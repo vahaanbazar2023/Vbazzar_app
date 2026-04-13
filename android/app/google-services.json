@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "943866177641",
+    "project_id": "vahaan-bazar-flutter-app",
+    "storage_bucket": "vahaan-bazar-flutter-app.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:943866177641:android:285ae27b01bb1d794e5af8",
+        "android_client_info": {
+          "package_name": "com.vahaanbazar.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB7hePnVwwTrDjA5vcEa0vM5Y69w6JjIug"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
