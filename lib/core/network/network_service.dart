@@ -147,6 +147,9 @@ class NetworkService extends GetxService {
     '/api/v1/spares-fms/list-shops',
     '/api/v1/spares-fms/user-shop-subscription',
     '/api/v1/spares-fms/user-spares-orders-listing',
+
+    // wallet
+    '/api/v1/wallet/eligibility',
   ];
 
   /// Check if a path requires authentication

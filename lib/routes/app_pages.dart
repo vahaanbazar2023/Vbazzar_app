@@ -16,6 +16,7 @@ import '../features/profile/profile_binding.dart';
 import '../features/subscription/views/subscription_screen.dart';
 import '../features/subscription/views/subscription_confirm_screen.dart';
 import '../features/subscription/views/my_subscription_screen.dart';
+import '../features/subscription/views/wallet_payment_screen.dart';
 import '../features/subscription/controllers/subscription_controller.dart';
 import '../features/auction/views/auction_type_screen.dart';
 import '../features/auction/views/autction_tab.dart';
@@ -133,6 +134,17 @@ class AppPages {
     GetPage(
       name: AppRoutes.vehicleDetail,
       page: () => const AuctionVehicleDetailScreen(),
+      transition: Transition.rightToLeft,
+    ),
+    GetPage(
+      name: AppRoutes.walletPayment,
+      page: () {
+        final args = Get.arguments as Map<String, dynamic>;
+        return WalletPaymentScreen(
+          plan: args['plan'],
+          source: args['source'] ?? '',
+        );
+      },
       transition: Transition.rightToLeft,
     ),
   ];

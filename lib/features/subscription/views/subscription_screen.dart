@@ -64,7 +64,7 @@ class SubscriptionScreen extends StatelessWidget {
           style: const TextStyle(
             fontFamily: 'Montserrat',
             fontWeight: FontWeight.w600,
-            fontSize: 20,
+            fontSize: 18,
             color: AppColors.textPrimary,
           ),
         ),
@@ -137,22 +137,6 @@ class _SubscriptionBodyState extends State<_SubscriptionBody> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Subtitle
-        Padding(
-          padding: const EdgeInsets.fromLTRB(60, 8, 28, 0),
-          child: Text(
-            widget.subtitle,
-            style: const TextStyle(
-              fontFamily: 'Montserrat',
-              fontWeight: FontWeight.w500,
-              fontSize: 16,
-              color: AppColors.black,
-              height: 1.4,
-            ),
-          ),
-        ),
-        const SizedBox(height: AppSizes.spaceXxl),
-
         // Scrollable plan list + referral field
         Expanded(
           child: SingleChildScrollView(
@@ -160,6 +144,22 @@ class _SubscriptionBodyState extends State<_SubscriptionBody> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                // Subtitle
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(4, 12, 12, 0),
+                  child: Text(
+                    widget.subtitle,
+                    style: const TextStyle(
+                      fontFamily: 'Montserrat',
+                      fontWeight: FontWeight.w400,
+                      fontSize: 14,
+                      color: AppColors.grey650,
+                      height: 1.4,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: AppSizes.spaceLg),
+
                 // Plan cards
                 Obx(
                   () => Column(
@@ -197,7 +197,7 @@ class _SubscriptionBodyState extends State<_SubscriptionBody> {
                           style: TextStyle(
                             fontFamily: 'Montserrat',
                             fontWeight: FontWeight.w500,
-                            fontSize: 13,
+                            fontSize: 12,
                             color: AppColors.grey900,
                           ),
                         ),
@@ -208,7 +208,7 @@ class _SubscriptionBodyState extends State<_SubscriptionBody> {
                           style: const TextStyle(
                             fontFamily: 'Montserrat',
                             fontWeight: FontWeight.w500,
-                            fontSize: 14,
+                            fontSize: 13,
                             color: AppColors.black,
                           ),
                           decoration: InputDecoration(
@@ -216,7 +216,7 @@ class _SubscriptionBodyState extends State<_SubscriptionBody> {
                             hintStyle: const TextStyle(
                               fontFamily: 'Montserrat',
                               fontWeight: FontWeight.w400,
-                              fontSize: 14,
+                              fontSize: 13,
                               color: AppColors.grey400,
                             ),
                             contentPadding: const EdgeInsets.symmetric(
@@ -244,7 +244,6 @@ class _SubscriptionBodyState extends State<_SubscriptionBody> {
                             ),
                           ),
                         ),
-                        // const SizedBox(height: AppSizes.spaceMd),
                       ],
                     ),
                   );
@@ -293,7 +292,7 @@ class _SubscriptionBodyState extends State<_SubscriptionBody> {
                         style: TextStyle(
                           fontFamily: 'Montserrat',
                           fontWeight: FontWeight.w700,
-                          fontSize: 15,
+                          fontSize: 14,
                           color: hasPlan ? AppColors.white : AppColors.grey400,
                           letterSpacing: 0.3,
                         ),
@@ -302,21 +301,39 @@ class _SubscriptionBodyState extends State<_SubscriptionBody> {
                   ),
                 ),
                 const SizedBox(height: AppSizes.spaceSm),
-                RichText(
-                  text: const TextSpan(
-                    style: TextStyle(
-                      fontFamily: 'Montserrat',
-                      fontWeight: FontWeight.w400,
-                      fontSize: 12,
-                      color: AppColors.grey650,
-                    ),
-                    children: [
-                      TextSpan(text: 'or pay from '),
-                      TextSpan(
-                        text: '"My wallet"',
-                        style: TextStyle(fontWeight: FontWeight.w700),
+                GestureDetector(
+                  onTap: () {
+                    final plan = widget.controller.selectedPlan;
+                    if (plan == null) return;
+                    Get.toNamed(
+                      AppRoutes.walletPayment,
+                      arguments: {
+                        'plan': plan,
+                        'source': widget.subscriptionSource,
+                      },
+                    );
+                  },
+                  child: RichText(
+                    text: TextSpan(
+                      style: const TextStyle(
+                        fontFamily: 'Montserrat',
+                        fontWeight: FontWeight.w400,
+                        fontSize: 11,
+                        color: AppColors.grey650,
                       ),
-                    ],
+                      children: [
+                        const TextSpan(text: 'or pay from '),
+                        TextSpan(
+                          text: '"My wallet"',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w700,
+                            color: hasPlan
+                                ? AppColors.primaryLight
+                                : AppColors.grey650,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ],
@@ -373,7 +390,7 @@ class _PlanCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: AnimatedContainer(
-        height: 100,
+        height: 85,
         duration: const Duration(milliseconds: 180),
         decoration: BoxDecoration(
           color: isSelected ? const Color(0xFFFFF0F0) : AppColors.grey50,
@@ -394,8 +411,8 @@ class _PlanCard extends StatelessWidget {
           children: [
             // Tier icon
             SizedBox(
-              width: 44,
-              height: 44,
+              width: 38,
+              height: 38,
               child: _tierAsset != null
                   ? Image.asset(_tierAsset!, fit: BoxFit.contain)
                   : Container(
@@ -410,14 +427,14 @@ class _PlanCard extends StatelessWidget {
                           style: TextStyle(
                             fontFamily: 'Montserrat',
                             fontWeight: FontWeight.w700,
-                            fontSize: 22,
+                            fontSize: 18,
                             color: _tierColor,
                           ),
                         ),
                       ),
                     ),
             ),
-            const SizedBox(width: 14),
+            const SizedBox(width: 12),
 
             // Name + validity
             Expanded(
@@ -430,17 +447,17 @@ class _PlanCard extends StatelessWidget {
                     style: const TextStyle(
                       fontFamily: 'Montserrat',
                       fontWeight: FontWeight.w600,
-                      fontSize: 22,
+                      fontSize: 18,
                       color: AppColors.textPrimary,
                     ),
                   ),
-                  const SizedBox(height: 3),
+                  const SizedBox(height: 2),
                   Text(
                     'Validity : ${plan.metricLabel}',
                     style: const TextStyle(
                       fontFamily: 'Montserrat',
                       fontWeight: FontWeight.w400,
-                      fontSize: 16,
+                      fontSize: 14,
                       color: AppColors.black,
                     ),
                   ),
@@ -451,13 +468,13 @@ class _PlanCard extends StatelessWidget {
             // Price
             Row(
               children: [
-                Icon(Icons.currency_rupee, color: AppColors.grey800, size: 22),
+                Icon(Icons.currency_rupee, color: AppColors.grey800, size: 18),
                 Text(
                   plan.price.toStringAsFixed(plan.price % 1 == 0 ? 0 : 2),
                   style: const TextStyle(
                     fontFamily: 'Montserrat',
                     fontWeight: FontWeight.w700,
-                    fontSize: 22,
+                    fontSize: 18,
                     color: AppColors.grey800,
                   ),
                 ),
@@ -506,7 +523,7 @@ class _ErrorState extends StatelessWidget {
               textAlign: TextAlign.center,
               style: const TextStyle(
                 fontFamily: 'Plus Jakarta Sans',
-                fontSize: 14,
+                fontSize: 13,
                 color: AppColors.grey500,
                 height: 1.5,
               ),
@@ -528,7 +545,7 @@ class _ErrorState extends StatelessWidget {
                   style: TextStyle(
                     fontFamily: 'Montserrat',
                     fontWeight: FontWeight.w700,
-                    fontSize: 14,
+                    fontSize: 13,
                     color: AppColors.white,
                   ),
                 ),

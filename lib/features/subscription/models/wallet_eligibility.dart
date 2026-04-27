@@ -24,18 +24,24 @@ class WalletEligibility {
   factory WalletEligibility.fromJson(Map<String, dynamic> json) {
     return WalletEligibility(
       userId: json['user_id'] as String? ?? '',
-      walletBalance: (json['wallet_balance'] as num?)?.toDouble() ?? 0.0,
+      walletBalance: _toDouble(json['wallet_balance']),
       planCode: json['plan_code'] as String? ?? '',
       planName: json['plan_name'] as String? ?? '',
-      subscriptionPrice:
-          (json['subscription_price'] as num?)?.toDouble() ?? 0.0,
-      maximumRedeemableAmount:
-          (json['maximum_redeemable_amount'] as num?)?.toDouble() ?? 0.0,
-      commissionAmount: (json['commission_amount'] as num?)?.toDouble() ?? 0.0,
+      subscriptionPrice: _toDouble(json['subscription_price']),
+      maximumRedeemableAmount: _toDouble(json['maximum_redeemable_amount']),
+      commissionAmount: _toDouble(json['commission_amount']),
       referralCode: json['referral_code'] as String?,
       referralCommissionPercentage:
-          (json['referral_commission_percentage'] as num?)?.toDouble() ?? 0.0,
+          _toDouble(json['referral_commission_percentage']),
     );
+  }
+
+  /// Safely converts a value that may be a [num] or [String] to [double].
+  static double _toDouble(dynamic value) {
+    if (value == null) return 0.0;
+    if (value is num) return value.toDouble();
+    if (value is String) return double.tryParse(value) ?? 0.0;
+    return 0.0;
   }
 
   /// Price after applying wallet deduction

@@ -17,4 +17,5 @@ class AppRoutes {
   static const auctionListings = '/auction/listings';
   static const vehicleListings = '/auction/vehicle-listings';
   static const vehicleDetail = '/auction/vehicle-detail';
+  static const walletPayment = '/subscription/wallet-payment';
 }
