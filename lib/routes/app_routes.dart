@@ -12,6 +12,7 @@ class AppRoutes {
   static const profile = '/profile';
   static const subscription = '/subscription';
   static const subscriptionConfirm = '/subscription/confirm';
+  static const mySubscriptions = '/my-subscriptions';
   static const auctionType = '/auction';
   static const auctionListings = '/auction/listings';
   static const vehicleListings = '/auction/vehicle-listings';

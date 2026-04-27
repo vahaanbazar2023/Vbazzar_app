@@ -108,7 +108,7 @@ class _AppBottomNavBarState extends State<AppBottomNavBar>
                   // ── Layer 1: bar shape + wave + red wave border ────────────────
                   Positioned.fill(
                     child: Padding(
-                      padding: const EdgeInsets.only(bottom: 8.0),
+                      padding: const EdgeInsets.only(bottom: 28.0, top: 4),
                       child: CustomPaint(painter: _WavePainter(cx)),
                     ),
                   ),

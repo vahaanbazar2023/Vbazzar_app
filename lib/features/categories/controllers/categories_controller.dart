@@ -1,5 +1,7 @@
 import 'package:get/get.dart';
 import '../../../routes/app_routes.dart';
+import '../../subscription/models/user_subscription.dart';
+import '../../subscription/services/subscription_guard_service.dart';
 import '../models/category_item.dart';
 
 class CategoriesController extends GetxController {
@@ -36,13 +38,35 @@ class CategoriesController extends GetxController {
     ),
   ];
 
-  void onCategoryTapped(CategoryItem item) {
+  Future<void> onCategoryTapped(CategoryItem item) async {
     switch (item.id) {
       case 'auction':
-        Get.toNamed(AppRoutes.auctionType);
+        await _openAuction();
         break;
       default:
         break;
     }
+  }
+
+  // ── Auction gate ──────────────────────────────────────────────────────────
+
+  Future<void> _openAuction() async {
+    final guard = SubscriptionGuardService.to;
+    await guard.ensureLoaded();
+
+    if (guard.hasActiveSubscription(SubscriptionTypeCode.auction)) {
+      Get.toNamed(AppRoutes.auctionType);
+      return;
+    }
+
+    // No valid subscription — go directly to the subscription screen
+    Get.toNamed(
+      AppRoutes.subscription,
+      arguments: {
+        'subscription_source': SubscriptionTypeCode.auction,
+        'title': 'Choose Subscription Plan',
+        'subtitle': 'Choose a subscription plan to unlock features of auction',
+      },
+    );
   }
 }

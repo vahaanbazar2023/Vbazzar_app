@@ -63,11 +63,12 @@ class AuthLayout extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final effectiveHeaderHeight = headerHeight ?? 240.h;
+    final statusBarHeight = MediaQuery.of(context).padding.top;
+    final effectiveHeaderHeight = (headerHeight ?? 200.h) + statusBarHeight;
 
     return Scaffold(
       backgroundColor: AppColors.black,
-      resizeToAvoidBottomInset: true,
+      resizeToAvoidBottomInset: false,
       body: Column(
         children: [
           /// RED GRADIENT HEADER SECTION
@@ -76,7 +77,7 @@ class AuthLayout extends StatelessWidget {
             width: double.infinity,
             height: effectiveHeaderHeight,
             padding: EdgeInsets.only(
-              top: MediaQuery.of(context).padding.top + AppSpacing.lg,
+              top: statusBarHeight + AppSpacing.sm,
               left: AppSpacing.xl,
               right: AppSpacing.xl,
               bottom: AppSpacing.xl,
@@ -127,45 +128,57 @@ class AuthLayout extends StatelessWidget {
           Expanded(
             child: Transform.translate(
               offset: Offset(0, -AppRadius.xxl),
-              child: Container(
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(AppRadius.xxl),
-                    topRight: Radius.circular(AppRadius.xxl),
-                  ),
-                ),
-                child: Column(
-                  children: [
-                    // Main scrollable content
-                    Expanded(
-                      child: SingleChildScrollView(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: AppSpacing.xl,
-                        ).copyWith(top: AppSpacing.md, bottom: AppSpacing.xxl),
-                        child: child,
-                      ),
+              child: Padding(
+                padding: EdgeInsets.only(bottom: AppRadius.xxl),
+                child: Container(
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(AppRadius.xxl),
+                      topRight: Radius.circular(AppRadius.xxl),
                     ),
-
-                    // Bottom widget (optional)
-                    if (bottomWidget != null)
-                      Container(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: AppSpacing.xl,
-                          vertical: AppSpacing.lg,
+                  ),
+                  child: Column(
+                    children: [
+                      // Main scrollable content
+                      Expanded(
+                        child: SingleChildScrollView(
+                          padding:
+                              EdgeInsets.symmetric(
+                                horizontal: AppSpacing.xl,
+                              ).copyWith(
+                                top: AppSpacing.md,
+                                bottom:
+                                    AppSpacing.xxl +
+                                    MediaQuery.of(context).viewInsets.bottom,
+                              ),
+                          child: child,
                         ),
-                        decoration: BoxDecoration(
-                          border: Border(
-                            top: BorderSide(
-                              color: AppColors.border.withOpacity(0.1),
-                              width: 1,
+                      ),
+
+                      // Bottom widget (optional)
+                      if (bottomWidget != null)
+                        Container(
+                          padding: EdgeInsets.fromLTRB(
+                            AppSpacing.xl,
+                            AppSpacing.lg,
+                            AppSpacing.xl,
+                            AppSpacing.lg +
+                                MediaQuery.of(context).padding.bottom,
+                          ),
+                          decoration: BoxDecoration(
+                            border: Border(
+                              top: BorderSide(
+                                color: AppColors.border.withOpacity(0.1),
+                                width: 1,
+                              ),
                             ),
                           ),
+                          child: bottomWidget,
                         ),
-                        child: bottomWidget,
-                      ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),

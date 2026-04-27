@@ -1,6 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import '../controllers/subscription_confirm_controller.dart';
 import '../models/subscription_plan.dart';
+import '../../../core/constants/app_assets.dart';
+import '../../../core/constants/app_colors.dart';
+import '../../../core/constants/app_sizes.dart';
+import '../../../core/design_system/molecules/gradient_button.dart';
+import '../../../core/design_system/organisms/app_bottom_nav_bar.dart';
+import '../../../features/main_shell/controllers/main_shell_controller.dart';
+import '../services/subscription_guard_service.dart';
 
 class SubscriptionConfirmScreen extends StatelessWidget {
   const SubscriptionConfirmScreen({super.key});
@@ -35,9 +44,7 @@ class SubscriptionConfirmScreen extends StatelessWidget {
     }
 
     return Scaffold(
-      backgroundColor: const Color(0xFF121212),
       appBar: AppBar(
-        backgroundColor: const Color(0xFF121212),
         elevation: 0,
         leading: GestureDetector(
           onTap: () => Get.back(),
@@ -438,8 +445,11 @@ class _PayButton extends StatelessWidget {
       color: const Color(0xFF121212),
       padding: EdgeInsets.fromLTRB(16, 12, 16, 12 + bottomPad),
       child: GestureDetector(
-        onTap: () {
-          // Payment integration hook — wired by calling feature
+        onTap: () async {
+          // TODO: integrate payment gateway here.
+          // On success, call SubscriptionGuardService.to.invalidateAndReload()
+          // so the cache reflects the new subscription immediately.
+          await SubscriptionGuardService.to.invalidateAndReload();
           Get.snackbar(
             'Coming Soon',
             'Payment integration will be available shortly.',

@@ -1,9 +1,12 @@
+import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import '../../../core/storage/secure_storage_service.dart';
 import '../../../core/storage/storage_keys.dart';
 import '../../../routes/app_routes.dart';
 import '../models/subscription_plan.dart';
 import '../models/subscription_image.dart';
+import '../models/user_subscription.dart';
+import '../services/subscription_guard_service.dart';
 import '../services/subscription_service.dart';
 
 class SubscriptionController extends GetxController {
@@ -64,4 +67,48 @@ class SubscriptionController extends GetxController {
   }
 
   void retry() => _loadPlans();
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// My Subscriptions controller — lists the user's active subscriptions
+// ─────────────────────────────────────────────────────────────────────────────
+class MySubscriptionController extends GetxController {
+  final SubscriptionService _service;
+
+  MySubscriptionController({SubscriptionService? service})
+    : _service = service ?? SubscriptionService();
+
+  final mySubscriptions = <UserSubscription>[].obs;
+  final isLoading = true.obs;
+  final errorMessage = Rxn<String>();
+  final auctionBidLimitOverall = 0.obs;
+  final totalCount = 0.obs;
+
+  @override
+  void onInit() {
+    super.onInit();
+    fetchMySubscriptions();
+  }
+
+  Future<void> fetchMySubscriptions() async {
+    isLoading.value = true;
+    errorMessage.value = null;
+    try {
+      final userId =
+          await SecureStorageService.to.read(StorageKeys.userId) ?? '';
+      final result = await _service.fetchMySubscriptions(userId: userId);
+      mySubscriptions.assignAll(result.subscriptions);
+      auctionBidLimitOverall.value = result.auctionBidLimitOverall;
+      totalCount.value = result.totalCount;
+      // Keep the guard cache in sync so category access-checks stay fresh
+      SubscriptionGuardService.to.invalidateAndReload();
+    } catch (e, st) {
+      debugPrint('❌ MySubscriptionController error: $e\n$st');
+      errorMessage.value = 'Failed to load subscriptions. Please try again.';
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  void retry() => fetchMySubscriptions();
 }

@@ -15,6 +15,8 @@ import '../features/profile/views/profile_screen.dart';
 import '../features/profile/profile_binding.dart';
 import '../features/subscription/views/subscription_screen.dart';
 import '../features/subscription/views/subscription_confirm_screen.dart';
+import '../features/subscription/views/my_subscription_screen.dart';
+import '../features/subscription/controllers/subscription_controller.dart';
 import '../features/auction/views/auction_type_screen.dart';
 import '../features/auction/views/autction_tab.dart';
 import '../features/auction/views/acution_vechile_listing.dart';
@@ -84,8 +86,11 @@ class AppPages {
       name: AppRoutes.subscription,
       page: () {
         final args = Get.arguments as Map<String, dynamic>? ?? {};
+        final source =
+            (args['subscription_source'] ?? args['source'] ?? 'SUBT001')
+                as String;
         return SubscriptionScreen(
-          subscriptionSource: args['source'] as String? ?? 'SUBT001',
+          subscriptionSource: source,
           title: args['title'] as String? ?? 'Choose a Plan',
           subtitle:
               args['subtitle'] as String? ??
@@ -97,6 +102,14 @@ class AppPages {
     GetPage(
       name: AppRoutes.subscriptionConfirm,
       page: () => const SubscriptionConfirmScreen(),
+      transition: Transition.rightToLeft,
+    ),
+    GetPage(
+      name: AppRoutes.mySubscriptions,
+      page: () => const MySubscriptionScreen(),
+      binding: BindingsBuilder(() {
+        Get.lazyPut(() => MySubscriptionController());
+      }),
       transition: Transition.rightToLeft,
     ),
     GetPage(

@@ -1,6 +1,8 @@
 class ApiEndpoints {
   ApiEndpoints._();
 
+  static const String subscriptionPrefix = '/api/v1/subscription';
+
   // ─── Auth ────────────────────────────────────────────────────
   static const String login = '/api/v2/auth/login';
   static const String verifyOtp = '/api/v2/auth/verify-otp';
@@ -15,6 +17,12 @@ class ApiEndpoints {
 
   // ─── Dashboard ───────────────────────────────────────────────
   static const String categoriesHome = '/api/v1/dashboard/categories-home';
+
+
+  // ─── Subscription ───────────────────────────────────────────────
+  static const String mySubscriptions = '$subscriptionPrefix/my-subscriptions';
+  static const String subscriptionListing = '$subscriptionPrefix/subscription-listing';
+  static const String walletEligibility = '/api/v1/wallet/eligibility';
 
   // ─── Vehicles ────────────────────────────────────────────────
   static const String vehicles = '/vehicles';

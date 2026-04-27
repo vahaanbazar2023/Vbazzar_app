@@ -3,6 +3,7 @@ import '../core/services/connectivity_service.dart';
 import '../core/services/location_service.dart';
 import '../core/network/network_service.dart';
 import '../features/main_shell/controllers/main_shell_controller.dart';
+import '../features/subscription/services/subscription_guard_service.dart';
 import 'app_lifecycle.dart';
 
 class AppBinding extends Bindings {
@@ -43,6 +44,10 @@ class AppBinding extends Bindings {
     if (!Get.isRegistered<MainShellController>()) {
       Get.put<MainShellController>(MainShellController(), permanent: true);
     }
+
+    // Register SubscriptionGuardService — permanent singleton for access-checks.
+    // The .to getter also self-registers on first access as a safety net.
+    SubscriptionGuardService.to;
 
     // Register AppLifecycle
     if (!Get.isRegistered<AppLifecycle>()) {

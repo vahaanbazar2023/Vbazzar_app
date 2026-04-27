@@ -2,15 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../controllers/subscription_controller.dart';
 import '../models/subscription_plan.dart';
+import '../../../core/constants/app_assets.dart';
+import '../../../core/constants/app_colors.dart';
+import '../../../core/constants/app_sizes.dart';
+import '../../../core/design_system/organisms/app_bottom_nav_bar.dart';
+import '../../../features/main_shell/controllers/main_shell_controller.dart';
+import '../../../routes/app_routes.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Public entry-point widget — fully reusable across any screen
-// Usage:
-//   SubscriptionScreen(
-//     subscriptionSource: 'SUBT001',
-//     title: 'Auction Access',
-//     subtitle: 'Choose a plan to access auction listings',
-//   )
+// Subscription plan listing screen — light theme
 // ─────────────────────────────────────────────────────────────────────────────
 class SubscriptionScreen extends StatelessWidget {
   final String subscriptionSource;
@@ -20,46 +20,60 @@ class SubscriptionScreen extends StatelessWidget {
   const SubscriptionScreen({
     super.key,
     required this.subscriptionSource,
-    this.title = 'Choose a Plan',
+    this.title = 'Choose Subscription Plan',
     this.subtitle = 'Select the subscription plan that suits you best',
   });
 
   @override
   Widget build(BuildContext context) {
-    // Each unique source gets its own controller instance tagged by source
     final controller = Get.put(
       SubscriptionController(subscriptionSource: subscriptionSource),
       tag: subscriptionSource,
     );
 
     return Scaffold(
-      backgroundColor: const Color(0xFF121212),
+      backgroundColor: AppColors.white,
+      bottomNavigationBar: Obx(() {
+        final shell = Get.isRegistered<MainShellController>()
+            ? Get.find<MainShellController>()
+            : null;
+        return AppBottomNavBar(
+          currentTab: shell != null
+              ? BottomNavTab.values[shell.currentIndex.value]
+              : BottomNavTab.categories,
+          onTabSelected: (tab) {
+            shell?.changePage(tab.index);
+            Get.until((route) => route.isFirst);
+          },
+        );
+      }),
       appBar: AppBar(
-        backgroundColor: const Color(0xFF121212),
-        elevation: 0,
+        backgroundColor: AppColors.white,
+        elevation: AppSizes.elevationNone,
+        surfaceTintColor: Colors.transparent,
         leading: GestureDetector(
           onTap: () => Get.back(),
           child: const Icon(
-            Icons.arrow_back_ios_new_rounded,
-            color: Colors.white,
-            size: 20,
+            Icons.arrow_back,
+            color: AppColors.black,
+            size: AppSizes.iconMd,
           ),
         ),
         title: Text(
           title,
           style: const TextStyle(
             fontFamily: 'Montserrat',
-            fontWeight: FontWeight.w700,
-            fontSize: 18,
-            color: Colors.white,
+            fontWeight: FontWeight.w600,
+            fontSize: 20,
+            color: AppColors.textPrimary,
           ),
         ),
-        centerTitle: true,
+        centerTitle: false,
       ),
       body: Obx(() {
         if (controller.isLoading.value) {
           return const Center(
-            child: CircularProgressIndicator(color: Color(0xFFD41F1F)),
+            child: CircularProgressIndicator(color: AppColors.primaryLight),
           );
         }
         if (controller.errorMessage.value.isNotEmpty) {
@@ -68,197 +82,254 @@ class SubscriptionScreen extends StatelessWidget {
             onRetry: controller.retry,
           );
         }
-        return _SubscriptionBody(controller: controller, subtitle: subtitle);
+        return _SubscriptionBody(
+          controller: controller,
+          subtitle: subtitle,
+          subscriptionSource: subscriptionSource,
+        );
       }),
     );
   }
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Body
+// Body with plan list + referral + proceed button
 // ─────────────────────────────────────────────────────────────────────────────
-class _SubscriptionBody extends StatelessWidget {
+class _SubscriptionBody extends StatefulWidget {
   final SubscriptionController controller;
   final String subtitle;
+  final String subscriptionSource;
 
-  const _SubscriptionBody({required this.controller, required this.subtitle});
+  const _SubscriptionBody({
+    required this.controller,
+    required this.subtitle,
+    required this.subscriptionSource,
+  });
+
+  @override
+  State<_SubscriptionBody> createState() => _SubscriptionBodyState();
+}
+
+class _SubscriptionBodyState extends State<_SubscriptionBody> {
+  final _referralController = TextEditingController();
+
+  @override
+  void dispose() {
+    _referralController.dispose();
+    super.dispose();
+  }
+
+  void _onProceed() {
+    final plan = widget.controller.selectedPlan;
+    if (plan == null) return;
+    Get.toNamed(
+      AppRoutes.subscriptionConfirm,
+      arguments: {
+        'plan': plan,
+        'source': widget.subscriptionSource,
+        'referral_code': _referralController.text.trim(),
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        // Subtitle
+        Padding(
+          padding: const EdgeInsets.fromLTRB(60, 8, 28, 0),
+          child: Text(
+            widget.subtitle,
+            style: const TextStyle(
+              fontFamily: 'Montserrat',
+              fontWeight: FontWeight.w500,
+              fontSize: 16,
+              color: AppColors.black,
+              height: 1.4,
+            ),
+          ),
+        ),
+        const SizedBox(height: AppSizes.spaceXxl),
+
+        // Scrollable plan list + referral field
         Expanded(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const SizedBox(height: 8),
-                // Subtitle
-                Text(
-                  subtitle,
-                  style: const TextStyle(
-                    fontFamily: 'Plus Jakarta Sans',
-                    fontWeight: FontWeight.w400,
-                    fontSize: 13,
-                    color: Color(0xFF9E9E9E),
-                    height: 1.4,
-                  ),
-                ),
-                const SizedBox(height: 20),
-                // Promotional banner carousel
-                if (controller.images.isNotEmpty)
-                  _BannerCarousel(
-                    images: controller.images.map((e) => e.s3Url).toList(),
-                  ),
-                const SizedBox(height: 24),
-                // Plans header
-                const Text(
-                  'Available Plans',
-                  style: TextStyle(
-                    fontFamily: 'Montserrat',
-                    fontWeight: FontWeight.w700,
-                    fontSize: 16,
-                    color: Colors.white,
-                  ),
-                ),
-                const SizedBox(height: 14),
                 // Plan cards
                 Obx(
                   () => Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: List.generate(
-                      controller.plans.length,
+                      widget.controller.plans.length,
                       (i) => Padding(
                         padding: const EdgeInsets.only(bottom: 14),
                         child: _PlanCard(
-                          plan: controller.plans[i],
-                          isSelected: controller.selectedPlanIndex.value == i,
-                          onTap: () => controller.selectPlan(i),
+                          plan: widget.controller.plans[i],
+                          isSelected:
+                              widget.controller.selectedPlanIndex.value == i,
+                          onTap: () => widget.controller.selectPlan(i),
                         ),
                       ),
                     ),
                   ),
                 ),
-                const SizedBox(height: 24),
+                const SizedBox(height: 4),
+
+                // Referral code — appears after plan is selected
+                Obx(() {
+                  if (widget.controller.selectedPlan == null) {
+                    return const SizedBox.shrink();
+                  }
+                  return AnimatedSize(
+                    duration: const Duration(milliseconds: 250),
+                    curve: Curves.easeOut,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Have Any Referral Code ?',
+                          style: TextStyle(
+                            fontFamily: 'Montserrat',
+                            fontWeight: FontWeight.w500,
+                            fontSize: 13,
+                            color: AppColors.grey900,
+                          ),
+                        ),
+                        const SizedBox(height: AppSizes.spaceSm),
+                        TextField(
+                          controller: _referralController,
+                          textCapitalization: TextCapitalization.characters,
+                          style: const TextStyle(
+                            fontFamily: 'Montserrat',
+                            fontWeight: FontWeight.w500,
+                            fontSize: 14,
+                            color: AppColors.black,
+                          ),
+                          decoration: InputDecoration(
+                            hintText: 'Enter here',
+                            hintStyle: const TextStyle(
+                              fontFamily: 'Montserrat',
+                              fontWeight: FontWeight.w400,
+                              fontSize: 14,
+                              color: AppColors.grey400,
+                            ),
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: AppSizes.spaceMd,
+                              vertical: 14,
+                            ),
+                            filled: true,
+                            fillColor: AppColors.white,
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(
+                                AppSizes.radiusMd,
+                              ),
+                              borderSide: const BorderSide(
+                                color: AppColors.border,
+                              ),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(
+                                AppSizes.radiusMd,
+                              ),
+                              borderSide: const BorderSide(
+                                color: AppColors.primaryLight,
+                                width: 1.5,
+                              ),
+                            ),
+                          ),
+                        ),
+                        // const SizedBox(height: AppSizes.spaceMd),
+                      ],
+                    ),
+                  );
+                }),
               ],
             ),
           ),
         ),
-        // Continue button
-        _ContinueButton(controller: controller),
-      ],
-    );
-  }
-}
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Banner carousel
-// ─────────────────────────────────────────────────────────────────────────────
-class _BannerCarousel extends StatefulWidget {
-  final List<String> images;
-
-  const _BannerCarousel({required this.images});
-
-  @override
-  State<_BannerCarousel> createState() => _BannerCarouselState();
-}
-
-class _BannerCarouselState extends State<_BannerCarousel> {
-  final PageController _pageController = PageController();
-  int _currentPage = 0;
-
-  @override
-  void dispose() {
-    _pageController.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        SizedBox(
-          height: 180,
-          child: PageView.builder(
-            controller: _pageController,
-            itemCount: widget.images.length,
-            onPageChanged: (i) => setState(() => _currentPage = i),
-            itemBuilder: (_, i) => _BannerImage(url: widget.images[i]),
-          ),
-        ),
-        if (widget.images.length > 1) ...[
-          const SizedBox(height: 10),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: List.generate(
-              widget.images.length,
-              (i) => AnimatedContainer(
-                duration: const Duration(milliseconds: 250),
-                margin: const EdgeInsets.symmetric(horizontal: 3),
-                width: _currentPage == i ? 18 : 6,
-                height: 6,
-                decoration: BoxDecoration(
-                  color: _currentPage == i
-                      ? const Color(0xFFD41F1F)
-                      : const Color(0xFF444444),
-                  borderRadius: BorderRadius.circular(3),
-                ),
-              ),
-            ),
-          ),
-        ],
-      ],
-    );
-  }
-}
-
-class _BannerImage extends StatelessWidget {
-  final String url;
-
-  const _BannerImage({required this.url});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 2),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16),
-        color: const Color(0xFF1E1E1E),
-      ),
-      clipBehavior: Clip.antiAlias,
-      child: Image.network(
-        url,
-        fit: BoxFit.cover,
-        width: double.infinity,
-        errorBuilder: (_, __, ___) => Container(
-          color: const Color(0xFF2A2A2A),
-          child: const Center(
-            child: Icon(
-              Icons.image_not_supported_outlined,
-              color: Color(0xFF555555),
-              size: 40,
-            ),
-          ),
-        ),
-        loadingBuilder: (_, child, progress) {
-          if (progress == null) return child;
+        // Bottom: Proceed Payment + My Wallet
+        Obx(() {
+          final hasPlan = widget.controller.selectedPlan != null;
           return Container(
-            color: const Color(0xFF1E1E1E),
-            child: const Center(
-              child: CircularProgressIndicator(
-                color: Color(0xFFD41F1F),
-                strokeWidth: 2,
-              ),
+            color: AppColors.white,
+            padding: const EdgeInsets.fromLTRB(
+              AppSizes.spaceMd,
+              0,
+              AppSizes.spaceMd,
+              AppSizes.space64,
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                GestureDetector(
+                  onTap: hasPlan ? _onProceed : null,
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
+                    height: AppSizes.buttonHeightLg,
+                    decoration: BoxDecoration(
+                      gradient: hasPlan
+                          ? const LinearGradient(
+                              colors: [
+                                AppColors.ctaGradientStart,
+                                AppColors.ctaGradientEnd,
+                              ],
+                              begin: Alignment.centerLeft,
+                              end: Alignment.centerRight,
+                            )
+                          : null,
+                      color: hasPlan ? null : AppColors.grey200,
+                      borderRadius: BorderRadius.circular(AppSizes.radiusFull),
+                    ),
+                    child: Center(
+                      child: Text(
+                        'Proceed Payment',
+                        style: TextStyle(
+                          fontFamily: 'Montserrat',
+                          fontWeight: FontWeight.w700,
+                          fontSize: 15,
+                          color: hasPlan ? AppColors.white : AppColors.grey400,
+                          letterSpacing: 0.3,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: AppSizes.spaceSm),
+                RichText(
+                  text: const TextSpan(
+                    style: TextStyle(
+                      fontFamily: 'Montserrat',
+                      fontWeight: FontWeight.w400,
+                      fontSize: 12,
+                      color: AppColors.grey650,
+                    ),
+                    children: [
+                      TextSpan(text: 'or pay from '),
+                      TextSpan(
+                        text: '"My wallet"',
+                        style: TextStyle(fontWeight: FontWeight.w700),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
           );
-        },
-      ),
+        }),
+      ],
     );
   }
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Plan card
+// Plan card — light theme
 // ─────────────────────────────────────────────────────────────────────────────
 class _PlanCard extends StatelessWidget {
   final SubscriptionPlan plan;
@@ -271,16 +342,29 @@ class _PlanCard extends StatelessWidget {
     required this.onTap,
   });
 
+  String? get _tierAsset {
+    switch (plan.name.toLowerCase()) {
+      case 'gold':
+        return AppAssets.tierGold;
+      case 'silver':
+        return AppAssets.tierSilver;
+      case 'bronze':
+        return AppAssets.tierBronze;
+      default:
+        return null;
+    }
+  }
+
   Color get _tierColor {
     switch (plan.name.toLowerCase()) {
       case 'gold':
-        return const Color(0xFFFFCC00);
+        return const Color(0xFFD4A017);
       case 'silver':
-        return const Color(0xFFB0B0B0);
+        return AppColors.grey500;
       case 'bronze':
         return const Color(0xFFCD7F32);
       default:
-        return const Color(0xFFD41F1F);
+        return AppColors.primaryLight;
     }
   }
 
@@ -289,217 +373,97 @@ class _PlanCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
+        height: 100,
+        duration: const Duration(milliseconds: 180),
         decoration: BoxDecoration(
-          color: const Color(0xFF1E1E1E),
-          borderRadius: BorderRadius.circular(16),
+          color: isSelected ? const Color(0xFFFFF0F0) : AppColors.grey50,
+          borderRadius: BorderRadius.circular(AppSizes.radiusLg),
           border: Border.all(
             color: isSelected
-                ? const Color(0xFFD41F1F)
-                : const Color(0xFF2E2E2E),
-            width: isSelected ? 2 : 1,
+                ? AppColors.primaryLight
+                : const Color(0xFFEADDDD),
           ),
-          boxShadow: isSelected
-              ? [
-                  BoxShadow(
-                    color: const Color(0xFFD41F1F).withOpacity(0.25),
-                    blurRadius: 16,
-                    offset: const Offset(0, 4),
-                  ),
-                ]
-              : [],
         ),
-        padding: const EdgeInsets.all(18),
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppSizes.spaceMd,
+          vertical: 14,
+        ),
         child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            // Tier badge
-            Container(
-              width: 52,
-              height: 52,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: _tierColor.withOpacity(0.12),
-                border: Border.all(color: _tierColor, width: 2),
-              ),
-              child: Center(
-                child: Text(
-                  plan.name[0].toUpperCase(),
-                  style: TextStyle(
-                    fontFamily: 'Montserrat',
-                    fontWeight: FontWeight.w800,
-                    fontSize: 22,
-                    color: _tierColor,
-                  ),
-                ),
-              ),
+            // Tier icon
+            SizedBox(
+              width: 44,
+              height: 44,
+              child: _tierAsset != null
+                  ? Image.asset(_tierAsset!, fit: BoxFit.contain)
+                  : Container(
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: _tierColor.withOpacity(0.12),
+                        border: Border.all(color: _tierColor, width: 1.8),
+                      ),
+                      child: Center(
+                        child: Text(
+                          plan.name[0].toUpperCase(),
+                          style: TextStyle(
+                            fontFamily: 'Montserrat',
+                            fontWeight: FontWeight.w700,
+                            fontSize: 22,
+                            color: _tierColor,
+                          ),
+                        ),
+                      ),
+                    ),
             ),
-            const SizedBox(width: 16),
-            // Plan details
+            const SizedBox(width: 14),
+
+            // Name + validity
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        plan.name,
-                        style: const TextStyle(
-                          fontFamily: 'Montserrat',
-                          fontWeight: FontWeight.w700,
-                          fontSize: 16,
-                          color: Colors.white,
-                        ),
-                      ),
-                      // Price
-                      RichText(
-                        text: TextSpan(
-                          children: [
-                            const TextSpan(
-                              text: '₹',
-                              style: TextStyle(
-                                fontFamily: 'Montserrat',
-                                fontWeight: FontWeight.w600,
-                                fontSize: 13,
-                                color: Color(0xFFD41F1F),
-                              ),
-                            ),
-                            TextSpan(
-                              text: plan.price.toStringAsFixed(
-                                plan.price % 1 == 0 ? 0 : 2,
-                              ),
-                              style: const TextStyle(
-                                fontFamily: 'Montserrat',
-                                fontWeight: FontWeight.w800,
-                                fontSize: 20,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 4),
-                  // Metric chip
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 10,
-                      vertical: 3,
-                    ),
-                    decoration: BoxDecoration(
-                      color: _tierColor.withOpacity(0.12),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Text(
-                      plan.metricLabel,
-                      style: TextStyle(
-                        fontFamily: 'Plus Jakarta Sans',
-                        fontWeight: FontWeight.w600,
-                        fontSize: 11,
-                        color: _tierColor,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 8),
                   Text(
-                    plan.featDescription,
+                    plan.name,
                     style: const TextStyle(
-                      fontFamily: 'Plus Jakarta Sans',
-                      fontWeight: FontWeight.w400,
-                      fontSize: 12,
-                      color: Color(0xFF9E9E9E),
-                      height: 1.4,
+                      fontFamily: 'Montserrat',
+                      fontWeight: FontWeight.w600,
+                      fontSize: 22,
+                      color: AppColors.textPrimary,
                     ),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 3),
+                  Text(
+                    'Validity : ${plan.metricLabel}',
+                    style: const TextStyle(
+                      fontFamily: 'Montserrat',
+                      fontWeight: FontWeight.w400,
+                      fontSize: 16,
+                      color: AppColors.black,
+                    ),
                   ),
                 ],
               ),
             ),
-            const SizedBox(width: 12),
-            // Selection indicator
-            AnimatedContainer(
-              duration: const Duration(milliseconds: 200),
-              width: 22,
-              height: 22,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: isSelected
-                    ? const Color(0xFFD41F1F)
-                    : Colors.transparent,
-                border: Border.all(
-                  color: isSelected
-                      ? const Color(0xFFD41F1F)
-                      : const Color(0xFF555555),
-                  width: 2,
+
+            // Price
+            Row(
+              children: [
+                Icon(Icons.currency_rupee, color: AppColors.grey800, size: 22),
+                Text(
+                  plan.price.toStringAsFixed(plan.price % 1 == 0 ? 0 : 2),
+                  style: const TextStyle(
+                    fontFamily: 'Montserrat',
+                    fontWeight: FontWeight.w700,
+                    fontSize: 22,
+                    color: AppColors.grey800,
+                  ),
                 ),
-              ),
-              child: isSelected
-                  ? const Icon(
-                      Icons.check_rounded,
-                      color: Colors.white,
-                      size: 14,
-                    )
-                  : null,
+              ],
             ),
           ],
-        ),
-      ),
-    );
-  }
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Continue button
-// ─────────────────────────────────────────────────────────────────────────────
-class _ContinueButton extends StatelessWidget {
-  final SubscriptionController controller;
-
-  const _ContinueButton({required this.controller});
-
-  @override
-  Widget build(BuildContext context) {
-    final bottomPad = MediaQuery.of(context).padding.bottom;
-    return Container(
-      color: const Color(0xFF121212),
-      padding: EdgeInsets.fromLTRB(16, 12, 16, 12 + bottomPad),
-      child: Obx(
-        () => GestureDetector(
-          onTap: controller.selectedPlan != null ? controller.onContinue : null,
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 200),
-            height: 54,
-            decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                colors: [Color(0xFFD41F1F), Color(0xFF9A0800)],
-                begin: Alignment.centerLeft,
-                end: Alignment.centerRight,
-              ),
-              borderRadius: BorderRadius.circular(14),
-              boxShadow: controller.selectedPlan != null
-                  ? [
-                      BoxShadow(
-                        color: const Color(0xFFD41F1F).withOpacity(0.4),
-                        blurRadius: 16,
-                        offset: const Offset(0, 6),
-                      ),
-                    ]
-                  : [],
-            ),
-            child: const Center(
-              child: Text(
-                'Continue',
-                style: TextStyle(
-                  fontFamily: 'Montserrat',
-                  fontWeight: FontWeight.w700,
-                  fontSize: 16,
-                  color: Colors.white,
-                  letterSpacing: 0.5,
-                ),
-              ),
-            ),
-          ),
         ),
       ),
     );
@@ -519,7 +483,7 @@ class _ErrorState extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(32),
+        padding: const EdgeInsets.all(AppSizes.spaceXl),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -527,45 +491,45 @@ class _ErrorState extends StatelessWidget {
               width: 72,
               height: 72,
               decoration: BoxDecoration(
-                color: const Color(0xFFD41F1F).withOpacity(0.1),
+                color: AppColors.primaryLight.withOpacity(0.08),
                 shape: BoxShape.circle,
               ),
               child: const Icon(
                 Icons.wifi_off_rounded,
-                color: Color(0xFFD41F1F),
-                size: 36,
+                color: AppColors.primaryLight,
+                size: AppSizes.spaceXl,
               ),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: AppSizes.spaceLg),
             Text(
               message,
               textAlign: TextAlign.center,
               style: const TextStyle(
                 fontFamily: 'Plus Jakarta Sans',
                 fontSize: 14,
-                color: Color(0xFF9E9E9E),
+                color: AppColors.grey500,
                 height: 1.5,
               ),
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: AppSizes.spaceLg),
             GestureDetector(
               onTap: onRetry,
               child: Container(
                 padding: const EdgeInsets.symmetric(
-                  horizontal: 32,
+                  horizontal: AppSizes.spaceXl,
                   vertical: 14,
                 ),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFD41F1F),
-                  borderRadius: BorderRadius.circular(12),
+                  color: AppColors.primaryLight,
+                  borderRadius: BorderRadius.circular(AppSizes.radiusMd),
                 ),
                 child: const Text(
-                  'Try Again',
+                  'Retry',
                   style: TextStyle(
                     fontFamily: 'Montserrat',
-                    fontWeight: FontWeight.w600,
+                    fontWeight: FontWeight.w700,
                     fontSize: 14,
-                    color: Colors.white,
+                    color: AppColors.white,
                   ),
                 ),
               ),

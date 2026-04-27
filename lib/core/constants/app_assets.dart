@@ -56,4 +56,27 @@ class AppAssets {
   static const String hourglassPng = '${_images}hourglass.png';
   static const String calendarPng = '${_images}calender.png';
   static const String filterPng = '${_images}filter.png';
+
+  // ── Bottom nav bar icons ──────────────────────────────────────────────────
+  static const String navHome = '${_images}home.png';
+  static const String navSubscriptions = '${_images}subscriptions.png';
+  static const String navCategory = '${_images}category.png';
+  static const String navRewards = '${_images}rewards.png';
+  static const String navSettings = '${_images}settings.png';
+
+  // ── Subscription tier badges ──────────────────────────────────────────────
+  static const String tierGold = '${_images}gold.png';
+  static const String tierSilver = '${_images}silver.png';
+  static const String tierBronze = '${_images}bronze.png';
+
+  // ── Miscellaneous images ──────────────────────────────────────────────────
+  static const String vbLogo = '${_images}vb_logo.png';
+  static const String vahaanBazarText = '${_images}vahaan_bazar_text.png';
+  static const String taglineText = '${_images}tagline_text.png';
+  static const String vehicleIllustrations =
+      '${_images}vehicle_illustrations.png';
+  static const String liveBidding = '${_images}live_bidding.png';
+  static const String govInventory = '${_images}goverment_inventory.png';
+  static const String forgotPasswordIllus =
+      '${_images}forgotpassword_illus.png';
 }

@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/design_system/design_system.dart';
+import '../../../routes/app_routes.dart';
 import '../controllers/profile_controller.dart';
 import '../models/profile_models.dart';
 
@@ -72,20 +73,25 @@ class ProfileScreen extends GetView<ProfileController> {
                       SizedBox(height: 24.h),
                       _MenuSection(
                         title: 'Account',
-                        items: const [
-                          _MenuItem(
+                        items: [
+                          const _MenuItem(
                             icon: Icons.person_outline,
                             label: 'Manage Profile',
                           ),
-                          _MenuItem(
+                          const _MenuItem(
                             icon: Icons.lock_outline,
                             label: 'Password & Security',
                           ),
-                          _MenuItem(
+                          const _MenuItem(
                             icon: Icons.account_balance_wallet_outlined,
                             label: 'My Wallet',
                           ),
                           _MenuItem(
+                            icon: Icons.card_membership_outlined,
+                            label: 'My Subscriptions',
+                            onTap: () => Get.toNamed(AppRoutes.mySubscriptions),
+                          ),
+                          const _MenuItem(
                             icon: Icons.language_outlined,
                             label: 'Language',
                           ),
@@ -335,8 +341,9 @@ class _MenuSection extends StatelessWidget {
 class _MenuItem {
   final IconData icon;
   final String label;
+  final VoidCallback? onTap;
 
-  const _MenuItem({required this.icon, required this.label});
+  const _MenuItem({required this.icon, required this.label, this.onTap});
 }
 
 class _MenuItemTile extends StatelessWidget {
@@ -349,7 +356,7 @@ class _MenuItemTile extends StatelessWidget {
     return Material(
       color: Colors.transparent,
       child: InkWell(
-        onTap: () {},
+        onTap: item.onTap,
         borderRadius: BorderRadius.circular(12.r),
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
