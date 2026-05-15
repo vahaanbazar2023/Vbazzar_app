@@ -348,40 +348,44 @@ class _WalletBodyState extends State<_WalletBody> {
           Padding(
             padding: const EdgeInsets.fromLTRB(45, 24, 45, 0),
             child: GestureDetector(
-              onTap: _payFromWallet ? widget.controller.onProceedPayment : null,
+              onTap: widget.controller.isPaymentInProgress.value
+                  ? null
+                  : widget.controller.onProceedPayment,
               child: Container(
                 height: 56,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(188),
                   border: Border.all(
                     width: 1,
-                    color: _payFromWallet
-                        ? _ctaStart
-                        : _ctaStart.withOpacity(0.3),
+                    color: _ctaStart,
                   ),
                   color: Colors.transparent,
                 ),
                 child: Center(
-                  child: ShaderMask(
-                    shaderCallback: (bounds) => LinearGradient(
-                      colors: _payFromWallet
-                          ? [_ctaStart, _ctaEnd]
-                          : [
-                              _ctaStart.withOpacity(0.3),
-                              _ctaEnd.withOpacity(0.3),
-                            ],
-                    ).createShader(bounds),
-                    child: Text(
-                      'Proceed Payment ${widget.controller.priceDisplay}',
-                      style: const TextStyle(
-                        fontFamily: 'Montserrat',
-                        fontWeight: FontWeight.w600,
-                        fontSize: 18,
-                        color: Colors.white,
-                        letterSpacing: 0.36,
-                      ),
-                    ),
-                  ),
+                  child: widget.controller.isPaymentInProgress.value
+                      ? const SizedBox(
+                          width: 22,
+                          height: 22,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2.5,
+                            color: _ctaStart,
+                          ),
+                        )
+                      : ShaderMask(
+                          shaderCallback: (bounds) => const LinearGradient(
+                            colors: [_ctaStart, _ctaEnd],
+                          ).createShader(bounds),
+                          child: Text(
+                            'Proceed Payment ${widget.controller.priceDisplay}',
+                            style: const TextStyle(
+                              fontFamily: 'Montserrat',
+                              fontWeight: FontWeight.w600,
+                              fontSize: 18,
+                              color: Colors.white,
+                              letterSpacing: 0.36,
+                            ),
+                          ),
+                        ),
                 ),
               ),
             ),

@@ -18,4 +18,13 @@ class AppRoutes {
   static const vehicleListings = '/auction/vehicle-listings';
   static const vehicleDetail = '/auction/vehicle-detail';
   static const walletPayment = '/subscription/wallet-payment';
+
+  // Approved Vehicles
+  static const approvedVehicleBuySell = '/approved-vehicle-buy-sell';
+  static const approvedVehicleCategory = '/approved-vehicle-category';
+  static const approvedVehicleListings = '/approved-vehicle-listings';
+  static const approvedVehicleDetail = '/approved-vehicle-detail';
+  static const approvedVehicleSellForm = '/approved-vehicle-sell-form';
+  static const approvedVehicleMyBookings = '/approved-vehicle-my-bookings';
+  static const approvedVehicleMyInspections = '/approved-vehicle-my-inspections';
 }

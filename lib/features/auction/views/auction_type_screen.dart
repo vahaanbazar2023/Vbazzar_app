@@ -29,7 +29,7 @@ class AuctionTypeScreen extends StatelessWidget {
           _TypeCard(
             tabIndex: 1,
             image: Image.asset('assets/images/png/goverment_inventory.png'),
-            title: AuctionType.label(AuctionType.live),
+            title: AuctionType.label('Approved Vehicles'),
             subtitle: 'Auctions currently live — bid now before time runs out',
             badgeColor: const Color(0xFFD41F1F),
             badgeLabel: 'LIVE',
@@ -60,10 +60,17 @@ class _TypeCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => Get.toNamed(
-        AppRoutes.auctionListings,
-        arguments: {'tabIndex': tabIndex},
-      ),
+      onTap: () {
+        if (tabIndex == 1) {
+          // Navigate to Approved Vehicles module
+          Get.toNamed(AppRoutes.approvedVehicleCategory);
+        } else {
+          Get.toNamed(
+            AppRoutes.auctionListings,
+            arguments: {'tabIndex': tabIndex},
+          );
+        }
+      },
       child: Container(
         height: 300,
         child: Column(

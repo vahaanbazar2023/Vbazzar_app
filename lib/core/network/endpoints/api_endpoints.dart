@@ -28,6 +28,12 @@ class ApiEndpoints {
   static const String vehicles = '/vehicles';
   static String vehicleById(String id) => '/vehicles/$id';
 
+  // ─── Payments ─────────────────────────────────────────────────
+  static const String paymentPrefix = '/api/v1/payments';
+  static const String paymentInitiate = '$paymentPrefix/initiate';
+  static const String paymentSuccess = '$paymentPrefix/success';
+  static const String paymentFailure = '$paymentPrefix/failure';
+
   // ─── Notifications ───────────────────────────────────────────
   static const String notifications = '/notifications';
 }

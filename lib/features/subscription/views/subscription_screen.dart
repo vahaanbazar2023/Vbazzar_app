@@ -6,7 +6,10 @@ import '../../../core/constants/app_assets.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_sizes.dart';
 import '../../../core/design_system/organisms/app_bottom_nav_bar.dart';
+import '../../../core/storage/secure_storage_service.dart';
+import '../../../core/storage/storage_keys.dart';
 import '../../../features/main_shell/controllers/main_shell_controller.dart';
+import '../../../features/payment/controllers/payment_controller.dart';
 import '../../../routes/app_routes.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -119,17 +122,80 @@ class _SubscriptionBodyState extends State<_SubscriptionBody> {
     super.dispose();
   }
 
-  void _onProceed() {
+  void _onProceed() async {
     final plan = widget.controller.selectedPlan;
     if (plan == null) return;
-    Get.toNamed(
-      AppRoutes.subscriptionConfirm,
-      arguments: {
-        'plan': plan,
-        'source': widget.subscriptionSource,
-        'referral_code': _referralController.text.trim(),
-      },
+
+    // Get user details from secure storage
+    final userId =
+        await SecureStorageService.to.read(StorageKeys.userId) ?? '';
+    final userName =
+        await SecureStorageService.to.read(StorageKeys.userName) ?? '';
+    final userEmail =
+        await SecureStorageService.to.read(StorageKeys.userEmail) ?? '';
+
+    if (userId.isEmpty) {
+      Get.snackbar('Error', 'Please login to continue');
+      return;
+    }
+
+    // Register payment controller
+    final paymentController = Get.put(PaymentController());
+
+    // Set callbacks
+    paymentController.onSuccess = (data, callback) {
+      Get.back(); // Close any loading dialogs
+      Get.snackbar(
+        'Payment Successful',
+        'Your subscription has been activated!',
+        backgroundColor: Colors.green.shade100,
+        duration: const Duration(seconds: 3),
+      );
+      // Navigate back or to my subscriptions
+      Get.until((route) => route.isFirst);
+    };
+
+    paymentController.onFailure = (message, callback) {
+      Get.back(); // Close any loading dialogs
+      Get.snackbar(
+        'Payment Failed',
+        message,
+        backgroundColor: Colors.red.shade100,
+        duration: const Duration(seconds: 3),
+      );
+    };
+
+    paymentController.onCancelled = () {
+      Get.snackbar(
+        'Payment Cancelled',
+        'You cancelled the payment',
+        backgroundColor: Colors.orange.shade100,
+        duration: const Duration(seconds: 2),
+      );
+    };
+
+    // Show loading
+    Get.dialog(
+      const Center(
+        child: CircularProgressIndicator(color: AppColors.primaryLight),
+      ),
+      barrierDismissible: false,
     );
+
+    // Initiate payment (without wallet)
+    await paymentController.initiatePayment(
+      userId: userId,
+      planCode: plan.planCode,
+      forPayment: plan.price,
+      referralCode: _referralController.text.trim().isNotEmpty
+          ? _referralController.text.trim()
+          : null,
+    );
+
+    // Close loading if still showing
+    if (Get.isDialogOpen ?? false) {
+      Get.back();
+    }
   }
 
   @override

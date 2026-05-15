@@ -25,6 +25,13 @@ import '../features/auction/views/acution_vechile_detail.dart';
 import '../features/auction/auction_binding.dart';
 import '../features/auction/vehicle_listing_binding.dart';
 import 'app_routes.dart';
+import '../features/approved_vehicles/approved_vehicle_binding.dart';
+import '../features/approved_vehicles/views/buy_sell_landing_screen.dart';
+import '../features/approved_vehicles/views/category_selection_screen.dart';
+import '../features/approved_vehicles/views/vehicle_listings_screen.dart';
+import '../features/approved_vehicles/views/vehicle_detail_screen.dart';
+import '../features/approved_vehicles/views/sell_vehicle_form_screen.dart';
+import '../features/approved_vehicles/views/my_bookings_screen.dart';
 
 class AppPages {
   AppPages._();
@@ -145,6 +152,49 @@ class AppPages {
           source: args['source'] ?? '',
         );
       },
+      transition: Transition.rightToLeft,
+    ),
+    // ── Approved Vehicles ─────────────────────────────────────
+    GetPage(
+      name: AppRoutes.approvedVehicleBuySell,
+      page: () => const BuySellLandingScreen(),
+      binding: ApprovedVehicleBinding(),
+      transition: Transition.rightToLeft,
+    ),
+    GetPage(
+      name: AppRoutes.approvedVehicleCategory,
+      page: () => const CategorySelectionScreen(),
+      binding: ApprovedVehicleBinding(),
+      transition: Transition.rightToLeft,
+    ),
+    GetPage(
+      name: AppRoutes.approvedVehicleListings,
+      page: () => const VehicleListingsScreen(),
+      binding: ApprovedVehicleBinding(),
+      transition: Transition.rightToLeft,
+    ),
+    GetPage(
+      name: AppRoutes.approvedVehicleDetail,
+      page: () => const VehicleDetailScreen(),
+      binding: ApprovedVehicleBinding(),
+      transition: Transition.rightToLeft,
+    ),
+    GetPage(
+      name: AppRoutes.approvedVehicleSellForm,
+      page: () => const SellVehicleFormScreen(),
+      binding: ApprovedVehicleBinding(),
+      transition: Transition.rightToLeft,
+    ),
+    GetPage(
+      name: AppRoutes.approvedVehicleMyBookings,
+      page: () => const MyBookingsScreen(),
+      binding: ApprovedVehicleBinding(),
+      transition: Transition.rightToLeft,
+    ),
+    GetPage(
+      name: AppRoutes.approvedVehicleMyInspections,
+      page: () => const MyBookingsScreen(),
+      binding: ApprovedVehicleBinding(),
       transition: Transition.rightToLeft,
     ),
   ];
