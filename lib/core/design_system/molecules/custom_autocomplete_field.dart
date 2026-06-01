@@ -355,6 +355,13 @@ class _CustomAutocompleteFieldState<T extends Object>
                   fontSize: 14.sp,
                   fontWeight: FontWeight.w400,
                 ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(
+                    width: 1,
+                    color: AppColors.ctaGradientStart,
+                  ),
+                  borderRadius: BorderRadius.all(Radius.circular(12)),
+                ),
                 prefixIcon: widget.prefixIcon != null
                     ? Icon(
                         widget.prefixIcon,

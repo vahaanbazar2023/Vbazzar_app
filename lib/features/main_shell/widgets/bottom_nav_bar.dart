@@ -8,9 +8,9 @@ import '../controllers/main_shell_controller.dart';
 // Dome oval (Ellipse 205 small): 72 × 67.75, center 5.545px ABOVE bar top
 // Arc ellipse (Ellipse 205 large): 84.5 × 29.5, center 13.55px ABOVE bar top
 // Circle (Frame 47): 48px diameter, protrudes 18px above bar top
-const double _kOverlap = 40; // widget height reserved ABOVE bar top
+const double _kOverlap = 0; // widget height reserved ABOVE bar top
 const double _kBarH = 90; // bar height
-const double _kCircle = 48; // floating red circle diameter
+const double _kCircle = 40; // floating red circle diameter
 const double _kCircleAbove = 18; // px the circle protrudes above bar top
 const double _kDomeW = 72;
 const double _kDomeH = 67.75;
@@ -31,7 +31,7 @@ class BottomNavBar extends GetView<MainShellController> {
   ];
 
   static const _labels = [
-    'Home',
+    'Homexsd',
     'Subscriptions',
     'Categories',
     'Rewards',
