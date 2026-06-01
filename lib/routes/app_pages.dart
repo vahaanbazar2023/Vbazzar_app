@@ -25,6 +25,13 @@ import '../features/auction/views/acution_vechile_detail.dart';
 import '../features/auction/auction_binding.dart';
 import '../features/auction/vehicle_listing_binding.dart';
 import 'app_routes.dart';
+import '../features/buy_and_sell/views/buy_sell_home_view.dart';
+import '../features/buy_and_sell/views/sell_view.dart';
+import '../features/buy_and_sell/views/buy_vehicle_listings_view.dart';
+import '../features/buy_and_sell/views/buy_vehicle_details_view.dart';
+import '../features/buy_and_sell/buy_sell_binding.dart';
+import '../features/buy_and_sell/controllers/vehicle_detail_controller.dart';
+import '../features/buy_and_sell/data/repositories/buy_sell_repository_impl.dart';
 import '../features/approved_vehicles/approved_vehicle_binding.dart';
 import '../features/approved_vehicles/views/buy_sell_landing_screen.dart';
 import '../features/approved_vehicles/views/category_selection_screen.dart';
@@ -152,6 +159,34 @@ class AppPages {
           source: args['source'] ?? '',
         );
       },
+      transition: Transition.rightToLeft,
+    ),
+    // ── Buy & Sell ──────────────────────────────────────────────
+    GetPage(
+      name: AppRoutes.buySellHome,
+      page: () => const BuySellHomeView(),
+      binding: BuySellBinding(),
+      transition: Transition.rightToLeft,
+    ),
+    GetPage(
+      name: AppRoutes.sellVehicle,
+      page: () => const SellVehicleView(),
+      binding: BuySellBinding(),
+      transition: Transition.rightToLeft,
+    ),
+    GetPage(
+      name: AppRoutes.buyVehicleListings,
+      page: () => const BuyVehicleListingsView(),
+      binding: BindingsBuilder(() {
+        Get.lazyPut(
+          () => BuyVehicleController(repository: BuySellRepositoryImpl()),
+        );
+      }),
+      transition: Transition.rightToLeft,
+    ),
+    GetPage(
+      name: AppRoutes.buyVehicleDetail,
+      page: () => const BuyVehicleDetailsView(),
       transition: Transition.rightToLeft,
     ),
     // ── Approved Vehicles ─────────────────────────────────────

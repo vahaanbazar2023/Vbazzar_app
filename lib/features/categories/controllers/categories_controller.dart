@@ -43,9 +43,18 @@ class CategoriesController extends GetxController {
       case 'auction':
         await _openAuction();
         break;
+      case 'buy_sell':
+        _openBuySell();
+        break;
       default:
         break;
     }
+  }
+
+  // ── Buy & Sell (no subscription gate) ───────────────────────────────────────
+
+  void _openBuySell() {
+    Get.toNamed(AppRoutes.buySellHome);
   }
 
   // ── Auction gate ──────────────────────────────────────────────────────────

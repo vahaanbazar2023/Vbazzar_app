@@ -18,10 +18,10 @@ class ApiEndpoints {
   // ─── Dashboard ───────────────────────────────────────────────
   static const String categoriesHome = '/api/v1/dashboard/categories-home';
 
-
   // ─── Subscription ───────────────────────────────────────────────
   static const String mySubscriptions = '$subscriptionPrefix/my-subscriptions';
-  static const String subscriptionListing = '$subscriptionPrefix/subscription-listing';
+  static const String subscriptionListing =
+      '$subscriptionPrefix/subscription-listing';
   static const String walletEligibility = '/api/v1/wallet/eligibility';
 
   // ─── Vehicles ────────────────────────────────────────────────
@@ -36,4 +36,50 @@ class ApiEndpoints {
 
   // ─── Notifications ───────────────────────────────────────────
   static const String notifications = '/notifications';
+
+  // ─── Buy & Sell ─────────────────────────────────────────────
+  static const String buySellPrefix = '/api/v1/sell-buy';
+  static const String vehicleCategories = '$buySellPrefix/vehicle-categories';
+  static const String vehicleBrands = '$buySellPrefix/vehicle-brands';
+  static const String vehicleListings = '$buySellPrefix/vehicle-listings';
+  static const String vehicleTyres = '$buySellPrefix/tyres';
+  static const String sellVehicle = '$buySellPrefix/sell-vehicle';
+  static const String listSellVehicles = '$buySellPrefix/list-sell-vehicles';
+  static const String updateSellVehicles =
+      '$buySellPrefix/update-sell-vehicles';
+  static const String listBuySubscribedVehicles =
+      '$buySellPrefix/list-buy-subscribed-vehicles';
+  static const String vehicleCategoryFormFields =
+      '$buySellPrefix/vehicle-category-form-fields';
+  static const String vehicleCategoryFilters =
+      '$buySellPrefix/vehicle-category-filters';
+  static const String vehicleCategoryListByFilters =
+      '$buySellPrefix/vehicle-category-list-by-filters';
+  static const String sbVehicleSold = '$buySellPrefix/sb-vehicle-sold';
+  static const String userInterest = '$buySellPrefix/user-interest';
+
+  // ─── Locations ────────────────────────────────────────────────
+  static const String locationPrefix = '/api/v1/locations';
+  static const String states = '$locationPrefix/states';
+  static const String cities = '$locationPrefix/cities';
+
+  // ─── Auction ──────────────────────────────────────────────────
+  static const String auctionPrefix = '/api/v1/auctions';
+  static const String auctionListings =
+      '$auctionPrefix/auction-listings-pagination';
+  static const String auctionVehicleListings =
+      '$auctionPrefix/vehicle-listings-pagination';
+  static const String placeBid = '$auctionPrefix/place-bid';
+  static const String myBids = '$auctionPrefix/my-bids';
+  static const String myWins = '$auctionPrefix/my-wins';
+  static const String winningLetter = '$auctionPrefix/winning-letter';
+  static const String updateInsuranceInterest =
+      '$auctionPrefix/update-insurance-interest';
+  static const String regions = '$auctionPrefix/regions';
+  static String statesByRegion(String regionId) =>
+      '$auctionPrefix/states/$regionId';
+  static const String vehicleSearch = '$auctionPrefix/vehicle-search';
+  static const String auctionRefundInitiate = '$auctionPrefix/refund-initiate';
+  static const String vehicleExcelDownload =
+      '$auctionPrefix/vehicle-excel-download';
 }

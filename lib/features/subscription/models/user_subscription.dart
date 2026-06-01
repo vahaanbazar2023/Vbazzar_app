@@ -2,7 +2,7 @@
 /// Add new entries here as new subscription products are introduced.
 abstract final class SubscriptionTypeCode {
   static const auction = 'SUBT001';
-  static const buySell = 'SUBT002';
+  static const auctionBidLimit = 'SUBT002';
 }
 
 class UserSubscription {
