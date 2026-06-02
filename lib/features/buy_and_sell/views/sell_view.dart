@@ -7,6 +7,7 @@ import 'package:image_picker/image_picker.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/design_system/design_system.dart';
 import '../../../core/design_system/molecules/custom_autocomplete_field.dart';
+import '../../../core/design_system/molecules/gradient_button.dart';
 import '../../../core/design_system/templates/app_layout.dart';
 import '../controllers/sell_vehicle_controller.dart';
 import '../data/repositories/buy_sell_repository_impl.dart';
@@ -162,35 +163,180 @@ class _SubmittingOverlay extends StatelessWidget {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Form Loading State
+// Form Loading Shimmer
 // ─────────────────────────────────────────────────────────────────────────────
 
-class _FormLoadingState extends StatelessWidget {
+class _FormLoadingState extends StatefulWidget {
+  @override
+  State<_FormLoadingState> createState() => _FormLoadingStateState();
+}
+
+class _FormLoadingStateState extends State<_FormLoadingState>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _animation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1200),
+    )..repeat();
+    _animation = Tween<double>(begin: -1.5, end: 2.5).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeInOutSine),
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.all(32.w),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16.r),
-        border: Border.all(color: AppColors.grey200),
-      ),
-      child: Column(
-        children: [
-          const CircularProgressIndicator(
-            color: AppColors.primary,
-            strokeWidth: 2.5,
-          ),
-          SizedBox(height: 12.h),
-          Text(
-            'Loading form fields...',
-            style: TextStyle(
-              fontFamily: 'Montserrat',
-              fontSize: 14.sp,
-              color: AppColors.grey500,
+    return AnimatedBuilder(
+      animation: _animation,
+      builder: (_, __) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Section header shimmer
+            _ShimmerBar(width: 160.w, height: 18.h, animation: _animation),
+            SizedBox(height: 12.h),
+            // Form card shimmer
+            Container(
+              padding: EdgeInsets.all(16.w),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(14.r),
+                border: Border.all(color: AppColors.grey100),
+              ),
+              child: Column(
+                children: List.generate(
+                  7,
+                  (i) => Padding(
+                    padding: EdgeInsets.only(bottom: 16.h),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _ShimmerBar(
+                          width: 100.w + (i % 3) * 30.w,
+                          height: 11.h,
+                          animation: _animation,
+                        ),
+                        SizedBox(height: 6.h),
+                        _ShimmerBar(
+                          width: double.infinity,
+                          height: _kFieldH.h,
+                          animation: _animation,
+                          radius: 8.r,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(height: 20.h),
+            // Toggle section shimmer
+            _ShimmerBar(width: 140.w, height: 18.h, animation: _animation),
+            SizedBox(height: 12.h),
+            Container(
+              padding: EdgeInsets.all(16.w),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(14.r),
+                border: Border.all(color: AppColors.grey100),
+              ),
+              child: Column(
+                children: List.generate(
+                  3,
+                  (i) => Padding(
+                    padding: EdgeInsets.only(bottom: i < 2 ? 12.h : 0),
+                    child: Row(
+                      children: [
+                        _ShimmerBar(
+                          width: 40.w,
+                          height: 40.w,
+                          animation: _animation,
+                          radius: 10.r,
+                        ),
+                        SizedBox(width: 12.w),
+                        Expanded(
+                          child: _ShimmerBar(
+                            width: double.infinity,
+                            height: 14.h,
+                            animation: _animation,
+                          ),
+                        ),
+                        SizedBox(width: 12.w),
+                        _ShimmerBar(
+                          width: 48.w,
+                          height: 28.h,
+                          animation: _animation,
+                          radius: 14.r,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(height: 28.h),
+            // Submit button shimmer
+            _ShimmerBar(
+              width: double.infinity,
+              height: 52.h,
+              animation: _animation,
+              radius: 26.r,
+            ),
+          ],
+        );
+      },
+    );
+  }
+}
+
+class _ShimmerBar extends StatelessWidget {
+  final double width;
+  final double height;
+  final Animation<double> animation;
+  final double radius;
+
+  const _ShimmerBar({
+    required this.width,
+    required this.height,
+    required this.animation,
+    this.radius = 6.0,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(radius),
+      child: SizedBox(
+        width: width,
+        height: height,
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.centerLeft,
+              end: Alignment.centerRight,
+              colors: const [
+                Color(0xFFEEEEEE),
+                Color(0xFFF8F8F8),
+                Color(0xFFEEEEEE),
+              ],
+              stops: [
+                (animation.value - 1).clamp(0.0, 1.0),
+                animation.value.clamp(0.0, 1.0),
+                (animation.value + 1).clamp(0.0, 1.0),
+              ],
             ),
           ),
-        ],
+        ),
       ),
     );
   }
@@ -259,31 +405,45 @@ class _DynamicFormBody extends StatelessWidget {
           )
           .toList();
 
+      // Pull Category to the top
+      final categoryField = regular.firstWhereOrNull(
+        (f) => f.fieldName == 'Category',
+      );
+      final regularWithoutCategory = regular
+          .where((f) => f.fieldName != 'Category')
+          .toList();
+
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // ── Category pre-filled read-only chip ────────────────────────────
-          if (preCode.isNotEmpty) ...[
-            _SellField(
-              label: 'Vehicle Category',
-              child: _ReadOnlyField(
-                value: preName,
-                icon: Icons.category_outlined,
-              ),
+          // ── Category (always first) ───────────────────────────────────────
+          if (categoryField != null) ...[
+            _FieldBuilder(
+              field: categoryField,
+              ctrl: ctrl,
+              preCode: preCode,
+              preName: preName,
             ),
             SizedBox(height: 16.h),
           ],
 
           // ── Regular fields ────────────────────────────────────────────────
-          if (regular.isNotEmpty) ...[
+          if (regularWithoutCategory.isNotEmpty) ...[
             _SectionHeader(
               label: 'Vehicle Details',
               icon: Icons.directions_car_outlined,
             ),
             SizedBox(height: 10.h),
             _FormCard(
-              children: regular
-                  .map((f) => _FieldBuilder(field: f, ctrl: ctrl))
+              children: regularWithoutCategory
+                  .map(
+                    (f) => _FieldBuilder(
+                      field: f,
+                      ctrl: ctrl,
+                      preCode: preCode,
+                      preName: preName,
+                    ),
+                  )
                   .toList(),
             ),
           ],
@@ -328,62 +488,6 @@ class _DynamicFormBody extends StatelessWidget {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Read-only pre-filled field (for Category when pre-selected)
-// ─────────────────────────────────────────────────────────────────────────────
-
-class _ReadOnlyField extends StatelessWidget {
-  final String value;
-  final IconData icon;
-  const _ReadOnlyField({required this.value, required this.icon});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: _kFieldH.h,
-      decoration: BoxDecoration(
-        color: AppColors.primary.withValues(alpha: 0.06),
-        borderRadius: BorderRadius.circular(8.r),
-        border: Border.all(color: AppColors.primary.withValues(alpha: 0.25)),
-      ),
-      child: Row(
-        children: [
-          SizedBox(width: 12.w),
-          Icon(icon, size: 20.sp, color: AppColors.primary),
-          SizedBox(width: 10.w),
-          Expanded(
-            child: Text(
-              value,
-              style: TextStyle(
-                fontFamily: 'Montserrat',
-                fontSize: 14.sp,
-                fontWeight: FontWeight.w600,
-                color: AppColors.primary,
-              ),
-            ),
-          ),
-          Container(
-            margin: EdgeInsets.only(right: 10.w),
-            padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 3.h),
-            decoration: BoxDecoration(
-              color: AppColors.primary.withValues(alpha: 0.12),
-              borderRadius: BorderRadius.circular(20.r),
-            ),
-            child: Text(
-              'Selected',
-              style: TextStyle(
-                fontFamily: 'Montserrat',
-                fontSize: 10.sp,
-                color: AppColors.primary,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
 // ─────────────────────────────────────────────────────────────────────────────
 // Section Header
 // ─────────────────────────────────────────────────────────────────────────────
@@ -596,7 +700,14 @@ class _UniformInput extends StatelessWidget {
 class _FieldBuilder extends StatelessWidget {
   final dynamic field;
   final SellVehicleController ctrl;
-  const _FieldBuilder({required this.field, required this.ctrl});
+  final String preCode;
+  final String preName;
+  const _FieldBuilder({
+    required this.field,
+    required this.ctrl,
+    this.preCode = '',
+    this.preName = '',
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -605,6 +716,70 @@ class _FieldBuilder extends StatelessWidget {
     final required = field.required as bool;
     final options = field.options as List<String>?;
     final label = '$name${required ? ' *' : ''}';
+
+    // ── Category field — pre-fill with selected category (read-only) ────────
+    if (name == 'Category') {
+      final displayName = preName.isNotEmpty
+          ? preName
+          : ctrl.categories
+                    .firstWhereOrNull(
+                      (c) => c.categoryCode == ctrl.selectedCategoryCode.value,
+                    )
+                    ?.categoryName ??
+                '';
+      return _SellField(
+        label: label,
+        child: Container(
+          height: _kFieldH.h,
+          decoration: BoxDecoration(
+            color: AppColors.primary.withValues(alpha: 0.06),
+            borderRadius: BorderRadius.circular(8.r),
+            border: Border.all(
+              color: AppColors.primary.withValues(alpha: 0.25),
+            ),
+          ),
+          child: Row(
+            children: [
+              SizedBox(width: 12.w),
+              Icon(
+                Icons.category_outlined,
+                size: 20.sp,
+                color: AppColors.primary,
+              ),
+              SizedBox(width: 8.w),
+              Expanded(
+                child: Text(
+                  displayName,
+                  style: TextStyle(
+                    fontFamily: 'Montserrat',
+                    fontSize: 14.sp,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.primary,
+                  ),
+                ),
+              ),
+              Container(
+                margin: EdgeInsets.only(right: 10.w),
+                padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 3.h),
+                decoration: BoxDecoration(
+                  color: AppColors.primary.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(20.r),
+                ),
+                child: Text(
+                  'Auto-filled',
+                  style: TextStyle(
+                    fontFamily: 'Montserrat',
+                    fontSize: 10.sp,
+                    color: AppColors.primary,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
 
     // Date picker
     if (type == 'date')
@@ -661,60 +836,14 @@ class _FieldBuilder extends StatelessWidget {
     if (name == 'State')
       return _SellField(
         label: label,
-        child: Obx(() {
-          final stateCtrl = TextEditingController(
-            text:
-                ctrl.states.firstWhereOrNull(
-                  (s) => s['state_id'] == ctrl.selectedStateId.value,
-                )?['state_name'] ??
-                '',
-          );
-          return CustomAutocompleteField<Map<String, String>>(
-            controller: stateCtrl,
-            options: ctrl.states,
-            placeholder: 'Search state',
-            prefixIcon: Icons.location_on_outlined,
-            isLoading: ctrl.isLoadingStates.value,
-            displayStringForOption: (s) => s['state_name'] ?? '',
-            forceSelection: true,
-            maxDropdownHeight: 250,
-            height: _kFieldH.h,
-            onSelected: (s) {
-              if (s != null) ctrl.fetchCities(s['state_id']!);
-            },
-          );
-        }),
+        child: _StateField(ctrl: ctrl),
       );
 
     // City autocomplete
     if (name == 'City')
       return _SellField(
         label: label,
-        child: Obx(() {
-          final stateSelected = ctrl.selectedStateId.value.isNotEmpty;
-          final cityCtrl = TextEditingController(
-            text:
-                ctrl.cities.firstWhereOrNull(
-                  (c) => c['city_id'] == ctrl.selectedCityId.value,
-                )?['city_name'] ??
-                '',
-          );
-          return CustomAutocompleteField<Map<String, String>>(
-            controller: cityCtrl,
-            options: ctrl.cities,
-            placeholder: stateSelected ? 'Search city' : 'Select state first',
-            prefixIcon: Icons.location_city_outlined,
-            isLoading: ctrl.isLoadingCities.value,
-            enabled: stateSelected,
-            displayStringForOption: (c) => c['city_name'] ?? '',
-            forceSelection: true,
-            maxDropdownHeight: 220,
-            height: _kFieldH.h,
-            onSelected: (c) {
-              if (c != null) ctrl.selectCity(c['city_id']!);
-            },
-          );
-        }),
+        child: _CityField(ctrl: ctrl),
       );
 
     // Dropdown with options
@@ -814,6 +943,112 @@ class _FieldBuilder extends StatelessWidget {
         onChanged: (v) => ctrl.updateFormValue(name, v),
       ),
     );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// State Field — StatefulWidget so the controller is stable across rebuilds
+// ─────────────────────────────────────────────────────────────────────────────
+
+class _StateField extends StatefulWidget {
+  final SellVehicleController ctrl;
+  const _StateField({required this.ctrl});
+  @override
+  State<_StateField> createState() => _StateFieldState();
+}
+
+class _StateFieldState extends State<_StateField> {
+  late final TextEditingController _textCtrl;
+
+  @override
+  void initState() {
+    super.initState();
+    // Pre-fill if a state is already selected (edit mode)
+    final existingName =
+        widget.ctrl.states.firstWhereOrNull(
+          (s) => s['state_id'] == widget.ctrl.selectedStateId.value,
+        )?['state_name'] ??
+        '';
+    _textCtrl = TextEditingController(text: existingName);
+  }
+
+  @override
+  void dispose() {
+    _textCtrl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Obx(
+      () => CustomAutocompleteField<Map<String, String>>(
+        controller: _textCtrl,
+        options: widget.ctrl.states,
+        placeholder: 'Search state',
+        prefixIcon: Icons.location_on_outlined,
+        isLoading: widget.ctrl.isLoadingStates.value,
+        displayStringForOption: (s) => s['state_name'] ?? '',
+        forceSelection: true,
+        maxDropdownHeight: 250,
+        height: _kFieldH.h,
+        onSelected: (s) {
+          if (s != null) widget.ctrl.fetchCities(s['state_id']!);
+        },
+      ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// City Field — StatefulWidget so the controller is stable across rebuilds
+// ─────────────────────────────────────────────────────────────────────────────
+
+class _CityField extends StatefulWidget {
+  final SellVehicleController ctrl;
+  const _CityField({required this.ctrl});
+  @override
+  State<_CityField> createState() => _CityFieldState();
+}
+
+class _CityFieldState extends State<_CityField> {
+  late final TextEditingController _textCtrl;
+
+  @override
+  void initState() {
+    super.initState();
+    _textCtrl = TextEditingController();
+    // When a new state is selected, cities list changes → clear the text
+    ever(widget.ctrl.cities, (_) {
+      if (mounted) _textCtrl.clear();
+    });
+  }
+
+  @override
+  void dispose() {
+    _textCtrl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Obx(() {
+      final stateSelected = widget.ctrl.selectedStateId.value.isNotEmpty;
+      return CustomAutocompleteField<Map<String, String>>(
+        controller: _textCtrl,
+        options: widget.ctrl.cities,
+        placeholder: stateSelected ? 'Search city' : 'Select state first',
+        prefixIcon: Icons.location_city_outlined,
+        isLoading: widget.ctrl.isLoadingCities.value,
+        enabled: stateSelected,
+        displayStringForOption: (c) => c['city_name'] ?? '',
+        forceSelection: true,
+        maxDropdownHeight: 220,
+        height: _kFieldH.h,
+        onSelected: (c) {
+          if (c != null) widget.ctrl.selectCity(c['city_id']!);
+        },
+      );
+    });
   }
 }
 
@@ -918,12 +1153,6 @@ class _ToggleCard extends StatelessWidget {
   final SellVehicleController ctrl;
   const _ToggleCard({required this.fields, required this.ctrl});
 
-  static const _palette = {
-    'Fitness': Color(0xFF10B981),
-    'Original Invoice': Color(0xFFF59E0B),
-    'GST Applicability': Color(0xFF8B5CF6),
-    'Vehicle Insurance': Color(0xFF3B82F6),
-  };
   static const _icons = {
     'Fitness': Icons.verified_outlined,
     'Original Invoice': Icons.receipt_long_outlined,
@@ -950,7 +1179,6 @@ class _ToggleCard extends StatelessWidget {
         children: fields.asMap().entries.map((e) {
           final i = e.key;
           final name = e.value.fieldName as String;
-          final color = _palette[name] ?? AppColors.primary;
           final icon = _icons[name] ?? Icons.check_circle_outline;
           final isFirst = i == 0;
           final isLast = i == fields.length - 1;
@@ -967,7 +1195,7 @@ class _ToggleCard extends StatelessWidget {
                   ),
                   decoration: BoxDecoration(
                     color: on
-                        ? color.withValues(alpha: 0.05)
+                        ? AppColors.primary.withValues(alpha: 0.05)
                         : Colors.transparent,
                     borderRadius: BorderRadius.only(
                       topLeft: Radius.circular(isFirst ? 14.r : 0),
@@ -984,14 +1212,14 @@ class _ToggleCard extends StatelessWidget {
                         height: 38.w,
                         decoration: BoxDecoration(
                           color: on
-                              ? color.withValues(alpha: 0.15)
+                              ? AppColors.primary.withValues(alpha: 0.12)
                               : AppColors.grey100,
                           borderRadius: BorderRadius.circular(10.r),
                         ),
                         child: Icon(
                           icon,
                           size: 19.sp,
-                          color: on ? color : AppColors.grey400,
+                          color: on ? AppColors.primary : AppColors.grey400,
                         ),
                       ),
                       SizedBox(width: 12.w),
@@ -1018,7 +1246,7 @@ class _ToggleCard extends StatelessWidget {
                                 style: TextStyle(
                                   fontFamily: 'Montserrat',
                                   fontSize: 11.sp,
-                                  color: color,
+                                  color: AppColors.primary,
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),
@@ -1029,7 +1257,7 @@ class _ToggleCard extends StatelessWidget {
                         value: on,
                         onChanged: (v) => ctrl.updateFormValue(name, v),
                         activeThumbColor: Colors.white,
-                        activeTrackColor: color,
+                        activeTrackColor: AppColors.primary,
                         inactiveThumbColor: AppColors.grey300,
                         inactiveTrackColor: AppColors.grey100,
                       ),
@@ -1076,16 +1304,14 @@ class _FileField extends StatelessWidget {
         if (picked.isNotEmpty)
           ctrl.addImages(picked.map((x) => File(x.path)).toList());
       } else {
-        final picked = await picker.pickImage(
-          source: ImageSource.gallery,
-          imageQuality: 90,
-        );
-        if (picked != null) {
-          final file = File(picked.path);
+        // Multiple docs allowed, each max 12 MB
+        final picked = await picker.pickMultiImage(imageQuality: 100);
+        if (picked.isNotEmpty) {
+          final files = picked.map((x) => File(x.path)).toList();
           if (fieldName == 'Upload Vehicle RC')
-            ctrl.setRcDocument(file);
+            ctrl.addRcDocuments(files);
           else
-            ctrl.setInsuranceDocument(file);
+            ctrl.addInsuranceDocuments(files);
         }
       }
     } catch (e) {
@@ -1145,120 +1371,246 @@ class _FileField extends StatelessWidget {
         if (_isImages)
           Obx(() {
             final imgs = ctrl.vehicleImages;
-            return Wrap(
-              spacing: 8.w,
-              runSpacing: 8.h,
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                ...imgs.asMap().entries.map(
-                  (e) => _ImageThumb(
-                    file: e.value,
-                    onRemove: () => ctrl.removeImage(e.key),
+                // ── Upload zone ───────────────────────────────────────────
+                GestureDetector(
+                  onTap: imgs.length < 10 ? _pick : null,
+                  child: Container(
+                    width: double.infinity,
+                    height: 110.h,
+                    decoration: BoxDecoration(
+                      color: imgs.isEmpty
+                          ? AppColors.primary.withValues(alpha: 0.04)
+                          : AppColors.primary.withValues(alpha: 0.02),
+                      borderRadius: BorderRadius.circular(12.r),
+                      border: Border.all(
+                        color: imgs.isEmpty
+                            ? AppColors.primary.withValues(alpha: 0.35)
+                            : AppColors.primary,
+                        width: 1.5,
+                      ),
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          width: 42.w,
+                          height: 42.w,
+                          decoration: BoxDecoration(
+                            color: AppColors.primary.withValues(alpha: 0.1),
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(
+                            Icons.add_photo_alternate_outlined,
+                            color: AppColors.primary,
+                            size: 22.sp,
+                          ),
+                        ),
+                        SizedBox(height: 8.h),
+                        Text(
+                          imgs.isEmpty
+                              ? 'Tap to add vehicle photos'
+                              : 'Tap to add more',
+                          style: TextStyle(
+                            fontFamily: 'Montserrat',
+                            fontSize: 13.sp,
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.primary,
+                          ),
+                        ),
+                        SizedBox(height: 2.h),
+                        Text(
+                          'Up to 10 photos  •  JPG, PNG',
+                          style: TextStyle(
+                            fontFamily: 'Montserrat',
+                            fontSize: 10.sp,
+                            color: AppColors.grey400,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-                if (imgs.length < 10) _AddImageButton(onTap: _pick),
+
+                // ── Uploaded thumbnails (horizontal scroll) ───────────────
+                if (imgs.isNotEmpty) ...[
+                  SizedBox(height: 10.h),
+                  SizedBox(
+                    height: 80.h,
+                    child: ListView.separated(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: imgs.length,
+                      separatorBuilder: (_, __) => SizedBox(width: 8.w),
+                      itemBuilder: (_, i) => _ImageThumb(
+                        file: imgs[i],
+                        onRemove: () => ctrl.removeImage(i),
+                      ),
+                    ),
+                  ),
+                ],
               ],
             );
           })
         else
           Obx(() {
-            final file = fieldName == 'Upload Vehicle RC'
-                ? ctrl.rcDocument.value
-                : ctrl.insuranceDocument.value;
-            final hasFile = file != null;
-            return GestureDetector(
-              onTap: _pick,
-              child: Container(
-                height: _kFieldH.h,
-                decoration: BoxDecoration(
-                  color: hasFile
-                      ? AppColors.successBackground
-                      : AppColors.white,
-                  boxShadow: [
-                    BoxShadow(
-                      color: hasFile
-                          ? AppColors.success.withValues(alpha: 0.15)
-                          : const Color(0xFFE4E5E7).withValues(alpha: 0.24),
-                      offset: const Offset(0, 1),
-                      blurRadius: 2,
-                    ),
-                  ],
-                ),
-                child: Row(
-                  children: [
-                    SizedBox(width: 12.w),
-                    Icon(
-                      hasFile
-                          ? Icons.check_circle_outline
-                          : Icons.upload_file_outlined,
-                      size: 20.sp,
-                      color: hasFile
-                          ? AppColors.success
-                          : AppColors.textSecondary,
-                    ),
-                    SizedBox(width: 8.w),
-                    Expanded(
-                      child: Text(
-                        hasFile ? file.path.split('/').last : 'Tap to upload',
-                        style: TextStyle(
-                          fontFamily: 'Montserrat',
-                          fontSize: 14.sp,
-                          color: hasFile
-                              ? AppColors.successDark
-                              : AppColors.textSecondary,
-                          fontWeight: hasFile
-                              ? FontWeight.w600
-                              : FontWeight.w400,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
+            final docs = fieldName == 'Upload Vehicle RC'
+                ? ctrl.rcDocuments
+                : ctrl.insuranceDocuments;
+            final hasDocs = docs.isNotEmpty;
+
+            void removeDoc(int i) {
+              if (fieldName == 'Upload Vehicle RC')
+                ctrl.removeRcDocument(i);
+              else
+                ctrl.removeInsuranceDocument(i);
+            }
+
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // ── Upload zone ──────────────────────────────────────────
+                GestureDetector(
+                  onTap: _pick,
+                  child: Container(
+                    width: double.infinity,
+                    height: 100.h,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12.r),
+                      border: Border.all(
+                        color: hasDocs ? AppColors.primary : AppColors.grey300,
+                        width: 1.5,
                       ),
                     ),
-                    if (hasFile)
-                      GestureDetector(
-                        onTap: () {
-                          if (fieldName == 'Upload Vehicle RC')
-                            ctrl.removeRcDocument();
-                          else
-                            ctrl.removeInsuranceDocument();
-                        },
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 12.w),
-                          child: Icon(
-                            Icons.close_rounded,
-                            size: 20.sp,
-                            color: AppColors.textSecondary,
-                          ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.folder_open_outlined,
+                          size: 36.sp,
+                          color: hasDocs
+                              ? AppColors.primary
+                              : AppColors.grey400,
                         ),
-                      )
-                    else
-                      Container(
-                        margin: EdgeInsets.only(right: 10.w),
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 10.w,
-                          vertical: 4.h,
-                        ),
-                        decoration: BoxDecoration(
-                          color: AppColors.primary.withValues(alpha: 0.1),
-                          borderRadius: BorderRadius.circular(20.r),
-                        ),
-                        child: Text(
-                          'Browse',
+                        SizedBox(height: 6.h),
+                        Text(
+                          'Tap to upload',
                           style: TextStyle(
                             fontFamily: 'Montserrat',
-                            fontSize: 11.sp,
-                            color: AppColors.primary,
+                            fontSize: 12.sp,
                             fontWeight: FontWeight.w600,
+                            color: hasDocs
+                                ? AppColors.primary
+                                : AppColors.grey500,
                           ),
                         ),
-                      ),
-                  ],
+                        SizedBox(height: 2.h),
+                        Text(
+                          'Multiple files allowed  •  Max 12 MB each  •  JPG, PNG',
+                          style: TextStyle(
+                            fontFamily: 'Montserrat',
+                            fontSize: 10.sp,
+                            color: AppColors.grey400,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
-              ),
+
+                // ── Uploaded files list ──────────────────────────────────
+                if (hasDocs) ...[
+                  SizedBox(height: 8.h),
+                  ...docs.asMap().entries.map(
+                    (e) => Padding(
+                      padding: EdgeInsets.only(bottom: 6.h),
+                      child: Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 12.w,
+                          vertical: 10.h,
+                        ),
+                        decoration: BoxDecoration(
+                          color: AppColors.primary.withValues(alpha: 0.06),
+                          borderRadius: BorderRadius.circular(10.r),
+                          border: Border.all(
+                            color: AppColors.primary.withValues(alpha: 0.25),
+                          ),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.insert_drive_file_outlined,
+                              size: 18.sp,
+                              color: AppColors.primary,
+                            ),
+                            SizedBox(width: 8.w),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    e.value.path.split('/').last,
+                                    style: TextStyle(
+                                      fontFamily: 'Montserrat',
+                                      fontSize: 12.sp,
+                                      fontWeight: FontWeight.w600,
+                                      color: AppColors.primaryDark,
+                                    ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                  Text(
+                                    _fileSizeLabel(e.value),
+                                    style: TextStyle(
+                                      fontFamily: 'Montserrat',
+                                      fontSize: 10.sp,
+                                      color: AppColors.primary.withValues(
+                                        alpha: 0.7,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            GestureDetector(
+                              onTap: () => removeDoc(e.key),
+                              child: Container(
+                                width: 22.w,
+                                height: 22.w,
+                                decoration: BoxDecoration(
+                                  color: AppColors.primary.withValues(
+                                    alpha: 0.15,
+                                  ),
+                                  shape: BoxShape.circle,
+                                ),
+                                child: Icon(
+                                  Icons.close_rounded,
+                                  size: 13.sp,
+                                  color: AppColors.primary,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ],
             );
           }),
       ],
     );
   }
+}
+
+String _fileSizeLabel(File file) {
+  final bytes = file.lengthSync();
+  if (bytes >= 1024 * 1024)
+    return '${(bytes / (1024 * 1024)).toStringAsFixed(1)} MB';
+  return '${(bytes / 1024).toStringAsFixed(0)} KB';
 }
 
 class _ImageThumb extends StatelessWidget {
@@ -1272,7 +1624,7 @@ class _ImageThumb extends StatelessWidget {
       children: [
         ClipRRect(
           borderRadius: BorderRadius.circular(10.r),
-          child: Image.file(file, width: 72.w, height: 72.w, fit: BoxFit.cover),
+          child: Image.file(file, width: 76.w, height: 76.w, fit: BoxFit.cover),
         ),
         Positioned(
           top: 3,
@@ -1295,47 +1647,6 @@ class _ImageThumb extends StatelessWidget {
   }
 }
 
-class _AddImageButton extends StatelessWidget {
-  final VoidCallback onTap;
-  const _AddImageButton({required this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        width: 72.w,
-        height: 72.w,
-        decoration: BoxDecoration(
-          color: AppColors.primary.withValues(alpha: 0.05),
-          borderRadius: BorderRadius.circular(10.r),
-          border: Border.all(color: AppColors.primary.withValues(alpha: 0.3)),
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.add_photo_alternate_outlined,
-              color: AppColors.primary,
-              size: 22.sp,
-            ),
-            SizedBox(height: 3.h),
-            Text(
-              'Add',
-              style: TextStyle(
-                fontFamily: 'Montserrat',
-                fontSize: 10.sp,
-                color: AppColors.primary,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
 // ─────────────────────────────────────────────────────────────────────────────
 // Submit Button
 // ─────────────────────────────────────────────────────────────────────────────
@@ -1346,55 +1657,16 @@ class _SubmitButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return GradientButton.filled(
+      text: 'Submit',
       width: double.infinity,
       height: 52.h,
-      decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [AppColors.ctaGradientStart, AppColors.ctaGradientEnd],
-        ),
-        borderRadius: BorderRadius.circular(26.r),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.primary.withValues(alpha: 0.35),
-            blurRadius: 16,
-            offset: const Offset(0, 6),
-          ),
-        ],
-      ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          borderRadius: BorderRadius.circular(26.r),
-          onTap: () async {
-            final success = await ctrl.submitSellForm();
-            if (success) Get.back();
-          },
-          child: Center(
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(
-                  Icons.check_circle_outline,
-                  color: Colors.white,
-                  size: 20.sp,
-                ),
-                SizedBox(width: 10.w),
-                Text(
-                  'Submit for Approval',
-                  style: TextStyle(
-                    fontFamily: 'Montserrat',
-                    fontSize: 15.sp,
-                    fontWeight: FontWeight.w700,
-                    color: Colors.white,
-                    letterSpacing: 0.3,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
+      fontSize: 15.sp,
+      fontWeight: FontWeight.w700,
+      onPressed: () async {
+        final success = await ctrl.submitSellForm();
+        if (success) Get.back();
+      },
     );
   }
 }

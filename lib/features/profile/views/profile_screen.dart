@@ -7,6 +7,11 @@ import '../../../core/design_system/design_system.dart';
 import '../../../routes/app_routes.dart';
 import '../controllers/profile_controller.dart';
 import '../models/profile_models.dart';
+import '../../buy_and_sell/views/my_vehicles_view.dart';
+import '../../buy_and_sell/views/subscribed_vehicles_view.dart';
+import '../../buy_and_sell/controllers/sell_vehicle_controller.dart';
+import '../../buy_and_sell/controllers/vehicle_detail_controller.dart';
+import '../../buy_and_sell/data/repositories/buy_sell_repository_impl.dart';
 
 class ProfileScreen extends GetView<ProfileController> {
   const ProfileScreen({super.key});
@@ -118,14 +123,40 @@ class ProfileScreen extends GetView<ProfileController> {
                       SizedBox(height: 24.h),
                       _MenuSection(
                         title: 'Buy & Sell',
-                        items: const [
+                        items: [
                           _MenuItem(
                             icon: Icons.directions_car_outlined,
                             label: 'My Vehicles',
+                            onTap: () => Get.to(
+                              () => const MyVehiclesView(),
+                              binding: BindingsBuilder(() {
+                                if (!Get.isRegistered<
+                                  SellVehicleController
+                                >()) {
+                                  Get.put(
+                                    SellVehicleController(
+                                      repository: BuySellRepositoryImpl(),
+                                    ),
+                                  );
+                                }
+                              }),
+                            ),
                           ),
                           _MenuItem(
                             icon: Icons.bookmark_outlined,
                             label: 'My Subscribed Vehicles',
+                            onTap: () => Get.to(
+                              () => const SubscribedVehiclesView(),
+                              binding: BindingsBuilder(() {
+                                if (!Get.isRegistered<BuyVehicleController>()) {
+                                  Get.put(
+                                    BuyVehicleController(
+                                      repository: BuySellRepositoryImpl(),
+                                    ),
+                                  );
+                                }
+                              }),
+                            ),
                           ),
                         ],
                       ),

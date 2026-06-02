@@ -40,8 +40,8 @@ class SellVehicleController extends GetxController {
   final formValues = <String, dynamic>{}.obs;
   final formErrors = <String, String?>{}.obs;
   final vehicleImages = <File>[].obs;
-  final rcDocument = Rxn<File>();
-  final insuranceDocument = Rxn<File>();
+  final rcDocuments = <File>[].obs; // multiple RC docs, 12MB each
+  final insuranceDocuments = <File>[].obs; // multiple insurance docs, 12MB each
 
   // ─── Loading States ──────────────────────────────────────────
 
@@ -86,8 +86,8 @@ class SellVehicleController extends GetxController {
   void onInit() {
     super.onInit();
     fetchCategories();
-    fetchSellVehiclesList();
     fetchStates();
+    // fetchSellVehiclesList() is called lazily — only when My Vehicles screen opens
   }
 
   // ─── Sell Vehicle List ───────────────────────────────────────
@@ -223,11 +223,11 @@ class SellVehicleController extends GetxController {
     }
 
     // Validate RC document
-    if (rcDocument.value == null && !isEditMode.value) {
+    if (rcDocuments.isEmpty && !isEditMode.value) {
       isValid = false;
       Get.snackbar(
         'Validation Error',
-        'Please upload RC document',
+        'Please upload at least one RC document',
         snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.red,
         colorText: Colors.white,
@@ -279,18 +279,50 @@ class SellVehicleController extends GetxController {
 
   // ─── Document Management ─────────────────────────────────────
 
-  /// Sets the RC document file. Called from document upload widget.
-  void setRcDocument(File file) {
-    rcDocument.value = file;
+  static const int _maxDocSizeBytes = 12 * 1024 * 1024; // 12 MB
+
+  bool _checkSize(File file) {
+    if (file.lengthSync() > _maxDocSizeBytes) {
+      Get.snackbar(
+        'File Too Large',
+        'Each document must be under 12 MB',
+        snackPosition: SnackPosition.TOP,
+        backgroundColor: Colors.orange,
+        colorText: Colors.white,
+      );
+      return false;
+    }
+    return true;
   }
 
-  /// Sets the insurance document file. Called from document upload widget.
-  void setInsuranceDocument(File file) {
-    insuranceDocument.value = file;
+  void addRcDocument(File file) {
+    if (_checkSize(file)) rcDocuments.add(file);
   }
 
-  void removeRcDocument() => rcDocument.value = null;
-  void removeInsuranceDocument() => insuranceDocument.value = null;
+  void addRcDocuments(List<File> files) {
+    for (final f in files) {
+      if (_checkSize(f)) rcDocuments.add(f);
+    }
+  }
+
+  void removeRcDocument(int index) {
+    if (index >= 0 && index < rcDocuments.length) rcDocuments.removeAt(index);
+  }
+
+  void addInsuranceDocument(File file) {
+    if (_checkSize(file)) insuranceDocuments.add(file);
+  }
+
+  void addInsuranceDocuments(List<File> files) {
+    for (final f in files) {
+      if (_checkSize(f)) insuranceDocuments.add(f);
+    }
+  }
+
+  void removeInsuranceDocument(int index) {
+    if (index >= 0 && index < insuranceDocuments.length)
+      insuranceDocuments.removeAt(index);
+  }
 
   // ─── Submit Sell Form ────────────────────────────────────────
 
@@ -314,8 +346,10 @@ class SellVehicleController extends GetxController {
         stateCode: formValues['state_code'] ?? '',
         cityCode: formValues['city_code'] ?? '',
         vehicleImages: vehicleImages.toList(),
-        rcDocument: rcDocument.value,
-        insuranceDocument: insuranceDocument.value,
+        rcDocument: rcDocuments.isNotEmpty ? rcDocuments.first : null,
+        insuranceDocument: insuranceDocuments.isNotEmpty
+            ? insuranceDocuments.first
+            : null,
         odometer: formValues['odometer'],
         noOfTyres: formValues['no_of_tyres'],
         fitness: formValues['fitness'] == true,
@@ -382,8 +416,10 @@ class SellVehicleController extends GetxController {
         stateCode: formValues['state_code'] ?? '',
         cityCode: formValues['city_code'] ?? '',
         vehicleImages: vehicleImages.isNotEmpty ? vehicleImages.toList() : null,
-        rcDocument: rcDocument.value,
-        insuranceDocument: insuranceDocument.value,
+        rcDocument: rcDocuments.isNotEmpty ? rcDocuments.first : null,
+        insuranceDocument: insuranceDocuments.isNotEmpty
+            ? insuranceDocuments.first
+            : null,
         odometer: formValues['odometer'],
         noOfTyres: formValues['no_of_tyres'],
         fitness: formValues['fitness'] == true,
@@ -554,8 +590,8 @@ class SellVehicleController extends GetxController {
     formValues.clear();
     formErrors.clear();
     vehicleImages.clear();
-    rcDocument.value = null;
-    insuranceDocument.value = null;
+    rcDocuments.clear();
+    insuranceDocuments.clear();
     selectedStateId.value = '';
     selectedCityId.value = '';
     cities.clear();

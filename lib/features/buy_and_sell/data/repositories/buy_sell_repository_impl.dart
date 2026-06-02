@@ -257,9 +257,9 @@ class BuySellRepositoryImpl implements BuySellRepository {
   Future<List<SellVehicleEntity>> getSellVehicles({String? userId}) async {
     final uid = userId ?? await _getUserId();
     try {
-      final response = await _network.get(
+      final response = await _network.post(
         ApiEndpoints.listSellVehicles,
-        queryParameters: {if (uid != null) 'user_id': uid},
+        data: {if (uid != null) 'user_id': uid},
       );
       if (response.statusCode == 200) {
         final data = response.data;
@@ -422,42 +422,42 @@ class BuySellRepositoryImpl implements BuySellRepository {
     required int page,
   }) async {
     try {
-      final response = await _network.get(
+      final response = await _network.post(
         ApiEndpoints.listBuySubscribedVehicles,
-        queryParameters: {'user_id': userId, 'page': page, 'limit': limit},
+        data: {'user_id': userId, 'page': page, 'limit': limit},
       );
       if (response.statusCode == 200) {
         final data = response.data;
         if (data['status'] == 'success' && data['data'] != null) {
           final resultData = data['data'];
-          List<dynamic> items;
-          int totalPages, totalCount, currentPageVal;
+          List<dynamic> items = [];
+          int totalPages = 1, totalCount = 0, currentPageVal = page;
 
           if (resultData is Map<String, dynamic>) {
             items = resultData['vehicles'] is List
                 ? resultData['vehicles']
-                : resultData['data'] is List
-                ? resultData['data']
                 : [];
-            totalPages = _parseInt(
-              resultData['total_pages'] ?? resultData['totalPages'] ?? 1,
-            );
-            totalCount = _parseInt(
-              resultData['total_count'] ?? resultData['totalCount'] ?? 0,
-            );
-            currentPageVal = _parseInt(
-              resultData['current_page'] ?? resultData['currentPage'] ?? page,
-            );
+            // New API uses data.pagination object
+            final pagination =
+                resultData['pagination'] as Map<String, dynamic>?;
+            if (pagination != null) {
+              totalPages = _parseInt(pagination['total_pages'] ?? 1);
+              totalCount = _parseInt(pagination['total_count'] ?? 0);
+              currentPageVal = _parseInt(pagination['page'] ?? page);
+            } else {
+              totalPages = _parseInt(
+                resultData['total_pages'] ?? resultData['totalPages'] ?? 1,
+              );
+              totalCount = _parseInt(
+                resultData['total_count'] ?? resultData['totalCount'] ?? 0,
+              );
+              currentPageVal = _parseInt(
+                resultData['current_page'] ?? resultData['currentPage'] ?? page,
+              );
+            }
           } else if (resultData is List) {
             items = resultData;
-            totalPages = 1;
             totalCount = items.length;
-            currentPageVal = 1;
-          } else {
-            items = [];
-            totalPages = 1;
-            totalCount = 0;
-            currentPageVal = page;
           }
 
           final vehicles = items
@@ -496,9 +496,9 @@ class BuySellRepositoryImpl implements BuySellRepository {
     required int page,
   }) async {
     try {
-      final response = await _network.get(
+      final response = await _network.post(
         ApiEndpoints.listSellVehicles,
-        queryParameters: {'user_id': userId, 'page': page, 'limit': limit},
+        data: {'user_id': userId, 'page': page, 'limit': limit},
       );
       if (response.statusCode == 200) {
         final data = response.data;

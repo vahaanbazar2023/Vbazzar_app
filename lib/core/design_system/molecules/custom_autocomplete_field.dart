@@ -107,6 +107,7 @@ class _CustomAutocompleteFieldState<T extends Object>
   final FocusNode _focusNode = FocusNode();
   final LayerLink _layerLink = LayerLink();
   OverlayEntry? _overlayEntry;
+  StateSetter? _setOverlayState;
   List<T> _filteredOptions = [];
   T? _selectedOption;
 
@@ -168,17 +169,22 @@ class _CustomAutocompleteFieldState<T extends Object>
 
   void _onTextChange() {
     final query = widget.controller.text.toLowerCase();
+    final filtered = query.isEmpty
+        ? List<T>.from(widget.options)
+        : widget.options.where((option) {
+            return widget
+                .displayStringForOption(option)
+                .toLowerCase()
+                .contains(query);
+          }).toList();
+
     setState(() {
-      if (query.isEmpty) {
-        _filteredOptions = widget.options;
-      } else {
-        _filteredOptions = widget.options.where((option) {
-          final optionText = widget
-              .displayStringForOption(option)
-              .toLowerCase();
-          return optionText.contains(query);
-        }).toList();
-      }
+      _filteredOptions = filtered;
+    });
+
+    // Also rebuild the overlay with the new filtered list
+    _setOverlayState?.call(() {
+      _filteredOptions = filtered;
     });
 
     if (_overlayEntry != null) {
@@ -204,7 +210,14 @@ class _CustomAutocompleteFieldState<T extends Object>
           child: Material(
             elevation: 8,
             borderRadius: BorderRadius.circular(8.r),
-            child: _buildDropdown(),
+            // Use StatefulBuilder so the overlay rebuilds when markNeedsBuild is called
+            child: StatefulBuilder(
+              builder: (_, setOverlayState) {
+                // Store the setter so _onTextChange can trigger it
+                _setOverlayState = setOverlayState;
+                return _buildDropdown();
+              },
+            ),
           ),
         ),
       ),
@@ -216,6 +229,7 @@ class _CustomAutocompleteFieldState<T extends Object>
   void _removeOverlay() {
     _overlayEntry?.remove();
     _overlayEntry = null;
+    _setOverlayState = null;
   }
 
   Widget _buildDropdown() {
@@ -289,29 +303,51 @@ class _CustomAutocompleteFieldState<T extends Object>
               widget.onSelected?.call(option);
               _focusNode.unfocus();
             },
-            child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-              color: isSelected ? AppColors.primary.withOpacity(0.1) : null,
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      displayText,
-                      style: AppTextStyles.bodyMedium.copyWith(
-                        fontSize: 14.sp,
-                        fontWeight: isSelected
-                            ? FontWeight.w600
-                            : FontWeight.w400,
-                        color: isSelected
-                            ? AppColors.primary
-                            : AppColors.textPrimary,
-                      ),
-                    ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 16.w,
+                    vertical: 12.h,
                   ),
-                  if (isSelected)
-                    Icon(Icons.check, color: AppColors.primary, size: 20.sp),
-                ],
-              ),
+                  color: isSelected
+                      ? AppColors.primary.withValues(alpha: 0.08)
+                      : null,
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          displayText,
+                          style: AppTextStyles.bodyMedium.copyWith(
+                            fontSize: 14.sp,
+                            fontWeight: isSelected
+                                ? FontWeight.w600
+                                : FontWeight.w400,
+                            color: isSelected
+                                ? AppColors.primary
+                                : AppColors.textPrimary,
+                          ),
+                        ),
+                      ),
+                      if (isSelected)
+                        Icon(
+                          Icons.check,
+                          color: AppColors.primary,
+                          size: 18.sp,
+                        ),
+                    ],
+                  ),
+                ),
+                if (index < _filteredOptions.length - 1)
+                  Divider(
+                    height: 1,
+                    thickness: 1,
+                    color: AppColors.grey100,
+                    indent: 16.w,
+                    endIndent: 16.w,
+                  ),
+              ],
             ),
           );
         },
@@ -333,7 +369,7 @@ class _CustomAutocompleteFieldState<T extends Object>
 
               boxShadow: [
                 BoxShadow(
-                  color: const Color(0xFFE4E5E7).withOpacity(0.24),
+                  color: const Color(0xFFE4E5E7).withValues(alpha: 0.24),
                   offset: const Offset(0, 1),
                   blurRadius: 2,
                 ),
