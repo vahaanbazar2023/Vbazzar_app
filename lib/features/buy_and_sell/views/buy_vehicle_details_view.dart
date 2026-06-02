@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+
 import '../../../core/constants/app_colors.dart';
 import '../../../core/design_system/design_system.dart';
 import '../../../core/design_system/templates/app_layout.dart';
+import '../../../core/design_system/tokens/app_radius.dart';
+import '../../../core/design_system/tokens/app_spacing.dart';
 import '../domain/entities/buy_vehicle_entity.dart';
 
 class BuyVehicleDetailsView extends StatelessWidget {
@@ -17,327 +20,532 @@ class BuyVehicleDetailsView extends StatelessWidget {
     if (vehicle == null) {
       return AppLayout(
         title: 'Vehicle Details',
+        showBack: true,
         body: const Center(child: Text('Vehicle not found')),
       );
     }
 
-    final images = vehicle.allImageUrls;
+    final title = '${vehicle.brandName ?? ''} ${vehicle.model ?? ''}'.trim();
 
     return AppLayout(
-      title: vehicle.categoryName,
-      subtitle: '${vehicle.brandName ?? ''} ${vehicle.model ?? ''}'.trim(),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // ── Image Carousel ──────────────────────────────────────────────
-            if (images.isNotEmpty)
-              SizedBox(
-                height: 240.h,
-                child: PageView.builder(
-                  itemCount: images.length,
-                  itemBuilder: (_, i) => Image.network(
-                    images[i],
-                    fit: BoxFit.cover,
-                    width: double.infinity,
-                    errorBuilder: (_, __, ___) => Container(
-                      color: AppColors.grey100,
+      title: title.isEmpty ? vehicle.categoryName : title,
+      subtitle: 'ID: ${vehicle.sbVehicleId}',
+      showBack: true,
+      body: Column(
+        children: [
+          Expanded(
+            child: SingleChildScrollView(
+              padding: EdgeInsets.fromLTRB(
+                AppSpacing.md,
+                AppSpacing.md,
+                AppSpacing.md,
+                AppSpacing.sm,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // ── Image carousel ───────────────────────────────────────
+                  ClipRRect(
+                    borderRadius: AppRadius.borderRadiusMd,
+                    child: Stack(
+                      children: [
+                        NetworkImageCarousel(
+                          imageUrls: vehicle.allImageUrls,
+                          height: 220.h,
+                        ),
+                        // Category badge top-left
+                        Positioned(
+                          top: 10,
+                          left: 10,
+                          child: Container(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 10.w,
+                              vertical: 5.h,
+                            ),
+                            decoration: BoxDecoration(
+                              color: AppColors.primary,
+                              borderRadius: BorderRadius.circular(20.r),
+                            ),
+                            child: Text(
+                              vehicle.categoryName.toUpperCase(),
+                              style: TextStyle(
+                                fontFamily: 'Montserrat',
+                                fontSize: 9.sp,
+                                fontWeight: FontWeight.w800,
+                                color: Colors.white,
+                                letterSpacing: 1.2,
+                              ),
+                            ),
+                          ),
+                        ),
+                        // Status badge top-right
+                        if (vehicle.status != null)
+                          Positioned(
+                            top: 10,
+                            right: 10,
+                            child: _StatusBadge(status: vehicle.status!),
+                          ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: AppSpacing.sm),
+
+                  // ── Vehicle title + location ─────────────────────────────
+                  Center(
+                    child: Text(
+                      title.isEmpty ? vehicle.categoryName : title,
+                      style: TextStyle(
+                        fontFamily: 'Montserrat',
+                        fontSize: 16.sp,
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.black,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+
+                  // Red underline accent
+                  Center(
+                    child: Container(
+                      margin: EdgeInsets.only(top: 5.h, bottom: AppSpacing.sm),
+                      height: 3.h,
+                      width: 55.w,
+                      decoration: BoxDecoration(
+                        color: AppColors.primary,
+                        borderRadius: BorderRadius.circular(2.r),
+                      ),
+                    ),
+                  ),
+
+                  // Location row
+                  if ((vehicle.city ?? '').isNotEmpty ||
+                      (vehicle.state ?? '').isNotEmpty)
+                    Center(
+                      child: Padding(
+                        padding: EdgeInsets.only(bottom: AppSpacing.sm),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.location_on_rounded,
+                              size: 14.sp,
+                              color: AppColors.primary,
+                            ),
+                            SizedBox(width: 4.w),
+                            Text(
+                              [vehicle.city, vehicle.state]
+                                  .where((s) => s != null && s.isNotEmpty)
+                                  .join(', '),
+                              style: TextStyle(
+                                fontFamily: 'Plus Jakarta Sans',
+                                fontSize: 13.sp,
+                                color: AppColors.grey600,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+
+                  // ── 2×2 Info boxes ───────────────────────────────────────
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: _InfoBox(
+                            icon: Icons.fingerprint_rounded,
+                            label: 'Vehicle ID',
+                            value: vehicle.sbVehicleId,
+                          ),
+                        ),
+                        SizedBox(width: 8.w),
+                        Expanded(
+                          child: _InfoBox(
+                            icon: Icons.category_outlined,
+                            label: 'Category',
+                            value: vehicle.categoryName,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: 8.h),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: _InfoBox(
+                            icon: Icons.location_city_outlined,
+                            label: 'Location',
+                            value:
+                                [vehicle.city, vehicle.state]
+                                    .where((s) => s != null && s.isNotEmpty)
+                                    .join(', ')
+                                    .isEmpty
+                                ? 'N/A'
+                                : [vehicle.city, vehicle.state]
+                                      .where((s) => s != null && s.isNotEmpty)
+                                      .join(', '),
+                          ),
+                        ),
+
+                        SizedBox(width: 8.w),
+                        Expanded(
+                          child: _InfoBox(
+                            icon: Icons.info_outline_rounded,
+                            label: 'Status',
+                            value: vehicle.status != null
+                                ? vehicle.status!.toUpperCase()
+                                : 'N/A',
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: AppSpacing.md),
+
+                  // ── Key specs card ───────────────────────────────────────
+                  _KeySpecsCard(vehicle: vehicle),
+                  SizedBox(height: AppSpacing.md),
+
+                  // ── Vehicle details accordion ────────────────────────────
+                  _VehicleDetailsAccordion(vehicle: vehicle),
+                  SizedBox(height: AppSpacing.md),
+
+                  // ── Actions label ────────────────────────────────────────
+                  _SectionLabel(icon: Icons.bolt_rounded, title: 'Take Action'),
+                  SizedBox(height: 12.h),
+
+                  // ── Action card 1: Become Member ─────────────────────────
+                  _ActionCard(
+                    gradient: const LinearGradient(
+                      colors: [Color(0xFF1A3A6B), Color(0xFF2A5298)],
+                    ),
+                    icon: Icons.workspace_premium_rounded,
+                    title: 'Become Member',
+                    subtitle: 'Connect With Owner',
+                    buttonText: 'Subscribe',
+                    buttonColor: Colors.white,
+                    buttonTextColor: const Color(0xFF1A3A6B),
+                    onTap: () => _snack(
+                      'Subscribe',
+                      'Redirecting to subscription plans',
+                    ),
+                  ),
+                  SizedBox(height: 10.h),
+
+                  // ── Action card 2: Show Interest ─────────────────────────
+                  _ActionCard(
+                    gradient: const LinearGradient(
+                      colors: [Color(0xFF0F9B8E), Color(0xFF16C79A)],
+                    ),
+                    icon: Icons.favorite_rounded,
+                    title: 'Let Us Know',
+                    subtitle: "You're Interested",
+                    buttonText: 'Interested',
+                    buttonColor: Colors.white,
+                    buttonTextColor: const Color(0xFF0F9B8E),
+                    onTap: () => _snack(
+                      'Interest Recorded',
+                      'The seller has been notified of your interest',
+                    ),
+                  ),
+                  SizedBox(height: 10.h),
+
+                  // ── Action card 3: Make Offer ────────────────────────────
+                  _ActionCard(
+                    gradient: const LinearGradient(
+                      colors: [Color(0xFFE8882A), Color(0xFFF5A623)],
+                    ),
+                    icon: Icons.local_offer_rounded,
+                    title: 'Submit Your',
+                    subtitle: 'Best Vehicle Offer',
+                    buttonText: 'Submit',
+                    buttonColor: Colors.white,
+                    buttonTextColor: const Color(0xFFE8882A),
+                    onTap: () => _offerDialog(context, vehicle),
+                  ),
+                  SizedBox(height: 12.h),
+
+                  // ── Inspection button ────────────────────────────────────
+                  GestureDetector(
+                    onTap: () => _snack(
+                      'Inspection Requested',
+                      'Our team will contact you to schedule an inspection',
+                    ),
+                    child: Container(
+                      width: double.infinity,
+                      height: 52.h,
+                      decoration: BoxDecoration(
+                        gradient: const LinearGradient(
+                          colors: [
+                            AppColors.ctaGradientStart,
+                            AppColors.ctaGradientEnd,
+                          ],
+                        ),
+                        borderRadius: BorderRadius.circular(14.r),
+                        boxShadow: [
+                          BoxShadow(
+                            color: AppColors.primary.withValues(alpha: 0.3),
+                            blurRadius: 14,
+                            offset: const Offset(0, 5),
+                          ),
+                        ],
+                      ),
                       child: Center(
-                        child: Icon(
-                          Icons.directions_car_rounded,
-                          size: 64,
-                          color: AppColors.grey300,
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.manage_search_rounded,
+                              color: Colors.white,
+                              size: 20.sp,
+                            ),
+                            SizedBox(width: 8.w),
+                            Text(
+                              'Request Vehicle Inspection',
+                              style: TextStyle(
+                                fontFamily: 'Montserrat',
+                                fontSize: 14.sp,
+                                fontWeight: FontWeight.w700,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ),
                   ),
-                ),
-              )
-            else
-              Container(
-                height: 200.h,
-                color: AppColors.grey100,
-                child: Center(
-                  child: Icon(
-                    Icons.directions_car_rounded,
-                    size: 64,
-                    color: AppColors.grey300,
-                  ),
-                ),
+                  SizedBox(height: 24.h),
+                ],
               ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 
-            Padding(
-              padding: EdgeInsets.all(AppSpacing.md),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+  void _snack(String t, String m) => Get.snackbar(
+    t,
+    m,
+    snackPosition: SnackPosition.BOTTOM,
+    backgroundColor: AppColors.black,
+    colorText: Colors.white,
+    margin: const EdgeInsets.fromLTRB(16, 0, 16, 24),
+    borderRadius: 14,
+    duration: const Duration(seconds: 3),
+  );
+
+  void _offerDialog(BuildContext context, BuyVehicleEntity vehicle) {
+    final ctrl = TextEditingController();
+    showDialog(
+      context: context,
+      builder: (_) => Dialog(
+        backgroundColor: Colors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20.r),
+        ),
+        child: Padding(
+          padding: EdgeInsets.all(22.w),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
                 children: [
-                  // ── Title + Price ─────────────────────────────────────────
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Expanded(
-                        child: Text(
-                          '${vehicle.brandName ?? ''} ${vehicle.model ?? ''}'
-                                  .trim()
-                                  .isEmpty
-                              ? vehicle.categoryName
-                              : '${vehicle.brandName ?? ''} ${vehicle.model ?? ''}'
-                                    .trim(),
+                  Container(
+                    width: 44.w,
+                    height: 44.w,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFE8882A).withValues(alpha: 0.12),
+                      borderRadius: BorderRadius.circular(12.r),
+                    ),
+                    child: const Icon(
+                      Icons.local_offer_rounded,
+                      color: Color(0xFFE8882A),
+                    ),
+                  ),
+                  SizedBox(width: 12.w),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Make an Offer',
                           style: TextStyle(
                             fontFamily: 'Montserrat',
-                            fontSize: 20.sp,
+                            fontSize: 16.sp,
                             fontWeight: FontWeight.w800,
-                            color: AppColors.textPrimary,
+                            color: AppColors.black,
                           ),
                         ),
-                      ),
-                      SizedBox(width: AppSpacing.sm),
-                      Text(
-                        vehicle.formattedPrice,
-                        style: TextStyle(
-                          fontFamily: 'Montserrat',
-                          fontSize: 20.sp,
-                          fontWeight: FontWeight.w800,
-                          color: AppColors.primary,
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: AppSpacing.sm),
-
-                  // ── Location ──────────────────────────────────────────────
-                  if (vehicle.city != null || vehicle.state != null)
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.location_on_outlined,
-                          size: 16,
-                          color: AppColors.grey500,
-                        ),
-                        SizedBox(width: 4),
                         Text(
-                          [
-                            vehicle.city,
-                            vehicle.state,
-                          ].where((s) => s != null && s.isNotEmpty).join(', '),
+                          'Propose your best price',
                           style: TextStyle(
-                            fontFamily: 'Montserrat',
-                            fontSize: 13.sp,
+                            fontFamily: 'Plus Jakarta Sans',
+                            fontSize: 12.sp,
                             color: AppColors.grey600,
                           ),
                         ),
                       ],
                     ),
-                  SizedBox(height: AppSpacing.lg),
-
-                  // ── Specs Card ────────────────────────────────────────────
-                  _InfoCard(
-                    title: 'Vehicle Specifications',
-                    icon: Icons.info_outline,
-                    children: [
-                      if (vehicle.year != null) _SpecRow('Year', vehicle.year!),
-                      if (vehicle.fuelType != null)
-                        _SpecRow('Fuel Type', vehicle.fuelType!),
-                      if (vehicle.bodyType != null)
-                        _SpecRow('Body Type', vehicle.bodyType!),
-                      if (vehicle.tonnage != null)
-                        _SpecRow('Tonnage', vehicle.tonnage!),
-                      if (vehicle.noOfTyres != null)
-                        _SpecRow('No. of Tyres', vehicle.noOfTyres!),
-                      if (vehicle.kv != null)
-                        _SpecRow('KV Rating', vehicle.kv!),
-                      _SpecRow('Category', vehicle.categoryName),
-                    ],
                   ),
-                  SizedBox(height: AppSpacing.md),
-
-                  // ── Actions Card ──────────────────────────────────────────
-                  _InfoCard(
-                    title: 'Actions',
-                    icon: Icons.star_outline,
-                    children: [
-                      _ActionTile(
-                        icon: Icons.favorite_border_rounded,
-                        label: 'Show Interest',
-                        color: const Color(0xFFEF4444),
-                        onTap: () => Get.snackbar(
-                          'Interest',
-                          'Interest recorded',
-                          snackPosition: SnackPosition.BOTTOM,
-                          backgroundColor: AppColors.primary,
-                          colorText: Colors.white,
-                          margin: const EdgeInsets.all(16),
-                          borderRadius: 12,
-                        ),
-                      ),
-                      const Divider(height: 1),
-                      _ActionTile(
-                        icon: Icons.local_offer_outlined,
-                        label: 'Make an Offer',
-                        color: const Color(0xFF10B981),
-                        onTap: () => _showOfferDialog(context),
-                      ),
-                      const Divider(height: 1),
-                      _ActionTile(
-                        icon: Icons.search_outlined,
-                        label: 'Request Inspection',
-                        color: const Color(0xFF3B82F6),
-                        onTap: () => Get.snackbar(
-                          'Inspection',
-                          'Inspection request sent',
-                          snackPosition: SnackPosition.BOTTOM,
-                          backgroundColor: AppColors.primary,
-                          colorText: Colors.white,
-                          margin: const EdgeInsets.all(16),
-                          borderRadius: 12,
-                        ),
-                      ),
-                      const Divider(height: 1),
-                      _ActionTile(
-                        icon: Icons.lock_outline,
-                        label: 'Request Owner Details',
-                        color: const Color(0xFF8B5CF6),
-                        onTap: () => Get.snackbar(
-                          'Access',
-                          'Access request sent',
-                          snackPosition: SnackPosition.BOTTOM,
-                          backgroundColor: AppColors.primary,
-                          colorText: Colors.white,
-                          margin: const EdgeInsets.all(16),
-                          borderRadius: 12,
-                        ),
-                      ),
-                    ],
+                ],
+              ),
+              SizedBox(height: 18.h),
+              Text(
+                'Offer Amount',
+                style: TextStyle(
+                  fontFamily: 'Montserrat',
+                  fontSize: 12.sp,
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.grey600,
+                ),
+              ),
+              SizedBox(height: 8.h),
+              TextField(
+                controller: ctrl,
+                keyboardType: TextInputType.number,
+                autofocus: true,
+                style: TextStyle(
+                  fontFamily: 'Montserrat',
+                  fontSize: 18.sp,
+                  fontWeight: FontWeight.w800,
+                  color: AppColors.black,
+                ),
+                decoration: InputDecoration(
+                  hintText: '0',
+                  hintStyle: TextStyle(color: AppColors.grey400),
+                  prefixText: '₹ ',
+                  prefixStyle: TextStyle(
+                    fontFamily: 'Montserrat',
+                    fontSize: 18.sp,
+                    fontWeight: FontWeight.w800,
+                    color: AppColors.primary,
                   ),
-                  SizedBox(height: AppSpacing.xl),
-
-                  // ── Contact Button ────────────────────────────────────────
-                  Container(
-                    width: double.infinity,
-                    height: 54,
-                    decoration: BoxDecoration(
-                      gradient: const LinearGradient(
-                        colors: [
-                          AppColors.ctaGradientStart,
-                          AppColors.ctaGradientEnd,
-                        ],
-                      ),
-                      borderRadius: BorderRadius.circular(27),
-                      boxShadow: [
-                        BoxShadow(
-                          color: AppColors.primary.withValues(alpha: 0.35),
-                          blurRadius: 16,
-                          offset: const Offset(0, 6),
-                        ),
-                      ],
+                  filled: true,
+                  fillColor: AppColors.grey50,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12.r),
+                    borderSide: BorderSide(color: AppColors.grey300),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12.r),
+                    borderSide: BorderSide(color: AppColors.grey300),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12.r),
+                    borderSide: const BorderSide(
+                      color: AppColors.primary,
+                      width: 2,
                     ),
-                    child: Material(
-                      color: Colors.transparent,
-                      child: InkWell(
-                        borderRadius: BorderRadius.circular(27),
-                        onTap: () => Get.snackbar(
-                          'Contact',
-                          'Subscribe to view owner details',
-                          snackPosition: SnackPosition.BOTTOM,
-                          backgroundColor: AppColors.grey900,
-                          colorText: Colors.white,
-                          margin: const EdgeInsets.all(16),
-                          borderRadius: 12,
+                  ),
+                ),
+              ),
+              SizedBox(height: 20.h),
+              Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton(
+                      onPressed: Get.back,
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: AppColors.grey600,
+                        side: BorderSide(color: AppColors.grey300),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12.r),
                         ),
-                        child: Center(
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(
-                                Icons.phone_outlined,
-                                color: Colors.white,
-                                size: 20,
-                              ),
-                              SizedBox(width: AppSpacing.sm),
-                              Text(
-                                'Contact Seller',
-                                style: TextStyle(
-                                  fontFamily: 'Montserrat',
-                                  fontSize: 16.sp,
-                                  fontWeight: FontWeight.w700,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ],
-                          ),
+                        padding: EdgeInsets.symmetric(vertical: 13.h),
+                      ),
+                      child: Text(
+                        'Cancel',
+                        style: TextStyle(
+                          fontFamily: 'Montserrat',
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 10.w),
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Get.back();
+                        _snack(
+                          'Offer Submitted',
+                          'Your offer of ₹${ctrl.text} has been sent',
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.primary,
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12.r),
+                        ),
+                        padding: EdgeInsets.symmetric(vertical: 13.h),
+                        elevation: 0,
+                      ),
+                      child: Text(
+                        'Submit Offer',
+                        style: TextStyle(
+                          fontFamily: 'Montserrat',
+                          fontWeight: FontWeight.w700,
                         ),
                       ),
                     ),
                   ),
                 ],
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
   }
+}
 
-  void _showOfferDialog(BuildContext context) {
-    final ctrl = TextEditingController();
-    showDialog(
-      context: context,
-      builder: (_) => AlertDialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppRadius.lg),
-        ),
-        title: Text(
-          'Make an Offer',
-          style: TextStyle(
-            fontFamily: 'Montserrat',
-            fontWeight: FontWeight.w700,
-            fontSize: 18.sp,
-          ),
-        ),
-        content: TextField(
-          controller: ctrl,
-          keyboardType: TextInputType.number,
-          decoration: InputDecoration(
-            hintText: 'Enter offer amount',
-            prefixText: '₹ ',
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(AppRadius.md),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(AppRadius.md),
-              borderSide: const BorderSide(
-                color: AppColors.primary,
-                width: 1.5,
-              ),
+// ─────────────────────────────────────────────────────────────────────────────
+// Status badge overlay on image
+// ─────────────────────────────────────────────────────────────────────────────
+
+class _StatusBadge extends StatelessWidget {
+  final String status;
+  const _StatusBadge({required this.status});
+
+  @override
+  Widget build(BuildContext context) {
+    final isActive = status.toLowerCase() == 'active';
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 5.h),
+      decoration: BoxDecoration(
+        color: isActive
+            ? AppColors.success.withValues(alpha: 0.9)
+            : Colors.grey.withValues(alpha: 0.85),
+        borderRadius: BorderRadius.circular(20.r),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 6.w,
+            height: 6.w,
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              shape: BoxShape.circle,
             ),
           ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Get.back(),
-            child: Text('Cancel', style: TextStyle(color: AppColors.grey600)),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              Get.back();
-              Get.snackbar(
-                'Offer Submitted',
-                'Your offer of ₹${ctrl.text} has been submitted',
-                snackPosition: SnackPosition.BOTTOM,
-                backgroundColor: AppColors.primary,
-                colorText: Colors.white,
-                margin: const EdgeInsets.all(16),
-                borderRadius: 12,
-              );
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.primary,
-              foregroundColor: Colors.white,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20),
-              ),
+          SizedBox(width: 5.w),
+          Text(
+            status.toUpperCase(),
+            style: TextStyle(
+              fontFamily: 'Montserrat',
+              fontSize: 9.sp,
+              fontWeight: FontWeight.w700,
+              color: Colors.white,
+              letterSpacing: 0.8,
             ),
-            child: const Text('Submit'),
           ),
         ],
       ),
@@ -346,31 +554,106 @@ class BuyVehicleDetailsView extends StatelessWidget {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Sub-widgets
+// Info box — matches auction detail _InfoBox exactly
 // ─────────────────────────────────────────────────────────────────────────────
 
-class _InfoCard extends StatelessWidget {
-  final String title;
+class _InfoBox extends StatelessWidget {
   final IconData icon;
-  final List<Widget> children;
-  const _InfoCard({
-    required this.title,
+  final String label;
+  final String value;
+  const _InfoBox({
     required this.icon,
-    required this.children,
+    required this.label,
+    required this.value,
   });
 
   @override
   Widget build(BuildContext context) {
-    final nonEmpty = children.where((w) => w is! SizedBox).toList();
-    if (nonEmpty.isEmpty) return const SizedBox.shrink();
+    return Container(
+      padding: EdgeInsets.fromLTRB(16.r, 12.r, 12.r, 16.r),
+      decoration: BoxDecoration(
+        color: AppColors.grey50,
+        borderRadius: BorderRadius.circular(8.r),
+        border: Border.all(color: AppColors.grey200),
+      ),
+      child: Column(
+        children: [
+          Icon(icon, size: 20.r, color: AppColors.grey600),
+          SizedBox(height: 4.h),
+          Text(
+            label,
+            style: TextStyle(
+              fontFamily: 'Plus Jakarta Sans',
+              fontSize: 10.sp,
+              color: AppColors.grey500,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          SizedBox(height: 2.h),
+          Text(
+            value,
+            style: TextStyle(
+              fontFamily: 'Montserrat',
+              fontSize: 12.sp,
+              fontWeight: FontWeight.w700,
+              color: AppColors.black,
+            ),
+            textAlign: TextAlign.center,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Key Specs card — horizontal grid of spec chips
+// ─────────────────────────────────────────────────────────────────────────────
+
+class _KeySpecsCard extends StatelessWidget {
+  final BuyVehicleEntity vehicle;
+  const _KeySpecsCard({required this.vehicle});
+
+  @override
+  Widget build(BuildContext context) {
+    final specs = <_SpecItem>[];
+    if (vehicle.year != null)
+      specs.add(_SpecItem(Icons.calendar_month_rounded, 'Year', vehicle.year!));
+    if (vehicle.fuelType != null)
+      specs.add(
+        _SpecItem(Icons.local_gas_station_outlined, 'Fuel', vehicle.fuelType!),
+      );
+    if (vehicle.bodyType != null)
+      specs.add(
+        _SpecItem(Icons.view_in_ar_outlined, 'Body Type', vehicle.bodyType!),
+      );
+    if (vehicle.tonnage != null)
+      specs.add(
+        _SpecItem(Icons.fitness_center_outlined, 'Tonnage', vehicle.tonnage!),
+      );
+    if (vehicle.noOfTyres != null)
+      specs.add(
+        _SpecItem(
+          Icons.radio_button_unchecked_rounded,
+          'Tyres',
+          vehicle.noOfTyres!,
+        ),
+      );
+    if (vehicle.kv != null)
+      specs.add(_SpecItem(Icons.bolt_rounded, 'KV', vehicle.kv!));
+
+    if (specs.isEmpty) return const SizedBox.shrink();
+
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(AppRadius.lg),
+        color: AppColors.white,
+        borderRadius: AppRadius.borderRadiusMd,
         border: Border.all(color: AppColors.grey200),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.03),
+            color: const Color(0x0A000000),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -379,126 +662,514 @@ class _InfoCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Header
           Padding(
             padding: EdgeInsets.fromLTRB(
               AppSpacing.md,
-              AppSpacing.sm,
+              14.h,
               AppSpacing.md,
-              AppSpacing.xs,
+              10.h,
             ),
             child: Row(
               children: [
-                Icon(icon, size: 18, color: AppColors.primary),
-                SizedBox(width: AppSpacing.xs),
+                Icon(
+                  Icons.speed_outlined,
+                  size: 18.r,
+                  color: AppColors.primary,
+                ),
+                SizedBox(width: 8.w),
                 Text(
-                  title,
+                  'Key Specifications',
                   style: TextStyle(
                     fontFamily: 'Montserrat',
                     fontSize: 14.sp,
                     fontWeight: FontWeight.w700,
-                    color: AppColors.textPrimary,
+                    color: AppColors.black,
                   ),
                 ),
               ],
             ),
           ),
-          const Divider(height: 1),
-          ...children,
+          Divider(height: 1, thickness: 1, color: AppColors.grey100),
+          // Spec chips grid
+          Padding(
+            padding: EdgeInsets.all(AppSpacing.sm),
+            child: Wrap(
+              spacing: 8.w,
+              runSpacing: 8.h,
+              children: specs
+                  .map(
+                    (s) => Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 12.w,
+                        vertical: 8.h,
+                      ),
+                      decoration: BoxDecoration(
+                        color: AppColors.grey50,
+                        borderRadius: BorderRadius.circular(10.r),
+                        border: Border.all(color: AppColors.grey200),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(s.icon, size: 14.r, color: AppColors.primary),
+                          SizedBox(width: 6.w),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                s.label,
+                                style: TextStyle(
+                                  fontFamily: 'Plus Jakarta Sans',
+                                  fontSize: 9.sp,
+                                  color: AppColors.grey500,
+                                ),
+                              ),
+                              Text(
+                                s.value,
+                                style: TextStyle(
+                                  fontFamily: 'Montserrat',
+                                  fontSize: 11.sp,
+                                  fontWeight: FontWeight.w700,
+                                  color: AppColors.black,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  )
+                  .toList(),
+            ),
+          ),
         ],
       ),
     );
   }
 }
 
-class _SpecRow extends StatelessWidget {
+class _SpecItem {
+  final IconData icon;
   final String label;
   final String value;
-  const _SpecRow(this.label, this.value);
+  const _SpecItem(this.icon, this.label, this.value);
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Vehicle Details Accordion — expandable, matches auction style
+// ─────────────────────────────────────────────────────────────────────────────
+
+class _VehicleDetailsAccordion extends StatefulWidget {
+  final BuyVehicleEntity vehicle;
+  const _VehicleDetailsAccordion({required this.vehicle});
+
+  @override
+  State<_VehicleDetailsAccordion> createState() =>
+      _VehicleDetailsAccordionState();
+}
+
+class _VehicleDetailsAccordionState extends State<_VehicleDetailsAccordion> {
+  bool _expanded = true; // open by default so user sees the details
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.symmetric(
-        horizontal: AppSpacing.md,
-        vertical: AppSpacing.sm,
+    final v = widget.vehicle;
+    return Container(
+      decoration: BoxDecoration(
+        color: AppColors.white,
+        borderRadius: AppRadius.borderRadiusMd,
+        border: Border.all(color: AppColors.grey200),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0x0A000000),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
-      child: Row(
+      clipBehavior: Clip.antiAlias,
+      child: Column(
         children: [
-          Expanded(
-            child: Text(
-              label,
-              style: TextStyle(
-                fontFamily: 'Montserrat',
-                fontSize: 13.sp,
-                color: AppColors.grey600,
+          // Header tap row
+          InkWell(
+            onTap: () => setState(() => _expanded = !_expanded),
+            child: Container(
+              padding: EdgeInsets.symmetric(
+                horizontal: AppSpacing.md,
+                vertical: 14.h,
+              ),
+              color: _expanded
+                  ? AppColors.lightOrange.withValues(alpha: 0.18)
+                  : AppColors.white,
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.directions_car_outlined,
+                    size: 18.r,
+                    color: AppColors.primary,
+                  ),
+                  SizedBox(width: 8.w),
+                  Expanded(
+                    child: Text(
+                      'Vehicle Details',
+                      style: TextStyle(
+                        fontFamily: 'Montserrat',
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.black,
+                      ),
+                    ),
+                  ),
+                  AnimatedRotation(
+                    turns: _expanded ? 0.5 : 0,
+                    duration: const Duration(milliseconds: 250),
+                    child: Icon(
+                      Icons.keyboard_arrow_down_rounded,
+                      size: 22.r,
+                      color: AppColors.grey600,
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
-          Text(
-            value,
-            style: TextStyle(
-              fontFamily: 'Montserrat',
-              fontSize: 13.sp,
-              fontWeight: FontWeight.w600,
-              color: AppColors.textPrimary,
-            ),
+
+          // Expandable content
+          AnimatedCrossFade(
+            firstChild: const SizedBox.shrink(),
+            secondChild: _buildDetails(v),
+            crossFadeState: _expanded
+                ? CrossFadeState.showSecond
+                : CrossFadeState.showFirst,
+            duration: const Duration(milliseconds: 280),
           ),
         ],
       ),
     );
   }
+
+  Widget _buildDetails(BuyVehicleEntity v) {
+    final rows = <_DetailRowData>[];
+    if (v.brandName != null)
+      rows.add(
+        _DetailRowData(
+          Icons.branding_watermark_outlined,
+          'Brand',
+          v.brandName!,
+        ),
+      );
+    if (v.model != null)
+      rows.add(
+        _DetailRowData(Icons.directions_car_outlined, 'Model', v.model!),
+      );
+    if (v.year != null)
+      rows.add(
+        _DetailRowData(
+          Icons.calendar_today_outlined,
+          'Year of Manufacture',
+          v.year!,
+        ),
+      );
+    rows.add(
+      _DetailRowData(Icons.category_outlined, 'Category', v.categoryName),
+    );
+    rows.add(
+      _DetailRowData(Icons.code_rounded, 'Category Code', v.categoryCode),
+    );
+    if (v.brandCode != null)
+      rows.add(_DetailRowData(Icons.tag_rounded, 'Brand Code', v.brandCode!));
+    if (v.fuelType != null)
+      rows.add(
+        _DetailRowData(
+          Icons.local_gas_station_outlined,
+          'Fuel Type',
+          v.fuelType!,
+        ),
+      );
+    if (v.bodyType != null)
+      rows.add(
+        _DetailRowData(Icons.view_in_ar_outlined, 'Body Type', v.bodyType!),
+      );
+    if (v.tonnage != null)
+      rows.add(
+        _DetailRowData(Icons.fitness_center_outlined, 'Tonnage', v.tonnage!),
+      );
+    if (v.noOfTyres != null)
+      rows.add(
+        _DetailRowData(
+          Icons.radio_button_unchecked_rounded,
+          'No. of Tyres',
+          v.noOfTyres!,
+        ),
+      );
+    if (v.kv != null)
+      rows.add(
+        _DetailRowData(Icons.electrical_services_outlined, 'KV Rating', v.kv!),
+      );
+    if (v.city != null)
+      rows.add(_DetailRowData(Icons.location_city_outlined, 'City', v.city!));
+    if (v.state != null)
+      rows.add(_DetailRowData(Icons.map_outlined, 'State', v.state!));
+    if (v.status != null)
+      rows.add(_DetailRowData(Icons.info_outline, 'Status', v.status!));
+
+    return Column(
+      children: [
+        Divider(height: 1, thickness: 1, color: AppColors.grey100),
+        ...rows.asMap().entries.map(
+          (entry) => _DetailRow(
+            icon: entry.value.icon,
+            label: entry.value.label,
+            value: entry.value.value,
+            isLast: entry.key == rows.length - 1,
+          ),
+        ),
+      ],
+    );
+  }
 }
 
-class _ActionTile extends StatelessWidget {
+class _DetailRowData {
   final IconData icon;
   final String label;
-  final Color color;
-  final VoidCallback onTap;
-  const _ActionTile({
+  final String value;
+  const _DetailRowData(this.icon, this.label, this.value);
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Detail row — matches auction _DetailRow
+// ─────────────────────────────────────────────────────────────────────────────
+
+class _DetailRow extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final String value;
+  final bool isLast;
+  const _DetailRow({
     required this.icon,
     required this.label,
-    required this.color,
+    required this.value,
+    this.isLast = false,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Padding(
+          padding: EdgeInsets.symmetric(
+            horizontal: AppSpacing.md,
+            vertical: 11.h,
+          ),
+          child: Row(
+            children: [
+              Icon(icon, size: 16.r, color: AppColors.grey500),
+              SizedBox(width: 8.w),
+              Expanded(
+                flex: 2,
+                child: Text(
+                  label,
+                  style: TextStyle(
+                    fontFamily: 'Plus Jakarta Sans',
+                    fontSize: 12.sp,
+                    color: AppColors.grey600,
+                  ),
+                ),
+              ),
+              Expanded(
+                flex: 3,
+                child: Text(
+                  value,
+                  textAlign: TextAlign.end,
+                  style: TextStyle(
+                    fontFamily: 'Montserrat',
+                    fontSize: 12.sp,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.black,
+                  ),
+                  softWrap: true,
+                ),
+              ),
+            ],
+          ),
+        ),
+        if (!isLast)
+          Divider(
+            height: 1,
+            thickness: 1,
+            color: AppColors.grey100,
+            indent: AppSpacing.md,
+            endIndent: AppSpacing.md,
+          ),
+      ],
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Section label row
+// ─────────────────────────────────────────────────────────────────────────────
+
+class _SectionLabel extends StatelessWidget {
+  final IconData icon;
+  final String title;
+  const _SectionLabel({required this.icon, required this.title});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Container(
+          width: 3.w,
+          height: 22.h,
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [AppColors.ctaGradientStart, AppColors.ctaGradientEnd],
+            ),
+            borderRadius: BorderRadius.circular(2.r),
+          ),
+        ),
+        SizedBox(width: 10.w),
+        Icon(icon, size: 18.r, color: AppColors.primary),
+        SizedBox(width: 8.w),
+        Text(
+          title,
+          style: TextStyle(
+            fontFamily: 'Montserrat',
+            fontSize: 16.sp,
+            fontWeight: FontWeight.w800,
+            color: AppColors.black,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Action card — preserved exactly (gradient colored cards)
+// ─────────────────────────────────────────────────────────────────────────────
+
+class _ActionCard extends StatelessWidget {
+  final LinearGradient gradient;
+  final IconData icon;
+  final String title;
+  final String subtitle;
+  final String buttonText;
+  final Color buttonColor;
+  final Color buttonTextColor;
+  final VoidCallback onTap;
+
+  const _ActionCard({
+    required this.gradient,
+    required this.icon,
+    required this.title,
+    required this.subtitle,
+    required this.buttonText,
+    required this.buttonColor,
+    required this.buttonTextColor,
     required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      child: Padding(
-        padding: EdgeInsets.symmetric(
-          horizontal: AppSpacing.md,
-          vertical: AppSpacing.sm,
-        ),
-        child: Row(
-          children: [
-            Container(
-              width: 36,
-              height: 36,
-              decoration: BoxDecoration(
-                color: color.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(AppRadius.sm),
-              ),
-              child: Icon(icon, size: 18, color: color),
-            ),
-            SizedBox(width: AppSpacing.sm),
-            Expanded(
-              child: Text(
-                label,
-                style: TextStyle(
-                  fontFamily: 'Montserrat',
-                  fontSize: 14.sp,
-                  fontWeight: FontWeight.w500,
-                  color: AppColors.textPrimary,
+    return Container(
+      height: 72.h,
+      decoration: BoxDecoration(
+        gradient: gradient,
+        borderRadius: BorderRadius.circular(16.r),
+        boxShadow: [
+          BoxShadow(
+            color: gradient.colors.first.withValues(alpha: 0.35),
+            blurRadius: 12,
+            offset: const Offset(0, 5),
+          ),
+        ],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(16.r),
+          onTap: onTap,
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 18.w),
+            child: Row(
+              children: [
+                // Icon
+                Container(
+                  width: 42.w,
+                  height: 42.w,
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.2),
+                    borderRadius: BorderRadius.circular(12.r),
+                  ),
+                  child: Icon(icon, color: Colors.white, size: 22.sp),
                 ),
-              ),
+                SizedBox(width: 14.w),
+                // Text
+                Expanded(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        title,
+                        style: TextStyle(
+                          fontFamily: 'Montserrat',
+                          fontSize: 13.sp,
+                          fontWeight: FontWeight.w700,
+                          color: Colors.white,
+                        ),
+                      ),
+                      Text(
+                        subtitle,
+                        style: TextStyle(
+                          fontFamily: 'Montserrat',
+                          fontSize: 12.sp,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.white.withValues(alpha: 0.85),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                // Button
+                GestureDetector(
+                  onTap: onTap,
+                  child: Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 18.w,
+                      vertical: 9.h,
+                    ),
+                    decoration: BoxDecoration(
+                      color: buttonColor,
+                      borderRadius: BorderRadius.circular(24.r),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.15),
+                          blurRadius: 6,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: Text(
+                      buttonText,
+                      style: TextStyle(
+                        fontFamily: 'Montserrat',
+                        fontSize: 12.sp,
+                        fontWeight: FontWeight.w800,
+                        color: buttonTextColor,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
-            Icon(
-              Icons.chevron_right_rounded,
-              size: 20,
-              color: AppColors.grey400,
-            ),
-          ],
+          ),
         ),
       ),
     );

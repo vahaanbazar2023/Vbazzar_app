@@ -14,6 +14,7 @@ void showBuyFilterSheet(BuildContext context, BuyVehicleController controller) {
   showModalBottomSheet(
     context: context,
     isScrollControlled: true,
+    useSafeArea: true,
     backgroundColor: Colors.transparent,
     builder: (_) => BuyFilterSheet(controller: controller),
   );
@@ -75,149 +76,156 @@ class _BuyFilterSheetState extends State<BuyFilterSheet> {
   @override
   Widget build(BuildContext context) {
     final bottomPad = MediaQuery.of(context).padding.bottom;
+    // Push sheet up when keyboard is visible
+    final keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
 
-    return Container(
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-      ),
-      // Let SafeArea + Column determine height — no fixed height
-      child: SafeArea(
-        top: false,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            // ── Drag handle ────────────────────────────────────────────────
-            Center(
-              child: Container(
-                margin: const EdgeInsets.only(top: 12, bottom: 4),
-                width: 40,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: AppColors.grey300,
-                  borderRadius: BorderRadius.circular(2),
+    return Padding(
+      padding: EdgeInsets.only(bottom: keyboardHeight),
+      child: Container(
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+        ),
+        // Let SafeArea + Column determine height — no fixed height
+        child: SafeArea(
+          top: false,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // ── Drag handle ────────────────────────────────────────────────
+              Center(
+                child: Container(
+                  margin: const EdgeInsets.only(top: 12, bottom: 4),
+                  width: 40,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: AppColors.grey300,
+                    borderRadius: BorderRadius.circular(2),
+                  ),
                 ),
               ),
-            ),
-            // ── Header ────────────────────────────────────────────────────
-            Padding(
-              padding: const EdgeInsets.fromLTRB(20, 8, 8, 0),
-              child: Row(
-                children: [
-                  Text(
-                    'Filters',
-                    style: TextStyle(
-                      fontFamily: 'Montserrat',
-                      fontSize: 17.sp,
-                      fontWeight: FontWeight.w700,
-                      color: AppColors.textPrimary,
-                    ),
-                  ),
-                  const Spacer(),
-                  TextButton(
-                    onPressed: _reset,
-                    child: Text(
-                      'Reset',
+              // ── Header ────────────────────────────────────────────────────
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 8, 8, 0),
+                child: Row(
+                  children: [
+                    Text(
+                      'Filters',
                       style: TextStyle(
                         fontFamily: 'Montserrat',
-                        color: AppColors.primary,
-                        fontWeight: FontWeight.w600,
-                        fontSize: 14.sp,
+                        fontSize: 17.sp,
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.textPrimary,
                       ),
                     ),
-                  ),
-                ],
-              ),
-            ),
-            const Divider(height: 1),
-
-            // ── Filter fields — shrink-wrapped, no fixed height ────────────
-            Flexible(
-              child: SingleChildScrollView(
-                padding: EdgeInsets.fromLTRB(20, 14, 20, bottomPad + 8),
-                child: Obx(() {
-                  if (widget.controller.isLoadingFilters.value) {
-                    return const Padding(
-                      padding: EdgeInsets.symmetric(vertical: 32),
-                      child: Center(
-                        child: CircularProgressIndicator(
+                    const Spacer(),
+                    TextButton(
+                      onPressed: _reset,
+                      child: Text(
+                        'Reset',
+                        style: TextStyle(
+                          fontFamily: 'Montserrat',
                           color: AppColors.primary,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 14.sp,
                         ),
                       ),
-                    );
-                  }
-                  final opts = widget.controller.dynamicFilterOptions;
-                  if (opts.isEmpty) {
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 24),
-                      child: Center(
-                        child: Text(
-                          'No filters available',
-                          style: TextStyle(
-                            fontFamily: 'Montserrat',
-                            color: AppColors.grey500,
-                          ),
-                        ),
-                      ),
-                    );
-                  }
-                  return Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      ...opts.entries.map((entry) {
-                        final key = entry.key;
-                        final def = entry.value as Map<String, dynamic>? ?? {};
-                        final source = def['source']?.toString();
-                        final staticOptions = def['options'] as List<dynamic>?;
+                    ),
+                  ],
+                ),
+              ),
+              const Divider(height: 1),
 
-                        return Padding(
-                          padding: const EdgeInsets.only(bottom: 20),
-                          child: _FilterField(
-                            filterKey: key,
-                            source: source,
-                            staticOptions: staticOptions,
-                            selectedLabel: _labels[key],
-                            selectedValue: _values[key],
-                            controller: widget.controller,
-                            onSelected: _select,
-                            onCleared: _clear,
+              // ── Filter fields — shrink-wrapped, no fixed height ────────────
+              Flexible(
+                child: SingleChildScrollView(
+                  padding: EdgeInsets.fromLTRB(20, 14, 20, bottomPad + 8),
+                  child: Obx(() {
+                    if (widget.controller.isLoadingFilters.value) {
+                      return const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 32),
+                        child: Center(
+                          child: CircularProgressIndicator(
+                            color: AppColors.primary,
                           ),
-                        );
-                      }),
-                      // ── Apply button ───────────────────────────────────
-                      SizedBox(
-                        width: double.infinity,
-                        height: 50,
-                        child: ElevatedButton(
-                          onPressed: _apply,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.primary,
-                            foregroundColor: Colors.white,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(25),
-                            ),
-                            elevation: 0,
-                          ),
+                        ),
+                      );
+                    }
+                    final opts = widget.controller.dynamicFilterOptions;
+                    if (opts.isEmpty) {
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 24),
+                        child: Center(
                           child: Text(
-                            'Apply Filters',
+                            'No filters available',
                             style: TextStyle(
                               fontFamily: 'Montserrat',
-                              fontSize: 15.sp,
-                              fontWeight: FontWeight.w700,
+                              color: AppColors.grey500,
                             ),
                           ),
                         ),
-                      ),
-                    ],
-                  );
-                }),
+                      );
+                    }
+                    return Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        ...opts.entries.map((entry) {
+                          final key = entry.key;
+                          final def =
+                              entry.value as Map<String, dynamic>? ?? {};
+                          final source = def['source']?.toString();
+                          final staticOptions =
+                              def['options'] as List<dynamic>?;
+
+                          return Padding(
+                            padding: const EdgeInsets.only(bottom: 20),
+                            child: _FilterField(
+                              filterKey: key,
+                              source: source,
+                              staticOptions: staticOptions,
+                              selectedLabel: _labels[key],
+                              selectedValue: _values[key],
+                              controller: widget.controller,
+                              onSelected: _select,
+                              onCleared: _clear,
+                            ),
+                          );
+                        }),
+                        // ── Apply button ───────────────────────────────────
+                        SizedBox(
+                          width: double.infinity,
+                          height: 50,
+                          child: ElevatedButton(
+                            onPressed: _apply,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: AppColors.primary,
+                              foregroundColor: Colors.white,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(25),
+                              ),
+                              elevation: 0,
+                            ),
+                            child: Text(
+                              'Apply Filters',
+                              style: TextStyle(
+                                fontFamily: 'Montserrat',
+                                fontSize: 15.sp,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    );
+                  }),
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
-      ),
-    );
+      ), // Container
+    ); // Padding
   }
 }
 

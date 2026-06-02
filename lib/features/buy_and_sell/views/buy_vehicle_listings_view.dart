@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/design_system/design_system.dart';
+import '../../../core/design_system/organisms/network_image_carousel.dart';
 import '../widgets/buy_filter_sheet.dart';
 import '../../../core/design_system/templates/app_layout.dart';
 import '../../../routes/app_routes.dart';
@@ -320,9 +321,6 @@ class _VehicleCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final images = vehicle.allImageUrls;
-    final imageUrl = images.isNotEmpty ? images.first : '';
-
     return GestureDetector(
       onTap: () => Get.toNamed(
         AppRoutes.buyVehicleDetail,
@@ -344,21 +342,16 @@ class _VehicleCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // ── Image ──────────────────────────────────────────────────────
+            // ── Image Carousel ─────────────────────────────────────────────
             ClipRRect(
               borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(AppRadius.lg),
                 topRight: Radius.circular(AppRadius.lg),
               ),
-              child: imageUrl.isNotEmpty
-                  ? Image.network(
-                      imageUrl,
-                      height: 180.h,
-                      width: double.infinity,
-                      fit: BoxFit.cover,
-                      errorBuilder: (_, __, ___) => _placeholder(),
-                    )
-                  : _placeholder(),
+              child: NetworkImageCarousel(
+                imageUrls: vehicle.allImageUrls,
+                height: 180.h,
+              ),
             ),
             // ── Details ────────────────────────────────────────────────────
             Padding(
@@ -367,7 +360,7 @@ class _VehicleCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    '${vehicle.brandName ?? ''} ${vehicle.model ?? ''}'
+                    '${vehicle.brandName ?? ''} | ${vehicle.model ?? ''}'
                             .trim()
                             .isEmpty
                         ? vehicle.categoryName
@@ -384,17 +377,18 @@ class _VehicleCard extends StatelessWidget {
                   ),
                   SizedBox(height: AppSpacing.xs),
                   Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       if (vehicle.year != null) ...[
                         _chip(Icons.calendar_today_outlined, vehicle.year!),
-                        SizedBox(width: AppSpacing.xs),
+                        SizedBox(width: AppSpacing.xxxl),
                       ],
                       if (vehicle.fuelType != null) ...[
                         _chip(
                           Icons.local_gas_station_outlined,
                           vehicle.fuelType!,
                         ),
-                        SizedBox(width: AppSpacing.xs),
+                        SizedBox(width: AppSpacing.xxl),
                       ],
                       if (vehicle.state != null)
                         _chip(Icons.location_on_outlined, vehicle.state!),
@@ -447,19 +441,6 @@ class _VehicleCard extends StatelessWidget {
       ),
     );
   }
-
-  Widget _placeholder() => Container(
-    height: 180.h,
-    width: double.infinity,
-    color: AppColors.grey100,
-    child: Center(
-      child: Icon(
-        Icons.directions_car_rounded,
-        size: 48,
-        color: AppColors.grey300,
-      ),
-    ),
-  );
 
   Widget _chip(IconData icon, String text) => Row(
     mainAxisSize: MainAxisSize.min,

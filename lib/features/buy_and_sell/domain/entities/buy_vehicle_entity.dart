@@ -56,23 +56,31 @@ class BuyVehicleEntity {
     return all;
   }
 
-  /// Formatted price string, e.g. "₹12,50,000".
+  /// Formatted price string with Indian comma formatting, e.g. "₹25,00,000".
   String get formattedPrice {
     if (price == null || price! <= 0) return 'Price on request';
     return '₹${_formatNumber(price!.toInt())}';
   }
 
+  /// Indian number formatting — inserts commas at thousands, then every 2 digits.
   static String _formatNumber(int n) {
-    if (n >= 10000000) {
-      return '${(n / 10000000).toStringAsFixed(2)} Cr';
-    } else if (n >= 100000) {
-      return '${(n / 100000).toStringAsFixed(2)} L';
-    } else if (n >= 1000) {
-      final s = n.toString();
-      final last3 = s.substring(s.length - 3);
-      final rest = s.substring(0, s.length - 3);
-      return rest.isNotEmpty ? '$rest,$last3' : last3;
+    if (n <= 0) return '0';
+    final s = n.toString();
+    if (s.length <= 3) return s;
+
+    // Last 3 digits
+    final last3 = s.substring(s.length - 3);
+    final rest = s.substring(0, s.length - 3);
+
+    // Remaining digits grouped in pairs from the right
+    final buffer = StringBuffer();
+    int count = 0;
+    for (int i = rest.length - 1; i >= 0; i--) {
+      if (count > 0 && count % 2 == 0) buffer.write(',');
+      buffer.write(rest[i]);
+      count++;
     }
-    return n.toString();
+    final prefix = buffer.toString().split('').reversed.join();
+    return '$prefix,$last3';
   }
 }
