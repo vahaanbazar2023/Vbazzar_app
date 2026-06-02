@@ -98,24 +98,35 @@ class BuySellRepositoryImpl implements BuySellRepository {
   }) async {
     final uid = userId ?? await _getUserId();
     try {
-      final response = await _network.get(
+      final response = await _network.post(
         ApiEndpoints.vehicleBrands,
-        queryParameters: {
+        data: {
           'category_code': categoryCode,
           if (uid != null) 'user_id': uid,
+          'status': 'active',
         },
       );
       if (response.statusCode == 200) {
         final data = response.data;
-        if (data['status'] == 'success' && data['data'] != null) {
-          final List<dynamic> brands = data['data'] is List ? data['data'] : [];
-          return brands
-              .map(
-                (json) =>
-                    VehicleBrandModel.fromJson(json as Map<String, dynamic>),
-              )
-              .toList();
+        // API returns: { "brands": [...], "total_count": N, "category_code": "..." }
+        // or wrapped: { "status": "success", "data": { ... } }
+        List<dynamic> brands = [];
+        if (data is Map<String, dynamic>) {
+          if (data['brands'] is List) {
+            brands = data['brands'] as List<dynamic>;
+          } else if (data['data'] is Map<String, dynamic> &&
+              (data['data'] as Map)['brands'] is List) {
+            brands = (data['data'] as Map)['brands'] as List<dynamic>;
+          } else if (data['data'] is List) {
+            brands = data['data'] as List<dynamic>;
+          }
         }
+        return brands
+            .map(
+              (json) =>
+                  VehicleBrandModel.fromJson(json as Map<String, dynamic>),
+            )
+            .toList();
       }
       return [];
     } on DioException catch (e) {

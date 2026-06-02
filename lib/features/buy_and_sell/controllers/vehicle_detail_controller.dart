@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../../core/network/network_service.dart';
+import '../../../core/network/endpoints/api_endpoints.dart';
 import '../../../core/storage/secure_storage_service.dart';
 import '../../../core/storage/storage_keys.dart';
 import '../domain/entities/buy_vehicle_entity.dart';
@@ -81,6 +83,8 @@ class BuyVehicleController extends GetxController {
 
   final brands = <VehicleBrandEntity>[].obs;
   final tyres = <VehicleTireEntity>[].obs;
+  final filterStates = <Map<String, String>>[].obs; // [{state_id, state_name}]
+  final isLoadingFilterStates = false.obs;
 
   // ─── Scroll Controller ──────────────────────────────────────
 
@@ -191,6 +195,16 @@ class BuyVehicleController extends GetxController {
       final filterOptions = data['filter_options'];
       if (filterOptions is Map<String, dynamic>) {
         dynamicFilterOptions.assignAll(filterOptions);
+
+        // Load master data for master-source filters in parallel
+        final futures = <Future>[];
+        if (filterOptions.containsKey('Brand')) {
+          futures.add(_loadFilterBrands(categoryCode));
+        }
+        if (filterOptions.containsKey('State')) {
+          futures.add(_loadFilterStates());
+        }
+        if (futures.isNotEmpty) await Future.wait(futures);
       } else {
         dynamicFilterOptions.clear();
       }
@@ -199,6 +213,44 @@ class BuyVehicleController extends GetxController {
       dynamicFilterOptions.clear();
     } finally {
       isLoadingFilters.value = false;
+    }
+  }
+
+  Future<void> _loadFilterBrands(String categoryCode) async {
+    try {
+      final result = await repository.getVehicleBrands(
+        categoryCode: categoryCode,
+      );
+      brands.assignAll(result);
+    } catch (e) {
+      debugPrint('🔴 [FILTER BRANDS ERROR] $e');
+    }
+  }
+
+  Future<void> _loadFilterStates() async {
+    isLoadingFilterStates.value = true;
+    try {
+      final response = await NetworkService.to.get(ApiEndpoints.states);
+      if (response.statusCode == 200) {
+        final raw = response.data;
+        final List<dynamic> list = (raw is Map)
+            ? ((raw['data']?['states'] ?? raw['data'] ?? []) as List)
+            : (raw is List ? raw : []);
+        filterStates.assignAll(
+          list
+              .map(
+                (e) => {
+                  'state_id': e['state_id']?.toString() ?? '',
+                  'state_name': e['state_name']?.toString() ?? '',
+                },
+              )
+              .toList(),
+        );
+      }
+    } catch (e) {
+      debugPrint('🔴 [FILTER STATES ERROR] $e');
+    } finally {
+      isLoadingFilterStates.value = false;
     }
   }
 

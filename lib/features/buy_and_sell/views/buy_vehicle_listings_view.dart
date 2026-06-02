@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/design_system/design_system.dart';
+import '../widgets/buy_filter_sheet.dart';
 import '../../../core/design_system/templates/app_layout.dart';
 import '../../../routes/app_routes.dart';
 import '../controllers/vehicle_detail_controller.dart';
@@ -31,9 +32,113 @@ class BuyVehicleListingsView extends GetView<BuyVehicleController> {
     return AppLayout(
       title: categoryName,
       subtitle: 'Browse available listings',
-      headerExtra: _SearchBar(controller: controller),
       body: Column(
         children: [
+          // ── Search bar + filter icon (white section) ──────────────────────
+          Padding(
+            padding: EdgeInsets.fromLTRB(
+              AppSpacing.md,
+              AppSpacing.sm,
+              AppSpacing.md,
+              0,
+            ),
+            child: Row(
+              children: [
+                // Search field
+                Expanded(
+                  child: SizedBox(
+                    height: 44.h,
+                    child: TextField(
+                      controller: controller.searchController,
+                      style: TextStyle(
+                        fontFamily: 'Montserrat',
+                        fontSize: 13.sp,
+                        color: AppColors.textPrimary,
+                      ),
+                      decoration: InputDecoration(
+                        hintText: 'Search vehicles...',
+                        hintStyle: TextStyle(
+                          fontFamily: 'Montserrat',
+                          fontSize: 13.sp,
+                          color: AppColors.grey400,
+                        ),
+                        prefixIcon: const Icon(
+                          Icons.search_rounded,
+                          color: AppColors.grey400,
+                          size: 18,
+                        ),
+                        suffixIcon: Obx(
+                          () => controller.searchQuery.value.isNotEmpty
+                              ? GestureDetector(
+                                  onTap: () =>
+                                      controller.searchController.clear(),
+                                  child: const Icon(
+                                    Icons.close_rounded,
+                                    color: AppColors.grey400,
+                                    size: 16,
+                                  ),
+                                )
+                              : const SizedBox.shrink(),
+                        ),
+                        contentPadding: EdgeInsets.symmetric(vertical: 10.h),
+                        isDense: true,
+                        filled: true,
+                        fillColor: AppColors.grey50,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: const BorderSide(
+                            color: AppColors.grey200,
+                          ),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: const BorderSide(
+                            color: AppColors.grey200,
+                          ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: const BorderSide(
+                            color: AppColors.primary,
+                            width: 1.5,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(width: AppSpacing.sm),
+                // Filter icon button
+                Obx(() {
+                  final hasFilters = controller.appliedFilters.isNotEmpty;
+                  return GestureDetector(
+                    onTap: () => _showFilterSheet(context, controller),
+                    child: Container(
+                      width: 44.h,
+                      height: 44.h,
+                      decoration: BoxDecoration(
+                        color: hasFilters
+                            ? AppColors.primary
+                            : AppColors.grey50,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                          color: hasFilters
+                              ? AppColors.primary
+                              : AppColors.grey200,
+                        ),
+                      ),
+                      child: Icon(
+                        Icons.tune_rounded,
+                        size: 20,
+                        color: hasFilters ? Colors.white : AppColors.grey600,
+                      ),
+                    ),
+                  );
+                }),
+              ],
+            ),
+          ),
+          SizedBox(height: AppSpacing.xs),
           // ── Active filters strip ──────────────────────────────────────────
           Obx(() {
             if (controller.appliedFilters.isEmpty)
@@ -109,78 +214,11 @@ class BuyVehicleListingsView extends GetView<BuyVehicleController> {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Search Bar (shown in header extra)
+// Filter sheet helper (free function so it can be called from build)
 // ─────────────────────────────────────────────────────────────────────────────
 
-class _SearchBar extends StatelessWidget {
-  final BuyVehicleController controller;
-  const _SearchBar({required this.controller});
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.fromLTRB(
-        AppSpacing.md,
-        0,
-        AppSpacing.md,
-        AppSpacing.sm,
-      ),
-      child: SizedBox(
-        height: 40.h,
-        child: TextField(
-          controller: controller.searchController,
-          style: TextStyle(
-            fontFamily: 'Montserrat',
-            fontSize: 13.sp,
-            color: Colors.white,
-          ),
-          decoration: InputDecoration(
-            hintText: 'Search vehicles...',
-            hintStyle: TextStyle(
-              fontFamily: 'Montserrat',
-              fontSize: 13.sp,
-              color: Colors.white70,
-            ),
-            prefixIcon: const Icon(
-              Icons.search_rounded,
-              color: Colors.white70,
-              size: 18,
-            ),
-            suffixIcon: Obx(
-              () => controller.searchQuery.value.isNotEmpty
-                  ? GestureDetector(
-                      onTap: () {
-                        controller.searchController.clear();
-                      },
-                      child: const Icon(
-                        Icons.close_rounded,
-                        color: Colors.white70,
-                        size: 16,
-                      ),
-                    )
-                  : const SizedBox.shrink(),
-            ),
-            contentPadding: EdgeInsets.symmetric(vertical: 8.h),
-            isDense: true,
-            filled: true,
-            fillColor: Colors.white.withValues(alpha: 0.15),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(20),
-              borderSide: BorderSide.none,
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(20),
-              borderSide: BorderSide.none,
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(20),
-              borderSide: const BorderSide(color: Colors.white30),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
+void _showFilterSheet(BuildContext context, BuyVehicleController controller) {
+  showBuyFilterSheet(context, controller);
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -444,19 +482,143 @@ class _VehicleCard extends StatelessWidget {
 // States
 // ─────────────────────────────────────────────────────────────────────────────
 
-class _ShimmerList extends StatelessWidget {
+class _ShimmerList extends StatefulWidget {
+  @override
+  State<_ShimmerList> createState() => _ShimmerListState();
+}
+
+class _ShimmerListState extends State<_ShimmerList>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _anim;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1200),
+    )..repeat();
+    _anim = Tween<double>(begin: -1.5, end: 2.5).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeInOutSine),
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      padding: EdgeInsets.all(AppSpacing.md),
-      itemCount: 4,
-      itemBuilder: (_, __) => Padding(
-        padding: EdgeInsets.only(bottom: AppSpacing.md),
-        child: Container(
-          height: 280.h,
+    return AnimatedBuilder(
+      animation: _anim,
+      builder: (_, __) => ListView.builder(
+        padding: EdgeInsets.fromLTRB(
+          AppSpacing.md,
+          AppSpacing.sm,
+          AppSpacing.md,
+          100,
+        ),
+        itemCount: 4,
+        itemBuilder: (_, __) => Padding(
+          padding: EdgeInsets.only(bottom: AppSpacing.md),
+          child: _ShimmerCard(anim: _anim),
+        ),
+      ),
+    );
+  }
+}
+
+class _ShimmerCard extends StatelessWidget {
+  final Animation<double> anim;
+  const _ShimmerCard({required this.anim});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(AppRadius.lg),
+        border: Border.all(color: AppColors.grey100),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.03),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // ── Image area ───────────────────────────────────────────────────
+          ClipRRect(
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(AppRadius.lg),
+              topRight: Radius.circular(AppRadius.lg),
+            ),
+            child: _shimmerBox(double.infinity, 180.h),
+          ),
+          // ── Details ──────────────────────────────────────────────────────
+          Padding(
+            padding: EdgeInsets.all(AppSpacing.md),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Title line
+                _shimmerBox(180.w, 16.h, radius: 6),
+                SizedBox(height: 10.h),
+                // Chips row
+                Row(
+                  children: [
+                    _shimmerBox(60.w, 12.h, radius: 4),
+                    SizedBox(width: 8.w),
+                    _shimmerBox(70.w, 12.h, radius: 4),
+                    SizedBox(width: 8.w),
+                    _shimmerBox(50.w, 12.h, radius: 4),
+                  ],
+                ),
+                SizedBox(height: 14.h),
+                // Price + button row
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    _shimmerBox(100.w, 20.h, radius: 6),
+                    _shimmerBox(90.w, 32.h, radius: 20),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _shimmerBox(double width, double height, {double radius = 0}) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(radius),
+      child: SizedBox(
+        width: width,
+        height: height,
+        child: DecoratedBox(
           decoration: BoxDecoration(
-            color: AppColors.grey100,
-            borderRadius: BorderRadius.circular(AppRadius.lg),
+            gradient: LinearGradient(
+              begin: Alignment.centerLeft,
+              end: Alignment.centerRight,
+              colors: const [
+                Color(0xFFEEEEEE),
+                Color(0xFFF8F8F8),
+                Color(0xFFEEEEEE),
+              ],
+              stops: [
+                (anim.value - 1).clamp(0.0, 1.0),
+                anim.value.clamp(0.0, 1.0),
+                (anim.value + 1).clamp(0.0, 1.0),
+              ],
+            ),
           ),
         ),
       ),
