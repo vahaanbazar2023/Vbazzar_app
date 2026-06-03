@@ -34,7 +34,7 @@ class FmsDetailView extends GetView<SpareAndFmsController> {
 
     return AppLayout(
       title: isFromOrders ? 'Order Detail' : 'Spare Part',
-      subtitle: isFromOrders ? 'Order #$orderId' : 'Product Details',
+      subtitle: isFromOrders ? 'Order #$orderId' : 'Product details',
       showBack: true,
       body: Column(
         children: [

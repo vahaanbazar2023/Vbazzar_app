@@ -18,7 +18,7 @@ class SpareFmsHomeView extends GetView<SpareAndFmsController> {
   @override
   Widget build(BuildContext context) {
     return AppLayout(
-      title: 'Spare & FMS',
+      title: 'Spares',
       subtitle: 'Find spare parts and nearby shops',
       showBack: true,
       body: Column(

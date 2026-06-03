@@ -165,14 +165,11 @@ class ProfileScreen extends GetView<ProfileController> {
                       SizedBox(height: 24.h),
                       _MenuSection(
                         title: 'Spare & FMS',
-                        items: const [
+                        items: [
                           _MenuItem(
-                            icon: Icons.build_outlined,
-                            label: 'My Spare Parts',
-                          ),
-                          _MenuItem(
-                            icon: Icons.local_shipping_outlined,
-                            label: 'My FMS',
+                            icon: Icons.receipt_long_rounded,
+                            label: 'My Bookings',
+                            onTap: () => Get.toNamed(AppRoutes.spareOrders),
                           ),
                         ],
                       ),

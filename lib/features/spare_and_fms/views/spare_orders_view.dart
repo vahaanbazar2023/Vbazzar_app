@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_sizes.dart';
+import '../../../core/design_system/templates/app_layout.dart';
 import '../../../core/design_system/tokens/app_spacing.dart';
 import '../../../theme/app_fonts.dart';
 import '../controllers/spare_and_fms_controller.dart';
@@ -14,14 +15,10 @@ class SpareOrdersView extends GetView<SpareAndFmsController> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('My Bookings'),
-        backgroundColor: AppColors.white,
-        foregroundColor: AppColors.black,
-        elevation: 0,
-      ),
-      backgroundColor: AppColors.grey100,
+    return AppLayout(
+      title: 'My Bookings',
+      subtitle: 'Your spare parts orders',
+      showBack: true,
       body: Obx(() {
         // Loading state
         if (controller.isSpareOrdersLoading.value &&

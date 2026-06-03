@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_sizes.dart';
+import '../../../core/design_system/templates/app_layout.dart';
 import '../../../core/design_system/tokens/app_spacing.dart';
 import '../../../theme/app_fonts.dart';
 import '../controllers/spare_and_fms_controller.dart';
@@ -19,20 +20,35 @@ class ShopListView extends GetView<SpareAndFmsController> {
     final args = Get.arguments as Map<String, dynamic>? ?? {};
     final category = args['category'] as String? ?? 'CE';
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('$category Shops Nearby'),
-        backgroundColor: AppColors.white,
-        foregroundColor: AppColors.black,
-        elevation: 0,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.refresh),
-            onPressed: () => controller.refreshLocationAndReloadShops(),
+    // Trigger shop loading when this view is opened
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (controller.currentShopCategory.value != category ||
+          !controller.hasShopsInitiallyLoaded.value) {
+        controller.loadShopsByCategory(category);
+      }
+    });
+
+    final title = category == 'CE'
+        ? 'Construction Equipment Shops'
+        : 'Commercial Vehicle Shops';
+
+    return AppLayout(
+      title: title,
+      subtitle: 'Shops near your location',
+      showBack: true,
+      actions: [
+        GestureDetector(
+          onTap: () => controller.refreshLocationAndReloadShops(),
+          child: Padding(
+            padding: EdgeInsets.only(right: AppSpacing.md),
+            child: Icon(
+              Icons.my_location_rounded,
+              color: AppColors.white,
+              size: 22.r,
+            ),
           ),
-        ],
-      ),
-      backgroundColor: AppColors.grey100,
+        ),
+      ],
       body: Obx(() {
         // Loading state
         if (controller.isShopsLoading.value) {
@@ -69,11 +85,9 @@ class ShopListView extends GetView<SpareAndFmsController> {
             itemCount: controller.shopsListData.length,
             itemBuilder: (context, index) {
               final shop = controller.shopsListData[index];
-              return ShopCard(
-                shop: shop,
-                hasMobileNumber: controller.hasShopMobileNumber(shop),
-                showSubscribeButton: true,
-                onSubscribe: () => controller.subscribeToShop(shop),
+                    return ShopCard(
+                      shop: shop,
+                      onContact: () => controller.subscribeToShop(shop),
                 onCall: controller.hasShopMobileNumber(shop)
                     ? () {
                         // TODO: Implement phone call via url_launcher

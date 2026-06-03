@@ -478,31 +478,41 @@ class SpareAndFmsController extends GetxController
   }
 
   void enableLocationFromUI() async {
-    final serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-      _showEnableGpsDialog();
-      return;
-    }
+    try {
+      final serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      if (!serviceEnabled) {
+        _showEnableGpsDialog();
+        return;
+      }
 
-    LocationPermission permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) return;
-    }
+      LocationPermission permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+        if (permission == LocationPermission.denied) return;
+      }
 
-    if (permission == LocationPermission.deniedForever) {
-      _showOpenSettingsDialog();
-      return;
-    }
+      if (permission == LocationPermission.deniedForever) {
+        _showOpenSettingsDialog();
+        return;
+      }
 
-    final position = await Geolocator.getCurrentPosition(
-      desiredAccuracy: LocationAccuracy.high,
-    );
-    _userLatitude = position.latitude;
-    _userLongitude = position.longitude;
+      final position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+      );
+      _userLatitude = position.latitude;
+      _userLongitude = position.longitude;
 
-    if (currentShopCategory.value.isNotEmpty) {
-      loadShopsByCategory(currentShopCategory.value);
+      if (currentShopCategory.value.isNotEmpty) {
+        loadShopsByCategory(currentShopCategory.value);
+      }
+    } catch (e) {
+      Get.snackbar(
+        'Location Error',
+        'Unable to access location. Please restart the app and try again.',
+        backgroundColor: AppColors.error,
+        colorText: AppColors.white,
+        duration: const Duration(seconds: 4),
+      );
     }
   }
 
