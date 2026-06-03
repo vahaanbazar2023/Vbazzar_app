@@ -72,12 +72,16 @@ class ApiEndpoints {
   static const String placeBid = '$auctionPrefix/place-bid';
   static const String myBids = '$auctionPrefix/my-bids';
   static const String myWins = '$auctionPrefix/my-wins';
+  static const String myBidsPaginated =
+      '$auctionPrefix/auction-my-bids-pagination';
+  static const String myWinsPaginated =
+      '$auctionPrefix/auction-my-wins-pagination';
   static const String winningLetter = '$auctionPrefix/winning-letter';
   static const String updateInsuranceInterest =
       '$auctionPrefix/update-insurance-interest';
-  static const String regions = '$auctionPrefix/regions';
+  static const String regions = '$locationPrefix/regions';
   static String statesByRegion(String regionId) =>
-      '$auctionPrefix/states/$regionId';
+      '$locationPrefix/regions/$regionId/states';
   static const String vehicleSearch = '$auctionPrefix/vehicle-search';
   static const String auctionRefundInitiate = '$auctionPrefix/refund-initiate';
   static const String vehicleExcelDownload =

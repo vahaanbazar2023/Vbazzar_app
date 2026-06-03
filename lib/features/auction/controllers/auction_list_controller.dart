@@ -13,16 +13,13 @@ import '../services/auction_service.dart';
 ///
 /// Manages auctions across 3 tabs (Live, Closing Today, Upcoming) and
 /// provides filter state for Category, Vehicle Type, Region, and State.
-class AuctionListController extends GetxController
-    with GetTickerProviderStateMixin {
+class AuctionListController extends GetxController {
   final AuctionService _service;
 
   AuctionListController({AuctionService? service})
-      : _service = service ?? AuctionService();
+    : _service = service ?? AuctionService();
 
   // ─── Tab state ────────────────────────────────────────────────
-
-  late final TabController tabController;
 
   static const tabTypes = [
     'live_auctions',
@@ -55,7 +52,7 @@ class AuctionListController extends GetxController
   final isLoadingRegions = false.obs;
   final isLoadingStatesByRegion = false.obs;
 
-  // Backup for cancel support
+  // Backup for cancel support — kept for API compatibility
   String? _backupCategory;
   String? _backupVehicleType;
   RegionEntity? _backupRegion;
@@ -72,25 +69,15 @@ class AuctionListController extends GetxController
   @override
   void onInit() {
     super.onInit();
-    tabController = TabController(length: 3, vsync: this);
-
-    _loadTab(tabController.index);
-    tabController.addListener(() {
-      if (!tabController.indexIsChanging) {
-        _loadTab(tabController.index);
-      }
-    });
-
+    _loadTab(0);
     for (int i = 0; i < 3; i++) {
       scrollControllers[i].addListener(() => _onScroll(i));
     }
-
     _fetchRegions();
   }
 
   @override
   void onClose() {
-    tabController.dispose();
     for (final sc in scrollControllers) {
       sc.dispose();
     }
@@ -159,8 +146,7 @@ class AuctionListController extends GetxController
   void _onScroll(int tabIndex) {
     final sc = scrollControllers[tabIndex];
     if (!sc.hasClients) return;
-    final nearBottom =
-        sc.position.pixels >= sc.position.maxScrollExtent - 200;
+    final nearBottom = sc.position.pixels >= sc.position.maxScrollExtent - 200;
     if (nearBottom &&
         !_tabs[tabIndex].isLoadingMore.value &&
         _tabs[tabIndex].pagination.value.hasNext) {
@@ -170,7 +156,7 @@ class AuctionListController extends GetxController
 
   Future<void> reloadTab(int tabIndex) => _loadTab(tabIndex, refresh: true);
 
-  Future<void> reloadCurrentTab() => _loadTab(tabController.index, refresh: true);
+  Future<void> reloadCurrentTab() => _loadTab(0, refresh: true);
 
   // ─── Regions & States ─────────────────────────────────────────
 
@@ -179,23 +165,28 @@ class AuctionListController extends GetxController
     try {
       final NetworkService network = Get.find<NetworkService>();
       final response = await network.get(ApiEndpoints.regions);
-      final data = response.data['data'];
-
+      final raw = response.data;
+      // Handle both { data: { regions: [...] } } and { data: [...] }
+      final data = raw is Map ? raw['data'] : null;
       List<dynamic> regionsList = [];
       if (data is Map<String, dynamic>) {
-        regionsList = data['regions'] as List<dynamic>? ?? [];
+        regionsList =
+            data['regions'] as List<dynamic>? ??
+            data['data'] as List<dynamic>? ??
+            [];
       } else if (data is List) {
         regionsList = data;
       }
-
       regions.value = regionsList
-          .map((e) => RegionEntity(
-                regionId: e['region_id'] as String? ?? '',
-                name: e['name'] as String? ?? '',
-              ))
+          .map(
+            (e) => RegionEntity(
+              regionId: e['region_id']?.toString() ?? '',
+              name: e['name']?.toString() ?? '',
+            ),
+          )
           .toList();
     } catch (_) {
-      // Silently handle
+      // Silently handle — region filter will just be empty
     } finally {
       isLoadingRegions.value = false;
     }
@@ -219,11 +210,50 @@ class AuctionListController extends GetxController
       }
 
       statesByRegion.value = statesList
-          .map((e) => StateByRegionEntity(
-                stateId: e['state_id'] as String? ?? '',
-                stateName: e['state_name'] as String? ?? '',
-                regionId: e['region_id'] as String? ?? '',
-              ))
+          .map(
+            (e) => StateByRegionEntity(
+              stateId: e['state_id'] as String? ?? '',
+              stateName: e['state_name'] as String? ?? '',
+              regionId: e['region_id'] as String? ?? '',
+            ),
+          )
+          .toList();
+    } catch (_) {
+      // Silently handle
+    } finally {
+      isLoadingStatesByRegion.value = false;
+    }
+  }
+
+  /// Loads all states using /api/v1/locations/states (no region filter).
+  /// Used by the State filter field in the filter sheet.
+  Future<void> loadAllStates() async {
+    if (statesByRegion.isNotEmpty) return; // already loaded
+    isLoadingStatesByRegion.value = true;
+    try {
+      final NetworkService network = Get.find<NetworkService>();
+      final response = await network.get(ApiEndpoints.states);
+      final raw = response.data;
+      final data = raw is Map ? raw['data'] : null;
+
+      List<dynamic> list = [];
+      if (data is Map<String, dynamic>) {
+        list =
+            data['states'] as List<dynamic>? ??
+            data['data'] as List<dynamic>? ??
+            [];
+      } else if (data is List) {
+        list = data;
+      }
+
+      statesByRegion.value = list
+          .map(
+            (e) => StateByRegionEntity(
+              stateId: e['state_id']?.toString() ?? '',
+              stateName: e['state_name']?.toString() ?? '',
+              regionId: e['region_id']?.toString() ?? '',
+            ),
+          )
           .toList();
     } catch (_) {
       // Silently handle
@@ -286,7 +316,7 @@ class AuctionListController extends GetxController
     for (int i = 0; i < 3; i++) {
       _tabs[i].initialized = false;
     }
-    _loadTab(tabController.index, refresh: true);
+    _loadTab(0, refresh: true);
   }
 }
 

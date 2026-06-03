@@ -11,6 +11,7 @@ import '../../../core/design_system/tokens/app_spacing.dart';
 import '../../../routes/app_routes.dart';
 import '../controllers/auction_controller.dart';
 import '../models/auction_listing.dart';
+import 'auction_filter_bottom_sheet.dart';
 
 class AuctionTab extends GetView<AuctionController> {
   const AuctionTab({super.key});
@@ -56,7 +57,7 @@ class AuctionTab extends GetView<AuctionController> {
                 Expanded(child: _SearchBar()),
                 SizedBox(width: AppSpacing.sm),
                 GestureDetector(
-                  onTap: () {},
+                  onTap: () => AuctionFilterBottomSheet.show(context),
                   child: Image.asset(
                     AppAssets.filterPng,
                     width: 28.r,

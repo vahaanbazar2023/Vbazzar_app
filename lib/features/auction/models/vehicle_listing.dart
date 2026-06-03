@@ -119,7 +119,7 @@ class VehicleListing {
       fuelType: json['fuel_type'] as String? ?? '',
       kilometers: (json['kilometers'] as num?)?.toInt() ?? 0,
       colour: json['colour'] as String? ?? '',
-      marketValue: json['market_value'] as String? ?? '0.00',
+      marketValue: (json['market_value'])?.toString() ?? '0.00',
       maxBids: (json['max_bids'] as num?)?.toInt() ?? 0,
       images: rawImages
           .map(_resolveImageUrl)

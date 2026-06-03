@@ -22,8 +22,11 @@ import '../features/auction/views/auction_type_screen.dart';
 import '../features/auction/views/autction_tab.dart';
 import '../features/auction/views/acution_vechile_listing.dart';
 import '../features/auction/views/acution_vechile_detail.dart';
+import '../features/auction/views/my_bids_view.dart';
+import '../features/auction/views/my_wins_view.dart';
 import '../features/auction/auction_binding.dart';
 import '../features/auction/vehicle_listing_binding.dart';
+import '../features/auction/controllers/my_bids_wins_controller.dart';
 import 'app_routes.dart';
 import '../features/buy_and_sell/views/buy_sell_home_view.dart';
 import '../features/buy_and_sell/views/sell_view.dart';
@@ -148,6 +151,22 @@ class AppPages {
     GetPage(
       name: AppRoutes.vehicleDetail,
       page: () => const AuctionVehicleDetailScreen(),
+      transition: Transition.rightToLeft,
+    ),
+    GetPage(
+      name: AppRoutes.myBids,
+      page: () => const MyBidsView(),
+      binding: BindingsBuilder(() {
+        Get.lazyPut(() => MyBidsController());
+      }),
+      transition: Transition.rightToLeft,
+    ),
+    GetPage(
+      name: AppRoutes.myWins,
+      page: () => const MyWinsView(),
+      binding: BindingsBuilder(() {
+        Get.lazyPut(() => MyWinsController());
+      }),
       transition: Transition.rightToLeft,
     ),
     GetPage(

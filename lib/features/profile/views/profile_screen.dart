@@ -105,16 +105,18 @@ class ProfileScreen extends GetView<ProfileController> {
                       SizedBox(height: 24.h),
                       _MenuSection(
                         title: 'Auctions',
-                        items: const [
+                        items: [
                           _MenuItem(
                             icon: Icons.emoji_events_outlined,
                             label: 'My Wins',
+                            onTap: () => Get.toNamed(AppRoutes.myWins),
                           ),
                           _MenuItem(
                             icon: Icons.gavel_outlined,
                             label: 'My Bids',
+                            onTap: () => Get.toNamed(AppRoutes.myBids),
                           ),
-                          _MenuItem(
+                          const _MenuItem(
                             icon: Icons.currency_rupee_outlined,
                             label: 'Initiate Refund',
                           ),

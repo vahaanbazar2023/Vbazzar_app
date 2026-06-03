@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
-import '../../../core/constants/app_assets.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/design_system/design_system.dart';
+import '../../../core/design_system/molecules/custom_autocomplete_field.dart';
+import '../../../core/design_system/molecules/inline_dropdown_field.dart';
 import '../controllers/auction_list_controller.dart';
 import '../domain/entities/auction_entity.dart';
-import '../domain/entities/bid_entity.dart';
 import '../utils/auction_utils.dart';
 
 /// A modern, stylish filter bottom sheet for the Auction screen.
@@ -16,7 +16,9 @@ class AuctionFilterBottomSheet extends StatelessWidget {
   const AuctionFilterBottomSheet({super.key});
 
   static Future<void> show(BuildContext context) {
-    final controller = Get.find<AuctionListController>();
+    final controller = Get.isRegistered<AuctionListController>()
+        ? Get.find<AuctionListController>()
+        : Get.put(AuctionListController());
     controller.backupCurrentFilters();
 
     return showModalBottomSheet(
@@ -29,7 +31,9 @@ class AuctionFilterBottomSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.find<AuctionListController>();
+    final controller = Get.isRegistered<AuctionListController>()
+        ? Get.find<AuctionListController>()
+        : Get.put(AuctionListController());
 
     return Container(
       height: MediaQuery.of(context).size.height * 0.72,
@@ -146,9 +150,12 @@ class AuctionFilterBottomSheet extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // ── Category ────────────────────────────────────
-                  _FilterSectionLabel(label: 'Category', icon: Icons.category_outlined),
+                  _FilterSectionLabel(
+                    label: 'Category',
+                    icon: Icons.category_outlined,
+                  ),
                   SizedBox(height: 8.h),
-                  _CategoryDropdown(controller: controller),
+                  _CategoryField(controller: controller),
                   SizedBox(height: 20.h),
 
                   // ── Vehicle Type ────────────────────────────────
@@ -157,7 +164,7 @@ class AuctionFilterBottomSheet extends StatelessWidget {
                     icon: Icons.directions_car_outlined,
                   ),
                   SizedBox(height: 8.h),
-                  _VehicleTypeDropdown(controller: controller),
+                  _VehicleTypeField(controller: controller),
                   SizedBox(height: 20.h),
 
                   // ── Region ──────────────────────────────────────
@@ -166,16 +173,16 @@ class AuctionFilterBottomSheet extends StatelessWidget {
                     icon: Icons.map_outlined,
                   ),
                   SizedBox(height: 8.h),
-                  _RegionDropdown(controller: controller),
+                  _RegionField(controller: controller),
                   SizedBox(height: 20.h),
 
-                  // ── State ───────────────────────────────────────
+                  // ── State (CustomAutocompleteField) ─────────────
                   _FilterSectionLabel(
                     label: 'State',
                     icon: Icons.location_city_outlined,
                   ),
                   SizedBox(height: 8.h),
-                  _StateDropdown(controller: controller),
+                  _StateField(controller: controller),
                   SizedBox(height: 16.h),
                 ],
               ),
@@ -281,262 +288,122 @@ class _FilterSectionLabel extends StatelessWidget {
   }
 }
 
-// ─── Styled Dropdown Wrapper ───────────────────────────────────────────────
+// ─── Category — InlineDropdownField ────────────────────────────────────────
 
-class _StyledDropdown<T> extends StatelessWidget {
-  final T? value;
-  final String hint;
-  final IconData icon;
-  final List<DropdownMenuItem<T>> items;
-  final ValueChanged<T?>? onChanged;
-  final bool isLoading;
-  final bool isDisabled;
-
-  const _StyledDropdown({
-    required this.value,
-    required this.hint,
-    required this.icon,
-    required this.items,
-    this.onChanged,
-    this.isLoading = false,
-    this.isDisabled = false,
-  });
+class _CategoryField extends StatelessWidget {
+  final AuctionListController controller;
+  const _CategoryField({required this.controller});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: isDisabled ? AppColors.grey100 : AppColors.white,
-        borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(
-          color: value != null && !isDisabled
-              ? AppColors.primary.withOpacity(0.4)
-              : AppColors.grey300,
-          width: value != null && !isDisabled ? 1.5 : 1,
-        ),
+    return Obx(
+      () => InlineDropdownField<String>(
+        value: controller.selectedCategory.value,
+        items: AuctionUtils.categoryOptions,
+        placeholder: 'Select Category',
+        prefixIcon: Icons.category_outlined,
+        itemLabel: (v) => v,
+        onChanged: (val) => controller.onCategoryChanged(val),
       ),
-      child: isLoading
-          ? Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: 16.w,
-                vertical: 14.h,
-              ),
-              child: Row(
-                children: [
-                  SizedBox(
-                    width: 18.r,
-                    height: 18.r,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      color: AppColors.primary,
-                    ),
-                  ),
-                  SizedBox(width: 12.w),
-                  Text(
-                    'Loading...',
-                    style: TextStyle(
-                      fontFamily: 'Montserrat',
-                      fontSize: 13.sp,
-                      color: AppColors.grey500,
-                    ),
-                  ),
-                ],
-              ),
-            )
-          : DropdownButtonHideUnderline(
-              child: DropdownButton<T>(
-                value: value,
-                hint: Row(
-                  children: [
-                    Icon(icon, size: 18.r, color: AppColors.grey400),
-                    SizedBox(width: 10.w),
-                    Text(
-                      hint,
-                      style: TextStyle(
-                        fontFamily: 'Montserrat',
-                        fontSize: 13.sp,
-                        color: AppColors.grey500,
-                      ),
-                    ),
-                  ],
-                ),
-                isExpanded: true,
-                icon: Padding(
-                  padding: EdgeInsets.only(right: 12.w),
-                  child: Icon(
-                    Icons.keyboard_arrow_down_rounded,
-                    color: isDisabled ? AppColors.grey400 : AppColors.grey600,
-                    size: 22.r,
-                  ),
-                ),
-                padding: EdgeInsets.symmetric(horizontal: 12.w),
-                borderRadius: BorderRadius.circular(12.r),
-                dropdownColor: AppColors.white,
-                style: TextStyle(
-                  fontFamily: 'Montserrat',
-                  fontSize: 13.sp,
-                  color: AppColors.grey900,
-                ),
-                items: items,
-                onChanged: isDisabled ? null : onChanged,
-              ),
-            ),
     );
   }
 }
 
-// ─── Category Dropdown ─────────────────────────────────────────────────────
+// ─── Vehicle Type — InlineDropdownField ────────────────────────────────────
 
-class _CategoryDropdown extends StatelessWidget {
+class _VehicleTypeField extends StatelessWidget {
   final AuctionListController controller;
-
-  const _CategoryDropdown({required this.controller});
+  const _VehicleTypeField({required this.controller});
 
   @override
   Widget build(BuildContext context) {
-    return Obx(() {
-      return _StyledDropdown<String>(
-        value: controller.selectedCategory.value,
-        hint: 'Select Category',
-        icon: Icons.category_outlined,
-        items: AuctionUtils.categoryOptions
-            .map(
-              (cat) => DropdownMenuItem<String>(
-                value: cat,
-                child: Row(
-                  children: [
-                    Container(
-                      width: 6.r,
-                      height: 6.r,
-                      decoration: BoxDecoration(
-                        color: AppColors.primary,
-                        shape: BoxShape.circle,
-                      ),
-                    ),
-                    SizedBox(width: 10.w),
-                    Text(cat),
-                  ],
-                ),
-              ),
-            )
-            .toList(),
-        onChanged: (val) => controller.onCategoryChanged(val),
-      );
-    });
-  }
-}
-
-// ─── Vehicle Type Dropdown ─────────────────────────────────────────────────
-
-class _VehicleTypeDropdown extends StatelessWidget {
-  final AuctionListController controller;
-
-  const _VehicleTypeDropdown({required this.controller});
-
-  @override
-  Widget build(BuildContext context) {
-    return Obx(() {
-      return _StyledDropdown<String>(
+    return Obx(
+      () => InlineDropdownField<String>(
         value: controller.selectedVehicleType.value,
-        hint: 'Select Vehicle Type',
-        icon: Icons.directions_car_outlined,
-        items: AuctionUtils.vehicleTypeOptions
-            .map(
-              (type) => DropdownMenuItem<String>(
-                value: type,
-                child: Row(
-                  children: [
-                    Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 6.w,
-                        vertical: 2.h,
-                      ),
-                      decoration: BoxDecoration(
-                        color: AppColors.primary.withOpacity(0.08),
-                        borderRadius: BorderRadius.circular(4.r),
-                      ),
-                      child: Text(
-                        type,
-                        style: TextStyle(
-                          fontFamily: 'Montserrat',
-                          fontSize: 12.sp,
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.primary,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            )
-            .toList(),
+        items: AuctionUtils.vehicleTypeOptions,
+        placeholder: 'Select Vehicle Type',
+        prefixIcon: Icons.directions_car_outlined,
+        itemLabel: (v) => v,
         onChanged: (val) => controller.onVehicleTypeChanged(val),
-      );
-    });
+      ),
+    );
   }
 }
 
-// ─── Region Dropdown ───────────────────────────────────────────────────────
+// ─── Region — InlineDropdownField ──────────────────────────────────────────
 
-class _RegionDropdown extends StatelessWidget {
+class _RegionField extends StatelessWidget {
   final AuctionListController controller;
-
-  const _RegionDropdown({required this.controller});
+  const _RegionField({required this.controller});
 
   @override
   Widget build(BuildContext context) {
-    return Obx(() {
-      return _StyledDropdown<RegionEntity>(
+    return Obx(
+      () => InlineDropdownField<RegionEntity>(
         value: controller.selectedRegion.value,
-        hint: 'Select Region',
-        icon: Icons.map_outlined,
+        items: controller.regions,
+        placeholder: 'Select Region',
+        prefixIcon: Icons.map_outlined,
         isLoading: controller.isLoadingRegions.value,
-        items: controller.regions
-            .map(
-              (region) => DropdownMenuItem<RegionEntity>(
-                value: region,
-                child: Text(region.name),
-              ),
-            )
-            .toList(),
+        itemLabel: (r) => r.name,
         onChanged: (val) => controller.onRegionChanged(val),
-      );
-    });
+      ),
+    );
   }
 }
 
-// ─── State Dropdown ────────────────────────────────────────────────────────
+// ─── State — CustomAutocompleteField (region-dependent) ────────────────────
 
-class _StateDropdown extends StatelessWidget {
+class _StateField extends StatefulWidget {
   final AuctionListController controller;
+  const _StateField({required this.controller});
 
-  const _StateDropdown({required this.controller});
+  @override
+  State<_StateField> createState() => _StateFieldState();
+}
+
+class _StateFieldState extends State<_StateField> {
+  late final TextEditingController _textCtrl;
+
+  @override
+  void initState() {
+    super.initState();
+    _textCtrl = TextEditingController(
+      text: widget.controller.selectedState.value?.stateName ?? '',
+    );
+  }
+
+  @override
+  void dispose() {
+    _textCtrl.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Obx(() {
-      final isDisabled = controller.selectedRegion.value == null;
-      final isValidState = controller.statesByRegion.contains(
-        controller.selectedState.value,
-      );
+      final isDisabled = widget.controller.selectedRegion.value == null;
+      final states = widget.controller.statesByRegion;
+      final isLoading = widget.controller.isLoadingStatesByRegion.value;
 
-      return _StyledDropdown<StateByRegionEntity>(
-        value: isValidState ? controller.selectedState.value : null,
-        hint: isDisabled ? 'Select Region First' : 'Select State',
-        icon: Icons.location_city_outlined,
-        isLoading: controller.isLoadingStatesByRegion.value,
-        isDisabled: isDisabled,
-        items: controller.statesByRegion
-            .map(
-              (state) => DropdownMenuItem<StateByRegionEntity>(
-                value: state,
-                child: Text(state.stateName),
-              ),
-            )
-            .toList(),
-        onChanged: isDisabled
-            ? null
-            : (val) => controller.onStateChanged(val),
+      if (isDisabled && _textCtrl.text.isNotEmpty) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted) _textCtrl.clear();
+        });
+      }
+
+      return CustomAutocompleteField<StateByRegionEntity>(
+        controller: _textCtrl,
+        options: states,
+        placeholder: isDisabled ? 'Select a Region first' : 'Search state...',
+        prefixIcon: Icons.location_city_outlined,
+        isLoading: isLoading,
+        enabled: !isDisabled,
+        displayStringForOption: (s) => s.stateName,
+        forceSelection: true,
+        maxDropdownHeight: 220,
+        onSelected: (s) => widget.controller.onStateChanged(s),
+        onChanged: (_) {},
       );
     });
   }
