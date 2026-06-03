@@ -69,7 +69,8 @@ class ApiEndpoints {
       '$auctionPrefix/auction-listings-pagination';
   static const String auctionVehicleListings =
       '$auctionPrefix/vehicle-listings-pagination';
-  static const String placeBid = '$auctionPrefix/place-bid';
+  static const String placeBid = '$auctionPrefix/auction-vehicle-bid';
+
   static const String myBids = '$auctionPrefix/my-bids';
   static const String myWins = '$auctionPrefix/my-wins';
   static const String myBidsPaginated =

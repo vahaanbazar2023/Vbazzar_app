@@ -4,9 +4,11 @@ import 'package:get/get.dart';
 
 import '../../../core/constants/app_colors.dart';
 import '../../../core/design_system/design_system.dart';
+import '../../../core/design_system/molecules/custom_snackbar.dart';
 import '../../../core/design_system/templates/app_layout.dart';
-import '../../../core/design_system/tokens/app_radius.dart';
 import '../../../core/design_system/tokens/app_spacing.dart';
+import '../controllers/vehicle_listing_controller.dart';
+import '../models/auction_listing.dart';
 import '../models/vehicle_listing.dart';
 
 class AuctionVehicleDetailScreen extends StatelessWidget {
@@ -15,8 +17,44 @@ class AuctionVehicleDetailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final args = Get.arguments as Map<String, dynamic>? ?? {};
-    final VehicleListing v = args['vehicle'] as VehicleListing;
+    final vehicle = args['vehicle'] as VehicleListing?;
+
+    if (vehicle == null) {
+      return AppLayout(
+        title: 'Place Bid',
+        showBack: true,
+        body: const Center(child: Text('Vehicle not found')),
+      );
+    }
+
+    final VehicleListing v = vehicle;
     final String endAt = args['endAt'] as String? ?? '';
+    // Ensure controller is available — create standalone instance if not registered via binding
+    final ctrl = Get.isRegistered<VehicleListingController>()
+        ? Get.find<VehicleListingController>()
+        : Get.put(
+            VehicleListingController(
+              auction: AuctionListing(
+                auctionId: v.auctionId,
+                auctionTitle: '',
+                startAt: '',
+                endAt: endAt,
+                vehicleCount: 0,
+                status: '',
+                insertedAt: '',
+                updatedAt: '',
+                category: '',
+                vehicleType: '',
+                regionId: '',
+                stateId: '',
+              ),
+            ),
+            tag: v.vehicleId,
+          );
+
+    debugPrint(
+      '🎯 [BidDetail] ctrl=${ctrl.runtimeType}, vehicleId=${v.vehicleId}',
+    );
 
     return AppLayout(
       title: 'Place Bid',
@@ -215,9 +253,14 @@ class AuctionVehicleDetailScreen extends StatelessWidget {
                 ),
                 SizedBox(width: AppSpacing.md),
                 Expanded(
-                  child: GradientButton.filled(
-                    text: 'Bid Now',
-                    onPressed: () {},
+                  child: Obx(
+                    () => GradientButton.filled(
+                      text: 'Bid Now',
+                      isLoading: ctrl.isPlacingBid.value,
+                      onPressed: ctrl.isPlacingBid.value
+                          ? null
+                          : () => _showBidDialog(context, v, ctrl),
+                    ),
                   ),
                 ),
               ],
@@ -240,8 +283,298 @@ class AuctionVehicleDetailScreen extends StatelessWidget {
     }
     return buf.toString().split('').reversed.join('');
   }
+
+  static void _showBidDialog(
+    BuildContext context,
+    VehicleListing v,
+    VehicleListingController ctrl,
+  ) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) => _BidSheet(vehicle: v, ctrl: ctrl),
+    );
+  }
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Bid placement bottom sheet
+// ─────────────────────────────────────────────────────────────────────────────
+
+class _BidSheet extends StatefulWidget {
+  final VehicleListing vehicle;
+  final VehicleListingController ctrl;
+  const _BidSheet({required this.vehicle, required this.ctrl});
+
+  @override
+  State<_BidSheet> createState() => _BidSheetState();
+}
+
+class _BidSheetState extends State<_BidSheet> {
+  final _amountCtrl = TextEditingController();
+  bool _isSubmitting = false;
+  String? _errorText;
+
+  @override
+  void dispose() {
+    _amountCtrl.dispose();
+    super.dispose();
+  }
+
+  static String _fmt(int n) {
+    if (n == 0) return '0';
+    final s = n.toString();
+    final buf = StringBuffer();
+    int c = 0;
+    for (int i = s.length - 1; i >= 0; i--) {
+      if (c > 0 && c % 3 == 0) buf.write(',');
+      buf.write(s[i]);
+      c++;
+    }
+    return buf.toString().split('').reversed.join();
+  }
+
+  Future<void> _submit() async {
+    debugPrint('🔵 [BidSheet] _submit called, amount=${_amountCtrl.text}');
+    final raw = _amountCtrl.text.replaceAll(',', '').trim();
+    final amount = int.tryParse(raw);
+    if (amount == null || amount <= 0) {
+      setState(() => _errorText = 'Enter a valid bid amount');
+      return;
+    }
+    if (amount % 100 != 0) {
+      setState(() => _errorText = 'Bid amount must be a multiple of ₹100');
+      return;
+    }
+    setState(() {
+      _errorText = null;
+      _isSubmitting = true;
+    });
+
+    final error = await widget.ctrl.placeBid(
+      vehicle: widget.vehicle,
+      bidAmount: amount,
+    );
+
+    if (!mounted) return;
+    setState(() => _isSubmitting = false);
+
+    if (error == '__navigated__') {
+      // Already navigated to subscription screen — just close sheet silently
+      if (Navigator.of(context).canPop()) Navigator.of(context).pop();
+    } else if (error == null) {
+      // Genuine success
+      if (Navigator.of(context).canPop()) Navigator.of(context).pop();
+      CustomSnackbar.show(
+        message: 'Bid placed successfully!',
+        type: SnackbarType.success,
+      );
+    } else {
+      setState(() => _errorText = error);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final v = widget.vehicle;
+    final keyboardH = MediaQuery.of(context).viewInsets.bottom;
+
+    return Padding(
+      padding: EdgeInsets.only(bottom: keyboardH),
+      child: Container(
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+        ),
+        child: SafeArea(
+          top: false,
+          child: Padding(
+            padding: EdgeInsets.fromLTRB(20, 8, 20, 16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Drag handle
+                Center(
+                  child: Container(
+                    width: 40,
+                    height: 4,
+                    margin: const EdgeInsets.only(bottom: 16),
+                    decoration: BoxDecoration(
+                      color: AppColors.grey300,
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
+                ),
+                // Title
+                Text(
+                  'Place Your Bid',
+                  style: TextStyle(
+                    fontFamily: 'Montserrat',
+                    fontSize: 18.sp,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.black,
+                  ),
+                ),
+                Text(
+                  '${v.make} ${v.model} · ${v.registrationNo}',
+                  style: TextStyle(
+                    fontFamily: 'Plus Jakarta Sans',
+                    fontSize: 12.sp,
+                    color: AppColors.grey500,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                // Bid info strip
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 12,
+                  ),
+                  decoration: BoxDecoration(
+                    color: AppColors.grey50,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: AppColors.grey200),
+                  ),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: _BidInfoItem(
+                          label: 'Min. Bid',
+                          value: '₹${_fmt(v.minimumPrice)}',
+                        ),
+                      ),
+                      Container(width: 1, height: 32, color: AppColors.grey200),
+                      Expanded(
+                        child: _BidInfoItem(
+                          label: 'Bids Left',
+                          value: v.bidsLeft.toString().padLeft(2, '0'),
+                        ),
+                      ),
+                      Container(width: 1, height: 32, color: AppColors.grey200),
+                      Expanded(
+                        child: _BidInfoItem(
+                          label: 'Bids Received',
+                          value: v.bidsReceived.toString().padLeft(2, '0'),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 16),
+                // Amount input
+                Text(
+                  'Your Bid Amount',
+                  style: TextStyle(
+                    fontFamily: 'Montserrat',
+                    fontSize: 13.sp,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.grey700,
+                  ),
+                ),
+                const SizedBox(height: 6),
+                TextField(
+                  controller: _amountCtrl,
+                  keyboardType: TextInputType.number,
+                  autofocus: true,
+                  onChanged: (_) {
+                    if (_errorText != null) setState(() => _errorText = null);
+                  },
+                  style: TextStyle(
+                    fontFamily: 'Montserrat',
+                    fontSize: 20.sp,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.black,
+                  ),
+                  decoration: InputDecoration(
+                    hintText: '0',
+                    prefixText: '₹ ',
+                    prefixStyle: TextStyle(
+                      fontFamily: 'Montserrat',
+                      fontSize: 20.sp,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.primary,
+                    ),
+                    errorText: _errorText,
+                    filled: true,
+                    fillColor: AppColors.grey50,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(14),
+                      borderSide: BorderSide(color: AppColors.grey300),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(14),
+                      borderSide: BorderSide(color: AppColors.grey300),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(14),
+                      borderSide: const BorderSide(
+                        color: AppColors.primary,
+                        width: 2,
+                      ),
+                    ),
+                    errorBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(14),
+                      borderSide: const BorderSide(color: AppColors.error),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                GradientButton.filled(
+                  text: 'Place Bid',
+                  width: double.infinity,
+                  isLoading: _isSubmitting,
+                  onPressed: _isSubmitting ? null : _submit,
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _BidInfoItem extends StatelessWidget {
+  final String label;
+  final String value;
+  final Color? valueColor;
+  const _BidInfoItem({
+    required this.label,
+    required this.value,
+    this.valueColor,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Text(
+          label,
+          style: TextStyle(
+            fontFamily: 'Plus Jakarta Sans',
+            fontSize: 10.sp,
+            color: AppColors.grey500,
+          ),
+        ),
+        const SizedBox(height: 2),
+        Text(
+          value,
+          style: TextStyle(
+            fontFamily: 'Montserrat',
+            fontSize: 13.sp,
+            fontWeight: FontWeight.w700,
+            color: valueColor ?? AppColors.black,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Vehicle details accordion
 // ─────────────────────────────────────────────────────────────────────────────
 
 class _VehicleDetailsAccordion extends StatefulWidget {
