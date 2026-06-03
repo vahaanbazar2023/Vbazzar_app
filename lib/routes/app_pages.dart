@@ -42,6 +42,11 @@ import '../features/approved_vehicles/views/vehicle_listings_screen.dart';
 import '../features/approved_vehicles/views/vehicle_detail_screen.dart';
 import '../features/approved_vehicles/views/sell_vehicle_form_screen.dart';
 import '../features/approved_vehicles/views/my_bookings_screen.dart';
+import '../features/spare_and_fms/spare_fms_binding.dart';
+import '../features/spare_and_fms/views/spare_fms_home_view.dart';
+import '../features/spare_and_fms/views/fms_detail_view.dart';
+import '../features/spare_and_fms/views/shop_list_view.dart';
+import '../features/spare_and_fms/views/spare_orders_view.dart';
 
 class AppPages {
   AppPages._();
@@ -249,6 +254,28 @@ class AppPages {
       name: AppRoutes.approvedVehicleMyInspections,
       page: () => const MyBookingsScreen(),
       binding: ApprovedVehicleBinding(),
+      transition: Transition.rightToLeft,
+    ),
+    // ── Spare & FMS ──────────────────────────────────────────
+    GetPage(
+      name: AppRoutes.spareFms,
+      page: () => const SpareFmsHomeView(),
+      binding: SpareFmsBinding(),
+      transition: Transition.rightToLeft,
+    ),
+    GetPage(
+      name: AppRoutes.spareDetail,
+      page: () => const FmsDetailView(),
+      transition: Transition.rightToLeft,
+    ),
+    GetPage(
+      name: AppRoutes.shopList,
+      page: () => const ShopListView(),
+      transition: Transition.rightToLeft,
+    ),
+    GetPage(
+      name: AppRoutes.spareOrders,
+      page: () => const SpareOrdersView(),
       transition: Transition.rightToLeft,
     ),
   ];

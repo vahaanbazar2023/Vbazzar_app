@@ -36,4 +36,10 @@ class AppRoutes {
   static const approvedVehicleMyBookings = '/approved-vehicle-my-bookings';
   static const approvedVehicleMyInspections =
       '/approved-vehicle-my-inspections';
+
+  // Spare & FMS
+  static const spareFms = '/spare-fms';
+  static const spareDetail = '/spare-detail';
+  static const shopList = '/shop-list';
+  static const spareOrders = '/spare-orders';
 }

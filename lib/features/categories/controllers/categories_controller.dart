@@ -46,6 +46,10 @@ class CategoriesController extends GetxController {
       case 'buy_sell':
         _openBuySell();
         break;
+      case 'fms':
+      case 'spare_parts':
+        _openSpareAndFms();
+        break;
       default:
         break;
     }
@@ -55,6 +59,12 @@ class CategoriesController extends GetxController {
 
   void _openBuySell() {
     Get.toNamed(AppRoutes.buySellHome);
+  }
+
+  // ── Spare & FMS ────────────────────────────────────────────────────────────
+
+  void _openSpareAndFms() {
+    Get.toNamed(AppRoutes.spareFms);
   }
 
   // ── Auction gate ──────────────────────────────────────────────────────────

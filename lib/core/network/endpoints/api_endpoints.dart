@@ -87,4 +87,14 @@ class ApiEndpoints {
   static const String auctionRefundInitiate = '$auctionPrefix/refund-initiate';
   static const String vehicleExcelDownload =
       '$auctionPrefix/vehicle-excel-download';
+
+  // ─── Spare & FMS ────────────────────────────────────────────
+  static const String spareFmsPrefix = '/api/v1/spares-fms';
+  static const String listSpares = '$spareFmsPrefix/list-spares';
+  static const String listShops = '$spareFmsPrefix/list-shops';
+  static const String userSpareInterest = '$spareFmsPrefix/user-spare-interest';
+  static const String userShopSubscription =
+      '$spareFmsPrefix/user-shop-subscription';
+  static const String userSparesOrdersListing =
+      '$spareFmsPrefix/user-spares-orders-listing';
 }
