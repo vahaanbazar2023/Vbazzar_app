@@ -97,4 +97,15 @@ class ApiEndpoints {
       '$spareFmsPrefix/user-shop-subscription';
   static const String userSparesOrdersListing =
       '$spareFmsPrefix/user-spares-orders-listing';
+
+  // ─── Insurance & Finance ────────────────────────────────────
+  static const String insuranceFinancePrefix = '/api/v1/insurance-finance';
+  static const String insuranceRequest =
+      '$insuranceFinancePrefix/insurance-request';
+  static const String financeRequest =
+      '$insuranceFinancePrefix/finance-request';
+  static const String vehicleQuotes =
+      '$insuranceFinancePrefix/vehicle-quotes';
+  static const String vehicleListingsQuotes =
+      '$insuranceFinancePrefix/vehicle-listings-quotes';
 }

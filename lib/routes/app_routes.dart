@@ -42,4 +42,8 @@ class AppRoutes {
   static const spareDetail = '/spare-detail';
   static const shopList = '/shop-list';
   static const spareOrders = '/spare-orders';
+
+  // Insurance & Finance
+  static const insuranceFinance = '/insurance-finance';
+  static const myQuotes = '/my-quotes';
 }

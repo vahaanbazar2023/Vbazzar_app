@@ -50,6 +50,9 @@ class CategoriesController extends GetxController {
       case 'spare_parts':
         _openSpareAndFms();
         break;
+      case 'insurance':
+        _openInsuranceAndFinance();
+        break;
       default:
         break;
     }
@@ -65,6 +68,12 @@ class CategoriesController extends GetxController {
 
   void _openSpareAndFms() {
     Get.toNamed(AppRoutes.spareFms);
+  }
+
+  // ── Insurance & Finance ────────────────────────────────────────────────────
+
+  void _openInsuranceAndFinance() {
+    Get.toNamed(AppRoutes.insuranceFinance);
   }
 
   // ── Auction gate ──────────────────────────────────────────────────────────

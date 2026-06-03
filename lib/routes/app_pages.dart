@@ -47,6 +47,9 @@ import '../features/spare_and_fms/views/spare_fms_home_view.dart';
 import '../features/spare_and_fms/views/fms_detail_view.dart';
 import '../features/spare_and_fms/views/shop_list_view.dart';
 import '../features/spare_and_fms/views/spare_orders_view.dart';
+import '../features/insurance_and_finance/insurance_finance_binding.dart';
+import '../features/insurance_and_finance/views/insurance_finance_view.dart';
+import '../features/insurance_and_finance/views/my_quotes_view.dart';
 
 class AppPages {
   AppPages._();
@@ -276,6 +279,19 @@ class AppPages {
     GetPage(
       name: AppRoutes.spareOrders,
       page: () => const SpareOrdersView(),
+      transition: Transition.rightToLeft,
+    ),
+    // ── Insurance & Finance ─────────────────────────────────
+    GetPage(
+      name: AppRoutes.insuranceFinance,
+      page: () => const InsuranceFinanceView(),
+      binding: InsuranceFinanceBinding(),
+      transition: Transition.rightToLeft,
+    ),
+    GetPage(
+      name: AppRoutes.myQuotes,
+      page: () => const MyQuotesView(),
+      binding: InsuranceFinanceBinding(),
       transition: Transition.rightToLeft,
     ),
   ];
