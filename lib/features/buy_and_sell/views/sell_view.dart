@@ -1657,16 +1657,25 @@ class _SubmitButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GradientButton.filled(
-      text: 'Submit',
-      width: double.infinity,
-      height: 52.h,
-      fontSize: 15.sp,
-      fontWeight: FontWeight.w700,
-      onPressed: () async {
-        final success = await ctrl.submitSellForm();
-        if (success) Get.back();
-      },
+    return Obx(
+      () => GradientButton.filled(
+        text: ctrl.isEditMode.value ? 'Update Vehicle' : 'Submit',
+        width: double.infinity,
+        height: 52.h,
+        fontSize: 15.sp,
+        fontWeight: FontWeight.w700,
+        isLoading: ctrl.isSubmittingForm.value,
+        onPressed: () async {
+          if (ctrl.isSubmittingForm.value) return; // guard double-tap
+          debugPrint(
+            '🖱️ [SubmitButton] tapped, isEditMode=${ctrl.isEditMode.value}',
+          );
+          final success = ctrl.isEditMode.value
+              ? await ctrl.updateVehicle()
+              : await ctrl.submitSellForm();
+          if (success) Get.back();
+        },
+      ),
     );
   }
 }

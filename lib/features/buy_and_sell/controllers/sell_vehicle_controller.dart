@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../../core/design_system/molecules/custom_snackbar.dart';
 import '../../../core/network/network_service.dart';
 import '../../../core/network/endpoints/api_endpoints.dart';
 import '../../../core/storage/secure_storage_service.dart';
@@ -199,15 +200,50 @@ class SellVehicleController extends GetxController {
     formErrors.clear();
     bool isValid = true;
 
+    // Fields whose values live under separate dedicated keys rather than
+    // the label-keyed formValues map — skip them in dynamic validation.
+    const _skipLabels = {
+      'State',
+      'City',
+      'Brand',
+      'Category',
+      'Vehicle Images',
+      'Upload Vehicle RC',
+      'Insurance Upload',
+    };
+
     // Validate required dynamic fields
     for (final field in dynamicFormFields) {
-      if (field.required) {
-        final value = formValues[field.fieldName];
-        if (value == null || (value is String && value.trim().isEmpty)) {
-          formErrors[field.fieldName] = '${field.fieldName} is required';
-          isValid = false;
-        }
+      if (!field.required) continue;
+      if (_skipLabels.contains(field.fieldName)) continue;
+
+      final value = formValues[field.fieldName];
+      if (value == null || (value is String && value.trim().isEmpty)) {
+        formErrors[field.fieldName] = '${field.fieldName} is required';
+        isValid = false;
       }
+    }
+
+    // Validate State & City via dedicated keys
+    if ((formValues['state_code'] ?? '').toString().isEmpty) {
+      formErrors['State'] = 'State is required';
+      isValid = false;
+    }
+    if ((formValues['city_code'] ?? '').toString().isEmpty) {
+      formErrors['City'] = 'City is required';
+      isValid = false;
+    }
+
+    // Validate Brand via dedicated key
+    if ((formValues['brand_code'] ?? '').toString().isEmpty) {
+      formErrors['Brand'] = 'Brand is required';
+      isValid = false;
+    }
+
+    // Validate Category via controller field
+    if (selectedCategoryCode.value.isEmpty) {
+      formErrors['Category'] = 'Category is required';
+      isValid = false;
     }
 
     // Validate required images
@@ -234,6 +270,7 @@ class SellVehicleController extends GetxController {
       );
     }
 
+    debugPrint('🚗 [validateForm] isValid=$isValid formErrors=$formErrors');
     return isValid;
   }
 
@@ -327,7 +364,20 @@ class SellVehicleController extends GetxController {
   // ─── Submit Sell Form ────────────────────────────────────────
 
   Future<bool> submitSellForm() async {
-    if (!validateForm()) return false;
+    debugPrint('🚗 [submitSellForm] START');
+    debugPrint(
+      '🚗 [submitSellForm] categoryCode=${selectedCategoryCode.value}',
+    );
+    debugPrint('🚗 [submitSellForm] formValues=$formValues');
+    debugPrint('🚗 [submitSellForm] vehicleImages=${vehicleImages.length}');
+    debugPrint('🚗 [submitSellForm] rcDocuments=${rcDocuments.length}');
+    if (!validateForm()) {
+      debugPrint(
+        '🚗 [submitSellForm] validateForm FAILED, formErrors=$formErrors',
+      );
+      return false;
+    }
+    debugPrint('🚗 [submitSellForm] validateForm PASSED, calling API...');
 
     isSubmittingForm.value = true;
     try {
@@ -335,50 +385,79 @@ class SellVehicleController extends GetxController {
       await repository.createSellVehicle(
         userId: uid,
         categoryCode: selectedCategoryCode.value,
-        brandCode: formValues['brand_code'] ?? '',
-        assetDescOrModel: formValues['model'] ?? '',
-        registrationNumber: formValues['registration_number'] ?? '',
+        brandCode: (formValues['brand_code'] ?? formValues['Brand'] ?? '')
+            .toString(),
+        assetDescOrModel:
+            (formValues['Asset Description'] ??
+                    formValues['asset_desc_or_model'] ??
+                    formValues['model'] ??
+                    '')
+                .toString(),
+        registrationNumber:
+            (formValues['Registration Number'] ??
+                    formValues['registration_number'] ??
+                    '')
+                .toString(),
         manufacturingYear:
-            int.tryParse('${formValues['manufacturing_year'] ?? 0}') ?? 0,
-        chassisNumber: formValues['chassis_number'] ?? '',
-        price: double.tryParse('${formValues['price'] ?? 0}') ?? 0,
-        ownerMobile: formValues['owner_mobile'] ?? '',
-        stateCode: formValues['state_code'] ?? '',
-        cityCode: formValues['city_code'] ?? '',
+            int.tryParse(
+              '${formValues['Year of Manufacturing'] ?? formValues['manufacturing_year'] ?? 0}',
+            ) ??
+            0,
+        chassisNumber:
+            (formValues['Chassis Number'] ?? formValues['chassis_number'] ?? '')
+                .toString(),
+        price:
+            double.tryParse(
+              '${formValues['Price'] ?? formValues['price'] ?? 0}',
+            ) ??
+            0,
+        ownerMobile:
+            (formValues['Owner Mobile Number'] ??
+                    formValues['owner_mobile'] ??
+                    '')
+                .toString(),
+        stateCode: (formValues['state_code'] ?? '').toString(),
+        cityCode: (formValues['city_code'] ?? '').toString(),
         vehicleImages: vehicleImages.toList(),
         rcDocument: rcDocuments.isNotEmpty ? rcDocuments.first : null,
         insuranceDocument: insuranceDocuments.isNotEmpty
             ? insuranceDocuments.first
             : null,
-        odometer: formValues['odometer'],
-        noOfTyres: formValues['no_of_tyres'],
-        fitness: formValues['fitness'] == true,
-        insurance: formValues['insurance'],
-        originalInvoice: formValues['original_invoice'] == true,
-        gstApplicability: formValues['gst_applicability'] == true,
-        tonnage: formValues['tonnage'],
-        hours: formValues['hours'],
-        bodyType: formValues['body_type'],
-        fuelType: formValues['fuel_type'],
-        kv: formValues['kv'],
-        otherBrand: formValues['other_brand'],
-        otherTipper: formValues['other_tipper'],
-        otherBodyType: formValues['other_body_type'],
-        otherTyre: formValues['other_tyre'],
+        odometer: (formValues['Odometer'] ?? formValues['odometer'])
+            ?.toString(),
+        noOfTyres: (formValues['No Of Tyres'] ?? formValues['no_of_tyres'])
+            ?.toString(),
+        fitness: formValues['Fitness'] == true || formValues['fitness'] == true,
+        insurance: formValues['Vehicle Insurance'] ?? formValues['insurance'],
+        originalInvoice:
+            formValues['Original Invoice'] == true ||
+            formValues['original_invoice'] == true,
+        gstApplicability:
+            formValues['GST Applicability'] == true ||
+            formValues['gst_applicability'] == true,
+        tonnage: (formValues['Tonnage'] ?? formValues['tonnage'])?.toString(),
+        hours: (formValues['Hours'] ?? formValues['hours'])?.toString(),
+        bodyType: (formValues['Body Type'] ?? formValues['body_type'])
+            ?.toString(),
+        fuelType: (formValues['Fuel Type'] ?? formValues['fuel_type'])
+            ?.toString(),
+        kv: (formValues['KV'] ?? formValues['kv'])?.toString(),
+        otherBrand: formValues['other_brand']?.toString(),
+        otherTipper: formValues['other_tipper']?.toString(),
+        otherBodyType: formValues['other_body_type']?.toString(),
+        otherTyre: formValues['other_tyre']?.toString(),
       );
 
-      Get.snackbar(
-        'Success',
-        'Vehicle submitted for approval',
-        snackPosition: SnackPosition.TOP,
-        backgroundColor: Colors.green,
-        colorText: Colors.white,
+      CustomSnackbar.show(
+        message: 'Vehicle submitted for approval.',
+        type: SnackbarType.success,
       );
 
       resetForm();
       await refreshSellVehiclesList();
       return true;
     } catch (e) {
+      debugPrint('❌ [submitSellForm] ERROR: $e');
       Get.snackbar(
         'Error',
         'Failed to submit vehicle: ${e.toString()}',
@@ -405,44 +484,72 @@ class SellVehicleController extends GetxController {
         sbVehicleId: editingVehicleId.value,
         userId: uid,
         categoryCode: selectedCategoryCode.value,
-        brandCode: formValues['brand_code'] ?? '',
-        assetDescOrModel: formValues['model'] ?? '',
-        registrationNumber: formValues['registration_number'] ?? '',
+        brandCode: (formValues['brand_code'] ?? formValues['Brand'] ?? '')
+            .toString(),
+        assetDescOrModel:
+            (formValues['Asset Description'] ??
+                    formValues['asset_desc_or_model'] ??
+                    formValues['model'] ??
+                    '')
+                .toString(),
+        registrationNumber:
+            (formValues['Registration Number'] ??
+                    formValues['registration_number'] ??
+                    '')
+                .toString(),
         manufacturingYear:
-            int.tryParse('${formValues['manufacturing_year'] ?? 0}') ?? 0,
-        chassisNumber: formValues['chassis_number'] ?? '',
-        price: double.tryParse('${formValues['price'] ?? 0}') ?? 0,
-        ownerMobile: formValues['owner_mobile'] ?? '',
-        stateCode: formValues['state_code'] ?? '',
-        cityCode: formValues['city_code'] ?? '',
+            int.tryParse(
+              '${formValues['Year of Manufacturing'] ?? formValues['manufacturing_year'] ?? 0}',
+            ) ??
+            0,
+        chassisNumber:
+            (formValues['Chassis Number'] ?? formValues['chassis_number'] ?? '')
+                .toString(),
+        price:
+            double.tryParse(
+              '${formValues['Price'] ?? formValues['price'] ?? 0}',
+            ) ??
+            0,
+        ownerMobile:
+            (formValues['Owner Mobile Number'] ??
+                    formValues['owner_mobile'] ??
+                    '')
+                .toString(),
+        stateCode: (formValues['state_code'] ?? '').toString(),
+        cityCode: (formValues['city_code'] ?? '').toString(),
         vehicleImages: vehicleImages.isNotEmpty ? vehicleImages.toList() : null,
         rcDocument: rcDocuments.isNotEmpty ? rcDocuments.first : null,
         insuranceDocument: insuranceDocuments.isNotEmpty
             ? insuranceDocuments.first
             : null,
-        odometer: formValues['odometer'],
-        noOfTyres: formValues['no_of_tyres'],
-        fitness: formValues['fitness'] == true,
-        insurance: formValues['insurance'],
-        originalInvoice: formValues['original_invoice'] == true,
-        gstApplicability: formValues['gst_applicability'] == true,
-        tonnage: formValues['tonnage'],
-        hours: formValues['hours'],
-        bodyType: formValues['body_type'],
-        fuelType: formValues['fuel_type'],
-        kv: formValues['kv'],
-        otherBrand: formValues['other_brand'],
-        otherTipper: formValues['other_tipper'],
-        otherBodyType: formValues['other_body_type'],
-        otherTyre: formValues['other_tyre'],
+        odometer: (formValues['Odometer'] ?? formValues['odometer'])
+            ?.toString(),
+        noOfTyres: (formValues['No Of Tyres'] ?? formValues['no_of_tyres'])
+            ?.toString(),
+        fitness: formValues['Fitness'] == true || formValues['fitness'] == true,
+        insurance: formValues['Vehicle Insurance'] ?? formValues['insurance'],
+        originalInvoice:
+            formValues['Original Invoice'] == true ||
+            formValues['original_invoice'] == true,
+        gstApplicability:
+            formValues['GST Applicability'] == true ||
+            formValues['gst_applicability'] == true,
+        tonnage: (formValues['Tonnage'] ?? formValues['tonnage'])?.toString(),
+        hours: (formValues['Hours'] ?? formValues['hours'])?.toString(),
+        bodyType: (formValues['Body Type'] ?? formValues['body_type'])
+            ?.toString(),
+        fuelType: (formValues['Fuel Type'] ?? formValues['fuel_type'])
+            ?.toString(),
+        kv: (formValues['KV'] ?? formValues['kv'])?.toString(),
+        otherBrand: formValues['other_brand']?.toString(),
+        otherTipper: formValues['other_tipper']?.toString(),
+        otherBodyType: formValues['other_body_type']?.toString(),
+        otherTyre: formValues['other_tyre']?.toString(),
       );
 
-      Get.snackbar(
-        'Success',
-        'Vehicle updated. Changes pending admin approval.',
-        snackPosition: SnackPosition.TOP,
-        backgroundColor: Colors.green,
-        colorText: Colors.white,
+      CustomSnackbar.show(
+        message: 'Vehicle updated. Changes pending admin approval.',
+        type: SnackbarType.success,
       );
 
       resetForm();
