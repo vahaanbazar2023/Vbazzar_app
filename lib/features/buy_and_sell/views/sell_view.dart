@@ -10,6 +10,7 @@ import '../../../core/design_system/molecules/custom_autocomplete_field.dart';
 import '../../../core/design_system/molecules/gradient_button.dart';
 import '../../../core/design_system/templates/app_layout.dart';
 import '../controllers/sell_vehicle_controller.dart';
+import '../../../routes/app_routes.dart';
 import '../data/repositories/buy_sell_repository_impl.dart';
 
 // ─── All inputs share this height to stay visually consistent ────────────────
@@ -1673,7 +1674,9 @@ class _SubmitButton extends StatelessWidget {
           final success = ctrl.isEditMode.value
               ? await ctrl.updateVehicle()
               : await ctrl.submitSellForm();
-          if (success) Get.back();
+          if (success) {
+            Get.offAllNamed(AppRoutes.buySellHome);
+          }
         },
       ),
     );
