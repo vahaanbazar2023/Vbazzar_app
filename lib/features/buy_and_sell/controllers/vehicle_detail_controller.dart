@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../../core/design_system/molecules/custom_snackbar.dart';
 import '../../../core/network/network_service.dart';
 import '../../../core/network/endpoints/api_endpoints.dart';
 import '../../../core/storage/secure_storage_service.dart';
@@ -422,6 +423,127 @@ class BuyVehicleController extends GetxController {
     if (index == 2 && subscribedVehicles.isEmpty) {
       fetchSubscribedVehicles(isRefresh: true);
     }
+  }
+
+  // ─── User Interest Actions ───────────────────────────────────
+
+  /// Sends "is_interested: yes" for the given vehicle.
+  Future<void> submitInterest(BuyVehicleEntity vehicle) async {
+    final uid = await _userId;
+    try {
+      final result = await repository.userInterest(
+        vehicleId: vehicle.sbVehicleId,
+        userId: uid,
+        vehicleOffer: null,
+        isInterested: 'yes',
+        ownerDetailsAccess: '',
+        vehicleDetailsAccess: '',
+        inspectionRequest: '',
+      );
+      if (result['status'] == 'success') {
+        CustomSnackbar.show(
+          message: 'The seller has been notified of your interest.',
+          type: SnackbarType.success,
+        );
+      } else {
+        Get.snackbar(
+          'Error',
+          result['message']?.toString() ?? 'Failed to record interest.',
+          snackPosition: SnackPosition.TOP,
+        );
+      }
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        'Something went wrong. Please try again.',
+        snackPosition: SnackPosition.TOP,
+      );
+    }
+  }
+
+  /// Submits a vehicle offer. Returns error message string on validation failure,
+  /// null on success.
+  Future<String?> submitOffer(BuyVehicleEntity vehicle, int offerAmount) async {
+    final uid = await _userId;
+    try {
+      final result = await repository.userInterest(
+        vehicleId: vehicle.sbVehicleId,
+        userId: uid,
+        vehicleOffer: offerAmount,
+        isInterested: '',
+        ownerDetailsAccess: '',
+        vehicleDetailsAccess: '',
+        inspectionRequest: '',
+      );
+      if (result['status'] == 'success') {
+        return null; // success
+      } else {
+        // Extract validation error details
+        final errorCode = result['error']?['details']?['code']?.toString();
+        if (errorCode == 'INSUFFICIENT_OFFER_AMOUNT') {
+          final additional = result['additional_data'] as Map<String, dynamic>?;
+          final minRequired = additional?['minimum_required'];
+          return 'Offer too low. Minimum required: ₹${_formatNum(minRequired)}';
+        }
+        return result['message']?.toString() ?? 'Failed to submit offer.';
+      }
+    } catch (e) {
+      return 'Something went wrong. Please try again.';
+    }
+  }
+
+  /// Sends "inspection_request: yes" for the given vehicle.
+  Future<void> requestInspection(BuyVehicleEntity vehicle) async {
+    final uid = await _userId;
+    try {
+      final result = await repository.userInterest(
+        vehicleId: vehicle.sbVehicleId,
+        userId: uid,
+        vehicleOffer: null,
+        isInterested: '',
+        ownerDetailsAccess: '',
+        vehicleDetailsAccess: '',
+        inspectionRequest: 'yes',
+      );
+      if (result['status'] == 'success') {
+        CustomSnackbar.show(
+          message: 'Our team will contact you to schedule an inspection.',
+          type: SnackbarType.success,
+        );
+      } else {
+        Get.snackbar(
+          'Error',
+          result['message']?.toString() ?? 'Failed to request inspection.',
+          snackPosition: SnackPosition.TOP,
+        );
+      }
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        'Something went wrong. Please try again.',
+        snackPosition: SnackPosition.TOP,
+      );
+    }
+  }
+
+  static String _formatNum(dynamic val) {
+    if (val == null) return '0';
+    final n =
+        (val is num ? val.toDouble() : double.tryParse(val.toString()) ?? 0)
+            .toInt();
+    if (n <= 0) return '0';
+    final s = n.toString();
+    if (s.length <= 3) return s;
+    final last3 = s.substring(s.length - 3);
+    final rest = s.substring(0, s.length - 3);
+    final buf = StringBuffer();
+    int count = 0;
+    for (int i = rest.length - 1; i >= 0; i--) {
+      if (count > 0 && count % 2 == 0) buf.write(',');
+      buf.write(rest[i]);
+      count++;
+    }
+    return '${buf.toString().split('').reversed.join()},$last3';
   }
 
   // ─── Helpers ─────────────────────────────────────────────────

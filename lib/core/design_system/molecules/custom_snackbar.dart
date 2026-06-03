@@ -151,7 +151,7 @@ class _CustomSnackbarContentState extends State<_CustomSnackbarContent>
             // Main snackbar container
             Container(
               width: 379.w,
-              height: 52.h,
+              height: 68.h,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(4.r),
                 border: Border.all(color: widget.borderColor, width: 1.w),
@@ -168,7 +168,7 @@ class _CustomSnackbarContentState extends State<_CustomSnackbarContent>
                   // Left color bar (5% width)
                   Container(
                     width: 379.w * 0.02,
-                    height: 52.h,
+                    height: 68.h,
                     decoration: BoxDecoration(
                       color: widget.leftBarColor,
                       borderRadius: BorderRadius.only(
@@ -181,7 +181,7 @@ class _CustomSnackbarContentState extends State<_CustomSnackbarContent>
                   // Main content container (95% width)
                   Expanded(
                     child: Container(
-                      height: 52.h,
+                      height: 68.h,
                       decoration: BoxDecoration(
                         color: widget.backgroundColor,
                         borderRadius: BorderRadius.only(

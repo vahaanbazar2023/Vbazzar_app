@@ -49,10 +49,16 @@ abstract class BuySellRepository {
     String? userId,
   });
 
-  /// Registers user interest for a vehicle
+  /// Registers or updates user interest for a vehicle.
+  /// Only ONE of the action fields should be non-empty/non-null at a time.
   Future<Map<String, dynamic>> userInterest({
     required String vehicleId,
     String? userId,
+    int? vehicleOffer, // offer amount (integer)
+    String? isInterested, // "yes" | "no" | ""
+    String? ownerDetailsAccess,
+    String? vehicleDetailsAccess,
+    String? inspectionRequest, // "yes" | "no" | ""
   });
 
   // ─── New methods used by controllers ──────────────────────

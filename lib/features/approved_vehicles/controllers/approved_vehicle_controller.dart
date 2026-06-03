@@ -227,7 +227,7 @@ class ApprovedVehicleController extends GetxController {
       Get.snackbar(
         'Error',
         'Failed to book vehicle. Please try again.',
-        snackPosition: SnackPosition.BOTTOM,
+        snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.red.shade100,
         colorText: Colors.red.shade900,
       );
@@ -253,7 +253,7 @@ class ApprovedVehicleController extends GetxController {
       Get.snackbar(
         'Error',
         'Failed to request inspection. Please try again.',
-        snackPosition: SnackPosition.BOTTOM,
+        snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.red.shade100,
         colorText: Colors.red.shade900,
       );
@@ -476,7 +476,7 @@ class ApprovedVehicleController extends GetxController {
       Get.snackbar(
         'Validation Error',
         'Please fix the errors before submitting',
-        snackPosition: SnackPosition.BOTTOM,
+        snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.red.shade100,
         colorText: Colors.red.shade900,
       );
@@ -560,7 +560,7 @@ class ApprovedVehicleController extends GetxController {
         Get.snackbar(
           'Success',
           'Vehicle submitted successfully!',
-          snackPosition: SnackPosition.BOTTOM,
+          snackPosition: SnackPosition.TOP,
           backgroundColor: Colors.green.shade100,
           colorText: Colors.green.shade900,
         );
@@ -571,7 +571,7 @@ class ApprovedVehicleController extends GetxController {
       Get.snackbar(
         'Error',
         'Failed to submit vehicle. Please try again.',
-        snackPosition: SnackPosition.BOTTOM,
+        snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.red.shade100,
         colorText: Colors.red.shade900,
       );

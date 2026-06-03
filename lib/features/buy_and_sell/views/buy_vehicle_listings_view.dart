@@ -7,6 +7,8 @@ import '../../../core/design_system/organisms/network_image_carousel.dart';
 import '../widgets/buy_filter_sheet.dart';
 import '../../../core/design_system/templates/app_layout.dart';
 import '../../../routes/app_routes.dart';
+import '../../subscription/models/user_subscription.dart';
+import '../../subscription/services/subscription_guard_service.dart';
 import '../controllers/vehicle_detail_controller.dart';
 import '../domain/entities/buy_vehicle_entity.dart';
 import '../domain/entities/vehicle_category_entity.dart';
@@ -322,10 +324,32 @@ class _VehicleCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => Get.toNamed(
-        AppRoutes.buyVehicleDetail,
-        arguments: {'vehicle': vehicle},
-      ),
+      onTap: () async {
+        // Check SUBT004 (Vehicle Details Access) subscription
+        final guard = SubscriptionGuardService.to;
+        await guard.ensureLoaded();
+
+        if (guard.hasActiveSubscription(
+          SubscriptionTypeCode.vehicleDetailsAccess,
+        )) {
+          // Has valid subscription — go straight to detail
+          Get.toNamed(
+            AppRoutes.buyVehicleDetail,
+            arguments: {'vehicle': vehicle},
+          );
+        } else {
+          // No subscription — go to subscription screen
+          Get.toNamed(
+            AppRoutes.subscription,
+            arguments: {
+              'subscription_source': SubscriptionTypeCode.vehicleDetailsAccess,
+              'title': 'Vehicle Details Access',
+              'subtitle':
+                  'Subscribe to view full vehicle details and connect with the owner.',
+            },
+          );
+        }
+      },
       child: Container(
         decoration: BoxDecoration(
           color: Colors.white,

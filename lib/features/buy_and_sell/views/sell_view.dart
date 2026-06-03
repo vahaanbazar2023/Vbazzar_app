@@ -1318,7 +1318,7 @@ class _FileField extends StatelessWidget {
       Get.snackbar(
         'Error',
         'Could not open picker: $e',
-        snackPosition: SnackPosition.BOTTOM,
+        snackPosition: SnackPosition.TOP,
         backgroundColor: AppColors.grey900,
         colorText: Colors.white,
         margin: const EdgeInsets.all(16),

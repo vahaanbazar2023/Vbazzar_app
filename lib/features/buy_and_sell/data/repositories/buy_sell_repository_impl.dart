@@ -315,16 +315,34 @@ class BuySellRepositoryImpl implements BuySellRepository {
   Future<Map<String, dynamic>> userInterest({
     required String vehicleId,
     String? userId,
+    int? vehicleOffer,
+    String? isInterested,
+    String? ownerDetailsAccess,
+    String? vehicleDetailsAccess,
+    String? inspectionRequest,
   }) async {
     final uid = userId ?? await _getUserId();
     try {
       final response = await _network.post(
         ApiEndpoints.userInterest,
-        data: {'sb_vehicle_id': vehicleId, if (uid != null) 'user_id': uid},
+        data: {
+          'user_id': uid ?? '',
+          'vehicle_id': vehicleId,
+          'vehicle_offer': vehicleOffer,
+          'is_interested': isInterested ?? '',
+          'owner_details_access': ownerDetailsAccess ?? '',
+          'vehicle_details_access': vehicleDetailsAccess ?? '',
+          'inspection_request': inspectionRequest ?? '',
+        },
       );
       return response.data as Map<String, dynamic>? ?? {};
     } on DioException catch (e) {
       print('❌ userInterest error: ${e.message}');
+      // Return structured error so caller can handle offer validation
+      if (e.response != null) {
+        return e.response!.data as Map<String, dynamic>? ??
+            {'status': 'error', 'message': e.message};
+      }
       return {'status': 'error', 'message': e.message};
     }
   }

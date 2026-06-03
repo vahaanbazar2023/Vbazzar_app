@@ -81,7 +81,7 @@ class _SellVehicleFormScreenState extends State<SellVehicleFormScreen> {
     Get.snackbar(
       'Info',
       'File picker integration pending. Add file_picker package to enable uploads.',
-      snackPosition: SnackPosition.BOTTOM,
+      snackPosition: SnackPosition.TOP,
       backgroundColor: AppColors.grey100,
       colorText: AppColors.black,
     );

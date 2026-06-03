@@ -34,6 +34,7 @@ class AppLayout extends StatelessWidget {
   final List<Widget>? actions;
   final bool showBack;
   final VoidCallback? onBack;
+  final Color? bodyColor;
 
   /// Extra widget rendered inside the red header, below the title row.
   /// Useful for tab bars or search fields.
@@ -48,6 +49,7 @@ class AppLayout extends StatelessWidget {
     this.showBack = true,
     this.onBack,
     this.headerExtra,
+    this.bodyColor,
   });
 
   @override
@@ -81,7 +83,7 @@ class AppLayout extends StatelessWidget {
                 child: Container(
                   width: double.infinity,
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: bodyColor ?? Colors.white,
                     borderRadius: BorderRadius.only(
                       topLeft: Radius.circular(AppRadius.xxl),
                       topRight: Radius.circular(AppRadius.xxl),

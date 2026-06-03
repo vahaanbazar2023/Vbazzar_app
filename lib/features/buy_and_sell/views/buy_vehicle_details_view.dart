@@ -7,10 +7,25 @@ import '../../../core/design_system/design_system.dart';
 import '../../../core/design_system/templates/app_layout.dart';
 import '../../../core/design_system/tokens/app_radius.dart';
 import '../../../core/design_system/tokens/app_spacing.dart';
+import '../controllers/vehicle_detail_controller.dart';
 import '../domain/entities/buy_vehicle_entity.dart';
 
-class BuyVehicleDetailsView extends StatelessWidget {
+class BuyVehicleDetailsView extends StatefulWidget {
   const BuyVehicleDetailsView({super.key});
+
+  @override
+  State<BuyVehicleDetailsView> createState() => _BuyVehicleDetailsViewState();
+}
+
+class _BuyVehicleDetailsViewState extends State<BuyVehicleDetailsView> {
+  bool _showOfferField = false;
+  final _offerCtrl = TextEditingController();
+
+  @override
+  void dispose() {
+    _offerCtrl.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,6 +46,7 @@ class BuyVehicleDetailsView extends StatelessWidget {
       title: title.isEmpty ? vehicle.categoryName : title,
       subtitle: 'ID: ${vehicle.sbVehicleId}',
       showBack: true,
+      bodyColor: AppColors.cardBackground,
       body: Column(
         children: [
           Expanded(
@@ -117,35 +133,35 @@ class BuyVehicleDetailsView extends StatelessWidget {
                     ),
                   ),
 
-                  // Location row
-                  if ((vehicle.city ?? '').isNotEmpty ||
-                      (vehicle.state ?? '').isNotEmpty)
-                    Center(
-                      child: Padding(
-                        padding: EdgeInsets.only(bottom: AppSpacing.sm),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              Icons.location_on_rounded,
-                              size: 14.sp,
-                              color: AppColors.primary,
-                            ),
-                            SizedBox(width: 4.w),
-                            Text(
-                              [vehicle.city, vehicle.state]
-                                  .where((s) => s != null && s.isNotEmpty)
-                                  .join(', '),
-                              style: TextStyle(
-                                fontFamily: 'Plus Jakarta Sans',
-                                fontSize: 13.sp,
-                                color: AppColors.grey600,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
+                  // // Location row
+                  // if ((vehicle.city ?? '').isNotEmpty ||
+                  //     (vehicle.state ?? '').isNotEmpty)
+                  //   Center(
+                  //     child: Padding(
+                  //       padding: EdgeInsets.only(bottom: AppSpacing.sm),
+                  //       child: Row(
+                  //         mainAxisSize: MainAxisSize.min,
+                  //         children: [
+                  //           Icon(
+                  //             Icons.location_on_rounded,
+                  //             size: 14.sp,
+                  //             color: AppColors.primary,
+                  //           ),
+                  //           SizedBox(width: 4.w),
+                  //           Text(
+                  //             [vehicle.city, vehicle.state]
+                  //                 .where((s) => s != null && s.isNotEmpty)
+                  //                 .join(', '),
+                  //             style: TextStyle(
+                  //               fontFamily: 'Plus Jakarta Sans',
+                  //               fontSize: 13.sp,
+                  //               color: AppColors.grey600,
+                  //             ),
+                  //           ),
+                  //         ],
+                  //       ),
+                  //     ),
+                  //   ),
 
                   // ── 2×2 Info boxes ───────────────────────────────────────
                   Padding(
@@ -194,11 +210,9 @@ class BuyVehicleDetailsView extends StatelessWidget {
                         SizedBox(width: 8.w),
                         Expanded(
                           child: _InfoBox(
-                            icon: Icons.info_outline_rounded,
-                            label: 'Status',
-                            value: vehicle.status != null
-                                ? vehicle.status!.toUpperCase()
-                                : 'N/A',
+                            icon: Icons.calendar_month_rounded,
+                            label: 'Model Year',
+                            value: vehicle.year ?? 'N/A',
                           ),
                         ),
                       ],
@@ -206,8 +220,8 @@ class BuyVehicleDetailsView extends StatelessWidget {
                   ),
                   SizedBox(height: AppSpacing.md),
 
-                  // ── Key specs card ───────────────────────────────────────
-                  _KeySpecsCard(vehicle: vehicle),
+                  // // ── Key specs card ───────────────────────────────────────
+                  // _KeySpecsCard(vehicle: vehicle),
                   SizedBox(height: AppSpacing.md),
 
                   // ── Vehicle details accordion ────────────────────────────
@@ -215,28 +229,10 @@ class BuyVehicleDetailsView extends StatelessWidget {
                   SizedBox(height: AppSpacing.md),
 
                   // ── Actions label ────────────────────────────────────────
-                  _SectionLabel(icon: Icons.bolt_rounded, title: 'Take Action'),
+                  _SectionLabel(icon: Icons.bolt_rounded, title: 'Actions'),
                   SizedBox(height: 12.h),
 
-                  // ── Action card 1: Become Member ─────────────────────────
-                  _ActionCard(
-                    gradient: const LinearGradient(
-                      colors: [Color(0xFF1A3A6B), Color(0xFF2A5298)],
-                    ),
-                    icon: Icons.workspace_premium_rounded,
-                    title: 'Become Member',
-                    subtitle: 'Connect With Owner',
-                    buttonText: 'Subscribe',
-                    buttonColor: Colors.white,
-                    buttonTextColor: const Color(0xFF1A3A6B),
-                    onTap: () => _snack(
-                      'Subscribe',
-                      'Redirecting to subscription plans',
-                    ),
-                  ),
-                  SizedBox(height: 10.h),
-
-                  // ── Action card 2: Show Interest ─────────────────────────
+                  // ── Action card 1: Show Interest ──────────────────────────
                   _ActionCard(
                     gradient: const LinearGradient(
                       colors: [Color(0xFF0F9B8E), Color(0xFF16C79A)],
@@ -247,76 +243,80 @@ class BuyVehicleDetailsView extends StatelessWidget {
                     buttonText: 'Interested',
                     buttonColor: Colors.white,
                     buttonTextColor: const Color(0xFF0F9B8E),
-                    onTap: () => _snack(
-                      'Interest Recorded',
-                      'The seller has been notified of your interest',
-                    ),
+                    onTap: () {
+                      final c = Get.find<BuyVehicleController>();
+                      c.submitInterest(vehicle);
+                    },
                   ),
                   SizedBox(height: 10.h),
 
-                  // ── Action card 3: Make Offer ────────────────────────────
-                  _ActionCard(
-                    gradient: const LinearGradient(
-                      colors: [Color(0xFFE8882A), Color(0xFFF5A623)],
-                    ),
-                    icon: Icons.local_offer_rounded,
-                    title: 'Submit Your',
-                    subtitle: 'Best Vehicle Offer',
-                    buttonText: 'Submit',
-                    buttonColor: Colors.white,
-                    buttonTextColor: const Color(0xFFE8882A),
-                    onTap: () => _offerDialog(context, vehicle),
+                  // ── Action card 3: Make Offer (expands inline) ──────────
+                  _OfferCard(
+                    offerCtrl: _offerCtrl,
+                    expanded: _showOfferField,
+                    onToggle: () => setState(() {
+                      _showOfferField = !_showOfferField;
+                      if (!_showOfferField) _offerCtrl.clear();
+                    }),
+                    onSubmit: () async {
+                      final amount = int.tryParse(
+                        _offerCtrl.text.replaceAll(',', '').trim(),
+                      );
+                      if (amount == null || amount <= 0) {
+                        Get.snackbar(
+                          'Invalid Amount',
+                          'Please enter a valid offer amount.',
+                          snackPosition: SnackPosition.TOP,
+                        );
+                        return;
+                      }
+                      // Client-side 60% validation
+                      if (vehicle.price != null && vehicle.price! > 0) {
+                        final minRequired = (vehicle.price! * 0.6).ceil();
+                        if (amount < minRequired) {
+                          Get.snackbar(
+                            'Offer Too Low',
+                            'Minimum offer is 60% of the price: ₹${_fmt(minRequired)}',
+                            snackPosition: SnackPosition.TOP,
+                            backgroundColor: Colors.red.shade700,
+                            colorText: Colors.white,
+                            duration: const Duration(seconds: 4),
+                          );
+                          return;
+                        }
+                      }
+                      final c = Get.find<BuyVehicleController>();
+                      final error = await c.submitOffer(vehicle, amount);
+                      if (error == null) {
+                        setState(() {
+                          _showOfferField = false;
+                          _offerCtrl.clear();
+                        });
+                        CustomSnackbar.show(
+                          message: 'Your offer has been sent.',
+                          type: SnackbarType.success,
+                        );
+                      } else {
+                        Get.snackbar(
+                          'Offer Failed',
+                          error,
+                          snackPosition: SnackPosition.TOP,
+                          backgroundColor: Colors.red.shade700,
+                          colorText: Colors.white,
+                        );
+                      }
+                    },
                   ),
-                  SizedBox(height: 12.h),
+                  SizedBox(height: 50.h),
 
                   // ── Inspection button ────────────────────────────────────
-                  GestureDetector(
-                    onTap: () => _snack(
-                      'Inspection Requested',
-                      'Our team will contact you to schedule an inspection',
-                    ),
-                    child: Container(
-                      width: double.infinity,
-                      height: 52.h,
-                      decoration: BoxDecoration(
-                        gradient: const LinearGradient(
-                          colors: [
-                            AppColors.ctaGradientStart,
-                            AppColors.ctaGradientEnd,
-                          ],
-                        ),
-                        borderRadius: BorderRadius.circular(14.r),
-                        boxShadow: [
-                          BoxShadow(
-                            color: AppColors.primary.withValues(alpha: 0.3),
-                            blurRadius: 14,
-                            offset: const Offset(0, 5),
-                          ),
-                        ],
-                      ),
-                      child: Center(
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              Icons.manage_search_rounded,
-                              color: Colors.white,
-                              size: 20.sp,
-                            ),
-                            SizedBox(width: 8.w),
-                            Text(
-                              'Request Vehicle Inspection',
-                              style: TextStyle(
-                                fontFamily: 'Montserrat',
-                                fontSize: 14.sp,
-                                fontWeight: FontWeight.w700,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
+                  GradientButton.filled(
+                    text: 'Request Vehicle Inspection',
+                    width: double.infinity,
+                    onPressed: () {
+                      final c = Get.find<BuyVehicleController>();
+                      c.requestInspection(vehicle);
+                    },
                   ),
                   SizedBox(height: 24.h),
                 ],
@@ -328,181 +328,21 @@ class BuyVehicleDetailsView extends StatelessWidget {
     );
   }
 
-  void _snack(String t, String m) => Get.snackbar(
-    t,
-    m,
-    snackPosition: SnackPosition.BOTTOM,
-    backgroundColor: AppColors.black,
-    colorText: Colors.white,
-    margin: const EdgeInsets.fromLTRB(16, 0, 16, 24),
-    borderRadius: 14,
-    duration: const Duration(seconds: 3),
-  );
-
-  void _offerDialog(BuildContext context, BuyVehicleEntity vehicle) {
-    final ctrl = TextEditingController();
-    showDialog(
-      context: context,
-      builder: (_) => Dialog(
-        backgroundColor: Colors.white,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20.r),
-        ),
-        child: Padding(
-          padding: EdgeInsets.all(22.w),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Container(
-                    width: 44.w,
-                    height: 44.w,
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFE8882A).withValues(alpha: 0.12),
-                      borderRadius: BorderRadius.circular(12.r),
-                    ),
-                    child: const Icon(
-                      Icons.local_offer_rounded,
-                      color: Color(0xFFE8882A),
-                    ),
-                  ),
-                  SizedBox(width: 12.w),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Make an Offer',
-                          style: TextStyle(
-                            fontFamily: 'Montserrat',
-                            fontSize: 16.sp,
-                            fontWeight: FontWeight.w800,
-                            color: AppColors.black,
-                          ),
-                        ),
-                        Text(
-                          'Propose your best price',
-                          style: TextStyle(
-                            fontFamily: 'Plus Jakarta Sans',
-                            fontSize: 12.sp,
-                            color: AppColors.grey600,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(height: 18.h),
-              Text(
-                'Offer Amount',
-                style: TextStyle(
-                  fontFamily: 'Montserrat',
-                  fontSize: 12.sp,
-                  fontWeight: FontWeight.w700,
-                  color: AppColors.grey600,
-                ),
-              ),
-              SizedBox(height: 8.h),
-              TextField(
-                controller: ctrl,
-                keyboardType: TextInputType.number,
-                autofocus: true,
-                style: TextStyle(
-                  fontFamily: 'Montserrat',
-                  fontSize: 18.sp,
-                  fontWeight: FontWeight.w800,
-                  color: AppColors.black,
-                ),
-                decoration: InputDecoration(
-                  hintText: '0',
-                  hintStyle: TextStyle(color: AppColors.grey400),
-                  prefixText: '₹ ',
-                  prefixStyle: TextStyle(
-                    fontFamily: 'Montserrat',
-                    fontSize: 18.sp,
-                    fontWeight: FontWeight.w800,
-                    color: AppColors.primary,
-                  ),
-                  filled: true,
-                  fillColor: AppColors.grey50,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12.r),
-                    borderSide: BorderSide(color: AppColors.grey300),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12.r),
-                    borderSide: BorderSide(color: AppColors.grey300),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12.r),
-                    borderSide: const BorderSide(
-                      color: AppColors.primary,
-                      width: 2,
-                    ),
-                  ),
-                ),
-              ),
-              SizedBox(height: 20.h),
-              Row(
-                children: [
-                  Expanded(
-                    child: OutlinedButton(
-                      onPressed: Get.back,
-                      style: OutlinedButton.styleFrom(
-                        foregroundColor: AppColors.grey600,
-                        side: BorderSide(color: AppColors.grey300),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12.r),
-                        ),
-                        padding: EdgeInsets.symmetric(vertical: 13.h),
-                      ),
-                      child: Text(
-                        'Cancel',
-                        style: TextStyle(
-                          fontFamily: 'Montserrat',
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(width: 10.w),
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: () {
-                        Get.back();
-                        _snack(
-                          'Offer Submitted',
-                          'Your offer of ₹${ctrl.text} has been sent',
-                        );
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.primary,
-                        foregroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12.r),
-                        ),
-                        padding: EdgeInsets.symmetric(vertical: 13.h),
-                        elevation: 0,
-                      ),
-                      child: Text(
-                        'Submit Offer',
-                        style: TextStyle(
-                          fontFamily: 'Montserrat',
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
+  /// Indian number formatting for display in snackbar messages
+  static String _fmt(int n) {
+    if (n <= 0) return '0';
+    final s = n.toString();
+    if (s.length <= 3) return s;
+    final last3 = s.substring(s.length - 3);
+    final rest = s.substring(0, s.length - 3);
+    final buf = StringBuffer();
+    int count = 0;
+    for (int i = rest.length - 1; i >= 0; i--) {
+      if (count > 0 && count % 2 == 0) buf.write(',');
+      buf.write(rest[i]);
+      count++;
+    }
+    return '${buf.toString().split('').reversed.join()},$last3';
   }
 }
 
@@ -1078,7 +918,7 @@ class _ActionCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 72.h,
+      height: 84.h,
       decoration: BoxDecoration(
         gradient: gradient,
         borderRadius: BorderRadius.circular(16.r),
@@ -1161,8 +1001,8 @@ class _ActionCard extends StatelessWidget {
                       style: TextStyle(
                         fontFamily: 'Montserrat',
                         fontSize: 12.sp,
-                        fontWeight: FontWeight.w800,
-                        color: buttonTextColor,
+                        fontWeight: FontWeight.w500,
+                        color: AppColors.black,
                       ),
                     ),
                   ),
@@ -1170,6 +1010,230 @@ class _ActionCard extends StatelessWidget {
               ],
             ),
           ),
+        ),
+      ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Offer card — orange gradient card that expands to show inline amount field
+// ─────────────────────────────────────────────────────────────────────────────
+
+class _OfferCard extends StatelessWidget {
+  final TextEditingController offerCtrl;
+  final bool expanded;
+  final VoidCallback onToggle;
+  final Future<void> Function() onSubmit;
+
+  const _OfferCard({
+    required this.offerCtrl,
+    required this.expanded,
+    required this.onToggle,
+    required this.onSubmit,
+  });
+
+  static const _g1 = Color(0xFFE8882A);
+  static const _g2 = Color(0xFFF5A623);
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 260),
+      curve: Curves.easeInOut,
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(colors: [_g1, _g2]),
+        borderRadius: BorderRadius.circular(16.r),
+        boxShadow: [
+          BoxShadow(
+            color: _g1.withValues(alpha: 0.35),
+            blurRadius: 12,
+            offset: const Offset(0, 5),
+          ),
+        ],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // ── Header row (always visible) ──────────────────────────────
+            InkWell(
+              borderRadius: BorderRadius.vertical(
+                top: Radius.circular(16.r),
+                bottom: expanded ? Radius.zero : Radius.circular(16.r),
+              ),
+              onTap: onToggle,
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 18.w, vertical: 0),
+                child: SizedBox(
+                  height: 72.h,
+                  child: Row(
+                    children: [
+                      // Icon box
+                      Container(
+                        width: 42.w,
+                        height: 42.w,
+                        decoration: BoxDecoration(
+                          color: Colors.white.withValues(alpha: 0.2),
+                          borderRadius: BorderRadius.circular(12.r),
+                        ),
+                        child: Icon(
+                          Icons.local_offer_rounded,
+                          color: Colors.white,
+                          size: 22.sp,
+                        ),
+                      ),
+                      SizedBox(width: 14.w),
+                      // Title / subtitle
+                      Expanded(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Submit Your',
+                              style: TextStyle(
+                                fontFamily: 'Montserrat',
+                                fontSize: 13.sp,
+                                fontWeight: FontWeight.w700,
+                                color: Colors.white,
+                              ),
+                            ),
+                            Text(
+                              'Best Vehicle Offer',
+                              style: TextStyle(
+                                fontFamily: 'Montserrat',
+                                fontSize: 12.sp,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.white.withValues(alpha: 0.85),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      // Toggle pill
+                      Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 14.w,
+                          vertical: 8.h,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(24.r),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withValues(alpha: 0.12),
+                              blurRadius: 5,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                        child: Text(
+                          expanded ? 'Cancel' : 'Submit',
+                          style: TextStyle(
+                            fontFamily: 'Montserrat',
+                            fontSize: 12.sp,
+                            fontWeight: FontWeight.w500,
+                            color: AppColors.black,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+
+            // ── Inline offer input (expands below header) ────────────────
+            AnimatedCrossFade(
+              duration: const Duration(milliseconds: 240),
+              crossFadeState: expanded
+                  ? CrossFadeState.showSecond
+                  : CrossFadeState.showFirst,
+              firstChild: const SizedBox.shrink(),
+              secondChild: Padding(
+                padding: EdgeInsets.fromLTRB(36.w, 0, 14.w, 12.h),
+                child: TextField(
+                  controller: offerCtrl,
+                  keyboardType: TextInputType.number,
+                  autofocus: true,
+                  style: TextStyle(
+                    fontFamily: 'Montserrat',
+                    fontSize: 16.sp,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.white,
+                  ),
+                  cursorColor: Colors.white,
+                  decoration: InputDecoration(
+                    hintText: 'Enter amount',
+                    hintStyle: TextStyle(
+                      fontFamily: 'Plus Jakarta Sans',
+                      fontSize: 14.sp,
+                      color: Colors.white.withValues(alpha: 0.6),
+                    ),
+                    prefixText: '₹  ',
+                    prefixStyle: TextStyle(
+                      fontFamily: 'Montserrat',
+                      fontSize: 18.sp,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white,
+                    ),
+                    suffixIcon: GestureDetector(
+                      onTap: onSubmit,
+                      child: Container(
+                        margin: EdgeInsets.all(6.r),
+                        width: 38.w,
+                        height: 38.w,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(24.r),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withValues(alpha: 0.15),
+                              blurRadius: 6,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                        child: Icon(
+                          Icons.arrow_forward_rounded,
+                          color: _g1,
+                          size: 18.sp,
+                        ),
+                      ),
+                    ),
+                    filled: true,
+                    fillColor: Colors.white.withValues(alpha: 0.18),
+                    isDense: true,
+                    contentPadding: EdgeInsets.symmetric(
+                      horizontal: 24.w,
+                      vertical: 6.h,
+                    ),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(48.r),
+                      borderSide: BorderSide(
+                        color: Colors.white.withValues(alpha: 0.4),
+                      ),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(48.r),
+                      borderSide: BorderSide(
+                        color: Colors.white.withValues(alpha: 0.4),
+                      ),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(48.r),
+                      borderSide: const BorderSide(
+                        color: Colors.white,
+                        width: 1.5,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );

@@ -69,7 +69,7 @@ class LanguageController extends GetxController {
       Get.snackbar(
         'Language Required',
         'Please select a language to continue',
-        snackPosition: SnackPosition.BOTTOM,
+        snackPosition: SnackPosition.TOP,
       );
       return;
     }

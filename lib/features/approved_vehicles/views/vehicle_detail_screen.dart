@@ -280,7 +280,7 @@ class VehicleDetailScreen extends StatelessWidget {
         subscriptionType == 'category'
             ? 'Category subscription not available'
             : 'Inspection subscription not available',
-        snackPosition: SnackPosition.BOTTOM,
+        snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.red.shade100,
         colorText: Colors.red.shade900,
       );
@@ -420,7 +420,7 @@ class VehicleDetailScreen extends StatelessWidget {
           subscriptionType == 'category'
               ? 'Vehicle booked successfully!'
               : 'Inspection requested successfully!',
-          snackPosition: SnackPosition.BOTTOM,
+          snackPosition: SnackPosition.TOP,
           backgroundColor: Colors.green.shade100,
           colorText: Colors.green.shade900,
         );
@@ -433,7 +433,7 @@ class VehicleDetailScreen extends StatelessWidget {
       Get.snackbar(
         'Error',
         'Payment processing failed. Please try again.',
-        snackPosition: SnackPosition.BOTTOM,
+        snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.red.shade100,
         colorText: Colors.red.shade900,
       );
