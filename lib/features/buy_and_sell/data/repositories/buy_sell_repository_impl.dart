@@ -666,7 +666,9 @@ class BuySellRepositoryImpl implements BuySellRepository {
     dynamic tonnage,
     dynamic hours,
     dynamic bodyType,
+    dynamic bodyLength,
     dynamic fuelType,
+    dynamic insuranceDates,
     dynamic kv,
     dynamic otherBrand,
     dynamic otherTipper,
@@ -674,14 +676,14 @@ class BuySellRepositoryImpl implements BuySellRepository {
     dynamic otherTyre,
   }) async {
     try {
-      final formData = FormData.fromMap({
+      // Build JSON data using proper field mapping (matching SellVehicleRequest.toJson)
+      final jsonData = <String, dynamic>{
         'user_id': userId,
         'category_code': categoryCode,
         'brand_code': brandCode,
         'asset_desc_or_model': assetDescOrModel,
         'registration_number': registrationNumber,
         'manufacturing_year': manufacturingYear,
-        'chassis_number': chassisNumber,
         'price': price,
         'owner_mobile': ownerMobile,
         'state_code': stateCode,
@@ -689,38 +691,55 @@ class BuySellRepositoryImpl implements BuySellRepository {
         'fitness': fitness,
         'original_invoice': originalInvoice,
         'gst_applicability': gstApplicability,
-        if (odometer != null) 'odometer': odometer,
-        if (noOfTyres != null) 'no_of_tyres': noOfTyres,
-        if (insurance != null) 'insurance': insurance,
-        if (tonnage != null) 'tonnage': tonnage,
-        if (hours != null) 'hours': hours,
-        if (bodyType != null) 'body_type': bodyType,
-        if (fuelType != null) 'fuel_type': fuelType,
-        if (kv != null) 'kv': kv,
-        if (otherBrand != null) 'other_brand': otherBrand,
-        if (otherTipper != null) 'other_tipper': otherTipper,
-        if (otherBodyType != null) 'other_body_type': otherBodyType,
-        if (otherTyre != null) 'other_tyre': otherTyre,
-        if (vehicleImages != null && vehicleImages.isNotEmpty)
-          'vehicle_images': vehicleImages
-              .map(
-                (f) => MultipartFile.fromFileSync(
-                  f.path,
-                  filename: f.path.split('/').last,
-                ),
-              )
-              .toList(),
-        if (rcDocument != null)
-          'rc_document': MultipartFile.fromFileSync(
-            rcDocument.path,
-            filename: rcDocument.path.split('/').last,
-          ),
-        if (insuranceDocument != null)
-          'insurance_document': MultipartFile.fromFileSync(
-            insuranceDocument.path,
-            filename: insuranceDocument.path.split('/').last,
-          ),
-      });
+        'insurance': insurance == true,
+      };
+
+      // Add optional fields only if not null and not empty
+      if (chassisNumber.isNotEmpty) jsonData['chassis_number'] = chassisNumber;
+      if (odometer != null && odometer.toString().isNotEmpty) jsonData['odometer'] = odometer;
+      if (noOfTyres != null && noOfTyres.toString().isNotEmpty) jsonData['no_of_tyres'] = noOfTyres;
+      if (tonnage != null && tonnage.toString().isNotEmpty) jsonData['tonnage'] = tonnage;
+      if (hours != null && hours.toString().isNotEmpty) jsonData['hours'] = hours;
+      if (bodyType != null && bodyType.toString().isNotEmpty) jsonData['body_type'] = bodyType;
+      if (bodyLength != null && bodyLength.toString().isNotEmpty) jsonData['body_length'] = bodyLength;
+      if (fuelType != null && fuelType.toString().isNotEmpty) jsonData['fuel_type'] = fuelType;
+      if (insuranceDates != null && insuranceDates.toString().isNotEmpty) jsonData['insurance_dates'] = insuranceDates;
+      if (kv != null && kv.toString().isNotEmpty) jsonData['kv'] = kv;
+      if (otherBrand != null && otherBrand.toString().isNotEmpty) jsonData['other_brand'] = otherBrand;
+      if (otherTipper != null && otherTipper.toString().isNotEmpty) jsonData['other_tipper'] = otherTipper;
+      if (otherBodyType != null && otherBodyType.toString().isNotEmpty) jsonData['other_body_type'] = otherBodyType;
+      if (otherTyre != null && otherTyre.toString().isNotEmpty) jsonData['other_tyre'] = otherTyre;
+
+      // Build FormData combining JSON data with file uploads
+      final formDataMap = <String, dynamic>{...jsonData};
+
+      if (vehicleImages != null && vehicleImages.isNotEmpty) {
+        formDataMap['vehicle_images'] = vehicleImages
+            .map(
+              (f) => MultipartFile.fromFileSync(
+                f.path,
+                filename: f.path.split('/').last,
+              ),
+            )
+            .toList();
+      }
+      if (rcDocument != null) {
+        formDataMap['rc_document'] = MultipartFile.fromFileSync(
+          rcDocument.path,
+          filename: rcDocument.path.split('/').last,
+        );
+      }
+      if (insuranceDocument != null) {
+        formDataMap['insurance_document'] = MultipartFile.fromFileSync(
+          insuranceDocument.path,
+          filename: insuranceDocument.path.split('/').last,
+        );
+      }
+
+      final formData = FormData.fromMap(formDataMap);
+
+      print('📤 [createSellVehicle] Sending data: $jsonData');
+      print('📤 [createSellVehicle] Files - images:${vehicleImages?.length ?? 0}, rc:${rcDocument != null}, insurance:${insuranceDocument != null}');
 
       final response = await _network.post(
         ApiEndpoints.sellVehicle,
@@ -737,7 +756,12 @@ class BuySellRepositoryImpl implements BuySellRepository {
       }
     } on DioException catch (e) {
       print('❌ createSellVehicle error: ${e.message}');
-      throw Exception('Failed to create vehicle: ${e.message}');
+      if (e.response != null) {
+        print('❌ createSellVehicle response status: ${e.response?.statusCode}');
+        print('❌ createSellVehicle response data: ${e.response?.data}');
+        print('❌ createSellVehicle request data: ${e.requestOptions.data}');
+      }
+      throw Exception('Failed to create vehicle: ${e.response?.data ?? e.message}');
     }
   }
 
@@ -767,7 +791,9 @@ class BuySellRepositoryImpl implements BuySellRepository {
     dynamic tonnage,
     dynamic hours,
     dynamic bodyType,
+    dynamic bodyLength,
     dynamic fuelType,
+    dynamic insuranceDates,
     dynamic kv,
     dynamic otherBrand,
     dynamic otherTipper,
@@ -794,9 +820,11 @@ class BuySellRepositoryImpl implements BuySellRepository {
         if (odometer != null) 'odometer': odometer,
         if (noOfTyres != null) 'no_of_tyres': noOfTyres,
         if (insurance != null) 'insurance': insurance,
+        if (insuranceDates != null) 'insurance_dates': insuranceDates,
         if (tonnage != null) 'tonnage': tonnage,
         if (hours != null) 'hours': hours,
         if (bodyType != null) 'body_type': bodyType,
+        if (bodyLength != null) 'body_length': bodyLength,
         if (fuelType != null) 'fuel_type': fuelType,
         if (kv != null) 'kv': kv,
         if (otherBrand != null) 'other_brand': otherBrand,

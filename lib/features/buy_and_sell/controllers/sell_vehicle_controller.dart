@@ -428,7 +428,8 @@ class SellVehicleController extends GetxController {
         noOfTyres: (formValues['No Of Tyres'] ?? formValues['no_of_tyres'])
             ?.toString(),
         fitness: formValues['Fitness'] == true || formValues['fitness'] == true,
-        insurance: formValues['Vehicle Insurance'] ?? formValues['insurance'],
+        insurance: formValues['Vehicle Insurance'] != null ||
+            formValues['insurance'] == true,
         originalInvoice:
             formValues['Original Invoice'] == true ||
             formValues['original_invoice'] == true,
@@ -439,8 +440,13 @@ class SellVehicleController extends GetxController {
         hours: (formValues['Hours'] ?? formValues['hours'])?.toString(),
         bodyType: (formValues['Body Type'] ?? formValues['body_type'])
             ?.toString(),
+        bodyLength: (formValues['Body Length'] ?? formValues['body_length'])
+            ?.toString(),
         fuelType: (formValues['Fuel Type'] ?? formValues['fuel_type'])
             ?.toString(),
+        insuranceDates:
+            (formValues['Vehicle Insurance'] ?? formValues['insurance_dates'])
+                ?.toString(),
         kv: (formValues['KV'] ?? formValues['kv'])?.toString(),
         otherBrand: formValues['other_brand']?.toString(),
         otherTipper: formValues['other_tipper']?.toString(),
@@ -527,7 +533,8 @@ class SellVehicleController extends GetxController {
         noOfTyres: (formValues['No Of Tyres'] ?? formValues['no_of_tyres'])
             ?.toString(),
         fitness: formValues['Fitness'] == true || formValues['fitness'] == true,
-        insurance: formValues['Vehicle Insurance'] ?? formValues['insurance'],
+        insurance: formValues['Vehicle Insurance'] != null ||
+            formValues['insurance'] == true,
         originalInvoice:
             formValues['Original Invoice'] == true ||
             formValues['original_invoice'] == true,
@@ -538,8 +545,13 @@ class SellVehicleController extends GetxController {
         hours: (formValues['Hours'] ?? formValues['hours'])?.toString(),
         bodyType: (formValues['Body Type'] ?? formValues['body_type'])
             ?.toString(),
+        bodyLength: (formValues['Body Length'] ?? formValues['body_length'])
+            ?.toString(),
         fuelType: (formValues['Fuel Type'] ?? formValues['fuel_type'])
             ?.toString(),
+        insuranceDates:
+            (formValues['Vehicle Insurance'] ?? formValues['insurance_dates'])
+                ?.toString(),
         kv: (formValues['KV'] ?? formValues['kv'])?.toString(),
         otherBrand: formValues['other_brand']?.toString(),
         otherTipper: formValues['other_tipper']?.toString(),
