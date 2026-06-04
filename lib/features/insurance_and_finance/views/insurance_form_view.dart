@@ -4,9 +4,10 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 import '../../../core/constants/app_colors.dart';
-import '../../../core/design_system/buttons/primary_button.dart';
-import '../../../core/design_system/molecules/custom_dropdown_field.dart';
+import '../../../core/design_system/molecules/gradient_button.dart';
+import '../../../core/design_system/molecules/custom_file_upload_field.dart';
 import '../../../core/design_system/molecules/custom_input_field.dart';
+import '../../../core/design_system/molecules/inline_dropdown_field.dart';
 import '../../../theme/app_fonts.dart';
 import '../controllers/insurance_finance_controller.dart';
 
@@ -53,42 +54,39 @@ class InsuranceFormView extends StatelessWidget {
             SizedBox(height: 16.h),
 
             // ── RC Document ─────────────────────────────────────
-            _buildLabel('RC Document *'),
-            SizedBox(height: 6.h),
-            _buildFileUploadArea(
-              context: context,
-              controller: controller,
-              files: controller.rcCopyFiles,
-              errorText: controller.rcFileError.value.isNotEmpty
-                  ? _getErrorMessage(controller.rcFileError.value)
-                  : null,
-              onTap: () => controller.pickFiles(controller.rcCopyFiles),
-              onRemove: (index) => controller.removeFile(
-                  controller.rcCopyFiles, index),
-              label: 'Upload RC Document',
-            ),
+            Obx(() => CustomFileUploadField(
+                  title: 'RC Document *',
+                  label: 'Choose a file/browse multiple files',
+                  subtitle: 'JPEG, PNG & PDF (up to 12 MB)',
+                  icon: Icons.cloud_upload,
+                  onTap: () => controller.pickFiles(controller.rcCopyFiles),
+                  files: controller.rcCopyFiles.toList(),
+                  onRemove: (index) => controller.removeFile(
+                      controller.rcCopyFiles, index),
+                  errorText: controller.rcFileError.value.isNotEmpty
+                      ? _getErrorMessage(controller.rcFileError.value)
+                      : null,
+                )),
             SizedBox(height: 16.h),
 
             // ── Previous Year Policy ────────────────────────────
-            _buildLabel('Previous Year Policy'),
-            SizedBox(height: 6.h),
-            _buildFileUploadArea(
-              context: context,
-              controller: controller,
-              files: controller.previousPolicyFiles,
-              errorText: null,
-              onTap: () =>
-                  controller.pickFiles(controller.previousPolicyFiles),
-              onRemove: (index) => controller.removeFile(
-                  controller.previousPolicyFiles, index),
-              label: 'Upload Previous Policy',
-            ),
+            Obx(() => CustomFileUploadField(
+                  title: 'Previous Year Policy',
+                  label: 'Choose a file/browse multiple files',
+                  subtitle: 'JPEG, PNG & PDF (up to 12 MB)',
+                  icon: Icons.cloud_upload,
+                  onTap: () =>
+                      controller.pickFiles(controller.previousPolicyFiles),
+                  files: controller.previousPolicyFiles.toList(),
+                  onRemove: (index) => controller.removeFile(
+                      controller.previousPolicyFiles, index),
+                  errorText: null,
+                )),
             SizedBox(height: 16.h),
 
             // ── Insurance Type ──────────────────────────────────
-            _buildLabel('Insurance Type *'),
-            SizedBox(height: 6.h),
-            Obx(() => CustomDropdownField<String>(
+            Obx(() => InlineDropdownField<String>(
+                  label: 'Insurance Type *',
                   value: controller.selectedInsuranceType.value.isNotEmpty
                       ? controller.selectedInsuranceType.value
                       : null,
@@ -109,9 +107,8 @@ class InsuranceFormView extends StatelessWidget {
             SizedBox(height: 16.h),
 
             // ── Claim Status ────────────────────────────────────
-            _buildLabel('Claim Status *'),
-            SizedBox(height: 6.h),
-            Obx(() => CustomDropdownField<String>(
+            Obx(() => InlineDropdownField<String>(
+                  label: 'Claim Status *',
                   value: controller.selectedClaim.value.isNotEmpty
                       ? controller.selectedClaim.value
                       : null,
@@ -130,33 +127,31 @@ class InsuranceFormView extends StatelessWidget {
             SizedBox(height: 16.h),
 
             // ── Aadhar Document ─────────────────────────────────
-            _buildLabel('Aadhar Document'),
-            SizedBox(height: 6.h),
-            _buildFileUploadArea(
-              context: context,
-              controller: controller,
-              files: controller.aadharFiles,
-              errorText: null,
-              onTap: () => controller.pickFiles(controller.aadharFiles),
-              onRemove: (index) =>
-                  controller.removeFile(controller.aadharFiles, index),
-              label: 'Upload Aadhar Document',
-            ),
+            Obx(() => CustomFileUploadField(
+                  title: 'Aadhar Document',
+                  label: 'Choose a file/browse multiple files',
+                  subtitle: 'JPEG, PNG & PDF (up to 12 MB)',
+                  icon: Icons.cloud_upload,
+                  onTap: () => controller.pickFiles(controller.aadharFiles),
+                  files: controller.aadharFiles.toList(),
+                  onRemove: (index) =>
+                      controller.removeFile(controller.aadharFiles, index),
+                  errorText: null,
+                )),
             SizedBox(height: 16.h),
 
             // ── PAN Document ────────────────────────────────────
-            _buildLabel('PAN Document'),
-            SizedBox(height: 6.h),
-            _buildFileUploadArea(
-              context: context,
-              controller: controller,
-              files: controller.panFiles,
-              errorText: null,
-              onTap: () => controller.pickFiles(controller.panFiles),
-              onRemove: (index) =>
-                  controller.removeFile(controller.panFiles, index),
-              label: 'Upload PAN Document',
-            ),
+            Obx(() => CustomFileUploadField(
+                  title: 'PAN Document',
+                  label: 'Choose a file/browse multiple files',
+                  subtitle: 'JPEG, PNG & PDF (up to 12 MB)',
+                  icon: Icons.cloud_upload,
+                  onTap: () => controller.pickFiles(controller.panFiles),
+                  files: controller.panFiles.toList(),
+                  onRemove: (index) =>
+                      controller.removeFile(controller.panFiles, index),
+                  errorText: null,
+                )),
             SizedBox(height: 16.h),
 
             // ── Terms & Conditions ──────────────────────────────
@@ -235,15 +230,16 @@ class InsuranceFormView extends StatelessWidget {
                 )),
             SizedBox(height: 24.h),
 
-            // ── Submit Button ───────────────────────────────────
-            Obx(() => PrimaryButton(
-                  label: controller.isSubmitting.value
-                      ? 'Submitting Request...'
-                      : 'Submit',
-                  onPressed: controller.isSubmitting.value
-                      ? null
-                      : () => controller.submitInsuranceRequest(),
-                  isLoading: controller.isSubmitting.value,
+            // ── Submit Button (Gradient Filled) ─────────────────
+            Obx(() => Center(
+                  child: GradientButton.filled(
+                    text: 'Submit',
+                    onPressed: controller.isSubmitting.value
+                        ? null
+                        : () => controller.submitInsuranceRequest(),
+                    width: double.infinity,
+                    height: 48.h,
+                  ),
                 )),
             SizedBox(height: 24.h),
           ],
@@ -282,86 +278,5 @@ class InsuranceFormView extends StatelessWidget {
       default:
         return errorKey;
     }
-  }
-
-  Widget _buildFileUploadArea({
-    required BuildContext context,
-    required InsuranceFinanceController controller,
-    required List files,
-    required String? errorText,
-    required VoidCallback onTap,
-    required Function(int) onRemove,
-    required String label,
-  }) {
-    return Obx(() {
-      final hasFiles = files.isNotEmpty;
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          GestureDetector(
-            onTap: onTap,
-            child: Container(
-              width: double.infinity,
-              padding: EdgeInsets.symmetric(
-                horizontal: 16.w,
-                vertical: 14.h,
-              ),
-              decoration: BoxDecoration(
-                border: Border.all(
-                  color: errorText != null
-                      ? AppColors.error
-                      : AppColors.grey300,
-                  width: 1,
-                ),
-                borderRadius: BorderRadius.circular(12.r),
-                color: AppColors.grey50,
-              ),
-              child: Row(
-                children: [
-                  Icon(
-                    Icons.cloud_upload_outlined,
-                    color: AppColors.textSecondary,
-                    size: 20.sp,
-                  ),
-                  SizedBox(width: 12.w),
-                  Expanded(
-                    child: Text(
-                      hasFiles ? files.first.name : label,
-                      style: AppFonts.bodyMedium.copyWith(
-                        color: hasFiles
-                            ? AppColors.textPrimary
-                            : AppColors.textSecondary,
-                        fontSize: 13.sp,
-                      ),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                  if (hasFiles)
-                    GestureDetector(
-                      onTap: () => onRemove(0),
-                      child: Icon(
-                        Icons.close,
-                        color: AppColors.error,
-                        size: 18.sp,
-                      ),
-                    ),
-                ],
-              ),
-            ),
-          ),
-          if (errorText != null)
-            Padding(
-              padding: EdgeInsets.only(top: 6.h, left: 4.w),
-              child: Text(
-                errorText,
-                style: TextStyle(
-                  color: AppColors.error,
-                  fontSize: 12.sp,
-                ),
-              ),
-            ),
-        ],
-      );
-    });
   }
 }

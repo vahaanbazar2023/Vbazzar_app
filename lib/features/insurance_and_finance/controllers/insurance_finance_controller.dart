@@ -3,12 +3,17 @@ import 'dart:io' show Platform;
 import 'package:file_picker/file_picker.dart';
 import 'package:dio/dio.dart' as dio;
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:open_filex/open_filex.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 
+import '../../../core/constants/app_colors.dart';
+import '../../../core/design_system/molecules/custom_snackbar.dart';
+import '../../../core/design_system/molecules/gradient_button.dart';
 import '../../../core/models/location_models.dart';
+import '../../../theme/app_fonts.dart';
 import '../../../core/services/location_service.dart';
 import '../../../core/storage/secure_storage_service.dart';
 import '../../../core/storage/storage_keys.dart';
@@ -267,7 +272,7 @@ class InsuranceFinanceController extends GetxController
         vehicleNo: vehicleNoController.text.trim(),
         insuranceType: selectedInsuranceType.value,
         claimType: selectedClaim.value,
-        acceptedTerms: isTermsAccepted.value.toString(),
+        acceptedTerms: isTermsAccepted.value ? 'checked' : 'unchecked',
       );
 
       // Build file map
@@ -291,17 +296,27 @@ class InsuranceFinanceController extends GetxController
         files: files.cast(),
       );
 
+      // ── Debug logging ──
+      debugPrint('══════════════════════════════════════════');
+      debugPrint('📋 INSURANCE RESULT');
+      debugPrint('Success: ${result.success}');
+      debugPrint('Message: ${result.message}');
+      debugPrint('Error: ${result.errorMessage}');
+      debugPrint('══════════════════════════════════════════');
+
       if (result.success) {
+        _resetInsuranceForm();
         _showSuccessDialog(
-          title: 'Insurance Request Submitted!',
-          message:
-              'Your insurance request has been submitted successfully. Our team will review your request and get back to you soon.',
-          onDismiss: _resetInsuranceForm,
+          'Insurance request submitted successfully! Our team will review and get back to you soon.',
         );
       } else {
-        _showErrorSnackbar(result.message);
+        final errorDetail = result.errorMessage != null && result.errorMessage!.isNotEmpty
+            ? '\n${result.errorMessage}'
+            : '';
+        _showErrorSnackbar('${result.message}$errorDetail');
       }
     } catch (e) {
+      debugPrint('❌ INSURANCE EXCEPTION: $e');
       _showErrorSnackbar('An unexpected error occurred. Please try again.');
     } finally {
       isSubmitting.value = false;
@@ -527,7 +542,7 @@ class InsuranceFinanceController extends GetxController
         fleetSize: fleetSizeController.text.trim(),
         vehicleLocation: vehicleLocationController.text.trim(),
         applicantMobileNum: mobileNumberController.text.trim(),
-        coApplicantDetails: isCoapplicant.value ? 'yes' : 'no',
+        coApplicantDetails: isCoapplicant.value ? 'checked' : 'unchecked',
         coApplicantMobileNum:
             mobileCoApplicantNumberController.text.trim(),
       );
@@ -569,17 +584,27 @@ class InsuranceFinanceController extends GetxController
         files: files.cast(),
       );
 
+      // ── Debug logging ──
+      debugPrint('══════════════════════════════════════════');
+      debugPrint('📋 FINANCE RESULT');
+      debugPrint('Success: ${result.success}');
+      debugPrint('Message: ${result.message}');
+      debugPrint('Error: ${result.errorMessage}');
+      debugPrint('══════════════════════════════════════════');
+
       if (result.success) {
+        _resetFinanceForm();
         _showSuccessDialog(
-          title: 'Finance Request Submitted!',
-          message:
-              'Your finance request has been submitted successfully. Our team will review your request and get back to you soon.',
-          onDismiss: _resetFinanceForm,
+          'Finance request submitted successfully! Our team will review and get back to you soon.',
         );
       } else {
-        _showErrorSnackbar(result.message);
+        final errorDetail = result.errorMessage != null && result.errorMessage!.isNotEmpty
+            ? '\n${result.errorMessage}'
+            : '';
+        _showErrorSnackbar('${result.message}$errorDetail');
       }
     } catch (e) {
+      debugPrint('❌ FINANCE EXCEPTION: $e');
       _showErrorSnackbar('An unexpected error occurred. Please try again.');
     } finally {
       isSubmitting.value = false;
@@ -654,11 +679,11 @@ class InsuranceFinanceController extends GetxController
       final result = await FilePicker.platform.pickFiles(
         type: FileType.custom,
         allowedExtensions: ['png', 'jpg', 'jpeg', 'pdf'],
-        allowMultiple: false,
+        allowMultiple: true,
         withData: true,
       );
       if (result != null && result.files.isNotEmpty) {
-        targetList.assignAll(result.files);
+        targetList.addAll(result.files);
       }
     } catch (e) {
       _showErrorSnackbar('Failed to pick file. Please try again.');
@@ -793,37 +818,79 @@ class InsuranceFinanceController extends GetxController
   // ─── UI helpers ─────────────────────────────────────────────
 
   void _showErrorSnackbar(String message) {
-    Get.snackbar(
-      'Error',
-      message,
-      snackPosition: SnackPosition.TOP,
-      backgroundColor: Colors.red,
-      colorText: Colors.white,
-      duration: const Duration(seconds: 3),
+    CustomSnackbar.show(
+      message: message,
+      type: SnackbarType.error,
+      duration: const Duration(seconds: 4),
     );
   }
 
-  void _showSuccessDialog({
-    required String title,
-    required String message,
-    VoidCallback? onDismiss,
-  }) {
+  void _showSuccessDialog(String message) {
     Get.dialog(
-      AlertDialog(
-        title: Text(title),
-        content: Text(message),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Get.back();
-              onDismiss?.call();
-            },
-            child: const Text('OK'),
+      Dialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16.r),
+        ),
+        backgroundColor: AppColors.white,
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 28.h),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Contact Us Image
+              Image.asset(
+                'assets/images/png/contact_us.png',
+                width: 120.w,
+                height: 120.h,
+                fit: BoxFit.contain,
+              ),
+              SizedBox(height: 20.h),
+
+              // Thank You Title
+              Text(
+                'Thank you for submitting!',
+                style: AppFonts.titleMedium.copyWith(
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.textPrimary,
+                  fontSize: 18.sp,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(height: 8.h),
+
+              // Subtitle
+              Text(
+                'Our team will contact you soon..!',
+                style: AppFonts.bodyMedium.copyWith(
+                  color: AppColors.textSecondary,
+                  fontSize: 14.sp,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(height: 24.h),
+
+              // Okay Button
+              SizedBox(
+                width: double.infinity,
+                child: GradientButton.filled(
+                  text: 'Okay',
+                  onPressed: () {
+                    Get.back(); // Close dialog
+                    _navigateToCategories();
+                  },
+                  height: 48.h,
+                ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
       barrierDismissible: false,
     );
+  }
+
+  void _navigateToCategories() {
+    Get.offAllNamed('/home');
   }
 
   /// Navigate to Terms & Conditions page.

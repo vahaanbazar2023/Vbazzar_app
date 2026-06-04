@@ -287,6 +287,7 @@ class AppPages {
     GetPage(
       name: AppRoutes.spareOrders,
       page: () => const SpareOrdersView(),
+      binding: SpareFmsBinding(),
       transition: Transition.rightToLeft,
     ),
     // ── Insurance & Finance ─────────────────────────────────

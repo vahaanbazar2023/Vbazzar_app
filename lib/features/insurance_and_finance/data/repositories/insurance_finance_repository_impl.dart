@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart' as dio;
+import 'package:flutter/foundation.dart';
 
 import '../../../../core/network/endpoints/api_endpoints.dart';
 import '../../../../core/network/network_service.dart';
@@ -31,10 +32,34 @@ class InsuranceFinanceRepositoryImpl implements InsuranceFinanceRepository {
         ...files,
       });
 
+      // ── Debug logging ──
+      debugPrint('══════════════════════════════════════════');
+      debugPrint('📤 INSURANCE REQUEST');
+      debugPrint('URL: ${ApiEndpoints.insuranceRequest}');
+      debugPrint('Fields:');
+      debugPrint('  user_id: ${request.userId}');
+      debugPrint('  vehicle_no: ${request.vehicleNo}');
+      debugPrint('  insurance_type: ${request.insuranceType}');
+      debugPrint('  claim_type: ${request.claimType}');
+      debugPrint('  accepted_terms: ${request.acceptedTerms}');
+      debugPrint('Files:');
+      for (final entry in files.entries) {
+        final multipart = entry.value;
+        debugPrint('  ${entry.key}: ${multipart.filename} (${multipart.length} bytes)');
+      }
+      debugPrint('══════════════════════════════════════════');
+
       final response = await _networkService.upload(
         ApiEndpoints.insuranceRequest,
         formData,
       );
+
+      // ── Debug logging: response ──
+      debugPrint('══════════════════════════════════════════');
+      debugPrint('📥 INSURANCE RESPONSE');
+      debugPrint('Status: ${response.statusCode}');
+      debugPrint('Data: ${response.data}');
+      debugPrint('══════════════════════════════════════════');
 
       final data = response.data as Map<String, dynamic>;
       final insuranceResponse = InsuranceResponseModel.fromJson(data);
@@ -57,8 +82,16 @@ class InsuranceFinanceRepositoryImpl implements InsuranceFinanceRepository {
         );
       }
     } on dio.DioException catch (e) {
+      // ── Debug logging: error ──
+      debugPrint('══════════════════════════════════════════');
+      debugPrint('❌ INSURANCE ERROR');
+      debugPrint('Status: ${e.response?.statusCode}');
+      debugPrint('Response: ${e.response?.data}');
+      debugPrint('Message: ${e.message}');
+      debugPrint('══════════════════════════════════════════');
       return _handleDioError(e);
     } catch (e) {
+      debugPrint('❌ INSURANCE UNEXPECTED ERROR: $e');
       return SubmissionResult(
         success: false,
         message: 'An unexpected error occurred',
@@ -73,24 +106,64 @@ class InsuranceFinanceRepositoryImpl implements InsuranceFinanceRepository {
     required Map<String, dio.MultipartFile> files,
   }) async {
     try {
-      // Build multipart form data
-      final formData = dio.FormData.fromMap({
+      // Build multipart form data — only include non-empty optional fields
+      final fields = <String, dynamic>{
         'user_id': request.userId,
         'vehicle_no': request.vehicleNo,
         'vehicle_state': request.vehicleState,
         'vehicle_city': request.vehicleCity,
-        'fleet_size': request.fleetSize,
         'vehicle_location': request.vehicleLocation,
         'applicant_mobile_num': request.applicantMobileNum,
         'co_applicant_details': request.coApplicantDetails,
-        'co_applicant_mobile_num': request.coApplicantMobileNum,
-        ...files,
-      });
+      };
+
+      // Only include fleet_size if provided
+      if (request.fleetSize.isNotEmpty) {
+        fields['fleet_size'] = request.fleetSize;
+      }
+
+      // Only include co_applicant_mobile_num when co-applicant is checked
+      if (request.coApplicantDetails == 'checked' &&
+          request.coApplicantMobileNum.isNotEmpty) {
+        fields['co_applicant_mobile_num'] = request.coApplicantMobileNum;
+      }
+
+      fields.addAll(files);
+
+      final formData = dio.FormData.fromMap(fields);
+
+      // ── Debug logging ──
+      debugPrint('══════════════════════════════════════════');
+      debugPrint('📤 FINANCE REQUEST');
+      debugPrint('URL: ${ApiEndpoints.financeRequest}');
+      debugPrint('Fields:');
+      debugPrint('  user_id: ${request.userId}');
+      debugPrint('  vehicle_no: ${request.vehicleNo}');
+      debugPrint('  vehicle_state: ${request.vehicleState}');
+      debugPrint('  vehicle_city: ${request.vehicleCity}');
+      debugPrint('  fleet_size: ${request.fleetSize}');
+      debugPrint('  vehicle_location: ${request.vehicleLocation}');
+      debugPrint('  applicant_mobile_num: ${request.applicantMobileNum}');
+      debugPrint('  co_applicant_details: ${request.coApplicantDetails}');
+      debugPrint('  co_applicant_mobile_num: ${request.coApplicantMobileNum}');
+      debugPrint('Files:');
+      for (final entry in files.entries) {
+        final multipart = entry.value;
+        debugPrint('  ${entry.key}: ${multipart.filename} (${multipart.length} bytes)');
+      }
+      debugPrint('══════════════════════════════════════════');
 
       final response = await _networkService.upload(
         ApiEndpoints.financeRequest,
         formData,
       );
+
+      // ── Debug logging: response ──
+      debugPrint('══════════════════════════════════════════');
+      debugPrint('📥 FINANCE RESPONSE');
+      debugPrint('Status: ${response.statusCode}');
+      debugPrint('Data: ${response.data}');
+      debugPrint('══════════════════════════════════════════');
 
       final data = response.data as Map<String, dynamic>;
       final financeResponse = FinanceResponseModel.fromJson(data);
@@ -113,8 +186,16 @@ class InsuranceFinanceRepositoryImpl implements InsuranceFinanceRepository {
         );
       }
     } on dio.DioException catch (e) {
+      // ── Debug logging: error ──
+      debugPrint('══════════════════════════════════════════');
+      debugPrint('❌ FINANCE ERROR');
+      debugPrint('Status: ${e.response?.statusCode}');
+      debugPrint('Response: ${e.response?.data}');
+      debugPrint('Message: ${e.message}');
+      debugPrint('══════════════════════════════════════════');
       return _handleDioError(e);
     } catch (e) {
+      debugPrint('❌ FINANCE UNEXPECTED ERROR: $e');
       return SubmissionResult(
         success: false,
         message: 'An unexpected error occurred',

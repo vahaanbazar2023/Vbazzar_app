@@ -1,11 +1,13 @@
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 import '../../../core/constants/app_colors.dart';
-import '../../../core/design_system/buttons/primary_button.dart';
+import '../../../core/design_system/molecules/gradient_button.dart';
 import '../../../core/design_system/molecules/custom_autocomplete_field.dart';
+import '../../../core/design_system/molecules/custom_file_upload_field.dart';
 import '../../../core/design_system/molecules/custom_input_field.dart';
 import '../../../core/models/location_models.dart';
 import '../../../theme/app_fonts.dart';
@@ -105,42 +107,40 @@ class FinanceFormView extends StatelessWidget {
             SizedBox(height: 16.h),
 
             // ── RC Copy ─────────────────────────────────────────
-            _buildLabel('RC Copy *'),
-            SizedBox(height: 6.h),
-            _buildFileUploadArea(
-              context: context,
-              controller: controller,
-              files: controller.rcCopyFinanceFiles,
-              errorText: controller.rcFinanceFileError.value.isNotEmpty
-                  ? _getErrorMessage(
-                      controller.rcFinanceFileError.value)
-                  : null,
-              onTap: () =>
-                  controller.pickFiles(controller.rcCopyFinanceFiles),
-              onRemove: (index) => controller.removeFile(
-                  controller.rcCopyFinanceFiles, index),
-              label: 'Upload RC Copy',
-            ),
+            Obx(() => CustomFileUploadField(
+                  title: 'RC Copy *',
+                  label: 'Choose a file/browse multiple files',
+                  subtitle: 'JPEG, PNG & PDF (up to 12 MB)',
+                  icon: Icons.cloud_upload,
+                  onTap: () =>
+                      controller.pickFiles(controller.rcCopyFinanceFiles),
+                  files: controller.rcCopyFinanceFiles.toList(),
+                  onRemove: (index) => controller.removeFile(
+                      controller.rcCopyFinanceFiles, index),
+                  errorText: controller.rcFinanceFileError.value.isNotEmpty
+                      ? _getErrorMessage(
+                          controller.rcFinanceFileError.value)
+                      : null,
+                )),
             SizedBox(height: 16.h),
 
             // ── Insurance Copy ──────────────────────────────────
-            _buildLabel('Insurance Copy *'),
-            SizedBox(height: 6.h),
-            _buildFileUploadArea(
-              context: context,
-              controller: controller,
-              files: controller.insuranceCopyFiles,
-              errorText:
-                  controller.insuranceFinanceFileError.value.isNotEmpty
-                      ? _getErrorMessage(
-                          controller.insuranceFinanceFileError.value)
-                      : null,
-              onTap: () =>
-                  controller.pickFiles(controller.insuranceCopyFiles),
-              onRemove: (index) => controller.removeFile(
-                  controller.insuranceCopyFiles, index),
-              label: 'Upload Insurance Copy',
-            ),
+            Obx(() => CustomFileUploadField(
+                  title: 'Insurance Copy *',
+                  label: 'Choose a file/browse multiple files',
+                  subtitle: 'JPEG, PNG & PDF (up to 12 MB)',
+                  icon: Icons.cloud_upload,
+                  onTap: () =>
+                      controller.pickFiles(controller.insuranceCopyFiles),
+                  files: controller.insuranceCopyFiles.toList(),
+                  onRemove: (index) => controller.removeFile(
+                      controller.insuranceCopyFiles, index),
+                  errorText:
+                      controller.insuranceFinanceFileError.value.isNotEmpty
+                          ? _getErrorMessage(
+                              controller.insuranceFinanceFileError.value)
+                          : null,
+                )),
             SizedBox(height: 16.h),
 
             // ── Fleet Size (optional) ───────────────────────────
@@ -158,19 +158,18 @@ class FinanceFormView extends StatelessWidget {
             SizedBox(height: 16.h),
 
             // ── Company GST (optional) ──────────────────────────
-            _buildLabel('Company GST (if Available)'),
-            SizedBox(height: 6.h),
-            _buildFileUploadArea(
-              context: context,
-              controller: controller,
-              files: controller.companyGstFiles,
-              errorText: null,
-              onTap: () =>
-                  controller.pickFiles(controller.companyGstFiles),
-              onRemove: (index) => controller.removeFile(
-                  controller.companyGstFiles, index),
-              label: 'Upload Company GST',
-            ),
+            Obx(() => CustomFileUploadField(
+                  title: 'Company GST (if Available)',
+                  label: 'Choose a file/browse multiple files',
+                  subtitle: 'JPEG, PNG & PDF (up to 12 MB)',
+                  icon: Icons.cloud_upload,
+                  onTap: () =>
+                      controller.pickFiles(controller.companyGstFiles),
+                  files: controller.companyGstFiles.toList(),
+                  onRemove: (index) => controller.removeFile(
+                      controller.companyGstFiles, index),
+                  errorText: null,
+                )),
             SizedBox(height: 16.h),
 
             // ── Vehicle Location ────────────────────────────────
@@ -212,43 +211,41 @@ class FinanceFormView extends StatelessWidget {
             SizedBox(height: 16.h),
 
             // ── Applicant Aadhar ────────────────────────────────
-            _buildLabel('Aadhar Document *'),
-            SizedBox(height: 6.h),
-            _buildFileUploadArea(
-              context: context,
-              controller: controller,
-              files: controller.aadharFinanceFiles,
-              errorText:
-                  controller.applicantAadharFileError.value.isNotEmpty
-                      ? _getErrorMessage(
-                          controller.applicantAadharFileError.value)
-                      : null,
-              onTap: () =>
-                  controller.pickFiles(controller.aadharFinanceFiles),
-              onRemove: (index) => controller.removeFile(
-                  controller.aadharFinanceFiles, index),
-              label: 'Upload Aadhar Document',
-            ),
+            Obx(() => CustomFileUploadField(
+                  title: 'Aadhar Document *',
+                  label: 'Choose a file/browse multiple files',
+                  subtitle: 'JPEG, PNG & PDF (up to 12 MB)',
+                  icon: Icons.cloud_upload,
+                  onTap: () =>
+                      controller.pickFiles(controller.aadharFinanceFiles),
+                  files: controller.aadharFinanceFiles.toList(),
+                  onRemove: (index) => controller.removeFile(
+                      controller.aadharFinanceFiles, index),
+                  errorText:
+                      controller.applicantAadharFileError.value.isNotEmpty
+                          ? _getErrorMessage(
+                              controller.applicantAadharFileError.value)
+                          : null,
+                )),
             SizedBox(height: 16.h),
 
             // ── Applicant PAN ───────────────────────────────────
-            _buildLabel('PAN Document *'),
-            SizedBox(height: 6.h),
-            _buildFileUploadArea(
-              context: context,
-              controller: controller,
-              files: controller.panFinanceFiles,
-              errorText:
-                  controller.applicantPanFileError.value.isNotEmpty
-                      ? _getErrorMessage(
-                          controller.applicantPanFileError.value)
-                      : null,
-              onTap: () =>
-                  controller.pickFiles(controller.panFinanceFiles),
-              onRemove: (index) => controller.removeFile(
-                  controller.panFinanceFiles, index),
-              label: 'Upload PAN Document',
-            ),
+            Obx(() => CustomFileUploadField(
+                  title: 'PAN Document *',
+                  label: 'Choose a file/browse multiple files',
+                  subtitle: 'JPEG, PNG & PDF (up to 12 MB)',
+                  icon: Icons.cloud_upload,
+                  onTap: () =>
+                      controller.pickFiles(controller.panFinanceFiles),
+                  files: controller.panFinanceFiles.toList(),
+                  onRemove: (index) => controller.removeFile(
+                      controller.panFinanceFiles, index),
+                  errorText:
+                      controller.applicantPanFileError.value.isNotEmpty
+                          ? _getErrorMessage(
+                              controller.applicantPanFileError.value)
+                          : null,
+                )),
             SizedBox(height: 16.h),
 
             // ── Applicant Mobile Number ─────────────────────────
@@ -341,43 +338,41 @@ class FinanceFormView extends StatelessWidget {
                   SizedBox(height: 16.h),
 
                   // Co-Applicant Aadhar
-                  _buildLabel('Aadhar Document *'),
-                  SizedBox(height: 6.h),
-                  _buildFileUploadArea(
-                    context: context,
-                    controller: controller,
-                    files: controller.aadharCoApplicantFinanceFiles,
-                    errorText: controller
-                            .coApplicantAadharFileError.value.isNotEmpty
-                        ? _getErrorMessage(
-                            controller.coApplicantAadharFileError.value)
-                        : null,
-                    onTap: () => controller.pickFiles(
-                        controller.aadharCoApplicantFinanceFiles),
-                    onRemove: (index) => controller.removeFile(
-                        controller.aadharCoApplicantFinanceFiles, index),
-                    label: 'Upload Aadhar Document',
-                  ),
+                  Obx(() => CustomFileUploadField(
+                        title: 'Aadhar Document *',
+                        label: 'Choose a file/browse multiple files',
+                        subtitle: 'JPEG, PNG & PDF (up to 12 MB)',
+                        icon: Icons.cloud_upload,
+                        onTap: () => controller.pickFiles(
+                            controller.aadharCoApplicantFinanceFiles),
+                        files: controller.aadharCoApplicantFinanceFiles.toList(),
+                        onRemove: (index) => controller.removeFile(
+                            controller.aadharCoApplicantFinanceFiles, index),
+                        errorText: controller
+                                .coApplicantAadharFileError.value.isNotEmpty
+                            ? _getErrorMessage(
+                                controller.coApplicantAadharFileError.value)
+                            : null,
+                      )),
                   SizedBox(height: 16.h),
 
                   // Co-Applicant PAN
-                  _buildLabel('PAN Document *'),
-                  SizedBox(height: 6.h),
-                  _buildFileUploadArea(
-                    context: context,
-                    controller: controller,
-                    files: controller.panCoApplicantFinanceFiles,
-                    errorText: controller
-                            .coApplicantPanFileError.value.isNotEmpty
-                        ? _getErrorMessage(
-                            controller.coApplicantPanFileError.value)
-                        : null,
-                    onTap: () => controller.pickFiles(
-                        controller.panCoApplicantFinanceFiles),
-                    onRemove: (index) => controller.removeFile(
-                        controller.panCoApplicantFinanceFiles, index),
-                    label: 'Upload PAN Document',
-                  ),
+                  Obx(() => CustomFileUploadField(
+                        title: 'PAN Document *',
+                        label: 'Choose a file/browse multiple files',
+                        subtitle: 'JPEG, PNG & PDF (up to 12 MB)',
+                        icon: Icons.cloud_upload,
+                        onTap: () => controller.pickFiles(
+                            controller.panCoApplicantFinanceFiles),
+                        files: controller.panCoApplicantFinanceFiles.toList(),
+                        onRemove: (index) => controller.removeFile(
+                            controller.panCoApplicantFinanceFiles, index),
+                        errorText: controller
+                                .coApplicantPanFileError.value.isNotEmpty
+                            ? _getErrorMessage(
+                                controller.coApplicantPanFileError.value)
+                            : null,
+                      )),
                   SizedBox(height: 16.h),
 
                   // Co-Applicant Mobile Number
@@ -404,15 +399,16 @@ class FinanceFormView extends StatelessWidget {
               );
             }),
 
-            // ── Submit Button ───────────────────────────────────
-            Obx(() => PrimaryButton(
-                  label: controller.isSubmitting.value
-                      ? 'Submitting Request...'
-                      : 'Submit',
-                  onPressed: controller.isSubmitting.value
-                      ? null
-                      : () => controller.submitFinanceRequest(),
-                  isLoading: controller.isSubmitting.value,
+            // ── Submit Button (Gradient Filled) ─────────────────
+            Obx(() => Center(
+                  child: GradientButton.filled(
+                    text: 'Submit',
+                    onPressed: controller.isSubmitting.value
+                        ? null
+                        : () => controller.submitFinanceRequest(),
+                    width: double.infinity,
+                    height: 48.h,
+                  ),
                 )),
             SizedBox(height: 24.h),
           ],
@@ -463,86 +459,5 @@ class FinanceFormView extends StatelessWidget {
       default:
         return errorKey;
     }
-  }
-
-  Widget _buildFileUploadArea({
-    required BuildContext context,
-    required InsuranceFinanceController controller,
-    required List files,
-    required String? errorText,
-    required VoidCallback onTap,
-    required Function(int) onRemove,
-    required String label,
-  }) {
-    return Obx(() {
-      final hasFiles = files.isNotEmpty;
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          GestureDetector(
-            onTap: onTap,
-            child: Container(
-              width: double.infinity,
-              padding: EdgeInsets.symmetric(
-                horizontal: 16.w,
-                vertical: 14.h,
-              ),
-              decoration: BoxDecoration(
-                border: Border.all(
-                  color: errorText != null
-                      ? AppColors.error
-                      : AppColors.grey300,
-                  width: 1,
-                ),
-                borderRadius: BorderRadius.circular(12.r),
-                color: AppColors.grey50,
-              ),
-              child: Row(
-                children: [
-                  Icon(
-                    Icons.cloud_upload_outlined,
-                    color: AppColors.textSecondary,
-                    size: 20.sp,
-                  ),
-                  SizedBox(width: 12.w),
-                  Expanded(
-                    child: Text(
-                      hasFiles ? files.first.name : label,
-                      style: AppFonts.bodyMedium.copyWith(
-                        color: hasFiles
-                            ? AppColors.textPrimary
-                            : AppColors.textSecondary,
-                        fontSize: 13.sp,
-                      ),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                  if (hasFiles)
-                    GestureDetector(
-                      onTap: () => onRemove(0),
-                      child: Icon(
-                        Icons.close,
-                        color: AppColors.error,
-                        size: 18.sp,
-                      ),
-                    ),
-                ],
-              ),
-            ),
-          ),
-          if (errorText != null)
-            Padding(
-              padding: EdgeInsets.only(top: 6.h, left: 4.w),
-              child: Text(
-                errorText,
-                style: TextStyle(
-                  color: AppColors.error,
-                  fontSize: 12.sp,
-                ),
-              ),
-            ),
-        ],
-      );
-    });
   }
 }

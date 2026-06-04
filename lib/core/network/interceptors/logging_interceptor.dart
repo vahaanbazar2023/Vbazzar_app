@@ -6,11 +6,19 @@ class LoggingInterceptor extends Interceptor {
 
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
-    _log.info(
-      '→ ${options.method} ${options.uri}\n'
-      '   Headers: ${options.headers}\n'
-      '   Data: ${options.data}',
-    );
+    final isMultipart = options.data is FormData;
+    final buffer = StringBuffer()
+      ..writeln('→ ${options.method} ${options.uri}')
+      ..writeln('   Headers: ${options.headers}');
+    if (isMultipart) {
+      final formData = options.data as FormData;
+      buffer.writeln('   [Multipart Form Data]');
+      buffer.writeln('   Fields: ${formData.fields.map((e) => '${e.key}=${e.value}').toList()}');
+      buffer.writeln('   Files: ${formData.files.map((f) => '${f.key}=>${f.value.filename} (${f.value.length} bytes)').toList()}');
+    } else {
+      buffer.writeln('   Data: ${options.data}');
+    }
+    _log.info(buffer.toString());
     handler.next(options);
   }
 
@@ -25,10 +33,12 @@ class LoggingInterceptor extends Interceptor {
 
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) {
-    _log.error(
-      '✕ ${err.requestOptions.method} ${err.requestOptions.uri}\n'
-      '   ${err.message}',
-    );
+    final buffer = StringBuffer()
+      ..writeln('✕ ${err.requestOptions.method} ${err.requestOptions.uri}')
+      ..writeln('   Status: ${err.response?.statusCode}')
+      ..writeln('   Message: ${err.message}')
+      ..writeln('   Response Data: ${err.response?.data}');
+    _log.error(buffer.toString());
     handler.next(err);
   }
 }

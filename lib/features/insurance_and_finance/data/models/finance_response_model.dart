@@ -96,7 +96,7 @@ class FinanceResponseModel {
     this.error,
   });
 
-  bool get isSuccess => status == 'success' && code == 200;
+  bool get isSuccess => status == 'success' && (code == 200 || code == 201);
 
   factory FinanceResponseModel.fromJson(Map<String, dynamic> json) {
     return FinanceResponseModel(

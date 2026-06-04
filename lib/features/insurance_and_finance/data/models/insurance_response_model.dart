@@ -78,7 +78,7 @@ class InsuranceResponseModel {
     this.error,
   });
 
-  bool get isSuccess => status == 'success' && code == 200;
+  bool get isSuccess => status == 'success' && (code == 200 || code == 201);
 
   factory InsuranceResponseModel.fromJson(Map<String, dynamic> json) {
     return InsuranceResponseModel(

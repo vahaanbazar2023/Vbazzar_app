@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 import '../../../core/constants/app_colors.dart';
+import '../../../core/design_system/atoms/custom_loader.dart';
 import '../../../core/design_system/templates/app_layout.dart';
 import '../../../theme/app_fonts.dart';
 import '../controllers/insurance_finance_controller.dart';
@@ -21,18 +22,27 @@ class InsuranceFinanceView extends GetView<InsuranceFinanceController> {
       title: 'Insurance & Finance',
       subtitle: 'Get quotes for vehicle insurance and financing',
       showBack: true,
-      body: Column(
+      body: Stack(
         children: [
-          _buildTabBar(),
-          Expanded(
-            child: TabBarView(
-              controller: controller.tabController,
-              children: const [
-                InsuranceFormView(),
-                FinanceFormView(),
-              ],
-            ),
+          Column(
+            children: [
+              _buildTabBar(),
+              Expanded(
+                child: TabBarView(
+                  controller: controller.tabController,
+                  children: const [
+                    InsuranceFormView(),
+                    FinanceFormView(),
+                  ],
+                ),
+              ),
+            ],
           ),
+
+          // ── Backdrop Loading Overlay ──────────────────────────
+          Obx(() => controller.isSubmitting.value
+              ? CustomLoader.backdrop()
+              : const SizedBox.shrink()),
         ],
       ),
     );

@@ -20,6 +20,7 @@ export 'atoms/app_icon.dart';
 export 'atoms/app_divider.dart';
 export 'atoms/app_svg_icon.dart';
 export 'atoms/gradient_text.dart';
+export 'atoms/custom_loader.dart';
 
 // ── Molecules ──────────────────────────────────────────────────
 export 'molecules/primary_button.dart';
@@ -31,6 +32,8 @@ export 'molecules/custom_autocomplete_field.dart';
 export 'molecules/custom_phone_input_field.dart';
 export 'molecules/search_bar.dart';
 export 'molecules/custom_snackbar.dart';
+export 'molecules/custom_file_upload_field.dart';
+export 'molecules/inline_dropdown_field.dart';
 export 'molecules/timer_badge.dart';
 
 // ── Organisms ──────────────────────────────────────────────────
