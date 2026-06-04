@@ -18,6 +18,7 @@ import '../features/subscription/views/subscription_confirm_screen.dart';
 import '../features/subscription/views/my_subscription_screen.dart';
 import '../features/subscription/views/wallet_payment_screen.dart';
 import '../features/subscription/controllers/subscription_controller.dart';
+import '../features/subscription/controllers/subscription_confirm_controller.dart';
 import '../features/auction/views/auction_type_screen.dart';
 import '../features/auction/views/autction_tab.dart';
 import '../features/auction/views/acution_vechile_listing.dart';
@@ -128,6 +129,13 @@ class AppPages {
     GetPage(
       name: AppRoutes.subscriptionConfirm,
       page: () => const SubscriptionConfirmScreen(),
+      binding: BindingsBuilder(() {
+        final args = Get.arguments as Map<String, dynamic>? ?? {};
+        Get.lazyPut(() => SubscriptionConfirmController(
+              planArg: args['plan'] as dynamic,
+              sourceArg: args['source'] as String?,
+            ));
+      }),
       transition: Transition.rightToLeft,
     ),
     GetPage(

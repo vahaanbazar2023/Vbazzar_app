@@ -219,18 +219,27 @@ class PaymentStatusCallback {
   final String phone;
   final String paymentStatus;
   final String hash;
-  final String? mode;
-  final String? bankRef;
-  final String? pgType;
-  final String? bankRefNum;
-  final String? mihpayid;
-  final String? udf1;
-  final String? udf2;
-  final String? udf3;
-  final String? udf4;
-  final String? udf5;
-  final String? error;
-  final String? errorMessage;
+  final String mode;
+  final String bankRef;
+  final String pgType;
+  final String bankRefNum;
+  final String mihpayid;
+  final String udf1;
+  final String udf2;
+  final String udf3;
+  final String udf4;
+  final String udf5;
+  final String error;
+  final String errorMessage;
+  final String bankcode;
+  final String bankmessage;
+  final String cardhash;
+  final String cardnum;
+  final String paymentSource;
+  final String payuMoneyId;
+  final String status;
+  final String surl;
+  final String furl;
 
   const PaymentStatusCallback({
     required this.key,
@@ -242,22 +251,31 @@ class PaymentStatusCallback {
     required this.phone,
     required this.paymentStatus,
     required this.hash,
-    this.mode,
-    this.bankRef,
-    this.pgType,
-    this.bankRefNum,
-    this.mihpayid,
-    this.udf1,
-    this.udf2,
-    this.udf3,
-    this.udf4,
-    this.udf5,
-    this.error,
-    this.errorMessage,
+    this.mode = '',
+    this.bankRef = '',
+    this.pgType = '',
+    this.bankRefNum = '',
+    this.mihpayid = '',
+    this.udf1 = '',
+    this.udf2 = '',
+    this.udf3 = '',
+    this.udf4 = '',
+    this.udf5 = '',
+    this.error = '',
+    this.errorMessage = '',
+    this.bankcode = '',
+    this.bankmessage = '',
+    this.cardhash = '',
+    this.cardnum = '',
+    this.paymentSource = '',
+    this.payuMoneyId = '',
+    this.status = '',
+    this.surl = '',
+    this.furl = '',
   });
 
   Map<String, dynamic> toJson() {
-    final map = <String, dynamic>{
+    return <String, dynamic>{
       'key': key,
       'txnid': txnId,
       'amount': amount,
@@ -267,19 +285,27 @@ class PaymentStatusCallback {
       'phone': phone,
       'payment_status': paymentStatus,
       'hash': hash,
+      'mode': mode,
+      'bankcode': bankcode,
+      'bankmessage': bankmessage,
+      'cardhash': cardhash,
+      'cardnum': cardnum,
+      'PG_TYPE': pgType,
+      'bank_ref_num': bankRefNum,
+      'mihpayid': mihpayid,
+      'bankref': bankRef,
+      'payment_source': paymentSource,
+      'payuMoneyId': payuMoneyId,
+      'status': status,
+      'error': error,
+      'error_Message': errorMessage,
+      'udf1': udf1,
+      'udf2': udf2,
+      'udf3': udf3,
+      'udf4': udf4,
+      'udf5': udf5,
+      'surl': surl,
+      'furl': furl,
     };
-    if (mode != null) map['mode'] = mode;
-    if (bankRef != null) map['bankref'] = bankRef;
-    if (pgType != null) map['PG_TYPE'] = pgType;
-    if (bankRefNum != null) map['bank_ref_num'] = bankRefNum;
-    if (mihpayid != null) map['mihpayid'] = mihpayid;
-    if (udf1 != null) map['udf1'] = udf1;
-    if (udf2 != null) map['udf2'] = udf2;
-    if (udf3 != null) map['udf3'] = udf3;
-    if (udf4 != null) map['udf4'] = udf4;
-    if (udf5 != null) map['udf5'] = udf5;
-    if (error != null) map['error'] = error;
-    if (errorMessage != null) map['error_Message'] = errorMessage;
-    return map;
   }
 }

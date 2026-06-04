@@ -23,7 +23,7 @@ class WalletPaymentScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.put(
-      SubscriptionConfirmController(plan: plan, source: source),
+      SubscriptionConfirmController(planArg: plan, sourceArg: source),
       tag: 'wallet_$source',
     );
 
@@ -247,7 +247,7 @@ class _WalletBodyState extends State<_WalletBody> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      if (_payFromWallet && widget.controller.isPriceDiscounted)
+                      if (_payFromWallet && widget.controller.isPriceDiscounted.value)
                         Text(
                           '₹${widget.plan.price.toStringAsFixed(widget.plan.price % 1 == 0 ? 0 : 2)}',
                           style: const TextStyle(
@@ -259,23 +259,23 @@ class _WalletBodyState extends State<_WalletBody> {
                             decorationColor: AppColors.grey400,
                           ),
                         ),
-                      if (_payFromWallet && widget.controller.isPriceDiscounted)
+                      if (_payFromWallet && widget.controller.isPriceDiscounted.value)
                         const SizedBox(height: 2),
                       Text(
-                        _payFromWallet && widget.controller.isPriceDiscounted
-                            ? widget.controller.priceDisplay
+                        _payFromWallet && widget.controller.isPriceDiscounted.value
+                            ? widget.controller.priceDisplay.value
                             : '₹${widget.plan.price.toStringAsFixed(widget.plan.price % 1 == 0 ? 0 : 2)}',
                         style: TextStyle(
                           fontFamily: 'Plus Jakarta Sans',
                           fontWeight: FontWeight.w700,
                           fontSize:
                               _payFromWallet &&
-                                  widget.controller.isPriceDiscounted
+                                  widget.controller.isPriceDiscounted.value
                               ? 20
                               : 22,
                           color:
                               _payFromWallet &&
-                                  widget.controller.isPriceDiscounted
+                                  widget.controller.isPriceDiscounted.value
                               ? _ctaStart
                               : Colors.black,
                         ),
@@ -376,7 +376,7 @@ class _WalletBodyState extends State<_WalletBody> {
                             colors: [_ctaStart, _ctaEnd],
                           ).createShader(bounds),
                           child: Text(
-                            'Proceed Payment ${widget.controller.priceDisplay}',
+                            'Proceed Payment ${widget.controller.priceDisplay.value}',
                             style: const TextStyle(
                               fontFamily: 'Montserrat',
                               fontWeight: FontWeight.w600,

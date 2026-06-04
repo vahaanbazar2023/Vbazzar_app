@@ -67,9 +67,40 @@ class PaymentController extends GetxController
 
       final res = await _service.initiatePayment(req);
 
+      debugPrint('═══════════════════════════════════════════════════');
+      debugPrint('📥 Initiate Payment API Response:');
+      debugPrint('═══════════════════════════════════════════════════');
+      debugPrint('  Status: ${res.status}');
+      debugPrint('  Code: ${res.code}');
+      debugPrint('  Message: ${res.message}');
+      if (res.data != null) {
+        debugPrint('  TxnId: ${res.data!.txnId}');
+        debugPrint('  Merchant Key: ${res.data!.merchantKey}');
+        debugPrint('  Salt Key: ${res.data!.saltKey}');
+        final formData = res.data!.payuFormData;
+        debugPrint('  ── PayU Form Data ──');
+        debugPrint('    key: ${formData.key}');
+        debugPrint('    txnId: ${formData.txnId}');
+        debugPrint('    amount: ${formData.amount}');
+        debugPrint('    productInfo: ${formData.productInfo}');
+        debugPrint('    firstname: ${formData.firstname}');
+        debugPrint('    email: ${formData.email}');
+        debugPrint('    phone: ${formData.phone}');
+        debugPrint('    surl: ${formData.surl}');
+        debugPrint('    furl: ${formData.furl}');
+        debugPrint('    hash: ${formData.hash}');
+        debugPrint('    udf1: ${formData.udf1}');
+        debugPrint('    udf2: ${formData.udf2}');
+        debugPrint('    udf3: ${formData.udf3}');
+        debugPrint('    udf4: ${formData.udf4}');
+        debugPrint('    udf5: ${formData.udf5}');
+      }
+      debugPrint('═══════════════════════════════════════════════════');
+
       if (!res.isSuccess || res.data == null) {
         status.value = PaymentStatus.failed;
         errorMessage.value = res.message;
+        debugPrint('❌ Initiate Payment FAILED: ${res.message}');
         onFailure?.call(res.message, null);
         return false;
       }
@@ -143,11 +174,25 @@ class PaymentController extends GetxController
       PayUPaymentParamKey.android_surl: formData.surl,
       PayUPaymentParamKey.android_furl: formData.furl,
       PayUPaymentParamKey.environment: environment,
-      PayUPaymentParamKey.userCredential: null,
       "transactionId": formData.txnId,
       PayUPaymentParamKey.additionalParam: additionalParam,
       PayUPaymentParamKey.enableNativeOTP: true,
     };
+
+    // PayU SDK REQUIRES userCredential to always be present.
+    // Omitting it causes "Card can not be stored!, user_credentials is missing!"
+    // Format MUST be "merchantKey:userIdentifier" (colon-separated).
+    final email = formData.email;
+    final phone = formData.phone;
+    if (email.isNotEmpty) {
+      params[PayUPaymentParamKey.userCredential] = '${formData.key}:$email';
+    } else if (phone.isNotEmpty) {
+      params[PayUPaymentParamKey.userCredential] = '${formData.key}:$phone';
+    } else {
+      // Fallback: use merchant key + txnId as unique user credential
+      params[PayUPaymentParamKey.userCredential] =
+          '${formData.key}:${formData.txnId}';
+    }
 
     debugPrint(
       '🔧 PayU Environment: $environment (${PayUConfig.isProduction ? "PRODUCTION" : "TEST"})',
@@ -298,28 +343,39 @@ class PaymentController extends GetxController
     Map<String, dynamic> data,
     String paymentStatus,
   ) {
+    final formData = paymentData.value?.payuFormData;
+    final amount = formData?.amount ?? '0';
     return PaymentStatusCallback(
-      key: data['key'] as String? ?? PayUConfig.merchantKey,
-      txnId: data['txnid'] as String? ?? paymentData.value?.txnId ?? '',
-      amount: data['amount'] as String? ?? '0',
-      productInfo: data['productinfo'] as String? ?? '',
-      firstname: data['firstname'] as String? ?? '',
-      email: data['email'] as String? ?? '',
-      phone: data['phone'] as String? ?? '',
+      key: (data['key'] as String?) ?? PayUConfig.merchantKey,
+      txnId: (data['txnid'] as String?) ?? paymentData.value?.txnId ?? '',
+      amount: amount,
+      productInfo: (data['productinfo'] as String?) ?? formData?.productInfo ?? '',
+      firstname: (data['firstname'] as String?) ?? formData?.firstname ?? '',
+      email: (data['email'] as String?) ?? formData?.email ?? '',
+      phone: (data['phone'] as String?) ?? formData?.phone ?? '',
       paymentStatus: paymentStatus,
-      hash: data['hash'] as String? ?? '',
-      mode: data['mode'] as String?,
-      bankRef: data['bankref'] as String?,
-      pgType: data['PG_TYPE'] as String?,
-      bankRefNum: data['bank_ref_num'] as String?,
-      mihpayid: data['mihpayid'] as String?,
-      udf1: data['udf1'] as String?,
-      udf2: data['udf2'] as String?,
-      udf3: data['udf3'] as String?,
-      udf4: data['udf4'] as String?,
-      udf5: data['udf5'] as String?,
-      error: data['error'] as String?,
-      errorMessage: data['error_Message'] as String?,
+      hash: (data['hash'] as String?) ?? formData?.hash ?? '',
+      mode: (data['mode'] as String?) ?? '',
+      bankRef: (data['bankref'] as String?) ?? '',
+      pgType: (data['PG_TYPE'] as String?) ?? '',
+      bankRefNum: (data['bank_ref_num'] as String?) ?? '',
+      mihpayid: (data['mihpayid'] as String?) ?? '',
+      udf1: (data['udf1'] as String?) ?? formData?.udf1 ?? '',
+      udf2: (data['udf2'] as String?) ?? formData?.udf2 ?? '',
+      udf3: (data['udf3'] as String?) ?? formData?.udf3 ?? '',
+      udf4: (data['udf4'] as String?) ?? formData?.udf4 ?? '',
+      udf5: (data['udf5'] as String?) ?? formData?.udf5 ?? '',
+      error: (data['error'] as String?) ?? '',
+      errorMessage: (data['error_Message'] as String?) ?? '',
+      bankcode: (data['bankcode'] as String?) ?? '',
+      bankmessage: (data['bankcode'] as String?) ?? '',
+      cardhash: (data['cardhash'] as String?) ?? '',
+      cardnum: (data['cardnum'] as String?) ?? '',
+      paymentSource: (data['payment_source'] as String?) ?? '',
+      payuMoneyId: (data['payuMoneyId'] as String?) ?? '',
+      status: (data['status'] as String?) ?? '',
+      surl: (data['surl'] as String?) ?? formData?.surl ?? '',
+      furl: (data['furl'] as String?) ?? formData?.furl ?? '',
     );
   }
 

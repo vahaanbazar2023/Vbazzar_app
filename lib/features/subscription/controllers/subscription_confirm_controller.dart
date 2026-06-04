@@ -1,184 +1,142 @@
-import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../core/storage/secure_storage_service.dart';
 import '../../../core/storage/storage_keys.dart';
-import '../../payment/controllers/payment_controller.dart';
+import '../../../features/payment/controllers/payment_controller.dart';
+import '../../../routes/app_routes.dart';
 import '../models/subscription_plan.dart';
-import '../models/wallet_eligibility.dart';
-import '../services/subscription_service.dart';
-import '../services/subscription_guard_service.dart';
+
+class SubscriptionEligibility {
+  final double walletBalance;
+  final bool hasRedeemableAmount;
+
+  const SubscriptionEligibility({
+    required this.walletBalance,
+    required this.hasRedeemableAmount,
+  });
+}
 
 class SubscriptionConfirmController extends GetxController {
-  final SubscriptionService _service;
-  final SubscriptionPlan plan;
-  final String source;
-  final String? referralCode;
+  final SubscriptionPlan? planArg;
+  final String? sourceArg;
 
-  SubscriptionConfirmController({
-    required this.plan,
-    required this.source,
-    this.referralCode,
-    SubscriptionService? service,
-  }) : _service = service ?? SubscriptionService();
-
-  final isLoading = true.obs;
-  final errorMessage = ''.obs;
-  final useWallet = false.obs;
-  final eligibility = Rxn<WalletEligibility>();
+  final isLoading = false.obs;
   final isPaymentInProgress = false.obs;
+  final priceDisplay = ''.obs;
+  final eligibility = Rxn<SubscriptionEligibility>();
+  final isPriceDiscounted = false.obs;
 
-  late final PaymentController _paymentController;
+  late final PaymentController _paymentCtrl;
+  SubscriptionPlan? _plan;
+  bool _useWallet = false;
+
+  SubscriptionConfirmController({this.planArg, this.sourceArg});
 
   @override
   void onInit() {
     super.onInit();
-    _paymentController = Get.put(PaymentController(), tag: 'subscription_payment');
-    _fetchEligibility();
+    _paymentCtrl = Get.find<PaymentController>();
+
+    // Resolve plan from constructor args or Get.arguments
+    final args = Get.arguments as Map<String, dynamic>? ?? {};
+    _plan = planArg ?? args['plan'] as SubscriptionPlan?;
+
+    if (_plan != null) {
+      priceDisplay.value =
+          '₹${_plan!.price.toStringAsFixed(_plan!.price % 1 == 0 ? 0 : 2)}';
+    }
+
+    _loadEligibility();
   }
 
-  @override
-  void onClose() {
-    _paymentController.reset();
-    super.onClose();
-  }
-
-  Future<void> _fetchEligibility() async {
+  Future<void> _loadEligibility() async {
     isLoading.value = true;
-    errorMessage.value = '';
     try {
-      final userId =
-          await SecureStorageService.to.read(StorageKeys.userId) ?? '';
-      final result = await _service.checkWalletEligibility(
-        userId: userId,
-        planCode: plan.planCode,
-        referralCode: referralCode,
-      );
-      eligibility.value = result;
-    } catch (e) {
-      debugPrint('⚠️ walletEligibility error: $e');
-      // Non-fatal — screen still usable without wallet info
-      eligibility.value = WalletEligibility(
-        userId: '',
+      // Placeholder: replace with real API/service call when available
+      await Future.delayed(const Duration(milliseconds: 300));
+      eligibility.value = const SubscriptionEligibility(
         walletBalance: 0,
-        planCode: plan.planCode,
-        planName: plan.name,
-        subscriptionPrice: plan.price,
-        maximumRedeemableAmount: 0,
-        commissionAmount: 0,
-        referralCommissionPercentage: 0,
+        hasRedeemableAmount: false,
       );
     } finally {
       isLoading.value = false;
     }
   }
 
-  void toggleWallet(bool? value) {
-    final e = eligibility.value;
-    if (e == null || !e.hasRedeemableAmount) return;
-    useWallet.value = value ?? false;
+  void toggleWallet(bool value) {
+    _useWallet = value;
+    final plan = _plan;
+    if (plan == null) return;
+
+    final elig = eligibility.value;
+    if (value && elig != null && elig.walletBalance > 0) {
+      final discounted = (plan.price - elig.walletBalance).clamp(0, plan.price);
+      isPriceDiscounted.value = discounted < plan.price;
+      priceDisplay.value =
+          '₹${discounted.toStringAsFixed(discounted % 1 == 0 ? 0 : 2)}';
+    } else {
+      isPriceDiscounted.value = false;
+      priceDisplay.value =
+          '₹${plan.price.toStringAsFixed(plan.price % 1 == 0 ? 0 : 2)}';
+    }
   }
 
-  double get displayBalance {
-    final e = eligibility.value;
-    if (e == null) return 0;
-    return e.remainingBalance(useWallet.value);
-  }
-
-  double get finalPrice {
-    final e = eligibility.value;
-    if (e == null) return plan.price;
-    return e.finalPrice(useWallet.value);
-  }
-
-  String get priceDisplay {
-    final p = finalPrice;
-    return '₹${p.toStringAsFixed(p % 1 == 0 ? 0 : 2)}';
-  }
-
-  String get originalPriceDisplay {
-    final p = plan.price;
-    return '₹${p.toStringAsFixed(p % 1 == 0 ? 0 : 2)}';
-  }
-
-  bool get isPriceDiscounted =>
-      useWallet.value && (eligibility.value?.maximumRedeemableAmount ?? 0) > 0;
+  String get source => sourceArg ??
+      (Get.arguments as Map<String, dynamic>? ?? {})['source'] as String? ??
+      '';
 
   Future<void> onProceedPayment() async {
-    if (isPaymentInProgress.value) return;
+    final plan = _plan;
+    if (plan == null) {
+      _showSnack('No plan selected');
+      return;
+    }
 
-    final e = eligibility.value;
-    final userId = await SecureStorageService.to.read(StorageKeys.userId) ?? '';
-    if (userId.isEmpty) {
-      Get.snackbar('Error', 'User not found. Please login again.',
-          snackPosition: SnackPosition.TOP);
+    final userId =
+        await SecureStorageService.to.read(StorageKeys.userId);
+    if (userId == null || userId.isEmpty) {
+      _showSnack('Please login to continue');
       return;
     }
 
     isPaymentInProgress.value = true;
 
-    // Determine wallet & PayU amounts
-    final double? fromWallet =
-        (useWallet.value && e != null && e.maximumRedeemableAmount > 0)
-            ? e.maximumRedeemableAmount
-            : null;
-    final double forPayment = finalPrice;
-
-    // Set callbacks before initiating
-    _paymentController.onSuccess = (data, callback) async {
+    _paymentCtrl.onSuccess = (data, callback) async {
       isPaymentInProgress.value = false;
-      await SubscriptionGuardService.to.invalidateAndReload();
-      Get.snackbar(
-        'Payment Successful',
-        'Your subscription has been activated.',
-        snackPosition: SnackPosition.TOP,
-        duration: const Duration(seconds: 3),
-      );
-      // Navigate back to home or subscription list
-      Get.until((route) => route.isFirst);
+      _showSnack('Payment successful! Activating subscription...');
+      // Wait for backend to activate subscription after payment callback
+      await Future.delayed(const Duration(seconds: 3));
+      Get.offAllNamed(AppRoutes.mySubscriptions);
     };
 
-    _paymentController.onFailure = (message, callback) {
+    _paymentCtrl.onFailure = (message, callback) {
       isPaymentInProgress.value = false;
-      Get.snackbar(
-        'Payment Failed',
-        message,
-        snackPosition: SnackPosition.TOP,
-        duration: const Duration(seconds: 3),
-      );
+      _showSnack('Payment failed: $message');
     };
 
-    _paymentController.onCancelled = () {
+    _paymentCtrl.onCancelled = () {
       isPaymentInProgress.value = false;
-      Get.snackbar(
-        'Payment Cancelled',
-        'You cancelled the payment.',
-        snackPosition: SnackPosition.TOP,
-        duration: const Duration(seconds: 2),
-      );
     };
 
-    // If forPayment is 0 (fully covered by wallet), skip PayU
-    if (forPayment <= 0) {
-      // Wallet covers full amount — just report to backend
-      await SubscriptionGuardService.to.invalidateAndReload();
-      isPaymentInProgress.value = false;
-      Get.snackbar(
-        'Subscription Activated',
-        'Paid entirely from wallet.',
-        snackPosition: SnackPosition.TOP,
-        duration: const Duration(seconds: 3),
-      );
-      Get.until((route) => route.isFirst);
-      return;
-    }
-
-    // Initiate PayU payment
-    await _paymentController.initiatePayment(
+    final success = await _paymentCtrl.initiatePayment(
       userId: userId,
       planCode: plan.planCode,
-      fromWallet: fromWallet,
-      forPayment: forPayment,
-      referralCode: referralCode,
+    );
+
+    if (!success && isPaymentInProgress.value) {
+      isPaymentInProgress.value = false;
+    }
+  }
+
+  void _showSnack(String message) {
+    Get.snackbar(
+      'Subscription',
+      message,
+      snackPosition: SnackPosition.BOTTOM,
+      backgroundColor: const Color(0xFF2E2E2E),
+      colorText: Colors.white,
+      margin: const EdgeInsets.all(12),
+      duration: const Duration(seconds: 3),
     );
   }
 }

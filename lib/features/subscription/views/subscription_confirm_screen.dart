@@ -1,15 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import '../controllers/subscription_confirm_controller.dart';
 import '../models/subscription_plan.dart';
-import '../../../core/constants/app_assets.dart';
-import '../../../core/constants/app_colors.dart';
-import '../../../core/constants/app_sizes.dart';
-import '../../../core/design_system/molecules/gradient_button.dart';
-import '../../../core/design_system/organisms/app_bottom_nav_bar.dart';
-import '../../../features/main_shell/controllers/main_shell_controller.dart';
-import '../services/subscription_guard_service.dart';
 
 class SubscriptionConfirmScreen extends StatelessWidget {
   const SubscriptionConfirmScreen({super.key});
@@ -438,60 +430,58 @@ class _PayButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bottomPad = MediaQuery.of(context).padding.bottom;
-    final priceStr =
-        '₹${plan.price.toStringAsFixed(plan.price % 1 == 0 ? 0 : 2)}';
+    final ctrl = Get.find<SubscriptionConfirmController>();
 
     return Container(
       color: const Color(0xFF121212),
       padding: EdgeInsets.fromLTRB(16, 12, 16, 12 + bottomPad),
-      child: GestureDetector(
-        onTap: () async {
-          // TODO: integrate payment gateway here.
-          // On success, call SubscriptionGuardService.to.invalidateAndReload()
-          // so the cache reflects the new subscription immediately.
-          await SubscriptionGuardService.to.invalidateAndReload();
-          Get.snackbar(
-            'Coming Soon',
-            'Payment integration will be available shortly.',
-            snackPosition: SnackPosition.TOP,
-            backgroundColor: const Color(0xFF1E1E1E),
-            colorText: Colors.white,
-            borderRadius: 12,
-            margin: const EdgeInsets.all(12),
-            duration: const Duration(seconds: 3),
-          );
-        },
-        child: Container(
-          height: 54,
-          decoration: BoxDecoration(
-            gradient: const LinearGradient(
-              colors: [Color(0xFFD41F1F), Color(0xFF9A0800)],
-              begin: Alignment.centerLeft,
-              end: Alignment.centerRight,
-            ),
-            borderRadius: BorderRadius.circular(14),
-            boxShadow: [
-              BoxShadow(
-                color: const Color(0xFFD41F1F).withOpacity(0.4),
-                blurRadius: 16,
-                offset: const Offset(0, 6),
+      child: Obx(() {
+        final priceStr = ctrl.priceDisplay;
+        final inProgress = ctrl.isPaymentInProgress.value;
+
+        return GestureDetector(
+          onTap: inProgress ? null : () => ctrl.onProceedPayment(),
+          child: Container(
+            height: 54,
+            decoration: BoxDecoration(
+              gradient: const LinearGradient(
+                colors: [Color(0xFFD41F1F), Color(0xFF9A0800)],
+                begin: Alignment.centerLeft,
+                end: Alignment.centerRight,
               ),
-            ],
-          ),
-          child: Center(
-            child: Text(
-              'Pay $priceStr',
-              style: const TextStyle(
-                fontFamily: 'Montserrat',
-                fontWeight: FontWeight.w700,
-                fontSize: 16,
-                color: Colors.white,
-                letterSpacing: 0.5,
-              ),
+              borderRadius: BorderRadius.circular(14),
+              boxShadow: [
+                BoxShadow(
+                  color: const Color(0xFFD41F1F).withOpacity(0.4),
+                  blurRadius: 16,
+                  offset: const Offset(0, 6),
+                ),
+              ],
+            ),
+            child: Center(
+              child: inProgress
+                  ? const SizedBox(
+                      width: 22,
+                      height: 22,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: Colors.white,
+                      ),
+                    )
+                  : Text(
+                      'Pay $priceStr',
+                      style: const TextStyle(
+                        fontFamily: 'Montserrat',
+                        fontWeight: FontWeight.w700,
+                        fontSize: 16,
+                        color: Colors.white,
+                        letterSpacing: 0.5,
+                      ),
+                    ),
             ),
           ),
-        ),
-      ),
+        );
+      }),
     );
   }
 }
