@@ -51,6 +51,9 @@ import '../features/spare_and_fms/views/spare_orders_view.dart';
 import '../features/insurance_and_finance/insurance_finance_binding.dart';
 import '../features/insurance_and_finance/views/insurance_finance_view.dart';
 import '../features/insurance_and_finance/views/my_quotes_view.dart';
+import '../features/service_support/bindings/service_support_binding.dart';
+import '../features/service_support/views/service_support_view.dart';
+import '../features/service_support/views/service_provider_list_view.dart';
 
 class AppPages {
   AppPages._();
@@ -301,6 +304,19 @@ class AppPages {
       name: AppRoutes.myQuotes,
       page: () => const MyQuotesView(),
       binding: InsuranceFinanceBinding(),
+      transition: Transition.rightToLeft,
+    ),
+    // ── Service Support ────────────────────────────────────────
+    GetPage(
+      name: AppRoutes.serviceSupport,
+      page: () => const ServiceSupportView(),
+      binding: ServiceSupportBinding(),
+      transition: Transition.rightToLeft,
+    ),
+    GetPage(
+      name: AppRoutes.serviceSupportListView,
+      page: () => const ServiceProviderListView(),
+      binding: ServiceSupportBinding(),
       transition: Transition.rightToLeft,
     ),
   ];

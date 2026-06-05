@@ -98,6 +98,12 @@ class ApiEndpoints {
   static const String userSparesOrdersListing =
       '$spareFmsPrefix/user-spares-orders-listing';
 
+  // ─── Service Support ─────────────────────────────────────────
+  static const String serviceSupportPrefix = '/api/v1/service-support';
+  static const String listMechanics = '$serviceSupportPrefix/list-mechanics';
+  static const String userMechanicSubscription =
+      '$serviceSupportPrefix/user-mechanic-subscription';
+
   // ─── Insurance & Finance ────────────────────────────────────
   static const String insuranceFinancePrefix = '/api/v1/insurance-finance';
   static const String insuranceRequest =

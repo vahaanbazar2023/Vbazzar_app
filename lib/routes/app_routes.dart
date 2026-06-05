@@ -46,4 +46,8 @@ class AppRoutes {
   // Insurance & Finance
   static const insuranceFinance = '/insurance-finance';
   static const myQuotes = '/my-quotes';
+
+  // Service Support
+  static const serviceSupport = '/service-support';
+  static const serviceSupportListView = '/service-support-list';
 }

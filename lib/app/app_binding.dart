@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import '../core/services/connectivity_service.dart';
+import '../core/services/gps_location_service.dart';
 import '../core/services/location_service.dart';
 import '../core/network/network_service.dart';
 import '../features/main_shell/controllers/main_shell_controller.dart';
@@ -38,6 +39,15 @@ class AppBinding extends Bindings {
       print('✅ LocationService registered successfully');
     } else {
       print('ℹ️  LocationService already registered');
+    }
+
+    // Register GpsLocationService (GPS coordinates provider)
+    if (!Get.isRegistered<GpsLocationService>()) {
+      print('📦 Registering GpsLocationService...');
+      Get.put<GpsLocationService>(GpsLocationService(), permanent: true);
+      print('✅ GpsLocationService registered successfully');
+    } else {
+      print('ℹ️  GpsLocationService already registered');
     }
 
     // Register MainShellController permanently so it survives route changes

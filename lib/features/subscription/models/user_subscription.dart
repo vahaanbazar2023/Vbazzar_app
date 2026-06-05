@@ -4,6 +4,7 @@ abstract final class SubscriptionTypeCode {
   static const auction = 'SUBT001';
   static const auctionBidLimit = 'SUBT002';
   static const vehicleDetailsAccess = 'SUBT004';
+  static const mechanicContact = 'SUBT006';
 }
 
 class UserSubscription {

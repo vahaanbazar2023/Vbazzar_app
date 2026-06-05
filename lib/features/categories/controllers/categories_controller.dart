@@ -32,8 +32,8 @@ class CategoriesController extends GetxController {
       assetPath: 'assets/images/png/inspection.png',
     ),
     CategoryItem(
-      id: 'spare_parts',
-      title: 'Spare Parts & Service Support',
+      id: 'service_support',
+      title: 'Service Support',
       assetPath: 'assets/images/png/spare_parts.png',
     ),
   ];
@@ -52,6 +52,9 @@ class CategoriesController extends GetxController {
         break;
       case 'insurance':
         _openInsuranceAndFinance();
+        break;
+      case 'service_support':
+        _openServiceSupport();
         break;
       default:
         break;
@@ -74,6 +77,12 @@ class CategoriesController extends GetxController {
 
   void _openInsuranceAndFinance() {
     Get.toNamed(AppRoutes.insuranceFinance);
+  }
+
+  // ── Service Support ────────────────────────────────────────────────────────
+
+  void _openServiceSupport() {
+    Get.toNamed(AppRoutes.serviceSupport);
   }
 
   // ── Auction gate ──────────────────────────────────────────────────────────

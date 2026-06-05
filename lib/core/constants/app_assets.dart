@@ -69,6 +69,9 @@ class AppAssets {
   static const String tierSilver = '${_images}silver.png';
   static const String tierBronze = '${_images}bronze.png';
 
+  // ── Service Support ──────────────────────────────────────────────────────
+  static const String serviceSupport = '${_images}contact_us.png';
+
   // ── Miscellaneous images ──────────────────────────────────────────────────
   static const String vbLogo = '${_images}vb_logo.png';
   static const String vahaanBazarText = '${_images}vahaan_bazar_text.png';
