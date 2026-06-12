@@ -23,6 +23,7 @@ class ApiEndpoints {
   static const String subscriptionListing =
       '$subscriptionPrefix/subscription-listing';
   static const String walletEligibility = '/api/v1/wallet/eligibility';
+  static const String walletDashboard = '/api/v1/wallet/dashboard';
 
   // ─── Vehicles ────────────────────────────────────────────────
   static const String vehicles = '/vehicles';
@@ -114,4 +115,16 @@ class ApiEndpoints {
       '$insuranceFinancePrefix/vehicle-quotes';
   static const String vehicleListingsQuotes =
       '$insuranceFinancePrefix/vehicle-listings-quotes';
+
+  // ─── Inspection & Valuation ────────────────────────────────
+  static const String inspectionValuationPrefix =
+      '/api/v1/inspection-valuation';
+  static const String valuationDropdownOptions =
+      '$inspectionValuationPrefix/valuation-dropdown-options';
+  static const String customerInspectionForm =
+      '$inspectionValuationPrefix/customer-inspection-form';
+  static const String agentValuationForm =
+      '$inspectionValuationPrefix/agent-valuation-form';
+  static const String myInspections =
+      '$inspectionValuationPrefix/my-inspections';
 }

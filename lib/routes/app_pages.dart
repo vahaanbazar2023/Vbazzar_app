@@ -12,6 +12,8 @@ import '../features/auth/auth_binding.dart';
 import '../features/main_shell/views/main_shell_screen.dart';
 import '../features/main_shell/bindings/main_shell_binding.dart';
 import '../features/profile/views/profile_screen.dart';
+import '../features/profile/views/manage_profile_view.dart';
+import '../features/profile/views/wallet_dashboard_view.dart';
 import '../features/profile/profile_binding.dart';
 import '../features/subscription/views/subscription_screen.dart';
 import '../features/subscription/views/subscription_confirm_screen.dart';
@@ -54,6 +56,12 @@ import '../features/insurance_and_finance/views/my_quotes_view.dart';
 import '../features/service_support/bindings/service_support_binding.dart';
 import '../features/service_support/views/service_support_view.dart';
 import '../features/service_support/views/service_provider_list_view.dart';
+import '../features/inspection_valuation/bindings/inspection_valuation_binding.dart';
+import '../features/inspection_valuation/views/inspection_home_view.dart';
+import '../features/inspection_valuation/views/customer_valuation_form_view.dart';
+import '../features/inspection_valuation/views/agent_valuation_form_view.dart';
+import '../features/inspection_valuation/views/my_inspections_view.dart';
+import '../features/inspection_valuation/views/inspection_detail_view.dart';
 
 class AppPages {
   AppPages._();
@@ -109,6 +117,18 @@ class AppPages {
     GetPage(
       name: AppRoutes.profile,
       page: () => const ProfileScreen(),
+      binding: ProfileBinding(),
+      transition: Transition.rightToLeft,
+    ),
+    GetPage(
+      name: AppRoutes.manageProfile,
+      page: () => const ManageProfileView(),
+      binding: ProfileBinding(),
+      transition: Transition.rightToLeft,
+    ),
+    GetPage(
+      name: AppRoutes.walletDashboard,
+      page: () => const WalletDashboardView(),
       binding: ProfileBinding(),
       transition: Transition.rightToLeft,
     ),
@@ -317,6 +337,37 @@ class AppPages {
       name: AppRoutes.serviceSupportListView,
       page: () => const ServiceProviderListView(),
       binding: ServiceSupportBinding(),
+      transition: Transition.rightToLeft,
+    ),
+    // ── Inspection & Valuation ─────────────────────────────────
+    GetPage(
+      name: AppRoutes.inspectionHome,
+      page: () => const InspectionHomeView(),
+      binding: InspectionValuationBinding(),
+      transition: Transition.rightToLeft,
+    ),
+    GetPage(
+      name: AppRoutes.customerValuationForm,
+      page: () => const CustomerValuationFormView(),
+      binding: InspectionValuationBinding(),
+      transition: Transition.rightToLeft,
+    ),
+    GetPage(
+      name: AppRoutes.agentValuationForm,
+      page: () => const AgentValuationFormView(),
+      binding: InspectionValuationBinding(),
+      transition: Transition.rightToLeft,
+    ),
+    GetPage(
+      name: AppRoutes.myInspections,
+      page: () => const MyInspectionsView(),
+      binding: InspectionValuationBinding(),
+      transition: Transition.rightToLeft,
+    ),
+    GetPage(
+      name: AppRoutes.inspectionDetail,
+      page: () => const InspectionDetailView(),
+      binding: InspectionValuationBinding(),
       transition: Transition.rightToLeft,
     ),
   ];

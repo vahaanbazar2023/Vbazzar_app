@@ -32,73 +32,43 @@ class ProfileScreen extends GetView<ProfileController> {
                     child: CircularProgressIndicator(color: AppColors.primary),
                   );
                 }
-                if (controller.errorMessage.value != null) {
-                  return Center(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(
-                          Icons.error_outline,
-                          size: 48.sp,
-                          color: AppColors.primary,
-                        ),
-                        SizedBox(height: 12.h),
-                        Text(
-                          controller.errorMessage.value!,
-                          textAlign: TextAlign.center,
-                          style: AppTextStyles.bodyMedium.copyWith(
-                            color: AppColors.textSecondary,
-                          ),
-                        ),
-                        SizedBox(height: 16.h),
-                        TextButton.icon(
-                          onPressed: controller.fetchProfile,
-                          icon: const Icon(
-                            Icons.refresh,
-                            color: AppColors.primary,
-                          ),
-                          label: Text(
-                            'Retry',
-                            style: AppTextStyles.bodyMedium.copyWith(
-                              color: AppColors.primary,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  );
-                }
                 return SingleChildScrollView(
                   physics: const BouncingScrollPhysics(),
                   padding: EdgeInsets.fromLTRB(16.w, 16.h, 16.w, 32.h),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _ProfileCard(profile: controller.profile.value),
+                      _ProfileCard(profile: controller.profileData.value),
                       SizedBox(height: 24.h),
                       _MenuSection(
                         title: 'Account',
                         items: [
-                          const _MenuItem(
+                          _MenuItem(
                             icon: Icons.person_outline,
                             label: 'Manage Profile',
+                            onTap: () => controller.openManageProfile(),
                           ),
                           const _MenuItem(
                             icon: Icons.lock_outline,
                             label: 'Password & Security',
                           ),
-                          const _MenuItem(
+                          _MenuItem(
                             icon: Icons.account_balance_wallet_outlined,
                             label: 'My Wallet',
+                            onTap: () => Get.toNamed(AppRoutes.walletDashboard),
                           ),
                           _MenuItem(
                             icon: Icons.card_membership_outlined,
                             label: 'My Subscriptions',
                             onTap: () => Get.toNamed(AppRoutes.mySubscriptions),
                           ),
-                          const _MenuItem(
+                          _MenuItem(
                             icon: Icons.language_outlined,
                             label: 'Language',
+                            onTap: () => Get.toNamed(
+                              AppRoutes.languageSelection,
+                              arguments: {'fromProfile': true},
+                            ),
                           ),
                         ],
                       ),
@@ -159,6 +129,17 @@ class ProfileScreen extends GetView<ProfileController> {
                                 }
                               }),
                             ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 24.h),
+                      _MenuSection(
+                        title: 'Inspection & Valuation',
+                        items: [
+                          _MenuItem(
+                            icon: Icons.fact_check_outlined,
+                            label: 'My Inspections',
+                            onTap: () => Get.toNamed(AppRoutes.myInspections),
                           ),
                         ],
                       ),
@@ -424,7 +405,7 @@ class _LogoutButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Obx(
       () => GestureDetector(
-        onTap: controller.isLoggingOut.value
+        onTap: controller.isLoading.value
             ? null
             : () => _confirmLogout(context),
         child: Container(
@@ -441,7 +422,7 @@ class _LogoutButton extends StatelessWidget {
               ),
             ],
           ),
-          child: controller.isLoggingOut.value
+          child: controller.isLoading.value
               ? SizedBox(
                   height: 20.h,
                   child: const Center(

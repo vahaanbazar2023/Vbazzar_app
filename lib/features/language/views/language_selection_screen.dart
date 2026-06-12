@@ -12,6 +12,8 @@ class LanguageSelectionScreen extends GetView<LanguageController> {
 
   @override
   Widget build(BuildContext context) {
+    final fromProfile = Get.arguments?['fromProfile'] == true;
+
     return Scaffold(
       backgroundColor: AppColors.black,
       body: Column(
@@ -19,7 +21,7 @@ class LanguageSelectionScreen extends GetView<LanguageController> {
           /// RED HEADER
           Container(
             width: double.infinity,
-            height: 240.h,
+            height: fromProfile ? 256.h : 240.h,
             padding: EdgeInsets.only(
               top: MediaQuery.of(context).padding.top + AppSpacing.lg,
               left: AppSpacing.xl,
@@ -37,6 +39,18 @@ class LanguageSelectionScreen extends GetView<LanguageController> {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
+                if (fromProfile)
+                  GestureDetector(
+                    onTap: () => Get.back(),
+                    child: Padding(
+                      padding: EdgeInsets.only(bottom: 12.h),
+                      child: Icon(
+                        Icons.arrow_back,
+                        color: AppColors.white,
+                        size: 24.sp,
+                      ),
+                    ),
+                  ),
                 Text(
                   context.l10n.languagePreference,
                   style: AppTextStyles.headingLarge.copyWith(
@@ -120,7 +134,7 @@ class LanguageSelectionScreen extends GetView<LanguageController> {
                       ),
                     ),
 
-                    /// CONTINUE BUTTON
+                    /// CONTINUE / SAVE BUTTON
                     Padding(
                       padding: EdgeInsets.only(
                         left: AppSpacing.xl,
@@ -133,15 +147,22 @@ class LanguageSelectionScreen extends GetView<LanguageController> {
                       child: Obx(() {
                         final isLanguageSelected =
                             controller.selectedLanguage.value != null;
+                        final buttonAction = fromProfile
+                            ? controller.switchLanguageAndGoBack
+                            : controller.continueToHome;
 
                         return isLanguageSelected
                             ? GradientButton.filled(
-                                text: context.l10n.continueButton,
-                                onPressed: controller.continueToHome,
+                                text: fromProfile
+                                    ? context.l10n.save
+                                    : context.l10n.continueButton,
+                                onPressed: buttonAction,
                               )
                             : GradientButton.outlined(
-                                text: context.l10n.continueButton,
-                                onPressed: controller.continueToHome,
+                                text: fromProfile
+                                    ? context.l10n.save
+                                    : context.l10n.continueButton,
+                                onPressed: buttonAction,
                               );
                       }),
                     ),

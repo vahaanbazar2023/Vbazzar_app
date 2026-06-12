@@ -168,7 +168,7 @@ class _AppLayoutHeader extends StatelessWidget {
                       title,
                       style: TextStyle(
                         fontFamily: 'Montserrat',
-                        fontSize: 22.sp,
+                        fontSize: 18.sp,
                         fontWeight: FontWeight.w600,
                         color: AppColors.white,
                       ),

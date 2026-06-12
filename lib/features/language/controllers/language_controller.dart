@@ -84,6 +84,26 @@ class LanguageController extends GetxController {
     Get.toNamed(AppRoutes.loginWithOtp);
   }
 
+  /// Switch language from profile/settings and go back
+  void switchLanguageAndGoBack() {
+    if (selectedLanguage.value == null) {
+      Get.snackbar(
+        'Language Required',
+        'Please select a language to continue',
+        snackPosition: SnackPosition.TOP,
+      );
+      return;
+    }
+
+    // Save language preference
+    LocalStorageService.to.setString(
+      StorageKeys.languageCode,
+      selectedLanguage.value!.code,
+    );
+
+    Get.back();
+  }
+
   /// Get localizations from context
   dynamic getLocalizations(BuildContext context) {
     return context.l10n;

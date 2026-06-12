@@ -11,6 +11,8 @@ class ProfileData {
   final String city;
   final String registrationStatus;
   final String createdAt;
+  final String? address;
+  final String? pincode;
 
   const ProfileData({
     required this.userId,
@@ -24,6 +26,8 @@ class ProfileData {
     required this.city,
     required this.registrationStatus,
     required this.createdAt,
+    this.address,
+    this.pincode,
   });
 
   String get fullName {
@@ -44,6 +48,8 @@ class ProfileData {
       city: json['city'] as String? ?? '',
       registrationStatus: json['registration_status'] as String? ?? '',
       createdAt: json['created_at'] as String? ?? '',
+      address: json['address'] as String?,
+      pincode: json['pincode'] as String?,
     );
   }
 }

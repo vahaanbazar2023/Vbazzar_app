@@ -1,4 +1,6 @@
 import 'package:get/get.dart';
+import '../../../core/storage/secure_storage_service.dart';
+import '../../../core/storage/storage_keys.dart';
 import '../../../routes/app_routes.dart';
 import '../../subscription/models/user_subscription.dart';
 import '../../subscription/services/subscription_guard_service.dart';
@@ -53,6 +55,9 @@ class CategoriesController extends GetxController {
       case 'insurance':
         _openInsuranceAndFinance();
         break;
+      case 'inspection':
+        _openInspection();
+        break;
       case 'service_support':
         _openServiceSupport();
         break;
@@ -83,6 +88,21 @@ class CategoriesController extends GetxController {
 
   void _openServiceSupport() {
     Get.toNamed(AppRoutes.serviceSupport);
+  }
+
+  // ── Inspection ────────────────────────────────────────────────────────────
+
+  Future<void> _openInspection() async {
+    final userType =
+        await SecureStorageService.to.read(StorageKeys.userType) ?? '';
+    final normalized = userType.toUpperCase().trim();
+
+    if (normalized == 'AGENT') {
+      Get.toNamed(AppRoutes.agentValuationForm);
+    } else {
+      // Default to customer form for 'CUSTOMER' or unknown types
+      Get.toNamed(AppRoutes.customerValuationForm);
+    }
   }
 
   // ── Auction gate ──────────────────────────────────────────────────────────

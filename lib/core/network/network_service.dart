@@ -151,6 +151,7 @@ class NetworkService extends GetxService {
 
     // wallet
     '/api/v1/wallet/eligibility',
+    '/api/v1/wallet/dashboard',
   ];
 
   /// Check if a path requires authentication

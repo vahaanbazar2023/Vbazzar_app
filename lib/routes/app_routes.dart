@@ -10,6 +10,8 @@ class AppRoutes {
   static const completeProfile = '/complete-profile';
   static const home = '/home';
   static const profile = '/profile';
+  static const manageProfile = '/manage-profile';
+  static const walletDashboard = '/wallet-dashboard';
   static const subscription = '/subscription';
   static const subscriptionConfirm = '/subscription/confirm';
   static const mySubscriptions = '/my-subscriptions';
@@ -50,4 +52,11 @@ class AppRoutes {
   // Service Support
   static const serviceSupport = '/service-support';
   static const serviceSupportListView = '/service-support-list';
+
+  // Inspection & Valuation
+  static const inspectionHome = '/inspection-home';
+  static const customerValuationForm = '/customer-valuation-form';
+  static const agentValuationForm = '/agent-valuation-form';
+  static const myInspections = '/my-inspections';
+  static const inspectionDetail = '/inspection-detail';
 }
