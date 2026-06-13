@@ -132,8 +132,8 @@ class InspectionValuationController extends GetxController {
         transmissionTypes.assignAll(options.transmissionType);
         caseTypes.assignAll(options.caseType);
         yesNoOptions.assignAll(options.yesNo);
-        hypothecationOptions.assignAll(options.hypothecation);
-        accidentalStatusOptions.assignAll(options.accidentalStatus);
+        hypothecationOptions.assignAll(options.yesNo);
+        accidentalStatusOptions.assignAll(options.yesNo);
         tyreConditionOptions.assignAll(options.tyreCondition);
       }
     } catch (e) {

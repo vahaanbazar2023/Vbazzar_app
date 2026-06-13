@@ -173,8 +173,7 @@ class _CustomYearPickerState extends State<CustomYearPicker> {
                   ),
                 ),
                 SizedBox(height: 20.h),
-                SizedBox(
-                  height: 300.h,
+                Flexible(
                   child: GridView.builder(
                     gridDelegate:
                         const SliverGridDelegateWithFixedCrossAxisCount(
@@ -222,7 +221,7 @@ class _CustomYearPickerState extends State<CustomYearPicker> {
                     },
                   ),
                 ),
-                SizedBox(height: 20.h),
+                SizedBox(height: 16.h),
                 SizedBox(
                   width: double.infinity,
                   child: TextButton(

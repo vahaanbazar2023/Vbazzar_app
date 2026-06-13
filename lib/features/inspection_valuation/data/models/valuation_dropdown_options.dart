@@ -18,8 +18,11 @@ class DropdownItem {
   @override
   int get hashCode => value.hashCode;
 
-  /// Parse a list of API dropdown objects like `[{"Excellent": "excellent"}, ...]`
-  /// into a list of [DropdownItem]s.
+  /// Parse a list of API dropdown objects into a list of [DropdownItem]s.
+  ///
+  /// Handles two formats:
+  ///  - Map entries: `[{"Excellent": "excellent"}, ...]`
+  ///  - Simple strings: `["Yes", "No"]`
   static List<DropdownItem> parseList(List<dynamic>? raw) {
     if (raw == null) return [];
     final items = <DropdownItem>[];
@@ -28,6 +31,9 @@ class DropdownItem {
         for (final e in entry.entries) {
           items.add(DropdownItem(label: e.key, value: e.value.toString()));
         }
+      } else if (entry is String) {
+        // Handle simple string arrays like ["Yes", "No"]
+        items.add(DropdownItem(label: entry, value: entry.toLowerCase()));
       }
     }
     return items;
@@ -68,8 +74,9 @@ class ValuationDropdownOptions {
           data['accidental_status'] as List<dynamic>?),
       tyreCondition:
           DropdownItem.parseList(data['tyre_condition'] as List<dynamic>?),
-      hypothecation:
-          DropdownItem.parseList(data['hypothecation'] as List<dynamic>?),
+      hypothecation: DropdownItem.parseList(
+          (data['hypothecation'] ?? data['hypothecation_options'])
+              as List<dynamic>?),
     );
   }
 }

@@ -15,8 +15,6 @@ import '../../../theme/app_fonts.dart';
 import '../controllers/agent_inspection_controller.dart';
 import '../controllers/inspection_valuation_controller.dart';
 import '../data/models/valuation_dropdown_options.dart';
-import '../widgets/valuation_summary_card.dart';
-
 /// Agent inspection form — single scrollable form with section headers.
 class AgentValuationFormView extends GetView<AgentInspectionController> {
   const AgentValuationFormView({super.key});
@@ -45,22 +43,118 @@ class AgentValuationFormView extends GetView<AgentInspectionController> {
                   _buildDocumentationSection(),
                   SizedBox(height: 24.h),
 
-                  // ── Section 3: Mechanical Inspection ─────────────
-                  _buildSectionHeader('Mechanical Inspection'),
-                  _buildMechanicalSection(),
+                  // ── Section 3: Engine ────────────────────────────
+                  _buildSectionHeader('Engine'),
+                  _buildInspectionCard(
+                    title: 'Engine',
+                    icon: Icons.engineering_outlined,
+                    iconColor: const Color(0xFFE65100),
+                    condition: controller.engineCondition,
+                    remarksController: controller.engineRemarksController,
+                    images: controller.engineImages,
+                    imageLabel: 'Engine Photos',
+                  ),
                   SizedBox(height: 24.h),
 
-                  // ── Section 4: Body & Interior ───────────────────
-                  _buildSectionHeader('Body & Interior'),
-                  _buildBodyInteriorSection(),
+                  // ── Section 4: Transmission ──────────────────────
+                  _buildSectionHeader('Transmission'),
+                  _buildInspectionCard(
+                    title: 'Transmission',
+                    icon: Icons.settings_suggest_outlined,
+                    iconColor: const Color(0xFF1565C0),
+                    condition: controller.transmissionCondition,
+                    remarksController: controller.transmissionRemarksController,
+                    images: controller.transmissionImages,
+                    imageLabel: 'Transmission Photos',
+                  ),
                   SizedBox(height: 24.h),
 
-                  // ── Section 5: Photo Documentation ───────────────
-                  _buildSectionHeader('Photo Documentation'),
-                  _buildPhotosSection(),
+                  // ── Section 5: Suspension ────────────────────────
+                  _buildSectionHeader('Suspension'),
+                  _buildInspectionCard(
+                    title: 'Suspension',
+                    icon: Icons.directions_car_outlined,
+                    iconColor: const Color(0xFF2E7D32),
+                    condition: controller.suspensionCondition,
+                    remarksController: controller.suspensionRemarksController,
+                    images: controller.suspensionImages,
+                    imageLabel: 'Suspension Photos',
+                  ),
                   SizedBox(height: 24.h),
 
-                  // ── Section 6: Valuation ─────────────────────────
+                  // ── Section 6: Tyres ─────────────────────────────
+                  _buildSectionHeader('Tyres'),
+                  _buildTyresCard(),
+                  SizedBox(height: 12.h),
+                  _buildImageUpload('Tyre Photos', controller.tyreImages),
+                  SizedBox(height: 24.h),
+
+                  // ── Section 7: Body ──────────────────────────────
+                  _buildSectionHeader('Body'),
+                  _buildInspectionCard(
+                    title: 'Body',
+                    icon: Icons.car_crash_outlined,
+                    iconColor: const Color(0xFF6A1B9A),
+                    condition: controller.bodyCondition,
+                    remarksController: controller.bodyRemarksController,
+                  ),
+                  SizedBox(height: 12.h),
+                  _buildImageUpload('Body - Front', controller.bodyFrontImages),
+                  SizedBox(height: 10.h),
+                  _buildImageUpload('Body - Back', controller.bodyBackImages),
+                  SizedBox(height: 10.h),
+                  _buildImageUpload('Body - Left Side', controller.bodyLeftImages),
+                  SizedBox(height: 10.h),
+                  _buildImageUpload('Body - Right Side', controller.bodyRightImages),
+                  SizedBox(height: 24.h),
+
+                  // ── Section 8: Cabin / Interior ──────────────────
+                  _buildSectionHeader('Cabin / Interior'),
+                  _buildInspectionCard(
+                    title: 'Cabin / Interior',
+                    icon: Icons.airline_seat_recline_normal_outlined,
+                    iconColor: const Color(0xFF00838F),
+                    condition: controller.cabinInteriorCondition,
+                    remarksController: controller.cabinInteriorRemarksController,
+                    images: controller.cabinInteriorImages,
+                    imageLabel: 'Cabin / Interior Photos',
+                  ),
+                  SizedBox(height: 24.h),
+
+                  // ── Section 9: Electrical ────────────────────────
+                  _buildSectionHeader('Electrical'),
+                  _buildInspectionCard(
+                    title: 'Electrical',
+                    icon: Icons.electrical_services_outlined,
+                    iconColor: const Color(0xFFF9A825),
+                    condition: controller.electricalCondition,
+                    remarksController: controller.electricalRemarksController,
+                    images: controller.electricalImages,
+                    imageLabel: 'Electrical Photos',
+                  ),
+                  SizedBox(height: 24.h),
+
+                  // ── Section 10: Chassis ──────────────────────────
+                  _buildSectionHeader('Chassis'),
+                  _buildInspectionCard(
+                    title: 'Chassis',
+                    icon: Icons.view_carousel_outlined,
+                    iconColor: const Color(0xFF37474F),
+                    condition: controller.chasisCondition,
+                    remarksController: controller.chasisRemarksController,
+                    images: controller.chasisImages,
+                    imageLabel: 'Chassis Photos',
+                  ),
+                  SizedBox(height: 24.h),
+
+                  // ── Section 11: Odometer ─────────────────────────
+                  _buildSectionHeader('Odometer'),
+                  _buildOdometerCard(),
+                  SizedBox(height: 12.h),
+                  _buildImageUpload('Odometer Photos', controller.odometerImages),
+                  SizedBox(height: 24.h),
+
+                  // ── Section 12: Valuation ────────────────────────
                   _buildSectionHeader('Valuation'),
                   _buildValuationSection(),
                   SizedBox(height: 20.h),
@@ -710,6 +804,8 @@ class AgentValuationFormView extends GetView<AgentInspectionController> {
     required Color iconColor,
     required RxString condition,
     required TextEditingController remarksController,
+    RxList<PlatformFile>? images,
+    String? imageLabel,
   }) {
     return Container(
       width: double.infinity,
@@ -886,6 +982,12 @@ class AgentValuationFormView extends GetView<AgentInspectionController> {
               ),
             ),
           ),
+
+          // ── Image upload (if provided) ───────────────────────
+          if (images != null && imageLabel != null) ...[
+            SizedBox(height: 16.h),
+            _buildImageUpload(imageLabel, images),
+          ],
         ],
       ),
     );

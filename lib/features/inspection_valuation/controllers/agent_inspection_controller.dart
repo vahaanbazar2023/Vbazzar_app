@@ -25,8 +25,7 @@ class AgentInspectionController extends GetxController {
   final isLoading = false.obs;
   final isSubmitting = false.obs;
 
-  // ── step management ───────────────────────────────────────────────
-  final currentStep = 0.obs;
+  // ── step management (retained for validation grouping) ───────────
   static const int totalSteps = 6;
 
   // ── step 1: vehicle info ──────────────────────────────────────────
@@ -146,50 +145,17 @@ class AgentInspectionController extends GetxController {
   }
 
   // ══════════════════════════════════════════════════════════════════
-  //  STEP NAVIGATION
-  // ══════════════════════════════════════════════════════════════════
-
-  void nextStep() {
-    if (currentStep.value < totalSteps - 1) {
-      if (validateCurrentStep()) {
-        currentStep.value++;
-      }
-    }
-  }
-
-  void previousStep() {
-    if (currentStep.value > 0) {
-      currentStep.value--;
-    }
-  }
-
-  void goToStep(int step) {
-    if (step >= 0 && step < totalSteps) {
-      currentStep.value = step;
-    }
-  }
-
-  // ══════════════════════════════════════════════════════════════════
   //  VALIDATION
   // ══════════════════════════════════════════════════════════════════
 
-  bool validateCurrentStep() {
-    switch (currentStep.value) {
-      case 0:
-        return _validateStep1();
-      case 1:
-        return _validateStep2();
-      case 2:
-        return _validateStep3();
-      case 3:
-        return _validateStep4();
-      case 4:
-        return _validateStep5();
-      case 5:
-        return _validateStep6();
-      default:
-        return true;
-    }
+  /// Validates the entire form before submission.
+  bool validateAllSteps() {
+    return _validateStep1() &&
+        _validateStep2() &&
+        _validateStep3() &&
+        _validateStep4() &&
+        _validateStep5() &&
+        _validateStep6();
   }
 
   bool _validateStep1() {
@@ -279,17 +245,6 @@ class AgentInspectionController extends GetxController {
     return true;
   }
 
-  /// Validate all steps before final submission.
-  bool validateAllSteps() {
-    for (int i = 0; i < totalSteps; i++) {
-      currentStep.value = i;
-      if (!validateCurrentStep()) {
-        return false;
-      }
-    }
-    return true;
-  }
-
   // ══════════════════════════════════════════════════════════════════
   //  IMAGE MANAGEMENT
   // ══════════════════════════════════════════════════════════════════
@@ -352,16 +307,10 @@ class AgentInspectionController extends GetxController {
 
   Future<void> submitAgentForm() async {
     // Validate all steps before submission
-    final savedStep = currentStep.value;
     if (!validateAllSteps()) {
       _showValidationError('Please fix errors before submitting');
       return;
     }
-    currentStep.value = savedStep;
-
-    // Show confirmation dialog
-    final confirmed = await _showConfirmationDialog();
-    if (confirmed != true) return;
 
     isSubmitting.value = true;
     try {
@@ -491,8 +440,6 @@ class AgentInspectionController extends GetxController {
   // ══════════════════════════════════════════════════════════════════
 
   void resetForm() {
-    currentStep.value = 0;
-
     // Step 1
     ownerNameController.clear();
     vehicleRegNoController.clear();
@@ -599,29 +546,6 @@ class AgentInspectionController extends GetxController {
       duration: const Duration(seconds: 3),
       margin: const EdgeInsets.all(12),
       borderRadius: 8,
-    );
-  }
-
-  Future<bool?> _showConfirmationDialog() {
-    return Get.defaultDialog<bool>(
-      title: 'Submit Inspection',
-      content: const Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(Icons.assignment_turned_in, color: Colors.blue, size: 48),
-          SizedBox(height: 16),
-          Text(
-            'Are you sure you want to submit this inspection report?',
-            textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 14),
-          ),
-        ],
-      ),
-      textCancel: 'Review',
-      textConfirm: 'Submit',
-      confirmTextColor: Colors.white,
-      onCancel: () => Get.back(result: false),
-      onConfirm: () => Get.back(result: true),
     );
   }
 
