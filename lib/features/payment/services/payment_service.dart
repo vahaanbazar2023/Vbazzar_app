@@ -16,10 +16,10 @@ import '../models/payment_models.dart';
 
 class PaymentService {
   /// Production base URL for all payment API calls.
-  static const String _paymentBaseUrl = 'https://api.prod.vahaanbazar.in';
+  static const String _paymentBaseUrl = 'https://api.staging.vahaanbazar.in';
 
   /// Production API key for payment endpoints.
-  static const String _paymentApiKey = '7B0F2K4R1MSS3P0D';
+  static const String _paymentApiKey = '7B9F2K4R1M6Q3P8D';
 
   /// Dedicated Dio instance for payment APIs, configured with the production
   /// base URL and production API key.

@@ -76,62 +76,57 @@ class ManageProfileView extends GetView<ProfileController> {
                     ),
                     SizedBox(height: AppSpacing.md),
 
-                    // Address
-                    _FieldLabel('Address'),
+                    // Mobile Number (read-only)
+                    _FieldLabel('Mobile Number'),
                     SizedBox(height: AppSpacing.sm),
                     CustomInputField(
-                      controller: controller.addressController,
-                      placeholder: 'Enter address',
-                      prefixIcon: Icons.home_outlined,
-                      keyboardType: TextInputType.streetAddress,
+                      controller: controller.phoneNumberController,
+                      placeholder: 'Mobile number',
+                      prefixIcon: Icons.phone_outlined,
+                      keyboardType: TextInputType.phone,
                       textInputAction: TextInputAction.next,
+                      readOnly: true,
                       onChanged: (_) {},
                     ),
                     SizedBox(height: AppSpacing.md),
 
-                    // Pincode
-                    _FieldLabel('Pincode'),
-                    SizedBox(height: AppSpacing.sm),
-                    CustomInputField(
-                      controller: controller.pincodeController,
-                      placeholder: 'Enter pincode',
-                      prefixIcon: Icons.location_on_outlined,
-                      keyboardType: TextInputType.number,
-                      textInputAction: TextInputAction.next,
-                      onChanged: (_) {},
-                    ),
-                    SizedBox(height: AppSpacing.md),
-
-                    // State dropdown
+                    // State (autocomplete)
                     _FieldLabel('State *'),
                     SizedBox(height: AppSpacing.sm),
-                    Obx(() {
-                      if (controller.isLoadingStates.value) {
-                        return SizedBox(
-                          height: 48.h,
-                          child: const Center(
-                            child: CircularProgressIndicator(),
-                          ),
-                        );
-                      }
-                      return _StateDropdown(controller: controller);
-                    }),
+                    Obx(
+                      () => CustomAutocompleteField<StateModel>(
+                        controller: controller.stateTextController,
+                        placeholder: 'Select State',
+                        prefixIcon: Icons.location_on_outlined,
+                        errorText: controller.stateErrorText.value,
+                        isLoading: controller.isLoadingStates.value,
+                        options: controller.availableStates,
+                        displayStringForOption: (s) => s.stateName,
+                        onSelected: (state) =>
+                            controller.onStateSelected(state),
+                      ),
+                    ),
                     SizedBox(height: AppSpacing.md),
 
-                    // City dropdown
+                    // City (autocomplete)
                     _FieldLabel('City *'),
                     SizedBox(height: AppSpacing.sm),
-                    Obx(() {
-                      if (controller.isLoadingCities.value) {
-                        return SizedBox(
-                          height: 48.h,
-                          child: const Center(
-                            child: CircularProgressIndicator(),
-                          ),
-                        );
-                      }
-                      return _CityDropdown(controller: controller);
-                    }),
+                    Obx(
+                      () => CustomAutocompleteField<CityModel>(
+                        controller: controller.cityTextController,
+                        placeholder: controller.selectedState.value == null
+                            ? 'Select state first'
+                            : 'Select City',
+                        prefixIcon: Icons.location_city_outlined,
+                        errorText: controller.cityErrorText.value,
+                        isLoading: controller.isLoadingCities.value,
+                        options: controller.availableCities,
+                        enabled: controller.selectedState.value != null,
+                        displayStringForOption: (c) => c.cityName,
+                        onSelected: (city) =>
+                            controller.onCitySelected(city),
+                      ),
+                    ),
                     SizedBox(height: AppSpacing.xxl),
 
                     // Save button
@@ -228,106 +223,3 @@ class _FieldLabel extends StatelessWidget {
   }
 }
 
-// ── State Dropdown ────────────────────────────────────────────────────────────
-
-class _StateDropdown extends StatelessWidget {
-  const _StateDropdown({required this.controller});
-  final ProfileController controller;
-
-  @override
-  Widget build(BuildContext context) {
-    return Obx(
-      () => Container(
-        decoration: BoxDecoration(
-          border: Border.all(
-            color: controller.stateErrorText.value != null
-                ? AppColors.error
-                : AppColors.grey300,
-          ),
-          borderRadius: BorderRadius.circular(12.r),
-        ),
-        child: DropdownButtonHideUnderline(
-          child: DropdownButton<StateModel>(
-            value: controller.selectedState.value,
-            isExpanded: true,
-            hint: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 12.w),
-              child: Text(
-                'Select state',
-                style: AppTextStyles.bodyMedium.copyWith(
-                  color: AppColors.grey650,
-                  fontSize: 14.sp,
-                ),
-              ),
-            ),
-            padding: EdgeInsets.symmetric(horizontal: 8.w),
-            borderRadius: BorderRadius.circular(12.r),
-            items: controller.availableStates
-                .map(
-                  (s) => DropdownMenuItem(
-                    value: s,
-                    child: Text(s.stateName),
-                  ),
-                )
-                .toList(),
-            onChanged: (state) => controller.onStateSelected(state),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-// ── City Dropdown ─────────────────────────────────────────────────────────────
-
-class _CityDropdown extends StatelessWidget {
-  const _CityDropdown({required this.controller});
-  final ProfileController controller;
-
-  @override
-  Widget build(BuildContext context) {
-    return Obx(
-      () => Container(
-        decoration: BoxDecoration(
-          border: Border.all(
-            color: controller.cityErrorText.value != null
-                ? AppColors.error
-                : AppColors.grey300,
-          ),
-          borderRadius: BorderRadius.circular(12.r),
-        ),
-        child: DropdownButtonHideUnderline(
-          child: DropdownButton<CityModel>(
-            value: controller.selectedCity.value,
-            isExpanded: true,
-            hint: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 12.w),
-              child: Text(
-                controller.selectedState.value == null
-                    ? 'Select state first'
-                    : 'Select city',
-                style: AppTextStyles.bodyMedium.copyWith(
-                  color: AppColors.grey650,
-                  fontSize: 14.sp,
-                ),
-              ),
-            ),
-            padding: EdgeInsets.symmetric(horizontal: 8.w),
-            borderRadius: BorderRadius.circular(12.r),
-            items: controller.availableCities
-                .map(
-                  (c) => DropdownMenuItem(
-                    value: c,
-                    child: Text(c.cityName),
-                  ),
-                )
-                .toList(),
-            onChanged: controller.selectedState.value == null
-                ? null
-                : (city) => controller.onCitySelected(city),
-          ),
-        ),
-      ),
-    );
-  }
-}

@@ -86,9 +86,10 @@ class ProfileScreen extends GetView<ProfileController> {
                             label: 'My Bids',
                             onTap: () => Get.toNamed(AppRoutes.myBids),
                           ),
-                          const _MenuItem(
-                            icon: Icons.currency_rupee_outlined,
+                          _MenuItem(
+                            icon: Icons.replay_circle_filled_outlined,
                             label: 'Initiate Refund',
+                            onTap: () => Get.toNamed(AppRoutes.initiateRefund),
                           ),
                         ],
                       ),

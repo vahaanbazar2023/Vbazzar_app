@@ -14,6 +14,8 @@ import '../features/main_shell/bindings/main_shell_binding.dart';
 import '../features/profile/views/profile_screen.dart';
 import '../features/profile/views/manage_profile_view.dart';
 import '../features/profile/views/wallet_dashboard_view.dart';
+import '../features/profile/views/initiate_refund_view.dart';
+import '../features/profile/controllers/initiate_refund_controller.dart';
 import '../features/profile/profile_binding.dart';
 import '../features/subscription/views/subscription_screen.dart';
 import '../features/subscription/views/subscription_confirm_screen.dart';
@@ -311,6 +313,15 @@ class AppPages {
       name: AppRoutes.spareOrders,
       page: () => const SpareOrdersView(),
       binding: SpareFmsBinding(),
+      transition: Transition.rightToLeft,
+    ),
+    // ── Initiate Refund ──────────────────────────────────────
+    GetPage(
+      name: AppRoutes.initiateRefund,
+      page: () => const InitiateRefundView(),
+      binding: BindingsBuilder(() {
+        Get.lazyPut(() => InitiateRefundController());
+      }),
       transition: Transition.rightToLeft,
     ),
     // ── Insurance & Finance ─────────────────────────────────

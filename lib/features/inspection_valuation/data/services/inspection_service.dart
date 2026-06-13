@@ -61,33 +61,33 @@ class InspectionService {
     final fields = request.toFields();
     final multipartFiles = <String, dio.MultipartFile>{};
 
-    // RC files (required)
+    // RC files (required) — API expects 'rc_file' as field name
     for (int i = 0; i < request.rcFiles.length; i++) {
       final file = request.rcFiles[i];
       if (file.path != null) {
-        multipartFiles['rc_files[$i]'] = await dio.MultipartFile.fromFile(
+        multipartFiles['rc_file'] = await dio.MultipartFile.fromFile(
           file.path!,
           filename: file.name,
         );
       }
     }
 
-    // Insurance files (optional)
+    // Insurance files (optional) — API expects 'insurance_file'
     for (int i = 0; i < request.insuranceFiles.length; i++) {
       final file = request.insuranceFiles[i];
       if (file.path != null) {
-        multipartFiles['insurance_files[$i]'] = await dio.MultipartFile.fromFile(
+        multipartFiles['insurance_file'] = await dio.MultipartFile.fromFile(
           file.path!,
           filename: file.name,
         );
       }
     }
 
-    // Company GST files (optional)
+    // Company GST files (optional) — API expects 'company_gst_file'
     for (int i = 0; i < request.companyGstFiles.length; i++) {
       final file = request.companyGstFiles[i];
       if (file.path != null) {
-        multipartFiles['company_gst_files[$i]'] = await dio.MultipartFile.fromFile(
+        multipartFiles['company_gst_file'] = await dio.MultipartFile.fromFile(
           file.path!,
           filename: file.name,
         );

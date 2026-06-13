@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import '../../../core/design_system/organisms/app_bottom_nav_bar.dart';
 import '../../categories/categories_binding.dart';
 import '../../categories/views/categories_screen.dart';
+import '../../profile/controllers/profile_controller.dart';
 import '../../profile/views/profile_screen.dart';
 import 'home_content.dart';
 
@@ -16,7 +17,7 @@ class MainShellController extends GetxController {
 }
 
 /// Main shell screen with bottom navigation
-/// Contains: Home, Subscriptions, Categories, Rewards, Settings
+/// Contains: Home, Subscriptions, Categories, Settings
 class MainShellScreen extends GetView<MainShellController> {
   const MainShellScreen({super.key});
 
@@ -43,9 +44,10 @@ class MainShellScreen extends GetView<MainShellController> {
       case BottomNavTab.categories:
         CategoriesBinding().dependencies();
         return const CategoriesScreen();
-      case BottomNavTab.rewards:
-        return const _PlaceholderScreen(title: 'Rewards');
       case BottomNavTab.settings:
+        if (!Get.isRegistered<ProfileController>()) {
+          Get.put(ProfileController());
+        }
         return const ProfileScreen(); // Settings uses profile for now
     }
   }

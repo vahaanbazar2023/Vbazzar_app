@@ -29,14 +29,14 @@ class ProfileController extends GetxController {
   final firstNameController = TextEditingController();
   final lastNameController = TextEditingController();
   final emailController = TextEditingController();
-  final addressController = TextEditingController();
-  final pincodeController = TextEditingController();
+  final phoneNumberController = TextEditingController();
+  final stateTextController = TextEditingController();
+  final cityTextController = TextEditingController();
 
   final firstNameText = ''.obs;
   final lastNameText = ''.obs;
   final emailText = ''.obs;
-  final addressText = ''.obs;
-  final pincodeText = ''.obs;
+  final phoneNumberText = ''.obs;
 
   final firstNameErrorText = Rxn<String>();
   final emailErrorText = Rxn<String>();
@@ -79,8 +79,9 @@ class ProfileController extends GetxController {
     firstNameController.dispose();
     lastNameController.dispose();
     emailController.dispose();
-    addressController.dispose();
-    pincodeController.dispose();
+    phoneNumberController.dispose();
+    stateTextController.dispose();
+    cityTextController.dispose();
     super.onClose();
   }
 
@@ -188,13 +189,11 @@ class ProfileController extends GetxController {
       firstNameController.text = p.firstName;
       lastNameController.text = p.lastName;
       emailController.text = p.email;
-      addressController.text = p.address ?? '';
-      pincodeController.text = p.pincode ?? '';
+      phoneNumberController.text = p.phoneNumber;
       firstNameText.value = p.firstName;
       lastNameText.value = p.lastName;
       emailText.value = p.email;
-      addressText.value = p.address ?? '';
-      pincodeText.value = p.pincode ?? '';
+      phoneNumberText.value = p.phoneNumber;
 
       // Try to match state
       if (p.state.isNotEmpty) {
@@ -203,6 +202,7 @@ class ProfileController extends GetxController {
         );
         if (match != null) {
           selectedState.value = match;
+          stateTextController.text = match.stateName;
           await fetchCitiesForState(match.stateId);
           // Try to match city
           if (p.city.isNotEmpty) {
@@ -211,6 +211,7 @@ class ProfileController extends GetxController {
             );
             if (cityMatch != null) {
               selectedCity.value = cityMatch;
+              cityTextController.text = cityMatch.cityName;
             }
           }
         }
@@ -240,9 +241,15 @@ class ProfileController extends GetxController {
     selectedState.value = state;
     stateErrorText.value = null;
     selectedCity.value = null;
+    cityTextController.clear();
     availableCities.clear();
     cityErrorText.value = null;
-    if (state != null) fetchCitiesForState(state.stateId);
+    if (state != null) {
+      stateTextController.text = state.stateName;
+      fetchCitiesForState(state.stateId);
+    } else {
+      stateTextController.clear();
+    }
   }
 
   Future<void> fetchCitiesForState(String stateId) async {
@@ -265,6 +272,11 @@ class ProfileController extends GetxController {
   void onCitySelected(CityModel? city) {
     selectedCity.value = city;
     cityErrorText.value = null;
+    if (city != null) {
+      cityTextController.text = city.cityName;
+    } else {
+      cityTextController.clear();
+    }
   }
 
   // ── Update profile ────────────────────────────────────────────
@@ -295,10 +307,8 @@ class ProfileController extends GetxController {
         firstName: firstNameController.text.trim(),
         lastName: lastNameController.text.trim(),
         email: emailController.text.trim(),
-        address: addressController.text.trim(),
-        city: selectedCity.value?.cityName,
-        state: selectedState.value?.stateName,
-        pincode: pincodeController.text.trim(),
+        state: selectedState.value?.stateName ?? '',
+        city: selectedCity.value?.cityName ?? '',
       );
 
       if (response.isSuccess) {
@@ -315,7 +325,7 @@ class ProfileController extends GetxController {
               : 'Profile updated successfully!',
           type: SnackbarType.success,
         );
-        Get.back();
+        Get.offAllNamed(AppRoutes.home);
       } else {
         CustomSnackbar.show(
           message: response.message.isNotEmpty

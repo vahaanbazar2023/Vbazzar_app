@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import '../../../core/network/network_service.dart';
 import '../../../core/network/endpoints/api_endpoints.dart';
 import '../../../core/services/logger_service.dart';
@@ -38,31 +39,33 @@ class ProfileDataSource {
     }
   }
 
-  /// POST /api/v1/dashboard/profile-update — update user profile
+  /// POST /api/v2/auth/complete-profile — update user profile
   Future<ProfileResponse> updateProfile({
     required String userId,
-    String? firstName,
-    String? lastName,
-    String? email,
-    String? address,
-    String? city,
-    String? state,
-    String? pincode,
+    required String firstName,
+    required String lastName,
+    required String email,
+    required String state,
+    required String city,
   }) async {
     try {
-      LoggerService.to.info('Updating profile for userId: $userId');
-      final data = <String, dynamic>{'user_id': userId};
-      if (firstName != null) data['first_name'] = firstName;
-      if (lastName != null) data['last_name'] = lastName;
-      if (email != null) data['email'] = email;
-      if (address != null) data['address'] = address;
-      if (city != null) data['city'] = city;
-      if (state != null) data['state'] = state;
-      if (pincode != null) data['pincode'] = pincode;
-
-      final response = await networkService.post(
-        ApiEndpoints.updateProfile,
-        data: data,
+      final requestData = {
+        'user_id': userId,
+        'first_name': firstName,
+        'last_name': lastName,
+        'email': email,
+        'state': state,
+        'city': city,
+      };
+      LoggerService.to.info(
+        'Updating profile — '
+        'URL: ${ApiEndpoints.completeProfile}  '
+        'Body: $requestData',
+      );
+      debugPrint('🔄 complete-profile REQUEST: $requestData');
+      final response = await networkService.put(
+        ApiEndpoints.completeProfile,
+        data: requestData,
       );
       if (response.data == null) {
         throw Exception('Empty response from server');
@@ -98,6 +101,47 @@ class ProfileDataSource {
           e.message ??
           'Failed to fetch wallet dashboard';
       LoggerService.to.error('fetchWalletDashboard DioException: $msg');
+      throw Exception(msg);
+    }
+  }
+
+  /// POST /api/v1/dashboard/auction-refund-initiate — initiate auction refund
+  Future<Map<String, dynamic>> initiateRefund({
+    required String userId,
+    required String accHolderName,
+    required String accountNumber,
+    required String bankName,
+    required String branchName,
+    required String ifscCode,
+    required String refundType,
+  }) async {
+    try {
+      LoggerService.to.info('Initiating refund for userId: $userId');
+      final response = await networkService.post(
+        ApiEndpoints.auctionRefundInitiate,
+        data: {
+          'user_id': userId,
+          'acc_holder_name': accHolderName,
+          'account_number': accountNumber,
+          'bank_name': bankName,
+          'branch_name': branchName,
+          'ifsc_code': ifscCode,
+          'refund_type': refundType,
+        },
+      );
+      if (response.data == null) {
+        throw Exception('Empty response from server');
+      }
+      return response.data as Map<String, dynamic>;
+    } on DioException catch (e) {
+      LoggerService.to.error(
+        'initiateRefund DioException [${e.response?.statusCode}]: '
+        'response=${e.response?.data}',
+      );
+      final msg =
+          e.response?.data?['message'] as String? ??
+          e.message ??
+          'Failed to initiate refund';
       throw Exception(msg);
     }
   }

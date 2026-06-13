@@ -85,7 +85,7 @@ class ApiEndpoints {
   static String statesByRegion(String regionId) =>
       '$locationPrefix/regions/$regionId/states';
   static const String vehicleSearch = '$auctionPrefix/vehicle-search';
-  static const String auctionRefundInitiate = '$auctionPrefix/refund-initiate';
+  static const String auctionRefundInitiate = '/api/v1/dashboard/auction-refund-initiate';
   static const String vehicleExcelDownload =
       '$auctionPrefix/vehicle-excel-download';
 

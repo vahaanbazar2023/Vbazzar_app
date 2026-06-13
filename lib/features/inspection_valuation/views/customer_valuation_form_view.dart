@@ -230,65 +230,72 @@ class CustomerValuationFormView extends GetView<InspectionValuationController> {
   Widget _buildDocumentUploads() {
     return Column(
       children: [
-        Obx(
-          () => CustomFileUploadField(
+        Obx(() {
+          // Access .length inside Obx to register reactive subscription
+          final rcCount = controller.rcFiles.length;
+          final rcErr = controller.rcFileError.value;
+          return CustomFileUploadField(
             title: 'RC Document *',
-            label: 'Choose a file/browse multiple files',
+            label: rcCount > 0
+                ? '$rcCount file(s) selected'
+                : 'Choose a file/browse multiple files',
             onTap: () => controller.pickFiles(
               controller.rcFiles,
               allowedExtensions: const ['pdf', 'jpg', 'jpeg', 'png'],
               allowMultiple: true,
             ),
-            files: controller.rcFiles,
+            files: controller.rcFiles.toList(),
             allowMultiple: true,
             onRemove: (index) {
               controller.rcFiles.removeAt(index);
             },
-            errorText: controller.rcFileError.value.isNotEmpty
-                ? controller.rcFileError.value
-                : null,
-          ),
-        ),
+            errorText: rcErr.isNotEmpty ? rcErr : null,
+          );
+        }),
         SizedBox(height: 12.h),
-        Obx(
-          () => CustomFileUploadField(
+        Obx(() {
+          final insCount = controller.insuranceFiles.length;
+          final insErr = controller.insuranceFileError.value;
+          return CustomFileUploadField(
             title: 'Insurance Document',
-            label: 'Choose a file/browse multiple files',
+            label: insCount > 0
+                ? '$insCount file(s) selected'
+                : 'Choose a file/browse multiple files',
             onTap: () => controller.pickFiles(
               controller.insuranceFiles,
               allowedExtensions: const ['pdf', 'jpg', 'jpeg', 'png'],
               allowMultiple: true,
             ),
-            files: controller.insuranceFiles,
+            files: controller.insuranceFiles.toList(),
             allowMultiple: true,
             onRemove: (index) {
               controller.insuranceFiles.removeAt(index);
             },
-            errorText: controller.insuranceFileError.value.isNotEmpty
-                ? controller.insuranceFileError.value
-                : null,
-          ),
-        ),
+            errorText: insErr.isNotEmpty ? insErr : null,
+          );
+        }),
         SizedBox(height: 12.h),
-        Obx(
-          () => CustomFileUploadField(
+        Obx(() {
+          final gstCount = controller.companyGstFiles.length;
+          final gstErr = controller.companyGstFileError.value;
+          return CustomFileUploadField(
             title: 'Company GST',
-            label: 'Choose a file/browse multiple files',
+            label: gstCount > 0
+                ? '$gstCount file(s) selected'
+                : 'Choose a file/browse multiple files',
             onTap: () => controller.pickFiles(
               controller.companyGstFiles,
               allowedExtensions: const ['pdf', 'jpg', 'jpeg', 'png'],
               allowMultiple: true,
             ),
-            files: controller.companyGstFiles,
+            files: controller.companyGstFiles.toList(),
             allowMultiple: true,
             onRemove: (index) {
               controller.companyGstFiles.removeAt(index);
             },
-            errorText: controller.companyGstFileError.value.isNotEmpty
-                ? controller.companyGstFileError.value
-                : null,
-          ),
-        ),
+            errorText: gstErr.isNotEmpty ? gstErr : null,
+          );
+        }),
       ],
     );
   }

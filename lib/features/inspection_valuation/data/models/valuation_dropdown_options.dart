@@ -89,8 +89,8 @@ class LocationOption {
 
   factory LocationOption.fromJson(Map<String, dynamic> json) {
     return LocationOption(
-      id: (json['id'] ?? json['state_id'] ?? json['city_id'] ?? '').toString(),
-      name: (json['name'] ?? json['state_name'] ?? json['city_name'] ?? '').toString(),
+      id: (json['id'] ?? json['city_id'] ?? json['state_id'] ?? '').toString(),
+      name: (json['name'] ?? json['city_name'] ?? json['state_name'] ?? '').toString(),
       stateId: json['state_id']?.toString(),
     );
   }

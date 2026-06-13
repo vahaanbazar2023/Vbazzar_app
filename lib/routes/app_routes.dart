@@ -53,6 +53,9 @@ class AppRoutes {
   static const serviceSupport = '/service-support';
   static const serviceSupportListView = '/service-support-list';
 
+  // Initiate Refund
+  static const initiateRefund = '/initiate-refund';
+
   // Inspection & Valuation
   static const inspectionHome = '/inspection-home';
   static const customerValuationForm = '/customer-valuation-form';

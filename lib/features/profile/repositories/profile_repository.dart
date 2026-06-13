@@ -21,13 +21,11 @@ class ProfileRepository {
   }
 
   Future<ProfileResponse> updateProfile({
-    String? firstName,
-    String? lastName,
-    String? email,
-    String? address,
-    String? city,
-    String? state,
-    String? pincode,
+    required String firstName,
+    required String lastName,
+    required String email,
+    required String state,
+    required String city,
   }) async {
     final userId = await _secureStorage.read(StorageKeys.userId) ?? '';
     return _dataSource.updateProfile(
@@ -35,16 +33,34 @@ class ProfileRepository {
       firstName: firstName,
       lastName: lastName,
       email: email,
-      address: address,
-      city: city,
       state: state,
-      pincode: pincode,
+      city: city,
     );
   }
 
   Future<WalletDashboardResponse> fetchWalletDashboard() async {
     final userId = await _secureStorage.read(StorageKeys.userId) ?? '';
     return _dataSource.fetchWalletDashboard(userId);
+  }
+
+  Future<Map<String, dynamic>> initiateRefund({
+    required String accHolderName,
+    required String accountNumber,
+    required String bankName,
+    required String branchName,
+    required String ifscCode,
+    required String refundType,
+  }) async {
+    final userId = await _secureStorage.read(StorageKeys.userId) ?? '';
+    return _dataSource.initiateRefund(
+      userId: userId,
+      accHolderName: accHolderName,
+      accountNumber: accountNumber,
+      bankName: bankName,
+      branchName: branchName,
+      ifscCode: ifscCode,
+      refundType: refundType,
+    );
   }
 
   Future<LogoutResponse> logout() async {

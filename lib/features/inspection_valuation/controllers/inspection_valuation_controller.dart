@@ -1,10 +1,14 @@
+import 'package:dio/dio.dart' as dio;
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../core/constants/app_colors.dart';
+import '../../../core/constants/app_sizes.dart';
 import '../../../core/storage/secure_storage_service.dart';
 import '../../../core/storage/storage_keys.dart';
-import '../../../routes/app_routes.dart';
+import '../../../routes/app_routes.dart' show AppRoutes;
+import '../../../theme/app_fonts.dart';
 import '../data/models/customer_inspection_request.dart';
 import '../data/models/inspection_vehicle_model.dart';
 import '../data/models/my_inspections_response.dart';
@@ -135,11 +139,7 @@ class InspectionValuationController extends GetxController {
       'Hybrid',
       'LPG',
     ]);
-    transmissionTypes.assignAll([
-      'Manual',
-      'Automatic',
-      'Semi-Automatic',
-    ]);
+    transmissionTypes.assignAll(['Manual', 'Automatic', 'Semi-Automatic']);
     caseTypes.assignAll([
       'Normal',
       'Accident',
@@ -148,10 +148,7 @@ class InspectionValuationController extends GetxController {
       'Flood Damaged',
       'Fire Damaged',
     ]);
-    hypothecationOptions.assignAll([
-      'No',
-      'Yes',
-    ]);
+    hypothecationOptions.assignAll(['No', 'Yes']);
     accidentalStatusOptions.assignAll([
       'No Accident',
       'Minor Accident',
@@ -369,7 +366,9 @@ class InspectionValuationController extends GetxController {
         } else {
           target.assignAll(result.files);
         }
-        debugPrint('📎 InspectionValuation: picked ${result.files.length} file(s), total=${target.length}');
+        debugPrint(
+          '📎 InspectionValuation: picked ${result.files.length} file(s), total=${target.length}',
+        );
       } else {
         debugPrint('📎 InspectionValuation: no files picked');
       }
@@ -418,13 +417,27 @@ class InspectionValuationController extends GetxController {
 
     isSubmitting.value = true;
     try {
+      // Resolve brand code from selected brand name
+      final selectedBrandMap = vehicleBrands.firstWhereOrNull(
+        (b) =>
+            (b['brand_name'] ?? b['name'] ?? b['title'] ?? '').toString() ==
+            selectedVehicleBrand.value,
+      );
+      final brandCode = selectedBrandMap != null
+          ? (selectedBrandMap['brand_code'] ??
+                  selectedBrandMap['code'] ??
+                  selectedBrandMap['id'] ??
+                  '')
+              .toString()
+          : selectedVehicleBrand.value;
+
       final request = CustomerInspectionRequest(
         vehicleNo: vehicleNoController.text.trim(),
         chasisNo: chasisNoController.text.trim(),
-        vehicleType: selectedVehicleType.value,
-        vehicleBrand: selectedVehicleBrand.value,
-        vehicleState: selectedState.value?.name ?? '',
-        vehicleCity: selectedCity.value?.name ?? '',
+        vehicleType: selectedCategoryCode.value,
+        vehicleBrand: brandCode,
+        vehicleState: selectedState.value?.id ?? '',
+        vehicleCity: selectedCity.value?.id ?? '',
         vehicleOwnerNumber: ownerNumberController.text.trim(),
         companyName: companyNameController.text.trim().isNotEmpty
             ? companyNameController.text.trim()
@@ -451,7 +464,16 @@ class InspectionValuationController extends GetxController {
       }
     } catch (e) {
       debugPrint('⚠️ InspectionValuation: submitCustomerForm error – $e');
-      _showErrorSnackBar('Failed to submit inspection request.');
+      if (e is dio.DioException && e.response?.data != null) {
+        final responseData = e.response!.data;
+        if (responseData is Map<String, dynamic>) {
+          _showErrorSnackBar(_extractErrorMessage(responseData));
+        } else {
+          _showErrorSnackBar('Server error: ${e.response?.statusCode}');
+        }
+      } else {
+        _showErrorSnackBar('Failed to submit inspection request.');
+      }
     } finally {
       isSubmitting.value = false;
     }
@@ -525,9 +547,13 @@ class InspectionValuationController extends GetxController {
         final innerData = rawData['data'];
         if (innerData is Map<String, dynamic>) {
           debugPrint('Data keys: ${innerData.keys.toList()}');
-          debugPrint('Data[data] count: ${(innerData['data'] as List?)?.length ?? 0}');
+          debugPrint(
+            'Data[data] count: ${(innerData['data'] as List?)?.length ?? 0}',
+          );
           debugPrint('Pagination: ${innerData['pagination']}');
-          debugPrint('First item: ${(innerData['data'] as List?)?.firstOrNull}');
+          debugPrint(
+            'First item: ${(innerData['data'] as List?)?.firstOrNull}',
+          );
         }
         debugPrint('══════════════════════════════════════════');
 
@@ -536,7 +562,9 @@ class InspectionValuationController extends GetxController {
         debugPrint('✅ Parsed ${parsed.inspections.length} inspections');
         for (var i = 0; i < parsed.inspections.length; i++) {
           final ins = parsed.inspections[i];
-          debugPrint('  [$i] vehicleNo=${ins.vehicleNo}, brand=${ins.vehicleBrand}, type=${ins.vehicleType}, status=${ins.status}');
+          debugPrint(
+            '  [$i] vehicleNo=${ins.vehicleNo}, brand=${ins.vehicleBrand}, type=${ins.vehicleType}, status=${ins.status}',
+          );
         }
 
         if (refresh) {
@@ -594,32 +622,84 @@ class InspectionValuationController extends GetxController {
     String? submissionId,
     required String message,
   }) {
-    Get.defaultDialog(
-      title: title,
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const Icon(Icons.check_circle, color: Colors.green, size: 64),
-          const SizedBox(height: 16),
-          Text(
-            message,
-            textAlign: TextAlign.center,
-            style: const TextStyle(fontSize: 14),
+    Get.dialog(
+      Dialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppSizes.radiusLg),
+        ),
+        backgroundColor: AppColors.white,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSizes.spaceLg,
+            vertical: 28,
           ),
-          if (submissionId != null && submissionId.isNotEmpty) ...[
-            const SizedBox(height: 12),
-            Text(
-              'Reference: $submissionId',
-              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
-            ),
-          ],
-        ],
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Contact Us Image
+              Image.asset(
+                'assets/images/png/contact_us.png',
+                width: 120,
+                height: 120,
+                fit: BoxFit.contain,
+              ),
+              const SizedBox(height: AppSizes.spaceLg),
+
+              // Thank You Title
+              Text(
+                'Thank you for submitting!',
+                style: AppFonts.titleMedium.copyWith(
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.textPrimary,
+                  fontSize: 18,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: AppSizes.spaceSm),
+
+              // Subtitle
+              Text(
+                'Our team will contact you soon..!',
+                style: AppFonts.bodyMedium.copyWith(
+                  color: AppColors.textSecondary,
+                  fontSize: 14,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: AppSizes.spaceLg),
+
+              // Okay Button
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () {
+                    Get.back(); // close dialog
+                    // Navigate to home page, clearing the form route from stack
+                    Get.offAllNamed(AppRoutes.home);
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.primary,
+                    foregroundColor: AppColors.white,
+                    minimumSize: const Size(double.infinity, 48),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(AppSizes.radiusMd),
+                    ),
+                    elevation: 0,
+                  ),
+                  child: const Text(
+                    'Okay',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
-      textConfirm: 'OK',
-      confirmTextColor: Colors.white,
-      onConfirm: () {
-        Get.back(); // close dialog
-      },
+      barrierDismissible: false,
     );
   }
 

@@ -5,7 +5,10 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:file_picker/file_picker.dart';
 
+import '../../../core/constants/app_colors.dart';
+import '../../../core/constants/app_sizes.dart';
 import '../../../routes/app_routes.dart';
+import '../../../theme/app_fonts.dart';
 import '../data/models/agent_inspection_request.dart';
 import '../data/models/valuation_dropdown_options.dart';
 import '../data/services/inspection_service.dart';
@@ -595,35 +598,84 @@ class AgentInspectionController extends GetxController {
     String? submissionId,
     required String message,
   }) {
-    Get.defaultDialog(
-      title: title,
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const Icon(Icons.check_circle, color: Colors.green, size: 64),
-          const SizedBox(height: 16),
-          Text(
-            message,
-            textAlign: TextAlign.center,
-            style: const TextStyle(fontSize: 14),
+    Get.dialog(
+      Dialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppSizes.radiusLg),
+        ),
+        backgroundColor: AppColors.white,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSizes.spaceLg,
+            vertical: 28,
           ),
-          if (submissionId != null && submissionId.isNotEmpty) ...[
-            const SizedBox(height: 12),
-            Text(
-              'Reference: $submissionId',
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 14,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Contact Us Image
+              Image.asset(
+                'assets/images/png/contact_us.png',
+                width: 120,
+                height: 120,
+                fit: BoxFit.contain,
               ),
-            ),
-          ],
-        ],
+              const SizedBox(height: AppSizes.spaceLg),
+
+              // Thank You Title
+              Text(
+                'Thank you for submitting!',
+                style: AppFonts.titleMedium.copyWith(
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.textPrimary,
+                  fontSize: 18,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: AppSizes.spaceSm),
+
+              // Subtitle
+              Text(
+                'Our team will contact you soon..!',
+                style: AppFonts.bodyMedium.copyWith(
+                  color: AppColors.textSecondary,
+                  fontSize: 14,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: AppSizes.spaceLg),
+
+              // Okay Button
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () {
+                    Get.back(); // close dialog
+                    // Navigate to home page, clearing the form route from stack
+                    Get.offAllNamed(AppRoutes.home);
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.primary,
+                    foregroundColor: AppColors.white,
+                    minimumSize: const Size(double.infinity, 48),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(AppSizes.radiusMd),
+                    ),
+                    elevation: 0,
+                  ),
+                  child: const Text(
+                    'Okay',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
-      textConfirm: 'OK',
-      confirmTextColor: Colors.white,
-      onConfirm: () {
-        Get.back(); // close dialog
-      },
+      barrierDismissible: false,
     );
   }
 }

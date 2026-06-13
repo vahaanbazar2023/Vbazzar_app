@@ -5,7 +5,6 @@ import '../controllers/main_shell_controller.dart';
 import '../../home/views/home_screen.dart';
 import '../../subscription/views/my_subscription_screen.dart';
 import '../../categories/views/categories_screen.dart';
-import '../../wishlist/views/wishlist_screen.dart';
 import '../../profile/views/profile_screen.dart';
 
 class MainShellScreen extends GetView<MainShellController> {
@@ -15,7 +14,6 @@ class MainShellScreen extends GetView<MainShellController> {
     HomeScreen(),
     MySubscriptionScreen(),
     CategoriesScreen(),
-    WishlistScreen(),
     ProfileScreen(),
   ];
 
