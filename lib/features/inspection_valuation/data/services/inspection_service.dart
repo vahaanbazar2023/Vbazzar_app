@@ -14,8 +14,13 @@ class InspectionService {
       : _network = network ?? NetworkService.to;
 
   /// Fetch valuation dropdown options for forms (agent form only).
-  Future<dio.Response> getValuationDropdownOptions() async {
-    return _network.get(ApiEndpoints.valuationDropdownOptions);
+  Future<dio.Response> getValuationDropdownOptions({
+    required String userId,
+  }) async {
+    return _network.get(
+      ApiEndpoints.valuationDropdownOptions,
+      queryParameters: {'user_id': userId},
+    );
   }
 
   /// Fetch vehicle categories from buy-sell API (POST with user_id).
@@ -59,51 +64,72 @@ class InspectionService {
     required CustomerInspectionRequest request,
   }) async {
     final fields = request.toFields();
-    final multipartFiles = <String, dio.MultipartFile>{};
+    final fileKeys = <String>[];
 
-    // RC files (required) — API expects 'rc_file' as field name
+    // Build FormData manually to support multiple files with the same key
+    final formData = dio.FormData.fromMap(fields);
+
+    // RC files (required) — API expects 'rc_file' field name
     for (int i = 0; i < request.rcFiles.length; i++) {
       final file = request.rcFiles[i];
       if (file.path != null) {
-        multipartFiles['rc_file'] = await dio.MultipartFile.fromFile(
-          file.path!,
-          filename: file.name,
+        final key = 'rc_file[]';
+        fileKeys.add(key);
+        formData.files.add(
+          MapEntry(
+            key,
+            await dio.MultipartFile.fromFile(
+              file.path!,
+              filename: file.name,
+            ),
+          ),
         );
       }
     }
 
-    // Insurance files (optional) — API expects 'insurance_file'
+    // Insurance files (optional) — API expects 'insurance_file' field name
     for (int i = 0; i < request.insuranceFiles.length; i++) {
       final file = request.insuranceFiles[i];
       if (file.path != null) {
-        multipartFiles['insurance_file'] = await dio.MultipartFile.fromFile(
-          file.path!,
-          filename: file.name,
+        final key = 'insurance_file[]';
+        fileKeys.add(key);
+        formData.files.add(
+          MapEntry(
+            key,
+            await dio.MultipartFile.fromFile(
+              file.path!,
+              filename: file.name,
+            ),
+          ),
         );
       }
     }
 
-    // Company GST files (optional) — API expects 'company_gst_file'
+    // Company GST files (optional) — API expects 'company_gst_file' field name
     for (int i = 0; i < request.companyGstFiles.length; i++) {
       final file = request.companyGstFiles[i];
       if (file.path != null) {
-        multipartFiles['company_gst_file'] = await dio.MultipartFile.fromFile(
-          file.path!,
-          filename: file.name,
+        final key = 'company_gst_file[]';
+        fileKeys.add(key);
+        formData.files.add(
+          MapEntry(
+            key,
+            await dio.MultipartFile.fromFile(
+              file.path!,
+              filename: file.name,
+            ),
+          ),
         );
       }
     }
-
-    final formData = dio.FormData.fromMap({
-      ...fields,
-      ...multipartFiles,
-    });
 
     debugPrint('══════════════════════════════════════════');
     debugPrint('📤 CUSTOMER INSPECTION FORM');
     debugPrint('URL: ${ApiEndpoints.customerInspectionForm}');
     debugPrint('Fields: $fields');
-    debugPrint('Files: ${multipartFiles.keys.toList()}');
+    debugPrint('Files: $fileKeys');
+    debugPrint('FormData files count: ${formData.files.length}');
+    debugPrint('FormData fields count: ${formData.fields.length}');
     debugPrint('══════════════════════════════════════════');
 
     final response = await _network.upload(

@@ -34,6 +34,7 @@ class AgentInspectionController extends GetxController {
   final vehicleRegNoController = TextEditingController();
   final chasisNumberController = TextEditingController();
   final manufacturingYearController = TextEditingController();
+  final selectedManufacturingYear = Rx<String?>(null);
   final engineNumberController = TextEditingController();
   final rtoLocationController = TextEditingController();
   final ownerNumberController = TextEditingController();
@@ -391,13 +392,43 @@ class AgentInspectionController extends GetxController {
   }
 
   AgentInspectionRequest _buildRequest() {
+    // Resolve vehicle type code from parent's category list
+    String vehicleTypeCode = selectedVehicleType.value;
+    final cat = _parent.vehicleCategories.firstWhereOrNull(
+      (c) =>
+          (c['name'] ?? c['title'] ?? c['category_name'] ?? '').toString() ==
+          selectedVehicleType.value,
+    );
+    if (cat != null) {
+      vehicleTypeCode = (cat['category_code'] ??
+              cat['code'] ??
+              cat['id'] ??
+              selectedVehicleType.value)
+          .toString();
+    }
+
+    // Resolve vehicle brand code from parent's brand list
+    String vehicleBrandCode = selectedVehicleBrand.value;
+    final brand = _parent.vehicleBrands.firstWhereOrNull(
+      (b) =>
+          (b['brand_name'] ?? b['name'] ?? b['title'] ?? '').toString() ==
+          selectedVehicleBrand.value,
+    );
+    if (brand != null) {
+      vehicleBrandCode = (brand['brand_code'] ??
+              brand['code'] ??
+              brand['id'] ??
+              selectedVehicleBrand.value)
+          .toString();
+    }
+
     return AgentInspectionRequest(
       ownerName: _textOrNull(ownerNameController),
       vehicleRegistrationNumber: vehicleRegNoController.text.trim(),
-      vehicleType: selectedVehicleType.value,
-      vehicleBrand: selectedVehicleBrand.value,
-      vehicleState: selectedState.value?.name ?? '',
-      vehicleCity: selectedCity.value?.name ?? '',
+      vehicleType: vehicleTypeCode,
+      vehicleBrand: vehicleBrandCode,
+      vehicleState: selectedState.value?.id ?? '',
+      vehicleCity: selectedCity.value?.id ?? '',
       chasisNumber: _textOrNull(chasisNumberController),
       manufacturingYear: _textOrNull(manufacturingYearController),
       engineNumber: _textOrNull(engineNumberController),
@@ -467,6 +498,7 @@ class AgentInspectionController extends GetxController {
     vehicleRegNoController.clear();
     chasisNumberController.clear();
     manufacturingYearController.clear();
+    selectedManufacturingYear.value = null;
     engineNumberController.clear();
     rtoLocationController.clear();
     ownerNumberController.clear();

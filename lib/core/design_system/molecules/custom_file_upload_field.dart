@@ -115,7 +115,7 @@ class CustomFileUploadField extends StatelessWidget {
               width: double.infinity,
               height: height ?? 120.h,
               decoration: BoxDecoration(
-                color: AppColors.grey50,
+                color: AppColors.cardBackground,
                 borderRadius: BorderRadius.circular(12.r),
               ),
               child: _buildEmptyState(),
@@ -192,10 +192,7 @@ class CustomFileUploadField extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppColors.white,
         borderRadius: BorderRadius.circular(10.r),
-        border: Border.all(
-          color: AppColors.grey200,
-          width: 1,
-        ),
+        border: Border.all(color: AppColors.grey200, width: 1),
         boxShadow: [
           BoxShadow(
             color: AppColors.black.withOpacity(0.03),
@@ -214,9 +211,7 @@ class CustomFileUploadField extends StatelessWidget {
               color: _getFileColor(file.name).withOpacity(0.1),
               borderRadius: BorderRadius.circular(8.r),
             ),
-            child: Center(
-              child: _buildFileIcon(file.name),
-            ),
+            child: Center(child: _buildFileIcon(file.name)),
           ),
           SizedBox(width: 12.w),
 
@@ -260,11 +255,7 @@ class CustomFileUploadField extends StatelessWidget {
                   shape: BoxShape.circle,
                 ),
                 child: Center(
-                  child: Icon(
-                    Icons.close,
-                    color: AppColors.error,
-                    size: 16.sp,
-                  ),
+                  child: Icon(Icons.close, color: AppColors.error, size: 16.sp),
                 ),
               ),
             ),

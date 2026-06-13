@@ -1,6 +1,7 @@
 import 'package:file_picker/file_picker.dart';
 
 class CustomerInspectionRequest {
+  final String userId;
   final String vehicleNo;
   final String chasisNo;
   final String vehicleType;
@@ -14,6 +15,7 @@ class CustomerInspectionRequest {
   final List<PlatformFile> companyGstFiles;
 
   const CustomerInspectionRequest({
+    required this.userId,
     required this.vehicleNo,
     required this.chasisNo,
     required this.vehicleType,
@@ -29,6 +31,7 @@ class CustomerInspectionRequest {
 
   Map<String, String> toFields() {
     return {
+      'user_id': userId,
       'vehicle_no': vehicleNo,
       'chasis_no': chasisNo,
       'vehicle_type': vehicleType,

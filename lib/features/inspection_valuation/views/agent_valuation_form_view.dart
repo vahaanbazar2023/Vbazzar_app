@@ -10,11 +10,11 @@ import '../../../core/design_system/molecules/custom_file_upload_field.dart';
 import '../../../core/design_system/molecules/gradient_button.dart';
 import '../../../core/design_system/molecules/inline_dropdown_field.dart';
 import '../../../core/design_system/templates/app_layout.dart';
+import '../../../core/design_system/molecules/custom_year_picker.dart';
 import '../../../theme/app_fonts.dart';
 import '../controllers/agent_inspection_controller.dart';
 import '../controllers/inspection_valuation_controller.dart';
 import '../data/models/valuation_dropdown_options.dart';
-import '../widgets/condition_rating_widget.dart';
 import '../widgets/valuation_summary_card.dart';
 
 /// Agent inspection form — single scrollable form with section headers.
@@ -64,8 +64,8 @@ class AgentValuationFormView extends GetView<AgentInspectionController> {
                   _buildSectionHeader('Valuation'),
                   _buildValuationSection(),
                   SizedBox(height: 20.h),
-                  _buildSectionHeader('Inspection Summary'),
-                  ValuationSummaryCard(controller: controller),
+                  // _buildSectionHeader('Inspection Summary'),
+                  // ValuationSummaryCard(controller: controller),
                   SizedBox(height: 24.h),
 
                   // ── Submit Button ────────────────────────────────
@@ -192,17 +192,19 @@ class AgentValuationFormView extends GetView<AgentInspectionController> {
           required: false,
         ),
         SizedBox(height: 12.h),
-        _buildTextField(
-          controller: controller.manufacturingYearController,
-          label: 'Manufacturing Year',
-          hint: 'e.g. 2020',
-          icon: Icons.calendar_today_outlined,
-          required: false,
-          keyboardType: TextInputType.number,
-          inputFormatters: [
-            FilteringTextInputFormatter.digitsOnly,
-            LengthLimitingTextInputFormatter(4),
-          ],
+        Obx(
+          () => CustomYearPicker(
+            labelText: 'Manufacturing Year',
+            hintText: 'Select year',
+            selectedYear: controller.selectedManufacturingYear.value,
+            startYear: 1970,
+            onYearSelected: (year) {
+              controller.selectedManufacturingYear.value = year.isEmpty
+                  ? null
+                  : year;
+              controller.manufacturingYearController.text = year;
+            },
+          ),
         ),
         SizedBox(height: 12.h),
         _buildTextField(
@@ -254,17 +256,20 @@ class AgentValuationFormView extends GetView<AgentInspectionController> {
         ),
         SizedBox(height: 12.h),
         Obx(
-          () => InlineDropdownField<String>(
+          () => InlineDropdownField<DropdownItem>(
             value: controller.selectedCondition.value.isEmpty
                 ? null
-                : controller.selectedCondition.value,
+                : parent.conditionOptions.firstWhereOrNull(
+                    (d) => d.value == controller.selectedCondition.value,
+                  ),
             items: parent.conditionOptions,
             placeholder: 'Select Condition',
             label: 'Vehicle Condition (Rating)',
             prefixIcon: Icons.rate_review_outlined,
-            itemLabel: (v) => v,
+            itemLabel: (v) => v.label,
             isLoading: parent.isDropdownLoading.value,
-            onChanged: (v) => controller.selectedCondition.value = v ?? '',
+            onChanged: (v) =>
+                controller.selectedCondition.value = v?.value ?? '',
           ),
         ),
         SizedBox(height: 12.h),
@@ -301,26 +306,28 @@ class AgentValuationFormView extends GetView<AgentInspectionController> {
         ),
         SizedBox(height: 12.h),
         Obx(
-          () => InlineDropdownField<String>(
+          () => InlineDropdownField<DropdownItem>(
             value: controller.selectedHypothecation.value.isEmpty
                 ? null
-                : controller.selectedHypothecation.value,
+                : parent.hypothecationOptions.firstWhereOrNull(
+                    (d) => d.value == controller.selectedHypothecation.value,
+                  ),
             items: parent.hypothecationOptions,
             placeholder: 'Select Hypothecation',
             label: 'Hypothecation',
             prefixIcon: Icons.account_balance_outlined,
-            itemLabel: (v) => v,
+            itemLabel: (v) => v.label,
             isLoading: parent.isDropdownLoading.value,
             onChanged: (v) {
-              controller.selectedHypothecation.value = v ?? '';
-              if (v != 'Yes') {
+              controller.selectedHypothecation.value = v?.value ?? '';
+              if (v?.value != 'yes') {
                 controller.hypothecatedToController.clear();
               }
             },
           ),
         ),
         Obx(
-          () => controller.selectedHypothecation.value == 'Yes'
+          () => controller.selectedHypothecation.value == 'yes'
               ? Padding(
                   padding: EdgeInsets.only(top: 12.h),
                   child: _buildTextField(
@@ -335,17 +342,19 @@ class AgentValuationFormView extends GetView<AgentInspectionController> {
         ),
         SizedBox(height: 12.h),
         Obx(
-          () => InlineDropdownField<String>(
+          () => InlineDropdownField<DropdownItem>(
             value: controller.selectedCaseType.value.isEmpty
                 ? null
-                : controller.selectedCaseType.value,
+                : parent.caseTypes.firstWhereOrNull(
+                    (d) => d.value == controller.selectedCaseType.value,
+                  ),
             items: parent.caseTypes,
             placeholder: 'Select Case Type',
             label: 'Case Type',
             prefixIcon: Icons.cases_outlined,
-            itemLabel: (v) => v,
+            itemLabel: (v) => v.label,
             isLoading: parent.isDropdownLoading.value,
-            onChanged: (v) => controller.selectedCaseType.value = v ?? '',
+            onChanged: (v) => controller.selectedCaseType.value = v?.value ?? '',
           ),
         ),
         SizedBox(height: 12.h),
@@ -370,48 +379,56 @@ class AgentValuationFormView extends GetView<AgentInspectionController> {
         ),
         SizedBox(height: 12.h),
         Obx(
-          () => InlineDropdownField<String>(
+          () => InlineDropdownField<DropdownItem>(
             value: controller.selectedFuel.value.isEmpty
                 ? null
-                : controller.selectedFuel.value,
+                : parent.fuelTypes.firstWhereOrNull(
+                    (d) => d.value == controller.selectedFuel.value,
+                  ),
             items: parent.fuelTypes,
             placeholder: 'Select Fuel Type',
             label: 'Fuel Type',
             prefixIcon: Icons.local_gas_station_outlined,
-            itemLabel: (v) => v,
+            itemLabel: (v) => v.label,
             isLoading: parent.isDropdownLoading.value,
-            onChanged: (v) => controller.selectedFuel.value = v ?? '',
+            onChanged: (v) => controller.selectedFuel.value = v?.value ?? '',
           ),
         ),
         SizedBox(height: 12.h),
         Obx(
-          () => InlineDropdownField<String>(
+          () => InlineDropdownField<DropdownItem>(
             value: controller.selectedTransmission.value.isEmpty
                 ? null
-                : controller.selectedTransmission.value,
+                : parent.transmissionTypes.firstWhereOrNull(
+                    (d) => d.value == controller.selectedTransmission.value,
+                  ),
             items: parent.transmissionTypes,
             placeholder: 'Select Transmission',
             label: 'Transmission Type',
             prefixIcon: Icons.settings_outlined,
-            itemLabel: (v) => v,
+            itemLabel: (v) => v.label,
             isLoading: parent.isDropdownLoading.value,
-            onChanged: (v) => controller.selectedTransmission.value = v ?? '',
+            onChanged: (v) =>
+                controller.selectedTransmission.value = v?.value ?? '',
           ),
         ),
         SizedBox(height: 12.h),
         Obx(
-          () => InlineDropdownField<String>(
+          () => InlineDropdownField<DropdownItem>(
             value: controller.selectedAccidentalStatus.value.isEmpty
                 ? null
-                : controller.selectedAccidentalStatus.value,
+                : parent.accidentalStatusOptions.firstWhereOrNull(
+                    (d) =>
+                        d.value == controller.selectedAccidentalStatus.value,
+                  ),
             items: parent.accidentalStatusOptions,
             placeholder: 'Select Accidental Status',
             label: 'Accidental Status',
             prefixIcon: Icons.warning_amber_outlined,
-            itemLabel: (v) => v,
+            itemLabel: (v) => v.label,
             isLoading: parent.isDropdownLoading.value,
             onChanged: (v) =>
-                controller.selectedAccidentalStatus.value = v ?? '',
+                controller.selectedAccidentalStatus.value = v?.value ?? '',
           ),
         ),
       ],
@@ -426,42 +443,31 @@ class AgentValuationFormView extends GetView<AgentInspectionController> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildInspectionCategory(
+        _buildInspectionCard(
           title: 'Engine',
+          icon: Icons.engineering_outlined,
+          iconColor: const Color(0xFFE65100),
           condition: controller.engineCondition,
           remarksController: controller.engineRemarksController,
         ),
-        SizedBox(height: 16.h),
-        _buildInspectionCategory(
+        SizedBox(height: 14.h),
+        _buildInspectionCard(
           title: 'Transmission',
+          icon: Icons.settings_suggest_outlined,
+          iconColor: const Color(0xFF1565C0),
           condition: controller.transmissionCondition,
           remarksController: controller.transmissionRemarksController,
         ),
-        SizedBox(height: 16.h),
-        _buildInspectionCategory(
+        SizedBox(height: 14.h),
+        _buildInspectionCard(
           title: 'Suspension',
+          icon: Icons.directions_car_outlined,
+          iconColor: const Color(0xFF2E7D32),
           condition: controller.suspensionCondition,
           remarksController: controller.suspensionRemarksController,
         ),
-        SizedBox(height: 16.h),
-        _buildSectionSubHeader('Tyres'),
-        SizedBox(height: 8.h),
-        Obx(
-          () => _buildTyreSlider(
-            label: 'Front Axle Tyres',
-            value: controller.frontAxleTyresPercent.value,
-            onChanged: (v) =>
-                controller.frontAxleTyresPercent.value = v.round(),
-          ),
-        ),
-        SizedBox(height: 12.h),
-        Obx(
-          () => _buildTyreSlider(
-            label: 'Rear Axle Tyres',
-            value: controller.rearAxleTyresPercent.value,
-            onChanged: (v) => controller.rearAxleTyresPercent.value = v.round(),
-          ),
-        ),
+        SizedBox(height: 14.h),
+        _buildTyresCard(),
       ],
     );
   }
@@ -474,39 +480,39 @@ class AgentValuationFormView extends GetView<AgentInspectionController> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildInspectionCategory(
+        _buildInspectionCard(
           title: 'Body',
+          icon: Icons.car_crash_outlined,
+          iconColor: const Color(0xFF6A1B9A),
           condition: controller.bodyCondition,
           remarksController: controller.bodyRemarksController,
         ),
-        SizedBox(height: 16.h),
-        _buildInspectionCategory(
+        SizedBox(height: 14.h),
+        _buildInspectionCard(
           title: 'Cabin / Interior',
+          icon: Icons.airline_seat_recline_normal_outlined,
+          iconColor: const Color(0xFF00838F),
           condition: controller.cabinInteriorCondition,
           remarksController: controller.cabinInteriorRemarksController,
         ),
-        SizedBox(height: 16.h),
-        _buildInspectionCategory(
+        SizedBox(height: 14.h),
+        _buildInspectionCard(
           title: 'Electrical',
+          icon: Icons.electrical_services_outlined,
+          iconColor: const Color(0xFFF9A825),
           condition: controller.electricalCondition,
           remarksController: controller.electricalRemarksController,
         ),
-        SizedBox(height: 16.h),
-        _buildInspectionCategory(
+        SizedBox(height: 14.h),
+        _buildInspectionCard(
           title: 'Chassis',
+          icon: Icons.view_carousel_outlined,
+          iconColor: const Color(0xFF37474F),
           condition: controller.chasisCondition,
           remarksController: controller.chasisRemarksController,
         ),
-        SizedBox(height: 16.h),
-        _buildSectionSubHeader('Odometer'),
-        SizedBox(height: 8.h),
-        _buildTextField(
-          controller: controller.odometerRemarksController,
-          label: 'Odometer Remarks',
-          hint: 'Enter odometer-related observations',
-          icon: Icons.speed_outlined,
-          required: false,
-        ),
+        SizedBox(height: 14.h),
+        _buildOdometerCard(),
       ],
     );
   }
@@ -654,6 +660,7 @@ class AgentValuationFormView extends GetView<AgentInspectionController> {
           keyboardType: keyboardType,
           inputFormatters: inputFormatters,
           validator: validator,
+
           maxLines: maxLines,
           style: AppFonts.bodyMedium.copyWith(color: AppColors.textPrimary),
           decoration: InputDecoration(
@@ -665,7 +672,7 @@ class AgentValuationFormView extends GetView<AgentInspectionController> {
                 ? Icon(icon, size: 20.r, color: AppColors.grey500)
                 : null,
             filled: true,
-            fillColor: AppColors.grey50,
+            fillColor: AppColors.white,
             contentPadding: EdgeInsets.symmetric(
               horizontal: 14.w,
               vertical: 14.h,
@@ -695,34 +702,374 @@ class AgentValuationFormView extends GetView<AgentInspectionController> {
     );
   }
 
-  Widget _buildInspectionCategory({
+  // ── Modern inspection card for each category ───────────────────
+
+  Widget _buildInspectionCard({
     required String title,
+    required IconData icon,
+    required Color iconColor,
     required RxString condition,
     required TextEditingController remarksController,
   }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _buildSectionSubHeader(title),
-        SizedBox(height: 4.h),
-        Obx(
-          () => ConditionRatingWidget(
-            label: '$title Condition',
-            selectedValue: condition.value,
-            onChanged: (v) => condition.value = v,
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.all(16.w),
+      decoration: BoxDecoration(
+        color: AppColors.white,
+        borderRadius: BorderRadius.circular(14.r),
+        border: Border.all(color: AppColors.grey200),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.black.withOpacity(0.04),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
           ),
-        ),
-        SizedBox(height: 8.h),
-        _buildTextField(
-          controller: remarksController,
-          label: '$title Remarks',
-          hint: 'Enter observations',
-          icon: Icons.comment_outlined,
-          required: false,
-          maxLines: 2,
-        ),
-      ],
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // ── Card header with icon ─────────────────────────────
+          Row(
+            children: [
+              Container(
+                width: 40.w,
+                height: 40.w,
+                decoration: BoxDecoration(
+                  color: iconColor.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(10.r),
+                ),
+                child: Icon(icon, color: iconColor, size: 22.r),
+              ),
+              SizedBox(width: 12.w),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: AppFonts.titleSmall.copyWith(
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.textPrimary,
+                      ),
+                    ),
+                    SizedBox(height: 2.h),
+                    Obx(() {
+                      final condVal = condition.value;
+                      return Text(
+                        condVal.isEmpty ? 'Not rated yet' : condVal,
+                        style: AppFonts.bodySmall.copyWith(
+                          color: condVal.isEmpty
+                              ? AppColors.grey400
+                              : _getColorForCondition(condVal),
+                          fontWeight: condVal.isEmpty
+                              ? FontWeight.w400
+                              : FontWeight.w600,
+                        ),
+                      );
+                    }),
+                  ],
+                ),
+              ),
+            ],
+          ),
+
+          SizedBox(height: 16.h),
+          // ── Divider ──────────────────────────────────────────
+          Container(height: 1, color: AppColors.grey200),
+          SizedBox(height: 16.h),
+
+          // ── Condition rating chips ───────────────────────────
+          Text(
+            'Rate Condition',
+            style: AppFonts.labelMedium.copyWith(
+              color: AppColors.textSecondary,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          SizedBox(height: 10.h),
+          Obx(() {
+            final options = const ['Excellent', 'Good', 'Average', 'Poor'];
+            return Wrap(
+              spacing: 10.w,
+              runSpacing: 8.h,
+              children: options.map((option) {
+                final isSelected = condition.value == option;
+                final color = _getColorForCondition(option);
+                return GestureDetector(
+                  onTap: () => condition.value = option,
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 16.w,
+                      vertical: 9.h,
+                    ),
+                    decoration: BoxDecoration(
+                      color: isSelected
+                          ? color.withOpacity(0.12)
+                          : AppColors.grey50,
+                      borderRadius: BorderRadius.circular(22.r),
+                      border: Border.all(
+                        color: isSelected ? color : AppColors.grey300,
+                        width: isSelected ? 1.5 : 1,
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        if (isSelected)
+                          Padding(
+                            padding: EdgeInsets.only(right: 5.w),
+                            child: Icon(
+                              Icons.check_circle,
+                              size: 15.r,
+                              color: color,
+                            ),
+                          ),
+                        Text(
+                          option,
+                          style: AppFonts.bodySmall.copyWith(
+                            fontWeight: isSelected
+                                ? FontWeight.w600
+                                : FontWeight.w400,
+                            color: isSelected ? color : AppColors.textSecondary,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              }).toList(),
+            );
+          }),
+
+          SizedBox(height: 16.h),
+
+          // ── Remarks field ─────────────────────────────────────
+          Text(
+            'Remarks',
+            style: AppFonts.labelMedium.copyWith(
+              color: AppColors.textSecondary,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          SizedBox(height: 8.h),
+          TextFormField(
+            controller: remarksController,
+            maxLines: 2,
+            style: AppFonts.bodyMedium.copyWith(color: AppColors.textPrimary),
+            decoration: InputDecoration(
+              hintText: 'Enter observations...',
+              hintStyle: AppFonts.bodyMedium.copyWith(
+                color: AppColors.textDisabled,
+              ),
+              filled: true,
+              fillColor: AppColors.grey50,
+              contentPadding: EdgeInsets.symmetric(
+                horizontal: 14.w,
+                vertical: 12.h,
+              ),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10.r),
+                borderSide: const BorderSide(color: AppColors.grey300),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10.r),
+                borderSide: const BorderSide(color: AppColors.grey300),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10.r),
+                borderSide: const BorderSide(
+                  color: AppColors.primary,
+                  width: 1.5,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
+  }
+
+  // ── Tyres card ────────────────────────────────────────────────
+
+  Widget _buildTyresCard() {
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.all(16.w),
+      decoration: BoxDecoration(
+        color: AppColors.white,
+        borderRadius: BorderRadius.circular(14.r),
+        border: Border.all(color: AppColors.grey200),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.black.withOpacity(0.04),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // ── Card header ───────────────────────────────────────
+          Row(
+            children: [
+              Container(
+                width: 40.w,
+                height: 40.w,
+                decoration: BoxDecoration(
+                  color: const Color(0xFF5D4037).withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(10.r),
+                ),
+                child: Icon(
+                  Icons.tire_repair_outlined,
+                  color: const Color(0xFF5D4037),
+                  size: 22.r,
+                ),
+              ),
+              SizedBox(width: 12.w),
+              Text(
+                'Tyres',
+                style: AppFonts.titleSmall.copyWith(
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.textPrimary,
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 16.h),
+          Container(height: 1, color: AppColors.grey200),
+          SizedBox(height: 16.h),
+          Obx(
+            () => _buildTyreSlider(
+              label: 'Front Axle Tyres',
+              value: controller.frontAxleTyresPercent.value,
+              onChanged: (v) =>
+                  controller.frontAxleTyresPercent.value = v.round(),
+            ),
+          ),
+          SizedBox(height: 12.h),
+          Obx(
+            () => _buildTyreSlider(
+              label: 'Rear Axle Tyres',
+              value: controller.rearAxleTyresPercent.value,
+              onChanged: (v) =>
+                  controller.rearAxleTyresPercent.value = v.round(),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ── Odometer card ─────────────────────────────────────────────
+
+  Widget _buildOdometerCard() {
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.all(16.w),
+      decoration: BoxDecoration(
+        color: AppColors.white,
+        borderRadius: BorderRadius.circular(14.r),
+        border: Border.all(color: AppColors.grey200),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.black.withOpacity(0.04),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                width: 40.w,
+                height: 40.w,
+                decoration: BoxDecoration(
+                  color: const Color(0xFF00695C).withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(10.r),
+                ),
+                child: Icon(
+                  Icons.speed_outlined,
+                  color: const Color(0xFF00695C),
+                  size: 22.r,
+                ),
+              ),
+              SizedBox(width: 12.w),
+              Text(
+                'Odometer',
+                style: AppFonts.titleSmall.copyWith(
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.textPrimary,
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 16.h),
+          Container(height: 1, color: AppColors.grey200),
+          SizedBox(height: 16.h),
+          Text(
+            'Remarks',
+            style: AppFonts.labelMedium.copyWith(
+              color: AppColors.textSecondary,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          SizedBox(height: 8.h),
+          TextFormField(
+            controller: controller.odometerRemarksController,
+            maxLines: 2,
+            style: AppFonts.bodyMedium.copyWith(color: AppColors.textPrimary),
+            decoration: InputDecoration(
+              hintText: 'Enter odometer-related observations...',
+              hintStyle: AppFonts.bodyMedium.copyWith(
+                color: AppColors.textDisabled,
+              ),
+              filled: true,
+              fillColor: AppColors.grey50,
+              contentPadding: EdgeInsets.symmetric(
+                horizontal: 14.w,
+                vertical: 12.h,
+              ),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10.r),
+                borderSide: const BorderSide(color: AppColors.grey300),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10.r),
+                borderSide: const BorderSide(color: AppColors.grey300),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10.r),
+                borderSide: const BorderSide(
+                  color: AppColors.primary,
+                  width: 1.5,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Color _getColorForCondition(String condition) {
+    switch (condition.toLowerCase()) {
+      case 'excellent':
+        return AppColors.success;
+      case 'good':
+        return const Color(0xFF2196F3);
+      case 'average':
+        return AppColors.warning;
+      case 'poor':
+        return AppColors.error;
+      default:
+        return AppColors.grey500;
+    }
   }
 
   Widget _buildTyreSlider({
@@ -809,6 +1156,68 @@ class AgentValuationFormView extends GetView<AgentInspectionController> {
     });
   }
 
+  Widget _buildDateField({
+    required TextEditingController controller,
+    required String label,
+    required String hint,
+    required IconData icon,
+    required VoidCallback onTap,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: AppFonts.labelMedium.copyWith(
+            color: AppColors.textSecondary,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        SizedBox(height: 6.h),
+        GestureDetector(
+          onTap: onTap,
+          child: AbsorbPointer(
+            child: TextFormField(
+              controller: controller,
+              style: AppFonts.bodyMedium.copyWith(color: AppColors.textPrimary),
+              decoration: InputDecoration(
+                hintText: hint,
+                hintStyle: AppFonts.bodyMedium.copyWith(color: AppColors.white),
+                prefixIcon: Icon(icon, size: 20.r, color: AppColors.grey500),
+                suffixIcon: Icon(
+                  Icons.arrow_drop_down,
+                  size: 24.r,
+                  color: AppColors.grey500,
+                ),
+                filled: true,
+                fillColor: AppColors.white,
+                contentPadding: EdgeInsets.symmetric(
+                  horizontal: 14.w,
+                  vertical: 14.h,
+                ),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10.r),
+                  borderSide: const BorderSide(color: AppColors.grey300),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10.r),
+                  borderSide: const BorderSide(color: AppColors.grey300),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10.r),
+                  borderSide: const BorderSide(
+                    color: AppColors.primary,
+                    width: 1.5,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
   Widget _buildDatePickerField({
     required String label,
     required String value,
@@ -833,7 +1242,7 @@ class AgentValuationFormView extends GetView<AgentInspectionController> {
             width: double.infinity,
             padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 14.h),
             decoration: BoxDecoration(
-              color: AppColors.grey50,
+              color: AppColors.white,
               borderRadius: BorderRadius.circular(10.r),
               border: Border.all(color: AppColors.grey300),
             ),

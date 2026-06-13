@@ -3,12 +3,9 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../../core/constants/app_colors.dart';
-import '../../../core/constants/app_sizes.dart';
 import '../../../core/storage/secure_storage_service.dart';
 import '../../../core/storage/storage_keys.dart';
 import '../../../routes/app_routes.dart' show AppRoutes;
-import '../../../theme/app_fonts.dart';
 import '../data/models/customer_inspection_request.dart';
 import '../data/models/inspection_vehicle_model.dart';
 import '../data/models/my_inspections_response.dart';
@@ -36,13 +33,14 @@ class InspectionValuationController extends GetxController {
   final states = <LocationOption>[].obs;
   final cities = <LocationOption>[].obs;
   final filteredCities = <LocationOption>[].obs;
-  final conditionOptions = <String>[].obs;
-  final fuelTypes = <String>[].obs;
-  final transmissionTypes = <String>[].obs;
-  final caseTypes = <String>[].obs;
-  final hypothecationOptions = <String>[].obs;
-  final accidentalStatusOptions = <String>[].obs;
-  final tyreConditionOptions = <String>[].obs;
+  final conditionOptions = <DropdownItem>[].obs;
+  final fuelTypes = <DropdownItem>[].obs;
+  final transmissionTypes = <DropdownItem>[].obs;
+  final caseTypes = <DropdownItem>[].obs;
+  final yesNoOptions = <DropdownItem>[].obs;
+  final hypothecationOptions = <DropdownItem>[].obs;
+  final accidentalStatusOptions = <DropdownItem>[].obs;
+  final tyreConditionOptions = <DropdownItem>[].obs;
   final isLoadingDropdowns = false.obs;
   final isLoadingVehicleCategories = false.obs;
   final isLoadingVehicleBrands = false.obs;
@@ -122,47 +120,27 @@ class InspectionValuationController extends GetxController {
 
   Future<void> loadDropdownOptions() async {
     isLoadingDropdowns.value = true;
-
-    // Populate static dropdown options
-    conditionOptions.assignAll([
-      'Excellent',
-      'Good',
-      'Average',
-      'Below Average',
-      'Poor',
-    ]);
-    fuelTypes.assignAll([
-      'Diesel',
-      'Petrol',
-      'CNG',
-      'Electric',
-      'Hybrid',
-      'LPG',
-    ]);
-    transmissionTypes.assignAll(['Manual', 'Automatic', 'Semi-Automatic']);
-    caseTypes.assignAll([
-      'Normal',
-      'Accident',
-      'Bank Seizure',
-      'Theft Recovery',
-      'Flood Damaged',
-      'Fire Damaged',
-    ]);
-    hypothecationOptions.assignAll(['No', 'Yes']);
-    accidentalStatusOptions.assignAll([
-      'No Accident',
-      'Minor Accident',
-      'Major Accident',
-    ]);
-    tyreConditionOptions.assignAll([
-      'New',
-      'Good',
-      'Average',
-      'Worn Out',
-      'Needs Replacement',
-    ]);
-
-    isLoadingDropdowns.value = false;
+    try {
+      final uid = await _userId;
+      final response = await _service.getValuationDropdownOptions(userId: uid);
+      if (response.statusCode == 200) {
+        final options = ValuationDropdownOptions.fromJson(
+          response.data as Map<String, dynamic>,
+        );
+        conditionOptions.assignAll(options.condition);
+        fuelTypes.assignAll(options.fuel);
+        transmissionTypes.assignAll(options.transmissionType);
+        caseTypes.assignAll(options.caseType);
+        yesNoOptions.assignAll(options.yesNo);
+        hypothecationOptions.assignAll(options.hypothecation);
+        accidentalStatusOptions.assignAll(options.accidentalStatus);
+        tyreConditionOptions.assignAll(options.tyreCondition);
+      }
+    } catch (e) {
+      debugPrint('⚠️ InspectionValuation: loadDropdownOptions error – $e');
+    } finally {
+      isLoadingDropdowns.value = false;
+    }
 
     // Load customer form data from separate APIs
     loadVehicleCategories();
@@ -431,7 +409,9 @@ class InspectionValuationController extends GetxController {
               .toString()
           : selectedVehicleBrand.value;
 
+      final uid = await _userId;
       final request = CustomerInspectionRequest(
+        userId: uid,
         vehicleNo: vehicleNoController.text.trim(),
         chasisNo: chasisNoController.text.trim(),
         vehicleType: selectedCategoryCode.value,
@@ -452,13 +432,9 @@ class InspectionValuationController extends GetxController {
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        final data = response.data as Map<String, dynamic>;
-        _showSuccessDialog(
-          title: 'Request Submitted',
-          submissionId: data['data']?['submission_id']?.toString() ?? '',
-          message: 'Your inspection request has been submitted successfully.',
-        );
+        _showSuccessSnackBar('Your inspection request has been submitted successfully.');
         resetCustomerForm();
+        Get.offAllNamed(AppRoutes.home);
       } else {
         _showErrorSnackBar(_extractErrorMessage(response.data));
       }
@@ -617,89 +593,16 @@ class InspectionValuationController extends GetxController {
     return 'Something went wrong';
   }
 
-  void _showSuccessDialog({
-    required String title,
-    String? submissionId,
-    required String message,
-  }) {
-    Get.dialog(
-      Dialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppSizes.radiusLg),
-        ),
-        backgroundColor: AppColors.white,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: AppSizes.spaceLg,
-            vertical: 28,
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // Contact Us Image
-              Image.asset(
-                'assets/images/png/contact_us.png',
-                width: 120,
-                height: 120,
-                fit: BoxFit.contain,
-              ),
-              const SizedBox(height: AppSizes.spaceLg),
-
-              // Thank You Title
-              Text(
-                'Thank you for submitting!',
-                style: AppFonts.titleMedium.copyWith(
-                  fontWeight: FontWeight.w700,
-                  color: AppColors.textPrimary,
-                  fontSize: 18,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: AppSizes.spaceSm),
-
-              // Subtitle
-              Text(
-                'Our team will contact you soon..!',
-                style: AppFonts.bodyMedium.copyWith(
-                  color: AppColors.textSecondary,
-                  fontSize: 14,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: AppSizes.spaceLg),
-
-              // Okay Button
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () {
-                    Get.back(); // close dialog
-                    // Navigate to home page, clearing the form route from stack
-                    Get.offAllNamed(AppRoutes.home);
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primary,
-                    foregroundColor: AppColors.white,
-                    minimumSize: const Size(double.infinity, 48),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(AppSizes.radiusMd),
-                    ),
-                    elevation: 0,
-                  ),
-                  child: const Text(
-                    'Okay',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-      barrierDismissible: false,
+  void _showSuccessSnackBar(String message) {
+    Get.snackbar(
+      'Success',
+      message,
+      backgroundColor: Colors.green,
+      colorText: Colors.white,
+      snackPosition: SnackPosition.TOP,
+      duration: const Duration(seconds: 3),
+      margin: const EdgeInsets.all(12),
+      borderRadius: 8,
     );
   }
 
