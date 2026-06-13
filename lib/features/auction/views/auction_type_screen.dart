@@ -65,10 +65,8 @@ class _TypeCard extends StatelessWidget {
           // Navigate to Approved Vehicles module
           Get.toNamed(AppRoutes.approvedVehicleCategory);
         } else {
-          Get.toNamed(
-            AppRoutes.auctionListings,
-            arguments: {'tabIndex': tabIndex},
-          );
+          // Navigate to Auction category screen first
+          Get.toNamed(AppRoutes.auctionCategory);
         }
       },
       child: Container(
