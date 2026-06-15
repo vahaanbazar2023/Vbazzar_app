@@ -161,10 +161,9 @@ class _SubscriptionBodyState extends State<_SubscriptionBody> {
     final paymentController = Get.put(PaymentController());
 
     paymentController.onSuccess = (data, callback) async {
-      // Bust the guard cache so the next auction check reflects the new sub
-      await SubscriptionGuardService.to.invalidateAndReload();
-
+      // Navigate immediately — refresh guard cache in background.
       _navigateAfterPayment(widget.subscriptionSource);
+      SubscriptionGuardService.to.invalidateAndReload();
     };
 
     paymentController.onFailure = (message, callback) {
@@ -197,7 +196,6 @@ class _SubscriptionBodyState extends State<_SubscriptionBody> {
 
   void _navigateAfterPayment(String source) {
     if (source == 'SUBT001') {
-      // Pop all subscription screens then push Auction Zone
       Get.until(
         (route) =>
             route.settings.name != AppRoutes.subscription &&
@@ -211,9 +209,17 @@ class _SubscriptionBodyState extends State<_SubscriptionBody> {
         type: SnackbarType.success,
       );
     } else if (source == 'SUBT002') {
-      // Delegate to VehicleListingController for bid revalidation
       if (Get.isRegistered<VehicleListingController>()) {
-        Get.find<VehicleListingController>().revalidatePendingBid();
+        final ctrl = Get.find<VehicleListingController>();
+        // Navigate immediately
+        Get.until(
+          (route) =>
+              route.settings.name != AppRoutes.subscription &&
+              route.settings.name != AppRoutes.subscriptionConfirm &&
+              route.settings.name != AppRoutes.walletPayment,
+        );
+        // Refresh + bid in background
+        _runSUBT002Background(ctrl);
       } else {
         Get.until(
           (route) =>
@@ -233,6 +239,20 @@ class _SubscriptionBodyState extends State<_SubscriptionBody> {
         type: SnackbarType.success,
       );
     }
+  }
+
+  Future<void> _runSUBT002Background(VehicleListingController ctrl) async {
+    try {
+      await SubscriptionGuardService.to.invalidateAndReload();
+    } catch (_) {
+      CustomSnackbar.show(
+        message: 'Could not refresh subscription. Please try again.',
+        type: SnackbarType.error,
+      );
+      return;
+    }
+    await ctrl.silentRefresh();
+    await ctrl.revalidatePendingBid();
   }
 
   @override

@@ -110,26 +110,9 @@ class SubscriptionConfirmController extends GetxController {
 
     _paymentCtrl.onSuccess = (data, callback) async {
       isPaymentInProgress.value = false;
-
-      // Refresh the guard cache — must succeed before revalidating
-      try {
-        await SubscriptionGuardService.to.invalidateAndReload();
-      } catch (_) {
-        CustomSnackbar.show(
-          message: 'Failed to refresh subscription. Please try again.',
-          type: SnackbarType.error,
-        );
-        return; // do NOT navigate on stale data (Req 3.4)
-      }
-
-      // For SUBT002, also refresh the vehicle list so availableBalance
-      // reflects the newly purchased plan before revalidatePendingBid runs.
-      if (source == SubscriptionTypeCode.auctionBidLimit &&
-          Get.isRegistered<VehicleListingController>()) {
-        await Get.find<VehicleListingController>().silentRefresh();
-      }
-
-      _handlePostPaymentNavigation(source);
+      // Navigate immediately — don't make the user wait on API calls.
+      // All refreshes happen in the background after navigation.
+      _navigateImmediately(source);
     };
 
     _paymentCtrl.onFailure = (message, callback) {
@@ -154,14 +137,14 @@ class SubscriptionConfirmController extends GetxController {
     }
   }
 
-  /// Source-aware post-payment navigation.
-  ///
-  /// SUBT001 — Auction Access: pop subscription screens, push Auction Zone.
-  /// SUBT002 — Bid Limit: delegate to [VehicleListingController.revalidatePendingBid].
-  /// Default — go to My Subscriptions.
-  Future<void> _handlePostPaymentNavigation(String src) async {
+  // ─── Immediate navigation — no waiting ──────────────────────────────────
+
+  /// Pops the subscription stack and navigates instantly.
+  /// Background refreshes are kicked off after navigation completes.
+  void _navigateImmediately(String src) {
     switch (src) {
       case SubscriptionTypeCode.auction: // SUBT001
+        // Pop subscription screens, push Auction Zone.
         Get.until(
           (route) =>
               route.settings.name != AppRoutes.subscription &&
@@ -170,20 +153,32 @@ class SubscriptionConfirmController extends GetxController {
         );
         Get.toNamed(AppRoutes.auctionType);
         CustomSnackbar.show(
-          message:
-              'Auction Access Activated! You can now browse and bid on auctions.',
+          message: 'Auction Access Activated! You can now browse and bid.',
           type: SnackbarType.success,
         );
+        // Refresh guard cache in background — no await needed here.
+        SubscriptionGuardService.to.invalidateAndReload();
         break;
 
       case SubscriptionTypeCode.auctionBidLimit: // SUBT002
-        // Delegate to VehicleListingController — it owns pendingBid state
-        // and knows whether Case A or Case B applies.
         if (Get.isRegistered<VehicleListingController>()) {
-          // await so the bid revalidation uses the fully-refreshed vehicle list
-          await Get.find<VehicleListingController>().revalidatePendingBid();
+          final ctrl = Get.find<VehicleListingController>();
+
+          // Pop subscription screens immediately — user is back on vehicle
+          // detail/listing screen right away.
+          Get.until(
+            (route) =>
+                route.settings.name != AppRoutes.subscription &&
+                route.settings.name != AppRoutes.subscriptionConfirm &&
+                route.settings.name != AppRoutes.walletPayment,
+          );
+
+          // Now run the full refresh + bid revalidation pipeline in the
+          // background. The vehicle detail screen's isPlacingBid spinner
+          // shows while the bid is being placed.
+          _runSUBT002BackgroundFlow(ctrl);
         } else {
-          // Fallback: VehicleListingController was disposed (unlikely)
+          // Fallback: controller was disposed — just clean the stack.
           Get.until(
             (route) =>
                 route.settings.name != AppRoutes.subscription &&
@@ -194,6 +189,7 @@ class SubscriptionConfirmController extends GetxController {
             message: 'Buying limit updated!',
             type: SnackbarType.success,
           );
+          SubscriptionGuardService.to.invalidateAndReload();
         }
         break;
 
@@ -203,7 +199,33 @@ class SubscriptionConfirmController extends GetxController {
           message: 'Subscription Activated! Your plan is now active.',
           type: SnackbarType.success,
         );
+        SubscriptionGuardService.to.invalidateAndReload();
         break;
     }
+  }
+
+  // ─── SUBT002 background pipeline ────────────────────────────────────────
+
+  /// Runs after navigation:
+  ///   1. Refresh subscription guard cache
+  ///   2. Silent-refresh vehicle list (updates availableBalance in the UI)
+  ///   3. Revalidate the pending bid (Case A: place it / Case B: show error)
+  Future<void> _runSUBT002BackgroundFlow(VehicleListingController ctrl) async {
+    // 1. Refresh subscription cache
+    try {
+      await SubscriptionGuardService.to.invalidateAndReload();
+    } catch (_) {
+      CustomSnackbar.show(
+        message: 'Could not refresh subscription. Please try again.',
+        type: SnackbarType.error,
+      );
+      return;
+    }
+
+    // 2. Refresh vehicle list so availableBalance is up to date in the UI
+    await ctrl.silentRefresh();
+
+    // 3. Revalidate pending bid
+    await ctrl.revalidatePendingBid();
   }
 }
