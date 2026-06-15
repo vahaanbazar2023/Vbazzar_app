@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import '../../../core/storage/secure_storage_service.dart';
 import '../../../core/storage/storage_keys.dart';
@@ -109,9 +110,14 @@ class CategoriesController extends GetxController {
 
   Future<void> _openAuction() async {
     final guard = SubscriptionGuardService.to;
-    await guard.ensureLoaded();
+    // Always do a fresh check when the user explicitly taps Auction Zone
+    // so a just-purchased subscription is always reflected.
+    await guard.ensureLoaded(forceRefresh: true);
 
-    if (guard.hasActiveSubscription(SubscriptionTypeCode.auction)) {
+    final hasAccess = guard.hasActiveSubscription(SubscriptionTypeCode.auction);
+    debugPrint('🎯 _openAuction: hasActiveSubscription(SUBT001)=$hasAccess');
+
+    if (hasAccess) {
       Get.toNamed(AppRoutes.auctionType);
       return;
     }

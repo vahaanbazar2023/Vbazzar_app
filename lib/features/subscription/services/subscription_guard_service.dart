@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import '../../../core/storage/secure_storage_service.dart';
@@ -45,6 +46,9 @@ class SubscriptionGuardService extends GetxService {
   bool _loaded = false;
   bool _loading = false;
 
+  // Completers waiting for an in-flight load to finish
+  final _waiters = <Completer<void>>[];
+
   // ── public API -----------------------------------------------------------
 
   /// Returns true if the user has at least one currently-valid subscription
@@ -67,8 +71,8 @@ class SubscriptionGuardService extends GetxService {
         .toList();
     if (subs == null || subs.isEmpty) return null;
     subs.sort((a, b) {
-      final aEnd = a.endDate != null ? DateTime.tryParse(a.endDate!) : null;
-      final bEnd = b.endDate != null ? DateTime.tryParse(b.endDate!) : null;
+      final aEnd = UserSubscription.parseApiDate(a.endDate);
+      final bEnd = UserSubscription.parseApiDate(b.endDate);
       if (aEnd == null && bEnd == null) return 0;
       if (aEnd == null) return 1;
       if (bEnd == null) return -1;
@@ -78,10 +82,19 @@ class SubscriptionGuardService extends GetxService {
   }
 
   /// Loads subscriptions from the API and caches them.
-  /// Safe to call multiple times — concurrent calls are collapsed.
+  /// Safe to call multiple times — concurrent callers all await the same
+  /// in-flight request rather than firing duplicate requests.
   Future<void> ensureLoaded({bool forceRefresh = false}) async {
     if (_loaded && !forceRefresh) return;
-    if (_loading) return;
+
+    // If a load is already in progress, wait for it to complete instead of
+    // returning immediately with stale data.
+    if (_loading) {
+      final completer = Completer<void>();
+      _waiters.add(completer);
+      return completer.future;
+    }
+
     _loading = true;
     try {
       final userId =
@@ -93,6 +106,11 @@ class SubscriptionGuardService extends GetxService {
       debugPrint('⚠️ SubscriptionGuardService load error: $e\n$st');
     } finally {
       _loading = false;
+      // Wake all callers that were waiting on this load
+      for (final w in _waiters) {
+        w.complete();
+      }
+      _waiters.clear();
     }
   }
 
@@ -111,5 +129,13 @@ class SubscriptionGuardService extends GetxService {
       '🔑 SubscriptionGuardService: indexed ${subscriptions.length} '
       'subscriptions across ${_byTypeCode.length} type(s)',
     );
+    // Log every subscription for diagnosis
+    for (final sub in subscriptions) {
+      debugPrint(
+        '  📋 ${sub.typeCode} | ${sub.planName} | status=${sub.status} '
+        '| start="${sub.startDate}" | end="${sub.endDate}" '
+        '| isCurrentlyValid=${sub.isCurrentlyValid}',
+      );
+    }
   }
 }

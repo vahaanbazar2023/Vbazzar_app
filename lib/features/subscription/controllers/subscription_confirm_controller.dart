@@ -5,6 +5,8 @@ import '../../../core/storage/storage_keys.dart';
 import '../../../features/payment/controllers/payment_controller.dart';
 import '../../../routes/app_routes.dart';
 import '../models/subscription_plan.dart';
+import '../models/user_subscription.dart';
+import '../services/subscription_guard_service.dart';
 
 class SubscriptionEligibility {
   final double walletBalance;
@@ -28,14 +30,17 @@ class SubscriptionConfirmController extends GetxController {
 
   late final PaymentController _paymentCtrl;
   SubscriptionPlan? _plan;
-  bool _useWallet = false;
 
   SubscriptionConfirmController({this.planArg, this.sourceArg});
 
   @override
   void onInit() {
     super.onInit();
-    _paymentCtrl = Get.find<PaymentController>();
+    // Use put with fenix so it registers a new instance if the route binding
+    // didn't already register one (e.g. when instantiated programmatically).
+    _paymentCtrl = Get.isRegistered<PaymentController>()
+        ? Get.find<PaymentController>()
+        : Get.put(PaymentController());
 
     // Resolve plan from constructor args or Get.arguments
     final args = Get.arguments as Map<String, dynamic>? ?? {};
@@ -64,7 +69,6 @@ class SubscriptionConfirmController extends GetxController {
   }
 
   void toggleWallet(bool value) {
-    _useWallet = value;
     final plan = _plan;
     if (plan == null) return;
 
@@ -81,7 +85,8 @@ class SubscriptionConfirmController extends GetxController {
     }
   }
 
-  String get source => sourceArg ??
+  String get source =>
+      sourceArg ??
       (Get.arguments as Map<String, dynamic>? ?? {})['source'] as String? ??
       '';
 
@@ -92,8 +97,7 @@ class SubscriptionConfirmController extends GetxController {
       return;
     }
 
-    final userId =
-        await SecureStorageService.to.read(StorageKeys.userId);
+    final userId = await SecureStorageService.to.read(StorageKeys.userId);
     if (userId == null || userId.isEmpty) {
       _showSnack('Please login to continue');
       return;
@@ -103,10 +107,12 @@ class SubscriptionConfirmController extends GetxController {
 
     _paymentCtrl.onSuccess = (data, callback) async {
       isPaymentInProgress.value = false;
-      _showSnack('Payment successful! Activating subscription...');
-      // Wait for backend to activate subscription after payment callback
-      await Future.delayed(const Duration(seconds: 3));
-      Get.offAllNamed(AppRoutes.mySubscriptions);
+
+      // Bust the subscription guard cache so the new subscription is
+      // immediately visible on the next guard check.
+      await SubscriptionGuardService.to.invalidateAndReload();
+
+      _handlePostPaymentNavigation(source);
     };
 
     _paymentCtrl.onFailure = (message, callback) {
@@ -128,6 +134,40 @@ class SubscriptionConfirmController extends GetxController {
     }
   }
 
+  /// Source-aware post-payment navigation.
+  ///
+  /// SUBT001 — Auction Access: pop all subscription screens from the stack
+  ///           and push the Auction Zone so the user lands there directly.
+  ///
+  /// Everything else — go to My Subscriptions to confirm the active plan.
+  void _handlePostPaymentNavigation(String src) {
+    switch (src) {
+      case SubscriptionTypeCode.auction: // 'SUBT001'
+        // Remove every subscription-related route from the stack first.
+        Get.until(
+          (route) =>
+              route.settings.name != AppRoutes.subscription &&
+              route.settings.name != AppRoutes.subscriptionConfirm &&
+              route.settings.name != AppRoutes.walletPayment,
+        );
+        // Then push the Auction Zone on top of the now-clean stack.
+        Get.toNamed(AppRoutes.auctionType);
+        _showSuccessSnack(
+          'Auction Access Activated! 🎉',
+          'You can now browse and bid on auctions.',
+        );
+        break;
+
+      default:
+        Get.offAllNamed(AppRoutes.mySubscriptions);
+        _showSuccessSnack(
+          'Subscription Activated! 🎉',
+          'Your plan is now active.',
+        );
+        break;
+    }
+  }
+
   void _showSnack(String message) {
     Get.snackbar(
       'Subscription',
@@ -135,6 +175,19 @@ class SubscriptionConfirmController extends GetxController {
       snackPosition: SnackPosition.BOTTOM,
       backgroundColor: const Color(0xFF2E2E2E),
       colorText: Colors.white,
+      margin: const EdgeInsets.all(12),
+      duration: const Duration(seconds: 3),
+    );
+  }
+
+  void _showSuccessSnack(String title, String message) {
+    Get.snackbar(
+      title,
+      message,
+      snackPosition: SnackPosition.TOP,
+      backgroundColor: Colors.green,
+      colorText: Colors.white,
+      icon: const Icon(Icons.check_circle, color: Colors.white),
       margin: const EdgeInsets.all(12),
       duration: const Duration(seconds: 3),
     );

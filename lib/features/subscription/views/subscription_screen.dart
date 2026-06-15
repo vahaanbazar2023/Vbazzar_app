@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../controllers/subscription_controller.dart';
 import '../models/subscription_plan.dart';
+import '../services/subscription_guard_service.dart';
 import '../../../core/constants/app_assets.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_sizes.dart';
@@ -126,37 +127,24 @@ class _SubscriptionBodyState extends State<_SubscriptionBody> {
     final plan = widget.controller.selectedPlan;
     if (plan == null) return;
 
-    // Get user details from secure storage
-    final userId =
-        await SecureStorageService.to.read(StorageKeys.userId) ?? '';
-    final userName =
-        await SecureStorageService.to.read(StorageKeys.userName) ?? '';
-    final userEmail =
-        await SecureStorageService.to.read(StorageKeys.userEmail) ?? '';
+    final userId = await SecureStorageService.to.read(StorageKeys.userId) ?? '';
 
     if (userId.isEmpty) {
       Get.snackbar('Error', 'Please login to continue');
       return;
     }
 
-    // Register payment controller
+    // Register / find payment controller
     final paymentController = Get.put(PaymentController());
 
-    // Set callbacks
-    paymentController.onSuccess = (data, callback) {
-      Get.back(); // Close any loading dialogs
-      Get.snackbar(
-        'Payment Successful',
-        'Your subscription has been activated!',
-        backgroundColor: Colors.green.shade100,
-        duration: const Duration(seconds: 3),
-      );
-      // Navigate back or to my subscriptions
-      Get.until((route) => route.isFirst);
+    paymentController.onSuccess = (data, callback) async {
+      // Bust the guard cache so the next auction check reflects the new sub
+      await SubscriptionGuardService.to.invalidateAndReload();
+
+      _navigateAfterPayment(widget.subscriptionSource);
     };
 
     paymentController.onFailure = (message, callback) {
-      Get.back(); // Close any loading dialogs
       Get.snackbar(
         'Payment Failed',
         message,
@@ -174,15 +162,6 @@ class _SubscriptionBodyState extends State<_SubscriptionBody> {
       );
     };
 
-    // Show loading
-    Get.dialog(
-      const Center(
-        child: CircularProgressIndicator(color: AppColors.primaryLight),
-      ),
-      barrierDismissible: false,
-    );
-
-    // Initiate payment (without wallet)
     await paymentController.initiatePayment(
       userId: userId,
       planCode: plan.planCode,
@@ -191,10 +170,38 @@ class _SubscriptionBodyState extends State<_SubscriptionBody> {
           ? _referralController.text.trim()
           : null,
     );
+  }
 
-    // Close loading if still showing
-    if (Get.isDialogOpen ?? false) {
-      Get.back();
+  void _navigateAfterPayment(String source) {
+    if (source == 'SUBT001') {
+      // Pop all subscription screens then push Auction Zone
+      Get.until(
+        (route) =>
+            route.settings.name != AppRoutes.subscription &&
+            route.settings.name != AppRoutes.subscriptionConfirm &&
+            route.settings.name != AppRoutes.walletPayment,
+      );
+      Get.toNamed(AppRoutes.auctionType);
+      Get.snackbar(
+        'Auction Access Activated! 🎉',
+        'You can now browse and bid on auctions.',
+        snackPosition: SnackPosition.TOP,
+        backgroundColor: Colors.green,
+        colorText: Colors.white,
+        icon: const Icon(Icons.check_circle, color: Colors.white),
+        duration: const Duration(seconds: 3),
+      );
+    } else {
+      Get.offAllNamed(AppRoutes.mySubscriptions);
+      Get.snackbar(
+        'Subscription Activated! 🎉',
+        'Your plan is now active.',
+        snackPosition: SnackPosition.TOP,
+        backgroundColor: Colors.green,
+        colorText: Colors.white,
+        icon: const Icon(Icons.check_circle, color: Colors.white),
+        duration: const Duration(seconds: 3),
+      );
     }
   }
 

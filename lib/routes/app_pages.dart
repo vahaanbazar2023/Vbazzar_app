@@ -23,6 +23,7 @@ import '../features/subscription/views/my_subscription_screen.dart';
 import '../features/subscription/views/wallet_payment_screen.dart';
 import '../features/subscription/controllers/subscription_controller.dart';
 import '../features/subscription/controllers/subscription_confirm_controller.dart';
+import '../features/payment/controllers/payment_controller.dart';
 import '../features/auction/views/auction_type_screen.dart';
 import '../features/auction/views/auction_category_screen.dart';
 import '../features/auction/views/autction_tab.dart';
@@ -157,11 +158,14 @@ class AppPages {
       name: AppRoutes.subscriptionConfirm,
       page: () => const SubscriptionConfirmScreen(),
       binding: BindingsBuilder(() {
+        Get.put(PaymentController());
         final args = Get.arguments as Map<String, dynamic>? ?? {};
-        Get.lazyPut(() => SubscriptionConfirmController(
-              planArg: args['plan'] as dynamic,
-              sourceArg: args['source'] as String?,
-            ));
+        Get.lazyPut(
+          () => SubscriptionConfirmController(
+            planArg: args['plan'] as dynamic,
+            sourceArg: args['source'] as String?,
+          ),
+        );
       }),
       transition: Transition.rightToLeft,
     ),
@@ -229,6 +233,9 @@ class AppPages {
           source: args['source'] ?? '',
         );
       },
+      binding: BindingsBuilder(() {
+        Get.put(PaymentController());
+      }),
       transition: Transition.rightToLeft,
     ),
     // ── Buy & Sell ──────────────────────────────────────────────
