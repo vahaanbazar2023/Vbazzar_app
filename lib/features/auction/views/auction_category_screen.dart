@@ -20,7 +20,7 @@ class AuctionCategoryScreen extends StatelessWidget {
       subtitle: 'Select a category to browse',
       body: Obx(() {
         if (ctrl.isLoadingCategories.value && ctrl.categories.isEmpty) {
-          return _buildShimmerGrid();
+          return _buildShimmerList();
         }
         if (ctrl.categoriesError.value.isNotEmpty && ctrl.categories.isEmpty) {
           return _buildErrorState(ctrl);
@@ -31,15 +31,13 @@ class AuctionCategoryScreen extends StatelessWidget {
         return RefreshIndicator(
           color: AppColors.primary,
           onRefresh: () => ctrl.fetchCategories(isRefresh: true),
-          child: GridView.builder(
-            padding: EdgeInsets.all(AppSpacing.lg),
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              mainAxisSpacing: 14.h,
-              crossAxisSpacing: 14.w,
-              childAspectRatio: 0.95,
+          child: ListView.separated(
+            padding: EdgeInsets.symmetric(
+              horizontal: AppSpacing.lg,
+              vertical: AppSpacing.lg,
             ),
             itemCount: ctrl.categories.length,
+            separatorBuilder: (_, __) => SizedBox(height: 16.h),
             itemBuilder: (context, index) {
               final category = ctrl.categories[index];
               return _CategoryCard(
@@ -53,22 +51,21 @@ class AuctionCategoryScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildShimmerGrid() {
-    return GridView.builder(
-      padding: EdgeInsets.all(AppSpacing.lg),
-      physics: const NeverScrollableScrollPhysics(),
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        mainAxisSpacing: 14.h,
-        crossAxisSpacing: 14.w,
-        childAspectRatio: 0.95,
+  Widget _buildShimmerList() {
+    return ListView.separated(
+      padding: EdgeInsets.symmetric(
+        horizontal: AppSpacing.lg,
+        vertical: AppSpacing.lg,
       ),
-      itemCount: 6,
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: 4,
+      separatorBuilder: (_, __) => SizedBox(height: 16.h),
       itemBuilder: (context, index) {
         return Container(
+          height: 130.h,
           decoration: BoxDecoration(
             color: AppColors.grey100,
-            borderRadius: BorderRadius.circular(16.r),
+            borderRadius: BorderRadius.circular(20.r),
           ),
         );
       },
@@ -82,21 +79,24 @@ class AuctionCategoryScreen extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.error_outline_rounded,
-                size: 48.w, color: AppColors.error),
+            Icon(
+              Icons.error_outline_rounded,
+              size: 48.w,
+              color: AppColors.error,
+            ),
             SizedBox(height: 12.h),
             Text(
               ctrl.categoriesError.value,
-              style:
-                  AppFonts.bodyMedium.copyWith(color: AppColors.textSecondary),
+              style: AppFonts.bodyMedium.copyWith(
+                color: AppColors.textSecondary,
+              ),
               textAlign: TextAlign.center,
             ),
             SizedBox(height: 16.h),
             GestureDetector(
               onTap: () => ctrl.fetchCategories(isRefresh: true),
               child: Container(
-                padding:
-                    EdgeInsets.symmetric(horizontal: 24.w, vertical: 10.h),
+                padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 10.h),
                 decoration: BoxDecoration(
                   color: AppColors.primary,
                   borderRadius: BorderRadius.circular(8.r),
@@ -123,19 +123,18 @@ class AuctionCategoryScreen extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.category_outlined,
-                size: 48.w, color: AppColors.grey400),
+            Icon(Icons.category_outlined, size: 48.w, color: AppColors.grey400),
             SizedBox(height: 12.h),
             Text(
               'No categories available',
-              style:
-                  AppFonts.bodyMedium.copyWith(color: AppColors.textSecondary),
+              style: AppFonts.bodyMedium.copyWith(
+                color: AppColors.textSecondary,
+              ),
             ),
             SizedBox(height: 8.h),
             Text(
               'Pull down to refresh',
-              style:
-                  AppFonts.bodySmall.copyWith(color: AppColors.textDisabled),
+              style: AppFonts.bodySmall.copyWith(color: AppColors.textDisabled),
             ),
           ],
         ),
@@ -143,6 +142,12 @@ class AuctionCategoryScreen extends StatelessWidget {
     );
   }
 }
+
+/// Brand gradient matching CTA colours.
+const List<Color> _cardGradient = [
+  Color(0xFFBB2625),
+  Color(0xFF67100B),
+];
 
 class _CategoryCard extends StatelessWidget {
   final ApprovedVehicleCategoryEntity category;
@@ -155,76 +160,108 @@ class _CategoryCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
         decoration: BoxDecoration(
-          color: Colors.white,
           borderRadius: BorderRadius.circular(16.r),
-          border: Border.all(color: AppColors.border, width: 1),
+          gradient: const LinearGradient(
+            begin: Alignment.centerLeft,
+            end: Alignment.centerRight,
+            colors: _cardGradient,
+          ),
           boxShadow: [
             BoxShadow(
-              color: AppColors.blackTransparent,
-              blurRadius: 10,
-              offset: const Offset(0, 4),
+              color: _cardGradient[0].withValues(alpha: 0.3),
+              blurRadius: 12,
+              offset: const Offset(0, 6),
             ),
           ],
         ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+        child: Row(
           children: [
-            // Icon
+            // Left: icon
             Container(
-              width: 64.w,
-              height: 64.w,
+              width: 52.w,
+              height: 52.w,
               decoration: BoxDecoration(
-                color: AppColors.primary.withValues(alpha: 0.08),
-                borderRadius: BorderRadius.circular(16.r),
+                color: Colors.white.withValues(alpha: 0.15),
+                borderRadius: BorderRadius.circular(14.r),
               ),
               child: ClipRRect(
-                borderRadius: BorderRadius.circular(16.r),
-                child: Image.network(
-                  category.iconName,
-                  fit: BoxFit.contain,
-                  errorBuilder: (context, error, stackTrace) => Icon(
-                    Icons.local_shipping_outlined,
-                    size: 32.w,
-                    color: AppColors.primary,
+                borderRadius: BorderRadius.circular(14.r),
+                child: Padding(
+                  padding: EdgeInsets.all(10.w),
+                  child: Image.network(
+                    category.iconName,
+                    fit: BoxFit.contain,
+                    errorBuilder: (context, error, stackTrace) => Icon(
+                      Icons.local_shipping_outlined,
+                      size: 26.w,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
               ),
             ),
-            SizedBox(height: 12.h),
-            // Category name
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 8.w),
-              child: Text(
-                category.categoryName,
-                style: AppFonts.bodyMedium.copyWith(
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.textPrimary,
-                ),
-                textAlign: TextAlign.center,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
+
+            SizedBox(width: 14.w),
+
+            // Center: name + availability
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    category.categoryName,
+                    style: AppFonts.bodyMedium.copyWith(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w700,
+                      fontSize: 15.sp,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  SizedBox(height: 4.h),
+                  if (category.approvedVehAvailableCount > 0)
+                    Row(
+                      children: [
+                        Container(
+                          width: 5.w,
+                          height: 5.w,
+                          decoration: const BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: AppColors.success,
+                          ),
+                        ),
+                        SizedBox(width: 5.w),
+                        Text(
+                          '${category.approvedVehAvailableCount} vehicles available',
+                          style: AppFonts.bodySmall.copyWith(
+                            color: Colors.white.withValues(alpha: 0.8),
+                            fontSize: 11.sp,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    )
+                  else
+                    Text(
+                      'No vehicles yet',
+                      style: AppFonts.bodySmall.copyWith(
+                        color: Colors.white.withValues(alpha: 0.55),
+                        fontSize: 11.sp,
+                      ),
+                    ),
+                ],
               ),
             ),
-            SizedBox(height: 4.h),
-            // Count badge
-            if (category.approvedVehAvailableCount > 0)
-              Container(
-                padding:
-                    EdgeInsets.symmetric(horizontal: 10.w, vertical: 3.h),
-                decoration: BoxDecoration(
-                  color: AppColors.success.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(20.r),
-                ),
-                child: Text(
-                  '${category.approvedVehAvailableCount} available',
-                  style: AppFonts.bodySmall.copyWith(
-                    color: AppColors.successDark,
-                    fontWeight: FontWeight.w500,
-                    fontSize: 11.sp,
-                  ),
-                ),
-              ),
+
+            // Right: arrow
+            Icon(
+              Icons.arrow_forward_ios_rounded,
+              color: Colors.white.withValues(alpha: 0.7),
+              size: 16.w,
+            ),
           ],
         ),
       ),
