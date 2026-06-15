@@ -12,11 +12,11 @@ class BidModel extends BidEntity {
 
   factory BidModel.fromJson(Map<String, dynamic> json) {
     return BidModel(
-      bidId: json['bid_id'] as String? ?? '',
-      vehicleId: json['vehicle_id'] as String? ?? '',
-      auctionId: json['auction_id'] as String? ?? '',
+      bidId: json['bid_id']?.toString() ?? '',
+      vehicleId: json['vehicle_id']?.toString() ?? '',
+      auctionId: json['auction_id']?.toString() ?? '',
       bidAmount: (json['bid_amount'] as num?)?.toInt() ?? 0,
-      bidStatus: json['bid_status'] as String? ?? '',
+      bidStatus: json['bid_status']?.toString() ?? '',
     );
   }
 

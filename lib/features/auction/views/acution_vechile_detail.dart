@@ -171,28 +171,37 @@ class AuctionVehicleDetailScreen extends StatelessWidget {
                   ),
                   SizedBox(height: AppSpacing.md),
 
-                  // ── Bid info ──────────────────────────────
-                  _SectionCard(
-                    children: [
-                      _BidInfoRow(
-                        label: 'Your Bid',
-                        value: '₹ ${_formatPrice(v.yourBid)}',
-                      ),
-                      _BidInfoRow(
-                        label: 'Bids Left',
-                        value: v.bidsLeft.toString().padLeft(2, '0'),
-                      ),
-                      _BidInfoRow(
-                        label: 'Bids Received',
-                        value: v.bidsReceived.toString().padLeft(2, '0'),
-                      ),
-                      _BidInfoRow(
-                        label: 'Available Buying Limit',
-                        value: '₹ ${_formatPrice(v.availableBalance)}',
-                        isLast: true,
-                      ),
-                    ],
-                  ),
+                  // ── Bid info — reactive: updates after each bid ───────
+                  Obx(() {
+                    // Find the freshest version of this vehicle from the
+                    // controller's list; fall back to the initial snapshot.
+                    final live =
+                        ctrl.vehicles.firstWhereOrNull(
+                          (x) => x.vehicleId == v.vehicleId,
+                        ) ??
+                        v;
+                    return _SectionCard(
+                      children: [
+                        _BidInfoRow(
+                          label: 'Your Bid',
+                          value: '₹ ${_formatPrice(live.yourBid)}',
+                        ),
+                        _BidInfoRow(
+                          label: 'Bids Left',
+                          value: live.bidsLeft.toString().padLeft(2, '0'),
+                        ),
+                        _BidInfoRow(
+                          label: 'Bids Received',
+                          value: live.bidsReceived.toString().padLeft(2, '0'),
+                        ),
+                        _BidInfoRow(
+                          label: 'Available Buying Limit',
+                          value: '₹ ${_formatPrice(live.availableBalance)}',
+                          isLast: true,
+                        ),
+                      ],
+                    );
+                  }),
                   SizedBox(height: AppSpacing.md),
 
                   // ── Vehicle Details accordion ─────────────
@@ -205,67 +214,72 @@ class AuctionVehicleDetailScreen extends StatelessWidget {
           ),
 
           // ── Fixed bottom: price + bid button ───────────────
-          Container(
-            padding: EdgeInsets.fromLTRB(
-              AppSpacing.md,
-              AppSpacing.sm,
-              AppSpacing.md,
-              AppSpacing.md,
-            ),
-            decoration: BoxDecoration(
-              color: AppColors.white,
-              border: Border(top: BorderSide(color: AppColors.grey200)),
-              boxShadow: [
-                BoxShadow(
-                  color: const Color(0x14000000),
-                  blurRadius: 12,
-                  offset: const Offset(0, -3),
-                ),
-              ],
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Flexible(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        'Bid Start Price',
-                        style: TextStyle(
-                          fontFamily: 'Plus Jakarta Sans',
-                          fontSize: 11.sp,
-                          color: AppColors.grey600,
-                        ),
-                      ),
-                      Text(
-                        '₹ ${_formatPrice(v.minimumPrice)}',
-                        style: TextStyle(
-                          fontFamily: 'Montserrat',
-                          fontSize: 18.sp,
-                          fontWeight: FontWeight.w700,
-                          color: AppColors.black,
-                        ),
-                      ),
-                    ],
+          Obx(() {
+            final live =
+                ctrl.vehicles.firstWhereOrNull(
+                  (x) => x.vehicleId == v.vehicleId,
+                ) ??
+                v;
+            return Container(
+              padding: EdgeInsets.fromLTRB(
+                AppSpacing.md,
+                AppSpacing.sm,
+                AppSpacing.md,
+                AppSpacing.md,
+              ),
+              decoration: BoxDecoration(
+                color: AppColors.white,
+                border: Border(top: BorderSide(color: AppColors.grey200)),
+                boxShadow: [
+                  BoxShadow(
+                    color: const Color(0x14000000),
+                    blurRadius: 12,
+                    offset: const Offset(0, -3),
                   ),
-                ),
-                SizedBox(width: AppSpacing.md),
-                Expanded(
-                  child: Obx(
-                    () => GradientButton.filled(
+                ],
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Flexible(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          'Bid Start Price',
+                          style: TextStyle(
+                            fontFamily: 'Plus Jakarta Sans',
+                            fontSize: 11.sp,
+                            color: AppColors.grey600,
+                          ),
+                        ),
+                        Text(
+                          '₹ ${_formatPrice(live.minimumPrice)}',
+                          style: TextStyle(
+                            fontFamily: 'Montserrat',
+                            fontSize: 18.sp,
+                            fontWeight: FontWeight.w700,
+                            color: AppColors.black,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(width: AppSpacing.md),
+                  Expanded(
+                    child: GradientButton.filled(
                       text: 'Bid Now',
                       isLoading: ctrl.isPlacingBid.value,
                       onPressed: ctrl.isPlacingBid.value
                           ? null
-                          : () => _showBidDialog(context, v, ctrl),
+                          : () => _showBidDialog(context, live, ctrl),
                     ),
                   ),
-                ),
-              ],
-            ),
-          ),
+                ],
+              ),
+            );
+          }),
         ],
       ),
     );

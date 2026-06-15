@@ -7,8 +7,10 @@ import '../../../core/constants/app_assets.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_sizes.dart';
 import '../../../core/design_system/organisms/app_bottom_nav_bar.dart';
+import '../../../core/design_system/molecules/custom_snackbar.dart';
 import '../../../core/storage/secure_storage_service.dart';
 import '../../../core/storage/storage_keys.dart';
+import '../../../features/auction/controllers/vehicle_listing_controller.dart';
 import '../../../features/main_shell/controllers/main_shell_controller.dart';
 import '../../../features/payment/controllers/payment_controller.dart';
 import '../../../routes/app_routes.dart';
@@ -16,7 +18,7 @@ import '../../../routes/app_routes.dart';
 // ─────────────────────────────────────────────────────────────────────────────
 // Subscription plan listing screen — light theme
 // ─────────────────────────────────────────────────────────────────────────────
-class SubscriptionScreen extends StatelessWidget {
+class SubscriptionScreen extends StatefulWidget {
   final String subscriptionSource;
   final String title;
   final String subtitle;
@@ -29,10 +31,31 @@ class SubscriptionScreen extends StatelessWidget {
   });
 
   @override
+  State<SubscriptionScreen> createState() => _SubscriptionScreenState();
+}
+
+class _SubscriptionScreenState extends State<SubscriptionScreen> {
+  @override
+  void dispose() {
+    // Only clear the pending bid when the SubscriptionScreen itself is
+    // dismissed (user pressed Back to leave the subscription flow entirely).
+    // Do NOT clear it here for the SUBT002 flow — Case B pops subscriptionConfirm
+    // back to this screen, and the screen is NOT disposed in that case.
+    // The pendingBid is already cleared inside revalidatePendingBid() for Case B,
+    // and for a genuine back-press the user is leaving the flow so clearing is correct.
+    if (widget.subscriptionSource != 'SUBT002') {
+      if (Get.isRegistered<VehicleListingController>()) {
+        Get.find<VehicleListingController>().pendingBid.value = null;
+      }
+    }
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final controller = Get.put(
-      SubscriptionController(subscriptionSource: subscriptionSource),
-      tag: subscriptionSource,
+      SubscriptionController(subscriptionSource: widget.subscriptionSource),
+      tag: widget.subscriptionSource,
     );
 
     return Scaffold(
@@ -64,7 +87,7 @@ class SubscriptionScreen extends StatelessWidget {
           ),
         ),
         title: Text(
-          title,
+          widget.title,
           style: const TextStyle(
             fontFamily: 'Montserrat',
             fontWeight: FontWeight.w600,
@@ -88,8 +111,8 @@ class SubscriptionScreen extends StatelessWidget {
         }
         return _SubscriptionBody(
           controller: controller,
-          subtitle: subtitle,
-          subscriptionSource: subscriptionSource,
+          subtitle: widget.subtitle,
+          subscriptionSource: widget.subscriptionSource,
         );
       }),
     );
@@ -182,25 +205,32 @@ class _SubscriptionBodyState extends State<_SubscriptionBody> {
             route.settings.name != AppRoutes.walletPayment,
       );
       Get.toNamed(AppRoutes.auctionType);
-      Get.snackbar(
-        'Auction Access Activated! 🎉',
-        'You can now browse and bid on auctions.',
-        snackPosition: SnackPosition.TOP,
-        backgroundColor: Colors.green,
-        colorText: Colors.white,
-        icon: const Icon(Icons.check_circle, color: Colors.white),
-        duration: const Duration(seconds: 3),
+      CustomSnackbar.show(
+        message:
+            'Auction Access Activated! You can now browse and bid on auctions.',
+        type: SnackbarType.success,
       );
+    } else if (source == 'SUBT002') {
+      // Delegate to VehicleListingController for bid revalidation
+      if (Get.isRegistered<VehicleListingController>()) {
+        Get.find<VehicleListingController>().revalidatePendingBid();
+      } else {
+        Get.until(
+          (route) =>
+              route.settings.name != AppRoutes.subscription &&
+              route.settings.name != AppRoutes.subscriptionConfirm &&
+              route.settings.name != AppRoutes.walletPayment,
+        );
+        CustomSnackbar.show(
+          message: 'Buying limit updated!',
+          type: SnackbarType.success,
+        );
+      }
     } else {
       Get.offAllNamed(AppRoutes.mySubscriptions);
-      Get.snackbar(
-        'Subscription Activated! 🎉',
-        'Your plan is now active.',
-        snackPosition: SnackPosition.TOP,
-        backgroundColor: Colors.green,
-        colorText: Colors.white,
-        icon: const Icon(Icons.check_circle, color: Colors.white),
-        duration: const Duration(seconds: 3),
+      CustomSnackbar.show(
+        message: 'Subscription Activated! Your plan is now active.',
+        type: SnackbarType.success,
       );
     }
   }

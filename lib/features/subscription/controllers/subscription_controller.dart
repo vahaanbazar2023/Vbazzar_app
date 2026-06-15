@@ -43,7 +43,15 @@ class SubscriptionController extends GetxController {
         userId: userId,
         subscriptionSource: subscriptionSource,
       );
-      plans.assignAll(result.plans);
+
+      // For SUBT002 (bid limit), sort ascending by price so the lowest
+      // tier (smallest limit) appears first — matches Req 5.4.
+      final sortedPlans = List<SubscriptionPlan>.from(result.plans);
+      if (subscriptionSource == 'SUBT002') {
+        sortedPlans.sort((a, b) => a.price.compareTo(b.price));
+      }
+
+      plans.assignAll(sortedPlans);
       images.assignAll(result.images);
       selectedPlanIndex.value = 0;
     } catch (e) {

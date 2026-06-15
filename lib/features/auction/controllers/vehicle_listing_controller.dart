@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../../core/design_system/molecules/custom_snackbar.dart';
 import '../../../core/storage/secure_storage_service.dart';
 import '../../../core/storage/storage_keys.dart';
 import '../../../features/subscription/models/user_subscription.dart';
@@ -10,6 +11,7 @@ import '../domain/entities/bid_entity.dart';
 import '../domain/repositories/auction_repository.dart';
 import '../models/auction_listing.dart';
 import '../models/auction_pagination.dart';
+import '../models/pending_bid.dart';
 import '../models/vehicle_listing.dart';
 import '../services/vehicle_listing_service.dart';
 
@@ -33,6 +35,10 @@ class VehicleListingController extends GetxController {
   final searchQuery = ''.obs;
   final currentIndex = 0.obs;
   final isPlacingBid = false.obs;
+
+  /// Holds the bid the user attempted before being redirected to SUBT002.
+  /// Null means no pending bid. Cleared before any auto-submission.
+  final pendingBid = Rxn<PendingBid>();
 
   int _currentPage = 1;
 
@@ -81,7 +87,8 @@ class VehicleListingController extends GetxController {
       vehicles.assignAll(result.vehicles);
       pagination.value = result.pagination;
       currentIndex.value = 0;
-    } catch (e) {
+    } catch (e, st) {
+      debugPrint('❌ [VehicleListingController._load] error: $e\n$st');
       errorMessage.value = 'Failed to load vehicles. Please try again.';
     } finally {
       isLoading.value = false;
@@ -111,6 +118,30 @@ class VehicleListingController extends GetxController {
   }
 
   Future<void> refresh() => _load(refresh: true);
+
+  /// Refreshes the vehicle list silently — no loading spinner, existing
+  /// vehicles stay visible until the new data arrives.
+  /// Public so external callers (e.g. after subscription purchase) can
+  /// trigger a refresh to update availableBalance.
+  Future<void> silentRefresh() => _silentRefresh();
+
+  Future<void> _silentRefresh() async {
+    try {
+      final userId =
+          await SecureStorageService.to.read(StorageKeys.userId) ?? '';
+      final result = await _service.fetchVehicles(
+        userId: userId,
+        auctionId: auction.auctionId,
+        page: 1,
+      );
+      vehicles.assignAll(result.vehicles);
+      pagination.value = result.pagination;
+      _currentPage = 1;
+    } catch (e, st) {
+      debugPrint('⚠️ [VehicleListingController._silentRefresh] error: $e\n$st');
+      // Silent — don't show an error; the stale list remains visible.
+    }
+  }
 
   void goNext() {
     final list = filteredVehicles;
@@ -180,8 +211,19 @@ class VehicleListingController extends GetxController {
     debugPrint('🔵 [placeBid] Step 3: hasBidLimit=$hasBidLimit');
     if (!hasBidLimit) {
       debugPrint('🔵 [placeBid] Navigating to SUBT002 subscription (no plan)');
+      pendingBid.value = PendingBid(
+        vehicleId: vehicle.vehicleId,
+        auctionId: vehicle.auctionId,
+        bidAmount: bidAmount,
+      );
       Get.back(); // close the bid sheet first
       await Future.delayed(const Duration(milliseconds: 300));
+      CustomSnackbar.show(
+        message:
+            'You need a Bid Limit subscription to place bids. '
+            'Please subscribe to continue.',
+        type: SnackbarType.error,
+      );
       Get.toNamed(
         AppRoutes.subscription,
         arguments: {
@@ -202,8 +244,22 @@ class VehicleListingController extends GetxController {
       debugPrint(
         '🔵 [placeBid] Navigating to SUBT002 subscription (limit exceeded/zero)',
       );
+      pendingBid.value = PendingBid(
+        vehicleId: vehicle.vehicleId,
+        auctionId: vehicle.auctionId,
+        bidAmount: bidAmount,
+      );
       Get.back(); // close the bid sheet first
       await Future.delayed(const Duration(milliseconds: 300));
+      CustomSnackbar.show(
+        message: vehicle.availableBalance <= 0
+            ? 'Your available buying limit is ₹0. '
+                  'Please upgrade your bid limit plan to continue.'
+            : 'Your bid of ₹${_fmt(bidAmount)} exceeds your available buying '
+                  'limit of ₹${_fmt(vehicle.availableBalance)}. '
+                  'Please upgrade your plan to place higher bids.',
+        type: SnackbarType.error,
+      );
       Get.toNamed(
         AppRoutes.subscription,
         arguments: {
@@ -233,8 +289,9 @@ class VehicleListingController extends GetxController {
         bidAmount: bidAmount,
       );
       debugPrint('✅ [placeBid] Success');
-      // Success — refresh vehicles list
-      _load();
+      // Silent background refresh — keeps the current list visible while
+      // fetching fresh values (bids_left, bids_received, available_balance).
+      _silentRefresh();
       return null;
     } on BidException catch (e) {
       debugPrint('❌ [placeBid] BidException: ${e.message} (${e.code})');
@@ -262,5 +319,136 @@ class VehicleListingController extends GetxController {
       c++;
     }
     return buf.toString().split('').reversed.join();
+  }
+
+  // ─── Post-subscription bid revalidation ──────────────────────────────────
+
+  /// Called by [SubscriptionConfirmController] after a successful SUBT002
+  /// payment and guard cache refresh.
+  ///
+  /// Reads the updated Available Buying Limit from [SubscriptionGuardService],
+  /// then either auto-submits the pending bid (Case A) or shows an error
+  /// and clears the pending bid (Case B).
+  Future<void> revalidatePendingBid() async {
+    final bid = pendingBid.value;
+    if (bid == null) {
+      debugPrint('🔵 [revalidatePendingBid] No pending bid — no-op');
+      return;
+    }
+    if (isPlacingBid.value) {
+      debugPrint('🔵 [revalidatePendingBid] Already placing bid — skipping');
+      return;
+    }
+
+    // Get the refreshed limit from the already-reloaded guard cache.
+    // Sum all active SUBT002 subscriptions' available balance since a user
+    // may have multiple plans active simultaneously.
+    final guard = SubscriptionGuardService.to;
+    final activeSubs = guard.allActiveSubscriptions(
+      SubscriptionTypeCode.auctionBidLimit,
+    );
+    final newLimit = activeSubs
+        .fold<double>(0, (sum, s) => sum + (s.planAvailableBidAmount ?? 0))
+        .toInt();
+
+    debugPrint(
+      '🔵 [revalidatePendingBid] bidAmount=${bid.bidAmount} newLimit=$newLimit',
+    );
+
+    if (bid.bidAmount <= newLimit) {
+      // ── Case A: limit now sufficient — auto-submit ──────────────────────
+      pendingBid.value = null; // clear BEFORE API call (prevents double-submit)
+      isPlacingBid.value = true;
+      try {
+        final uid =
+            await SecureStorageService.to.read(StorageKeys.userId) ?? '';
+
+        // Prefer the live VehicleListing from the loaded list; fall back to
+        // the stored auctionId so we can still place the bid even if the list
+        // was refreshed and the vehicle is not at the same index.
+        final vehicle = vehicles.firstWhereOrNull(
+          (v) => v.vehicleId == bid.vehicleId,
+        );
+
+        if (vehicle == null) {
+          debugPrint('❌ [revalidatePendingBid] Vehicle not found in list');
+          CustomSnackbar.show(
+            message: 'Vehicle not found. Please refresh and try again.',
+            type: SnackbarType.error,
+          );
+          return;
+        }
+
+        debugPrint(
+          '🔵 [revalidatePendingBid] Case A — placing bid: '
+          'vehicleId=${bid.vehicleId} auctionId=${bid.auctionId} amount=${bid.bidAmount}',
+        );
+
+        await _repository.placeBid(
+          userId: uid,
+          vehicleId: vehicle.vehicleId,
+          auctionId: vehicle.auctionId,
+          bidAmount: bid.bidAmount,
+        );
+
+        debugPrint('✅ [revalidatePendingBid] Bid placed successfully');
+
+        // Clean up the navigation stack — remove all subscription screens
+        Get.until(
+          (route) =>
+              route.settings.name != AppRoutes.subscription &&
+              route.settings.name != AppRoutes.subscriptionConfirm &&
+              route.settings.name != AppRoutes.walletPayment,
+        );
+
+        CustomSnackbar.show(
+          message: 'Bid placed successfully!',
+          type: SnackbarType.success,
+        );
+
+        // Refresh the vehicle listing. After Get.until() the listing screen
+        // is on top and its controller is the registered instance — refresh it.
+        // Use a post-frame delay so the route transition has settled first.
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (Get.isRegistered<VehicleListingController>()) {
+            Get.find<VehicleListingController>().refresh();
+          }
+        });
+      } on BidException catch (e) {
+        debugPrint('❌ [revalidatePendingBid] BidException: ${e.message}');
+        CustomSnackbar.show(
+          message: e.message.isNotEmpty
+              ? e.message
+              : 'Bid could not be placed.',
+          type: SnackbarType.error,
+        );
+      } catch (e) {
+        debugPrint('❌ [revalidatePendingBid] Error: $e');
+        CustomSnackbar.show(
+          message: 'Something went wrong. Please try again.',
+          type: SnackbarType.error,
+        );
+      } finally {
+        isPlacingBid.value = false;
+      }
+    } else {
+      // ── Case B: still exceeds limit ─────────────────────────────────────
+      debugPrint(
+        '🔵 [revalidatePendingBid] Case B — bid still exceeds limit '
+        '(bid=${bid.bidAmount}, limit=$newLimit)',
+      );
+      CustomSnackbar.show(
+        message:
+            'Your bid of ₹${_fmt(bid.bidAmount)} exceeds your available '
+            'buying limit of ₹${_fmt(newLimit)}. '
+            'Please upgrade your plan to continue.',
+        type: SnackbarType.error,
+      );
+      // Keep pendingBid alive — the user will pick a higher-tier plan and
+      // the next payment success will re-run revalidatePendingBid() with
+      // the updated limit. It is cleared when the subscription screen
+      // disposes (user backs out entirely without purchasing).
+      Get.back(); // pop subscriptionConfirm, return to subscription screen
+    }
   }
 }

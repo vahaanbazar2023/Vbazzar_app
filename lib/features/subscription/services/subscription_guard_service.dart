@@ -62,15 +62,37 @@ class SubscriptionGuardService extends GetxService {
     return subs.any((s) => s.isCurrentlyValid);
   }
 
-  /// Returns the best active subscription for [typeCode] — the one with the
-  /// latest endDate, so callers can display its details.
+  /// Returns ALL currently-valid subscriptions for [typeCode].
+  /// Useful for summing available balances across multiple active plans.
+  List<UserSubscription> allActiveSubscriptions(String typeCode) {
+    return _byTypeCode[typeCode]?.where((s) => s.isCurrentlyValid).toList() ??
+        [];
+  }
+
+  /// Returns the best active subscription for [typeCode].
+  ///
+  /// For bid-limit subscriptions (SUBT002) that have no end date, we pick
+  /// the one with the highest [planAvailableBidAmount] so the revalidation
+  /// always uses the subscription with the most remaining balance.
+  ///
+  /// For all other types we pick the one with the latest end date.
   /// Returns null if no valid subscription exists.
   UserSubscription? bestSubscription(String typeCode) {
     final subs = _byTypeCode[typeCode]
         ?.where((s) => s.isCurrentlyValid)
         .toList();
     if (subs == null || subs.isEmpty) return null;
+
     subs.sort((a, b) {
+      // For amount-based bid-limit plans: prefer highest available balance.
+      final aAmount = a.planAvailableBidAmount ?? 0;
+      final bAmount = b.planAvailableBidAmount ?? 0;
+      if (aAmount > 0 || bAmount > 0) {
+        // At least one has an amount — sort descending by available balance.
+        return bAmount.compareTo(aAmount);
+      }
+
+      // For time-based plans: prefer latest end date.
       final aEnd = UserSubscription.parseApiDate(a.endDate);
       final bEnd = UserSubscription.parseApiDate(b.endDate);
       if (aEnd == null && bEnd == null) return 0;
@@ -78,7 +100,14 @@ class SubscriptionGuardService extends GetxService {
       if (bEnd == null) return -1;
       return bEnd.compareTo(aEnd); // latest first
     });
-    return subs.first;
+
+    final best = subs.first;
+    debugPrint(
+      '🏆 bestSubscription($typeCode): ${best.planName} '
+      '| available=₹${best.planAvailableBidAmount} '
+      '| end=${best.endDate}',
+    );
+    return best;
   }
 
   /// Loads subscriptions from the API and caches them.

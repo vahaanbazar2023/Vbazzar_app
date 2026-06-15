@@ -1,7 +1,8 @@
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../../core/design_system/molecules/custom_snackbar.dart';
 import '../../../core/storage/secure_storage_service.dart';
 import '../../../core/storage/storage_keys.dart';
+import '../../../features/auction/controllers/vehicle_listing_controller.dart';
 import '../../../features/payment/controllers/payment_controller.dart';
 import '../../../routes/app_routes.dart';
 import '../models/subscription_plan.dart';
@@ -36,13 +37,10 @@ class SubscriptionConfirmController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    // Use put with fenix so it registers a new instance if the route binding
-    // didn't already register one (e.g. when instantiated programmatically).
     _paymentCtrl = Get.isRegistered<PaymentController>()
         ? Get.find<PaymentController>()
         : Get.put(PaymentController());
 
-    // Resolve plan from constructor args or Get.arguments
     final args = Get.arguments as Map<String, dynamic>? ?? {};
     _plan = planArg ?? args['plan'] as SubscriptionPlan?;
 
@@ -57,7 +55,6 @@ class SubscriptionConfirmController extends GetxController {
   Future<void> _loadEligibility() async {
     isLoading.value = true;
     try {
-      // Placeholder: replace with real API/service call when available
       await Future.delayed(const Duration(milliseconds: 300));
       eligibility.value = const SubscriptionEligibility(
         walletBalance: 0,
@@ -93,13 +90,19 @@ class SubscriptionConfirmController extends GetxController {
   Future<void> onProceedPayment() async {
     final plan = _plan;
     if (plan == null) {
-      _showSnack('No plan selected');
+      CustomSnackbar.show(
+        message: 'No plan selected',
+        type: SnackbarType.error,
+      );
       return;
     }
 
     final userId = await SecureStorageService.to.read(StorageKeys.userId);
     if (userId == null || userId.isEmpty) {
-      _showSnack('Please login to continue');
+      CustomSnackbar.show(
+        message: 'Please login to continue',
+        type: SnackbarType.error,
+      );
       return;
     }
 
@@ -108,16 +111,33 @@ class SubscriptionConfirmController extends GetxController {
     _paymentCtrl.onSuccess = (data, callback) async {
       isPaymentInProgress.value = false;
 
-      // Bust the subscription guard cache so the new subscription is
-      // immediately visible on the next guard check.
-      await SubscriptionGuardService.to.invalidateAndReload();
+      // Refresh the guard cache — must succeed before revalidating
+      try {
+        await SubscriptionGuardService.to.invalidateAndReload();
+      } catch (_) {
+        CustomSnackbar.show(
+          message: 'Failed to refresh subscription. Please try again.',
+          type: SnackbarType.error,
+        );
+        return; // do NOT navigate on stale data (Req 3.4)
+      }
+
+      // For SUBT002, also refresh the vehicle list so availableBalance
+      // reflects the newly purchased plan before revalidatePendingBid runs.
+      if (source == SubscriptionTypeCode.auctionBidLimit &&
+          Get.isRegistered<VehicleListingController>()) {
+        await Get.find<VehicleListingController>().silentRefresh();
+      }
 
       _handlePostPaymentNavigation(source);
     };
 
     _paymentCtrl.onFailure = (message, callback) {
       isPaymentInProgress.value = false;
-      _showSnack('Payment failed: $message');
+      CustomSnackbar.show(
+        message: 'Payment failed: $message',
+        type: SnackbarType.error,
+      );
     };
 
     _paymentCtrl.onCancelled = () {
@@ -136,60 +156,54 @@ class SubscriptionConfirmController extends GetxController {
 
   /// Source-aware post-payment navigation.
   ///
-  /// SUBT001 — Auction Access: pop all subscription screens from the stack
-  ///           and push the Auction Zone so the user lands there directly.
-  ///
-  /// Everything else — go to My Subscriptions to confirm the active plan.
-  void _handlePostPaymentNavigation(String src) {
+  /// SUBT001 — Auction Access: pop subscription screens, push Auction Zone.
+  /// SUBT002 — Bid Limit: delegate to [VehicleListingController.revalidatePendingBid].
+  /// Default — go to My Subscriptions.
+  Future<void> _handlePostPaymentNavigation(String src) async {
     switch (src) {
-      case SubscriptionTypeCode.auction: // 'SUBT001'
-        // Remove every subscription-related route from the stack first.
+      case SubscriptionTypeCode.auction: // SUBT001
         Get.until(
           (route) =>
               route.settings.name != AppRoutes.subscription &&
               route.settings.name != AppRoutes.subscriptionConfirm &&
               route.settings.name != AppRoutes.walletPayment,
         );
-        // Then push the Auction Zone on top of the now-clean stack.
         Get.toNamed(AppRoutes.auctionType);
-        _showSuccessSnack(
-          'Auction Access Activated! 🎉',
-          'You can now browse and bid on auctions.',
+        CustomSnackbar.show(
+          message:
+              'Auction Access Activated! You can now browse and bid on auctions.',
+          type: SnackbarType.success,
         );
+        break;
+
+      case SubscriptionTypeCode.auctionBidLimit: // SUBT002
+        // Delegate to VehicleListingController — it owns pendingBid state
+        // and knows whether Case A or Case B applies.
+        if (Get.isRegistered<VehicleListingController>()) {
+          // await so the bid revalidation uses the fully-refreshed vehicle list
+          await Get.find<VehicleListingController>().revalidatePendingBid();
+        } else {
+          // Fallback: VehicleListingController was disposed (unlikely)
+          Get.until(
+            (route) =>
+                route.settings.name != AppRoutes.subscription &&
+                route.settings.name != AppRoutes.subscriptionConfirm &&
+                route.settings.name != AppRoutes.walletPayment,
+          );
+          CustomSnackbar.show(
+            message: 'Buying limit updated!',
+            type: SnackbarType.success,
+          );
+        }
         break;
 
       default:
         Get.offAllNamed(AppRoutes.mySubscriptions);
-        _showSuccessSnack(
-          'Subscription Activated! 🎉',
-          'Your plan is now active.',
+        CustomSnackbar.show(
+          message: 'Subscription Activated! Your plan is now active.',
+          type: SnackbarType.success,
         );
         break;
     }
-  }
-
-  void _showSnack(String message) {
-    Get.snackbar(
-      'Subscription',
-      message,
-      snackPosition: SnackPosition.BOTTOM,
-      backgroundColor: const Color(0xFF2E2E2E),
-      colorText: Colors.white,
-      margin: const EdgeInsets.all(12),
-      duration: const Duration(seconds: 3),
-    );
-  }
-
-  void _showSuccessSnack(String title, String message) {
-    Get.snackbar(
-      title,
-      message,
-      snackPosition: SnackPosition.TOP,
-      backgroundColor: Colors.green,
-      colorText: Colors.white,
-      icon: const Icon(Icons.check_circle, color: Colors.white),
-      margin: const EdgeInsets.all(12),
-      duration: const Duration(seconds: 3),
-    );
   }
 }

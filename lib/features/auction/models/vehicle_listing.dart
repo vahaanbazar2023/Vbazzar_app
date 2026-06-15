@@ -102,24 +102,24 @@ class VehicleListing {
     final rawImages = json['images'] as List<dynamic>? ?? [];
     return VehicleListing(
       id: (json['id'] as num?)?.toInt() ?? 0,
-      vehicleId: json['vehicle_id'] as String? ?? '',
-      auctionId: json['auction_id'] as String? ?? '',
-      sellerReference: json['seller_reference'] as String? ?? '',
-      repoDate: json['repo_date'] as String? ?? '',
-      make: json['make'] as String? ?? '',
-      model: json['model'] as String? ?? '',
+      vehicleId: json['vehicle_id']?.toString() ?? '',
+      auctionId: json['auction_id']?.toString() ?? '',
+      sellerReference: json['seller_reference']?.toString() ?? '',
+      repoDate: json['repo_date']?.toString() ?? '',
+      make: json['make']?.toString() ?? '',
+      model: json['model']?.toString() ?? '',
       year: (json['year'] as num?)?.toInt() ?? 0,
-      registrationNo: json['registration_no'] as String? ?? '',
-      chassisNo: json['chassis_no'] as String? ?? '',
-      engineNo: json['engine_no'] as String? ?? '',
-      registeredRto: json['registered_rto'] as String? ?? '',
-      variant: json['variant'] as String? ?? '',
-      transmission: json['transmission'] as String? ?? '',
-      vehicleType: json['vehicle_type'] as String? ?? '',
-      fuelType: json['fuel_type'] as String? ?? '',
+      registrationNo: json['registration_no']?.toString() ?? '',
+      chassisNo: json['chassis_no']?.toString() ?? '',
+      engineNo: json['engine_no']?.toString() ?? '',
+      registeredRto: json['registered_rto']?.toString() ?? '',
+      variant: json['variant']?.toString() ?? '',
+      transmission: json['transmission']?.toString() ?? '',
+      vehicleType: json['vehicle_type']?.toString() ?? '',
+      fuelType: json['fuel_type']?.toString() ?? '',
       kilometers: (json['kilometers'] as num?)?.toInt() ?? 0,
-      colour: json['colour'] as String? ?? '',
-      marketValue: (json['market_value'])?.toString() ?? '0.00',
+      colour: json['colour']?.toString() ?? '',
+      marketValue: json['market_value']?.toString() ?? '0.00',
       maxBids: (json['max_bids'] as num?)?.toInt() ?? 0,
       images: rawImages
           .map(_resolveImageUrl)
@@ -127,28 +127,37 @@ class VehicleListing {
           .toList(),
       minimumPrice: (json['minimum_price'] as num?)?.toInt() ?? 0,
       reservePrice: (json['reserve_price'] as num?)?.toInt() ?? 0,
-      owner: json['owner'] as String? ?? '',
-      remarks: json['remarks'] as String? ?? '',
-      category: json['category'] as String? ?? '',
-      yardName: json['yard_name'] as String? ?? '',
-      yardLocation: json['yard_location'] as String? ?? '',
-      contactPersonName: json['contact_person_name'] as String? ?? '',
-      contactPersonNumber: json['contact_person_number'] as String? ?? '',
+      owner: json['owner']?.toString() ?? '',
+      remarks: json['remarks']?.toString() ?? '',
+      category: json['category']?.toString() ?? '',
+      yardName: json['yard_name']?.toString() ?? '',
+      yardLocation: json['yard_location']?.toString() ?? '',
+      contactPersonName: json['contact_person_name']?.toString() ?? '',
+      contactPersonNumber: json['contact_person_number']?.toString() ?? '',
       yourBid: (json['your_bid'] as num?)?.toInt() ?? 0,
       bidsLeft: (json['bids_left'] as num?)?.toInt() ?? 0,
       bidsReceived: (json['bids_received'] as num?)?.toInt() ?? 0,
-      currentHighestBid: (json['current_highest_bid'] as num?)?.toInt(),
-      currentBid: (json['current_bid'] as num?)?.toInt(),
+      currentHighestBid: _parseInt(json['current_highest_bid']),
+      currentBid: _parseInt(json['current_bid']),
       availableBalance: (json['available_balance'] as num?)?.toInt() ?? 0,
       maxUserVehiclesBidLimit:
           (json['max_user_vehicles_bid_limit'] as num?)?.toInt() ?? 10,
       userVehicleBidCount:
           (json['user_vehicle_bid_count'] as num?)?.toInt() ?? 0,
-      status: json['status'] as String? ?? '',
-      insertedAt: json['inserted_at'] as String? ?? '',
-      updatedAt: json['updated_at'] as String? ?? '',
+      status: json['status']?.toString() ?? '',
+      insertedAt: json['inserted_at']?.toString() ?? '',
+      updatedAt: json['updated_at']?.toString() ?? '',
     );
   }
 
   String get displayTitle => '$make $model'.trim();
+
+  /// Safely converts any value to int — returns null for non-numeric strings
+  /// like "high" that the API sometimes sends for bid fields.
+  static int? _parseInt(dynamic value) {
+    if (value == null) return null;
+    if (value is num) return value.toInt();
+    final parsed = int.tryParse(value.toString());
+    return parsed; // null for "high", "low", etc.
+  }
 }

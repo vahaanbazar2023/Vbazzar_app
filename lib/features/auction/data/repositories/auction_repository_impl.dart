@@ -42,7 +42,7 @@ class AuctionRepositoryImpl implements AuctionRepository {
 
   @override
   Future<({List<AuctionEntity> auctions, PaginationEntity pagination})>
-      fetchAuctionListings({
+  fetchAuctionListings({
     required String userId,
     required String auctionType,
     String categoryType = '',
@@ -95,7 +95,7 @@ class AuctionRepositoryImpl implements AuctionRepository {
 
   @override
   Future<({List<VehicleListingEntity> vehicles, PaginationEntity pagination})>
-      fetchVehicleListings({
+  fetchVehicleListings({
     required String userId,
     required String auctionId,
     int page = 1,
@@ -135,8 +135,8 @@ class AuctionRepositoryImpl implements AuctionRepository {
 
       // Handle both wrapped (response.data['data']) and unwrapped (response.data) structures
       final responseData = response.data as Map<String, dynamic>;
-      final data = responseData.containsKey('data') &&
-              responseData['data'] != null
+      final data =
+          responseData.containsKey('data') && responseData['data'] != null
           ? responseData['data'] as Map<String, dynamic>
           : responseData;
 
@@ -189,8 +189,7 @@ class AuctionRepositoryImpl implements AuctionRepository {
       if (status == 'error') {
         final errorMsg =
             responseData['message'] as String? ?? 'Failed to place bid';
-        final errorData =
-            responseData['error'] as Map<String, dynamic>?;
+        final errorData = responseData['error'] as Map<String, dynamic>?;
         final errorCode = errorData?['code'] as String? ?? '';
         final errorDetails = errorData?['message'] as String? ?? errorMsg;
         _logError(ApiEndpoints.placeBid, '[$errorCode] $errorDetails');
@@ -223,11 +222,7 @@ class AuctionRepositoryImpl implements AuctionRepository {
     int page = 1,
     int limit = 10,
   }) async {
-    final myBidsBody = {
-      'user_id': userId,
-      'page': page,
-      'limit': limit,
-    };
+    final myBidsBody = {'user_id': userId, 'page': page, 'limit': limit};
     _logRequest(ApiEndpoints.myBids, myBidsBody);
     try {
       final response = await _network.post(
@@ -264,11 +259,7 @@ class AuctionRepositoryImpl implements AuctionRepository {
     int page = 1,
     int limit = 10,
   }) async {
-    final myWinsBody = {
-      'user_id': userId,
-      'page': page,
-      'limit': limit,
-    };
+    final myWinsBody = {'user_id': userId, 'page': page, 'limit': limit};
     _logRequest(ApiEndpoints.myWins, myWinsBody);
     try {
       final response = await _network.post(
@@ -317,8 +308,10 @@ class AuctionRepositoryImpl implements AuctionRepository {
         data: letterBody,
       );
 
-      _logResponse(ApiEndpoints.winningLetter,
-          'PDF response received (${response.data?.runtimeType})');
+      _logResponse(
+        ApiEndpoints.winningLetter,
+        'PDF response received (${response.data?.runtimeType})',
+      );
 
       // If response is raw bytes
       if (response.data is List) {
@@ -404,8 +397,7 @@ class AuctionRepositoryImpl implements AuctionRepository {
       }
 
       return statesList
-          .map(
-              (e) => StateByRegionModel.fromJson(e as Map<String, dynamic>))
+          .map((e) => StateByRegionModel.fromJson(e as Map<String, dynamic>))
           .toList();
     } catch (e) {
       _logError(endpoint, e);
@@ -420,10 +412,7 @@ class AuctionRepositoryImpl implements AuctionRepository {
     required String searchValue,
     required String auctionId,
   }) async {
-    final searchBody = {
-      'search_value': searchValue,
-      'auction_id': auctionId,
-    };
+    final searchBody = {'search_value': searchValue, 'auction_id': auctionId};
     _logRequest(ApiEndpoints.vehicleSearch, searchBody);
     try {
       final response = await _network.post(
@@ -435,16 +424,16 @@ class AuctionRepositoryImpl implements AuctionRepository {
       _logResponse(ApiEndpoints.vehicleSearch, response.data);
       if (data is List) {
         return data
-            .map((e) =>
-                VehicleListingModel.fromJson(e as Map<String, dynamic>))
+            .map((e) => VehicleListingModel.fromJson(e as Map<String, dynamic>))
             .toList();
       }
       if (data is Map<String, dynamic>) {
         final vehicles = data['vehicles'];
         if (vehicles is List) {
           return vehicles
-              .map((e) => VehicleListingModel.fromJson(
-                  e as Map<String, dynamic>))
+              .map(
+                (e) => VehicleListingModel.fromJson(e as Map<String, dynamic>),
+              )
               .toList();
         }
       }
@@ -508,8 +497,10 @@ class AuctionRepositoryImpl implements AuctionRepository {
         data: excelBody,
       );
 
-      _logResponse(ApiEndpoints.vehicleExcelDownload,
-          'Excel response received (${response.data?.runtimeType})');
+      _logResponse(
+        ApiEndpoints.vehicleExcelDownload,
+        'Excel response received (${response.data?.runtimeType})',
+      );
 
       if (response.data is List) {
         return (response.data as List).cast<int>();

@@ -67,31 +67,27 @@ class AppLayout extends StatelessWidget {
             },
           ),
         ),
-        body: Column(
+        body: Stack(
           children: [
-            _AppLayoutHeader(
-              title: title,
-              subtitle: subtitle,
-              showBack: showBack,
-              onBack: onBack,
-              actions: actions,
-              headerExtra: headerExtra,
-            ),
-            Expanded(
-              child: Transform.translate(
-                offset: Offset(0, -AppRadius.xxl),
-                child: Container(
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    color: bodyColor ?? Colors.white,
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(AppRadius.xxl),
-                      topRight: Radius.circular(AppRadius.xxl),
-                    ),
-                  ),
-                  child: body,
-                ),
+            // ── Red header (fixed height) ────────────────────────────────
+            Positioned(
+              top: 0,
+              left: 0,
+              right: 0,
+              child: _AppLayoutHeader(
+                title: title,
+                subtitle: subtitle,
+                showBack: showBack,
+                onBack: onBack,
+                actions: actions,
+                headerExtra: headerExtra,
               ),
+            ),
+            // ── White body — overlaps the bottom of the header ───────────
+            // Using SafeArea + top padding so the body starts just below the
+            // header visually. The rounded top corners sit over the header.
+            Positioned.fill(
+              child: _AppLayoutBody(bodyColor: bodyColor, child: body),
             ),
           ],
         ),
@@ -198,6 +194,48 @@ class _AppLayoutHeader extends StatelessWidget {
           if (headerExtra != null) headerExtra!,
         ],
       ),
+    );
+  }
+}
+
+/// White rounded body that sits below the red header.
+/// Positioned with a top padding that equals the header height minus the
+/// rounded-corner overlap so the corners visually sit over the header.
+class _AppLayoutBody extends StatelessWidget {
+  final Color? bodyColor;
+  final Widget child;
+
+  const _AppLayoutBody({this.bodyColor, required this.child});
+
+  @override
+  Widget build(BuildContext context) {
+    final topPad = MediaQuery.of(context).padding.top;
+    // Header height minus the overlap (AppRadius.xxl) so the white card
+    // peeks up behind the header's rounded bottom edge.
+    final headerHeight = 120.h + topPad;
+    final bodyTop = headerHeight - AppRadius.xxl;
+
+    return Column(
+      children: [
+        // Transparent spacer — sits behind the header
+        SizedBox(height: bodyTop),
+        // White rounded body — fills the rest of the screen
+        Expanded(
+          child: Container(
+            width: double.infinity,
+            decoration: BoxDecoration(
+              color: bodyColor ?? Colors.white,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(AppRadius.xxl),
+                topRight: Radius.circular(AppRadius.xxl),
+              ),
+            ),
+            // clipBehavior clips child content to the rounded corners
+            clipBehavior: Clip.antiAlias,
+            child: child,
+          ),
+        ),
+      ],
     );
   }
 }
