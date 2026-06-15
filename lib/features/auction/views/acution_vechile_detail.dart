@@ -7,6 +7,7 @@ import '../../../core/design_system/design_system.dart';
 import '../../../core/design_system/molecules/custom_snackbar.dart';
 import '../../../core/design_system/templates/app_layout.dart';
 import '../../../core/design_system/tokens/app_spacing.dart';
+import '../../../core/extensions/context_extensions.dart';
 import '../controllers/vehicle_listing_controller.dart';
 import '../models/auction_listing.dart';
 import '../models/vehicle_listing.dart';
@@ -21,7 +22,7 @@ class AuctionVehicleDetailScreen extends StatelessWidget {
 
     if (vehicle == null) {
       return AppLayout(
-        title: 'Place Bid',
+        title: context.l10n.placeBidTitle,
         showBack: true,
         body: const Center(child: Text('Vehicle not found')),
       );
@@ -57,8 +58,8 @@ class AuctionVehicleDetailScreen extends StatelessWidget {
     );
 
     return AppLayout(
-      title: 'Place Bid',
-      subtitle: 'Auction ID: ${v.auctionId}',
+      title: context.l10n.placeBidTitle,
+      subtitle: '${context.l10n.auction_id}: ${v.auctionId}',
       showBack: true,
       body: Column(
         children: [
@@ -125,7 +126,7 @@ class AuctionVehicleDetailScreen extends StatelessWidget {
                         Expanded(
                           child: _InfoBox(
                             icon: Icons.gavel_rounded,
-                            label: 'Auction ID',
+                            label: context.l10n.auction_id,
                             value: v.auctionId,
                           ),
                         ),
@@ -133,7 +134,7 @@ class AuctionVehicleDetailScreen extends StatelessWidget {
                         Expanded(
                           child: _InfoBox(
                             icon: Icons.description_outlined,
-                            label: 'Vehicle Ref',
+                            label: context.l10n.vehicleRef,
                             value: v.sellerReference.isNotEmpty
                                 ? v.sellerReference
                                 : v.vehicleId,
@@ -150,20 +151,20 @@ class AuctionVehicleDetailScreen extends StatelessWidget {
                         Expanded(
                           child: _InfoBox(
                             icon: Icons.app_registration_outlined,
-                            label: 'Registration RTO',
+                            label: context.l10n.registrationRto,
                             value: v.registeredRto.isNotEmpty
                                 ? v.registeredRto
-                                : 'N/A',
+                                : context.l10n.na,
                           ),
                         ),
                         SizedBox(width: 8.w),
                         Expanded(
                           child: _InfoBox(
                             icon: Icons.badge_outlined,
-                            label: 'Reg. Number',
+                            label: context.l10n.regNumber,
                             value: v.registrationNo.isNotEmpty
                                 ? v.registrationNo
-                                : 'N/A',
+                                : context.l10n.na,
                           ),
                         ),
                       ],
@@ -183,19 +184,19 @@ class AuctionVehicleDetailScreen extends StatelessWidget {
                     return _SectionCard(
                       children: [
                         _BidInfoRow(
-                          label: 'Your Bid',
+                          label: context.l10n.your_bid,
                           value: '₹ ${_formatPrice(live.yourBid)}',
                         ),
                         _BidInfoRow(
-                          label: 'Bids Left',
+                          label: context.l10n.bids_left,
                           value: live.bidsLeft.toString().padLeft(2, '0'),
                         ),
                         _BidInfoRow(
-                          label: 'Bids Received',
+                          label: context.l10n.bids_received,
                           value: live.bidsReceived.toString().padLeft(2, '0'),
                         ),
                         _BidInfoRow(
-                          label: 'Available Buying Limit',
+                          label: context.l10n.availableBuyingLimit,
                           value: '₹ ${_formatPrice(live.availableBalance)}',
                           isLast: true,
                         ),
@@ -247,7 +248,7 @@ class AuctionVehicleDetailScreen extends StatelessWidget {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Text(
-                          'Bid Start Price',
+                          context.l10n.bidStartPrice,
                           style: TextStyle(
                             fontFamily: 'Plus Jakarta Sans',
                             fontSize: 11.sp,
@@ -269,7 +270,7 @@ class AuctionVehicleDetailScreen extends StatelessWidget {
                   SizedBox(width: AppSpacing.md),
                   Expanded(
                     child: GradientButton.filled(
-                      text: 'Bid Now',
+                      text: context.l10n.bid_now,
                       isLoading: ctrl.isPlacingBid.value,
                       onPressed: ctrl.isPlacingBid.value
                           ? null
@@ -354,11 +355,11 @@ class _BidSheetState extends State<_BidSheet> {
     final raw = _amountCtrl.text.replaceAll(',', '').trim();
     final amount = int.tryParse(raw);
     if (amount == null || amount <= 0) {
-      setState(() => _errorText = 'Enter a valid bid amount');
+      setState(() => _errorText = context.l10n.enterValidBidAmount);
       return;
     }
     if (amount % 100 != 0) {
-      setState(() => _errorText = 'Bid amount must be a multiple of ₹100');
+      setState(() => _errorText = context.l10n.bidMultipleOf100);
       return;
     }
     setState(() {
@@ -381,7 +382,7 @@ class _BidSheetState extends State<_BidSheet> {
       // Genuine success
       if (Navigator.of(context).canPop()) Navigator.of(context).pop();
       CustomSnackbar.show(
-        message: 'Bid placed successfully!',
+        message: context.l10n.bidPlacedSuccessfully,
         type: SnackbarType.success,
       );
     } else {
@@ -423,7 +424,7 @@ class _BidSheetState extends State<_BidSheet> {
                 ),
                 // Title
                 Text(
-                  'Place Your Bid',
+                  context.l10n.placeBid,
                   style: TextStyle(
                     fontFamily: 'Montserrat',
                     fontSize: 18.sp,
@@ -455,21 +456,21 @@ class _BidSheetState extends State<_BidSheet> {
                     children: [
                       Expanded(
                         child: _BidInfoItem(
-                          label: 'Min. Bid',
+                          label: context.l10n.minBid,
                           value: '₹${_fmt(v.minimumPrice)}',
                         ),
                       ),
                       Container(width: 1, height: 32, color: AppColors.grey200),
                       Expanded(
                         child: _BidInfoItem(
-                          label: 'Bids Left',
+                          label: context.l10n.bids_left,
                           value: v.bidsLeft.toString().padLeft(2, '0'),
                         ),
                       ),
                       Container(width: 1, height: 32, color: AppColors.grey200),
                       Expanded(
                         child: _BidInfoItem(
-                          label: 'Bids Received',
+                          label: context.l10n.bids_received,
                           value: v.bidsReceived.toString().padLeft(2, '0'),
                         ),
                       ),
@@ -479,7 +480,7 @@ class _BidSheetState extends State<_BidSheet> {
                 const SizedBox(height: 16),
                 // Amount input
                 Text(
-                  'Your Bid Amount',
+                  context.l10n.yourBidAmount,
                   style: TextStyle(
                     fontFamily: 'Montserrat',
                     fontSize: 13.sp,
@@ -536,7 +537,7 @@ class _BidSheetState extends State<_BidSheet> {
                 ),
                 const SizedBox(height: 20),
                 GradientButton.filled(
-                  text: 'Place Bid',
+                  text: context.l10n.placeBid,
                   width: double.infinity,
                   isLoading: _isSubmitting,
                   onPressed: _isSubmitting ? null : _submit,
@@ -643,7 +644,7 @@ class _VehicleDetailsAccordionState extends State<_VehicleDetailsAccordion> {
                   SizedBox(width: 8.w),
                   Expanded(
                     child: Text(
-                      'Vehicle Details',
+                      context.l10n.vehicleDetailsTitle,
                       style: TextStyle(
                         fontFamily: 'Montserrat',
                         fontSize: 14.sp,
@@ -674,88 +675,94 @@ class _VehicleDetailsAccordionState extends State<_VehicleDetailsAccordion> {
                 Divider(height: 1, thickness: 1, color: AppColors.grey100),
                 _DetailRow(
                   icon: Icons.calendar_today_outlined,
-                  label: 'Repo Date',
-                  value: v.repoDate.isNotEmpty ? v.repoDate : 'N/A',
+                  label: context.l10n.repoDate,
+                  value: v.repoDate.isNotEmpty ? v.repoDate : context.l10n.na,
                 ),
                 _DetailRow(
                   icon: Icons.receipt_long_outlined,
-                  label: 'Transaction Fees',
-                  value: 'N/A',
+                  label: context.l10n.transactionFees,
+                  value: context.l10n.na,
                 ),
                 _DetailRow(
                   icon: Icons.directions_car_outlined,
-                  label: 'Make & Model',
+                  label: context.l10n.makeAndModel,
                   value: '${v.make} ${v.model}',
                 ),
                 _DetailRow(
                   icon: Icons.build_circle_outlined,
-                  label: 'Variant',
-                  value: v.variant.isNotEmpty ? v.variant : 'N/A',
+                  label: context.l10n.variant,
+                  value: v.variant.isNotEmpty ? v.variant : context.l10n.na,
                 ),
                 _DetailRow(
                   icon: Icons.date_range_outlined,
-                  label: 'Mfg Year',
-                  value: v.year > 0 ? v.year.toString() : 'N/A',
+                  label: context.l10n.mfgYear,
+                  value: v.year > 0 ? v.year.toString() : context.l10n.na,
                 ),
                 _DetailRow(
                   icon: Icons.color_lens_outlined,
-                  label: 'Colour',
-                  value: v.colour.isNotEmpty ? v.colour : 'N/A',
+                  label: context.l10n.colour,
+                  value: v.colour.isNotEmpty ? v.colour : context.l10n.na,
                 ),
                 _DetailRow(
                   icon: Icons.speed_outlined,
-                  label: 'Kilometers',
-                  value: v.kilometers > 0 ? '${v.kilometers} km' : 'N/A',
+                  label: context.l10n.kilometers,
+                  value: v.kilometers > 0
+                      ? '${v.kilometers} km'
+                      : context.l10n.na,
                 ),
                 _DetailRow(
                   icon: Icons.local_gas_station_outlined,
-                  label: 'Fuel Type',
-                  value: v.fuelType.isNotEmpty ? v.fuelType : 'N/A',
+                  label: context.l10n.fuelType,
+                  value: v.fuelType.isNotEmpty ? v.fuelType : context.l10n.na,
                 ),
                 _DetailRow(
                   icon: Icons.settings_outlined,
-                  label: 'Transmission',
-                  value: v.transmission.isNotEmpty ? v.transmission : 'N/A',
+                  label: context.l10n.transmission,
+                  value: v.transmission.isNotEmpty
+                      ? v.transmission
+                      : context.l10n.na,
                 ),
                 _DetailRow(
                   icon: Icons.person_outline_rounded,
-                  label: 'Owner',
-                  value: v.owner.isNotEmpty ? v.owner : 'N/A',
+                  label: context.l10n.owner,
+                  value: v.owner.isNotEmpty ? v.owner : context.l10n.na,
                 ),
                 _DetailRow(
                   icon: Icons.confirmation_number_outlined,
-                  label: 'Chassis No',
-                  value: v.chassisNo.isNotEmpty ? v.chassisNo : 'N/A',
+                  label: context.l10n.chassisNumber,
+                  value: v.chassisNo.isNotEmpty ? v.chassisNo : context.l10n.na,
                 ),
                 _DetailRow(
                   icon: Icons.memory_outlined,
-                  label: 'Engine No',
-                  value: v.engineNo.isNotEmpty ? v.engineNo : 'N/A',
+                  label: context.l10n.engineNumber,
+                  value: v.engineNo.isNotEmpty ? v.engineNo : context.l10n.na,
                 ),
                 _DetailRow(
                   icon: Icons.verified_outlined,
-                  label: 'RC Status',
-                  value: 'N/A',
+                  label: context.l10n.rcStatus,
+                  value: context.l10n.na,
                 ),
                 _DetailRow(
                   icon: Icons.local_parking_outlined,
-                  label: 'Parking Charges',
-                  value: 'N/A',
+                  label: context.l10n.parkingCharges,
+                  value: context.l10n.na,
                 ),
                 _DetailRow(
                   icon: Icons.warehouse_outlined,
-                  label: 'Yard Name',
-                  value: v.yardName.isNotEmpty ? v.yardName : 'N/A',
+                  label: context.l10n.yard_name,
+                  value: v.yardName.isNotEmpty ? v.yardName : context.l10n.na,
                 ),
                 _DetailRow(
                   icon: Icons.location_city_outlined,
-                  label: 'Yard Details',
-                  value: v.yardLocation.isNotEmpty ? v.yardLocation : 'N/A',
+                  label: context.l10n.yardDetails,
+                  value: v.yardLocation.isNotEmpty
+                      ? v.yardLocation
+                      : context.l10n.na,
                 ),
                 _DetailRow(
                   icon: Icons.notes_outlined,
-                  label: 'Remarks',
-                  value: v.remarks.isNotEmpty ? v.remarks : 'N/A',
+                  label: context.l10n.remarks,
+                  value: v.remarks.isNotEmpty ? v.remarks : context.l10n.na,
                 ),
                 // Contact sub-header
                 Container(
@@ -773,7 +780,7 @@ class _VehicleDetailsAccordionState extends State<_VehicleDetailsAccordion> {
                       ),
                       SizedBox(width: 6.w),
                       Text(
-                        'Contact Details',
+                        context.l10n.contactDetails,
                         style: TextStyle(
                           fontFamily: 'Montserrat',
                           fontSize: 12.sp,
@@ -786,17 +793,17 @@ class _VehicleDetailsAccordionState extends State<_VehicleDetailsAccordion> {
                 ),
                 _DetailRow(
                   icon: Icons.person_rounded,
-                  label: 'Name',
+                  label: context.l10n.contactName,
                   value: v.contactPersonName.isNotEmpty
                       ? v.contactPersonName
-                      : 'N/A',
+                      : context.l10n.na,
                 ),
                 _DetailRow(
                   icon: Icons.phone_outlined,
-                  label: 'Mobile No.',
+                  label: context.l10n.mobileNo,
                   value: v.contactPersonNumber.isNotEmpty
                       ? v.contactPersonNumber
-                      : 'N/A',
+                      : context.l10n.na,
                   isLast: true,
                 ),
               ],

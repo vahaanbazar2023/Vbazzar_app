@@ -7,6 +7,7 @@ import '../../../core/design_system/design_system.dart';
 import '../../../core/design_system/templates/app_layout.dart';
 import '../../../core/design_system/tokens/app_radius.dart';
 import '../../../core/design_system/tokens/app_spacing.dart';
+import '../../../core/extensions/context_extensions.dart';
 import '../../../routes/app_routes.dart';
 import '../controllers/vehicle_listing_controller.dart';
 import '../models/vehicle_listing.dart';
@@ -17,7 +18,7 @@ class AuctionVehicleListingScreen extends GetView<VehicleListingController> {
   @override
   Widget build(BuildContext context) {
     return AppLayout(
-      title: 'Live Auctions',
+      title: context.l10n.liveAuctions,
       subtitle: '',
       showBack: true,
       body: Column(
@@ -76,7 +77,7 @@ class AuctionVehicleListingScreen extends GetView<VehicleListingController> {
                         ),
                         SizedBox(height: AppSpacing.md),
                         GradientButton.filled(
-                          text: 'Retry',
+                          text: context.l10n.retry,
                           onPressed: controller.refresh,
                           width: 120.w,
                         ),
@@ -89,7 +90,7 @@ class AuctionVehicleListingScreen extends GetView<VehicleListingController> {
               if (vehicles.isEmpty) {
                 return Center(
                   child: Text(
-                    'No vehicles found',
+                    context.l10n.noVehiclesFound,
                     style: TextStyle(
                       fontFamily: 'Montserrat',
                       fontSize: 14.sp,
@@ -167,7 +168,7 @@ class _VehicleSearchBar extends StatelessWidget {
             size: 20.r,
             color: AppColors.grey500,
           ),
-          hintText: 'Search vehicles',
+          hintText: context.l10n.searchVehiclesHint,
           hintStyle: TextStyle(
             fontFamily: 'Montserrat',
             fontSize: 13.sp,
@@ -268,12 +269,12 @@ class _VehicleCard extends StatelessWidget {
                       Row(
                         children: [
                           _BidInfoRow(
-                            label: 'Bids Left',
+                            label: context.l10n.bids_left,
                             value: v.bidsLeft.toString().padLeft(2, '0'),
                           ),
                           SizedBox(width: AppSpacing.xxl),
                           _BidInfoRow(
-                            label: 'Bids Received',
+                            label: context.l10n.bids_received,
                             value: v.bidsReceived.toString().padLeft(2, '0'),
                           ),
                         ],
@@ -282,7 +283,7 @@ class _VehicleCard extends StatelessWidget {
                       Row(
                         children: [
                           Text(
-                            'Bid Start Price:',
+                            context.l10n.bidStartPriceLabel,
                             style: TextStyle(
                               fontFamily: 'Montserrat',
                               fontSize: 14.sp,
@@ -319,7 +320,7 @@ class _VehicleCard extends StatelessWidget {
                     children: [
                       SizedBox(width: AppSpacing.md),
                       GradientButton.filled(
-                        text: 'Bid Now',
+                        text: context.l10n.bid_now,
                         onPressed: () => Get.toNamed(
                           AppRoutes.vehicleDetail,
                           arguments: {'vehicle': v, 'endAt': endAt},
@@ -328,7 +329,7 @@ class _VehicleCard extends StatelessWidget {
                       ),
                       SizedBox(height: AppSpacing.md),
                       GradientButton.outlined(
-                        text: 'View more details',
+                        text: context.l10n.viewMoreDetails,
                         backgroundColor: Colors.transparent,
                         onPressed: () => Get.toNamed(
                           AppRoutes.vehicleDetail,

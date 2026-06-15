@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/design_system/atoms/custom_loader.dart';
 import '../../../core/design_system/templates/app_layout.dart';
+import '../../../core/extensions/context_extensions.dart';
 import '../../../theme/app_fonts.dart';
 import '../controllers/insurance_finance_controller.dart';
 import 'finance_form_view.dart';
@@ -19,36 +20,35 @@ class InsuranceFinanceView extends GetView<InsuranceFinanceController> {
   @override
   Widget build(BuildContext context) {
     return AppLayout(
-      title: 'Insurance & Finance',
-      subtitle: 'Get quotes for vehicle insurance and financing',
+      title: context.l10n.insuranceFinance,
+      subtitle: context.l10n.insuranceFinanceSubtitle,
       showBack: true,
       body: Stack(
         children: [
           Column(
             children: [
-              _buildTabBar(),
+              _buildTabBar(context),
               Expanded(
                 child: TabBarView(
                   controller: controller.tabController,
-                  children: const [
-                    InsuranceFormView(),
-                    FinanceFormView(),
-                  ],
+                  children: const [InsuranceFormView(), FinanceFormView()],
                 ),
               ),
             ],
           ),
 
           // ── Backdrop Loading Overlay ──────────────────────────
-          Obx(() => controller.isSubmitting.value
-              ? CustomLoader.backdrop()
-              : const SizedBox.shrink()),
+          Obx(
+            () => controller.isSubmitting.value
+                ? CustomLoader.backdrop()
+                : const SizedBox.shrink(),
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildTabBar() {
+  Widget _buildTabBar(BuildContext context) {
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
       decoration: BoxDecoration(
@@ -75,9 +75,9 @@ class InsuranceFinanceView extends GetView<InsuranceFinanceController> {
         ),
         labelPadding: EdgeInsets.zero,
         indicatorPadding: EdgeInsets.all(4.r),
-        tabs: const [
-          Tab(text: 'Insurance'),
-          Tab(text: 'Finance'),
+        tabs: [
+          Tab(text: context.l10n.insurance),
+          Tab(text: context.l10n.finance),
         ],
       ),
     );

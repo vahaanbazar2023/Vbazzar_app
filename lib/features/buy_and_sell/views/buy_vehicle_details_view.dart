@@ -8,6 +8,7 @@ import '../../../core/design_system/design_system.dart';
 import '../../../core/design_system/templates/app_layout.dart';
 import '../../../core/design_system/tokens/app_radius.dart';
 import '../../../core/design_system/tokens/app_spacing.dart';
+import '../../../core/extensions/context_extensions.dart';
 import '../../../routes/app_routes.dart';
 import '../../subscription/models/user_subscription.dart';
 import '../controllers/vehicle_detail_controller.dart';
@@ -60,7 +61,7 @@ class _BuyVehicleDetailsViewState extends State<BuyVehicleDetailsView> {
       // While loading show a spinner inside the layout
       if (ctrl.isLoadingDetail.value) {
         return AppLayout(
-          title: 'Vehicle Details',
+          title: context.l10n.vehicleDetailsTitle,
           subtitle: '',
           showBack: true,
           body: const Center(
@@ -73,7 +74,7 @@ class _BuyVehicleDetailsViewState extends State<BuyVehicleDetailsView> {
       if (ctrl.detailError.value.isNotEmpty &&
           ctrl.currentVehicleDetail.value == null) {
         return AppLayout(
-          title: 'Vehicle Details',
+          title: context.l10n.vehicleDetailsTitle,
           subtitle: '',
           showBack: true,
           body: Center(
@@ -93,7 +94,7 @@ class _BuyVehicleDetailsViewState extends State<BuyVehicleDetailsView> {
                   ),
                   SizedBox(height: 16.h),
                   GradientButton.filled(
-                    text: 'Retry',
+                    text: context.l10n.retry,
                     onPressed: () {
                       final args = Get.arguments as Map<String, dynamic>? ?? {};
                       final v = args['vehicle'] as BuyVehicleEntity?;
@@ -123,7 +124,7 @@ class _BuyVehicleDetailsViewState extends State<BuyVehicleDetailsView> {
       final vehicle = ctrl.currentVehicleDetail.value;
       if (vehicle == null) {
         return AppLayout(
-          title: 'Vehicle Details',
+          title: context.l10n.vehicleDetailsTitle,
           subtitle: '',
           showBack: true,
           body: const Center(
@@ -272,7 +273,7 @@ class _BuyVehicleDetailsViewState extends State<BuyVehicleDetailsView> {
                         Expanded(
                           child: _InfoBox(
                             icon: Icons.fingerprint_rounded,
-                            label: 'Vehicle ID',
+                            label: context.l10n.vehicle_id,
                             value: vehicle.sbVehicleId,
                           ),
                         ),
@@ -280,7 +281,7 @@ class _BuyVehicleDetailsViewState extends State<BuyVehicleDetailsView> {
                         Expanded(
                           child: _InfoBox(
                             icon: Icons.category_outlined,
-                            label: 'Category',
+                            label: context.l10n.category,
                             value: vehicle.categoryName,
                           ),
                         ),
@@ -295,13 +296,13 @@ class _BuyVehicleDetailsViewState extends State<BuyVehicleDetailsView> {
                         Expanded(
                           child: _InfoBox(
                             icon: Icons.location_city_outlined,
-                            label: 'Location',
+                            label: context.l10n.location,
                             value:
                                 [vehicle.city, vehicle.state]
                                     .where((s) => s != null && s.isNotEmpty)
                                     .join(', ')
                                     .isEmpty
-                                ? 'N/A'
+                                ? context.l10n.na
                                 : [vehicle.city, vehicle.state]
                                       .where((s) => s != null && s.isNotEmpty)
                                       .join(', '),
@@ -312,8 +313,8 @@ class _BuyVehicleDetailsViewState extends State<BuyVehicleDetailsView> {
                         Expanded(
                           child: _InfoBox(
                             icon: Icons.calendar_month_rounded,
-                            label: 'Model Year',
-                            value: vehicle.year ?? 'N/A',
+                            label: context.l10n.modelYear,
+                            value: vehicle.year ?? context.l10n.na,
                           ),
                         ),
                       ],
@@ -330,7 +331,10 @@ class _BuyVehicleDetailsViewState extends State<BuyVehicleDetailsView> {
                   SizedBox(height: AppSpacing.md),
 
                   // ── Actions label ────────────────────────────────────────
-                  _SectionLabel(icon: Icons.bolt_rounded, title: 'Actions'),
+                  _SectionLabel(
+                    icon: Icons.bolt_rounded,
+                    title: context.l10n.actions,
+                  ),
                   SizedBox(height: 12.h),
 
                   // ── Action card 1: Show Interest ──────────────────────────
@@ -339,9 +343,9 @@ class _BuyVehicleDetailsViewState extends State<BuyVehicleDetailsView> {
                       colors: [Color(0xFF0F9B8E), Color(0xFF16C79A)],
                     ),
                     icon: Icons.favorite_rounded,
-                    title: 'Let Us Know',
-                    subtitle: "You're Interested",
-                    buttonText: 'Interested',
+                    title: context.l10n.letUsKnow,
+                    subtitle: context.l10n.youreInterested,
+                    buttonText: context.l10n.interested,
                     buttonColor: Colors.white,
                     buttonTextColor: const Color(0xFF0F9B8E),
                     onTap: () {
@@ -369,8 +373,8 @@ class _BuyVehicleDetailsViewState extends State<BuyVehicleDetailsView> {
                       );
                       if (amount == null || amount <= 0) {
                         Get.snackbar(
-                          'Invalid Amount',
-                          'Please enter a valid offer amount.',
+                          context.l10n.invalidAmount,
+                          context.l10n.pleaseEnterValidOfferAmount,
                           snackPosition: SnackPosition.TOP,
                         );
                         return;
@@ -380,8 +384,8 @@ class _BuyVehicleDetailsViewState extends State<BuyVehicleDetailsView> {
                         final minRequired = (vehicle.price! * 0.6).ceil();
                         if (amount < minRequired) {
                           Get.snackbar(
-                            'Offer Too Low',
-                            'Minimum offer is 60% of the price: ₹${_fmt(minRequired)}',
+                            context.l10n.offerTooLow,
+                            context.l10n.minimumOfferPercent(_fmt(minRequired)),
                             snackPosition: SnackPosition.TOP,
                             backgroundColor: Colors.red.shade700,
                             colorText: Colors.white,
@@ -398,12 +402,12 @@ class _BuyVehicleDetailsViewState extends State<BuyVehicleDetailsView> {
                           _offerCtrl.clear();
                         });
                         CustomSnackbar.show(
-                          message: 'Your offer has been sent.',
+                          message: context.l10n.offerSent,
                           type: SnackbarType.success,
                         );
                       } else {
                         Get.snackbar(
-                          'Offer Failed',
+                          context.l10n.offerFailed,
                           error,
                           snackPosition: SnackPosition.TOP,
                           backgroundColor: Colors.red.shade700,
@@ -434,7 +438,7 @@ class _BuyVehicleDetailsViewState extends State<BuyVehicleDetailsView> {
                               ),
                               SizedBox(width: 8.w),
                               Text(
-                                'Inspection Requested',
+                                context.l10n.inspectionRequested,
                                 style: TextStyle(
                                   fontFamily: 'Montserrat',
                                   fontSize: 14.sp,
@@ -446,7 +450,7 @@ class _BuyVehicleDetailsViewState extends State<BuyVehicleDetailsView> {
                           ),
                         )
                       : GradientButton.filled(
-                          text: 'Request Vehicle Inspection',
+                          text: context.l10n.requestVehicleInspection,
                           width: double.infinity,
                           onPressed: () {
                             Get.find<BuyVehicleController>().requestInspection(
@@ -596,29 +600,49 @@ class _KeySpecsCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final specs = <_SpecItem>[];
     if (vehicle.year != null)
-      specs.add(_SpecItem(Icons.calendar_month_rounded, 'Year', vehicle.year!));
+      specs.add(
+        _SpecItem(
+          Icons.calendar_month_rounded,
+          context.l10n.year,
+          vehicle.year!,
+        ),
+      );
     if (vehicle.fuelType != null)
       specs.add(
-        _SpecItem(Icons.local_gas_station_outlined, 'Fuel', vehicle.fuelType!),
+        _SpecItem(
+          Icons.local_gas_station_outlined,
+          context.l10n.fuelType,
+          vehicle.fuelType!,
+        ),
       );
     if (vehicle.bodyType != null)
       specs.add(
-        _SpecItem(Icons.view_in_ar_outlined, 'Body Type', vehicle.bodyType!),
+        _SpecItem(
+          Icons.view_in_ar_outlined,
+          context.l10n.bodyType,
+          vehicle.bodyType!,
+        ),
       );
     if (vehicle.tonnage != null)
       specs.add(
-        _SpecItem(Icons.fitness_center_outlined, 'Tonnage', vehicle.tonnage!),
+        _SpecItem(
+          Icons.fitness_center_outlined,
+          context.l10n.tonnage,
+          vehicle.tonnage!,
+        ),
       );
     if (vehicle.noOfTyres != null)
       specs.add(
         _SpecItem(
           Icons.radio_button_unchecked_rounded,
-          'Tyres',
+          context.l10n.noOfTyres,
           vehicle.noOfTyres!,
         ),
       );
     if (vehicle.kv != null)
-      specs.add(_SpecItem(Icons.bolt_rounded, 'KV', vehicle.kv!));
+      specs.add(
+        _SpecItem(Icons.bolt_rounded, context.l10n.kvRating, vehicle.kv!),
+      );
 
     if (specs.isEmpty) return const SizedBox.shrink();
 
@@ -655,7 +679,7 @@ class _KeySpecsCard extends StatelessWidget {
                 ),
                 SizedBox(width: 8.w),
                 Text(
-                  'Key Specifications',
+                  context.l10n.keySpecifications,
                   style: TextStyle(
                     fontFamily: 'Montserrat',
                     fontSize: 14.sp,
@@ -789,7 +813,7 @@ class _VehicleDetailsAccordionState extends State<_VehicleDetailsAccordion> {
                   SizedBox(width: 8.w),
                   Expanded(
                     child: Text(
-                      'Vehicle Details',
+                      context.l10n.vehicleDetailsTitle,
                       style: TextStyle(
                         fontFamily: 'Montserrat',
                         fontSize: 14.sp,
@@ -832,64 +856,100 @@ class _VehicleDetailsAccordionState extends State<_VehicleDetailsAccordion> {
       rows.add(
         _DetailRowData(
           Icons.branding_watermark_outlined,
-          'Brand',
+          context.l10n.brand,
           v.brandName!,
         ),
       );
     if (v.model != null)
       rows.add(
-        _DetailRowData(Icons.directions_car_outlined, 'Model', v.model!),
+        _DetailRowData(
+          Icons.directions_car_outlined,
+          context.l10n.model,
+          v.model!,
+        ),
       );
     if (v.year != null)
       rows.add(
         _DetailRowData(
           Icons.calendar_today_outlined,
-          'Year of Manufacture',
+          context.l10n.yearOfManufacture,
           v.year!,
         ),
       );
     rows.add(
-      _DetailRowData(Icons.category_outlined, 'Category', v.categoryName),
+      _DetailRowData(
+        Icons.category_outlined,
+        context.l10n.category,
+        v.categoryName,
+      ),
     );
     rows.add(
-      _DetailRowData(Icons.code_rounded, 'Category Code', v.categoryCode),
+      _DetailRowData(
+        Icons.code_rounded,
+        context.l10n.categoryCode,
+        v.categoryCode,
+      ),
     );
     if (v.brandCode != null)
-      rows.add(_DetailRowData(Icons.tag_rounded, 'Brand Code', v.brandCode!));
+      rows.add(
+        _DetailRowData(Icons.tag_rounded, context.l10n.brandCode, v.brandCode!),
+      );
     if (v.fuelType != null)
       rows.add(
         _DetailRowData(
           Icons.local_gas_station_outlined,
-          'Fuel Type',
+          context.l10n.fuelType,
           v.fuelType!,
         ),
       );
     if (v.bodyType != null)
       rows.add(
-        _DetailRowData(Icons.view_in_ar_outlined, 'Body Type', v.bodyType!),
+        _DetailRowData(
+          Icons.view_in_ar_outlined,
+          context.l10n.bodyType,
+          v.bodyType!,
+        ),
       );
     if (v.tonnage != null)
       rows.add(
-        _DetailRowData(Icons.fitness_center_outlined, 'Tonnage', v.tonnage!),
+        _DetailRowData(
+          Icons.fitness_center_outlined,
+          context.l10n.tonnage,
+          v.tonnage!,
+        ),
       );
     if (v.noOfTyres != null)
       rows.add(
         _DetailRowData(
           Icons.radio_button_unchecked_rounded,
-          'No. of Tyres',
+          context.l10n.noOfTyres,
           v.noOfTyres!,
         ),
       );
     if (v.kv != null)
       rows.add(
-        _DetailRowData(Icons.electrical_services_outlined, 'KV Rating', v.kv!),
+        _DetailRowData(
+          Icons.electrical_services_outlined,
+          context.l10n.kvRating,
+          v.kv!,
+        ),
       );
     if (v.city != null)
-      rows.add(_DetailRowData(Icons.location_city_outlined, 'City', v.city!));
+      rows.add(
+        _DetailRowData(
+          Icons.location_city_outlined,
+          context.l10n.city,
+          v.city!,
+        ),
+      );
     if (v.state != null)
-      rows.add(_DetailRowData(Icons.map_outlined, 'State', v.state!));
+      rows.add(
+        _DetailRowData(Icons.map_outlined, context.l10n.state, v.state!),
+      );
     if (v.status != null)
-      rows.add(_DetailRowData(Icons.info_outline, 'Status', v.status!));
+      rows.add(
+        _DetailRowData(Icons.info_outline, context.l10n.status, v.status!),
+      );
 
     return Column(
       children: [
@@ -1228,7 +1288,7 @@ class _OfferCard extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Submit Your',
+                              context.l10n.submitYour,
                               style: TextStyle(
                                 fontFamily: 'Montserrat',
                                 fontSize: 13.sp,
@@ -1237,7 +1297,7 @@ class _OfferCard extends StatelessWidget {
                               ),
                             ),
                             Text(
-                              'Best Vehicle Offer',
+                              context.l10n.bestVehicleOffer,
                               style: TextStyle(
                                 fontFamily: 'Montserrat',
                                 fontSize: 12.sp,
@@ -1266,7 +1326,7 @@ class _OfferCard extends StatelessWidget {
                           ],
                         ),
                         child: Text(
-                          expanded ? 'Cancel' : 'Submit',
+                          expanded ? context.l10n.cancel : context.l10n.submit,
                           style: TextStyle(
                             fontFamily: 'Montserrat',
                             fontSize: 12.sp,
@@ -1302,7 +1362,7 @@ class _OfferCard extends StatelessWidget {
                   ),
                   cursorColor: Colors.white,
                   decoration: InputDecoration(
-                    hintText: 'Enter amount',
+                    hintText: context.l10n.enterAmount,
                     hintStyle: TextStyle(
                       fontFamily: 'Plus Jakarta Sans',
                       fontSize: 14.sp,
@@ -1486,7 +1546,7 @@ class _ConnectWithOwnerCardState extends State<_ConnectWithOwnerCard> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Become a Member',
+                    context.l10n.becomeMember,
                     style: TextStyle(
                       fontFamily: 'Montserrat',
                       fontSize: 14.sp,
@@ -1497,10 +1557,10 @@ class _ConnectWithOwnerCardState extends State<_ConnectWithOwnerCard> {
                   SizedBox(height: 3.h),
                   Text(
                     isFetching
-                        ? 'Fetching contact...'
+                        ? context.l10n.fetchingContact
                         : hasPhone
                         ? cachedPhone
-                        : 'Connect with owner',
+                        : context.l10n.connectWithOwner,
                     style: TextStyle(
                       fontFamily: 'Plus Jakarta Sans',
                       fontSize: hasPhone ? 16.sp : 12.sp,
@@ -1532,7 +1592,7 @@ class _ConnectWithOwnerCardState extends State<_ConnectWithOwnerCard> {
                     await launchUrl(uri);
                   } else {
                     CustomSnackbar.show(
-                      message: 'Owner: $cachedPhone',
+                      message: '${context.l10n.owner}: $cachedPhone',
                       type: SnackbarType.success,
                     );
                   }
@@ -1556,7 +1616,7 @@ class _ConnectWithOwnerCardState extends State<_ConnectWithOwnerCard> {
                       ),
                       SizedBox(width: 4.w),
                       Text(
-                        'Call',
+                        context.l10n.callButton,
                         style: TextStyle(
                           fontFamily: 'Montserrat',
                           fontSize: 12.sp,
@@ -1575,9 +1635,8 @@ class _ConnectWithOwnerCardState extends State<_ConnectWithOwnerCard> {
                   AppRoutes.subscription,
                   arguments: {
                     'subscription_source': SubscriptionTypeCode.ownerContact,
-                    'title': 'Connect with Owner',
-                    'subtitle':
-                        "Subscribe to get the owner's contact number and connect directly.",
+                    'title': context.l10n.connectWithOwnerTitle,
+                    'subtitle': context.l10n.connectWithOwnerSubtitle,
                     'pending_vehicle_id': vehicleId,
                     'category_code': widget.vehicle.categoryCode,
                     if (planCode != null) 'plan_code_override': planCode,
@@ -1593,7 +1652,7 @@ class _ConnectWithOwnerCardState extends State<_ConnectWithOwnerCard> {
                     borderRadius: BorderRadius.circular(20.r),
                   ),
                   child: Text(
-                    'Subscribe',
+                    context.l10n.subscribe,
                     style: TextStyle(
                       fontFamily: 'Montserrat',
                       fontSize: 12.sp,

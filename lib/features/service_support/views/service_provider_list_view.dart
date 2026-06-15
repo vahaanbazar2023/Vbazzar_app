@@ -8,6 +8,7 @@ import '../../../core/constants/app_colors.dart';
 import '../../../core/design_system/atoms/custom_loader.dart';
 import '../../../core/design_system/molecules/gradient_button.dart';
 import '../../../core/design_system/templates/app_layout.dart';
+import '../../../core/extensions/context_extensions.dart';
 import '../../../theme/app_fonts.dart';
 import '../controllers/service_support_controller.dart';
 import '../data/models/mechanic_model.dart';
@@ -18,8 +19,8 @@ class ServiceProviderListView extends GetView<ServiceSupportController> {
   @override
   Widget build(BuildContext context) {
     return AppLayout(
-      title: 'Service Providers',
-      subtitle: 'Find nearby mechanics and garages',
+      title: context.l10n.serviceProviders,
+      subtitle: context.l10n.findNearbyMechanics,
       showBack: true,
       body: Column(
         children: [
@@ -45,7 +46,9 @@ class ServiceProviderListView extends GetView<ServiceSupportController> {
                             borderRadius: BorderRadius.circular(20.r),
                           ),
                           child: Text(
-                            '${controller.totalCount.value} providers found',
+                            context.l10n.providersFound(
+                              controller.totalCount.value.toString(),
+                            ),
                             style: AppFonts.bodySmall.copyWith(
                               color: AppColors.primary,
                               fontWeight: FontWeight.w600,

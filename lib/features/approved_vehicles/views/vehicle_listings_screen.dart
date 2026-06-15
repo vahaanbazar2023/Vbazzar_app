@@ -6,6 +6,7 @@ import '../../../core/design_system/loaders/loading_widget.dart';
 import '../../../core/design_system/templates/app_layout.dart';
 import '../../../core/design_system/tokens/app_radius.dart';
 import '../../../core/design_system/tokens/app_spacing.dart';
+import '../../../core/extensions/context_extensions.dart';
 import '../../../routes/app_routes.dart';
 import '../../../theme/app_fonts.dart';
 import '../controllers/approved_vehicle_controller.dart';
@@ -58,7 +59,7 @@ class _VehicleListingsScreenState extends State<VehicleListingsScreen> {
   Widget build(BuildContext context) {
     return AppLayout(
       title: category.categoryName,
-      subtitle: 'Approved vehicles available',
+      subtitle: context.l10n.approvedVehiclesAvailable,
       body: Obx(() {
         if (ctrl.isLoadingListings.value && ctrl.listings.isEmpty) {
           return _buildShimmerList();
@@ -78,15 +79,15 @@ class _VehicleListingsScreenState extends State<VehicleListingsScreen> {
           child: ListView.builder(
             controller: _scrollController,
             padding: EdgeInsets.all(AppSpacing.md),
-            itemCount: ctrl.listings.length +
+            itemCount:
+                ctrl.listings.length +
                 (ctrl.isLoadingMoreListings.value ? 1 : 0),
             itemBuilder: (context, index) {
               if (index >= ctrl.listings.length) {
                 return Padding(
                   padding: EdgeInsets.symmetric(vertical: 16.h),
                   child: const Center(
-                    child:
-                        CircularProgressIndicator(color: AppColors.primary),
+                    child: CircularProgressIndicator(color: AppColors.primary),
                   ),
                 );
               }
@@ -128,13 +129,17 @@ class _VehicleListingsScreenState extends State<VehicleListingsScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.error_outline_rounded,
-                size: 48.w, color: AppColors.error),
+            Icon(
+              Icons.error_outline_rounded,
+              size: 48.w,
+              color: AppColors.error,
+            ),
             SizedBox(height: 12.h),
             Text(
               ctrl.listingsError.value,
-              style: AppFonts.bodyMedium
-                  .copyWith(color: AppColors.textSecondary),
+              style: AppFonts.bodyMedium.copyWith(
+                color: AppColors.textSecondary,
+              ),
               textAlign: TextAlign.center,
             ),
             SizedBox(height: 16.h),
@@ -144,14 +149,13 @@ class _VehicleListingsScreenState extends State<VehicleListingsScreen> {
                 isRefresh: true,
               ),
               child: Container(
-                padding:
-                    EdgeInsets.symmetric(horizontal: 24.w, vertical: 10.h),
+                padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 10.h),
                 decoration: BoxDecoration(
                   color: AppColors.primary,
                   borderRadius: BorderRadius.circular(8.r),
                 ),
                 child: Text(
-                  'Retry',
+                  context.l10n.retry,
                   style: AppFonts.bodyMedium.copyWith(
                     color: Colors.white,
                     fontWeight: FontWeight.w600,
@@ -172,19 +176,22 @@ class _VehicleListingsScreenState extends State<VehicleListingsScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.directions_car_outlined,
-                size: 56.w, color: AppColors.grey400),
+            Icon(
+              Icons.directions_car_outlined,
+              size: 56.w,
+              color: AppColors.grey400,
+            ),
             SizedBox(height: 12.h),
             Text(
-              'No vehicles available',
-              style: AppFonts.bodyMedium
-                  .copyWith(color: AppColors.textSecondary),
+              context.l10n.noVehiclesAvailable,
+              style: AppFonts.bodyMedium.copyWith(
+                color: AppColors.textSecondary,
+              ),
             ),
             SizedBox(height: 8.h),
             Text(
-              'Pull down to refresh',
-              style:
-                  AppFonts.bodySmall.copyWith(color: AppColors.textDisabled),
+              context.l10n.pullDownToRefresh,
+              style: AppFonts.bodySmall.copyWith(color: AppColors.textDisabled),
             ),
           ],
         ),
@@ -205,10 +212,9 @@ class _VehicleListingCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final imageUrl =
-        listing.files?.images.isNotEmpty == true
-            ? listing.files!.images.first.fileUrl
-            : null;
+    final imageUrl = listing.files?.images.isNotEmpty == true
+        ? listing.files!.images.first.fileUrl
+        : null;
 
     return GestureDetector(
       onTap: onTap,
@@ -237,9 +243,9 @@ class _VehicleListingCard extends StatelessWidget {
                   ? Image.network(
                       imageUrl,
                       fit: BoxFit.cover,
-                      errorBuilder: (_, __, ___) => _imagePlaceholder(),
+                      errorBuilder: (_, __, ___) => _imagePlaceholder(context),
                     )
-                  : _imagePlaceholder(),
+                  : _imagePlaceholder(context),
             ),
 
             // ── Info ─────────────────────────────────────────────
@@ -268,7 +274,9 @@ class _VehicleListingCard extends StatelessWidget {
                         ),
                         Container(
                           padding: EdgeInsets.symmetric(
-                              horizontal: 8.w, vertical: 3.h),
+                            horizontal: 8.w,
+                            vertical: 3.h,
+                          ),
                           decoration: BoxDecoration(
                             color: AppColors.success.withOpacity(0.1),
                             borderRadius: BorderRadius.circular(6.r),
@@ -302,8 +310,11 @@ class _VehicleListingCard extends StatelessWidget {
                         Expanded(
                           child: Row(
                             children: [
-                              Icon(Icons.location_on_outlined,
-                                  size: 14.w, color: AppColors.grey500),
+                              Icon(
+                                Icons.location_on_outlined,
+                                size: 14.w,
+                                color: AppColors.grey500,
+                              ),
                               SizedBox(width: 4.w),
                               Flexible(
                                 child: Text(
@@ -346,7 +357,7 @@ class _VehicleListingCard extends StatelessWidget {
                           elevation: 0,
                         ),
                         child: Text(
-                          'Know More',
+                          context.l10n.knowMore,
                           style: TextStyle(
                             fontFamily: 'Montserrat',
                             fontSize: 13.sp,
@@ -365,18 +376,21 @@ class _VehicleListingCard extends StatelessWidget {
     );
   }
 
-  Widget _imagePlaceholder() {
+  Widget _imagePlaceholder(BuildContext context) {
     return Container(
       color: AppColors.grey100,
       child: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.directions_car_outlined,
-                size: 40.w, color: AppColors.grey400),
+            Icon(
+              Icons.directions_car_outlined,
+              size: 40.w,
+              color: AppColors.grey400,
+            ),
             SizedBox(height: 4.h),
             Text(
-              'No Image',
+              context.l10n.noImage,
               style: AppFonts.bodySmall.copyWith(color: AppColors.grey400),
             ),
           ],
@@ -419,11 +433,7 @@ class _ShimmerCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // ── Image placeholder ──────────────────────────────────
-          SkeletonBox(
-            width: double.infinity,
-            height: 180.h,
-            radius: 0,
-          ),
+          SkeletonBox(width: double.infinity, height: 180.h, radius: 0),
 
           // ── Info section ──────────────────────────────────────
           Container(
@@ -454,8 +464,7 @@ class _ShimmerCard extends StatelessWidget {
                 ),
                 SizedBox(height: 16.h),
                 // Button placeholder
-                SkeletonBox(
-                    width: double.infinity, height: 40.h, radius: 8),
+                SkeletonBox(width: double.infinity, height: 40.h, radius: 8),
               ],
             ),
           ),

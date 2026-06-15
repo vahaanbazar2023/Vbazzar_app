@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../core/design_system/templates/app_layout.dart';
 import '../../../core/design_system/tokens/app_spacing.dart';
+import '../../../core/extensions/context_extensions.dart';
 import '../../../routes/app_routes.dart';
 import '../controllers/auction_controller.dart';
 
@@ -11,8 +12,8 @@ class AuctionTypeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AppLayout(
-      title: 'Auction Zone',
-      subtitle: 'Choose any one',
+      title: context.l10n.auctionZone,
+      subtitle: context.l10n.chooseAnyOne,
       body: ListView(
         padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
         children: [
@@ -21,18 +22,18 @@ class AuctionTypeScreen extends StatelessWidget {
             tabIndex: 0,
             image: Image.asset('assets/images/png/live_bidding.png'),
             title: AuctionType.label(AuctionType.live),
-            subtitle: 'Auctions currently live — bid now before time runs out',
+            subtitle: context.l10n.liveAuctionSubtitle,
             badgeColor: const Color(0xFFD41F1F),
-            badgeLabel: 'LIVE',
+            badgeLabel: context.l10n.liveBadge,
           ),
 
           _TypeCard(
             tabIndex: 1,
             image: Image.asset('assets/images/png/goverment_inventory.png'),
             title: AuctionType.label('Approved Vehicles'),
-            subtitle: 'Auctions currently live — bid now before time runs out',
+            subtitle: context.l10n.liveAuctionSubtitle,
             badgeColor: const Color(0xFFD41F1F),
-            badgeLabel: 'LIVE',
+            badgeLabel: context.l10n.liveBadge,
           ),
         ],
       ),

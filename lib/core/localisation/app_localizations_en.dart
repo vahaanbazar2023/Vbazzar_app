@@ -2245,4 +2245,743 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get please_fix_all_validation_errors =>
       'Please fix all validation errors before submitting';
+
+  @override
+  String get vehicleDetailsTitle => 'Vehicle Details';
+
+  @override
+  String get modelYear => 'Model Year';
+
+  @override
+  String get keySpecifications => 'Key Specifications';
+
+  @override
+  String get categoryCode => 'Category Code';
+
+  @override
+  String get brandCode => 'Brand Code';
+
+  @override
+  String get bodyType => 'Body Type';
+
+  @override
+  String get tonnage => 'Tonnage';
+
+  @override
+  String get noOfTyres => 'No. of Tyres';
+
+  @override
+  String get kvRating => 'KV Rating';
+
+  @override
+  String get actions => 'Actions';
+
+  @override
+  String get letUsKnow => 'Let Us Know';
+
+  @override
+  String get youreInterested => 'You\'re Interested';
+
+  @override
+  String get interested => 'Interested';
+
+  @override
+  String get becomeMember => 'Become a Member';
+
+  @override
+  String get connectWithOwner => 'Connect with owner';
+
+  @override
+  String get fetchingContact => 'Fetching contact...';
+
+  @override
+  String get callButton => 'Call';
+
+  @override
+  String get connectWithOwnerTitle => 'Connect with Owner';
+
+  @override
+  String get connectWithOwnerSubtitle =>
+      'Subscribe to get the owner\'s contact number and connect directly.';
+
+  @override
+  String get subscribe => 'Subscribe';
+
+  @override
+  String get submitYour => 'Submit Your';
+
+  @override
+  String get bestVehicleOffer => 'Best Vehicle Offer';
+
+  @override
+  String get enterAmount => 'Enter amount';
+
+  @override
+  String get invalidAmount => 'Invalid Amount';
+
+  @override
+  String get pleaseEnterValidOfferAmount =>
+      'Please enter a valid offer amount.';
+
+  @override
+  String get offerTooLow => 'Offer Too Low';
+
+  @override
+  String minimumOfferPercent(String amount) {
+    return 'Minimum offer is 60% of the price: ₹$amount';
+  }
+
+  @override
+  String get offerSent => 'Your offer has been sent.';
+
+  @override
+  String get offerFailed => 'Offer Failed';
+
+  @override
+  String get inspectionRequested => 'Inspection Requested';
+
+  @override
+  String get requestVehicleInspection => 'Request Vehicle Inspection';
+
+  @override
+  String get na => 'N/A';
+
+  @override
+  String get inspectionValuation => 'Inspection & Valuation';
+
+  @override
+  String get professionalVehicleInspection =>
+      'Professional vehicle inspection services';
+
+  @override
+  String get vehicleInspectionHero => 'Vehicle Inspection\n& Valuation';
+
+  @override
+  String get inspectionHeroSubtitle =>
+      'Get professional vehicle inspection and accurate valuation reports';
+
+  @override
+  String get requestInspectionCard => 'Request Inspection';
+
+  @override
+  String get requestInspectionDesc =>
+      'Submit your vehicle for professional inspection and valuation';
+
+  @override
+  String get getStarted => 'Get Started';
+
+  @override
+  String get agentInspection => 'Agent Inspection';
+
+  @override
+  String get agentInspectionDesc =>
+      'Perform detailed on-site vehicle inspection and submit report';
+
+  @override
+  String get startInspection => 'Start Inspection';
+
+  @override
+  String get myInspections => 'My Inspections';
+
+  @override
+  String get trackInspectionRequests =>
+      'Track your vehicle inspection requests and valuations';
+
+  @override
+  String get unableToLoadInspections =>
+      'Unable to load inspections. Please try again.';
+
+  @override
+  String get noInspectionsFound => 'No inspections found';
+
+  @override
+  String get inspectionRequestsAppearHere =>
+      'Your inspection requests will appear here';
+
+  @override
+  String get requestInspection => 'Request Inspection';
+
+  @override
+  String get noMoreInspections => 'No more inspections';
+
+  @override
+  String get insuranceFinance => 'Insurance & Finance';
+
+  @override
+  String get insuranceFinanceSubtitle =>
+      'Get quotes for vehicle insurance and financing';
+
+  @override
+  String get insurance => 'Insurance';
+
+  @override
+  String get finance => 'Finance';
+
+  @override
+  String get enterLastNameOptional => 'Enter last name (optional)';
+
+  @override
+  String get selectStateFirst => 'Select a Region first';
+
+  @override
+  String get saveChanges => 'Save Changes';
+
+  @override
+  String get myWallet => 'My Wallet';
+
+  @override
+  String get transactions => 'Transactions';
+
+  @override
+  String get yourReferralCode => 'Your Referral Code';
+
+  @override
+  String get shareCodeEarnCredits => 'Share this code to earn wallet credits';
+
+  @override
+  String get copyReferralCode => 'Copy Referral Code';
+
+  @override
+  String get referralCodeCopied => 'Referral code copied!';
+
+  @override
+  String get unableToLoadWallet => 'Unable to Load Wallet';
+
+  @override
+  String get pleaseTryAgainLater => 'Please try again later';
+
+  @override
+  String get noTransactionsYet => 'No Transactions Yet';
+
+  @override
+  String get walletTransactionsAppearHere =>
+      'Your wallet transactions will appear here';
+
+  @override
+  String get selectSubscriptionSubtitle =>
+      'Select the subscription plan that suits you best';
+
+  @override
+  String get haveReferralCode => 'Have Any Referral Code ?';
+
+  @override
+  String get enterHere => 'Enter here';
+
+  @override
+  String get proceedPayment => 'Proceed Payment';
+
+  @override
+  String get orPayFromWallet => 'or pay from ';
+
+  @override
+  String get myWalletLink => '\"My wallet\"';
+
+  @override
+  String validity(String label) {
+    return 'Validity : $label';
+  }
+
+  @override
+  String get paymentFailed => 'Payment Failed';
+
+  @override
+  String get paymentCancelled => 'Payment Cancelled';
+
+  @override
+  String get youCancelledPayment => 'You cancelled the payment';
+
+  @override
+  String get buyingLimitUpdated => 'Buying limit updated!';
+
+  @override
+  String get membershipActivated =>
+      'Membership activated! Fetching owner contact...';
+
+  @override
+  String get inspectionSubmitted => 'Inspection request submitted!';
+
+  @override
+  String get vehicleDetailsUnlocked => 'Vehicle Details unlocked!';
+
+  @override
+  String get auctionAccessActivated => 'Auction Access Activated!';
+
+  @override
+  String get subscriptionActivated => 'Subscription Activated!';
+
+  @override
+  String get couldNotRefreshSubscription =>
+      'Could not refresh subscription. Please try again.';
+
+  @override
+  String get pleaseLoginToContinue => 'Please login to continue';
+
+  @override
+  String get yourActivePlans => 'Your active plans';
+
+  @override
+  String activePlanCount(String count) {
+    return '$count Active Plan';
+  }
+
+  @override
+  String get yourCurrentSubscriptions => 'Your current subscriptions';
+
+  @override
+  String get noExpiryDate => 'No expiry date';
+
+  @override
+  String get noActiveSubscriptions => 'No Active Subscriptions';
+
+  @override
+  String get notSubscribedYet => 'You have not subscribed to any plan yet.';
+
+  @override
+  String get serviceProviders => 'Service Providers';
+
+  @override
+  String get findNearbyMechanics => 'Find nearby mechanics and garages';
+
+  @override
+  String providersFound(String count) {
+    return '$count providers found';
+  }
+
+  @override
+  String get findingShopsNearYou => 'Finding shops near you...';
+
+  @override
+  String get subscribeToCAll => 'Subscribe to Call';
+
+  @override
+  String get noMechanicsFound => 'No Mechanics Found';
+
+  @override
+  String get noServiceProvidersFound =>
+      'No service providers found near your location';
+
+  @override
+  String get tryAgain => 'Try Again';
+
+  @override
+  String get noResultsFound => 'No results found';
+
+  @override
+  String get tryDifferentSearch => 'Try a different search term';
+
+  @override
+  String get couldNotLaunchDialer => 'Could not launch phone dialer';
+
+  @override
+  String get loadMore => 'Load More';
+
+  @override
+  String get sparesTitle => 'Spares';
+
+  @override
+  String get findSparePartsShops => 'Find spare parts and nearby shops';
+
+  @override
+  String get myBookings => 'My Bookings';
+
+  @override
+  String get yourSparePartsOrders => 'Your spare parts orders';
+
+  @override
+  String get noBookingsYet => 'No bookings yet';
+
+  @override
+  String get spareOrdersAppearHere =>
+      'Your spare parts orders will appear here';
+
+  @override
+  String orderNumber(String id) {
+    return 'Order #$id';
+  }
+
+  @override
+  String get spareDetail => 'Spare Detail';
+
+  @override
+  String get orderDetail => 'Order Detail';
+
+  @override
+  String get productDetails => 'Product details';
+
+  @override
+  String get rating => 'Rating';
+
+  @override
+  String get partId => 'Part ID';
+
+  @override
+  String get spareName => 'Spare Name';
+
+  @override
+  String get suitsFor => 'Suits For';
+
+  @override
+  String get noSparePartData => 'No spare part data';
+
+  @override
+  String get noDescriptionAvailable =>
+      'No description available for this spare part.';
+
+  @override
+  String get showInterest => 'Show Interest';
+
+  @override
+  String orderStatus(String status) {
+    return 'Order Status: $status';
+  }
+
+  @override
+  String get constructionEquipmentShops => 'Construction Equipment Shops';
+
+  @override
+  String get commercialVehicleShops => 'Commercial Vehicle Shops';
+
+  @override
+  String get shopsNearLocation => 'Shops near your location';
+
+  @override
+  String get noShopsFound => 'No shops found';
+
+  @override
+  String get enableLocation => 'Enable Location';
+
+  @override
+  String get chooseByCategory => 'Choose By Category';
+
+  @override
+  String get exploreServicesYourVehicle =>
+      'Explore the services that your vehicle need.';
+
+  @override
+  String get bidDetails => 'Bid Details';
+
+  @override
+  String get vehicleRef => 'Vehicle Ref';
+
+  @override
+  String get endTime => 'End Time';
+
+  @override
+  String get currentHighest => 'Current Highest';
+
+  @override
+  String get placedAt => 'Placed At';
+
+  @override
+  String get makeAndModel => 'Make & Model';
+
+  @override
+  String get mfgYear => 'Mfg Year';
+
+  @override
+  String get enterBidHint => 'Enter bid';
+
+  @override
+  String get invalidBidAmount => 'Please enter a valid bid amount.';
+
+  @override
+  String get regNumber => 'Reg. Number';
+
+  @override
+  String get auctionClosed => 'Auction Closed';
+
+  @override
+  String get winDetails => 'Win Details';
+
+  @override
+  String get winningBidLabel => 'Winning Bid:';
+
+  @override
+  String get bidApprovedAt => 'Bid Approved At';
+
+  @override
+  String get paymentStatus => 'Payment Status';
+
+  @override
+  String get winningLetter => 'Winning Letter';
+
+  @override
+  String get sentStatus => 'Sent';
+
+  @override
+  String get pendingStatus => 'Pending';
+
+  @override
+  String get auctionEnded => 'Auction Ended';
+
+  @override
+  String get viewDetails => 'View Details';
+
+  @override
+  String get approvedVehicles => 'Approved Vehicles';
+
+  @override
+  String get pullDownToRefresh => 'Pull down to refresh';
+
+  @override
+  String get approvedVehiclesAvailable => 'Approved vehicles available';
+
+  @override
+  String get noVehiclesAvailable => 'No vehicles available';
+
+  @override
+  String get noImage => 'No Image';
+
+  @override
+  String get knowMore => 'Know More';
+
+  @override
+  String get auctionZone => 'Auction Zone';
+
+  @override
+  String get chooseAnyOne => 'Choose any one';
+
+  @override
+  String get liveAuctionSubtitle =>
+      'Auctions currently live — bid now before time runs out';
+
+  @override
+  String get liveBadge => 'LIVE';
+
+  @override
+  String get auctionKnowCondition => 'Know the real condition of your vehicle.';
+
+  @override
+  String get liveTab => 'Live';
+
+  @override
+  String get closingTodayTab => 'Closing Today';
+
+  @override
+  String get upcomingTab => 'Upcoming';
+
+  @override
+  String get noAuctionsAvailable => 'No auctions available';
+
+  @override
+  String get tapToBid => 'Tap to Bid';
+
+  @override
+  String get auctionIdLabel => 'AUCTION ID';
+
+  @override
+  String get lot => 'LOT';
+
+  @override
+  String get endDate => 'End Date';
+
+  @override
+  String get liveAuctions => 'Live Auctions';
+
+  @override
+  String get searchVehiclesHint => 'Search vehicles';
+
+  @override
+  String get bidStartPriceLabel => 'Bid Start Price:';
+
+  @override
+  String get viewMoreDetails => 'View more details';
+
+  @override
+  String get registrationRto => 'Registration RTO';
+
+  @override
+  String get yourBidAmount => 'Your Bid Amount';
+
+  @override
+  String get minBid => 'Min. Bid';
+
+  @override
+  String get bidStartPrice => 'Bid Start Price';
+
+  @override
+  String get availableBuyingLimit => 'Available Buying Limit';
+
+  @override
+  String get placeBidTitle => 'Place Bid';
+
+  @override
+  String get placeBid => 'Place Bid';
+
+  @override
+  String get enterValidBidAmount => 'Enter a valid bid amount';
+
+  @override
+  String get bidMultipleOf100 => 'Bid amount must be a multiple of ₹100';
+
+  @override
+  String get bidPlacedSuccessfully => 'Bid placed successfully!';
+
+  @override
+  String get repoDate => 'Repo Date';
+
+  @override
+  String get transactionFees => 'Transaction Fees';
+
+  @override
+  String get rcStatus => 'RC Status';
+
+  @override
+  String get parkingCharges => 'Parking Charges';
+
+  @override
+  String get yardDetails => 'Yard Details';
+
+  @override
+  String get contactDetails => 'Contact Details';
+
+  @override
+  String get contactName => 'Name';
+
+  @override
+  String get mobileNo => 'Mobile No.';
+
+  @override
+  String get filterAuctions => 'Filter Auctions';
+
+  @override
+  String get clearFilters => 'Clear';
+
+  @override
+  String get resetFilters => 'Reset Filters';
+
+  @override
+  String get applyFilters => 'Apply Filters';
+
+  @override
+  String get selectVehicleTypeFilter => 'Select Vehicle Type';
+
+  @override
+  String get selectRegion => 'Select Region';
+
+  @override
+  String get searchState => 'Search state...';
+
+  @override
+  String get noCategoriesAvailable => 'No categories available';
+
+  @override
+  String vehiclesAvailableCount(int count) {
+    return '$count vehicles available';
+  }
+
+  @override
+  String get noVehiclesYet => 'No vehicles yet';
+
+  @override
+  String get myBids => 'My Bids';
+
+  @override
+  String get yourAuctionBids => 'Your auction bids';
+
+  @override
+  String get noBidsYet =>
+      'No bids placed yet.\nStart bidding in live auctions!';
+
+  @override
+  String get closedBadge => 'CLOSED';
+
+  @override
+  String get highestBid => 'Highest Bid:';
+
+  @override
+  String get auctionClosedButton => 'Auction Closed';
+
+  @override
+  String get myWins => 'My Wins';
+
+  @override
+  String get yourWonAuctions => 'Your won auctions';
+
+  @override
+  String get noWinsYet => 'No wins yet.\nStart bidding to win auctions!';
+
+  @override
+  String get wonBadge => 'WON';
+
+  @override
+  String get paymentChip => 'Payment';
+
+  @override
+  String get letterChip => 'Letter';
+
+  @override
+  String get account => 'Account';
+
+  @override
+  String get manageProfile => 'Manage Profile';
+
+  @override
+  String get passwordAndSecurity => 'Password & Security';
+
+  @override
+  String get language => 'Language';
+
+  @override
+  String get auctions => 'Auctions';
+
+  @override
+  String get initiateRefund => 'Initiate Refund';
+
+  @override
+  String get myVehicles => 'My Vehicles';
+
+  @override
+  String get mySubscribedVehicles => 'My Subscribed Vehicles';
+
+  @override
+  String get inspectionAndValuation => 'Inspection & Valuation';
+
+  @override
+  String get spareFms => 'Spare & FMS';
+
+  @override
+  String get areYouSureLogout => 'Are you sure you want to logout?';
+
+  @override
+  String get userId => 'User ID';
+
+  @override
+  String get accountHolderName => 'Account Holder Name *';
+
+  @override
+  String get enterAccountHolderName => 'Enter account holder name';
+
+  @override
+  String get accountNumber => 'Account Number *';
+
+  @override
+  String get enterAccountNumber => 'Enter account number';
+
+  @override
+  String get bankName => 'Bank Name *';
+
+  @override
+  String get enterBankName => 'Enter bank name';
+
+  @override
+  String get branchName => 'Branch Name *';
+
+  @override
+  String get enterBranchName => 'Enter branch name';
+
+  @override
+  String get ifscCode => 'IFSC Code *';
+
+  @override
+  String get enterIfscCode => 'Enter IFSC code';
+
+  @override
+  String get refundType => 'Refund Type *';
+
+  @override
+  String get enterRefundType => 'Enter refund type';
+
+  @override
+  String get initiateRefundTitle => 'Initiate Refund';
 }

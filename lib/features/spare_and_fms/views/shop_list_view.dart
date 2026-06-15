@@ -6,6 +6,7 @@ import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_sizes.dart';
 import '../../../core/design_system/templates/app_layout.dart';
 import '../../../core/design_system/tokens/app_spacing.dart';
+import '../../../core/extensions/context_extensions.dart';
 import '../../../theme/app_fonts.dart';
 import '../controllers/spare_and_fms_controller.dart';
 import '../widgets/shop_card.dart';
@@ -29,12 +30,12 @@ class ShopListView extends GetView<SpareAndFmsController> {
     });
 
     final title = category == 'CE'
-        ? 'Construction Equipment Shops'
-        : 'Commercial Vehicle Shops';
+        ? context.l10n.constructionEquipmentShops
+        : context.l10n.commercialVehicleShops;
 
     return AppLayout(
       title: title,
-      subtitle: 'Shops near your location',
+      subtitle: context.l10n.shopsNearLocation,
       showBack: true,
       actions: [
         GestureDetector(
@@ -68,7 +69,7 @@ class ShopListView extends GetView<SpareAndFmsController> {
                 ),
                 SizedBox(height: AppSpacing.md),
                 Text(
-                  'Finding shops near you...',
+                  context.l10n.findingShopsNearYou,
                   style: AppFonts.bodyMedium.copyWith(color: AppColors.grey600),
                 ),
               ],
@@ -113,9 +114,11 @@ class ShopListView extends GetView<SpareAndFmsController> {
           children: [
             Icon(Icons.store_outlined, size: 64.r, color: AppColors.grey400),
             SizedBox(height: AppSpacing.md),
-            Text(
-              'No shops found',
-              style: AppFonts.titleMedium.copyWith(color: AppColors.grey600),
+            Builder(
+              builder: (context) => Text(
+                context.l10n.noShopsFound,
+                style: AppFonts.titleMedium.copyWith(color: AppColors.grey600),
+              ),
             ),
             SizedBox(height: AppSpacing.xs),
             Text(
@@ -124,15 +127,17 @@ class ShopListView extends GetView<SpareAndFmsController> {
               style: AppFonts.bodySmall.copyWith(color: AppColors.grey500),
             ),
             SizedBox(height: AppSpacing.lg),
-            ElevatedButton.icon(
-              onPressed: () => controller.enableLocationFromUI(),
-              icon: const Icon(Icons.location_on),
-              label: const Text('Enable Location'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primary,
-                foregroundColor: AppColors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(AppSizes.radiusMd),
+            Builder(
+              builder: (context) => ElevatedButton.icon(
+                onPressed: () => controller.enableLocationFromUI(),
+                icon: const Icon(Icons.location_on),
+                label: Text(context.l10n.enableLocation),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.primary,
+                  foregroundColor: AppColors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(AppSizes.radiusMd),
+                  ),
                 ),
               ),
             ),

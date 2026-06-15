@@ -7,6 +7,7 @@ import '../../../core/design_system/design_system.dart';
 import '../../../core/design_system/templates/app_layout.dart';
 import '../../../core/design_system/tokens/app_radius.dart';
 import '../../../core/design_system/tokens/app_spacing.dart';
+import '../../../core/extensions/context_extensions.dart';
 import '../controllers/my_bids_wins_controller.dart';
 import '../models/my_bids_wins_models.dart';
 
@@ -34,8 +35,8 @@ class _MyBidDetailViewState extends State<MyBidDetailView> {
     final isClosed = !item.isAuctionActive;
 
     return AppLayout(
-      title: 'Bid Details',
-      subtitle: 'Auction ID: ${item.auctionId}',
+      title: context.l10n.bidDetails,
+      subtitle: '${context.l10n.auction_id}: ${item.auctionId}',
       showBack: true,
       body: Column(
         children: [
@@ -93,7 +94,7 @@ class _MyBidDetailViewState extends State<MyBidDetailView> {
                         Expanded(
                           child: _InfoBox(
                             icon: Icons.gavel_rounded,
-                            label: 'Auction ID',
+                            label: context.l10n.auction_id,
                             value: item.auctionId,
                           ),
                         ),
@@ -101,7 +102,7 @@ class _MyBidDetailViewState extends State<MyBidDetailView> {
                         Expanded(
                           child: _InfoBox(
                             icon: Icons.description_outlined,
-                            label: 'Vehicle Ref',
+                            label: context.l10n.vehicleRef,
                             value: v.sellerReference.isNotEmpty
                                 ? v.sellerReference
                                 : v.vehicleId,
@@ -118,7 +119,7 @@ class _MyBidDetailViewState extends State<MyBidDetailView> {
                         Expanded(
                           child: _InfoBox(
                             icon: Icons.badge_outlined,
-                            label: 'Reg. Number',
+                            label: context.l10n.regNumber,
                             value: v.registrationNo.isNotEmpty
                                 ? v.registrationNo
                                 : 'N/A',
@@ -128,7 +129,7 @@ class _MyBidDetailViewState extends State<MyBidDetailView> {
                         Expanded(
                           child: _InfoBox(
                             icon: Icons.calendar_today_outlined,
-                            label: 'End Time',
+                            label: context.l10n.endTime,
                             value: item.auctionEndTime.isNotEmpty
                                 ? item.auctionEndTime
                                 : 'N/A',
@@ -143,28 +144,28 @@ class _MyBidDetailViewState extends State<MyBidDetailView> {
                   _SectionCard(
                     children: [
                       _BidRow(
-                        label: 'Your Bid',
+                        label: context.l10n.your_bid,
                         value: '₹ ${_fmt(item.userBidAmount)}',
                       ),
                       _BidRow(
-                        label: 'Current Highest',
+                        label: context.l10n.currentHighest,
                         value: '₹ ${_fmt(item.currentHighestBid)}',
                       ),
                       _BidRow(
-                        label: 'Bids Left',
+                        label: context.l10n.bids_left,
                         value: v.bidsLeft.toString().padLeft(2, '0'),
                       ),
                       _BidRow(
-                        label: 'Bids Received',
+                        label: context.l10n.bids_received,
                         value: v.bidsReceived.toString().padLeft(2, '0'),
                       ),
                       _BidRow(
-                        label: 'Status',
+                        label: context.l10n.status,
                         value: _capitalize(item.bidStatus),
                         valueColor: _statusColor(item.bidStatus),
                       ),
                       _BidRow(
-                        label: 'Placed At',
+                        label: context.l10n.placedAt,
                         value: item.bidPlacedAt.isNotEmpty
                             ? item.bidPlacedAt
                             : 'N/A',
@@ -211,7 +212,7 @@ class _MyBidDetailViewState extends State<MyBidDetailView> {
                       borderRadius: BorderRadius.circular(AppRadius.full),
                     ),
                     child: Text(
-                      'Auction Closed',
+                      context.l10n.auctionClosed,
                       style: TextStyle(
                         fontFamily: 'Montserrat',
                         fontWeight: FontWeight.w600,
@@ -229,7 +230,7 @@ class _MyBidDetailViewState extends State<MyBidDetailView> {
                       Obx(() {
                         final ctrl = Get.find<MyBidsController>();
                         return GradientButton.filled(
-                          text: 'Bid Now',
+                          text: context.l10n.bid_now,
                           isLoading: ctrl.isPlacingBid.value,
                           onPressed: ctrl.isPlacingBid.value
                               ? null
@@ -248,8 +249,8 @@ class _MyBidDetailViewState extends State<MyBidDetailView> {
     final amount = int.tryParse(_bidCtrl.text.replaceAll(',', '').trim()) ?? 0;
     if (amount <= 0) {
       Get.snackbar(
-        'Invalid Amount',
-        'Please enter a valid bid amount.',
+        context.l10n.invalidAmount,
+        context.l10n.invalidBidAmount,
         snackPosition: SnackPosition.TOP,
       );
       return;
@@ -322,7 +323,7 @@ class _BidAmountField extends StatelessWidget {
             fontWeight: FontWeight.w700,
             color: AppColors.primary,
           ),
-          hintText: 'Enter bid',
+          hintText: context.l10n.enterBidHint,
           hintStyle: TextStyle(
             fontFamily: 'Plus Jakarta Sans',
             fontSize: 13.sp,
@@ -548,7 +549,7 @@ class _VehicleAccordionState extends State<_VehicleAccordion> {
                   SizedBox(width: 8.w),
                   Expanded(
                     child: Text(
-                      'Vehicle Details',
+                      context.l10n.vehicleDetailsTitle,
                       style: TextStyle(
                         fontFamily: 'Montserrat',
                         fontSize: 14.sp,
@@ -577,67 +578,67 @@ class _VehicleAccordionState extends State<_VehicleAccordion> {
                 Divider(height: 1, thickness: 1, color: AppColors.grey100),
                 _DR(
                   Icons.directions_car_outlined,
-                  'Make & Model',
+                  context.l10n.makeAndModel,
                   '${v.make} ${v.model}',
                 ),
                 _DR(
                   Icons.build_circle_outlined,
-                  'Variant',
+                  context.l10n.variant,
                   v.variant.isNotEmpty ? v.variant : 'N/A',
                 ),
                 _DR(
                   Icons.date_range_outlined,
-                  'Mfg Year',
+                  context.l10n.mfgYear,
                   v.year > 0 ? v.year.toString() : 'N/A',
                 ),
                 _DR(
                   Icons.color_lens_outlined,
-                  'Colour',
+                  context.l10n.colour,
                   v.colour.isNotEmpty ? v.colour : 'N/A',
                 ),
                 _DR(
                   Icons.speed_outlined,
-                  'Kilometers',
+                  context.l10n.kilometers,
                   v.kilometers > 0 ? '${v.kilometers} km' : 'N/A',
                 ),
                 _DR(
                   Icons.local_gas_station_outlined,
-                  'Fuel Type',
+                  context.l10n.fuelType,
                   v.fuelType.isNotEmpty ? v.fuelType : 'N/A',
                 ),
                 _DR(
                   Icons.settings_outlined,
-                  'Transmission',
+                  context.l10n.transmission,
                   v.transmission.isNotEmpty ? v.transmission : 'N/A',
                 ),
                 _DR(
                   Icons.person_outline_rounded,
-                  'Owner',
+                  context.l10n.owner,
                   v.owner.isNotEmpty ? v.owner : 'N/A',
                 ),
                 _DR(
                   Icons.confirmation_number_outlined,
-                  'Chassis No',
+                  context.l10n.chassisNumber,
                   v.chassisNo.isNotEmpty ? v.chassisNo : 'N/A',
                 ),
                 _DR(
                   Icons.memory_outlined,
-                  'Engine No',
+                  context.l10n.engineNumber,
                   v.engineNo.isNotEmpty ? v.engineNo : 'N/A',
                 ),
                 _DR(
                   Icons.warehouse_outlined,
-                  'Yard Name',
+                  context.l10n.yard_name,
                   v.yardName.isNotEmpty ? v.yardName : 'N/A',
                 ),
                 _DR(
                   Icons.location_city_outlined,
-                  'Yard Location',
+                  context.l10n.yard_location,
                   v.yardLocation.isNotEmpty ? v.yardLocation : 'N/A',
                 ),
                 _DR(
                   Icons.notes_outlined,
-                  'Remarks',
+                  context.l10n.remarks,
                   v.remarks.isNotEmpty ? v.remarks : 'N/A',
                   isLast: true,
                 ),

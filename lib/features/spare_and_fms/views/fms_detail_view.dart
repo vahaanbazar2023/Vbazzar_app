@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/design_system/design_system.dart';
 import '../../../core/design_system/templates/app_layout.dart';
+import '../../../core/extensions/context_extensions.dart';
 import '../controllers/spare_and_fms_controller.dart';
 
 /// Spare part detail view — mirrors the auction vehicle detail layout:
@@ -24,17 +25,19 @@ class FmsDetailView extends GetView<SpareAndFmsController> {
 
     if (sparePart == null) {
       return AppLayout(
-        title: 'Spare Detail',
+        title: context.l10n.spareDetail,
         showBack: true,
-        body: const Center(child: Text('No spare part data')),
+        body: Center(child: Text(context.l10n.noSparePartData)),
       );
     }
 
     final rating = double.tryParse(sparePart.starRating ?? '0') ?? 0;
 
     return AppLayout(
-      title: isFromOrders ? 'Order Detail' : 'Spare Part',
-      subtitle: isFromOrders ? 'Order #$orderId' : 'Product details',
+      title: isFromOrders ? context.l10n.orderDetail : context.l10n.spareDetail,
+      subtitle: isFromOrders
+          ? context.l10n.orderNumber(orderId)
+          : context.l10n.productDetails,
       showBack: true,
       body: Column(
         children: [
@@ -110,7 +113,7 @@ class FmsDetailView extends GetView<SpareAndFmsController> {
                         Expanded(
                           child: _InfoBox(
                             icon: Icons.price_change_outlined,
-                            label: 'Price',
+                            label: context.l10n.price,
                             value: '₹${sparePart.price}',
                           ),
                         ),
@@ -118,7 +121,7 @@ class FmsDetailView extends GetView<SpareAndFmsController> {
                         Expanded(
                           child: _InfoBox(
                             icon: Icons.star_outline_rounded,
-                            label: 'Rating',
+                            label: context.l10n.rating,
                             value: rating > 0 ? '$rating / 5.0' : 'N/A',
                           ),
                         ),
@@ -133,7 +136,7 @@ class FmsDetailView extends GetView<SpareAndFmsController> {
                         Expanded(
                           child: _InfoBox(
                             icon: Icons.category_outlined,
-                            label: 'Status',
+                            label: context.l10n.status,
                             value: (sparePart.status as String).isNotEmpty
                                 ? sparePart.status as String
                                 : 'N/A',
@@ -143,7 +146,7 @@ class FmsDetailView extends GetView<SpareAndFmsController> {
                         Expanded(
                           child: _InfoBox(
                             icon: Icons.info_outline,
-                            label: 'Part ID',
+                            label: context.l10n.partId,
                             value: (sparePart.sparePartId as String).isNotEmpty
                                 ? sparePart.sparePartId as String
                                 : 'N/A',
@@ -158,20 +161,23 @@ class FmsDetailView extends GetView<SpareAndFmsController> {
                   _SectionCard(
                     children: [
                       _InfoRow(
-                        label: 'Spare Name',
+                        label: context.l10n.spareName,
                         value: sparePart.spareName as String,
                       ),
-                      _InfoRow(label: 'Price', value: '₹${sparePart.price}'),
                       _InfoRow(
-                        label: 'Rating',
+                        label: context.l10n.price,
+                        value: '₹${sparePart.price}',
+                      ),
+                      _InfoRow(
+                        label: context.l10n.rating,
                         value: rating > 0 ? '⭐ $rating' : 'N/A',
                       ),
                       _InfoRow(
-                        label: 'Status',
+                        label: context.l10n.status,
                         value: (sparePart.status as String).toUpperCase(),
                       ),
                       _InfoRow(
-                        label: 'Suits For',
+                        label: context.l10n.suitsFor,
                         value: (sparePart.suitsFor as String).isNotEmpty
                             ? sparePart.suitsFor as String
                             : 'N/A',
@@ -221,7 +227,7 @@ class FmsDetailView extends GetView<SpareAndFmsController> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Text(
-                          'Price',
+                          context.l10n.price,
                           style: TextStyle(
                             fontFamily: 'Plus Jakarta Sans',
                             fontSize: 11.sp,
@@ -244,7 +250,7 @@ class FmsDetailView extends GetView<SpareAndFmsController> {
                   Expanded(
                     child: Obx(
                       () => GradientButton.filled(
-                        text: 'Show Interest',
+                        text: context.l10n.showInterest,
                         isLoading: controller.isRecordingInterest.value,
                         onPressed: controller.isRecordingInterest.value
                             ? null
@@ -378,7 +384,7 @@ class _OrderStatusBanner extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Order Status: ${status.toUpperCase()}',
+                  context.l10n.orderStatus(status.toUpperCase()),
                   style: TextStyle(
                     fontFamily: 'Montserrat',
                     fontSize: 13.sp,
@@ -388,7 +394,7 @@ class _OrderStatusBanner extends StatelessWidget {
                 ),
                 SizedBox(height: 2.h),
                 Text(
-                  'Order #$orderId',
+                  context.l10n.orderNumber(orderId),
                   style: TextStyle(
                     fontFamily: 'Plus Jakarta Sans',
                     fontSize: 11.sp,
@@ -604,7 +610,7 @@ class _DescriptionAccordionState extends State<_DescriptionAccordion> {
                   SizedBox(width: 8.w),
                   Expanded(
                     child: Text(
-                      'Description',
+                      context.l10n.description,
                       style: TextStyle(
                         fontFamily: 'Montserrat',
                         fontSize: 14.sp,
@@ -640,7 +646,7 @@ class _DescriptionAccordionState extends State<_DescriptionAccordion> {
               child: Text(
                 widget.description.isNotEmpty
                     ? widget.description
-                    : 'No description available for this spare part.',
+                    : context.l10n.noDescriptionAvailable,
                 style: TextStyle(
                   fontFamily: 'Plus Jakarta Sans',
                   fontSize: 13.sp,

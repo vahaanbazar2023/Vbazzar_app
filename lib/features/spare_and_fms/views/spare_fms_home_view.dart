@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 
 import '../../../core/constants/app_colors.dart';
 import '../../../core/design_system/templates/app_layout.dart';
+import '../../../core/extensions/context_extensions.dart';
 import '../../../theme/app_fonts.dart';
 import '../controllers/spare_and_fms_controller.dart';
 import 'fms_tab.dart';
@@ -18,8 +19,8 @@ class SpareFmsHomeView extends GetView<SpareAndFmsController> {
   @override
   Widget build(BuildContext context) {
     return AppLayout(
-      title: 'Spares',
-      subtitle: 'Find spare parts and nearby shops',
+      title: context.l10n.sparesTitle,
+      subtitle: context.l10n.findSparePartsShops,
       showBack: true,
       body: Column(
         children: [
@@ -27,10 +28,7 @@ class SpareFmsHomeView extends GetView<SpareAndFmsController> {
           Expanded(
             child: TabBarView(
               controller: controller.tabController,
-              children: const [
-                FmsTab(),
-                SpareSupportTab(),
-              ],
+              children: const [FmsTab(), SpareSupportTab()],
             ),
           ),
         ],
@@ -58,14 +56,10 @@ class SpareFmsHomeView extends GetView<SpareAndFmsController> {
           fontWeight: FontWeight.w600,
           fontSize: 13.sp,
         ),
-        unselectedLabelStyle: AppFonts.labelMedium.copyWith(
-          fontSize: 13.sp,
-        ),
+        unselectedLabelStyle: AppFonts.labelMedium.copyWith(fontSize: 13.sp),
         dividerColor: Colors.transparent,
         indicatorPadding: EdgeInsets.all(3.r),
-        tabs: SpareAndFmsController.tabs
-            .map((t) => Tab(text: t))
-            .toList(),
+        tabs: SpareAndFmsController.tabs.map((t) => Tab(text: t)).toList(),
       ),
     );
   }

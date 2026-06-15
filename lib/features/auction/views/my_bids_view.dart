@@ -7,6 +7,7 @@ import '../../../core/design_system/design_system.dart';
 import '../../../core/design_system/templates/app_layout.dart';
 import '../../../core/design_system/tokens/app_radius.dart';
 import '../../../core/design_system/tokens/app_spacing.dart';
+import '../../../core/extensions/context_extensions.dart';
 import '../controllers/my_bids_wins_controller.dart';
 import '../models/my_bids_wins_models.dart';
 import 'my_bid_detail_view.dart';
@@ -17,8 +18,8 @@ class MyBidsView extends GetView<MyBidsController> {
   @override
   Widget build(BuildContext context) {
     return AppLayout(
-      title: 'My Bids',
-      subtitle: 'Your auction bids',
+      title: context.l10n.myBids,
+      subtitle: context.l10n.yourAuctionBids,
       showBack: true,
       body: Obx(() {
         if (controller.isLoading.value) {
@@ -33,9 +34,9 @@ class MyBidsView extends GetView<MyBidsController> {
           );
         }
         if (controller.bids.isEmpty) {
-          return const _EmptyState(
+          return _EmptyState(
             icon: Icons.gavel_outlined,
-            message: 'No bids placed yet.\nStart bidding in live auctions!',
+            message: context.l10n.noBidsYet,
           );
         }
         return RefreshIndicator(
@@ -123,7 +124,7 @@ class _BidCard extends StatelessWidget {
                       borderRadius: BorderRadius.circular(20.r),
                     ),
                     child: Text(
-                      'CLOSED',
+                      context.l10n.closedBadge,
                       style: TextStyle(
                         fontFamily: 'Montserrat',
                         fontSize: 9.sp,
@@ -177,13 +178,13 @@ class _BidCard extends StatelessWidget {
                       Row(
                         children: [
                           _BidInfoChip(
-                            label: 'Your Bid',
+                            label: context.l10n.your_bid,
                             value: '₹ ${_fmt(item.userBidAmount)}',
                             highlight: isWinning,
                           ),
                           SizedBox(width: AppSpacing.lg),
                           _BidInfoChip(
-                            label: 'Status',
+                            label: context.l10n.status,
                             value: _capitalize(item.bidStatus),
                             statusColor: _statusColor(item.bidStatus),
                           ),
@@ -193,7 +194,7 @@ class _BidCard extends StatelessWidget {
                       Row(
                         children: [
                           Text(
-                            'Highest Bid:',
+                            context.l10n.highestBid,
                             style: TextStyle(
                               fontFamily: 'Montserrat',
                               fontSize: 14.sp,
@@ -237,7 +238,7 @@ class _BidCard extends StatelessWidget {
                             borderRadius: BorderRadius.circular(AppRadius.full),
                           ),
                           child: Text(
-                            'Auction Closed',
+                            context.l10n.auctionClosedButton,
                             style: TextStyle(
                               fontFamily: 'Montserrat',
                               fontWeight: FontWeight.w600,
@@ -249,14 +250,14 @@ class _BidCard extends StatelessWidget {
                       : Column(
                           children: [
                             GradientButton.filled(
-                              text: 'Bid Now',
+                              text: context.l10n.bid_now,
                               width: double.infinity,
                               onPressed: () =>
                                   Get.to(() => MyBidDetailView(item: item)),
                             ),
                             SizedBox(height: AppSpacing.sm),
                             GradientButton.outlined(
-                              text: 'View Details',
+                              text: context.l10n.viewDetails,
                               backgroundColor: Colors.transparent,
                               width: double.infinity,
                               onPressed: () =>
@@ -423,7 +424,7 @@ class _ErrorState extends StatelessWidget {
               ),
             ),
             SizedBox(height: 16.h),
-            GradientButton.filled(text: 'Retry', onPressed: onRetry),
+            GradientButton.filled(text: context.l10n.retry, onPressed: onRetry),
           ],
         ),
       ),

@@ -6,6 +6,7 @@ import '../../../core/design_system/design_system.dart';
 import '../../../core/design_system/templates/app_layout.dart';
 import '../../../core/design_system/tokens/app_radius.dart';
 import '../../../core/design_system/tokens/app_spacing.dart';
+import '../../../core/extensions/context_extensions.dart';
 import '../models/my_bids_wins_models.dart';
 
 class MyWinDetailView extends StatelessWidget {
@@ -17,8 +18,8 @@ class MyWinDetailView extends StatelessWidget {
     final v = item.vehicleDetails;
 
     return AppLayout(
-      title: 'Win Details',
-      subtitle: 'Auction ID: ${item.auctionId}',
+      title: context.l10n.winDetails,
+      subtitle: '${context.l10n.auction_id}: ${item.auctionId}',
       showBack: true,
       body: Column(
         children: [
@@ -74,7 +75,7 @@ class MyWinDetailView extends StatelessWidget {
                         Expanded(
                           child: _InfoBox(
                             icon: Icons.gavel_rounded,
-                            label: 'Auction ID',
+                            label: context.l10n.auction_id,
                             value: item.auctionId,
                           ),
                         ),
@@ -82,7 +83,7 @@ class MyWinDetailView extends StatelessWidget {
                         Expanded(
                           child: _InfoBox(
                             icon: Icons.description_outlined,
-                            label: 'Vehicle Ref',
+                            label: context.l10n.vehicleRef,
                             value: v.sellerReference.isNotEmpty
                                 ? v.sellerReference
                                 : v.vehicleId,
@@ -99,7 +100,7 @@ class MyWinDetailView extends StatelessWidget {
                         Expanded(
                           child: _InfoBox(
                             icon: Icons.badge_outlined,
-                            label: 'Reg. Number',
+                            label: context.l10n.regNumber,
                             value: v.registrationNo.isNotEmpty
                                 ? v.registrationNo
                                 : 'N/A',
@@ -109,7 +110,7 @@ class MyWinDetailView extends StatelessWidget {
                         Expanded(
                           child: _InfoBox(
                             icon: Icons.check_circle_outline_rounded,
-                            label: 'Payment',
+                            label: context.l10n.paymentStatus,
                             value: item.userAuctionStatus,
                           ),
                         ),
@@ -122,17 +123,17 @@ class MyWinDetailView extends StatelessWidget {
                   _SectionCard(
                     children: [
                       _Row(
-                        label: 'Winning Bid',
+                        label: context.l10n.winningBidLabel,
                         value: '₹ ${_fmt(item.winningBidAmount)}',
                       ),
                       _Row(
-                        label: 'Bid Approved At',
+                        label: context.l10n.bidApprovedAt,
                         value: item.bidApprovedAt.isNotEmpty
                             ? item.bidApprovedAt
                             : 'N/A',
                       ),
                       _Row(
-                        label: 'Payment Status',
+                        label: context.l10n.paymentStatus,
                         value: item.paymentStatus.isNotEmpty
                             ? item.paymentStatus
                             : 'N/A',
@@ -141,16 +142,16 @@ class MyWinDetailView extends StatelessWidget {
                             : AppColors.warning,
                       ),
                       _Row(
-                        label: 'Winning Letter',
+                        label: context.l10n.winningLetter,
                         value: item.winningLetterStatus == 'sent'
-                            ? 'Sent'
-                            : 'Pending',
+                            ? context.l10n.sentStatus
+                            : context.l10n.pendingStatus,
                         valueColor: item.winningLetterStatus == 'sent'
                             ? AppColors.success
                             : AppColors.grey600,
                       ),
                       _Row(
-                        label: 'Auction Ended',
+                        label: context.l10n.auctionEnded,
                         value: item.auctionEndTime.isNotEmpty
                             ? item.auctionEndTime
                             : 'N/A',
@@ -195,7 +196,7 @@ class MyWinDetailView extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
-                        'Winning Bid',
+                        context.l10n.winningBidLabel,
                         style: TextStyle(
                           fontFamily: 'Plus Jakarta Sans',
                           fontSize: 11.sp,
@@ -447,7 +448,7 @@ class _VehicleAccordionState extends State<_VehicleAccordion> {
                   SizedBox(width: 8.w),
                   Expanded(
                     child: Text(
-                      'Vehicle Details',
+                      context.l10n.vehicleDetailsTitle,
                       style: TextStyle(
                         fontFamily: 'Montserrat',
                         fontSize: 14.sp,
@@ -476,67 +477,67 @@ class _VehicleAccordionState extends State<_VehicleAccordion> {
                 Divider(height: 1, thickness: 1, color: AppColors.grey100),
                 _DR(
                   Icons.directions_car_outlined,
-                  'Make & Model',
+                  context.l10n.makeAndModel,
                   '${v.make} ${v.model}',
                 ),
                 _DR(
                   Icons.build_circle_outlined,
-                  'Variant',
+                  context.l10n.variant,
                   v.variant.isNotEmpty ? v.variant : 'N/A',
                 ),
                 _DR(
                   Icons.date_range_outlined,
-                  'Mfg Year',
+                  context.l10n.mfgYear,
                   v.year > 0 ? v.year.toString() : 'N/A',
                 ),
                 _DR(
                   Icons.color_lens_outlined,
-                  'Colour',
+                  context.l10n.colour,
                   v.colour.isNotEmpty ? v.colour : 'N/A',
                 ),
                 _DR(
                   Icons.speed_outlined,
-                  'Kilometers',
+                  context.l10n.kilometers,
                   v.kilometers > 0 ? '${v.kilometers} km' : 'N/A',
                 ),
                 _DR(
                   Icons.local_gas_station_outlined,
-                  'Fuel Type',
+                  context.l10n.fuelType,
                   v.fuelType.isNotEmpty ? v.fuelType : 'N/A',
                 ),
                 _DR(
                   Icons.settings_outlined,
-                  'Transmission',
+                  context.l10n.transmission,
                   v.transmission.isNotEmpty ? v.transmission : 'N/A',
                 ),
                 _DR(
                   Icons.person_outline_rounded,
-                  'Owner',
+                  context.l10n.owner,
                   v.owner.isNotEmpty ? v.owner : 'N/A',
                 ),
                 _DR(
                   Icons.confirmation_number_outlined,
-                  'Chassis No',
+                  context.l10n.chassisNumber,
                   v.chassisNo.isNotEmpty ? v.chassisNo : 'N/A',
                 ),
                 _DR(
                   Icons.memory_outlined,
-                  'Engine No',
+                  context.l10n.engineNumber,
                   v.engineNo.isNotEmpty ? v.engineNo : 'N/A',
                 ),
                 _DR(
                   Icons.warehouse_outlined,
-                  'Yard Name',
+                  context.l10n.yard_name,
                   v.yardName.isNotEmpty ? v.yardName : 'N/A',
                 ),
                 _DR(
                   Icons.location_city_outlined,
-                  'Yard Location',
+                  context.l10n.yard_location,
                   v.yardLocation.isNotEmpty ? v.yardLocation : 'N/A',
                 ),
                 _DR(
                   Icons.notes_outlined,
-                  'Remarks',
+                  context.l10n.remarks,
                   v.remarks.isNotEmpty ? v.remarks : 'N/A',
                   isLast: true,
                 ),

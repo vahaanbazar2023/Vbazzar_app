@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/design_system/templates/app_layout.dart';
 import '../../../core/design_system/tokens/app_spacing.dart';
+import '../../../core/extensions/context_extensions.dart';
 import '../../../theme/app_fonts.dart';
 import '../../approved_vehicles/domain/entities/approved_vehicle_category_entity.dart';
 import '../controllers/auction_category_controller.dart';
@@ -16,17 +17,17 @@ class AuctionCategoryScreen extends StatelessWidget {
     final ctrl = Get.find<AuctionCategoryController>();
 
     return AppLayout(
-      title: 'Auction Zone',
-      subtitle: 'Select a category to browse',
+      title: context.l10n.auctionZone,
+      subtitle: context.l10n.chooseAnyOne,
       body: Obx(() {
         if (ctrl.isLoadingCategories.value && ctrl.categories.isEmpty) {
           return _buildShimmerList();
         }
         if (ctrl.categoriesError.value.isNotEmpty && ctrl.categories.isEmpty) {
-          return _buildErrorState(ctrl);
+          return _buildErrorState(context, ctrl);
         }
         if (ctrl.categories.isEmpty) {
-          return _buildEmptyState(ctrl);
+          return _buildEmptyState(context, ctrl);
         }
         return RefreshIndicator(
           color: AppColors.primary,
@@ -72,7 +73,10 @@ class AuctionCategoryScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildErrorState(AuctionCategoryController ctrl) {
+  Widget _buildErrorState(
+    BuildContext context,
+    AuctionCategoryController ctrl,
+  ) {
     return Center(
       child: Padding(
         padding: EdgeInsets.all(AppSpacing.xl),
@@ -102,7 +106,7 @@ class AuctionCategoryScreen extends StatelessWidget {
                   borderRadius: BorderRadius.circular(8.r),
                 ),
                 child: Text(
-                  'Retry',
+                  context.l10n.retry,
                   style: AppFonts.bodyMedium.copyWith(
                     color: Colors.white,
                     fontWeight: FontWeight.w600,
@@ -116,7 +120,10 @@ class AuctionCategoryScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildEmptyState(AuctionCategoryController ctrl) {
+  Widget _buildEmptyState(
+    BuildContext context,
+    AuctionCategoryController ctrl,
+  ) {
     return Center(
       child: Padding(
         padding: EdgeInsets.all(AppSpacing.xl),
@@ -126,14 +133,14 @@ class AuctionCategoryScreen extends StatelessWidget {
             Icon(Icons.category_outlined, size: 48.w, color: AppColors.grey400),
             SizedBox(height: 12.h),
             Text(
-              'No categories available',
+              context.l10n.noCategoriesAvailable,
               style: AppFonts.bodyMedium.copyWith(
                 color: AppColors.textSecondary,
               ),
             ),
             SizedBox(height: 8.h),
             Text(
-              'Pull down to refresh',
+              context.l10n.pullDownToRefresh,
               style: AppFonts.bodySmall.copyWith(color: AppColors.textDisabled),
             ),
           ],
@@ -144,10 +151,7 @@ class AuctionCategoryScreen extends StatelessWidget {
 }
 
 /// Brand gradient matching CTA colours.
-const List<Color> _cardGradient = [
-  Color(0xFFBB2625),
-  Color(0xFF67100B),
-];
+const List<Color> _cardGradient = [Color(0xFFBB2625), Color(0xFF67100B)];
 
 class _CategoryCard extends StatelessWidget {
   final ApprovedVehicleCategoryEntity category;
@@ -235,7 +239,9 @@ class _CategoryCard extends StatelessWidget {
                         ),
                         SizedBox(width: 5.w),
                         Text(
-                          '${category.approvedVehAvailableCount} vehicles available',
+                          context.l10n.vehiclesAvailableCount(
+                            category.approvedVehAvailableCount,
+                          ),
                           style: AppFonts.bodySmall.copyWith(
                             color: Colors.white.withValues(alpha: 0.8),
                             fontSize: 11.sp,
@@ -246,7 +252,7 @@ class _CategoryCard extends StatelessWidget {
                     )
                   else
                     Text(
-                      'No vehicles yet',
+                      context.l10n.noVehiclesYet,
                       style: AppFonts.bodySmall.copyWith(
                         color: Colors.white.withValues(alpha: 0.55),
                         fontSize: 11.sp,

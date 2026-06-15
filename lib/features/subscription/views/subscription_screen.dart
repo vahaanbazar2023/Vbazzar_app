@@ -8,6 +8,7 @@ import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_sizes.dart';
 import '../../../core/design_system/organisms/app_bottom_nav_bar.dart';
 import '../../../core/design_system/molecules/custom_snackbar.dart';
+import '../../../core/extensions/context_extensions.dart';
 import '../../../core/storage/secure_storage_service.dart';
 import '../../../core/storage/storage_keys.dart';
 import '../../../features/auction/controllers/vehicle_listing_controller.dart';
@@ -34,7 +35,7 @@ class SubscriptionScreen extends StatefulWidget {
     super.key,
     required this.subscriptionSource,
     this.title = 'Choose Subscription Plan',
-    this.subtitle = 'Select the subscription plan that suits you best',
+    this.subtitle = '',
     this.prebuiltPlan,
     this.extraArgs = const {},
   });
@@ -159,14 +160,14 @@ class _SubscriptionBodyState extends State<_SubscriptionBody> {
     super.dispose();
   }
 
-  void _onProceed() async {
+  void _onProceed(BuildContext context) async {
     final plan = widget.controller.selectedPlan;
     if (plan == null) return;
 
     final userId = await SecureStorageService.to.read(StorageKeys.userId) ?? '';
 
     if (userId.isEmpty) {
-      Get.snackbar('Error', 'Please login to continue');
+      Get.snackbar('Error', context.l10n.pleaseLoginToContinue);
       return;
     }
 
@@ -175,13 +176,13 @@ class _SubscriptionBodyState extends State<_SubscriptionBody> {
 
     paymentController.onSuccess = (data, callback) async {
       // Navigate immediately — refresh guard cache in background.
-      _navigateAfterPayment(widget.subscriptionSource);
+      _navigateAfterPayment(context, widget.subscriptionSource);
       SubscriptionGuardService.to.invalidateAndReload();
     };
 
     paymentController.onFailure = (message, callback) {
       Get.snackbar(
-        'Payment Failed',
+        context.l10n.paymentFailed,
         message,
         backgroundColor: Colors.red.shade100,
         duration: const Duration(seconds: 3),
@@ -190,8 +191,8 @@ class _SubscriptionBodyState extends State<_SubscriptionBody> {
 
     paymentController.onCancelled = () {
       Get.snackbar(
-        'Payment Cancelled',
-        'You cancelled the payment',
+        context.l10n.paymentCancelled,
+        context.l10n.youCancelledPayment,
         backgroundColor: Colors.orange.shade100,
         duration: const Duration(seconds: 2),
       );
@@ -207,7 +208,7 @@ class _SubscriptionBodyState extends State<_SubscriptionBody> {
     );
   }
 
-  void _navigateAfterPayment(String source) {
+  void _navigateAfterPayment(BuildContext context, String source) {
     if (source == 'SUBT001') {
       Get.until(
         (route) =>
@@ -217,8 +218,7 @@ class _SubscriptionBodyState extends State<_SubscriptionBody> {
       );
       Get.toNamed(AppRoutes.auctionType);
       CustomSnackbar.show(
-        message:
-            'Auction Access Activated! You can now browse and bid on auctions.',
+        message: context.l10n.auctionAccessActivated,
         type: SnackbarType.success,
       );
     } else if (source == 'SUBT002') {
@@ -239,7 +239,7 @@ class _SubscriptionBodyState extends State<_SubscriptionBody> {
               route.settings.name != AppRoutes.walletPayment,
         );
         CustomSnackbar.show(
-          message: 'Buying limit updated!',
+          message: context.l10n.buyingLimitUpdated,
           type: SnackbarType.success,
         );
       }
@@ -256,7 +256,7 @@ class _SubscriptionBodyState extends State<_SubscriptionBody> {
       );
 
       CustomSnackbar.show(
-        message: 'Membership activated! Fetching owner contact...',
+        message: context.l10n.membershipActivated,
         type: SnackbarType.success,
       );
 
@@ -282,7 +282,7 @@ class _SubscriptionBodyState extends State<_SubscriptionBody> {
         Get.find<BuyVehicleController>().unlockInspectionAndRequest(vehicleId);
       } else {
         CustomSnackbar.show(
-          message: 'Inspection request submitted!',
+          message: context.l10n.inspectionSubmitted,
           type: SnackbarType.success,
         );
       }
@@ -308,14 +308,14 @@ class _SubscriptionBodyState extends State<_SubscriptionBody> {
       }
 
       CustomSnackbar.show(
-        message: 'Vehicle Details unlocked! You can now view full details.',
+        message: context.l10n.vehicleDetailsUnlocked,
         type: SnackbarType.success,
       );
       SubscriptionGuardService.to.invalidateAndReload();
     } else {
       Get.offAllNamed(AppRoutes.mySubscriptions);
       CustomSnackbar.show(
-        message: 'Subscription Activated! Your plan is now active.',
+        message: context.l10n.subscriptionActivated,
         type: SnackbarType.success,
       );
     }
@@ -326,7 +326,7 @@ class _SubscriptionBodyState extends State<_SubscriptionBody> {
       await SubscriptionGuardService.to.invalidateAndReload();
     } catch (_) {
       CustomSnackbar.show(
-        message: 'Could not refresh subscription. Please try again.',
+        message: context.l10n.couldNotRefreshSubscription,
         type: SnackbarType.error,
       );
       return;
@@ -351,7 +351,9 @@ class _SubscriptionBodyState extends State<_SubscriptionBody> {
                 Padding(
                   padding: const EdgeInsets.fromLTRB(4, 12, 12, 0),
                   child: Text(
-                    widget.subtitle,
+                    widget.subtitle.isEmpty
+                        ? context.l10n.selectSubscriptionSubtitle
+                        : widget.subtitle,
                     style: const TextStyle(
                       fontFamily: 'Montserrat',
                       fontWeight: FontWeight.w400,
@@ -395,9 +397,9 @@ class _SubscriptionBodyState extends State<_SubscriptionBody> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
-                          'Have Any Referral Code ?',
-                          style: TextStyle(
+                        Text(
+                          context.l10n.haveReferralCode,
+                          style: const TextStyle(
                             fontFamily: 'Montserrat',
                             fontWeight: FontWeight.w500,
                             fontSize: 12,
@@ -415,7 +417,7 @@ class _SubscriptionBodyState extends State<_SubscriptionBody> {
                             color: AppColors.black,
                           ),
                           decoration: InputDecoration(
-                            hintText: 'Enter here',
+                            hintText: context.l10n.enterHere,
                             hintStyle: const TextStyle(
                               fontFamily: 'Montserrat',
                               fontWeight: FontWeight.w400,
@@ -471,7 +473,7 @@ class _SubscriptionBodyState extends State<_SubscriptionBody> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 GestureDetector(
-                  onTap: hasPlan ? _onProceed : null,
+                  onTap: hasPlan ? () => _onProceed(context) : null,
                   child: AnimatedContainer(
                     duration: const Duration(milliseconds: 200),
                     height: AppSizes.buttonHeightLg,
@@ -491,7 +493,7 @@ class _SubscriptionBodyState extends State<_SubscriptionBody> {
                     ),
                     child: Center(
                       child: Text(
-                        'Proceed Payment',
+                        context.l10n.proceedPayment,
                         style: TextStyle(
                           fontFamily: 'Montserrat',
                           fontWeight: FontWeight.w700,
@@ -508,8 +510,6 @@ class _SubscriptionBodyState extends State<_SubscriptionBody> {
                   onTap: () {
                     final plan = widget.controller.selectedPlan;
                     if (plan == null) return;
-                    // Forward all current args so extra data like
-                    // pending_vehicle_id passes through to wallet screen.
                     final currentArgs =
                         Get.arguments as Map<String, dynamic>? ?? {};
                     Get.toNamed(
@@ -530,9 +530,9 @@ class _SubscriptionBodyState extends State<_SubscriptionBody> {
                         color: AppColors.grey650,
                       ),
                       children: [
-                        const TextSpan(text: 'or pay from '),
+                        TextSpan(text: context.l10n.orPayFromWallet),
                         TextSpan(
-                          text: '"My wallet"',
+                          text: context.l10n.myWalletLink,
                           style: TextStyle(
                             fontWeight: FontWeight.w700,
                             color: hasPlan
@@ -661,7 +661,7 @@ class _PlanCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 2),
                   Text(
-                    'Validity : ${plan.metricLabel}',
+                    context.l10n.validity(plan.metricLabel),
                     style: const TextStyle(
                       fontFamily: 'Montserrat',
                       fontWeight: FontWeight.w400,
@@ -748,9 +748,9 @@ class _ErrorState extends StatelessWidget {
                   color: AppColors.primaryLight,
                   borderRadius: BorderRadius.circular(AppSizes.radiusMd),
                 ),
-                child: const Text(
-                  'Retry',
-                  style: TextStyle(
+                child: Text(
+                  context.l10n.retry,
+                  style: const TextStyle(
                     fontFamily: 'Montserrat',
                     fontWeight: FontWeight.w700,
                     fontSize: 13,

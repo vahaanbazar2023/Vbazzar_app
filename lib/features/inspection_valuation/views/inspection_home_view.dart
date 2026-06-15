@@ -7,6 +7,7 @@ import '../../../core/constants/app_colors.dart';
 import '../../../core/design_system/atoms/custom_loader.dart';
 import '../../../core/design_system/molecules/gradient_button.dart';
 import '../../../core/design_system/templates/app_layout.dart';
+import '../../../core/extensions/context_extensions.dart';
 import '../../../core/storage/secure_storage_service.dart';
 import '../../../core/storage/storage_keys.dart';
 import '../../../routes/app_routes.dart';
@@ -56,42 +57,40 @@ class _InspectionHomeViewState extends State<InspectionHomeView> {
   Widget build(BuildContext context) {
     if (_isLoading) {
       return AppLayout(
-        title: 'Inspection & Valuation',
-        subtitle: 'Professional vehicle inspection services',
+        title: context.l10n.inspectionValuation,
+        subtitle: context.l10n.professionalVehicleInspection,
         showBack: true,
         body: const Center(child: CustomLoader()),
       );
     }
 
     return AppLayout(
-      title: 'Inspection & Valuation',
-      subtitle: 'Professional vehicle inspection services',
+      title: context.l10n.inspectionValuation,
+      subtitle: context.l10n.professionalVehicleInspection,
       showBack: true,
       body: SingleChildScrollView(
         padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildHeroSection(),
+            _buildHeroSection(context),
             SizedBox(height: 20.h),
             _buildServiceCard(
+              context: context,
               icon: Icons.request_quote_outlined,
-              title: 'Request Inspection',
-              description:
-                  'Submit your vehicle for professional inspection and valuation',
-              buttonText: 'Get Started',
-              onPressed: () =>
-                  Get.toNamed(AppRoutes.customerValuationForm),
+              title: context.l10n.requestInspectionCard,
+              description: context.l10n.requestInspectionDesc,
+              buttonText: context.l10n.getStarted,
+              onPressed: () => Get.toNamed(AppRoutes.customerValuationForm),
             ),
             SizedBox(height: 14.h),
             _buildServiceCard(
+              context: context,
               icon: Icons.search_outlined,
-              title: 'Agent Inspection',
-              description:
-                  'Perform detailed on-site vehicle inspection and submit report',
-              buttonText: 'Start Inspection',
-              onPressed: () =>
-                  Get.toNamed(AppRoutes.agentValuationForm),
+              title: context.l10n.agentInspection,
+              description: context.l10n.agentInspectionDesc,
+              buttonText: context.l10n.startInspection,
+              onPressed: () => Get.toNamed(AppRoutes.agentValuationForm),
             ),
             SizedBox(height: 24.h),
           ],
@@ -100,7 +99,7 @@ class _InspectionHomeViewState extends State<InspectionHomeView> {
     );
   }
 
-  Widget _buildHeroSection() {
+  Widget _buildHeroSection(BuildContext context) {
     return Container(
       width: double.infinity,
       padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 24.h),
@@ -121,7 +120,7 @@ class _InspectionHomeViewState extends State<InspectionHomeView> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Vehicle Inspection\n& Valuation',
+            context.l10n.vehicleInspectionHero,
             style: AppFonts.headlineMedium.copyWith(
               color: AppColors.white,
               fontWeight: FontWeight.w700,
@@ -130,7 +129,7 @@ class _InspectionHomeViewState extends State<InspectionHomeView> {
           ),
           SizedBox(height: 8.h),
           Text(
-            'Get professional vehicle inspection and accurate valuation reports',
+            context.l10n.inspectionHeroSubtitle,
             style: AppFonts.bodyMedium.copyWith(
               color: AppColors.white.withOpacity(0.85),
             ),
@@ -141,6 +140,7 @@ class _InspectionHomeViewState extends State<InspectionHomeView> {
   }
 
   Widget _buildServiceCard({
+    required BuildContext context,
     required IconData icon,
     required String title,
     required String description,

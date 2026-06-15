@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/design_system/atoms/custom_loader.dart';
+import '../../../core/extensions/context_extensions.dart';
 import '../controllers/profile_controller.dart';
 import '../models/wallet_models.dart';
 
@@ -28,9 +29,9 @@ class _WalletDashboardViewState extends State<WalletDashboardView> {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: const Text(
-          'My Wallet',
-          style: TextStyle(
+        title: Text(
+          context.l10n.myWallet,
+          style: const TextStyle(
             fontFamily: 'Montserrat',
             fontWeight: FontWeight.w700,
             fontSize: 18,
@@ -52,7 +53,7 @@ class _WalletDashboardViewState extends State<WalletDashboardView> {
 
         final wallet = controller.walletData.value;
         if (wallet == null) {
-          return _buildEmptyState();
+          return _buildEmptyState(context);
         }
 
         return RefreshIndicator(
@@ -64,9 +65,7 @@ class _WalletDashboardViewState extends State<WalletDashboardView> {
             ),
             slivers: [
               // ── Referral Code Card ──────────────────────────────
-              SliverToBoxAdapter(
-                child: _buildReferralCard(wallet),
-              ),
+              SliverToBoxAdapter(child: _buildReferralCard(context, wallet)),
 
               // ── Transaction List Header ─────────────────────────
               SliverToBoxAdapter(
@@ -83,9 +82,9 @@ class _WalletDashboardViewState extends State<WalletDashboardView> {
                         ),
                       ),
                       const SizedBox(width: 10),
-                      const Text(
-                        'Transactions',
-                        style: TextStyle(
+                      Text(
+                        context.l10n.transactions,
+                        style: const TextStyle(
                           fontFamily: 'Montserrat',
                           fontSize: 16,
                           fontWeight: FontWeight.w700,
@@ -122,27 +121,22 @@ class _WalletDashboardViewState extends State<WalletDashboardView> {
               if (wallet.transactions.isEmpty)
                 SliverFillRemaining(
                   hasScrollBody: false,
-                  child: _buildNoTransactions(),
+                  child: _buildNoTransactions(context),
                 )
               else
                 SliverPadding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   sliver: SliverList(
-                    delegate: SliverChildBuilderDelegate(
-                      (context, index) {
-                        return _TransactionCard(
-                          transaction: wallet.transactions[index],
-                        );
-                      },
-                      childCount: wallet.transactions.length,
-                    ),
+                    delegate: SliverChildBuilderDelegate((context, index) {
+                      return _TransactionCard(
+                        transaction: wallet.transactions[index],
+                      );
+                    }, childCount: wallet.transactions.length),
                   ),
                 ),
 
               // Bottom padding
-              const SliverToBoxAdapter(
-                child: SizedBox(height: 32),
-              ),
+              const SliverToBoxAdapter(child: SizedBox(height: 32)),
             ],
           ),
         );
@@ -151,18 +145,14 @@ class _WalletDashboardViewState extends State<WalletDashboardView> {
   }
 
   // ── Referral Code Card ───────────────────────────────────────
-  Widget _buildReferralCard(WalletDashboardData wallet) {
+  Widget _buildReferralCard(BuildContext context, WalletDashboardData wallet) {
     return Container(
       margin: const EdgeInsets.fromLTRB(16, 16, 16, 0),
       decoration: BoxDecoration(
         gradient: const LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [
-            Color(0xFFBB2625),
-            Color(0xFF8B1A1A),
-            Color(0xFF67100B),
-          ],
+          colors: [Color(0xFFBB2625), Color(0xFF8B1A1A), Color(0xFF67100B)],
         ),
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
@@ -222,10 +212,10 @@ class _WalletDashboardViewState extends State<WalletDashboardView> {
                       ),
                     ),
                     const SizedBox(width: 14),
-                    const Expanded(
+                    Expanded(
                       child: Text(
-                        'Your Referral Code',
-                        style: TextStyle(
+                        context.l10n.yourReferralCode,
+                        style: const TextStyle(
                           fontFamily: 'Montserrat',
                           fontSize: 14,
                           fontWeight: FontWeight.w500,
@@ -236,6 +226,7 @@ class _WalletDashboardViewState extends State<WalletDashboardView> {
                     // Copy icon button
                     _CopyButton(
                       code: wallet.myReferralCode,
+                      copiedLabel: context.l10n.referralCodeCopied,
                     ),
                   ],
                 ),
@@ -271,7 +262,7 @@ class _WalletDashboardViewState extends State<WalletDashboardView> {
                       ),
                       const SizedBox(height: 6),
                       Text(
-                        'Share this code to earn wallet credits',
+                        context.l10n.shareCodeEarnCredits,
                         style: TextStyle(
                           fontFamily: 'Montserrat',
                           fontSize: 11,
@@ -283,7 +274,7 @@ class _WalletDashboardViewState extends State<WalletDashboardView> {
                   ),
                 ),
                 const SizedBox(height: 18),
-                // Share button
+                // Copy button
                 SizedBox(
                   width: double.infinity,
                   height: 44,
@@ -294,9 +285,9 @@ class _WalletDashboardViewState extends State<WalletDashboardView> {
                       );
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
-                          content: const Text(
-                            'Referral code copied to clipboard!',
-                            style: TextStyle(
+                          content: Text(
+                            context.l10n.referralCodeCopied,
+                            style: const TextStyle(
                               fontFamily: 'Montserrat',
                               fontWeight: FontWeight.w500,
                             ),
@@ -311,9 +302,9 @@ class _WalletDashboardViewState extends State<WalletDashboardView> {
                       );
                     },
                     icon: const Icon(Icons.copy_rounded, size: 18),
-                    label: const Text(
-                      'Copy Referral Code',
-                      style: TextStyle(
+                    label: Text(
+                      context.l10n.copyReferralCode,
+                      style: const TextStyle(
                         fontFamily: 'Montserrat',
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
@@ -338,7 +329,7 @@ class _WalletDashboardViewState extends State<WalletDashboardView> {
   }
 
   // ── Empty State ──────────────────────────────────────────────
-  Widget _buildEmptyState() {
+  Widget _buildEmptyState(BuildContext context) {
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(40),
@@ -358,9 +349,9 @@ class _WalletDashboardViewState extends State<WalletDashboardView> {
               ),
             ),
             const SizedBox(height: 24),
-            const Text(
-              'Unable to Load Wallet',
-              style: TextStyle(
+            Text(
+              context.l10n.unableToLoadWallet,
+              style: const TextStyle(
                 fontFamily: 'Montserrat',
                 fontSize: 18,
                 fontWeight: FontWeight.w700,
@@ -369,8 +360,8 @@ class _WalletDashboardViewState extends State<WalletDashboardView> {
             ),
             const SizedBox(height: 8),
             Text(
-              'Please try again later',
-              style: TextStyle(
+              context.l10n.pleaseTryAgainLater,
+              style: const TextStyle(
                 fontFamily: 'Montserrat',
                 fontSize: 14,
                 color: AppColors.grey500,
@@ -390,9 +381,9 @@ class _WalletDashboardViewState extends State<WalletDashboardView> {
                   borderRadius: BorderRadius.circular(12),
                 ),
               ),
-              child: const Text(
-                'Retry',
-                style: TextStyle(
+              child: Text(
+                context.l10n.retry,
+                style: const TextStyle(
                   fontFamily: 'Montserrat',
                   fontWeight: FontWeight.w600,
                 ),
@@ -405,7 +396,7 @@ class _WalletDashboardViewState extends State<WalletDashboardView> {
   }
 
   // ── No Transactions ──────────────────────────────────────────
-  Widget _buildNoTransactions() {
+  Widget _buildNoTransactions(BuildContext context) {
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(40),
@@ -414,20 +405,20 @@ class _WalletDashboardViewState extends State<WalletDashboardView> {
           children: [
             Container(
               padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 color: AppColors.grey100,
                 shape: BoxShape.circle,
               ),
-              child: Icon(
+              child: const Icon(
                 Icons.receipt_long_outlined,
                 size: 48,
                 color: AppColors.grey400,
               ),
             ),
             const SizedBox(height: 20),
-            const Text(
-              'No Transactions Yet',
-              style: TextStyle(
+            Text(
+              context.l10n.noTransactionsYet,
+              style: const TextStyle(
                 fontFamily: 'Montserrat',
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
@@ -436,8 +427,8 @@ class _WalletDashboardViewState extends State<WalletDashboardView> {
             ),
             const SizedBox(height: 8),
             Text(
-              'Your wallet transactions will appear here',
-              style: TextStyle(
+              context.l10n.walletTransactionsAppearHere,
+              style: const TextStyle(
                 fontFamily: 'Montserrat',
                 fontSize: 13,
                 color: AppColors.grey500,
@@ -454,8 +445,9 @@ class _WalletDashboardViewState extends State<WalletDashboardView> {
 // ── Copy Button Widget ────────────────────────────────────────
 class _CopyButton extends StatelessWidget {
   final String code;
+  final String copiedLabel;
 
-  const _CopyButton({required this.code});
+  const _CopyButton({required this.code, required this.copiedLabel});
 
   @override
   Widget build(BuildContext context) {
@@ -467,9 +459,9 @@ class _CopyButton extends StatelessWidget {
           Clipboard.setData(ClipboardData(text: code));
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: const Text(
-                'Referral code copied!',
-                style: TextStyle(
+              content: Text(
+                copiedLabel,
+                style: const TextStyle(
                   fontFamily: 'Montserrat',
                   fontWeight: FontWeight.w500,
                 ),
@@ -490,11 +482,7 @@ class _CopyButton extends StatelessWidget {
             color: Colors.white.withOpacity(0.15),
             borderRadius: BorderRadius.circular(10),
           ),
-          child: const Icon(
-            Icons.copy_rounded,
-            color: Colors.white,
-            size: 18,
-          ),
+          child: const Icon(Icons.copy_rounded, color: Colors.white, size: 18),
         ),
       ),
     );
@@ -525,10 +513,7 @@ class _TransactionCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppColors.white,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(
-          color: AppColors.grey200,
-          width: 1,
-        ),
+        border: Border.all(color: AppColors.grey200, width: 1),
         boxShadow: [
           BoxShadow(
             color: AppColors.black.withOpacity(0.03),
@@ -547,11 +532,7 @@ class _TransactionCard extends StatelessWidget {
               color: iconBgColor,
               borderRadius: BorderRadius.circular(12),
             ),
-            child: Icon(
-              iconData,
-              color: amountColor,
-              size: 22,
-            ),
+            child: Icon(iconData, color: amountColor, size: 22),
           ),
           const SizedBox(width: 14),
           // Details
@@ -576,7 +557,7 @@ class _TransactionCard extends StatelessWidget {
                     padding: const EdgeInsets.only(bottom: 4),
                     child: Text(
                       transaction.subscriptionName,
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontFamily: 'Montserrat',
                         fontSize: 12,
                         fontWeight: FontWeight.w500,
@@ -588,7 +569,7 @@ class _TransactionCard extends StatelessWidget {
                   ),
                 Row(
                   children: [
-                    Icon(
+                    const Icon(
                       Icons.calendar_today_rounded,
                       size: 11,
                       color: AppColors.grey400,
@@ -596,14 +577,14 @@ class _TransactionCard extends StatelessWidget {
                     const SizedBox(width: 4),
                     Text(
                       transaction.transactionDate,
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontFamily: 'Montserrat',
                         fontSize: 11,
                         color: AppColors.grey500,
                       ),
                     ),
                     const SizedBox(width: 10),
-                    Icon(
+                    const Icon(
                       Icons.access_time_rounded,
                       size: 11,
                       color: AppColors.grey400,
@@ -611,7 +592,7 @@ class _TransactionCard extends StatelessWidget {
                     const SizedBox(width: 4),
                     Text(
                       transaction.transactionTime,
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontFamily: 'Montserrat',
                         fontSize: 11,
                         color: AppColors.grey500,
@@ -625,10 +606,7 @@ class _TransactionCard extends StatelessWidget {
           const SizedBox(width: 10),
           // Amount
           Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 10,
-              vertical: 6,
-            ),
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
             decoration: BoxDecoration(
               color: amountColor.withOpacity(0.08),
               borderRadius: BorderRadius.circular(8),

@@ -7,6 +7,7 @@ import '../../../core/design_system/design_system.dart';
 import '../../../core/design_system/templates/app_layout.dart';
 import '../../../core/design_system/tokens/app_radius.dart';
 import '../../../core/design_system/tokens/app_spacing.dart';
+import '../../../core/extensions/context_extensions.dart';
 import '../controllers/my_bids_wins_controller.dart';
 import '../models/my_bids_wins_models.dart';
 import 'my_win_detail_view.dart';
@@ -17,8 +18,8 @@ class MyWinsView extends GetView<MyWinsController> {
   @override
   Widget build(BuildContext context) {
     return AppLayout(
-      title: 'My Wins',
-      subtitle: 'Your won auctions',
+      title: context.l10n.myWins,
+      subtitle: context.l10n.yourWonAuctions,
       showBack: true,
       body: Obx(() {
         if (controller.isLoading.value) {
@@ -33,9 +34,9 @@ class MyWinsView extends GetView<MyWinsController> {
           );
         }
         if (controller.wins.isEmpty) {
-          return const _EmptyState(
+          return _EmptyState(
             icon: Icons.emoji_events_outlined,
-            message: 'No wins yet.\nStart bidding to win auctions!',
+            message: context.l10n.noWinsYet,
           );
         }
         return RefreshIndicator(
@@ -134,7 +135,7 @@ class _WinCard extends StatelessWidget {
                       ),
                       SizedBox(width: 4.w),
                       Text(
-                        'WON',
+                        context.l10n.wonBadge,
                         style: TextStyle(
                           fontFamily: 'Montserrat',
                           fontSize: 9.sp,
@@ -191,7 +192,7 @@ class _WinCard extends StatelessWidget {
                       Row(
                         children: [
                           _InfoChip(
-                            label: 'Payment',
+                            label: context.l10n.paymentChip,
                             value: item.userAuctionStatus,
                             color: item.isPaid
                                 ? AppColors.success
@@ -199,10 +200,10 @@ class _WinCard extends StatelessWidget {
                           ),
                           SizedBox(width: AppSpacing.lg),
                           _InfoChip(
-                            label: 'Letter',
+                            label: context.l10n.letterChip,
                             value: item.winningLetterStatus == 'sent'
-                                ? 'Sent'
-                                : 'Pending',
+                                ? context.l10n.sentStatus
+                                : context.l10n.pendingStatus,
                             color: item.winningLetterStatus == 'sent'
                                 ? AppColors.success
                                 : AppColors.grey600,
@@ -213,7 +214,7 @@ class _WinCard extends StatelessWidget {
                       Row(
                         children: [
                           Text(
-                            'Winning Bid:',
+                            context.l10n.winningBidLabel,
                             style: TextStyle(
                               fontFamily: 'Montserrat',
                               fontSize: 14.sp,
@@ -250,7 +251,7 @@ class _WinCard extends StatelessWidget {
                   child: Column(
                     children: [
                       GradientButton.filled(
-                        text: 'View Details',
+                        text: context.l10n.viewDetails,
                         width: double.infinity,
                         onPressed: () =>
                             Get.to(() => MyWinDetailView(item: item)),
@@ -388,7 +389,7 @@ class _ErrorState extends StatelessWidget {
               ),
             ),
             SizedBox(height: 16.h),
-            GradientButton.filled(text: 'Retry', onPressed: onRetry),
+            GradientButton.filled(text: context.l10n.retry, onPressed: onRetry),
           ],
         ),
       ),

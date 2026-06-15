@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/design_system/molecules/gradient_button.dart';
 import '../../../core/design_system/templates/app_layout.dart';
+import '../../../core/extensions/context_extensions.dart';
 import '../../../core/storage/secure_storage_service.dart';
 import '../../../core/storage/storage_keys.dart';
 import '../../../routes/app_routes.dart';
@@ -29,8 +30,8 @@ class MyInspectionsView extends GetView<InspectionValuationController> {
     }
 
     return AppLayout(
-      title: 'My Inspections',
-      subtitle: 'Track your vehicle inspection requests and valuations',
+      title: context.l10n.myInspections,
+      subtitle: context.l10n.trackInspectionRequests,
       showBack: true,
       body: Obx(() {
         // Initial loading
@@ -43,18 +44,18 @@ class MyInspectionsView extends GetView<InspectionValuationController> {
         if (controller.hasAttemptedLoad.value &&
             controller.hasError.value &&
             controller.inspections.isEmpty) {
-          return _buildErrorState();
+          return _buildErrorState(context);
         }
 
         // Empty state
         if (controller.hasAttemptedLoad.value &&
             !controller.isInspectionsLoading.value &&
             controller.inspections.isEmpty) {
-          return _buildEmptyState();
+          return _buildEmptyState(context);
         }
 
         // Data state
-        return _buildDataList();
+        return _buildDataList(context);
       }),
     );
   }
@@ -77,7 +78,7 @@ class MyInspectionsView extends GetView<InspectionValuationController> {
     );
   }
 
-  Widget _buildErrorState() {
+  Widget _buildErrorState(BuildContext context) {
     return Center(
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: 32.w),
@@ -87,7 +88,7 @@ class MyInspectionsView extends GetView<InspectionValuationController> {
             Icon(Icons.error_outline, size: 56.r, color: AppColors.error),
             SizedBox(height: 16.h),
             Text(
-              'Something went wrong',
+              context.l10n.somethingWentWrong,
               style: AppFonts.titleMedium.copyWith(
                 fontWeight: FontWeight.w600,
                 color: AppColors.textPrimary,
@@ -97,13 +98,15 @@ class MyInspectionsView extends GetView<InspectionValuationController> {
             Text(
               controller.errorMessage.value.isNotEmpty
                   ? controller.errorMessage.value
-                  : 'Unable to load inspections. Please try again.',
+                  : context.l10n.unableToLoadInspections,
               textAlign: TextAlign.center,
-              style: AppFonts.bodyMedium.copyWith(color: AppColors.textSecondary),
+              style: AppFonts.bodyMedium.copyWith(
+                color: AppColors.textSecondary,
+              ),
             ),
             SizedBox(height: 20.h),
             GradientButton.filled(
-              text: 'Retry',
+              text: context.l10n.retry,
               onPressed: () => controller.fetchMyInspections(refresh: true),
               width: 140.w,
               height: 42.h,
@@ -115,18 +118,21 @@ class MyInspectionsView extends GetView<InspectionValuationController> {
     );
   }
 
-  Widget _buildEmptyState() {
+  Widget _buildEmptyState(BuildContext context) {
     return Center(
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: 32.w),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.description_outlined,
-                size: 56.r, color: AppColors.grey400),
+            Icon(
+              Icons.description_outlined,
+              size: 56.r,
+              color: AppColors.grey400,
+            ),
             SizedBox(height: 16.h),
             Text(
-              'No inspections found',
+              context.l10n.noInspectionsFound,
               style: AppFonts.titleMedium.copyWith(
                 fontWeight: FontWeight.w600,
                 color: AppColors.textPrimary,
@@ -134,13 +140,15 @@ class MyInspectionsView extends GetView<InspectionValuationController> {
             ),
             SizedBox(height: 8.h),
             Text(
-              'Your inspection requests will appear here',
+              context.l10n.inspectionRequestsAppearHere,
               textAlign: TextAlign.center,
-              style: AppFonts.bodyMedium.copyWith(color: AppColors.textSecondary),
+              style: AppFonts.bodyMedium.copyWith(
+                color: AppColors.textSecondary,
+              ),
             ),
             SizedBox(height: 20.h),
             GradientButton.filled(
-              text: 'Request Inspection',
+              text: context.l10n.requestInspection,
               onPressed: () => _navigateToInspectionForm(),
               width: 180.w,
               height: 42.h,
@@ -162,14 +170,15 @@ class MyInspectionsView extends GetView<InspectionValuationController> {
     }
   }
 
-  Widget _buildDataList() {
+  Widget _buildDataList(BuildContext context) {
     return RefreshIndicator(
       color: AppColors.primary,
       onRefresh: () => controller.fetchMyInspections(refresh: true),
       child: ListView.builder(
         controller: controller.inspectionsScrollController,
         padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-        itemCount: controller.inspections.length +
+        itemCount:
+            controller.inspections.length +
             (controller.isLoadMoreLoading.value ? 1 : 0) +
             (!controller.inspectionsHasMore.value &&
                     controller.inspections.isNotEmpty
@@ -201,7 +210,7 @@ class MyInspectionsView extends GetView<InspectionValuationController> {
               padding: EdgeInsets.symmetric(vertical: 16.h),
               child: Center(
                 child: Text(
-                  'No more inspections',
+                  context.l10n.noMoreInspections,
                   style: AppFonts.bodySmall.copyWith(
                     color: AppColors.textSecondary,
                   ),
@@ -215,10 +224,8 @@ class MyInspectionsView extends GetView<InspectionValuationController> {
             padding: EdgeInsets.only(bottom: 12.h),
             child: InspectionCard(
               inspection: vehicle,
-              onTap: () => Get.toNamed(
-                AppRoutes.inspectionDetail,
-                arguments: vehicle,
-              ),
+              onTap: () =>
+                  Get.toNamed(AppRoutes.inspectionDetail, arguments: vehicle),
             ),
           );
         },

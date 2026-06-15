@@ -8,6 +8,7 @@ import '../../../core/design_system/design_system.dart';
 import '../../../core/design_system/templates/app_layout.dart';
 import '../../../core/design_system/tokens/app_radius.dart';
 import '../../../core/design_system/tokens/app_spacing.dart';
+import '../../../core/extensions/context_extensions.dart';
 import '../../../routes/app_routes.dart';
 import '../controllers/auction_controller.dart';
 import '../models/auction_listing.dart';
@@ -19,8 +20,8 @@ class AuctionTab extends GetView<AuctionController> {
   @override
   Widget build(BuildContext context) {
     return AppLayout(
-      title: 'Auction',
-      subtitle: 'Know the real condition of your vehicle.',
+      title: context.l10n.auction,
+      subtitle: context.l10n.auctionKnowCondition,
       body: Column(
         children: [
           SizedBox(height: 8.h),
@@ -42,10 +43,10 @@ class AuctionTab extends GetView<AuctionController> {
               fontSize: 13.sp,
               fontWeight: FontWeight.w500,
             ),
-            tabs: const [
-              Tab(text: 'Live'),
-              Tab(text: 'Closing Today'),
-              Tab(text: 'Upcoming'),
+            tabs: [
+              Tab(text: context.l10n.liveTab),
+              Tab(text: context.l10n.closingTodayTab),
+              Tab(text: context.l10n.upcomingTab),
             ],
           ),
           SizedBox(height: AppSpacing.md),
@@ -105,7 +106,7 @@ class _SearchBar extends StatelessWidget {
             size: 20.r,
             color: AppColors.grey500,
           ),
-          hintText: 'Search',
+          hintText: context.l10n.search,
           hintStyle: TextStyle(
             fontFamily: 'Montserrat',
             fontSize: 13.sp,
@@ -170,7 +171,7 @@ class _TabContent extends StatelessWidget {
       if (auctions.isEmpty) {
         return Center(
           child: Text(
-            'No auctions available',
+            context.l10n.noAuctionsAvailable,
             style: TextStyle(
               fontFamily: 'Montserrat',
               fontSize: 14.sp,
@@ -289,7 +290,7 @@ class _AuctionCard extends StatelessWidget {
                           height: 14,
                           color: AppColors.grey600,
                         ),
-                        label: 'AUCTION ID',
+                        label: context.l10n.auctionIdLabel,
                         value: listing.auctionId,
                       ),
                     ),
@@ -298,7 +299,7 @@ class _AuctionCard extends StatelessWidget {
                 ),
                 _InfoRow(
                   icon: Image.asset(AppAssets.bidPng, width: 14, height: 14),
-                  label: 'LOT',
+                  label: context.l10n.lot,
                   value: listing.vehicleCount.toString().padLeft(2, '0'),
                 ),
                 SizedBox(height: AppSpacing.xs),
@@ -309,14 +310,14 @@ class _AuctionCard extends StatelessWidget {
                     height: 14,
                     color: AppColors.grey600,
                   ),
-                  label: 'End Date',
+                  label: context.l10n.endDate,
                   value: _formatDate(listing.endAt),
                 ),
                 SizedBox(height: AppSpacing.md),
 
                 // Tap to Bid — gradient button
                 GradientButton.filled(
-                  text: 'Tap to Bid',
+                  text: context.l10n.tapToBid,
                   onPressed: () => Get.toNamed(
                     AppRoutes.vehicleListings,
                     arguments: {'auction': listing},

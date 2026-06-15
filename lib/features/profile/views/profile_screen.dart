@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/design_system/design_system.dart';
+import '../../../core/extensions/context_extensions.dart';
 import '../../../routes/app_routes.dart';
 import '../controllers/profile_controller.dart';
 import '../models/profile_models.dart';
@@ -41,30 +42,30 @@ class ProfileScreen extends GetView<ProfileController> {
                       _ProfileCard(profile: controller.profileData.value),
                       SizedBox(height: 24.h),
                       _MenuSection(
-                        title: 'Account',
+                        title: context.l10n.account,
                         items: [
                           _MenuItem(
                             icon: Icons.person_outline,
-                            label: 'Manage Profile',
+                            label: context.l10n.manageProfile,
                             onTap: () => controller.openManageProfile(),
                           ),
-                          const _MenuItem(
+                          _MenuItem(
                             icon: Icons.lock_outline,
-                            label: 'Password & Security',
+                            label: context.l10n.passwordAndSecurity,
                           ),
                           _MenuItem(
                             icon: Icons.account_balance_wallet_outlined,
-                            label: 'My Wallet',
+                            label: context.l10n.myWallet,
                             onTap: () => Get.toNamed(AppRoutes.walletDashboard),
                           ),
                           _MenuItem(
                             icon: Icons.card_membership_outlined,
-                            label: 'My Subscriptions',
+                            label: context.l10n.my_subscriptions_title,
                             onTap: () => Get.toNamed(AppRoutes.mySubscriptions),
                           ),
                           _MenuItem(
                             icon: Icons.language_outlined,
-                            label: 'Language',
+                            label: context.l10n.language,
                             onTap: () => Get.toNamed(
                               AppRoutes.languageSelection,
                               arguments: {'fromProfile': true},
@@ -74,32 +75,32 @@ class ProfileScreen extends GetView<ProfileController> {
                       ),
                       SizedBox(height: 24.h),
                       _MenuSection(
-                        title: 'Auctions',
+                        title: context.l10n.auctions,
                         items: [
                           _MenuItem(
                             icon: Icons.emoji_events_outlined,
-                            label: 'My Wins',
+                            label: context.l10n.myWins,
                             onTap: () => Get.toNamed(AppRoutes.myWins),
                           ),
                           _MenuItem(
                             icon: Icons.gavel_outlined,
-                            label: 'My Bids',
+                            label: context.l10n.myBids,
                             onTap: () => Get.toNamed(AppRoutes.myBids),
                           ),
                           _MenuItem(
                             icon: Icons.replay_circle_filled_outlined,
-                            label: 'Initiate Refund',
+                            label: context.l10n.initiateRefund,
                             onTap: () => Get.toNamed(AppRoutes.initiateRefund),
                           ),
                         ],
                       ),
                       SizedBox(height: 24.h),
                       _MenuSection(
-                        title: 'Buy & Sell',
+                        title: context.l10n.buyAndSell,
                         items: [
                           _MenuItem(
                             icon: Icons.directions_car_outlined,
-                            label: 'My Vehicles',
+                            label: context.l10n.myVehicles,
                             onTap: () => Get.to(
                               () => const MyVehiclesView(),
                               binding: BindingsBuilder(() {
@@ -117,7 +118,7 @@ class ProfileScreen extends GetView<ProfileController> {
                           ),
                           _MenuItem(
                             icon: Icons.bookmark_outlined,
-                            label: 'My Subscribed Vehicles',
+                            label: context.l10n.mySubscribedVehicles,
                             onTap: () => Get.to(
                               () => const SubscribedVehiclesView(),
                               binding: BindingsBuilder(() {
@@ -135,22 +136,22 @@ class ProfileScreen extends GetView<ProfileController> {
                       ),
                       SizedBox(height: 24.h),
                       _MenuSection(
-                        title: 'Inspection & Valuation',
+                        title: context.l10n.inspectionAndValuation,
                         items: [
                           _MenuItem(
                             icon: Icons.fact_check_outlined,
-                            label: 'My Inspections',
+                            label: context.l10n.myInspections,
                             onTap: () => Get.toNamed(AppRoutes.myInspections),
                           ),
                         ],
                       ),
                       SizedBox(height: 24.h),
                       _MenuSection(
-                        title: 'Spare & FMS',
+                        title: context.l10n.spareFms,
                         items: [
                           _MenuItem(
                             icon: Icons.receipt_long_rounded,
-                            label: 'My Bookings',
+                            label: context.l10n.myBookings,
                             onTap: () => Get.toNamed(AppRoutes.spareOrders),
                           ),
                         ],
@@ -202,7 +203,7 @@ class _ProfileHeader extends StatelessWidget {
           ),
           SizedBox(width: 16.w),
           Text(
-            'Profile',
+            context.l10n.profile,
             style: AppTextStyles.headingMedium.copyWith(
               fontSize: 20.sp,
               fontWeight: FontWeight.w700,
@@ -443,7 +444,7 @@ class _LogoutButton extends StatelessWidget {
                     Icon(Icons.logout, size: 20.sp, color: AppColors.primary),
                     SizedBox(width: 10.w),
                     Text(
-                      'Logout',
+                      context.l10n.logout,
                       style: AppTextStyles.bodyMedium.copyWith(
                         fontSize: 15.sp,
                         fontWeight: FontWeight.w600,
@@ -465,11 +466,11 @@ class _LogoutButton extends StatelessWidget {
           borderRadius: BorderRadius.circular(16.r),
         ),
         title: Text(
-          'Logout',
+          context.l10n.logout,
           style: AppTextStyles.headingSmall.copyWith(fontSize: 18.sp),
         ),
         content: Text(
-          'Are you sure you want to logout?',
+          context.l10n.areYouSureLogout,
           style: AppTextStyles.bodyMedium.copyWith(
             color: AppColors.textSecondary,
           ),
@@ -478,7 +479,7 @@ class _LogoutButton extends StatelessWidget {
           TextButton(
             onPressed: () => Get.back(),
             child: Text(
-              'Cancel',
+              context.l10n.cancel,
               style: AppTextStyles.bodyMedium.copyWith(
                 color: AppColors.textSecondary,
               ),
@@ -490,7 +491,7 @@ class _LogoutButton extends StatelessWidget {
               controller.logout();
             },
             child: Text(
-              'Logout',
+              context.l10n.logout,
               style: AppTextStyles.bodyMedium.copyWith(
                 color: AppColors.primary,
                 fontWeight: FontWeight.w700,

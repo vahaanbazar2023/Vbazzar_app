@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/design_system/design_system.dart';
+import '../../../core/extensions/context_extensions.dart';
 import '../../../core/models/location_models.dart';
 import '../controllers/profile_controller.dart';
 
@@ -32,12 +33,12 @@ class ManageProfileView extends GetView<ProfileController> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // First Name
-                    _FieldLabel('First Name *'),
+                    _FieldLabel('${context.l10n.firstName} *'),
                     SizedBox(height: AppSpacing.sm),
                     Obx(
                       () => CustomInputField(
                         controller: controller.firstNameController,
-                        placeholder: 'Enter first name',
+                        placeholder: context.l10n.enterFirstName,
                         prefixIcon: Icons.person_outline,
                         errorText: controller.firstNameErrorText.value,
                         keyboardType: TextInputType.name,
@@ -48,11 +49,11 @@ class ManageProfileView extends GetView<ProfileController> {
                     SizedBox(height: AppSpacing.md),
 
                     // Last Name
-                    _FieldLabel('Last Name'),
+                    _FieldLabel(context.l10n.lastName),
                     SizedBox(height: AppSpacing.sm),
                     CustomInputField(
                       controller: controller.lastNameController,
-                      placeholder: 'Enter last name (optional)',
+                      placeholder: context.l10n.enterLastNameOptional,
                       prefixIcon: Icons.person_outline,
                       keyboardType: TextInputType.name,
                       textInputAction: TextInputAction.next,
@@ -61,12 +62,12 @@ class ManageProfileView extends GetView<ProfileController> {
                     SizedBox(height: AppSpacing.md),
 
                     // Email
-                    _FieldLabel('Email *'),
+                    _FieldLabel('${context.l10n.email} *'),
                     SizedBox(height: AppSpacing.sm),
                     Obx(
                       () => CustomInputField(
                         controller: controller.emailController,
-                        placeholder: 'Enter email address',
+                        placeholder: context.l10n.enterEmail,
                         prefixIcon: Icons.email_outlined,
                         errorText: controller.emailErrorText.value,
                         keyboardType: TextInputType.emailAddress,
@@ -77,11 +78,11 @@ class ManageProfileView extends GetView<ProfileController> {
                     SizedBox(height: AppSpacing.md),
 
                     // Mobile Number (read-only)
-                    _FieldLabel('Mobile Number'),
+                    _FieldLabel(context.l10n.mobileNumber),
                     SizedBox(height: AppSpacing.sm),
                     CustomInputField(
                       controller: controller.phoneNumberController,
-                      placeholder: 'Mobile number',
+                      placeholder: context.l10n.mobileNumber,
                       prefixIcon: Icons.phone_outlined,
                       keyboardType: TextInputType.phone,
                       textInputAction: TextInputAction.next,
@@ -91,12 +92,12 @@ class ManageProfileView extends GetView<ProfileController> {
                     SizedBox(height: AppSpacing.md),
 
                     // State (autocomplete)
-                    _FieldLabel('State *'),
+                    _FieldLabel('${context.l10n.state} *'),
                     SizedBox(height: AppSpacing.sm),
                     Obx(
                       () => CustomAutocompleteField<StateModel>(
                         controller: controller.stateTextController,
-                        placeholder: 'Select State',
+                        placeholder: context.l10n.selectState,
                         prefixIcon: Icons.location_on_outlined,
                         errorText: controller.stateErrorText.value,
                         isLoading: controller.isLoadingStates.value,
@@ -109,33 +110,31 @@ class ManageProfileView extends GetView<ProfileController> {
                     SizedBox(height: AppSpacing.md),
 
                     // City (autocomplete)
-                    _FieldLabel('City *'),
+                    _FieldLabel('${context.l10n.city} *'),
                     SizedBox(height: AppSpacing.sm),
                     Obx(
                       () => CustomAutocompleteField<CityModel>(
                         controller: controller.cityTextController,
                         placeholder: controller.selectedState.value == null
-                            ? 'Select state first'
-                            : 'Select City',
+                            ? context.l10n.selectStateFirst
+                            : context.l10n.selectCity,
                         prefixIcon: Icons.location_city_outlined,
                         errorText: controller.cityErrorText.value,
                         isLoading: controller.isLoadingCities.value,
                         options: controller.availableCities,
                         enabled: controller.selectedState.value != null,
                         displayStringForOption: (c) => c.cityName,
-                        onSelected: (city) =>
-                            controller.onCitySelected(city),
+                        onSelected: (city) => controller.onCitySelected(city),
                       ),
                     ),
                     SizedBox(height: AppSpacing.xxl),
 
                     // Save button
                     Obx(() {
-                      final isValid =
-                          controller.isManageProfileFormValid;
+                      final isValid = controller.isManageProfileFormValid;
                       return isValid
                           ? GradientButton.filled(
-                              text: 'Save Changes',
+                              text: context.l10n.saveChanges,
                               onPressed: controller.isUpdatingProfile.value
                                   ? null
                                   : () => controller.updateProfile(),
@@ -143,7 +142,7 @@ class ManageProfileView extends GetView<ProfileController> {
                               width: double.infinity,
                             )
                           : GradientButton.outlined(
-                              text: 'Save Changes',
+                              text: context.l10n.saveChanges,
                               onPressed: null,
                               width: double.infinity,
                             );
@@ -192,7 +191,7 @@ class _Header extends StatelessWidget {
           ),
           SizedBox(width: 16.w),
           Text(
-            'Manage Profile',
+            context.l10n.edit_profile_term,
             style: AppTextStyles.headingMedium.copyWith(
               fontSize: 20.sp,
               fontWeight: FontWeight.w700,
@@ -222,4 +221,3 @@ class _FieldLabel extends StatelessWidget {
     );
   }
 }
-

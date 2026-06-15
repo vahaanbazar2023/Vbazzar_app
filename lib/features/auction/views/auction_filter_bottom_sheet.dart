@@ -6,6 +6,7 @@ import '../../../core/constants/app_colors.dart';
 import '../../../core/design_system/design_system.dart';
 import '../../../core/design_system/molecules/custom_autocomplete_field.dart';
 import '../../../core/design_system/molecules/inline_dropdown_field.dart';
+import '../../../core/extensions/context_extensions.dart';
 import '../controllers/auction_list_controller.dart';
 import '../domain/entities/auction_entity.dart';
 import '../utils/auction_utils.dart';
@@ -85,7 +86,7 @@ class AuctionFilterBottomSheet extends StatelessWidget {
                 ),
                 SizedBox(width: 12.w),
                 Text(
-                  'Filter Auctions',
+                  context.l10n.filterAuctions,
                   style: TextStyle(
                     fontFamily: 'Montserrat',
                     fontSize: 18.sp,
@@ -119,7 +120,7 @@ class AuctionFilterBottomSheet extends StatelessWidget {
                           ),
                           SizedBox(width: 4.w),
                           Text(
-                            'Clear',
+                            context.l10n.clearFilters,
                             style: TextStyle(
                               fontFamily: 'Montserrat',
                               fontSize: 12.sp,
@@ -151,7 +152,7 @@ class AuctionFilterBottomSheet extends StatelessWidget {
                 children: [
                   // ── Category ────────────────────────────────────
                   _FilterSectionLabel(
-                    label: 'Category',
+                    label: context.l10n.category,
                     icon: Icons.category_outlined,
                   ),
                   SizedBox(height: 8.h),
@@ -160,7 +161,7 @@ class AuctionFilterBottomSheet extends StatelessWidget {
 
                   // ── Vehicle Type ────────────────────────────────
                   _FilterSectionLabel(
-                    label: 'Vehicle Type',
+                    label: context.l10n.selectVehicleTypeFilter,
                     icon: Icons.directions_car_outlined,
                   ),
                   SizedBox(height: 8.h),
@@ -169,7 +170,7 @@ class AuctionFilterBottomSheet extends StatelessWidget {
 
                   // ── Region ──────────────────────────────────────
                   _FilterSectionLabel(
-                    label: 'Region',
+                    label: context.l10n.selectRegion,
                     icon: Icons.map_outlined,
                   ),
                   SizedBox(height: 8.h),
@@ -178,7 +179,7 @@ class AuctionFilterBottomSheet extends StatelessWidget {
 
                   // ── State (CustomAutocompleteField) ─────────────
                   _FilterSectionLabel(
-                    label: 'State',
+                    label: context.l10n.state,
                     icon: Icons.location_city_outlined,
                   ),
                   SizedBox(height: 8.h),
@@ -225,7 +226,7 @@ class AuctionFilterBottomSheet extends StatelessWidget {
                       ),
                       child: Center(
                         child: Text(
-                          'Reset Filters',
+                          context.l10n.resetFilters,
                           style: TextStyle(
                             fontFamily: 'Montserrat',
                             fontSize: 14.sp,
@@ -242,7 +243,7 @@ class AuctionFilterBottomSheet extends StatelessWidget {
                 Expanded(
                   flex: 2,
                   child: GradientButton.filled(
-                    text: 'Apply Filters',
+                    text: context.l10n.applyFilters,
                     onPressed: () {
                       controller.applyFilters();
                       Navigator.of(context).pop();
@@ -300,7 +301,7 @@ class _CategoryField extends StatelessWidget {
       () => InlineDropdownField<String>(
         value: controller.selectedCategory.value,
         items: AuctionUtils.categoryOptions,
-        placeholder: 'Select Category',
+        placeholder: context.l10n.selectCategory,
         prefixIcon: Icons.category_outlined,
         itemLabel: (v) => v,
         onChanged: (val) => controller.onCategoryChanged(val),
@@ -321,7 +322,7 @@ class _VehicleTypeField extends StatelessWidget {
       () => InlineDropdownField<String>(
         value: controller.selectedVehicleType.value,
         items: AuctionUtils.vehicleTypeOptions,
-        placeholder: 'Select Vehicle Type',
+        placeholder: context.l10n.selectVehicleTypeFilter,
         prefixIcon: Icons.directions_car_outlined,
         itemLabel: (v) => v,
         onChanged: (val) => controller.onVehicleTypeChanged(val),
@@ -342,7 +343,7 @@ class _RegionField extends StatelessWidget {
       () => InlineDropdownField<RegionEntity>(
         value: controller.selectedRegion.value,
         items: controller.regions,
-        placeholder: 'Select Region',
+        placeholder: context.l10n.selectRegion,
         prefixIcon: Icons.map_outlined,
         isLoading: controller.isLoadingRegions.value,
         itemLabel: (r) => r.name,
@@ -395,7 +396,9 @@ class _StateFieldState extends State<_StateField> {
       return CustomAutocompleteField<StateByRegionEntity>(
         controller: _textCtrl,
         options: states,
-        placeholder: isDisabled ? 'Select a Region first' : 'Search state...',
+        placeholder: isDisabled
+            ? context.l10n.selectStateFirst
+            : context.l10n.searchState,
         prefixIcon: Icons.location_city_outlined,
         isLoading: isLoading,
         enabled: !isDisabled,

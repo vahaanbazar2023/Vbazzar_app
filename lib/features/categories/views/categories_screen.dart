@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../core/constants/app_colors.dart';
+import '../../../core/extensions/context_extensions.dart';
 import '../controllers/categories_controller.dart';
 import '../models/category_item.dart';
 
@@ -52,7 +53,7 @@ class _Header extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Choose By Category',
+            context.l10n.chooseByCategory,
             style: TextStyle(
               fontFamily: 'Montserrat',
               fontSize: 22,
@@ -62,7 +63,7 @@ class _Header extends StatelessWidget {
           ),
           const SizedBox(height: 6),
           Text(
-            'Explore the services that your vehicle need.',
+            context.l10n.exploreServicesYourVehicle,
             style: TextStyle(
               fontFamily: 'Montserrat',
               fontSize: 16,

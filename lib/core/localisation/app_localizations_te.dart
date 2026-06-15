@@ -2262,4 +2262,748 @@ class AppLocalizationsTe extends AppLocalizations {
   @override
   String get please_fix_all_validation_errors =>
       'దయచేసి సమర్పించే ముందు అన్ని ధృవీకరణ లోపాలను పరిష్కరించండి';
+
+  @override
+  String get vehicleDetailsTitle => 'వాహన వివరాలు';
+
+  @override
+  String get modelYear => 'మోడల్ సంవత్సరం';
+
+  @override
+  String get keySpecifications => 'ముఖ్య విశిష్టతలు';
+
+  @override
+  String get categoryCode => 'వర్గం కోడ్';
+
+  @override
+  String get brandCode => 'బ్రాండ్ కోడ్';
+
+  @override
+  String get bodyType => 'బాడీ రకం';
+
+  @override
+  String get tonnage => 'టన్నేజ్';
+
+  @override
+  String get noOfTyres => 'టైర్ల సంఖ్య';
+
+  @override
+  String get kvRating => 'KV రేటింగ్';
+
+  @override
+  String get actions => 'చర్యలు';
+
+  @override
+  String get letUsKnow => 'మాకు తెలియజేయండి';
+
+  @override
+  String get youreInterested => 'మీకు ఆసక్తి ఉంది';
+
+  @override
+  String get interested => 'ఆసక్తి ఉంది';
+
+  @override
+  String get becomeMember => 'సభ్యుడు అవ్వండి';
+
+  @override
+  String get connectWithOwner => 'యజమానితో సంప్రదించండి';
+
+  @override
+  String get fetchingContact => 'సంప్రదింపు తీసుకుంటోంది...';
+
+  @override
+  String get callButton => 'కాల్ చేయండి';
+
+  @override
+  String get connectWithOwnerTitle => 'యజమానితో సంప్రదించండి';
+
+  @override
+  String get connectWithOwnerSubtitle =>
+      'యజమాని సంప్రదింపు నంబర్ పొందడానికి మరియు నేరుగా కనెక్ట్ అవ్వడానికి సభ్యత్వం తీసుకోండి.';
+
+  @override
+  String get subscribe => 'సభ్యత్వం తీసుకోండి';
+
+  @override
+  String get submitYour => 'మీ';
+
+  @override
+  String get bestVehicleOffer => 'ఉత్తమ వాహన ప్రతిపాదన';
+
+  @override
+  String get enterAmount => 'మొత్తం నమోదు చేయండి';
+
+  @override
+  String get invalidAmount => 'చెల్లని మొత్తం';
+
+  @override
+  String get pleaseEnterValidOfferAmount =>
+      'దయచేసి చెల్లుబాటు అయ్యే ప్రతిపాదన మొత్తం నమోదు చేయండి.';
+
+  @override
+  String get offerTooLow => 'ప్రతిపాదన చాలా తక్కువ';
+
+  @override
+  String minimumOfferPercent(String amount) {
+    return 'కనిష్ట ప్రతిపాదన ధరలో 60%: ₹$amount';
+  }
+
+  @override
+  String get offerSent => 'మీ ప్రతిపాదన పంపబడింది.';
+
+  @override
+  String get offerFailed => 'ప్రతిపాదన విఫలమైంది';
+
+  @override
+  String get inspectionRequested => 'తనిఖీ అభ్యర్థించబడింది';
+
+  @override
+  String get requestVehicleInspection => 'వాహన తనిఖీ అభ్యర్థించండి';
+
+  @override
+  String get na => 'N/A';
+
+  @override
+  String get inspectionValuation => 'తనిఖీ & మూల్యాంకనం';
+
+  @override
+  String get professionalVehicleInspection => 'వృత్తిపరమైన వాహన తనిఖీ సేవలు';
+
+  @override
+  String get vehicleInspectionHero => 'వాహన తనిఖీ\n& మూల్యాంకనం';
+
+  @override
+  String get inspectionHeroSubtitle =>
+      'వృత్తిపరమైన వాహన తనిఖీ మరియు ఖచ్చితమైన మూల్యాంకన నివేదికలు పొందండి';
+
+  @override
+  String get requestInspectionCard => 'తనిఖీ అభ్యర్థించండి';
+
+  @override
+  String get requestInspectionDesc =>
+      'వృత్తిపరమైన తనిఖీ మరియు మూల్యాంకనం కోసం మీ వాహనాన్ని సమర్పించండి';
+
+  @override
+  String get getStarted => 'ప్రారంభించండి';
+
+  @override
+  String get agentInspection => 'ఏజెంట్ తనిఖీ';
+
+  @override
+  String get agentInspectionDesc =>
+      'వివరణాత్మక ఆన్-సైట్ వాహన తనిఖీ నిర్వహించి రిపోర్ట్ సమర్పించండి';
+
+  @override
+  String get startInspection => 'తనిఖీ ప్రారంభించండి';
+
+  @override
+  String get myInspections => 'నా తనిఖీలు';
+
+  @override
+  String get trackInspectionRequests =>
+      'మీ వాహన తనిఖీ అభ్యర్థనలను ట్రాక్ చేయండి';
+
+  @override
+  String get unableToLoadInspections =>
+      'తనిఖీలు లోడ్ చేయడం సాధ్యం కాలేదు. దయచేసి మళ్లీ ప్రయత్నించండి.';
+
+  @override
+  String get noInspectionsFound => 'తనిఖీలు కనుగొనబడలేదు';
+
+  @override
+  String get inspectionRequestsAppearHere =>
+      'మీ తనిఖీ అభ్యర్థనలు ఇక్కడ కనిపిస్తాయి';
+
+  @override
+  String get requestInspection => 'తనిఖీ అభ్యర్థించండి';
+
+  @override
+  String get noMoreInspections => 'మరిన్ని తనిఖీలు లేవు';
+
+  @override
+  String get insuranceFinance => 'బీమా & ఫైనాన్స్';
+
+  @override
+  String get insuranceFinanceSubtitle =>
+      'వాహన బీమా మరియు ఫైనాన్సింగ్ కోసం కోట్లు పొందండి';
+
+  @override
+  String get insurance => 'బీమా';
+
+  @override
+  String get finance => 'ఫైనాన్స్';
+
+  @override
+  String get enterLastNameOptional => 'చివరి పేరు నమోదు చేయండి (ఐచ్ఛికం)';
+
+  @override
+  String get selectStateFirst => 'ముందుగా ప్రాంతాన్ని ఎంచుకోండి';
+
+  @override
+  String get saveChanges => 'మార్పులు సేవ్ చేయండి';
+
+  @override
+  String get myWallet => 'నా వాలెట్';
+
+  @override
+  String get transactions => 'లావాదేవీలు';
+
+  @override
+  String get yourReferralCode => 'మీ రెఫరల్ కోడ్';
+
+  @override
+  String get shareCodeEarnCredits =>
+      'వాలెట్ క్రెడిట్లు సంపాదించడానికి ఈ కోడ్ షేర్ చేయండి';
+
+  @override
+  String get copyReferralCode => 'రెఫరల్ కోడ్ కాపీ చేయండి';
+
+  @override
+  String get referralCodeCopied => 'రెఫరల్ కోడ్ కాపీ చేయబడింది!';
+
+  @override
+  String get unableToLoadWallet => 'వాలెట్ లోడ్ చేయడం సాధ్యం కాలేదు';
+
+  @override
+  String get pleaseTryAgainLater => 'దయచేసి తర్వాత మళ్లీ ప్రయత్నించండి';
+
+  @override
+  String get noTransactionsYet => 'ఇంకా లావాదేవీలు లేవు';
+
+  @override
+  String get walletTransactionsAppearHere =>
+      'మీ వాలెట్ లావాదేవీలు ఇక్కడ కనిపిస్తాయి';
+
+  @override
+  String get selectSubscriptionSubtitle =>
+      'మీకు అత్యంత అనుకూలమైన సభ్యత్వ ప్లాన్ ఎంచుకోండి';
+
+  @override
+  String get haveReferralCode => 'మీకు రెఫరల్ కోడ్ ఉందా?';
+
+  @override
+  String get enterHere => 'ఇక్కడ నమోదు చేయండి';
+
+  @override
+  String get proceedPayment => 'చెల్లింపు కొనసాగించండి';
+
+  @override
+  String get orPayFromWallet => 'లేదా ఇక్కడ నుండి చెల్లించండి ';
+
+  @override
+  String get myWalletLink => '\"నా వాలెట్\"';
+
+  @override
+  String validity(String label) {
+    return 'చెల్లుబాటు : $label';
+  }
+
+  @override
+  String get paymentFailed => 'చెల్లింపు విఫలమైంది';
+
+  @override
+  String get paymentCancelled => 'చెల్లింపు రద్దు చేయబడింది';
+
+  @override
+  String get youCancelledPayment => 'మీరు చెల్లింపు రద్దు చేశారు';
+
+  @override
+  String get buyingLimitUpdated => 'కొనుగోలు పరిమితి అప్‌డేట్ చేయబడింది!';
+
+  @override
+  String get membershipActivated =>
+      'సభ్యత్వం సక్రియమైంది! యజమాని సంప్రదింపు తీసుకుంటోంది...';
+
+  @override
+  String get inspectionSubmitted => 'తనిఖీ అభ్యర్థన సమర్పించబడింది!';
+
+  @override
+  String get vehicleDetailsUnlocked => 'వాహన వివరాలు అన్‌లాక్ అయ్యాయి!';
+
+  @override
+  String get auctionAccessActivated => 'వేలం యాక్సెస్ సక్రియమైంది!';
+
+  @override
+  String get subscriptionActivated => 'సభ్యత్వం సక్రియమైంది!';
+
+  @override
+  String get couldNotRefreshSubscription =>
+      'సభ్యత్వాన్ని రిఫ్రెష్ చేయడం సాధ్యం కాలేదు. దయచేసి మళ్లీ ప్రయత్నించండి.';
+
+  @override
+  String get pleaseLoginToContinue => 'కొనసాగించడానికి దయచేసి లాగిన్ చేయండి';
+
+  @override
+  String get yourActivePlans => 'మీ యాక్టివ్ ప్లాన్లు';
+
+  @override
+  String activePlanCount(String count) {
+    return '$count యాక్టివ్ ప్లాన్';
+  }
+
+  @override
+  String get yourCurrentSubscriptions => 'మీ ప్రస్తుత సభ్యత్వాలు';
+
+  @override
+  String get noExpiryDate => 'గడువు తేదీ లేదు';
+
+  @override
+  String get noActiveSubscriptions => 'యాక్టివ్ సభ్యత్వాలు లేవు';
+
+  @override
+  String get notSubscribedYet => 'మీరు ఇంకా ఏ ప్లాన్‌కు సభ్యత్వం తీసుకోలేదు.';
+
+  @override
+  String get serviceProviders => 'సర్వీస్ ప్రొవైడర్లు';
+
+  @override
+  String get findNearbyMechanics =>
+      'దగ్గరలో మెకానిక్ మరియు గ్యారేజ్‌లు కనుగొనండి';
+
+  @override
+  String providersFound(String count) {
+    return '$count ప్రొవైడర్లు కనుగొనబడ్డారు';
+  }
+
+  @override
+  String get findingShopsNearYou => 'మీ సమీపంలో దుకాణాలు కనుగొంటోంది...';
+
+  @override
+  String get subscribeToCAll => 'కాల్ చేయడానికి సభ్యత్వం తీసుకోండి';
+
+  @override
+  String get noMechanicsFound => 'మెకానిక్‌లు కనుగొనబడలేదు';
+
+  @override
+  String get noServiceProvidersFound =>
+      'మీ స్థానం సమీపంలో సర్వీస్ ప్రొవైడర్లు కనుగొనబడలేదు';
+
+  @override
+  String get tryAgain => 'మళ్లీ ప్రయత్నించండి';
+
+  @override
+  String get noResultsFound => 'ఫలితాలు కనుగొనబడలేదు';
+
+  @override
+  String get tryDifferentSearch => 'వేరే శోధన పదాన్ని ప్రయత్నించండి';
+
+  @override
+  String get couldNotLaunchDialer => 'ఫోన్ డయలర్ ప్రారంభించడం సాధ్యం కాలేదు';
+
+  @override
+  String get loadMore => 'మరిన్ని లోడ్ చేయండి';
+
+  @override
+  String get sparesTitle => 'స్పేర్ పార్ట్స్';
+
+  @override
+  String get findSparePartsShops =>
+      'స్పేర్ పార్ట్స్ మరియు సమీప దుకాణాలు కనుగొనండి';
+
+  @override
+  String get myBookings => 'నా బుకింగ్‌లు';
+
+  @override
+  String get yourSparePartsOrders => 'మీ స్పేర్ పార్ట్స్ ఆర్డర్లు';
+
+  @override
+  String get noBookingsYet => 'ఇంకా బుకింగ్‌లు లేవు';
+
+  @override
+  String get spareOrdersAppearHere =>
+      'మీ స్పేర్ పార్ట్స్ ఆర్డర్లు ఇక్కడ కనిపిస్తాయి';
+
+  @override
+  String orderNumber(String id) {
+    return 'ఆర్డర్ #$id';
+  }
+
+  @override
+  String get spareDetail => 'స్పేర్ వివరాలు';
+
+  @override
+  String get orderDetail => 'ఆర్డర్ వివరాలు';
+
+  @override
+  String get productDetails => 'ఉత్పత్తి వివరాలు';
+
+  @override
+  String get rating => 'రేటింగ్';
+
+  @override
+  String get partId => 'పార్ట్ ఐడి';
+
+  @override
+  String get spareName => 'స్పేర్ పేరు';
+
+  @override
+  String get suitsFor => 'కోసం అనుకూలం';
+
+  @override
+  String get noSparePartData => 'స్పేర్ పార్ట్ డేటా లేదు';
+
+  @override
+  String get noDescriptionAvailable =>
+      'ఈ స్పేర్ పార్ట్ కోసం వివరణ అందుబాటులో లేదు.';
+
+  @override
+  String get showInterest => 'ఆసక్తి చూపండి';
+
+  @override
+  String orderStatus(String status) {
+    return 'ఆర్డర్ స్థితి: $status';
+  }
+
+  @override
+  String get constructionEquipmentShops => 'నిర్మాణ పరికరాల దుకాణాలు';
+
+  @override
+  String get commercialVehicleShops => 'వాణిజ్య వాహన దుకాణాలు';
+
+  @override
+  String get shopsNearLocation => 'మీ స్థానానికి సమీపంలో దుకాణాలు';
+
+  @override
+  String get noShopsFound => 'దుకాణాలు కనుగొనబడలేదు';
+
+  @override
+  String get enableLocation => 'స్థానాన్ని ఎనేబుల్ చేయండి';
+
+  @override
+  String get chooseByCategory => 'వర్గం ద్వారా ఎంచుకోండి';
+
+  @override
+  String get exploreServicesYourVehicle =>
+      'మీ వాహనానికి అవసరమైన సేవలను అన్వేషించండి.';
+
+  @override
+  String get bidDetails => 'బిడ్ వివరాలు';
+
+  @override
+  String get vehicleRef => 'వాహన సూచన';
+
+  @override
+  String get endTime => 'ముగింపు సమయం';
+
+  @override
+  String get currentHighest => 'ప్రస్తుత అత్యధికం';
+
+  @override
+  String get placedAt => 'వేయబడింది';
+
+  @override
+  String get makeAndModel => 'మేక్ & మోడల్';
+
+  @override
+  String get mfgYear => 'తయారీ సంవత్సరం';
+
+  @override
+  String get enterBidHint => 'బిడ్ నమోదు చేయండి';
+
+  @override
+  String get invalidBidAmount =>
+      'దయచేసి చెల్లుబాటు అయ్యే బిడ్ మొత్తం నమోదు చేయండి.';
+
+  @override
+  String get regNumber => 'రిజిస్ట్రేషన్ నంబర్';
+
+  @override
+  String get auctionClosed => 'వేలం మూసివేయబడింది';
+
+  @override
+  String get winDetails => 'గెలుపు వివరాలు';
+
+  @override
+  String get winningBidLabel => 'విజేత బిడ్:';
+
+  @override
+  String get bidApprovedAt => 'బిడ్ ఆమోదించబడింది';
+
+  @override
+  String get paymentStatus => 'చెల్లింపు స్థితి';
+
+  @override
+  String get winningLetter => 'విజేత లేఖ';
+
+  @override
+  String get sentStatus => 'పంపబడింది';
+
+  @override
+  String get pendingStatus => 'లంబిత';
+
+  @override
+  String get auctionEnded => 'వేలం ముగిసింది';
+
+  @override
+  String get viewDetails => 'వివరాలు చూడండి';
+
+  @override
+  String get approvedVehicles => 'అనుమతించిన వాహనాలు';
+
+  @override
+  String get pullDownToRefresh => 'రిఫ్రెష్ చేయడానికి క్రిందకు లాగండి';
+
+  @override
+  String get approvedVehiclesAvailable => 'అనుమతించిన వాహనాలు అందుబాటులో';
+
+  @override
+  String get noVehiclesAvailable => 'వాహనాలు అందుబాటులో లేవు';
+
+  @override
+  String get noImage => 'చిత్రం లేదు';
+
+  @override
+  String get knowMore => 'మరింత తెలుసుకోండి';
+
+  @override
+  String get auctionZone => 'వేలం జోన్';
+
+  @override
+  String get chooseAnyOne => 'ఒకదాన్ని ఎంచుకోండి';
+
+  @override
+  String get liveAuctionSubtitle =>
+      'వేలాలు ఇప్పుడు లైవ్‌గా ఉన్నాయి — సమయం తీరే ముందే బిడ్ చేయండి';
+
+  @override
+  String get liveBadge => 'LIVE';
+
+  @override
+  String get auctionKnowCondition =>
+      'మీ వాహనం యొక్క నిజమైన స్థితిని తెలుసుకోండి.';
+
+  @override
+  String get liveTab => 'లైవ్';
+
+  @override
+  String get closingTodayTab => 'ఈరోజు మూసివేయబడుతున్నవి';
+
+  @override
+  String get upcomingTab => 'రాబోయేవి';
+
+  @override
+  String get noAuctionsAvailable => 'ఏ వేలాలు అందుబాటులో లేవు';
+
+  @override
+  String get tapToBid => 'బిడ్ చేయడానికి నొక్కండి';
+
+  @override
+  String get auctionIdLabel => 'వేలం ఐడి';
+
+  @override
+  String get lot => 'లాట్';
+
+  @override
+  String get endDate => 'ముగింపు తేదీ';
+
+  @override
+  String get liveAuctions => 'లైవ్ వేలాలు';
+
+  @override
+  String get searchVehiclesHint => 'వాహనాలు వెతకండి';
+
+  @override
+  String get bidStartPriceLabel => 'బిడ్ ప్రారంభ ధర:';
+
+  @override
+  String get viewMoreDetails => 'మరిన్ని వివరాలు చూడండి';
+
+  @override
+  String get registrationRto => 'రిజిస్ట్రేషన్ RTO';
+
+  @override
+  String get yourBidAmount => 'మీ బిడ్ మొత్తం';
+
+  @override
+  String get minBid => 'కనిష్ట బిడ్';
+
+  @override
+  String get bidStartPrice => 'బిడ్ ప్రారంభ ధర';
+
+  @override
+  String get availableBuyingLimit => 'అందుబాటులో ఉన్న కొనుగోలు పరిమితి';
+
+  @override
+  String get placeBidTitle => 'బిడ్ వేయండి';
+
+  @override
+  String get placeBid => 'బిడ్ వేయండి';
+
+  @override
+  String get enterValidBidAmount => 'చెల్లుబాటు అయ్యే బిడ్ మొత్తం నమోదు చేయండి';
+
+  @override
+  String get bidMultipleOf100 => 'బిడ్ మొత్తం ₹100 యొక్క గుణకారం అయి ఉండాలి';
+
+  @override
+  String get bidPlacedSuccessfully => 'బిడ్ విజయవంతంగా వేయబడింది!';
+
+  @override
+  String get repoDate => 'రెపో తేదీ';
+
+  @override
+  String get transactionFees => 'లావాదేవీ రుసుములు';
+
+  @override
+  String get rcStatus => 'RC స్థితి';
+
+  @override
+  String get parkingCharges => 'పార్కింగ్ ఛార్జీలు';
+
+  @override
+  String get yardDetails => 'యార్డ్ వివరాలు';
+
+  @override
+  String get contactDetails => 'సంప్రదింపు వివరాలు';
+
+  @override
+  String get contactName => 'పేరు';
+
+  @override
+  String get mobileNo => 'మొబైల్ నం.';
+
+  @override
+  String get filterAuctions => 'వేలాలను ఫిల్టర్ చేయండి';
+
+  @override
+  String get clearFilters => 'తొలగించు';
+
+  @override
+  String get resetFilters => 'ఫిల్టర్లు రీసెట్ చేయండి';
+
+  @override
+  String get applyFilters => 'ఫిల్టర్లు వర్తింపజేయండి';
+
+  @override
+  String get selectVehicleTypeFilter => 'వాహన రకాన్ని ఎంచుకోండి';
+
+  @override
+  String get selectRegion => 'ప్రాంతాన్ని ఎంచుకోండి';
+
+  @override
+  String get searchState => 'రాష్ట్రాన్ని వెతకండి...';
+
+  @override
+  String get noCategoriesAvailable => 'వర్గాలు అందుబాటులో లేవు';
+
+  @override
+  String vehiclesAvailableCount(int count) {
+    return '$count వాహనాలు అందుబాటులో ఉన్నాయి';
+  }
+
+  @override
+  String get noVehiclesYet => 'ఇంకా వాహనాలు లేవు';
+
+  @override
+  String get myBids => 'నా బిడ్లు';
+
+  @override
+  String get yourAuctionBids => 'మీ వేలం బిడ్లు';
+
+  @override
+  String get noBidsYet =>
+      'ఇంకా బిడ్లు వేయలేదు.\nలైవ్ వేలాల్లో బిడ్ వేయడం ప్రారంభించండి!';
+
+  @override
+  String get closedBadge => 'మూసివేయబడింది';
+
+  @override
+  String get highestBid => 'అత్యధిక బిడ్:';
+
+  @override
+  String get auctionClosedButton => 'వేలం మూసివేయబడింది';
+
+  @override
+  String get myWins => 'నా గెలుపులు';
+
+  @override
+  String get yourWonAuctions => 'మీరు గెలిచిన వేలాలు';
+
+  @override
+  String get noWinsYet =>
+      'ఇంకా గెలుపులు లేవు.\nవేలాలు గెలవడానికి బిడ్ వేయడం ప్రారంభించండి!';
+
+  @override
+  String get wonBadge => 'గెలిచింది';
+
+  @override
+  String get paymentChip => 'చెల్లింపు';
+
+  @override
+  String get letterChip => 'లేఖ';
+
+  @override
+  String get account => 'ఖాతా';
+
+  @override
+  String get manageProfile => 'ప్రొఫైల్ నిర్వహించండి';
+
+  @override
+  String get passwordAndSecurity => 'పాస్‌వర్డ్ & భద్రత';
+
+  @override
+  String get language => 'భాష';
+
+  @override
+  String get auctions => 'వేలాలు';
+
+  @override
+  String get initiateRefund => 'రిఫండ్ ప్రారంభించండి';
+
+  @override
+  String get myVehicles => 'నా వాహనాలు';
+
+  @override
+  String get mySubscribedVehicles => 'నా సభ్యత్వ వాహనాలు';
+
+  @override
+  String get inspectionAndValuation => 'తనిఖీ & మూల్యాంకనం';
+
+  @override
+  String get spareFms => 'విడిభాగాలు & FMS';
+
+  @override
+  String get areYouSureLogout => 'మీరు నిజంగా లాగ్ అవుట్ చేయాలనుకుంటున్నారా?';
+
+  @override
+  String get userId => 'యూజర్ ఐడి';
+
+  @override
+  String get accountHolderName => 'ఖాతాదారు పేరు *';
+
+  @override
+  String get enterAccountHolderName => 'ఖాతాదారు పేరు నమోదు చేయండి';
+
+  @override
+  String get accountNumber => 'ఖాతా నంబర్ *';
+
+  @override
+  String get enterAccountNumber => 'ఖాతా నంబర్ నమోదు చేయండి';
+
+  @override
+  String get bankName => 'బ్యాంక్ పేరు *';
+
+  @override
+  String get enterBankName => 'బ్యాంక్ పేరు నమోదు చేయండి';
+
+  @override
+  String get branchName => 'శాఖ పేరు *';
+
+  @override
+  String get enterBranchName => 'శాఖ పేరు నమోదు చేయండి';
+
+  @override
+  String get ifscCode => 'IFSC కోడ్ *';
+
+  @override
+  String get enterIfscCode => 'IFSC కోడ్ నమోదు చేయండి';
+
+  @override
+  String get refundType => 'రిఫండ్ రకం *';
+
+  @override
+  String get enterRefundType => 'రిఫండ్ రకం నమోదు చేయండి';
+
+  @override
+  String get initiateRefundTitle => 'రిఫండ్ ప్రారంభించండి';
 }

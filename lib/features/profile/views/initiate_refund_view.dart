@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/design_system/design_system.dart';
+import '../../../core/extensions/context_extensions.dart';
 import '../controllers/initiate_refund_controller.dart';
 
 class InitiateRefundView extends GetView<InitiateRefundController> {
@@ -28,14 +29,14 @@ class InitiateRefundView extends GetView<InitiateRefundController> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         // User ID (read-only, auto-filled)
-                        _FieldLabel('User ID'),
+                        _FieldLabel(context.l10n.userId),
                         SizedBox(height: AppSpacing.sm),
                         Obx(() {
                           return CustomInputField(
                             controller: TextEditingController(
                               text: controller.userId.value,
                             ),
-                            placeholder: 'User ID',
+                            placeholder: context.l10n.userId,
                             prefixIcon: Icons.person_outline,
                             keyboardType: TextInputType.text,
                             textInputAction: TextInputAction.next,
@@ -46,11 +47,11 @@ class InitiateRefundView extends GetView<InitiateRefundController> {
                         SizedBox(height: AppSpacing.md),
 
                         // Account Holder Name
-                        _FieldLabel('Account Holder Name *'),
+                        _FieldLabel(context.l10n.accountHolderName),
                         SizedBox(height: AppSpacing.sm),
                         CustomInputField(
                           controller: controller.accHolderNameController,
-                          placeholder: 'Enter account holder name',
+                          placeholder: context.l10n.enterAccountHolderName,
                           prefixIcon: Icons.person_outline,
                           keyboardType: TextInputType.name,
                           textInputAction: TextInputAction.next,
@@ -59,11 +60,11 @@ class InitiateRefundView extends GetView<InitiateRefundController> {
                         SizedBox(height: AppSpacing.md),
 
                         // Account Number
-                        _FieldLabel('Account Number *'),
+                        _FieldLabel(context.l10n.accountNumber),
                         SizedBox(height: AppSpacing.sm),
                         CustomInputField(
                           controller: controller.accountNumberController,
-                          placeholder: 'Enter account number',
+                          placeholder: context.l10n.enterAccountNumber,
                           prefixIcon: Icons.account_balance_outlined,
                           keyboardType: TextInputType.number,
                           textInputAction: TextInputAction.next,
@@ -72,11 +73,11 @@ class InitiateRefundView extends GetView<InitiateRefundController> {
                         SizedBox(height: AppSpacing.md),
 
                         // Bank Name
-                        _FieldLabel('Bank Name *'),
+                        _FieldLabel(context.l10n.bankName),
                         SizedBox(height: AppSpacing.sm),
                         CustomInputField(
                           controller: controller.bankNameController,
-                          placeholder: 'Enter bank name',
+                          placeholder: context.l10n.enterBankName,
                           prefixIcon: Icons.account_balance_outlined,
                           keyboardType: TextInputType.text,
                           textInputAction: TextInputAction.next,
@@ -85,11 +86,11 @@ class InitiateRefundView extends GetView<InitiateRefundController> {
                         SizedBox(height: AppSpacing.md),
 
                         // Branch Name
-                        _FieldLabel('Branch Name *'),
+                        _FieldLabel(context.l10n.branchName),
                         SizedBox(height: AppSpacing.sm),
                         CustomInputField(
                           controller: controller.branchNameController,
-                          placeholder: 'Enter branch name',
+                          placeholder: context.l10n.enterBranchName,
                           prefixIcon: Icons.location_on_outlined,
                           keyboardType: TextInputType.text,
                           textInputAction: TextInputAction.next,
@@ -98,11 +99,11 @@ class InitiateRefundView extends GetView<InitiateRefundController> {
                         SizedBox(height: AppSpacing.md),
 
                         // IFSC Code
-                        _FieldLabel('IFSC Code *'),
+                        _FieldLabel(context.l10n.ifscCode),
                         SizedBox(height: AppSpacing.sm),
                         CustomInputField(
                           controller: controller.ifscCodeController,
-                          placeholder: 'Enter IFSC code',
+                          placeholder: context.l10n.enterIfscCode,
                           prefixIcon: Icons.code_outlined,
                           keyboardType: TextInputType.text,
                           textInputAction: TextInputAction.next,
@@ -111,11 +112,11 @@ class InitiateRefundView extends GetView<InitiateRefundController> {
                         SizedBox(height: AppSpacing.md),
 
                         // Refund Type
-                        _FieldLabel('Refund Type *'),
+                        _FieldLabel(context.l10n.refundType),
                         SizedBox(height: AppSpacing.sm),
                         CustomInputField(
                           controller: controller.refundTypeController,
-                          placeholder: 'Enter refund type',
+                          placeholder: context.l10n.enterRefundType,
                           prefixIcon: Icons.category_outlined,
                           keyboardType: TextInputType.text,
                           textInputAction: TextInputAction.next,
@@ -128,7 +129,7 @@ class InitiateRefundView extends GetView<InitiateRefundController> {
                           final isValid = controller.isFormValid;
                           return isValid
                               ? GradientButton.filled(
-                                  text: 'Initiate Refund',
+                                  text: context.l10n.initiateRefundTitle,
                                   onPressed: controller.isSubmitting.value
                                       ? null
                                       : () => controller.submitRefund(),
@@ -136,7 +137,7 @@ class InitiateRefundView extends GetView<InitiateRefundController> {
                                   width: double.infinity,
                                 )
                               : GradientButton.outlined(
-                                  text: 'Initiate Refund',
+                                  text: context.l10n.initiateRefundTitle,
                                   onPressed: null,
                                   width: double.infinity,
                                 );
@@ -193,7 +194,7 @@ class _Header extends StatelessWidget {
           ),
           SizedBox(width: 16.w),
           Text(
-            'Initiate Refund',
+            context.l10n.initiateRefundTitle,
             style: AppTextStyles.headingMedium.copyWith(
               fontSize: 20.sp,
               fontWeight: FontWeight.w700,

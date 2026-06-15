@@ -6,6 +6,7 @@ import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_sizes.dart';
 import '../../../core/design_system/templates/app_layout.dart';
 import '../../../core/design_system/tokens/app_spacing.dart';
+import '../../../core/extensions/context_extensions.dart';
 import '../../../theme/app_fonts.dart';
 import '../controllers/spare_and_fms_controller.dart';
 
@@ -16,8 +17,8 @@ class SpareOrdersView extends GetView<SpareAndFmsController> {
   @override
   Widget build(BuildContext context) {
     return AppLayout(
-      title: 'My Bookings',
-      subtitle: 'Your spare parts orders',
+      title: context.l10n.myBookings,
+      subtitle: context.l10n.yourSparePartsOrders,
       showBack: true,
       body: Obx(() {
         // Loading state
@@ -33,10 +34,12 @@ class SpareOrdersView extends GetView<SpareAndFmsController> {
 
         // Orders list
         return RefreshIndicator(
-          onRefresh: () async => controller.loadUserSpareOrders(isRefresh: true),
+          onRefresh: () async =>
+              controller.loadUserSpareOrders(isRefresh: true),
           child: ListView.builder(
             padding: EdgeInsets.all(AppSpacing.md),
-            itemCount: controller.spareOrdersList.length +
+            itemCount:
+                controller.spareOrdersList.length +
                 (controller.hasMoreSpareOrders.value ? 1 : 0),
             itemBuilder: (context, index) {
               if (index == controller.spareOrdersList.length) {
@@ -73,16 +76,24 @@ class SpareOrdersView extends GetView<SpareAndFmsController> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.receipt_long_outlined, size: 64.r, color: AppColors.grey400),
+          Icon(
+            Icons.receipt_long_outlined,
+            size: 64.r,
+            color: AppColors.grey400,
+          ),
           SizedBox(height: AppSpacing.md),
-          Text(
-            'No bookings yet',
-            style: AppFonts.titleMedium.copyWith(color: AppColors.grey600),
+          Builder(
+            builder: (ctx) => Text(
+              ctx.l10n.noBookingsYet,
+              style: AppFonts.titleMedium.copyWith(color: AppColors.grey600),
+            ),
           ),
           SizedBox(height: AppSpacing.xs),
-          Text(
-            'Your spare parts orders will appear here',
-            style: AppFonts.bodySmall.copyWith(color: AppColors.grey500),
+          Builder(
+            builder: (ctx) => Text(
+              ctx.l10n.spareOrdersAppearHere,
+              style: AppFonts.bodySmall.copyWith(color: AppColors.grey500),
+            ),
           ),
         ],
       ),
@@ -178,7 +189,7 @@ class _OrderCard extends StatelessWidget {
                     ),
                     SizedBox(height: 4.h),
                     Text(
-                      'Order #${order.spareOrderId}',
+                      context.l10n.orderNumber(order.spareOrderId.toString()),
                       style: AppFonts.bodySmall.copyWith(
                         color: AppColors.grey500,
                       ),

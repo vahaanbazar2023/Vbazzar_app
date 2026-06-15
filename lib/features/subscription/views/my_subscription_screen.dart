@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/design_system/tokens/app_radius.dart';
 import '../../../core/design_system/tokens/app_spacing.dart';
+import '../../../core/extensions/context_extensions.dart';
 import '../controllers/subscription_controller.dart';
 import '../models/user_subscription.dart';
 
@@ -56,7 +57,7 @@ class MySubscriptionScreen extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
-                        'My Subscriptions',
+                        context.l10n.my_subscriptions_title,
                         style: TextStyle(
                           fontFamily: 'Montserrat',
                           fontSize: 22.sp,
@@ -68,7 +69,7 @@ class MySubscriptionScreen extends StatelessWidget {
                       Padding(
                         padding: EdgeInsets.only(left: AppSpacing.lg),
                         child: Text(
-                          'Your active plans',
+                          context.l10n.yourActivePlans,
                           style: TextStyle(
                             fontFamily: 'Montserrat',
                             fontSize: 14.sp,
@@ -177,7 +178,7 @@ class _PlanCountStrip extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            '$count Active Plan${count == 1 ? '' : 's'}',
+            context.l10n.activePlanCount(count.toString()),
             style: TextStyle(
               fontFamily: 'Montserrat',
               fontWeight: FontWeight.w700,
@@ -187,7 +188,7 @@ class _PlanCountStrip extends StatelessWidget {
           ),
           SizedBox(height: 2.h),
           Text(
-            'Your current subscriptions',
+            context.l10n.yourCurrentSubscriptions,
             style: TextStyle(
               fontFamily: 'Plus Jakarta Sans',
               fontSize: 11.sp,
@@ -377,7 +378,7 @@ class _SubscriptionCard extends StatelessWidget {
                   ),
                   SizedBox(width: 5.w),
                   Text(
-                    'No expiry date',
+                    context.l10n.noExpiryDate,
                     style: TextStyle(
                       fontFamily: 'Plus Jakarta Sans',
                       fontSize: 12.sp,
@@ -515,7 +516,7 @@ class _EmptyState extends StatelessWidget {
             ),
             SizedBox(height: 16.h),
             Text(
-              'No Active Subscriptions',
+              context.l10n.noActiveSubscriptions,
               style: TextStyle(
                 fontFamily: 'Montserrat',
                 fontWeight: FontWeight.w700,
@@ -525,7 +526,7 @@ class _EmptyState extends StatelessWidget {
             ),
             SizedBox(height: 6.h),
             Text(
-              'You have not subscribed to any plan yet.',
+              context.l10n.notSubscribedYet,
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontFamily: 'Plus Jakarta Sans',
@@ -583,7 +584,7 @@ class _ErrorState extends StatelessWidget {
                   borderRadius: BorderRadius.circular(24.r),
                 ),
                 child: Text(
-                  'Retry',
+                  context.l10n.retry,
                   style: TextStyle(
                     fontFamily: 'Montserrat',
                     fontWeight: FontWeight.w700,

@@ -4323,6 +4323,1416 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Please fix all validation errors before submitting'**
   String get please_fix_all_validation_errors;
+
+  /// No description provided for @vehicleDetailsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Vehicle Details'**
+  String get vehicleDetailsTitle;
+
+  /// No description provided for @modelYear.
+  ///
+  /// In en, this message translates to:
+  /// **'Model Year'**
+  String get modelYear;
+
+  /// No description provided for @keySpecifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Key Specifications'**
+  String get keySpecifications;
+
+  /// No description provided for @categoryCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Category Code'**
+  String get categoryCode;
+
+  /// No description provided for @brandCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Brand Code'**
+  String get brandCode;
+
+  /// No description provided for @bodyType.
+  ///
+  /// In en, this message translates to:
+  /// **'Body Type'**
+  String get bodyType;
+
+  /// No description provided for @tonnage.
+  ///
+  /// In en, this message translates to:
+  /// **'Tonnage'**
+  String get tonnage;
+
+  /// No description provided for @noOfTyres.
+  ///
+  /// In en, this message translates to:
+  /// **'No. of Tyres'**
+  String get noOfTyres;
+
+  /// No description provided for @kvRating.
+  ///
+  /// In en, this message translates to:
+  /// **'KV Rating'**
+  String get kvRating;
+
+  /// No description provided for @actions.
+  ///
+  /// In en, this message translates to:
+  /// **'Actions'**
+  String get actions;
+
+  /// No description provided for @letUsKnow.
+  ///
+  /// In en, this message translates to:
+  /// **'Let Us Know'**
+  String get letUsKnow;
+
+  /// No description provided for @youreInterested.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re Interested'**
+  String get youreInterested;
+
+  /// No description provided for @interested.
+  ///
+  /// In en, this message translates to:
+  /// **'Interested'**
+  String get interested;
+
+  /// No description provided for @becomeMember.
+  ///
+  /// In en, this message translates to:
+  /// **'Become a Member'**
+  String get becomeMember;
+
+  /// No description provided for @connectWithOwner.
+  ///
+  /// In en, this message translates to:
+  /// **'Connect with owner'**
+  String get connectWithOwner;
+
+  /// No description provided for @fetchingContact.
+  ///
+  /// In en, this message translates to:
+  /// **'Fetching contact...'**
+  String get fetchingContact;
+
+  /// No description provided for @callButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Call'**
+  String get callButton;
+
+  /// No description provided for @connectWithOwnerTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Connect with Owner'**
+  String get connectWithOwnerTitle;
+
+  /// No description provided for @connectWithOwnerSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Subscribe to get the owner\'s contact number and connect directly.'**
+  String get connectWithOwnerSubtitle;
+
+  /// No description provided for @subscribe.
+  ///
+  /// In en, this message translates to:
+  /// **'Subscribe'**
+  String get subscribe;
+
+  /// No description provided for @submitYour.
+  ///
+  /// In en, this message translates to:
+  /// **'Submit Your'**
+  String get submitYour;
+
+  /// No description provided for @bestVehicleOffer.
+  ///
+  /// In en, this message translates to:
+  /// **'Best Vehicle Offer'**
+  String get bestVehicleOffer;
+
+  /// No description provided for @enterAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter amount'**
+  String get enterAmount;
+
+  /// No description provided for @invalidAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid Amount'**
+  String get invalidAmount;
+
+  /// No description provided for @pleaseEnterValidOfferAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a valid offer amount.'**
+  String get pleaseEnterValidOfferAmount;
+
+  /// No description provided for @offerTooLow.
+  ///
+  /// In en, this message translates to:
+  /// **'Offer Too Low'**
+  String get offerTooLow;
+
+  /// No description provided for @minimumOfferPercent.
+  ///
+  /// In en, this message translates to:
+  /// **'Minimum offer is 60% of the price: ₹{amount}'**
+  String minimumOfferPercent(String amount);
+
+  /// No description provided for @offerSent.
+  ///
+  /// In en, this message translates to:
+  /// **'Your offer has been sent.'**
+  String get offerSent;
+
+  /// No description provided for @offerFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Offer Failed'**
+  String get offerFailed;
+
+  /// No description provided for @inspectionRequested.
+  ///
+  /// In en, this message translates to:
+  /// **'Inspection Requested'**
+  String get inspectionRequested;
+
+  /// No description provided for @requestVehicleInspection.
+  ///
+  /// In en, this message translates to:
+  /// **'Request Vehicle Inspection'**
+  String get requestVehicleInspection;
+
+  /// No description provided for @na.
+  ///
+  /// In en, this message translates to:
+  /// **'N/A'**
+  String get na;
+
+  /// No description provided for @inspectionValuation.
+  ///
+  /// In en, this message translates to:
+  /// **'Inspection & Valuation'**
+  String get inspectionValuation;
+
+  /// No description provided for @professionalVehicleInspection.
+  ///
+  /// In en, this message translates to:
+  /// **'Professional vehicle inspection services'**
+  String get professionalVehicleInspection;
+
+  /// No description provided for @vehicleInspectionHero.
+  ///
+  /// In en, this message translates to:
+  /// **'Vehicle Inspection\n& Valuation'**
+  String get vehicleInspectionHero;
+
+  /// No description provided for @inspectionHeroSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Get professional vehicle inspection and accurate valuation reports'**
+  String get inspectionHeroSubtitle;
+
+  /// No description provided for @requestInspectionCard.
+  ///
+  /// In en, this message translates to:
+  /// **'Request Inspection'**
+  String get requestInspectionCard;
+
+  /// No description provided for @requestInspectionDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Submit your vehicle for professional inspection and valuation'**
+  String get requestInspectionDesc;
+
+  /// No description provided for @getStarted.
+  ///
+  /// In en, this message translates to:
+  /// **'Get Started'**
+  String get getStarted;
+
+  /// No description provided for @agentInspection.
+  ///
+  /// In en, this message translates to:
+  /// **'Agent Inspection'**
+  String get agentInspection;
+
+  /// No description provided for @agentInspectionDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Perform detailed on-site vehicle inspection and submit report'**
+  String get agentInspectionDesc;
+
+  /// No description provided for @startInspection.
+  ///
+  /// In en, this message translates to:
+  /// **'Start Inspection'**
+  String get startInspection;
+
+  /// No description provided for @myInspections.
+  ///
+  /// In en, this message translates to:
+  /// **'My Inspections'**
+  String get myInspections;
+
+  /// No description provided for @trackInspectionRequests.
+  ///
+  /// In en, this message translates to:
+  /// **'Track your vehicle inspection requests and valuations'**
+  String get trackInspectionRequests;
+
+  /// No description provided for @unableToLoadInspections.
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to load inspections. Please try again.'**
+  String get unableToLoadInspections;
+
+  /// No description provided for @noInspectionsFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No inspections found'**
+  String get noInspectionsFound;
+
+  /// No description provided for @inspectionRequestsAppearHere.
+  ///
+  /// In en, this message translates to:
+  /// **'Your inspection requests will appear here'**
+  String get inspectionRequestsAppearHere;
+
+  /// No description provided for @requestInspection.
+  ///
+  /// In en, this message translates to:
+  /// **'Request Inspection'**
+  String get requestInspection;
+
+  /// No description provided for @noMoreInspections.
+  ///
+  /// In en, this message translates to:
+  /// **'No more inspections'**
+  String get noMoreInspections;
+
+  /// No description provided for @insuranceFinance.
+  ///
+  /// In en, this message translates to:
+  /// **'Insurance & Finance'**
+  String get insuranceFinance;
+
+  /// No description provided for @insuranceFinanceSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Get quotes for vehicle insurance and financing'**
+  String get insuranceFinanceSubtitle;
+
+  /// No description provided for @insurance.
+  ///
+  /// In en, this message translates to:
+  /// **'Insurance'**
+  String get insurance;
+
+  /// No description provided for @finance.
+  ///
+  /// In en, this message translates to:
+  /// **'Finance'**
+  String get finance;
+
+  /// No description provided for @enterLastNameOptional.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter last name (optional)'**
+  String get enterLastNameOptional;
+
+  /// No description provided for @selectStateFirst.
+  ///
+  /// In en, this message translates to:
+  /// **'Select a Region first'**
+  String get selectStateFirst;
+
+  /// No description provided for @saveChanges.
+  ///
+  /// In en, this message translates to:
+  /// **'Save Changes'**
+  String get saveChanges;
+
+  /// No description provided for @myWallet.
+  ///
+  /// In en, this message translates to:
+  /// **'My Wallet'**
+  String get myWallet;
+
+  /// No description provided for @transactions.
+  ///
+  /// In en, this message translates to:
+  /// **'Transactions'**
+  String get transactions;
+
+  /// No description provided for @yourReferralCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Referral Code'**
+  String get yourReferralCode;
+
+  /// No description provided for @shareCodeEarnCredits.
+  ///
+  /// In en, this message translates to:
+  /// **'Share this code to earn wallet credits'**
+  String get shareCodeEarnCredits;
+
+  /// No description provided for @copyReferralCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy Referral Code'**
+  String get copyReferralCode;
+
+  /// No description provided for @referralCodeCopied.
+  ///
+  /// In en, this message translates to:
+  /// **'Referral code copied!'**
+  String get referralCodeCopied;
+
+  /// No description provided for @unableToLoadWallet.
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to Load Wallet'**
+  String get unableToLoadWallet;
+
+  /// No description provided for @pleaseTryAgainLater.
+  ///
+  /// In en, this message translates to:
+  /// **'Please try again later'**
+  String get pleaseTryAgainLater;
+
+  /// No description provided for @noTransactionsYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No Transactions Yet'**
+  String get noTransactionsYet;
+
+  /// No description provided for @walletTransactionsAppearHere.
+  ///
+  /// In en, this message translates to:
+  /// **'Your wallet transactions will appear here'**
+  String get walletTransactionsAppearHere;
+
+  /// No description provided for @selectSubscriptionSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Select the subscription plan that suits you best'**
+  String get selectSubscriptionSubtitle;
+
+  /// No description provided for @haveReferralCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Have Any Referral Code ?'**
+  String get haveReferralCode;
+
+  /// No description provided for @enterHere.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter here'**
+  String get enterHere;
+
+  /// No description provided for @proceedPayment.
+  ///
+  /// In en, this message translates to:
+  /// **'Proceed Payment'**
+  String get proceedPayment;
+
+  /// No description provided for @orPayFromWallet.
+  ///
+  /// In en, this message translates to:
+  /// **'or pay from '**
+  String get orPayFromWallet;
+
+  /// No description provided for @myWalletLink.
+  ///
+  /// In en, this message translates to:
+  /// **'\"My wallet\"'**
+  String get myWalletLink;
+
+  /// No description provided for @validity.
+  ///
+  /// In en, this message translates to:
+  /// **'Validity : {label}'**
+  String validity(String label);
+
+  /// No description provided for @paymentFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment Failed'**
+  String get paymentFailed;
+
+  /// No description provided for @paymentCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment Cancelled'**
+  String get paymentCancelled;
+
+  /// No description provided for @youCancelledPayment.
+  ///
+  /// In en, this message translates to:
+  /// **'You cancelled the payment'**
+  String get youCancelledPayment;
+
+  /// No description provided for @buyingLimitUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Buying limit updated!'**
+  String get buyingLimitUpdated;
+
+  /// No description provided for @membershipActivated.
+  ///
+  /// In en, this message translates to:
+  /// **'Membership activated! Fetching owner contact...'**
+  String get membershipActivated;
+
+  /// No description provided for @inspectionSubmitted.
+  ///
+  /// In en, this message translates to:
+  /// **'Inspection request submitted!'**
+  String get inspectionSubmitted;
+
+  /// No description provided for @vehicleDetailsUnlocked.
+  ///
+  /// In en, this message translates to:
+  /// **'Vehicle Details unlocked!'**
+  String get vehicleDetailsUnlocked;
+
+  /// No description provided for @auctionAccessActivated.
+  ///
+  /// In en, this message translates to:
+  /// **'Auction Access Activated!'**
+  String get auctionAccessActivated;
+
+  /// No description provided for @subscriptionActivated.
+  ///
+  /// In en, this message translates to:
+  /// **'Subscription Activated!'**
+  String get subscriptionActivated;
+
+  /// No description provided for @couldNotRefreshSubscription.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not refresh subscription. Please try again.'**
+  String get couldNotRefreshSubscription;
+
+  /// No description provided for @pleaseLoginToContinue.
+  ///
+  /// In en, this message translates to:
+  /// **'Please login to continue'**
+  String get pleaseLoginToContinue;
+
+  /// No description provided for @yourActivePlans.
+  ///
+  /// In en, this message translates to:
+  /// **'Your active plans'**
+  String get yourActivePlans;
+
+  /// No description provided for @activePlanCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} Active Plan'**
+  String activePlanCount(String count);
+
+  /// No description provided for @yourCurrentSubscriptions.
+  ///
+  /// In en, this message translates to:
+  /// **'Your current subscriptions'**
+  String get yourCurrentSubscriptions;
+
+  /// No description provided for @noExpiryDate.
+  ///
+  /// In en, this message translates to:
+  /// **'No expiry date'**
+  String get noExpiryDate;
+
+  /// No description provided for @noActiveSubscriptions.
+  ///
+  /// In en, this message translates to:
+  /// **'No Active Subscriptions'**
+  String get noActiveSubscriptions;
+
+  /// No description provided for @notSubscribedYet.
+  ///
+  /// In en, this message translates to:
+  /// **'You have not subscribed to any plan yet.'**
+  String get notSubscribedYet;
+
+  /// No description provided for @serviceProviders.
+  ///
+  /// In en, this message translates to:
+  /// **'Service Providers'**
+  String get serviceProviders;
+
+  /// No description provided for @findNearbyMechanics.
+  ///
+  /// In en, this message translates to:
+  /// **'Find nearby mechanics and garages'**
+  String get findNearbyMechanics;
+
+  /// No description provided for @providersFound.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} providers found'**
+  String providersFound(String count);
+
+  /// No description provided for @findingShopsNearYou.
+  ///
+  /// In en, this message translates to:
+  /// **'Finding shops near you...'**
+  String get findingShopsNearYou;
+
+  /// No description provided for @subscribeToCAll.
+  ///
+  /// In en, this message translates to:
+  /// **'Subscribe to Call'**
+  String get subscribeToCAll;
+
+  /// No description provided for @noMechanicsFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No Mechanics Found'**
+  String get noMechanicsFound;
+
+  /// No description provided for @noServiceProvidersFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No service providers found near your location'**
+  String get noServiceProvidersFound;
+
+  /// No description provided for @tryAgain.
+  ///
+  /// In en, this message translates to:
+  /// **'Try Again'**
+  String get tryAgain;
+
+  /// No description provided for @noResultsFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No results found'**
+  String get noResultsFound;
+
+  /// No description provided for @tryDifferentSearch.
+  ///
+  /// In en, this message translates to:
+  /// **'Try a different search term'**
+  String get tryDifferentSearch;
+
+  /// No description provided for @couldNotLaunchDialer.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not launch phone dialer'**
+  String get couldNotLaunchDialer;
+
+  /// No description provided for @loadMore.
+  ///
+  /// In en, this message translates to:
+  /// **'Load More'**
+  String get loadMore;
+
+  /// No description provided for @sparesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Spares'**
+  String get sparesTitle;
+
+  /// No description provided for @findSparePartsShops.
+  ///
+  /// In en, this message translates to:
+  /// **'Find spare parts and nearby shops'**
+  String get findSparePartsShops;
+
+  /// No description provided for @myBookings.
+  ///
+  /// In en, this message translates to:
+  /// **'My Bookings'**
+  String get myBookings;
+
+  /// No description provided for @yourSparePartsOrders.
+  ///
+  /// In en, this message translates to:
+  /// **'Your spare parts orders'**
+  String get yourSparePartsOrders;
+
+  /// No description provided for @noBookingsYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No bookings yet'**
+  String get noBookingsYet;
+
+  /// No description provided for @spareOrdersAppearHere.
+  ///
+  /// In en, this message translates to:
+  /// **'Your spare parts orders will appear here'**
+  String get spareOrdersAppearHere;
+
+  /// No description provided for @orderNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Order #{id}'**
+  String orderNumber(String id);
+
+  /// No description provided for @spareDetail.
+  ///
+  /// In en, this message translates to:
+  /// **'Spare Detail'**
+  String get spareDetail;
+
+  /// No description provided for @orderDetail.
+  ///
+  /// In en, this message translates to:
+  /// **'Order Detail'**
+  String get orderDetail;
+
+  /// No description provided for @productDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Product details'**
+  String get productDetails;
+
+  /// No description provided for @rating.
+  ///
+  /// In en, this message translates to:
+  /// **'Rating'**
+  String get rating;
+
+  /// No description provided for @partId.
+  ///
+  /// In en, this message translates to:
+  /// **'Part ID'**
+  String get partId;
+
+  /// No description provided for @spareName.
+  ///
+  /// In en, this message translates to:
+  /// **'Spare Name'**
+  String get spareName;
+
+  /// No description provided for @suitsFor.
+  ///
+  /// In en, this message translates to:
+  /// **'Suits For'**
+  String get suitsFor;
+
+  /// No description provided for @noSparePartData.
+  ///
+  /// In en, this message translates to:
+  /// **'No spare part data'**
+  String get noSparePartData;
+
+  /// No description provided for @noDescriptionAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'No description available for this spare part.'**
+  String get noDescriptionAvailable;
+
+  /// No description provided for @showInterest.
+  ///
+  /// In en, this message translates to:
+  /// **'Show Interest'**
+  String get showInterest;
+
+  /// No description provided for @orderStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Order Status: {status}'**
+  String orderStatus(String status);
+
+  /// No description provided for @constructionEquipmentShops.
+  ///
+  /// In en, this message translates to:
+  /// **'Construction Equipment Shops'**
+  String get constructionEquipmentShops;
+
+  /// No description provided for @commercialVehicleShops.
+  ///
+  /// In en, this message translates to:
+  /// **'Commercial Vehicle Shops'**
+  String get commercialVehicleShops;
+
+  /// No description provided for @shopsNearLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Shops near your location'**
+  String get shopsNearLocation;
+
+  /// No description provided for @noShopsFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No shops found'**
+  String get noShopsFound;
+
+  /// No description provided for @enableLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable Location'**
+  String get enableLocation;
+
+  /// No description provided for @chooseByCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose By Category'**
+  String get chooseByCategory;
+
+  /// No description provided for @exploreServicesYourVehicle.
+  ///
+  /// In en, this message translates to:
+  /// **'Explore the services that your vehicle need.'**
+  String get exploreServicesYourVehicle;
+
+  /// No description provided for @bidDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Bid Details'**
+  String get bidDetails;
+
+  /// No description provided for @vehicleRef.
+  ///
+  /// In en, this message translates to:
+  /// **'Vehicle Ref'**
+  String get vehicleRef;
+
+  /// No description provided for @endTime.
+  ///
+  /// In en, this message translates to:
+  /// **'End Time'**
+  String get endTime;
+
+  /// No description provided for @currentHighest.
+  ///
+  /// In en, this message translates to:
+  /// **'Current Highest'**
+  String get currentHighest;
+
+  /// No description provided for @placedAt.
+  ///
+  /// In en, this message translates to:
+  /// **'Placed At'**
+  String get placedAt;
+
+  /// No description provided for @makeAndModel.
+  ///
+  /// In en, this message translates to:
+  /// **'Make & Model'**
+  String get makeAndModel;
+
+  /// No description provided for @mfgYear.
+  ///
+  /// In en, this message translates to:
+  /// **'Mfg Year'**
+  String get mfgYear;
+
+  /// No description provided for @enterBidHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter bid'**
+  String get enterBidHint;
+
+  /// No description provided for @invalidBidAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a valid bid amount.'**
+  String get invalidBidAmount;
+
+  /// No description provided for @regNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Reg. Number'**
+  String get regNumber;
+
+  /// No description provided for @auctionClosed.
+  ///
+  /// In en, this message translates to:
+  /// **'Auction Closed'**
+  String get auctionClosed;
+
+  /// No description provided for @winDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Win Details'**
+  String get winDetails;
+
+  /// No description provided for @winningBidLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Winning Bid:'**
+  String get winningBidLabel;
+
+  /// No description provided for @bidApprovedAt.
+  ///
+  /// In en, this message translates to:
+  /// **'Bid Approved At'**
+  String get bidApprovedAt;
+
+  /// No description provided for @paymentStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment Status'**
+  String get paymentStatus;
+
+  /// No description provided for @winningLetter.
+  ///
+  /// In en, this message translates to:
+  /// **'Winning Letter'**
+  String get winningLetter;
+
+  /// No description provided for @sentStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Sent'**
+  String get sentStatus;
+
+  /// No description provided for @pendingStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending'**
+  String get pendingStatus;
+
+  /// No description provided for @auctionEnded.
+  ///
+  /// In en, this message translates to:
+  /// **'Auction Ended'**
+  String get auctionEnded;
+
+  /// No description provided for @viewDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'View Details'**
+  String get viewDetails;
+
+  /// No description provided for @approvedVehicles.
+  ///
+  /// In en, this message translates to:
+  /// **'Approved Vehicles'**
+  String get approvedVehicles;
+
+  /// No description provided for @pullDownToRefresh.
+  ///
+  /// In en, this message translates to:
+  /// **'Pull down to refresh'**
+  String get pullDownToRefresh;
+
+  /// No description provided for @approvedVehiclesAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Approved vehicles available'**
+  String get approvedVehiclesAvailable;
+
+  /// No description provided for @noVehiclesAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'No vehicles available'**
+  String get noVehiclesAvailable;
+
+  /// No description provided for @noImage.
+  ///
+  /// In en, this message translates to:
+  /// **'No Image'**
+  String get noImage;
+
+  /// No description provided for @knowMore.
+  ///
+  /// In en, this message translates to:
+  /// **'Know More'**
+  String get knowMore;
+
+  /// No description provided for @auctionZone.
+  ///
+  /// In en, this message translates to:
+  /// **'Auction Zone'**
+  String get auctionZone;
+
+  /// No description provided for @chooseAnyOne.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose any one'**
+  String get chooseAnyOne;
+
+  /// No description provided for @liveAuctionSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Auctions currently live — bid now before time runs out'**
+  String get liveAuctionSubtitle;
+
+  /// No description provided for @liveBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'LIVE'**
+  String get liveBadge;
+
+  /// No description provided for @auctionKnowCondition.
+  ///
+  /// In en, this message translates to:
+  /// **'Know the real condition of your vehicle.'**
+  String get auctionKnowCondition;
+
+  /// No description provided for @liveTab.
+  ///
+  /// In en, this message translates to:
+  /// **'Live'**
+  String get liveTab;
+
+  /// No description provided for @closingTodayTab.
+  ///
+  /// In en, this message translates to:
+  /// **'Closing Today'**
+  String get closingTodayTab;
+
+  /// No description provided for @upcomingTab.
+  ///
+  /// In en, this message translates to:
+  /// **'Upcoming'**
+  String get upcomingTab;
+
+  /// No description provided for @noAuctionsAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'No auctions available'**
+  String get noAuctionsAvailable;
+
+  /// No description provided for @tapToBid.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to Bid'**
+  String get tapToBid;
+
+  /// No description provided for @auctionIdLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'AUCTION ID'**
+  String get auctionIdLabel;
+
+  /// No description provided for @lot.
+  ///
+  /// In en, this message translates to:
+  /// **'LOT'**
+  String get lot;
+
+  /// No description provided for @endDate.
+  ///
+  /// In en, this message translates to:
+  /// **'End Date'**
+  String get endDate;
+
+  /// No description provided for @liveAuctions.
+  ///
+  /// In en, this message translates to:
+  /// **'Live Auctions'**
+  String get liveAuctions;
+
+  /// No description provided for @searchVehiclesHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search vehicles'**
+  String get searchVehiclesHint;
+
+  /// No description provided for @bidStartPriceLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Bid Start Price:'**
+  String get bidStartPriceLabel;
+
+  /// No description provided for @viewMoreDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'View more details'**
+  String get viewMoreDetails;
+
+  /// No description provided for @registrationRto.
+  ///
+  /// In en, this message translates to:
+  /// **'Registration RTO'**
+  String get registrationRto;
+
+  /// No description provided for @yourBidAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Bid Amount'**
+  String get yourBidAmount;
+
+  /// No description provided for @minBid.
+  ///
+  /// In en, this message translates to:
+  /// **'Min. Bid'**
+  String get minBid;
+
+  /// No description provided for @bidStartPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Bid Start Price'**
+  String get bidStartPrice;
+
+  /// No description provided for @availableBuyingLimit.
+  ///
+  /// In en, this message translates to:
+  /// **'Available Buying Limit'**
+  String get availableBuyingLimit;
+
+  /// No description provided for @placeBidTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Place Bid'**
+  String get placeBidTitle;
+
+  /// No description provided for @placeBid.
+  ///
+  /// In en, this message translates to:
+  /// **'Place Bid'**
+  String get placeBid;
+
+  /// No description provided for @enterValidBidAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid bid amount'**
+  String get enterValidBidAmount;
+
+  /// No description provided for @bidMultipleOf100.
+  ///
+  /// In en, this message translates to:
+  /// **'Bid amount must be a multiple of ₹100'**
+  String get bidMultipleOf100;
+
+  /// No description provided for @bidPlacedSuccessfully.
+  ///
+  /// In en, this message translates to:
+  /// **'Bid placed successfully!'**
+  String get bidPlacedSuccessfully;
+
+  /// No description provided for @repoDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Repo Date'**
+  String get repoDate;
+
+  /// No description provided for @transactionFees.
+  ///
+  /// In en, this message translates to:
+  /// **'Transaction Fees'**
+  String get transactionFees;
+
+  /// No description provided for @rcStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'RC Status'**
+  String get rcStatus;
+
+  /// No description provided for @parkingCharges.
+  ///
+  /// In en, this message translates to:
+  /// **'Parking Charges'**
+  String get parkingCharges;
+
+  /// No description provided for @yardDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Yard Details'**
+  String get yardDetails;
+
+  /// No description provided for @contactDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact Details'**
+  String get contactDetails;
+
+  /// No description provided for @contactName.
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get contactName;
+
+  /// No description provided for @mobileNo.
+  ///
+  /// In en, this message translates to:
+  /// **'Mobile No.'**
+  String get mobileNo;
+
+  /// No description provided for @filterAuctions.
+  ///
+  /// In en, this message translates to:
+  /// **'Filter Auctions'**
+  String get filterAuctions;
+
+  /// No description provided for @clearFilters.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear'**
+  String get clearFilters;
+
+  /// No description provided for @resetFilters.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset Filters'**
+  String get resetFilters;
+
+  /// No description provided for @applyFilters.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply Filters'**
+  String get applyFilters;
+
+  /// No description provided for @selectVehicleTypeFilter.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Vehicle Type'**
+  String get selectVehicleTypeFilter;
+
+  /// No description provided for @selectRegion.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Region'**
+  String get selectRegion;
+
+  /// No description provided for @searchState.
+  ///
+  /// In en, this message translates to:
+  /// **'Search state...'**
+  String get searchState;
+
+  /// No description provided for @noCategoriesAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'No categories available'**
+  String get noCategoriesAvailable;
+
+  /// No description provided for @vehiclesAvailableCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} vehicles available'**
+  String vehiclesAvailableCount(int count);
+
+  /// No description provided for @noVehiclesYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No vehicles yet'**
+  String get noVehiclesYet;
+
+  /// No description provided for @myBids.
+  ///
+  /// In en, this message translates to:
+  /// **'My Bids'**
+  String get myBids;
+
+  /// No description provided for @yourAuctionBids.
+  ///
+  /// In en, this message translates to:
+  /// **'Your auction bids'**
+  String get yourAuctionBids;
+
+  /// No description provided for @noBidsYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No bids placed yet.\nStart bidding in live auctions!'**
+  String get noBidsYet;
+
+  /// No description provided for @closedBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'CLOSED'**
+  String get closedBadge;
+
+  /// No description provided for @highestBid.
+  ///
+  /// In en, this message translates to:
+  /// **'Highest Bid:'**
+  String get highestBid;
+
+  /// No description provided for @auctionClosedButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Auction Closed'**
+  String get auctionClosedButton;
+
+  /// No description provided for @myWins.
+  ///
+  /// In en, this message translates to:
+  /// **'My Wins'**
+  String get myWins;
+
+  /// No description provided for @yourWonAuctions.
+  ///
+  /// In en, this message translates to:
+  /// **'Your won auctions'**
+  String get yourWonAuctions;
+
+  /// No description provided for @noWinsYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No wins yet.\nStart bidding to win auctions!'**
+  String get noWinsYet;
+
+  /// No description provided for @wonBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'WON'**
+  String get wonBadge;
+
+  /// No description provided for @paymentChip.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment'**
+  String get paymentChip;
+
+  /// No description provided for @letterChip.
+  ///
+  /// In en, this message translates to:
+  /// **'Letter'**
+  String get letterChip;
+
+  /// No description provided for @account.
+  ///
+  /// In en, this message translates to:
+  /// **'Account'**
+  String get account;
+
+  /// No description provided for @manageProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage Profile'**
+  String get manageProfile;
+
+  /// No description provided for @passwordAndSecurity.
+  ///
+  /// In en, this message translates to:
+  /// **'Password & Security'**
+  String get passwordAndSecurity;
+
+  /// No description provided for @language.
+  ///
+  /// In en, this message translates to:
+  /// **'Language'**
+  String get language;
+
+  /// No description provided for @auctions.
+  ///
+  /// In en, this message translates to:
+  /// **'Auctions'**
+  String get auctions;
+
+  /// No description provided for @initiateRefund.
+  ///
+  /// In en, this message translates to:
+  /// **'Initiate Refund'**
+  String get initiateRefund;
+
+  /// No description provided for @myVehicles.
+  ///
+  /// In en, this message translates to:
+  /// **'My Vehicles'**
+  String get myVehicles;
+
+  /// No description provided for @mySubscribedVehicles.
+  ///
+  /// In en, this message translates to:
+  /// **'My Subscribed Vehicles'**
+  String get mySubscribedVehicles;
+
+  /// No description provided for @inspectionAndValuation.
+  ///
+  /// In en, this message translates to:
+  /// **'Inspection & Valuation'**
+  String get inspectionAndValuation;
+
+  /// No description provided for @spareFms.
+  ///
+  /// In en, this message translates to:
+  /// **'Spare & FMS'**
+  String get spareFms;
+
+  /// No description provided for @areYouSureLogout.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to logout?'**
+  String get areYouSureLogout;
+
+  /// No description provided for @userId.
+  ///
+  /// In en, this message translates to:
+  /// **'User ID'**
+  String get userId;
+
+  /// No description provided for @accountHolderName.
+  ///
+  /// In en, this message translates to:
+  /// **'Account Holder Name *'**
+  String get accountHolderName;
+
+  /// No description provided for @enterAccountHolderName.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter account holder name'**
+  String get enterAccountHolderName;
+
+  /// No description provided for @accountNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Account Number *'**
+  String get accountNumber;
+
+  /// No description provided for @enterAccountNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter account number'**
+  String get enterAccountNumber;
+
+  /// No description provided for @bankName.
+  ///
+  /// In en, this message translates to:
+  /// **'Bank Name *'**
+  String get bankName;
+
+  /// No description provided for @enterBankName.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter bank name'**
+  String get enterBankName;
+
+  /// No description provided for @branchName.
+  ///
+  /// In en, this message translates to:
+  /// **'Branch Name *'**
+  String get branchName;
+
+  /// No description provided for @enterBranchName.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter branch name'**
+  String get enterBranchName;
+
+  /// No description provided for @ifscCode.
+  ///
+  /// In en, this message translates to:
+  /// **'IFSC Code *'**
+  String get ifscCode;
+
+  /// No description provided for @enterIfscCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter IFSC code'**
+  String get enterIfscCode;
+
+  /// No description provided for @refundType.
+  ///
+  /// In en, this message translates to:
+  /// **'Refund Type *'**
+  String get refundType;
+
+  /// No description provided for @enterRefundType.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter refund type'**
+  String get enterRefundType;
+
+  /// No description provided for @initiateRefundTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Initiate Refund'**
+  String get initiateRefundTitle;
 }
 
 class _AppLocalizationsDelegate
