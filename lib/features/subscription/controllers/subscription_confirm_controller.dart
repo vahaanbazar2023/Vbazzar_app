@@ -6,6 +6,7 @@ import '../../../features/auction/controllers/vehicle_listing_controller.dart';
 import '../../../features/buy_and_sell/controllers/vehicle_detail_controller.dart';
 import '../../../features/payment/controllers/payment_controller.dart';
 import '../../../features/spare_and_fms/controllers/spare_and_fms_controller.dart';
+import '../../../features/service_support/controllers/service_support_controller.dart';
 import '../../../routes/app_routes.dart';
 import '../models/subscription_plan.dart';
 import '../models/user_subscription.dart';
@@ -282,6 +283,30 @@ class SubscriptionConfirmController extends GetxController {
         } else {
           CustomSnackbar.show(
             message: 'Shop contact unlocked!',
+            type: SnackbarType.success,
+          );
+        }
+        break;
+
+      case 'SUBT007': // Mechanic contact — unlock mobile number
+        final args007 = _allArgs;
+        final mechanicId007 = args007['mechanic_id'] as String?;
+
+        Get.until(
+          (route) =>
+              route.settings.name != AppRoutes.subscription &&
+              route.settings.name != AppRoutes.subscriptionConfirm &&
+              route.settings.name != AppRoutes.walletPayment,
+        );
+
+        if (mechanicId007 != null &&
+            Get.isRegistered<ServiceSupportController>()) {
+          Get.find<ServiceSupportController>().unlockMechanicContactById(
+            mechanicId007,
+          );
+        } else {
+          CustomSnackbar.show(
+            message: 'Mechanic contact unlocked!',
             type: SnackbarType.success,
           );
         }

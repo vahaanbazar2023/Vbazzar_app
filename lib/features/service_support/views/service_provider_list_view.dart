@@ -378,11 +378,14 @@ class ServiceProviderListView extends GetView<ServiceSupportController> {
           // Action button
           Padding(
             padding: EdgeInsets.all(12.r),
-            child: Obx(
-              () => controller.hasSubscription.value && mechanic.hasValidMobile
+            child: Obx(() {
+              // Watch mechanics list so card rebuilds after silent refresh
+              controller.mechanics.length;
+              final hasPhone = mechanic.hasValidMobile;
+              return hasPhone
                   ? _buildCallButton(mechanic)
-                  : _buildSubscribeButton(mechanic),
-            ),
+                  : _buildSubscribeButton(mechanic);
+            }),
           ),
         ],
       ),
@@ -412,7 +415,7 @@ class ServiceProviderListView extends GetView<ServiceSupportController> {
 
   Widget _buildCallButton(Mechanic mechanic) {
     return GradientButton.filled(
-      text: 'Call ${mechanic.mechanicName}',
+      text: mechanic.mobileNumber,
       onPressed: () => _makeDirectCall(mechanic),
       width: double.infinity,
       height: 48.h,
@@ -423,7 +426,7 @@ class ServiceProviderListView extends GetView<ServiceSupportController> {
   Widget _buildSubscribeButton(Mechanic mechanic) {
     return GradientButton.filled(
       text: 'Subscribe to Call',
-      onPressed: () => controller.callMechanic(mechanic),
+      onPressed: () => controller.contactMechanic(mechanic),
       width: double.infinity,
       height: 48.h,
       fontSize: 15.sp,

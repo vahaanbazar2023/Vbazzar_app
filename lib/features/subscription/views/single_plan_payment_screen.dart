@@ -31,6 +31,9 @@ class SinglePlanPaymentScreen extends StatefulWidget {
   /// Optional shop ID — used by SUBT006 wallet flow to unlock shop contact.
   final String? shopId;
 
+  /// Optional mechanic ID — used by SUBT007 wallet flow to unlock mechanic contact.
+  final String? mechanicId;
+
   /// Called immediately after payment success (direct pay path).
   final VoidCallback onPaymentSuccess;
 
@@ -42,6 +45,7 @@ class SinglePlanPaymentScreen extends StatefulWidget {
     this.subtitle = '',
     this.source = 'INSPECTION',
     this.shopId,
+    this.mechanicId,
   });
 
   @override
@@ -108,6 +112,7 @@ class _SinglePlanPaymentScreenState extends State<SinglePlanPaymentScreen> {
     final extraArgs = <String, dynamic>{
       'onSuccess': widget.onPaymentSuccess,
       if (widget.shopId != null) 'shop_id': widget.shopId,
+      if (widget.mechanicId != null) 'mechanic_id': widget.mechanicId,
     };
     Get.to(
       () => WalletPaymentScreen(
