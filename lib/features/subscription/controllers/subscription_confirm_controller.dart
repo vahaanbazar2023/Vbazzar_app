@@ -3,6 +3,7 @@ import '../../../core/design_system/molecules/custom_snackbar.dart';
 import '../../../core/storage/secure_storage_service.dart';
 import '../../../core/storage/storage_keys.dart';
 import '../../../features/auction/controllers/vehicle_listing_controller.dart';
+import '../../../features/buy_and_sell/controllers/vehicle_detail_controller.dart';
 import '../../../features/payment/controllers/payment_controller.dart';
 import '../../../routes/app_routes.dart';
 import '../models/subscription_plan.dart';
@@ -191,6 +192,65 @@ class SubscriptionConfirmController extends GetxController {
           );
           SubscriptionGuardService.to.invalidateAndReload();
         }
+        break;
+
+      case SubscriptionTypeCode.ownerContact: // SUBT003
+        final args003 = Get.arguments as Map<String, dynamic>? ?? {};
+        final vehicleId003 = args003['pending_vehicle_id'] as String?;
+        final categoryCode003 = args003['category_code'] as String? ?? '';
+
+        // Pop subscription screens — user is back on the vehicle detail.
+        Get.until(
+          (route) =>
+              route.settings.name != AppRoutes.subscription &&
+              route.settings.name != AppRoutes.subscriptionConfirm &&
+              route.settings.name != AppRoutes.walletPayment,
+        );
+
+        CustomSnackbar.show(
+          message: 'Membership activated! Fetching owner contact...',
+          type: SnackbarType.success,
+        );
+
+        // Re-fetch the vehicle detail — the fresh response will have
+        // owner_details_access: "yes" and owner_mobile populated.
+        // The card's Obx updates automatically when the phone arrives.
+        if (vehicleId003 != null && Get.isRegistered<BuyVehicleController>()) {
+          Get.find<BuyVehicleController>().unlockOwnerContactAndRefresh(
+            vehicleId003,
+            categoryCode: categoryCode003,
+          );
+        }
+        SubscriptionGuardService.to.invalidateAndReload();
+        break;
+
+      case SubscriptionTypeCode.vehicleDetailsAccess: // SUBT004
+        // Retrieve the vehicle that triggered the subscription flow.
+        final pendingVehicle =
+            (Get.arguments as Map<String, dynamic>? ?? {})['pending_vehicle'];
+
+        // Pop all subscription screens.
+        Get.until(
+          (route) =>
+              route.settings.name != AppRoutes.subscription &&
+              route.settings.name != AppRoutes.subscriptionConfirm &&
+              route.settings.name != AppRoutes.walletPayment,
+        );
+
+        // Navigate to the vehicle detail the user originally wanted.
+        if (pendingVehicle != null) {
+          Get.toNamed(
+            AppRoutes.buyVehicleDetail,
+            arguments: {'vehicle': pendingVehicle},
+          );
+        }
+
+        CustomSnackbar.show(
+          message: 'Vehicle Details unlocked! You can now view full details.',
+          type: SnackbarType.success,
+        );
+        // Refresh guard cache in background.
+        SubscriptionGuardService.to.invalidateAndReload();
         break;
 
       default:

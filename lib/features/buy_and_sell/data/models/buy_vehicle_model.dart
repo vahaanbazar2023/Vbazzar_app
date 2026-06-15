@@ -21,6 +21,10 @@ class BuyVehicleModel extends BuyVehicleEntity {
     super.city,
     super.imageUrls,
     super.vehicleFileUrls,
+    super.sellerPhone,
+    super.ownerDetailsAccess,
+    super.categoryPlan,
+    super.subscriptionAmount,
   });
 
   factory BuyVehicleModel.fromJson(Map<String, dynamic> json) {
@@ -62,11 +66,23 @@ class BuyVehicleModel extends BuyVehicleEntity {
       bodyType: json['body_type']?.toString(),
       state: json['state']?.toString() ?? json['state_name']?.toString(),
       city: json['city']?.toString() ?? json['city_name']?.toString(),
-      imageUrl: json['image_url']?.toString() ?? json['primary_image']?.toString(),
+      imageUrl:
+          json['image_url']?.toString() ?? json['primary_image']?.toString(),
       status: json['status']?.toString(),
       price: json['price'] is num ? (json['price'] as num).toDouble() : null,
       imageUrls: images,
       vehicleFileUrls: vehicleFiles,
+      // Owner phone from user_info.mobile — only meaningful when
+      // owner_details_access == "yes"
+      sellerPhone:
+          (json['user_info'] as Map<String, dynamic>?)?['mobile']?.toString() ??
+          json['seller_phone']?.toString() ??
+          json['owner_mobile']?.toString(),
+      ownerDetailsAccess: json['owner_details_access']?.toString(),
+      categoryPlan: json['category_plan']?.toString(),
+      subscriptionAmount: json['subscription_amount'] is num
+          ? (json['subscription_amount'] as num).toDouble()
+          : double.tryParse(json['subscription_amount']?.toString() ?? ''),
     );
   }
 }

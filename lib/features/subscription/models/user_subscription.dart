@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 abstract final class SubscriptionTypeCode {
   static const auction = 'SUBT001';
   static const auctionBidLimit = 'SUBT002';
+  static const ownerContact = 'SUBT003'; // Connect with owner
   static const vehicleDetailsAccess = 'SUBT004';
   static const mechanicContact = 'SUBT006';
 }

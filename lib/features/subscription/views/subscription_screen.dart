@@ -11,6 +11,7 @@ import '../../../core/design_system/molecules/custom_snackbar.dart';
 import '../../../core/storage/secure_storage_service.dart';
 import '../../../core/storage/storage_keys.dart';
 import '../../../features/auction/controllers/vehicle_listing_controller.dart';
+import '../../../features/buy_and_sell/controllers/vehicle_detail_controller.dart';
 import '../../../features/main_shell/controllers/main_shell_controller.dart';
 import '../../../features/payment/controllers/payment_controller.dart';
 import '../../../routes/app_routes.dart';
@@ -211,14 +212,12 @@ class _SubscriptionBodyState extends State<_SubscriptionBody> {
     } else if (source == 'SUBT002') {
       if (Get.isRegistered<VehicleListingController>()) {
         final ctrl = Get.find<VehicleListingController>();
-        // Navigate immediately
         Get.until(
           (route) =>
               route.settings.name != AppRoutes.subscription &&
               route.settings.name != AppRoutes.subscriptionConfirm &&
               route.settings.name != AppRoutes.walletPayment,
         );
-        // Refresh + bid in background
         _runSUBT002Background(ctrl);
       } else {
         Get.until(
@@ -232,6 +231,55 @@ class _SubscriptionBodyState extends State<_SubscriptionBody> {
           type: SnackbarType.success,
         );
       }
+    } else if (source == 'SUBT003') {
+      final args003 = Get.arguments as Map<String, dynamic>? ?? {};
+      final vehicleId = args003['pending_vehicle_id'] as String?;
+      final categoryCode003 = args003['category_code'] as String? ?? '';
+
+      Get.until(
+        (route) =>
+            route.settings.name != AppRoutes.subscription &&
+            route.settings.name != AppRoutes.subscriptionConfirm &&
+            route.settings.name != AppRoutes.walletPayment,
+      );
+
+      CustomSnackbar.show(
+        message: 'Membership activated! Fetching owner contact...',
+        type: SnackbarType.success,
+      );
+
+      SubscriptionGuardService.to.invalidateAndReload();
+      if (vehicleId != null && Get.isRegistered<BuyVehicleController>()) {
+        Get.find<BuyVehicleController>().unlockOwnerContactAndRefresh(
+          vehicleId,
+          categoryCode: categoryCode003,
+        );
+      }
+    } else if (source == 'SUBT004') {
+      // Retrieve the vehicle passed when the user was redirected here from
+      // the buy vehicle listings screen.
+      final pendingVehicle =
+          (Get.arguments as Map<String, dynamic>? ?? {})['pending_vehicle'];
+
+      Get.until(
+        (route) =>
+            route.settings.name != AppRoutes.subscription &&
+            route.settings.name != AppRoutes.subscriptionConfirm &&
+            route.settings.name != AppRoutes.walletPayment,
+      );
+
+      if (pendingVehicle != null) {
+        Get.toNamed(
+          AppRoutes.buyVehicleDetail,
+          arguments: {'vehicle': pendingVehicle},
+        );
+      }
+
+      CustomSnackbar.show(
+        message: 'Vehicle Details unlocked! You can now view full details.',
+        type: SnackbarType.success,
+      );
+      SubscriptionGuardService.to.invalidateAndReload();
     } else {
       Get.offAllNamed(AppRoutes.mySubscriptions);
       CustomSnackbar.show(

@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/design_system/design_system.dart';
+import '../../../core/design_system/molecules/custom_snackbar.dart';
 import '../../../core/design_system/organisms/network_image_carousel.dart';
 import '../widgets/buy_filter_sheet.dart';
 import '../../../core/design_system/templates/app_layout.dart';
@@ -338,7 +339,13 @@ class _VehicleCard extends StatelessWidget {
             arguments: {'vehicle': vehicle},
           );
         } else {
-          // No subscription — go to subscription screen
+          // No subscription — show warning then redirect to subscription screen.
+          CustomSnackbar.show(
+            message:
+                'You need a Vehicle Details plan to view full details. Please subscribe to continue.',
+            type: SnackbarType.warning,
+          );
+          await Future.delayed(const Duration(milliseconds: 600));
           Get.toNamed(
             AppRoutes.subscription,
             arguments: {
@@ -346,6 +353,7 @@ class _VehicleCard extends StatelessWidget {
               'title': 'Vehicle Details Access',
               'subtitle':
                   'Subscribe to view full vehicle details and connect with the owner.',
+              'pending_vehicle': vehicle,
             },
           );
         }
@@ -405,57 +413,39 @@ class _VehicleCard extends StatelessWidget {
                     children: [
                       if (vehicle.year != null) ...[
                         _chip(Icons.calendar_today_outlined, vehicle.year!),
-                        SizedBox(width: AppSpacing.xxxl),
-                      ],
-                      if (vehicle.fuelType != null) ...[
-                        _chip(
-                          Icons.local_gas_station_outlined,
-                          vehicle.fuelType!,
-                        ),
-                        SizedBox(width: AppSpacing.xxl),
+                        SizedBox(width: AppSpacing.sm),
                       ],
                       if (vehicle.state != null)
                         _chip(Icons.location_on_outlined, vehicle.state!),
                     ],
                   ),
                   SizedBox(height: AppSpacing.sm),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        vehicle.formattedPrice,
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 14,
+                        vertical: 7,
+                      ),
+                      decoration: BoxDecoration(
+                        gradient: const LinearGradient(
+                          colors: [
+                            AppColors.ctaGradientStart,
+                            AppColors.ctaGradientEnd,
+                          ],
+                        ),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Text(
+                        'View Details',
                         style: TextStyle(
                           fontFamily: 'Montserrat',
-                          fontSize: 18.sp,
-                          fontWeight: FontWeight.w800,
-                          color: AppColors.primary,
+                          fontSize: 12.sp,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white,
                         ),
                       ),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 14,
-                          vertical: 7,
-                        ),
-                        decoration: BoxDecoration(
-                          gradient: const LinearGradient(
-                            colors: [
-                              AppColors.ctaGradientStart,
-                              AppColors.ctaGradientEnd,
-                            ],
-                          ),
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: Text(
-                          'View Details',
-                          style: TextStyle(
-                            fontFamily: 'Montserrat',
-                            fontSize: 12.sp,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
                 ],
               ),
@@ -586,13 +576,10 @@ class _ShimmerCard extends StatelessWidget {
                   ],
                 ),
                 SizedBox(height: 14.h),
-                // Price + button row
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    _shimmerBox(100.w, 20.h, radius: 6),
-                    _shimmerBox(90.w, 32.h, radius: 20),
-                  ],
+                // View Details button (right-aligned)
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: _shimmerBox(90.w, 32.h, radius: 20),
                 ),
               ],
             ),

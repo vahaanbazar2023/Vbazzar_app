@@ -76,6 +76,17 @@ class BuyVehicleController extends GetxController {
   final searchQuery = ''.obs;
   final searchController = TextEditingController();
 
+  // ─── Owner Contact (SUBT003) ─────────────────────────────────
+  // Maps vehicleId → revealed owner mobile number.
+  // Populated after a successful SUBT003 subscription payment.
+  final ownerPhones = <String, String>{}.obs;
+  final isFetchingOwnerPhone = false.obs;
+
+  // ─── Vehicle Detail (single vehicle fetch) ───────────────────
+  final currentVehicleDetail = Rxn<BuyVehicleEntity>();
+  final isLoadingDetail = false.obs;
+  final detailError = ''.obs;
+
   // ─── Tab State ───────────────────────────────────────────────
 
   final selectedTabIndex = 0.obs; // 0=All, 1=My Vehicles, 2=Subscribed
@@ -524,6 +535,118 @@ class BuyVehicleController extends GetxController {
         snackPosition: SnackPosition.TOP,
       );
     }
+  }
+
+  /// Calls the userInterest API with ownerDetailsAccess="yes" to reveal the
+  /// owner's mobile number for [vehicleId].
+  /// Called after a successful SUBT003 payment.
+  Future<void> fetchOwnerPhone(String vehicleId) async {
+    if (isFetchingOwnerPhone.value) return;
+    isFetchingOwnerPhone.value = true;
+    try {
+      final uid = await _userId;
+      final result = await repository.userInterest(
+        vehicleId: vehicleId,
+        userId: uid,
+        vehicleOffer: null,
+        isInterested: '',
+        ownerDetailsAccess: 'yes',
+        vehicleDetailsAccess: '',
+        inspectionRequest: '',
+      );
+      debugPrint('📞 fetchOwnerPhone result: $result');
+      if (result['status'] == 'success') {
+        final data = result['data'] as Map<String, dynamic>?;
+        final phone =
+            data?['owner_mobile']?.toString() ??
+            data?['seller_phone']?.toString() ??
+            result['owner_mobile']?.toString();
+        if (phone != null && phone.isNotEmpty) {
+          ownerPhones[vehicleId] = phone;
+          debugPrint('📞 Owner phone for $vehicleId: $phone');
+        } else {
+          debugPrint('⚠️ fetchOwnerPhone: no phone in response $result');
+        }
+      }
+    } catch (e) {
+      debugPrint('❌ fetchOwnerPhone error: $e');
+    } finally {
+      isFetchingOwnerPhone.value = false;
+    }
+  }
+
+  /// Fetches full vehicle details by sb_vehicle_id from the listing API.
+  /// [categoryCode] must match the vehicle's category so the API returns results.
+  /// Stores result in [currentVehicleDetail].
+  Future<void> fetchVehicleDetail(
+    String sbVehicleId, {
+    String categoryCode = '',
+    bool silent = false, // if true, no loading spinner
+  }) async {
+    if (!silent) {
+      isLoadingDetail.value = true;
+      detailError.value = '';
+      currentVehicleDetail.value = null;
+    }
+    try {
+      final uid = await _userId;
+      final result = await repository.listVehiclesByCategoryFilters(
+        userId: uid,
+        categoryCode: categoryCode,
+        limit: 1,
+        page: 1,
+        filters: {'sb_vehicle_id': sbVehicleId},
+      );
+      if (result.vehicles.isNotEmpty) {
+        currentVehicleDetail.value = result.vehicles.first;
+        final v = result.vehicles.first;
+        if (v.hasOwnerAccess && (v.sellerPhone?.isNotEmpty ?? false)) {
+          ownerPhones[sbVehicleId] = v.sellerPhone!;
+        }
+      } else if (!silent) {
+        detailError.value = 'Vehicle not found.';
+      }
+    } catch (e) {
+      debugPrint('❌ fetchVehicleDetail: $e');
+      if (!silent) {
+        detailError.value = 'Failed to load vehicle details. Please try again.';
+      }
+    } finally {
+      if (!silent) isLoadingDetail.value = false;
+    }
+  }
+
+  /// After a successful SUBT003 payment:
+  ///   1. Call userInterest(ownerDetailsAccess: "yes") to unlock the contact
+  ///   2. Call fetchVehicleDetail to get the fresh vehicle with owner_mobile
+  Future<void> unlockOwnerContactAndRefresh(
+    String sbVehicleId, {
+    String categoryCode = '',
+  }) async {
+    // Step 1: unlock owner contact
+    try {
+      final uid = await _userId;
+      await repository.userInterest(
+        vehicleId: sbVehicleId,
+        userId: uid,
+        vehicleOffer: null,
+        isInterested: '',
+        ownerDetailsAccess: 'yes',
+        vehicleDetailsAccess: '',
+        inspectionRequest: '',
+      );
+      debugPrint('✅ unlockOwnerContact: userInterest sent for $sbVehicleId');
+    } catch (e) {
+      debugPrint('⚠️ unlockOwnerContact: userInterest failed: $e');
+      // Continue to fetch anyway — might already be unlocked
+    }
+
+    // Step 2: silent refresh — keeps existing UI visible while fetching
+    await fetchVehicleDetail(
+      sbVehicleId,
+      categoryCode: categoryCode,
+      silent: true,
+    );
   }
 
   static String _formatNum(dynamic val) {

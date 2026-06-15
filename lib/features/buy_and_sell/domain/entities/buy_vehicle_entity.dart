@@ -19,6 +19,20 @@ class BuyVehicleEntity {
   final List<String> imageUrls;
   final List<String> vehicleFileUrls;
 
+  /// Owner's mobile number from `user_info.mobile`.
+  /// Only non-null when [ownerDetailsAccess] == "yes".
+  final String? sellerPhone;
+
+  /// Whether the current user has already bought access to this vehicle's
+  /// owner contact. "yes" = phone already unlocked, "no" = needs subscription.
+  final String? ownerDetailsAccess;
+
+  /// Per-category plan code used when subscribing for owner contact.
+  final String? categoryPlan;
+
+  /// Subscription amount (₹) for this vehicle's owner-contact plan.
+  final double? subscriptionAmount;
+
   const BuyVehicleEntity({
     required this.id,
     required this.categoryCode,
@@ -39,7 +53,14 @@ class BuyVehicleEntity {
     this.city,
     this.imageUrls = const [],
     this.vehicleFileUrls = const [],
+    this.sellerPhone,
+    this.ownerDetailsAccess,
+    this.categoryPlan,
+    this.subscriptionAmount,
   });
+
+  /// Returns true when the owner's phone is already accessible.
+  bool get hasOwnerAccess => ownerDetailsAccess?.toLowerCase() == 'yes';
 
   /// Backward-compatible alias used by some views.
   String get sbVehicleId => id;
@@ -68,11 +89,9 @@ class BuyVehicleEntity {
     final s = n.toString();
     if (s.length <= 3) return s;
 
-    // Last 3 digits
     final last3 = s.substring(s.length - 3);
     final rest = s.substring(0, s.length - 3);
 
-    // Remaining digits grouped in pairs from the right
     final buffer = StringBuffer();
     int count = 0;
     for (int i = rest.length - 1; i >= 0; i--) {

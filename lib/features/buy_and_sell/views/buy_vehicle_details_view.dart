@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/constants/app_colors.dart';
 import '../../../core/design_system/design_system.dart';
 import '../../../core/design_system/templates/app_layout.dart';
 import '../../../core/design_system/tokens/app_radius.dart';
 import '../../../core/design_system/tokens/app_spacing.dart';
+import '../../../routes/app_routes.dart';
+import '../../subscription/models/user_subscription.dart';
 import '../controllers/vehicle_detail_controller.dart';
 import '../domain/entities/buy_vehicle_entity.dart';
 
@@ -22,6 +25,28 @@ class _BuyVehicleDetailsViewState extends State<BuyVehicleDetailsView> {
   final _offerCtrl = TextEditingController();
 
   @override
+  void initState() {
+    super.initState();
+    final args = Get.arguments as Map<String, dynamic>? ?? {};
+    final vehicle = args['vehicle'] as BuyVehicleEntity?;
+    final vehicleId =
+        vehicle?.sbVehicleId ?? args['sb_vehicle_id'] as String? ?? '';
+    final categoryCode =
+        vehicle?.categoryCode ?? args['category_code'] as String? ?? '';
+    if (vehicleId.isNotEmpty) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        final ctrl = Get.find<BuyVehicleController>();
+        // Skip fetch if we already have fresh data for this vehicle.
+        if (ctrl.currentVehicleDetail.value?.sbVehicleId == vehicleId &&
+            !ctrl.isLoadingDetail.value) {
+          return;
+        }
+        ctrl.fetchVehicleDetail(vehicleId, categoryCode: categoryCode);
+      });
+    }
+  }
+
+  @override
   void dispose() {
     _offerCtrl.dispose();
     super.dispose();
@@ -29,22 +54,98 @@ class _BuyVehicleDetailsViewState extends State<BuyVehicleDetailsView> {
 
   @override
   Widget build(BuildContext context) {
-    final args = Get.arguments as Map<String, dynamic>? ?? {};
-    final vehicle = args['vehicle'] as BuyVehicleEntity?;
+    final ctrl = Get.find<BuyVehicleController>();
 
-    if (vehicle == null) {
-      return AppLayout(
-        title: 'Vehicle Details',
-        showBack: true,
-        body: const Center(child: Text('Vehicle not found')),
-      );
-    }
+    return Obx(() {
+      // While loading show a spinner inside the layout
+      if (ctrl.isLoadingDetail.value) {
+        return AppLayout(
+          title: 'Vehicle Details',
+          subtitle: '',
+          showBack: true,
+          body: const Center(
+            child: CircularProgressIndicator(color: AppColors.primary),
+          ),
+        );
+      }
 
+      // Error state
+      if (ctrl.detailError.value.isNotEmpty &&
+          ctrl.currentVehicleDetail.value == null) {
+        return AppLayout(
+          title: 'Vehicle Details',
+          subtitle: '',
+          showBack: true,
+          body: Center(
+            child: Padding(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    ctrl.detailError.value,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontFamily: 'Montserrat',
+                      fontSize: 14.sp,
+                      color: AppColors.grey600,
+                    ),
+                  ),
+                  SizedBox(height: 16.h),
+                  GradientButton.filled(
+                    text: 'Retry',
+                    onPressed: () {
+                      final args = Get.arguments as Map<String, dynamic>? ?? {};
+                      final v = args['vehicle'] as BuyVehicleEntity?;
+                      final vehicleId =
+                          v?.sbVehicleId ??
+                          args['sb_vehicle_id'] as String? ??
+                          '';
+                      final catCode =
+                          v?.categoryCode ??
+                          args['category_code'] as String? ??
+                          '';
+                      if (vehicleId.isNotEmpty) {
+                        ctrl.fetchVehicleDetail(
+                          vehicleId,
+                          categoryCode: catCode,
+                        );
+                      }
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      }
+
+      final vehicle = ctrl.currentVehicleDetail.value;
+      if (vehicle == null) {
+        return AppLayout(
+          title: 'Vehicle Details',
+          subtitle: '',
+          showBack: true,
+          body: const Center(
+            child: CircularProgressIndicator(color: AppColors.primary),
+          ),
+        );
+      }
+
+      return _buildDetail(context, vehicle, ctrl);
+    });
+  }
+
+  Widget _buildDetail(
+    BuildContext context,
+    BuyVehicleEntity vehicle,
+    BuyVehicleController ctrl,
+  ) {
     final title = '${vehicle.brandName ?? ''} ${vehicle.model ?? ''}'.trim();
 
     return AppLayout(
       title: title.isEmpty ? vehicle.categoryName : title,
-      subtitle: 'ID: ${vehicle.sbVehicleId}',
+      subtitle: vehicle.sbVehicleId.isNotEmpty ? vehicle.sbVehicleId : '',
       showBack: true,
       bodyColor: AppColors.cardBackground,
       body: Column(
@@ -248,6 +349,10 @@ class _BuyVehicleDetailsViewState extends State<BuyVehicleDetailsView> {
                       c.submitInterest(vehicle);
                     },
                   ),
+                  SizedBox(height: 10.h),
+
+                  // ── Action card 2: Become a Member / Connect with Owner ──
+                  _ConnectWithOwnerCard(vehicle: vehicle),
                   SizedBox(height: 10.h),
 
                   // ── Action card 3: Make Offer (expands inline) ──────────
@@ -1237,5 +1342,239 @@ class _OfferCard extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Become a Member / Connect with Owner card
+//
+// State machine (priority order):
+//   1. vehicle.hasOwnerAccess == true   → phone already revealed by API
+//   2. ownerPhones[vehicleId] != null   → phone fetched after payment
+//   3. isFetchingOwnerPhone == true     → payment just happened, fetching
+//   4. default                          → show Subscribe button
+// ─────────────────────────────────────────────────────────────────────────────
+
+class _ConnectWithOwnerCard extends StatefulWidget {
+  final BuyVehicleEntity vehicle;
+  const _ConnectWithOwnerCard({required this.vehicle});
+
+  @override
+  State<_ConnectWithOwnerCard> createState() => _ConnectWithOwnerCardState();
+}
+
+class _ConnectWithOwnerCardState extends State<_ConnectWithOwnerCard> {
+  Worker? _worker;
+
+  @override
+  void initState() {
+    super.initState();
+    final ctrl = Get.find<BuyVehicleController>();
+    final vehicleId = widget.vehicle.sbVehicleId;
+
+    // Seed immediately if API already granted access on this load.
+    if (widget.vehicle.hasOwnerAccess) {
+      final phone = widget.vehicle.sellerPhone ?? '';
+      if (phone.isNotEmpty) {
+        ctrl.ownerPhones[vehicleId] = phone;
+      }
+    }
+
+    // Watch for future fetchVehicleDetail completions (e.g. after payment).
+    // When currentVehicleDetail updates with owner access, seed the phone.
+    _worker = ever(ctrl.currentVehicleDetail, (fresh) {
+      if (fresh == null) return;
+      if (fresh.sbVehicleId != vehicleId) return;
+      if (!fresh.hasOwnerAccess) return;
+      final phone = fresh.sellerPhone ?? '';
+      if (phone.isNotEmpty && !ctrl.ownerPhones.containsKey(vehicleId)) {
+        ctrl.ownerPhones[vehicleId] = phone;
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _worker?.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final ctrl = Get.find<BuyVehicleController>();
+    final vehicleId = widget.vehicle.sbVehicleId;
+    final planCode = widget.vehicle.categoryPlan;
+
+    return Obx(() {
+      final cachedPhone = ctrl.ownerPhones[vehicleId];
+      final isFetching = ctrl.isLoadingDetail.value;
+      final hasPhone = cachedPhone != null && cachedPhone.isNotEmpty;
+
+      return Container(
+        decoration: BoxDecoration(
+          gradient: const LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [Color(0xFF3A0CA3), Color(0xFF7209B7)],
+          ),
+          borderRadius: BorderRadius.circular(16.r),
+          boxShadow: [
+            BoxShadow(
+              color: const Color(0xFF3A0CA3).withValues(alpha: 0.35),
+              blurRadius: 16,
+              offset: const Offset(0, 6),
+            ),
+          ],
+        ),
+        padding: EdgeInsets.all(AppSpacing.md),
+        child: Row(
+          children: [
+            // ── Icon ─────────────────────────────────────────────────────
+            Container(
+              width: 48.w,
+              height: 48.w,
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.15),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                isFetching
+                    ? Icons.hourglass_empty_rounded
+                    : hasPhone
+                    ? Icons.phone_rounded
+                    : Icons.stars_rounded,
+                color: Colors.white,
+                size: 22.r,
+              ),
+            ),
+            SizedBox(width: AppSpacing.md),
+
+            // ── Text ─────────────────────────────────────────────────────
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Become a Member',
+                    style: TextStyle(
+                      fontFamily: 'Montserrat',
+                      fontSize: 14.sp,
+                      fontWeight: FontWeight.w700,
+                      color: Colors.white,
+                    ),
+                  ),
+                  SizedBox(height: 3.h),
+                  Text(
+                    isFetching
+                        ? 'Fetching contact...'
+                        : hasPhone
+                        ? cachedPhone
+                        : 'Connect with owner',
+                    style: TextStyle(
+                      fontFamily: 'Plus Jakarta Sans',
+                      fontSize: hasPhone ? 16.sp : 12.sp,
+                      fontWeight: hasPhone ? FontWeight.w700 : FontWeight.w400,
+                      color: Colors.white.withValues(alpha: 0.9),
+                      letterSpacing: hasPhone ? 1.2 : 0,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            // ── Action ───────────────────────────────────────────────────
+            if (isFetching)
+              SizedBox(
+                width: 20.w,
+                height: 20.w,
+                child: const CircularProgressIndicator(
+                  strokeWidth: 2,
+                  color: Colors.white,
+                ),
+              )
+            else if (hasPhone)
+              // Phone is revealed — show Call button
+              GestureDetector(
+                onTap: () async {
+                  final uri = Uri(scheme: 'tel', path: cachedPhone);
+                  if (await canLaunchUrl(uri)) {
+                    await launchUrl(uri);
+                  } else {
+                    CustomSnackbar.show(
+                      message: 'Owner: $cachedPhone',
+                      type: SnackbarType.success,
+                    );
+                  }
+                },
+                child: Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 14.w,
+                    vertical: 8.h,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(20.r),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        Icons.call_rounded,
+                        size: 14.r,
+                        color: const Color(0xFF3A0CA3),
+                      ),
+                      SizedBox(width: 4.w),
+                      Text(
+                        'Call',
+                        style: TextStyle(
+                          fontFamily: 'Montserrat',
+                          fontSize: 12.sp,
+                          fontWeight: FontWeight.w700,
+                          color: const Color(0xFF3A0CA3),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              )
+            else
+              // Not yet subscribed — show Subscribe button with price
+              GestureDetector(
+                onTap: () => Get.toNamed(
+                  AppRoutes.subscription,
+                  arguments: {
+                    'subscription_source': SubscriptionTypeCode.ownerContact,
+                    'title': 'Connect with Owner',
+                    'subtitle':
+                        "Subscribe to get the owner's contact number and connect directly.",
+                    'pending_vehicle_id': vehicleId,
+                    'category_code': widget.vehicle.categoryCode,
+                    if (planCode != null) 'plan_code_override': planCode,
+                  },
+                ),
+                child: Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 14.w,
+                    vertical: 8.h,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(20.r),
+                  ),
+                  child: Text(
+                    'Subscribe',
+                    style: TextStyle(
+                      fontFamily: 'Montserrat',
+                      fontSize: 12.sp,
+                      fontWeight: FontWeight.w700,
+                      color: const Color(0xFF7209B7),
+                    ),
+                  ),
+                ),
+              ),
+          ],
+        ),
+      );
+    });
   }
 }
