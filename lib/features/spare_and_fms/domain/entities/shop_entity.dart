@@ -16,6 +16,15 @@ class ShopEntity {
   final String starRating;
   final double distanceKm;
 
+  /// "yes" if the current user has already paid for mobile number access.
+  final String numberAccessSubscription;
+
+  /// Per-category plan code for the contact subscription (SUBT006).
+  final String? subscriptionPlanCode;
+
+  /// Subscription amount for this shop's contact plan.
+  final double? subscriptionAmount;
+
   const ShopEntity({
     required this.id,
     required this.shopId,
@@ -32,7 +41,13 @@ class ShopEntity {
     required this.priority,
     required this.starRating,
     required this.distanceKm,
+    this.numberAccessSubscription = 'no',
+    this.subscriptionPlanCode,
+    this.subscriptionAmount,
   });
+
+  /// True when the user has paid for mobile number access.
+  bool get hasMobileAccess => numberAccessSubscription.toLowerCase() == 'yes';
 
   /// Parsed rating as double.
   double get ratingAsDouble => double.tryParse(starRating) ?? 0;
@@ -48,9 +63,7 @@ class ShopEntity {
 
   /// Whether the shop has a valid mobile number.
   bool get hasValidMobileNumber =>
-      mobileNumber.isNotEmpty &&
-      mobileNumber != 'null' &&
-      mobileNumber != '0';
+      mobileNumber.isNotEmpty && mobileNumber != 'null' && mobileNumber != '0';
 
   /// Formatted distance string.
   String get formattedDistance => '${distanceKm.toStringAsFixed(1)} km';
@@ -61,8 +74,5 @@ class UserLocationEntity {
   final double latitude;
   final double longitude;
 
-  const UserLocationEntity({
-    required this.latitude,
-    required this.longitude,
-  });
+  const UserLocationEntity({required this.latitude, required this.longitude});
 }

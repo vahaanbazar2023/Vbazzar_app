@@ -85,7 +85,8 @@ class ApiEndpoints {
   static String statesByRegion(String regionId) =>
       '$locationPrefix/regions/$regionId/states';
   static const String vehicleSearch = '$auctionPrefix/vehicle-search';
-  static const String auctionRefundInitiate = '/api/v1/dashboard/auction-refund-initiate';
+  static const String auctionRefundInitiate =
+      '/api/v1/dashboard/auction-refund-initiate';
   static const String vehicleExcelDownload =
       '$auctionPrefix/vehicle-excel-download';
 
@@ -96,6 +97,8 @@ class ApiEndpoints {
   static const String userSpareInterest = '$spareFmsPrefix/user-spare-interest';
   static const String userShopSubscription =
       '$spareFmsPrefix/user-shop-subscription';
+  static const String userShopNumberAccess =
+      '$spareFmsPrefix/user-shop-subscription'; // same endpoint, number_access_subscription: yes
   static const String userSparesOrdersListing =
       '$spareFmsPrefix/user-spares-orders-listing';
 
@@ -111,8 +114,7 @@ class ApiEndpoints {
       '$insuranceFinancePrefix/insurance-request';
   static const String financeRequest =
       '$insuranceFinancePrefix/finance-request';
-  static const String vehicleQuotes =
-      '$insuranceFinancePrefix/vehicle-quotes';
+  static const String vehicleQuotes = '$insuranceFinancePrefix/vehicle-quotes';
   static const String vehicleListingsQuotes =
       '$insuranceFinancePrefix/vehicle-listings-quotes';
 

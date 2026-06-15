@@ -15,12 +15,7 @@ class ShopCard extends StatelessWidget {
   final VoidCallback? onContact;
   final VoidCallback? onCall;
 
-  const ShopCard({
-    super.key,
-    required this.shop,
-    this.onContact,
-    this.onCall,
-  });
+  const ShopCard({super.key, required this.shop, this.onContact, this.onCall});
 
   // ── CTA gradient (same as GradientButton.filled) ────────────
   static const _ctaGradient = LinearGradient(
@@ -31,7 +26,8 @@ class ShopCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final hasValidPhone = shop.mobileNumber.isNotEmpty &&
+    final hasValidPhone =
+        shop.mobileNumber.isNotEmpty &&
         shop.mobileNumber != 'null' &&
         shop.mobileNumber != '0';
 
@@ -169,10 +165,8 @@ class ShopCard extends StatelessWidget {
   /// Category badge (CE / CV) — theme-colored
   Widget _buildCategoryBadge() {
     final isCE = shop.category.toUpperCase() == 'CE';
-    final bgColor =
-        isCE ? AppColors.lightOrange : AppColors.warningBackground;
-    final textColor =
-        isCE ? AppColors.primaryDark : AppColors.secondaryDark;
+    final bgColor = isCE ? AppColors.lightOrange : AppColors.warningBackground;
+    final textColor = isCE ? AppColors.primaryDark : AppColors.secondaryDark;
 
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 3.h),
@@ -222,8 +216,11 @@ class ShopCard extends StatelessWidget {
     );
   }
 
-  /// Gradient-filled "Contact" button — full width, matching app CTA style
+  /// Gradient-filled button:
+  /// • mobile_number empty → shows "Contact" → tapping triggers payment flow
+  /// • mobile_number present → shows the number → tapping opens dialer
   Widget _buildContactButton() {
+    final hasPhone = shop.hasValidMobileNumber;
     return GestureDetector(
       onTap: onContact,
       child: Container(
@@ -244,13 +241,13 @@ class ShopCard extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
-              Icons.phone_in_talk_rounded,
+              hasPhone ? Icons.call_rounded : Icons.phone_in_talk_rounded,
               size: 18.r,
               color: AppColors.white,
             ),
             SizedBox(width: 8.w),
             Text(
-              'Contact',
+              hasPhone ? shop.mobileNumber : 'Contact',
               style: AppFonts.titleSmall.copyWith(
                 color: AppColors.white,
                 fontWeight: FontWeight.w700,
@@ -288,11 +285,23 @@ class ShopCard extends StatelessWidget {
         children: [
           ...List.generate(5, (i) {
             if (i < fullStars) {
-              return Icon(Icons.star_rounded, size: 14.r, color: AppColors.warningDark);
+              return Icon(
+                Icons.star_rounded,
+                size: 14.r,
+                color: AppColors.warningDark,
+              );
             } else if (i == fullStars && hasHalf) {
-              return Icon(Icons.star_half_rounded, size: 14.r, color: AppColors.warningDark);
+              return Icon(
+                Icons.star_half_rounded,
+                size: 14.r,
+                color: AppColors.warningDark,
+              );
             } else {
-              return Icon(Icons.star_border_rounded, size: 14.r, color: AppColors.grey300);
+              return Icon(
+                Icons.star_border_rounded,
+                size: 14.r,
+                color: AppColors.grey300,
+              );
             }
           }),
           SizedBox(width: 4.w),

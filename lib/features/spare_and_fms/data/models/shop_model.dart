@@ -18,6 +18,9 @@ class ShopModel extends ShopEntity {
     required super.priority,
     required super.starRating,
     required super.distanceKm,
+    super.numberAccessSubscription,
+    super.subscriptionPlanCode,
+    super.subscriptionAmount,
   });
 
   factory ShopModel.fromJson(Map<String, dynamic> json) {
@@ -37,6 +40,14 @@ class ShopModel extends ShopEntity {
       priority: json['priority'] as String? ?? '',
       starRating: json['star_rating'] as String? ?? '0',
       distanceKm: (json['distance_km'] as num?)?.toDouble() ?? 0,
+      numberAccessSubscription:
+          json['number_access_subscription']?.toString() ?? 'no',
+      subscriptionPlanCode:
+          json['subscription_plan_code']?.toString() ??
+          json['category_plan']?.toString(),
+      subscriptionAmount: json['subscription_amount'] is num
+          ? (json['subscription_amount'] as num).toDouble()
+          : double.tryParse(json['subscription_amount']?.toString() ?? ''),
     );
   }
 
@@ -93,10 +104,7 @@ class ShopPaginationModel {
 
 /// Data model for [UserLocationEntity].
 class UserLocationModel extends UserLocationEntity {
-  const UserLocationModel({
-    required super.latitude,
-    required super.longitude,
-  });
+  const UserLocationModel({required super.latitude, required super.longitude});
 
   factory UserLocationModel.fromJson(Map<String, dynamic> json) {
     return UserLocationModel(
@@ -124,7 +132,8 @@ class ShopListData {
     return ShopListData(
       userLocation: json['user_location'] != null
           ? UserLocationModel.fromJson(
-              json['user_location'] as Map<String, dynamic>)
+              json['user_location'] as Map<String, dynamic>,
+            )
           : null,
       count: (json['count'] as num?)?.toInt() ?? 0,
       shops: (json['shops'] as List<dynamic>? ?? [])

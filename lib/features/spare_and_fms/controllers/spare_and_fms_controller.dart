@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/constants/app_colors.dart';
+import '../../../core/design_system/molecules/custom_snackbar.dart';
 import '../../../core/storage/secure_storage_service.dart';
 import '../../../core/storage/storage_keys.dart';
 import '../../../routes/app_routes.dart';
+import '../../subscription/models/subscription_plan.dart';
+import '../../subscription/services/subscription_service.dart';
+import '../../subscription/views/single_plan_payment_screen.dart';
 import '../domain/entities/shop_entity.dart';
 import '../domain/entities/spare_order_entity.dart';
 import '../domain/entities/spare_part_entity.dart';
@@ -21,7 +26,7 @@ class SpareAndFmsController extends GetxController
   final SpareFmsRepository _repository;
 
   SpareAndFmsController({required SpareFmsRepository repository})
-      : _repository = repository;
+    : _repository = repository;
 
   // ─── Tab state ──────────────────────────────────────────────
 
@@ -32,6 +37,11 @@ class SpareAndFmsController extends GetxController
   // ─── User ───────────────────────────────────────────────────
 
   String? _currentUserId;
+
+  // ─── SUBT006 plan (fetched once on init) ────────────────────
+
+  SubscriptionPlan? _subt006Plan;
+  final isSUBT006Loading = false.obs;
 
   // ─── FMS spare parts (Tab 0) ────────────────────────────────
 
@@ -102,10 +112,33 @@ class SpareAndFmsController extends GetxController
   // ─── Initialization ─────────────────────────────────────────
 
   Future<void> _initializeData() async {
-    _currentUserId =
-        await SecureStorageService.instance.read(StorageKeys.userId);
+    _currentUserId = await SecureStorageService.instance.read(
+      StorageKeys.userId,
+    );
     _initializeLocationInBackground();
+    _fetchSUBT006Plan(); // fetch in background, don't block
     _loadTabData(0);
+  }
+
+  /// Fetches the SUBT006 plan from subscription listing API once on init.
+  /// Cached in [_subt006Plan] for use in [contactShop].
+  Future<void> _fetchSUBT006Plan() async {
+    if (_currentUserId == null || _currentUserId!.isEmpty) return;
+    isSUBT006Loading.value = true;
+    try {
+      final service = SubscriptionService();
+      final result = await service.fetchPlans(
+        userId: _currentUserId!,
+        subscriptionSource: 'SUBT006',
+      );
+      if (result.plans.isNotEmpty) {
+        _subt006Plan = result.plans.first;
+      }
+    } catch (e) {
+      // Silently fail — will retry on contactShop tap if null
+    } finally {
+      isSUBT006Loading.value = false;
+    }
   }
 
   Future<void> _initializeLocationInBackground() async {
@@ -251,10 +284,7 @@ class SpareAndFmsController extends GetxController
   void navigateToFmsDetail(SparePartEntity sparePart) {
     Get.toNamed(
       AppRoutes.spareDetail,
-      arguments: {
-        'sparePart': sparePart,
-        'isFromOrders': false,
-      },
+      arguments: {'sparePart': sparePart, 'isFromOrders': false},
     );
   }
 
@@ -314,62 +344,151 @@ class SpareAndFmsController extends GetxController
     }
   }
 
-  // ─── Shop Subscription ──────────────────────────────────────
+  /// Silently refreshes the shops list without showing the loading spinner.
+  /// Used after payment to reveal the phone number in-place.
+  Future<void> _silentRefreshShops() async {
+    if (currentShopCategory.value.isEmpty) return;
 
-  void subscribeToShop(ShopEntity shop) {
-    _navigateToShopSubscriptionPlan(shop);
+    final location = await _getUserLocation();
+    if (location == null) return;
+
+    try {
+      final result = await _repository.getShopsListByCategory(
+        latitude: location.latitude,
+        longitude: location.longitude,
+        shopCategoryType: currentShopCategory.value,
+        userId: _currentUserId ?? '',
+        page: 1,
+        limit: 20,
+      );
+      shopsListData.assignAll(result.shops);
+    } catch (_) {
+      // Silently fail — user still sees old data
+    }
   }
 
-  void _navigateToShopSubscriptionPlan(ShopEntity shop) {
-    // Save pending shop for post-payment callback
-    SecureStorageService.instance.write('pending_shop_id', shop.shopId);
-    SecureStorageService.instance.write('subscription_source', 'SUBT007');
+  // ─── Shop Contact (SUBT006) ─────────────────────────────────
 
-    Get.toNamed(
-      AppRoutes.subscription,
-      arguments: {
-        'subscriptionSource': 'SUBT007',
-        'shop': {
-          'shop_id': shop.shopId,
-          'shop_name': shop.shopName,
-          'category': shop.category,
-          'mobile_number': shop.mobileNumber,
-          'distance_km': shop.distanceKm,
-          'address': '${shop.addressLine1}, ${shop.addressLine2}',
+  /// Called when user taps "Contact" on a shop card.
+  ///
+  /// If mobile_number is already populated (returned by API) → open dialer.
+  /// If mobile_number is empty → fetch SUBT006 plan (if not yet cached) →
+  /// show SinglePlanPaymentScreen → after payment → POST user-shop-subscription
+  /// → refresh shops → dial.
+  Future<void> contactShop(ShopEntity shop) async {
+    // Number already revealed by the API — dial directly
+    if (shop.hasValidMobileNumber) {
+      _launchDialer(shop.mobileNumber);
+      return;
+    }
+
+    // Ensure we have the SUBT006 plan
+    if (_subt006Plan == null) {
+      // Try fetching it now (may not have loaded yet on init)
+      if (_currentUserId != null && !isSUBT006Loading.value) {
+        await _fetchSUBT006Plan();
+      }
+    }
+
+    final plan = _subt006Plan;
+
+    if (plan == null) {
+      // Couldn't load plan — show error
+      CustomSnackbar.show(
+        message: 'Unable to load subscription plan. Please try again.',
+        type: SnackbarType.error,
+      );
+      return;
+    }
+
+    // Show single plan payment screen — no subscription listing API needed
+    Get.to(
+      () => SinglePlanPaymentScreen(
+        plan: plan,
+        source: 'SUBT006',
+        shopId: shop.shopId,
+        title: 'Connect with Shop',
+        subtitle: 'Pay to get the direct contact number for ${shop.shopName}.',
+        onPaymentSuccess: () {
+          Get.back(); // pop payment screen
+          _unlockShopContact(shop);
         },
-      },
+      ),
+      transition: Transition.rightToLeft,
     );
   }
 
-  Future<void> handleShopSubscriptionPaymentSuccess(String shopId) async {
-    if (_currentUserId == null) return;
+  /// Public entry point called from [SubscriptionConfirmController] wallet flow.
+  /// Looks up the shop by ID from [shopsListData] and unlocks contact.
+  Future<void> unlockShopContactById(String shopId) async {
+    final shop = shopsListData.firstWhereOrNull((s) => s.shopId == shopId);
+    if (shop != null) {
+      await _unlockShopContact(shop);
+    } else {
+      // Shop not in current list — just POST the unlock and refresh
+      if (_currentUserId == null) return;
+      try {
+        final success = await _repository.createShopSubscription(
+          shopId: shopId,
+          userId: _currentUserId!,
+        );
+        if (success) {
+          CustomSnackbar.show(
+            message: 'Contact unlocked! You can now call the shop.',
+            type: SnackbarType.success,
+          );
+          _silentRefreshShops();
+        }
+      } catch (_) {
+        CustomSnackbar.show(
+          message: 'Something went wrong. Please try again.',
+          type: SnackbarType.error,
+        );
+      }
+    }
+  }
 
+  /// After payment: call the API with number_access_subscription: yes,
+  /// then refresh shops so the card updates to show the phone number.
+  /// Does NOT auto-dial — the user taps the contact button themselves.
+  Future<void> _unlockShopContact(ShopEntity shop) async {
+    if (_currentUserId == null) return;
     try {
       final success = await _repository.createShopSubscription(
-        shopId: shopId,
+        shopId: shop.shopId,
         userId: _currentUserId!,
       );
-
-      await SecureStorageService.instance.delete('pending_shop_id');
-
       if (success) {
-        Get.snackbar(
-          'Success',
-          'Shop subscription activated!',
-          backgroundColor: AppColors.success,
-          colorText: AppColors.white,
+        CustomSnackbar.show(
+          message: 'Contact unlocked! You can now call the shop.',
+          type: SnackbarType.success,
         );
-        refreshShopsData();
+        // Silent refresh — updates card in-place without showing spinner.
+        _silentRefreshShops();
+      } else {
+        CustomSnackbar.show(
+          message: 'Could not unlock contact. Please try again.',
+          type: SnackbarType.error,
+        );
       }
-    } catch (e) {
-      await SecureStorageService.instance.delete('pending_shop_id');
-      Get.snackbar(
-        'Error',
-        'Subscription activation failed. Please contact support.',
-        backgroundColor: AppColors.error,
-        colorText: AppColors.white,
+    } catch (_) {
+      CustomSnackbar.show(
+        message: 'Something went wrong. Please try again.',
+        type: SnackbarType.error,
       );
     }
+  }
+
+  void _launchDialer(String phone) {
+    final uri = Uri(scheme: 'tel', path: phone);
+    launchUrl(uri).catchError((_) {
+      Get.snackbar(
+        'Phone',
+        'Contact: $phone',
+        snackPosition: SnackPosition.TOP,
+      );
+      return false;
+    });
   }
 
   bool hasShopMobileNumber(ShopEntity shop) {
@@ -532,19 +651,14 @@ class SpareAndFmsController extends GetxController
   void _showLocationPermissionDialog() {
     Get.dialog(
       AlertDialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: const Text('Location Permission'),
         content: const Text(
           'We need your location to find nearby shops. '
           'Please grant location permission.',
         ),
         actions: [
-          TextButton(
-            onPressed: () => Get.back(),
-            child: const Text('Cancel'),
-          ),
+          TextButton(onPressed: () => Get.back(), child: const Text('Cancel')),
           ElevatedButton(
             onPressed: () async {
               Get.back();
@@ -573,18 +687,13 @@ class SpareAndFmsController extends GetxController
   void _showEnableGpsDialog() {
     Get.dialog(
       AlertDialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: const Text('Enable GPS'),
         content: const Text(
           'GPS is disabled. Please enable location services to find nearby shops.',
         ),
         actions: [
-          TextButton(
-            onPressed: () => Get.back(),
-            child: const Text('Cancel'),
-          ),
+          TextButton(onPressed: () => Get.back(), child: const Text('Cancel')),
           ElevatedButton(
             onPressed: () {
               Get.back();
@@ -601,19 +710,14 @@ class SpareAndFmsController extends GetxController
   void _showOpenSettingsDialog() {
     Get.dialog(
       AlertDialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: const Text('Location Permission Required'),
         content: const Text(
           'Location permission has been permanently denied. '
           'Please enable it from app settings.',
         ),
         actions: [
-          TextButton(
-            onPressed: () => Get.back(),
-            child: const Text('Cancel'),
-          ),
+          TextButton(onPressed: () => Get.back(), child: const Text('Cancel')),
           ElevatedButton(
             onPressed: () {
               Get.back();
@@ -630,18 +734,11 @@ class SpareAndFmsController extends GetxController
   void _showRetryAfterSettingsDialog() {
     Get.dialog(
       AlertDialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: const Text('Location Updated?'),
-        content: const Text(
-          'Would you like to retry loading shops now?',
-        ),
+        content: const Text('Would you like to retry loading shops now?'),
         actions: [
-          TextButton(
-            onPressed: () => Get.back(),
-            child: const Text('Not Now'),
-          ),
+          TextButton(onPressed: () => Get.back(), child: const Text('Not Now')),
           ElevatedButton(
             onPressed: () {
               Get.back();
@@ -659,24 +756,15 @@ class SpareAndFmsController extends GetxController
   void _showSuccessDialog({required String title, required String message}) {
     Get.dialog(
       AlertDialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(
-              Icons.check_circle,
-              color: AppColors.success,
-              size: 64,
-            ),
+            const Icon(Icons.check_circle, color: AppColors.success, size: 64),
             const SizedBox(height: 16),
             Text(
               title,
-              style: const TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.w700,
-              ),
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 8),

@@ -2,6 +2,7 @@ import 'package:get/get.dart' hide Response;
 
 import '../../../../core/network/endpoints/api_endpoints.dart';
 import '../../../../core/network/network_service.dart';
+import 'package:flutter/foundation.dart' show debugPrint;
 import '../../domain/entities/shop_entity.dart';
 import '../../domain/entities/spare_order_entity.dart';
 import '../../domain/entities/spare_part_entity.dart';
@@ -43,23 +44,13 @@ class SpareFmsRepositoryImpl implements SpareFmsRepository {
 
   @override
   Future<({List<SparePartEntity> spares, PaginationMeta pagination})>
-      getSparesList({
-    required int page,
-    required int limit,
-    String? userId,
-  }) async {
-    final body = <String, dynamic>{
-      'page': page,
-      'limit': limit,
-    };
+  getSparesList({required int page, required int limit, String? userId}) async {
+    final body = <String, dynamic>{'page': page, 'limit': limit};
     if (userId != null && userId.isNotEmpty) body['user_id'] = userId;
 
     _logRequest(ApiEndpoints.listSpares, body);
     try {
-      final response = await _network.post(
-        ApiEndpoints.listSpares,
-        data: body,
-      );
+      final response = await _network.post(ApiEndpoints.listSpares, data: body);
 
       final responseData = response.data as Map<String, dynamic>;
       _logResponse(ApiEndpoints.listSpares, responseData);
@@ -69,8 +60,7 @@ class SpareFmsRepositoryImpl implements SpareFmsRepository {
           .map((e) => SparePartModel.fromJson(e as Map<String, dynamic>))
           .toList();
 
-      final paginationData =
-          data['pagination'] as Map<String, dynamic>? ?? {};
+      final paginationData = data['pagination'] as Map<String, dynamic>? ?? {};
 
       return (
         spares: sparesList.cast<SparePartEntity>(),
@@ -96,10 +86,7 @@ class SpareFmsRepositoryImpl implements SpareFmsRepository {
     required String spareId,
     required String userId,
   }) async {
-    final body = {
-      'spare_id': spareId,
-      'user_id': userId,
-    };
+    final body = {'spare_id': spareId, 'user_id': userId};
 
     _logRequest(ApiEndpoints.userSpareInterest, body);
     try {
@@ -113,7 +100,8 @@ class SpareFmsRepositoryImpl implements SpareFmsRepository {
 
       if (responseData['status'] == 'error') {
         throw Exception(
-            responseData['message'] as String? ?? 'Failed to record interest');
+          responseData['message'] as String? ?? 'Failed to record interest',
+        );
       }
 
       final data = responseData['data'] as Map<String, dynamic>?;
@@ -132,18 +120,12 @@ class SpareFmsRepositoryImpl implements SpareFmsRepository {
     required int limit,
     String? userId,
   }) async {
-    final body = <String, dynamic>{
-      'page': page,
-      'limit': limit,
-    };
+    final body = <String, dynamic>{'page': page, 'limit': limit};
     if (userId != null && userId.isNotEmpty) body['user_id'] = userId;
 
     _logRequest(ApiEndpoints.listShops, body);
     try {
-      final response = await _network.post(
-        ApiEndpoints.listShops,
-        data: body,
-      );
+      final response = await _network.post(ApiEndpoints.listShops, data: body);
 
       final responseData = response.data as Map<String, dynamic>;
       _logResponse(ApiEndpoints.listShops, responseData);
@@ -153,8 +135,7 @@ class SpareFmsRepositoryImpl implements SpareFmsRepository {
           .map((e) => ShopModel.fromJson(e as Map<String, dynamic>))
           .toList();
 
-      final paginationData =
-          data['pagination'] as Map<String, dynamic>? ?? {};
+      final paginationData = data['pagination'] as Map<String, dynamic>? ?? {};
 
       return (
         shops: shopsList.cast<ShopEntity>(),
@@ -176,11 +157,14 @@ class SpareFmsRepositoryImpl implements SpareFmsRepository {
   // ─── List Shops by Category ─────────────────────────────────
 
   @override
-  Future<({
-    List<ShopEntity> shops,
-    PaginationMeta pagination,
-    UserLocationEntity? userLocation,
-  })> getShopsListByCategory({
+  Future<
+    ({
+      List<ShopEntity> shops,
+      PaginationMeta pagination,
+      UserLocationEntity? userLocation,
+    })
+  >
+  getShopsListByCategory({
     required double latitude,
     required double longitude,
     required String shopCategoryType,
@@ -198,22 +182,32 @@ class SpareFmsRepositoryImpl implements SpareFmsRepository {
     if (userId.isNotEmpty) body['user_id'] = userId;
 
     _logRequest(ApiEndpoints.listShops, body);
+    // ── Extra debug: print full request body as JSON ──────────
+    debugPrint('📤 [list-shops] REQUEST BODY: $body');
     try {
-      final response = await _network.post(
-        ApiEndpoints.listShops,
-        data: body,
-      );
+      final response = await _network.post(ApiEndpoints.listShops, data: body);
 
       final responseData = response.data as Map<String, dynamic>;
       _logResponse(ApiEndpoints.listShops, responseData);
+      // ── Extra debug: print first shop's mobile_number field ──
+      final shops = (responseData['data'] as Map<String, dynamic>?)?['shops'];
+      if (shops is List && shops.isNotEmpty) {
+        final first = shops.first as Map<String, dynamic>?;
+        debugPrint(
+          '📥 [list-shops] first shop'
+          ' mobile_number="${first?['mobile_number']}"'
+          ' | number_access_subscription="${first?['number_access_subscription']}"'
+          ' | subscription_plan_code="${first?['subscription_plan_code']}"'
+          ' | subscription_amount="${first?['subscription_amount']}"',
+        );
+      }
 
       final data = responseData['data'] as Map<String, dynamic>? ?? {};
       final shopsList = (data['shops'] as List<dynamic>? ?? [])
           .map((e) => ShopModel.fromJson(e as Map<String, dynamic>))
           .toList();
 
-      final paginationData =
-          data['pagination'] as Map<String, dynamic>? ?? {};
+      final paginationData = data['pagination'] as Map<String, dynamic>? ?? {};
 
       final userLocationData = data['user_location'] as Map<String, dynamic>?;
 
@@ -244,10 +238,7 @@ class SpareFmsRepositoryImpl implements SpareFmsRepository {
     required String shopId,
     required String userId,
   }) async {
-    final body = {
-      'shop_id': shopId,
-      'user_id': userId,
-    };
+    final body = {'shop_id': shopId, 'user_id': userId};
 
     _logRequest(ApiEndpoints.userShopSubscription, body);
     try {
@@ -298,16 +289,12 @@ class SpareFmsRepositoryImpl implements SpareFmsRepository {
 
   @override
   Future<({List<SpareOrderEntity> orders, PaginationMeta pagination})>
-      getUserSparesOrders({
+  getUserSparesOrders({
     required String userId,
     required int page,
     required int limit,
   }) async {
-    final body = {
-      'user_id': userId,
-      'page': page,
-      'limit': limit,
-    };
+    final body = {'user_id': userId, 'page': page, 'limit': limit};
 
     _logRequest(ApiEndpoints.userSparesOrdersListing, body);
     try {
@@ -324,8 +311,7 @@ class SpareFmsRepositoryImpl implements SpareFmsRepository {
           .map((e) => SpareOrderModel.fromJson(e as Map<String, dynamic>))
           .toList();
 
-      final paginationData =
-          data['pagination'] as Map<String, dynamic>? ?? {};
+      final paginationData = data['pagination'] as Map<String, dynamic>? ?? {};
 
       return (
         orders: ordersList.cast<SpareOrderEntity>(),

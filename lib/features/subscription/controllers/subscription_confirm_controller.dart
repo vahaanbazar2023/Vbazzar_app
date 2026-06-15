@@ -5,6 +5,7 @@ import '../../../core/storage/storage_keys.dart';
 import '../../../features/auction/controllers/vehicle_listing_controller.dart';
 import '../../../features/buy_and_sell/controllers/vehicle_detail_controller.dart';
 import '../../../features/payment/controllers/payment_controller.dart';
+import '../../../features/spare_and_fms/controllers/spare_and_fms_controller.dart';
 import '../../../routes/app_routes.dart';
 import '../models/subscription_plan.dart';
 import '../models/user_subscription.dart';
@@ -263,6 +264,27 @@ class SubscriptionConfirmController extends GetxController {
           );
         }
         SubscriptionGuardService.to.invalidateAndReload();
+        break;
+
+      case 'SUBT006': // Shop contact — unlock mobile number
+        final args006 = _allArgs;
+        final shopId006 = args006['shop_id'] as String?;
+
+        Get.until(
+          (route) =>
+              route.settings.name != AppRoutes.subscription &&
+              route.settings.name != AppRoutes.subscriptionConfirm &&
+              route.settings.name != AppRoutes.walletPayment,
+        );
+
+        if (shopId006 != null && Get.isRegistered<SpareAndFmsController>()) {
+          Get.find<SpareAndFmsController>().unlockShopContactById(shopId006);
+        } else {
+          CustomSnackbar.show(
+            message: 'Shop contact unlocked!',
+            type: SnackbarType.success,
+          );
+        }
         break;
 
       case SubscriptionTypeCode.vehicleDetailsAccess: // SUBT004

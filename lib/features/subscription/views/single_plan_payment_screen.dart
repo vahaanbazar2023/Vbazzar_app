@@ -24,6 +24,13 @@ class SinglePlanPaymentScreen extends StatefulWidget {
   final String title;
   final String subtitle;
 
+  /// Source identifier used when routing through WalletPaymentScreen
+  /// (e.g. 'INSPECTION', 'SUBT006').
+  final String source;
+
+  /// Optional shop ID — used by SUBT006 wallet flow to unlock shop contact.
+  final String? shopId;
+
   /// Called immediately after payment success (direct pay path).
   final VoidCallback onPaymentSuccess;
 
@@ -33,6 +40,8 @@ class SinglePlanPaymentScreen extends StatefulWidget {
     required this.onPaymentSuccess,
     this.title = 'Subscribe',
     this.subtitle = '',
+    this.source = 'INSPECTION',
+    this.shopId,
   });
 
   @override
@@ -96,11 +105,15 @@ class _SinglePlanPaymentScreenState extends State<SinglePlanPaymentScreen> {
     // Navigate to WalletPaymentScreen — same as SubscriptionScreen's wallet path.
     // WalletPaymentScreen creates its own SubscriptionConfirmController with
     // the plan and source, which handles wallet eligibility and payment.
+    final extraArgs = <String, dynamic>{
+      'onSuccess': widget.onPaymentSuccess,
+      if (widget.shopId != null) 'shop_id': widget.shopId,
+    };
     Get.to(
       () => WalletPaymentScreen(
         plan: widget.plan,
-        source: 'INSPECTION',
-        extraArgs: {'onSuccess': widget.onPaymentSuccess},
+        source: widget.source,
+        extraArgs: extraArgs,
       ),
       transition: Transition.rightToLeft,
     );
@@ -176,9 +189,7 @@ class _SinglePlanPaymentScreenState extends State<SinglePlanPaymentScreen> {
                   const SizedBox(height: 20),
 
                   // ── Plan card (matches SubscriptionScreen _PlanCard) ──────
-                  AnimatedContainer(
-                    duration: const Duration(milliseconds: 180),
-                    height: 85,
+                  Container(
                     decoration: BoxDecoration(
                       color: const Color(0xFFFFF0F0),
                       borderRadius: BorderRadius.circular(AppSizes.radiusLg),
@@ -218,6 +229,7 @@ class _SinglePlanPaymentScreenState extends State<SinglePlanPaymentScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             mainAxisAlignment: MainAxisAlignment.center,
+                            mainAxisSize: MainAxisSize.min,
                             children: [
                               Text(
                                 plan.name,
@@ -227,6 +239,8 @@ class _SinglePlanPaymentScreenState extends State<SinglePlanPaymentScreen> {
                                   fontSize: 16.sp,
                                   color: AppColors.textPrimary,
                                 ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
                               ),
                               if (plan.featDescription.isNotEmpty)
                                 Text(

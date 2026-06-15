@@ -61,7 +61,11 @@ class ShopListView extends GetView<SpareAndFmsController> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.location_searching, size: 64.r, color: AppColors.grey400),
+                Icon(
+                  Icons.location_searching,
+                  size: 64.r,
+                  color: AppColors.grey400,
+                ),
                 SizedBox(height: AppSpacing.md),
                 Text(
                   'Finding shops near you...',
@@ -85,13 +89,12 @@ class ShopListView extends GetView<SpareAndFmsController> {
             itemCount: controller.shopsListData.length,
             itemBuilder: (context, index) {
               final shop = controller.shopsListData[index];
-                    return ShopCard(
-                      shop: shop,
-                      onContact: () => controller.subscribeToShop(shop),
-                onCall: controller.hasShopMobileNumber(shop)
-                    ? () {
-                        // TODO: Implement phone call via url_launcher
-                      }
+              return ShopCard(
+                shop: shop,
+                onContact: () => controller.contactShop(shop),
+                // Phone icon only shown when number is already revealed
+                onCall: shop.hasValidMobileNumber
+                    ? () => controller.contactShop(shop)
                     : null,
               );
             },
