@@ -7,6 +7,7 @@ abstract final class SubscriptionTypeCode {
   static const auctionBidLimit = 'SUBT002';
   static const ownerContact = 'SUBT003'; // Connect with owner
   static const vehicleDetailsAccess = 'SUBT004';
+  static const vehicleInspection = 'SUBT005'; // Request vehicle inspection
   static const mechanicContact = 'SUBT006';
 }
 

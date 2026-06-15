@@ -13,8 +13,16 @@ class SubscriptionController extends GetxController {
   final SubscriptionService _service;
   final String subscriptionSource;
 
+  /// When set, skips the API call and uses this plan directly.
+  final SubscriptionPlan? prebuiltPlan;
+
+  /// Extra args to carry through to the confirm screen (e.g. pending_vehicle_id).
+  final Map<String, dynamic> extraArgs;
+
   SubscriptionController({
     required this.subscriptionSource,
+    this.prebuiltPlan,
+    this.extraArgs = const {},
     SubscriptionService? service,
   }) : _service = service ?? SubscriptionService();
 
@@ -34,6 +42,14 @@ class SubscriptionController extends GetxController {
   }
 
   Future<void> _loadPlans() async {
+    // If a plan is pre-built (e.g. from categories data), skip the API.
+    if (prebuiltPlan != null) {
+      plans.assignAll([prebuiltPlan!]);
+      selectedPlanIndex.value = 0;
+      isLoading.value = false;
+      return;
+    }
+
     isLoading.value = true;
     errorMessage.value = '';
     try {
@@ -70,7 +86,11 @@ class SubscriptionController extends GetxController {
     if (selectedPlan == null) return;
     Get.toNamed(
       AppRoutes.subscriptionConfirm,
-      arguments: {'plan': selectedPlan, 'source': subscriptionSource},
+      arguments: {
+        ...extraArgs,
+        'plan': selectedPlan,
+        'source': subscriptionSource,
+      },
     );
   }
 

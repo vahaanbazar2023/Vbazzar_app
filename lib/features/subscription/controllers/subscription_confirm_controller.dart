@@ -24,6 +24,10 @@ class SubscriptionConfirmController extends GetxController {
   final SubscriptionPlan? planArg;
   final String? sourceArg;
 
+  /// Extra args carried through from the originating screen.
+  /// Used by INSPECTION / SUBT003 etc. to retrieve pending_vehicle_id.
+  final Map<String, dynamic> extraArgs;
+
   final isLoading = false.obs;
   final isPaymentInProgress = false.obs;
   final priceDisplay = ''.obs;
@@ -33,7 +37,11 @@ class SubscriptionConfirmController extends GetxController {
   late final PaymentController _paymentCtrl;
   SubscriptionPlan? _plan;
 
-  SubscriptionConfirmController({this.planArg, this.sourceArg});
+  SubscriptionConfirmController({
+    this.planArg,
+    this.sourceArg,
+    this.extraArgs = const {},
+  });
 
   @override
   void onInit() {
@@ -87,6 +95,13 @@ class SubscriptionConfirmController extends GetxController {
       sourceArg ??
       (Get.arguments as Map<String, dynamic>? ?? {})['source'] as String? ??
       '';
+
+  /// Returns a merged view of all args: Get.arguments + extraArgs.
+  /// extraArgs takes priority (set when navigating from requestInspection etc.)
+  Map<String, dynamic> get _allArgs => {
+    ...(Get.arguments as Map<String, dynamic>? ?? {}),
+    ...extraArgs,
+  };
 
   Future<void> onProceedPayment() async {
     final plan = _plan;
@@ -195,7 +210,7 @@ class SubscriptionConfirmController extends GetxController {
         break;
 
       case SubscriptionTypeCode.ownerContact: // SUBT003
-        final args003 = Get.arguments as Map<String, dynamic>? ?? {};
+        final args003 = _allArgs;
         final vehicleId003 = args003['pending_vehicle_id'] as String?;
         final categoryCode003 = args003['category_code'] as String? ?? '';
 
@@ -224,10 +239,34 @@ class SubscriptionConfirmController extends GetxController {
         SubscriptionGuardService.to.invalidateAndReload();
         break;
 
+      case SubscriptionTypeCode
+          .vehicleInspection: // SUBT005 — kept for backward compat
+      case 'INSPECTION': // per-category inspection plan
+        final args005 = _allArgs;
+        final vehicleId005 = args005['pending_vehicle_id'] as String?;
+
+        Get.until(
+          (route) =>
+              route.settings.name != AppRoutes.subscription &&
+              route.settings.name != AppRoutes.subscriptionConfirm &&
+              route.settings.name != AppRoutes.walletPayment,
+        );
+
+        if (vehicleId005 != null && Get.isRegistered<BuyVehicleController>()) {
+          Get.find<BuyVehicleController>().unlockInspectionAndRequest(
+            vehicleId005,
+          );
+        } else {
+          CustomSnackbar.show(
+            message: 'Inspection request submitted!',
+            type: SnackbarType.success,
+          );
+        }
+        SubscriptionGuardService.to.invalidateAndReload();
+        break;
+
       case SubscriptionTypeCode.vehicleDetailsAccess: // SUBT004
-        // Retrieve the vehicle that triggered the subscription flow.
-        final pendingVehicle =
-            (Get.arguments as Map<String, dynamic>? ?? {})['pending_vehicle'];
+        final pendingVehicle = _allArgs['pending_vehicle'];
 
         // Pop all subscription screens.
         Get.until(

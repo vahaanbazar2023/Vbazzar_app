@@ -6,6 +6,8 @@ import '../../../core/network/network_service.dart';
 import '../../../core/network/endpoints/api_endpoints.dart';
 import '../../../core/storage/secure_storage_service.dart';
 import '../../../core/storage/storage_keys.dart';
+import '../../../features/subscription/models/subscription_plan.dart';
+import '../../../features/subscription/views/single_plan_payment_screen.dart';
 import '../domain/entities/buy_vehicle_entity.dart';
 import '../domain/entities/subscribed_vehicle_entity.dart';
 import '../domain/entities/vehicle_brand_entity.dart';
@@ -503,12 +505,63 @@ class BuyVehicleController extends GetxController {
     }
   }
 
-  /// Sends "inspection_request: yes" for the given vehicle.
+  /// Request vehicle inspection.
+  /// Looks up the subscription amount and plan code from the cached categories
+  /// list (fetched on Buy & Sell entry). If payment is required, navigates to
+  /// the subscription screen. Otherwise calls the API directly.
   Future<void> requestInspection(BuyVehicleEntity vehicle) async {
+    // Find the category from the already-loaded list
+    final category = categories.firstWhereOrNull(
+      (c) => c.categoryCode == vehicle.categoryCode,
+    );
+
+    final amount = category?.subscriptionAmount ?? vehicle.subscriptionAmount;
+    final planCode = category?.categoryPlan ?? vehicle.categoryPlan;
+    final requiresPayment = amount != null && amount > 0 && planCode != null;
+
+    if (requiresPayment) {
+      final plan = SubscriptionPlan(
+        typeCode: 'INSPECTION',
+        planCode: planCode,
+        name: 'Inspection',
+        price: amount,
+        displayOrder: 0,
+        status: 'active',
+        featDescription:
+            'Professional on-site inspection for ${vehicle.categoryName}',
+        planMetric: 'fixed',
+        planMetricValue: '',
+      );
+
+      final vehicleId = vehicle.sbVehicleId;
+
+      Get.to(
+        () => SinglePlanPaymentScreen(
+          plan: plan,
+          title: 'Request Inspection',
+          subtitle:
+              'Pay to request a professional inspection for this vehicle.',
+          onPaymentSuccess: () {
+            // Navigate back to the detail screen immediately
+            Get.back();
+            // Then submit the inspection request + silent refresh
+            unlockInspectionAndRequest(vehicleId);
+          },
+        ),
+        transition: Transition.rightToLeft,
+      );
+    } else {
+      // Free or no plan — call API directly
+      await _submitInspectionRequest(vehicle.sbVehicleId);
+    }
+  }
+
+  /// Calls userInterest with inspection_request:"yes" and shows snackbar.
+  Future<void> _submitInspectionRequest(String vehicleId) async {
     final uid = await _userId;
     try {
       final result = await repository.userInterest(
-        vehicleId: vehicle.sbVehicleId,
+        vehicleId: vehicleId,
         userId: uid,
         vehicleOffer: null,
         isInterested: '',
@@ -535,6 +588,17 @@ class BuyVehicleController extends GetxController {
         snackPosition: SnackPosition.TOP,
       );
     }
+  }
+
+  /// After successful SUBT005 payment:
+  ///   1. Call userInterest(inspectionRequest: "yes")
+  ///   2. Silent-refresh vehicle detail so button flips to "Inspection Requested"
+  Future<void> unlockInspectionAndRequest(String vehicleId) async {
+    debugPrint('🔵 unlockInspectionAndRequest: $vehicleId');
+    await _submitInspectionRequest(vehicleId);
+    // Silently refresh so inspection_requested flips to "yes" in the UI
+    final catCode = currentVehicleDetail.value?.categoryCode ?? '';
+    await fetchVehicleDetail(vehicleId, categoryCode: catCode, silent: true);
   }
 
   /// Calls the userInterest API with ownerDetailsAccess="yes" to reveal the

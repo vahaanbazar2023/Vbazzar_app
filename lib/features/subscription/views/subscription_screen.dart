@@ -24,11 +24,19 @@ class SubscriptionScreen extends StatefulWidget {
   final String title;
   final String subtitle;
 
+  /// When set, the listing API is skipped and this plan is used directly.
+  final SubscriptionPlan? prebuiltPlan;
+
+  /// Extra args passed through to the confirm screen after plan selection.
+  final Map<String, dynamic> extraArgs;
+
   const SubscriptionScreen({
     super.key,
     required this.subscriptionSource,
     this.title = 'Choose Subscription Plan',
     this.subtitle = 'Select the subscription plan that suits you best',
+    this.prebuiltPlan,
+    this.extraArgs = const {},
   });
 
   @override
@@ -55,7 +63,11 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
   @override
   Widget build(BuildContext context) {
     final controller = Get.put(
-      SubscriptionController(subscriptionSource: widget.subscriptionSource),
+      SubscriptionController(
+        subscriptionSource: widget.subscriptionSource,
+        prebuiltPlan: widget.prebuiltPlan,
+        extraArgs: widget.extraArgs,
+      ),
       tag: widget.subscriptionSource,
     );
 
@@ -255,6 +267,26 @@ class _SubscriptionBodyState extends State<_SubscriptionBody> {
           categoryCode: categoryCode003,
         );
       }
+    } else if (source == 'SUBT005' || source == 'INSPECTION') {
+      final args005 = Get.arguments as Map<String, dynamic>? ?? {};
+      final vehicleId = args005['pending_vehicle_id'] as String?;
+
+      Get.until(
+        (route) =>
+            route.settings.name != AppRoutes.subscription &&
+            route.settings.name != AppRoutes.subscriptionConfirm &&
+            route.settings.name != AppRoutes.walletPayment,
+      );
+
+      if (vehicleId != null && Get.isRegistered<BuyVehicleController>()) {
+        Get.find<BuyVehicleController>().unlockInspectionAndRequest(vehicleId);
+      } else {
+        CustomSnackbar.show(
+          message: 'Inspection request submitted!',
+          type: SnackbarType.success,
+        );
+      }
+      SubscriptionGuardService.to.invalidateAndReload();
     } else if (source == 'SUBT004') {
       // Retrieve the vehicle passed when the user was redirected here from
       // the buy vehicle listings screen.
@@ -476,9 +508,14 @@ class _SubscriptionBodyState extends State<_SubscriptionBody> {
                   onTap: () {
                     final plan = widget.controller.selectedPlan;
                     if (plan == null) return;
+                    // Forward all current args so extra data like
+                    // pending_vehicle_id passes through to wallet screen.
+                    final currentArgs =
+                        Get.arguments as Map<String, dynamic>? ?? {};
                     Get.toNamed(
                       AppRoutes.walletPayment,
                       arguments: {
+                        ...currentArgs,
                         'plan': plan,
                         'source': widget.subscriptionSource,
                       },

@@ -14,16 +14,24 @@ class WalletPaymentScreen extends StatelessWidget {
   final SubscriptionPlan plan;
   final String source;
 
+  /// Extra args (e.g. pending_vehicle_id) carried from the originating screen.
+  final Map<String, dynamic> extraArgs;
+
   const WalletPaymentScreen({
     super.key,
     required this.plan,
     required this.source,
+    this.extraArgs = const {},
   });
 
   @override
   Widget build(BuildContext context) {
     final controller = Get.put(
-      SubscriptionConfirmController(planArg: plan, sourceArg: source),
+      SubscriptionConfirmController(
+        planArg: plan,
+        sourceArg: source,
+        extraArgs: extraArgs,
+      ),
       tag: 'wallet_$source',
     );
 
@@ -247,7 +255,8 @@ class _WalletBodyState extends State<_WalletBody> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      if (_payFromWallet && widget.controller.isPriceDiscounted.value)
+                      if (_payFromWallet &&
+                          widget.controller.isPriceDiscounted.value)
                         Text(
                           '₹${widget.plan.price.toStringAsFixed(widget.plan.price % 1 == 0 ? 0 : 2)}',
                           style: const TextStyle(
@@ -259,10 +268,12 @@ class _WalletBodyState extends State<_WalletBody> {
                             decorationColor: AppColors.grey400,
                           ),
                         ),
-                      if (_payFromWallet && widget.controller.isPriceDiscounted.value)
+                      if (_payFromWallet &&
+                          widget.controller.isPriceDiscounted.value)
                         const SizedBox(height: 2),
                       Text(
-                        _payFromWallet && widget.controller.isPriceDiscounted.value
+                        _payFromWallet &&
+                                widget.controller.isPriceDiscounted.value
                             ? widget.controller.priceDisplay.value
                             : '₹${widget.plan.price.toStringAsFixed(widget.plan.price % 1 == 0 ? 0 : 2)}',
                         style: TextStyle(
@@ -355,10 +366,7 @@ class _WalletBodyState extends State<_WalletBody> {
                 height: 56,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(188),
-                  border: Border.all(
-                    width: 1,
-                    color: _ctaStart,
-                  ),
+                  border: Border.all(width: 1, color: _ctaStart),
                   color: Colors.transparent,
                 ),
                 child: Center(

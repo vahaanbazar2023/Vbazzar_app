@@ -33,6 +33,10 @@ class BuyVehicleEntity {
   /// Subscription amount (₹) for this vehicle's owner-contact plan.
   final double? subscriptionAmount;
 
+  /// Whether the current user has already requested an inspection.
+  /// "yes" = already requested, "no" = not yet.
+  final String inspectionRequested;
+
   const BuyVehicleEntity({
     required this.id,
     required this.categoryCode,
@@ -57,7 +61,11 @@ class BuyVehicleEntity {
     this.ownerDetailsAccess,
     this.categoryPlan,
     this.subscriptionAmount,
+    this.inspectionRequested = 'no',
   });
+
+  /// True if inspection has already been requested for this vehicle.
+  bool get isInspectionRequested => inspectionRequested.toLowerCase() == 'yes';
 
   /// Returns true when the owner's phone is already accessible.
   bool get hasOwnerAccess => ownerDetailsAccess?.toLowerCase() == 'yes';

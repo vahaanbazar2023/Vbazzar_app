@@ -10,6 +10,8 @@ class VehicleCategoryModel extends VehicleCategoryEntity {
     super.iconUrl,
     super.sortOrder,
     super.vehicleCount,
+    super.categoryPlan,
+    super.subscriptionAmount,
   });
 
   factory VehicleCategoryModel.fromJson(Map<String, dynamic> json) {
@@ -18,21 +20,25 @@ class VehicleCategoryModel extends VehicleCategoryEntity {
       categoryName: json['category_name']?.toString() ?? '',
       description: json['description']?.toString(),
       imageUrl: json['image_url']?.toString(),
-      iconUrl: json['icon_url']?.toString(),
-      sortOrder: _parseInt(json['sort_order']),
+      iconUrl: json['icon_url']?.toString() ?? json['icon_name']?.toString(),
+      sortOrder: _parseInt(json['sort_order'] ?? json['sorting_order']),
       vehicleCount: _parseInt(json['vehicle_count']),
+      categoryPlan: json['category_plan']?.toString(),
+      subscriptionAmount: json['subscription_amount'] is num
+          ? (json['subscription_amount'] as num).toDouble()
+          : double.tryParse(json['subscription_amount']?.toString() ?? ''),
     );
   }
 
   Map<String, dynamic> toJson() => {
-        'category_code': categoryCode,
-        'category_name': categoryName,
-        'description': description,
-        'image_url': imageUrl,
-        'icon_url': iconUrl,
-        'sort_order': sortOrder,
-        'vehicle_count': vehicleCount,
-      };
+    'category_code': categoryCode,
+    'category_name': categoryName,
+    'description': description,
+    'image_url': imageUrl,
+    'icon_url': iconUrl,
+    'sort_order': sortOrder,
+    'vehicle_count': vehicleCount,
+  };
 
   static int _parseInt(dynamic value) {
     if (value == null) return 0;
@@ -70,13 +76,13 @@ class FormFieldConfigModel extends FormFieldConfigEntity {
   }
 
   Map<String, dynamic> toJson() => {
-        'field_name': fieldName,
-        'field_type': fieldType,
-        'required': required,
-        'options': options,
-        'placeholder': placeholder,
-        'default_value': defaultValue,
-        'validation_regex': validationRegex,
-        'api_field_name': apiFieldName,
-      };
+    'field_name': fieldName,
+    'field_type': fieldType,
+    'required': required,
+    'options': options,
+    'placeholder': placeholder,
+    'default_value': defaultValue,
+    'validation_regex': validationRegex,
+    'api_field_name': apiFieldName,
+  };
 }

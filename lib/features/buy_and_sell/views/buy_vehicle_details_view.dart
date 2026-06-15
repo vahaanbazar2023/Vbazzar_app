@@ -415,14 +415,45 @@ class _BuyVehicleDetailsViewState extends State<BuyVehicleDetailsView> {
                   SizedBox(height: 50.h),
 
                   // ── Inspection button ────────────────────────────────────
-                  GradientButton.filled(
-                    text: 'Request Vehicle Inspection',
-                    width: double.infinity,
-                    onPressed: () {
-                      final c = Get.find<BuyVehicleController>();
-                      c.requestInspection(vehicle);
-                    },
-                  ),
+                  vehicle.isInspectionRequested
+                      ? Container(
+                          width: double.infinity,
+                          height: 52.h,
+                          decoration: BoxDecoration(
+                            color: AppColors.grey100,
+                            borderRadius: BorderRadius.circular(12.r),
+                            border: Border.all(color: AppColors.grey300),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.check_circle_rounded,
+                                color: AppColors.success,
+                                size: 18.r,
+                              ),
+                              SizedBox(width: 8.w),
+                              Text(
+                                'Inspection Requested',
+                                style: TextStyle(
+                                  fontFamily: 'Montserrat',
+                                  fontSize: 14.sp,
+                                  fontWeight: FontWeight.w600,
+                                  color: AppColors.grey600,
+                                ),
+                              ),
+                            ],
+                          ),
+                        )
+                      : GradientButton.filled(
+                          text: 'Request Vehicle Inspection',
+                          width: double.infinity,
+                          onPressed: () {
+                            Get.find<BuyVehicleController>().requestInspection(
+                              vehicle,
+                            );
+                          },
+                        ),
                   SizedBox(height: 24.h),
                 ],
               ),

@@ -25,6 +25,7 @@ class BuyVehicleModel extends BuyVehicleEntity {
     super.ownerDetailsAccess,
     super.categoryPlan,
     super.subscriptionAmount,
+    super.inspectionRequested,
   });
 
   factory BuyVehicleModel.fromJson(Map<String, dynamic> json) {
@@ -83,6 +84,7 @@ class BuyVehicleModel extends BuyVehicleEntity {
       subscriptionAmount: json['subscription_amount'] is num
           ? (json['subscription_amount'] as num).toDouble()
           : double.tryParse(json['subscription_amount']?.toString() ?? ''),
+      inspectionRequested: json['inspection_requested']?.toString() ?? 'no',
     );
   }
 }

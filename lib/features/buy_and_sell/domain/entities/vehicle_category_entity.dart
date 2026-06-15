@@ -7,6 +7,12 @@ class VehicleCategoryEntity {
   final int sortOrder;
   final int vehicleCount;
 
+  /// Per-category plan code for the inspection subscription.
+  final String? categoryPlan;
+
+  /// Subscription amount (₹) required for inspection on this category.
+  final double? subscriptionAmount;
+
   const VehicleCategoryEntity({
     required this.categoryCode,
     required this.categoryName,
@@ -15,6 +21,8 @@ class VehicleCategoryEntity {
     this.iconUrl,
     this.sortOrder = 0,
     this.vehicleCount = 0,
+    this.categoryPlan,
+    this.subscriptionAmount,
   });
 }
 

@@ -23,6 +23,7 @@ import '../features/subscription/views/my_subscription_screen.dart';
 import '../features/subscription/views/wallet_payment_screen.dart';
 import '../features/subscription/controllers/subscription_controller.dart';
 import '../features/subscription/controllers/subscription_confirm_controller.dart';
+import '../features/subscription/models/subscription_plan.dart';
 import '../features/payment/controllers/payment_controller.dart';
 import '../features/auction/views/auction_type_screen.dart';
 import '../features/auction/views/auction_category_screen.dart';
@@ -144,12 +145,25 @@ class AppPages {
         final source =
             (args['subscription_source'] ?? args['source'] ?? 'SUBT001')
                 as String;
+        final prebuiltPlan = args['prebuilt_plan'] as SubscriptionPlan?;
+        final knownKeys = {
+          'subscription_source',
+          'source',
+          'title',
+          'subtitle',
+          'prebuilt_plan',
+        };
+        final extraArgs = Map<String, dynamic>.fromEntries(
+          args.entries.where((e) => !knownKeys.contains(e.key)),
+        );
         return SubscriptionScreen(
           subscriptionSource: source,
           title: args['title'] as String? ?? 'Choose a Plan',
           subtitle:
               args['subtitle'] as String? ??
               'Select the subscription plan that suits you best',
+          prebuiltPlan: prebuiltPlan,
+          extraArgs: extraArgs,
         );
       },
       transition: Transition.rightToLeft,
@@ -160,10 +174,17 @@ class AppPages {
       binding: BindingsBuilder(() {
         Get.put(PaymentController());
         final args = Get.arguments as Map<String, dynamic>? ?? {};
+        // Extract extra args (anything beyond plan/source) to carry through
+        // to post-payment handlers (e.g. pending_vehicle_id for inspection).
+        final knownKeys = {'plan', 'source'};
+        final extraArgs = Map<String, dynamic>.fromEntries(
+          args.entries.where((e) => !knownKeys.contains(e.key)),
+        );
         Get.lazyPut(
           () => SubscriptionConfirmController(
             planArg: args['plan'] as dynamic,
             sourceArg: args['source'] as String?,
+            extraArgs: extraArgs,
           ),
         );
       }),
@@ -228,9 +249,16 @@ class AppPages {
       name: AppRoutes.walletPayment,
       page: () {
         final args = Get.arguments as Map<String, dynamic>;
+        // Pass all extra args through so INSPECTION/SUBT003 etc. keep
+        // pending_vehicle_id and category_code for post-payment navigation.
+        final knownKeys = {'plan', 'source'};
+        final extraArgs = Map<String, dynamic>.fromEntries(
+          args.entries.where((e) => !knownKeys.contains(e.key)),
+        );
         return WalletPaymentScreen(
           plan: args['plan'],
           source: args['source'] ?? '',
+          extraArgs: extraArgs,
         );
       },
       binding: BindingsBuilder(() {
