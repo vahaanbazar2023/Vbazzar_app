@@ -839,5 +839,23 @@
   "enterIfscCode": "IFSC కోడ్ నమోదు చేయండి",
   "refundType": "రిఫండ్ రకం *",
   "enterRefundType": "రిఫండ్ రకం నమోదు చేయండి",
-  "initiateRefundTitle": "రిఫండ్ ప్రారంభించండి"
+  "initiateRefundTitle": "రిఫండ్ ప్రారంభించండి",
+
+  "searchByServiceVehicle": "సేవ, వాహనం ద్వారా వెతకండి...",
+  "mostBoughtVehicles": "అత్యధికంగా కొనుగోలైన వాహనాలు",
+  "fmsItems": "FMS అంశాలు",
+  "spareSupportNearYou": "మీ దగ్గర స్పేర్ సపోర్ట్",
+  "isYourVehicleReadyForInspection": "మీ వాహనం తనిఖీకి సిద్ధంగా ఉందా?",
+  "inspectionBannerSubtitle": "నిపుణుల వాహన తనిఖీ మరియు ఖచ్చితమైన మూల్యాంకన నివేదికలు పొందండి.",
+  "inspectNow": "ఇప్పుడు తనిఖీ చేయండి",
+  "isYourVehicleLookingForInsurance": "మీ వాహనానికి భీమా కావాలా?",
+  "insuranceBannerSubtitle": "అధిక క్లెయిమ్ విజయంతో అత్యుత్తమ భీమా రేట్లు పొందండి.",
+  "applyNow": "ఇప్పుడే దరఖాస్తు చేయండి",
+  "constructionEquipmentCe": "నిర్మాణ పరికరాలు (CE)",
+  "commercialVehicleCv": "వాణిజ్య వాహనం (CV)",
+  "spareSupportTileSubtitle": "మీ దగ్గర దుకాణాలు మరియు విడి భాగాలు వెతకండి.",
+  "vehicleModel": "వాహన మోడల్",
+  "availableVehicles": "అందుబాటులో ఉన్న వాహనాలు",
+  "buyNow": "ఇప్పుడే కొనండి",
+  "liveAuction": "లైవ్ వేలం"
 }

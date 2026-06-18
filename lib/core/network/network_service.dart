@@ -60,6 +60,7 @@ class NetworkService extends GetxService {
     '/api/v1/dashboard/categories-home',
     '/api/v1/dashboard/auction-refund-initiate',
     '/api/v1/dashboard/categories-home',
+    '/api/v2/dashboard/home',
     '/api/v1/auth/refresh-token',
     '/api/v1/auth/verify-otp',
 

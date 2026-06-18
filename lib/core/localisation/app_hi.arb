@@ -1086,5 +1086,23 @@
   "enterIfscCode": "IFSC कोड दर्ज करें",
   "refundType": "रिफंड प्रकार *",
   "enterRefundType": "रिफंड प्रकार दर्ज करें",
-  "initiateRefundTitle": "रिफंड शुरू करें"
+  "initiateRefundTitle": "रिफंड शुरू करें",
+
+  "searchByServiceVehicle": "सेवा, वाहन से खोजें...",
+  "mostBoughtVehicles": "सबसे ज्यादा खरीदे गए वाहन",
+  "fmsItems": "FMS आइटम",
+  "spareSupportNearYou": "आपके पास स्पेयर सपोर्ट",
+  "isYourVehicleReadyForInspection": "क्या आपका वाहन निरीक्षण के लिए तैयार है?",
+  "inspectionBannerSubtitle": "पेशेवर वाहन निरीक्षण और सटीक मूल्यांकन रिपोर्ट प्राप्त करें।",
+  "inspectNow": "अभी निरीक्षण करें",
+  "isYourVehicleLookingForInsurance": "क्या आपका वाहन बीमा ढूंढ रहा है?",
+  "insuranceBannerSubtitle": "उच्च दावा सफलता के साथ सर्वोत्तम बीमा दरें प्राप्त करें।",
+  "applyNow": "अभी आवेदन करें",
+  "constructionEquipmentCe": "निर्माण उपकरण (CE)",
+  "commercialVehicleCv": "वाणिज्यिक वाहन (CV)",
+  "spareSupportTileSubtitle": "अपने पास दुकानें और स्पेयर पार्ट्स खोजें।",
+  "vehicleModel": "वाहन मॉडल",
+  "availableVehicles": "उपलब्ध वाहन",
+  "buyNow": "अभी खरीदें",
+  "liveAuction": "लाइव नीलामी"
 }

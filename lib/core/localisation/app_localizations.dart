@@ -5733,6 +5733,108 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Initiate Refund'**
   String get initiateRefundTitle;
+
+  /// No description provided for @searchByServiceVehicle.
+  ///
+  /// In en, this message translates to:
+  /// **'Search by service, vehicle...'**
+  String get searchByServiceVehicle;
+
+  /// No description provided for @mostBoughtVehicles.
+  ///
+  /// In en, this message translates to:
+  /// **'Most Bought Vehicles'**
+  String get mostBoughtVehicles;
+
+  /// No description provided for @fmsItems.
+  ///
+  /// In en, this message translates to:
+  /// **'FMS Items'**
+  String get fmsItems;
+
+  /// No description provided for @spareSupportNearYou.
+  ///
+  /// In en, this message translates to:
+  /// **'Spare Support Near You'**
+  String get spareSupportNearYou;
+
+  /// No description provided for @isYourVehicleReadyForInspection.
+  ///
+  /// In en, this message translates to:
+  /// **'Is Your Vehicle Ready For Inspection?'**
+  String get isYourVehicleReadyForInspection;
+
+  /// No description provided for @inspectionBannerSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Get professional vehicle inspection and accurate valuation reports.'**
+  String get inspectionBannerSubtitle;
+
+  /// No description provided for @inspectNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Inspect Now'**
+  String get inspectNow;
+
+  /// No description provided for @isYourVehicleLookingForInsurance.
+  ///
+  /// In en, this message translates to:
+  /// **'Is Your Vehicle Looking For Insurance?'**
+  String get isYourVehicleLookingForInsurance;
+
+  /// No description provided for @insuranceBannerSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Get the best insurance rates with high claim success support.'**
+  String get insuranceBannerSubtitle;
+
+  /// No description provided for @applyNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply Now'**
+  String get applyNow;
+
+  /// No description provided for @constructionEquipmentCe.
+  ///
+  /// In en, this message translates to:
+  /// **'Construction Equipment (CE)'**
+  String get constructionEquipmentCe;
+
+  /// No description provided for @commercialVehicleCv.
+  ///
+  /// In en, this message translates to:
+  /// **'Commercial Vehicle (CV)'**
+  String get commercialVehicleCv;
+
+  /// No description provided for @spareSupportTileSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Find nearby shops and spare parts near you.'**
+  String get spareSupportTileSubtitle;
+
+  /// No description provided for @vehicleModel.
+  ///
+  /// In en, this message translates to:
+  /// **'Vehicle Model'**
+  String get vehicleModel;
+
+  /// No description provided for @availableVehicles.
+  ///
+  /// In en, this message translates to:
+  /// **'Available Vehicles'**
+  String get availableVehicles;
+
+  /// No description provided for @buyNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Buy Now'**
+  String get buyNow;
+
+  /// No description provided for @liveAuction.
+  ///
+  /// In en, this message translates to:
+  /// **'Live Auction'**
+  String get liveAuction;
 }
 
 class _AppLocalizationsDelegate

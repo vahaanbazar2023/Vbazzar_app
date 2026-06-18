@@ -1156,5 +1156,23 @@
   "enterIfscCode": "Enter IFSC code",
   "refundType": "Refund Type *",
   "enterRefundType": "Enter refund type",
-  "initiateRefundTitle": "Initiate Refund"
+  "initiateRefundTitle": "Initiate Refund",
+
+  "searchByServiceVehicle": "Search by service, vehicle...",
+  "mostBoughtVehicles": "Most Bought Vehicles",
+  "fmsItems": "FMS Items",
+  "spareSupportNearYou": "Spare Support Near You",
+  "isYourVehicleReadyForInspection": "Is Your Vehicle Ready For Inspection?",
+  "inspectionBannerSubtitle": "Get professional vehicle inspection and accurate valuation reports.",
+  "inspectNow": "Inspect Now",
+  "isYourVehicleLookingForInsurance": "Is Your Vehicle Looking For Insurance?",
+  "insuranceBannerSubtitle": "Get the best insurance rates with high claim success support.",
+  "applyNow": "Apply Now",
+  "constructionEquipmentCe": "Construction Equipment (CE)",
+  "commercialVehicleCv": "Commercial Vehicle (CV)",
+  "spareSupportTileSubtitle": "Find nearby shops and spare parts near you.",
+  "vehicleModel": "Vehicle Model",
+  "availableVehicles": "Available Vehicles",
+  "buyNow": "Buy Now",
+  "liveAuction": "Live Auction"
 }

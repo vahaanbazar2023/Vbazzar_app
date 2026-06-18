@@ -2984,4 +2984,60 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get initiateRefundTitle => 'Initiate Refund';
+
+  @override
+  String get searchByServiceVehicle => 'Search by service, vehicle...';
+
+  @override
+  String get mostBoughtVehicles => 'Most Bought Vehicles';
+
+  @override
+  String get fmsItems => 'FMS Items';
+
+  @override
+  String get spareSupportNearYou => 'Spare Support Near You';
+
+  @override
+  String get isYourVehicleReadyForInspection =>
+      'Is Your Vehicle Ready For Inspection?';
+
+  @override
+  String get inspectionBannerSubtitle =>
+      'Get professional vehicle inspection and accurate valuation reports.';
+
+  @override
+  String get inspectNow => 'Inspect Now';
+
+  @override
+  String get isYourVehicleLookingForInsurance =>
+      'Is Your Vehicle Looking For Insurance?';
+
+  @override
+  String get insuranceBannerSubtitle =>
+      'Get the best insurance rates with high claim success support.';
+
+  @override
+  String get applyNow => 'Apply Now';
+
+  @override
+  String get constructionEquipmentCe => 'Construction Equipment (CE)';
+
+  @override
+  String get commercialVehicleCv => 'Commercial Vehicle (CV)';
+
+  @override
+  String get spareSupportTileSubtitle =>
+      'Find nearby shops and spare parts near you.';
+
+  @override
+  String get vehicleModel => 'Vehicle Model';
+
+  @override
+  String get availableVehicles => 'Available Vehicles';
+
+  @override
+  String get buyNow => 'Buy Now';
+
+  @override
+  String get liveAuction => 'Live Auction';
 }

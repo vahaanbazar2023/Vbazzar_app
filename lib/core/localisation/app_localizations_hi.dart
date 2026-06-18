@@ -2981,4 +2981,60 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get initiateRefundTitle => 'रिफंड शुरू करें';
+
+  @override
+  String get searchByServiceVehicle => 'सेवा, वाहन से खोजें...';
+
+  @override
+  String get mostBoughtVehicles => 'सबसे ज्यादा खरीदे गए वाहन';
+
+  @override
+  String get fmsItems => 'FMS आइटम';
+
+  @override
+  String get spareSupportNearYou => 'आपके पास स्पेयर सपोर्ट';
+
+  @override
+  String get isYourVehicleReadyForInspection =>
+      'क्या आपका वाहन निरीक्षण के लिए तैयार है?';
+
+  @override
+  String get inspectionBannerSubtitle =>
+      'पेशेवर वाहन निरीक्षण और सटीक मूल्यांकन रिपोर्ट प्राप्त करें।';
+
+  @override
+  String get inspectNow => 'अभी निरीक्षण करें';
+
+  @override
+  String get isYourVehicleLookingForInsurance =>
+      'क्या आपका वाहन बीमा ढूंढ रहा है?';
+
+  @override
+  String get insuranceBannerSubtitle =>
+      'उच्च दावा सफलता के साथ सर्वोत्तम बीमा दरें प्राप्त करें।';
+
+  @override
+  String get applyNow => 'अभी आवेदन करें';
+
+  @override
+  String get constructionEquipmentCe => 'निर्माण उपकरण (CE)';
+
+  @override
+  String get commercialVehicleCv => 'वाणिज्यिक वाहन (CV)';
+
+  @override
+  String get spareSupportTileSubtitle =>
+      'अपने पास दुकानें और स्पेयर पार्ट्स खोजें।';
+
+  @override
+  String get vehicleModel => 'वाहन मॉडल';
+
+  @override
+  String get availableVehicles => 'उपलब्ध वाहन';
+
+  @override
+  String get buyNow => 'अभी खरीदें';
+
+  @override
+  String get liveAuction => 'लाइव नीलामी';
 }

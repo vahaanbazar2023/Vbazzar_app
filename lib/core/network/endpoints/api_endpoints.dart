@@ -17,6 +17,7 @@ class ApiEndpoints {
 
   // ─── Dashboard ───────────────────────────────────────────────
   static const String categoriesHome = '/api/v1/dashboard/categories-home';
+  static const String dashboardHome = '/api/v2/dashboard/home';
 
   // ─── Subscription ───────────────────────────────────────────────
   static const String mySubscriptions = '$subscriptionPrefix/my-subscriptions';

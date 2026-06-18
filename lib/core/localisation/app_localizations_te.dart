@@ -3006,4 +3006,59 @@ class AppLocalizationsTe extends AppLocalizations {
 
   @override
   String get initiateRefundTitle => 'రిఫండ్ ప్రారంభించండి';
+
+  @override
+  String get searchByServiceVehicle => 'సేవ, వాహనం ద్వారా వెతకండి...';
+
+  @override
+  String get mostBoughtVehicles => 'అత్యధికంగా కొనుగోలైన వాహనాలు';
+
+  @override
+  String get fmsItems => 'FMS అంశాలు';
+
+  @override
+  String get spareSupportNearYou => 'మీ దగ్గర స్పేర్ సపోర్ట్';
+
+  @override
+  String get isYourVehicleReadyForInspection =>
+      'మీ వాహనం తనిఖీకి సిద్ధంగా ఉందా?';
+
+  @override
+  String get inspectionBannerSubtitle =>
+      'నిపుణుల వాహన తనిఖీ మరియు ఖచ్చితమైన మూల్యాంకన నివేదికలు పొందండి.';
+
+  @override
+  String get inspectNow => 'ఇప్పుడు తనిఖీ చేయండి';
+
+  @override
+  String get isYourVehicleLookingForInsurance => 'మీ వాహనానికి భీమా కావాలా?';
+
+  @override
+  String get insuranceBannerSubtitle =>
+      'అధిక క్లెయిమ్ విజయంతో అత్యుత్తమ భీమా రేట్లు పొందండి.';
+
+  @override
+  String get applyNow => 'ఇప్పుడే దరఖాస్తు చేయండి';
+
+  @override
+  String get constructionEquipmentCe => 'నిర్మాణ పరికరాలు (CE)';
+
+  @override
+  String get commercialVehicleCv => 'వాణిజ్య వాహనం (CV)';
+
+  @override
+  String get spareSupportTileSubtitle =>
+      'మీ దగ్గర దుకాణాలు మరియు విడి భాగాలు వెతకండి.';
+
+  @override
+  String get vehicleModel => 'వాహన మోడల్';
+
+  @override
+  String get availableVehicles => 'అందుబాటులో ఉన్న వాహనాలు';
+
+  @override
+  String get buyNow => 'ఇప్పుడే కొనండి';
+
+  @override
+  String get liveAuction => 'లైవ్ వేలం';
 }

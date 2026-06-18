@@ -72,6 +72,13 @@ class AppAssets {
   // ── Service Support ──────────────────────────────────────────────────────
   static const String serviceSupport = '${_images}contact_us.png';
 
+  // ── Dashboard banner images ───────────────────────────────────────────────
+  static const String inspectionDashboardIcon =
+      '${_images}inspection_dasboard_icon.png';
+  static const String insuranceDashboardIcon =
+      '${_images}insurance_dashboard_icon.png';
+  static const String yellowBulldoser = '${_images}yellow_bulldoser.png';
+
   // ── Miscellaneous images ──────────────────────────────────────────────────
   static const String vbLogo = '${_images}vb_logo.png';
   static const String vahaanBazarText = '${_images}vahaan_bazar_text.png';
