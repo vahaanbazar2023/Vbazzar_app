@@ -3,7 +3,9 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../../core/constants/app_assets.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/design_system/design_system.dart';
@@ -173,41 +175,23 @@ class _HomeHeader extends StatelessWidget {
             ),
           ),
           SizedBox(width: 10.w),
-          // Notification
-          Stack(
-            children: [
-              Icon(
-                Icons.notifications_outlined,
-                color: AppColors.textPrimary,
-                size: 26.r,
-              ),
-              Positioned(
-                top: 0,
-                right: 0,
-                child: Container(
-                  width: 8.r,
-                  height: 8.r,
-                  decoration: const BoxDecoration(
-                    color: AppColors.success,
-                    shape: BoxShape.circle,
-                  ),
-                ),
-              ),
-            ],
+          // Notification — SVG has badge and colours baked in
+          SvgPicture.asset(
+            AppAssets.iconNotification,
+            width: 24.r,
+            height: 24.r,
           ),
           SizedBox(width: 12.w),
-          // Chat
-          Container(
-            width: 36.w,
-            height: 36.w,
-            decoration: BoxDecoration(
-              color: AppColors.primary,
-              shape: BoxShape.circle,
-            ),
-            child: Icon(
-              Icons.chat_bubble_outline_rounded,
-              color: Colors.white,
-              size: 18.r,
+          // Customer care — tap to open dialer
+          GestureDetector(
+            onTap: () async {
+              final uri = Uri(scheme: 'tel', path: '+918008801806');
+              if (await canLaunchUrl(uri)) launchUrl(uri);
+            },
+            child: Image.asset(
+              AppAssets.customerCare,
+              width: 28.r,
+              height: 28.r,
             ),
           ),
         ],
@@ -1043,9 +1027,10 @@ class _FmsItemCard extends StatelessWidget {
           border: Border.all(color: AppColors.grey200),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.04),
-              blurRadius: 6,
-              offset: const Offset(0, 2),
+              color: Colors.black.withValues(alpha: 0.10),
+              blurRadius: 12,
+              spreadRadius: 1,
+              offset: const Offset(0, 4),
             ),
           ],
         ),
@@ -1268,7 +1253,7 @@ class _SpareSupportSection extends StatelessWidget {
         children: [
           Expanded(
             child: _SpareSupportTile(
-              icon: AppAssets.inspection,
+              icon: AppAssets.CE,
               title: context.l10n.constructionEquipmentCe,
               subtitle: context.l10n.spareSupportTileSubtitle,
               onTap: () => Get.toNamed(
@@ -1280,7 +1265,7 @@ class _SpareSupportSection extends StatelessWidget {
           SizedBox(width: 12.w),
           Expanded(
             child: _SpareSupportTile(
-              icon: AppAssets.buySell,
+              icon: AppAssets.CV,
               title: context.l10n.commercialVehicleCv,
               subtitle: context.l10n.spareSupportTileSubtitle,
               onTap: () => Get.toNamed(
@@ -1312,68 +1297,88 @@ class _SpareSupportTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
-      child: Container(
-        padding: EdgeInsets.all(14.w),
-        decoration: BoxDecoration(
-          color: AppColors.white,
-          borderRadius: BorderRadius.circular(14.r),
-          border: Border.all(color: AppColors.grey200),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.04),
-              blurRadius: 6,
-              offset: const Offset(0, 2),
-            ),
-          ],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Stack(
-              children: [
-                Image.asset(icon, height: 48.h, fit: BoxFit.contain),
-                Positioned(
-                  top: 0,
-                  right: 0,
-                  child: Container(
-                    width: 22.w,
-                    height: 22.w,
-                    decoration: const BoxDecoration(
-                      color: AppColors.primary,
-                      shape: BoxShape.circle,
-                    ),
-                    child: Icon(
-                      Icons.arrow_outward_rounded,
-                      color: Colors.white,
-                      size: 12.r,
-                    ),
-                  ),
+      child: Stack(
+        children: [
+          // Gradient border wrapper
+          Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(14.r),
+              gradient: const LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [AppColors.ctaGradientStart, AppColors.ctaGradientEnd],
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.10),
+                  blurRadius: 12,
+                  spreadRadius: 1,
+                  offset: const Offset(0, 4),
                 ),
               ],
             ),
-            SizedBox(height: 10.h),
-            Text(
-              title,
-              style: TextStyle(
-                fontFamily: 'Montserrat',
-                fontSize: 12.sp,
-                fontWeight: FontWeight.w700,
-                color: AppColors.textPrimary,
+            child: Container(
+              margin: const EdgeInsets.all(1.5), // border thickness
+              padding: EdgeInsets.all(14.w),
+              decoration: BoxDecoration(
+                color: AppColors.white,
+                borderRadius: BorderRadius.circular(13.r),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Image.asset(icon, height: 48.h, fit: BoxFit.contain),
+                  SizedBox(height: 10.h),
+                  Text(
+                    title,
+                    style: TextStyle(
+                      fontFamily: 'Montserrat',
+                      fontSize: 12.sp,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.textPrimary,
+                    ),
+                  ),
+                  SizedBox(height: 4.h),
+                  Text(
+                    subtitle,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontFamily: 'Plus Jakarta Sans',
+                      fontSize: 10.sp,
+                      color: AppColors.grey500,
+                    ),
+                  ),
+                ],
               ),
             ),
-            SizedBox(height: 4.h),
-            Text(
-              subtitle,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(
-                fontFamily: 'Plus Jakarta Sans',
-                fontSize: 10.sp,
-                color: AppColors.grey500,
+          ),
+          // Arrow badge pinned to top-right of the card
+          Positioned(
+            top: 10.h,
+            right: 10.w,
+            child: Container(
+              width: 24.w,
+              height: 24.w,
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    AppColors.ctaGradientStart,
+                    AppColors.ctaGradientEnd,
+                  ],
+                ),
+                borderRadius: BorderRadius.circular(12.r),
+              ),
+              child: Icon(
+                Icons.arrow_outward_rounded,
+                color: Colors.white,
+                size: 13.r,
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

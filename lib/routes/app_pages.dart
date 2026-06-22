@@ -352,6 +352,7 @@ class AppPages {
     GetPage(
       name: AppRoutes.shopList,
       page: () => const ShopListView(),
+      binding: SpareFmsBinding(),
       transition: Transition.rightToLeft,
     ),
     GetPage(

@@ -39,9 +39,15 @@ class ShopCard extends StatelessWidget {
         border: Border.all(color: AppColors.grey200, width: 1),
         boxShadow: [
           BoxShadow(
-            color: AppColors.black.withValues(alpha: 0.04),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
+            color: AppColors.black.withValues(alpha: 0.10),
+            blurRadius: 14,
+            spreadRadius: 1,
+            offset: const Offset(0, 4),
+          ),
+          BoxShadow(
+            color: AppColors.primary.withValues(alpha: 0.06),
+            blurRadius: 6,
+            offset: const Offset(0, 1),
           ),
         ],
       ),

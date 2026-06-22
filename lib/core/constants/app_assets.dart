@@ -11,6 +11,9 @@ class AppAssets {
   static const String logoWhite = '${_images}logo_white.png';
   static const String splash = '${_images}splash_bg.png';
   static const String placeholder = '${_images}placeholder.png';
+  static const String CE = '${_images}CE.png';
+  static const String CV = '${_images}CV.png';
+  static const String CC = '${_images}cc.png';
 
   // category Images
   static const String auction = '${_images}auction.png';
@@ -44,6 +47,9 @@ class AppAssets {
   static const String iconHome = '${_icons}home.svg';
   static const String iconProfile = '${_icons}profile.svg';
   static const String iconVehicle = '${_icons}vehicle.svg';
+  static const String iconNotification = '${_icons}ion_notifications.svg';
+  static const String iconCustomerSupport = '${_icons}cc.svg';
+  static const String customerCare = '${_images}cc.png';
 
   // ── Auction icons ─────────────────────────────────────────────────────────
   static const String auctionIcon = '${_icons}auction.svg';

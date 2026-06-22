@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:get/get.dart' hide Response;
 
 import '../../../../core/network/endpoints/api_endpoints.dart';
@@ -182,8 +183,15 @@ class SpareFmsRepositoryImpl implements SpareFmsRepository {
     if (userId.isNotEmpty) body['user_id'] = userId;
 
     _logRequest(ApiEndpoints.listShops, body);
-    // ── Extra debug: print full request body as JSON ──────────
-    debugPrint('📤 [list-shops] REQUEST BODY: $body');
+    debugPrint(
+      '📤 [list-shops] FULL REQUEST:\n'
+      '  URL     : ${ApiEndpoints.listShops}\n'
+      '  lat     : $latitude\n'
+      '  lng     : $longitude\n'
+      '  category: $shopCategoryType\n'
+      '  page    : $page  limit: $limit\n'
+      '  userId  : $userId',
+    );
     try {
       final response = await _network.post(ApiEndpoints.listShops, data: body);
 
@@ -227,6 +235,11 @@ class SpareFmsRepositoryImpl implements SpareFmsRepository {
       );
     } catch (e) {
       _logError(ApiEndpoints.listShops, e);
+      // Print the raw error response body so we can see what field the server rejects
+      if (e is DioException && e.response != null) {
+        debugPrint('🔴 [list-shops] ERROR RESPONSE BODY: ${e.response?.data}');
+        debugPrint('🔴 [list-shops] STATUS: ${e.response?.statusCode}');
+      }
       rethrow;
     }
   }
