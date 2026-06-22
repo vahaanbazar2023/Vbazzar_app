@@ -10,6 +10,8 @@ import '../../../core/constants/app_assets.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/design_system/design_system.dart';
 import '../../../core/extensions/context_extensions.dart';
+import '../../../core/storage/secure_storage_service.dart';
+import '../../../core/storage/storage_keys.dart';
 import '../../../routes/app_routes.dart';
 import '../../../features/auction/models/auction_listing.dart';
 import '../../../features/spare_and_fms/domain/entities/spare_part_entity.dart';
@@ -841,10 +843,23 @@ class _RadialGlowPainter extends CustomPainter {
 // ─────────────────────────────────────────────────────────────────────────────
 
 class _InspectionBanner extends StatelessWidget {
+  const _InspectionBanner();
+
+  Future<void> _openInspection() async {
+    final userType =
+        await SecureStorageService.to.read(StorageKeys.userType) ?? '';
+    final normalized = userType.toUpperCase().trim();
+    if (normalized == 'VENDOR' || normalized == 'AGENT') {
+      Get.toNamed(AppRoutes.agentValuationForm);
+    } else {
+      Get.toNamed(AppRoutes.customerValuationForm);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => Get.toNamed(AppRoutes.inspectionDetail),
+      onTap: _openInspection,
       child: Container(
         margin: EdgeInsets.symmetric(horizontal: 16.w),
         // bottom padding gives room for the overflowing 3D image
