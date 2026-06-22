@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import '../../../../core/network/network_service.dart';
 import '../../../../core/storage/secure_storage_service.dart';
 import '../../../../core/storage/storage_keys.dart';
@@ -24,11 +25,23 @@ class DashboardRepository {
       );
       if (response.statusCode == 200) {
         final raw = response.data;
+        debugPrint('🏠 Dashboard raw response: $raw');
         if (raw is Map<String, dynamic> &&
             raw['status'] == 'success' &&
             raw['data'] != null) {
-          return DashboardData.fromJson(raw['data'] as Map<String, dynamic>);
+          final dataMap = raw['data'] as Map<String, dynamic>;
+          debugPrint('🏠 Dashboard data keys: ${dataMap.keys.toList()}');
+          debugPrint(
+            '🏠 Dashboard: live_auctions=${(dataMap['live_auctions'] as List?)?.length ?? 0}'
+            ', most_bought_veh=${(dataMap['most_bought_veh'] as List?)?.length ?? 0}'
+            ', spares_fms=${(dataMap['spares_fms'] as List?)?.length ?? 0}',
+          );
+          final data = DashboardData.fromJson(dataMap);
+          return data;
         }
+        debugPrint(
+          '🏠 Dashboard: unexpected structure - status=${raw['status']}, hasData=${raw['data'] != null}',
+        );
       }
       return null;
     } on DioException catch (e) {

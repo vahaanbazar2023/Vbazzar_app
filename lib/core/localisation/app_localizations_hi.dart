@@ -3017,6 +3017,16 @@ class AppLocalizationsHi extends AppLocalizations {
   String get applyNow => 'अभी आवेदन करें';
 
   @override
+  String get isYourVehicleLookingForFinance => 'Need Finance For Your Vehicle?';
+
+  @override
+  String get financeBannerSubtitle =>
+      'Quick approvals from top NBFCs and banks at competitive rates.';
+
+  @override
+  String get applyForFinance => 'Apply For Finance';
+
+  @override
   String get constructionEquipmentCe => 'निर्माण उपकरण (CE)';
 
   @override
@@ -3037,4 +3047,7 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get liveAuction => 'लाइव नीलामी';
+
+  @override
+  String get mechanicsNearYou => 'आपके पास मैकेनिक';
 }

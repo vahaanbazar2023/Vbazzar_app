@@ -1104,5 +1104,6 @@
   "vehicleModel": "वाहन मॉडल",
   "availableVehicles": "उपलब्ध वाहन",
   "buyNow": "अभी खरीदें",
-  "liveAuction": "लाइव नीलामी"
+  "liveAuction": "लाइव नीलामी",
+  "mechanicsNearYou": "आपके पास मैकेनिक"
 }

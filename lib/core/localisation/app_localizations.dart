@@ -5794,6 +5794,24 @@ abstract class AppLocalizations {
   /// **'Apply Now'**
   String get applyNow;
 
+  /// No description provided for @isYourVehicleLookingForFinance.
+  ///
+  /// In en, this message translates to:
+  /// **'Need Finance For Your Vehicle?'**
+  String get isYourVehicleLookingForFinance;
+
+  /// No description provided for @financeBannerSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Quick approvals from top NBFCs and banks at competitive rates.'**
+  String get financeBannerSubtitle;
+
+  /// No description provided for @applyForFinance.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply For Finance'**
+  String get applyForFinance;
+
   /// No description provided for @constructionEquipmentCe.
   ///
   /// In en, this message translates to:
@@ -5835,6 +5853,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Live Auction'**
   String get liveAuction;
+
+  /// No description provided for @mechanicsNearYou.
+  ///
+  /// In en, this message translates to:
+  /// **'Mechanics Near You'**
+  String get mechanicsNearYou;
 }
 
 class _AppLocalizationsDelegate

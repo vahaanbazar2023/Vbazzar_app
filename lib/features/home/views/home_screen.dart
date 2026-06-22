@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -24,9 +26,7 @@ class HomeScreen extends GetView<HomeController> {
         body: SafeArea(
           child: Obx(() {
             if (controller.isLoading.value) {
-              return const Center(
-                child: CircularProgressIndicator(color: AppColors.primary),
-              );
+              return const _DashboardShimmer();
             }
             if (controller.hasError.value) {
               return _ErrorState(
@@ -55,10 +55,8 @@ class HomeScreen extends GetView<HomeController> {
                     _HomeHeader(),
                     SizedBox(height: 16.h),
                     // ── Live Auction Carousel ────────────────────
-                    if (data.liveAuctions.isNotEmpty) ...[
-                      _LiveAuctionCarousel(auctions: data.liveAuctions),
-                      SizedBox(height: 24.h),
-                    ],
+                    _LiveAuctionCarousel(auctions: data.liveAuctions),
+                    SizedBox(height: 24.h),
                     // ── Most Bought Vehicles ─────────────────────
                     if (data.mostBoughtVehicles.isNotEmpty) ...[
                       _SectionHeader(
@@ -91,6 +89,15 @@ class HomeScreen extends GetView<HomeController> {
                     _SectionHeader(title: context.l10n.spareSupportNearYou),
                     SizedBox(height: 12.h),
                     _SpareSupportSection(),
+                    SizedBox(height: 28.h),
+                    // ── Mechanics Near You ───────────────────────
+                    _SectionHeader(
+                      title: context.l10n.mechanicsNearYou,
+                      onViewAll: () =>
+                          Get.toNamed(AppRoutes.serviceSupportListView),
+                    ),
+                    SizedBox(height: 12.h),
+                    _MechanicsMarquee(),
                     SizedBox(height: 32.h),
                   ],
                 ),
@@ -268,49 +275,130 @@ class _LiveAuctionCarousel extends StatefulWidget {
 class _LiveAuctionCarouselState extends State<_LiveAuctionCarousel> {
   final PageController _pageCtrl = PageController();
   int _currentPage = 0;
+  Timer? _autoSlideTimer;
+
+  // When auctions is empty we fall back to the promo poster images.
+  bool get _showPosters => widget.auctions.isEmpty;
+  List<String> get _posterPaths => AppAssets.promoPosterImages;
+  int get _itemCount =>
+      _showPosters ? _posterPaths.length : widget.auctions.length;
+
+  @override
+  void initState() {
+    super.initState();
+    _startAutoSlide();
+  }
+
+  void _startAutoSlide() {
+    _autoSlideTimer?.cancel();
+    if (_itemCount <= 1) return;
+    _autoSlideTimer = Timer.periodic(const Duration(seconds: 3), (_) {
+      if (!mounted || !_pageCtrl.hasClients) return;
+      final next = (_currentPage + 1) % _itemCount;
+      _pageCtrl.animateToPage(
+        next,
+        duration: const Duration(milliseconds: 400),
+        curve: Curves.easeInOut,
+      );
+    });
+  }
 
   @override
   void dispose() {
+    _autoSlideTimer?.cancel();
     _pageCtrl.dispose();
     super.dispose();
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        SizedBox(
-          height: 180.h,
-          child: PageView.builder(
-            controller: _pageCtrl,
-            onPageChanged: (i) => setState(() => _currentPage = i),
-            itemCount: widget.auctions.length,
-            itemBuilder: (_, i) =>
-                _AuctionBannerCard(auction: widget.auctions[i]),
+  Widget _buildDots() {
+    if (_itemCount <= 1) return const SizedBox.shrink();
+    return Positioned(
+      bottom: 10.h,
+      left: 0,
+      right: 0,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: List.generate(
+          _itemCount,
+          (i) => AnimatedContainer(
+            duration: const Duration(milliseconds: 250),
+            margin: EdgeInsets.symmetric(horizontal: 3.w),
+            width: i == _currentPage ? 16.w : 6.w,
+            height: 6.h,
+            decoration: BoxDecoration(
+              color: i == _currentPage
+                  ? Colors.white
+                  : Colors.white.withValues(alpha: 0.45),
+              borderRadius: BorderRadius.circular(3.r),
+            ),
           ),
         ),
-        if (widget.auctions.length > 1) ...[
-          SizedBox(height: 8.h),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: List.generate(
-              widget.auctions.length,
-              (i) => AnimatedContainer(
-                duration: const Duration(milliseconds: 250),
-                margin: EdgeInsets.symmetric(horizontal: 3.w),
-                width: i == _currentPage ? 16.w : 6.w,
-                height: 6.h,
-                decoration: BoxDecoration(
-                  color: i == _currentPage
-                      ? AppColors.primary
-                      : AppColors.grey300,
-                  borderRadius: BorderRadius.circular(3.r),
-                ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 180.h,
+      child: Stack(
+        children: [
+          PageView.builder(
+            controller: _pageCtrl,
+            onPageChanged: (i) => setState(() => _currentPage = i),
+            itemCount: _itemCount,
+            itemBuilder: (_, i) => _showPosters
+                ? _PromoPostCard(imagePath: _posterPaths[i])
+                : _AuctionBannerCard(auction: widget.auctions[i]),
+          ),
+          _buildDots(),
+        ],
+      ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Promo Poster Card — shown when liveAuctions is empty
+// ─────────────────────────────────────────────────────────────────────────────
+
+class _PromoPostCard extends StatelessWidget {
+  final String imagePath;
+  const _PromoPostCard({required this.imagePath});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 16.w),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(16.r),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.12),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(16.r),
+        child: Image.asset(
+          imagePath,
+          width: double.infinity,
+          height: 180.h,
+          fit: BoxFit.cover,
+          errorBuilder: (_, __, ___) => Container(
+            color: AppColors.grey100,
+            child: Center(
+              child: Icon(
+                Icons.image_outlined,
+                size: 48.r,
+                color: AppColors.grey400,
               ),
             ),
           ),
-        ],
-      ],
+        ),
+      ),
     );
   }
 }
@@ -745,16 +833,17 @@ class _RadialGlowPainter extends CustomPainter {
       Rect.fromLTWH(0, 0, size.width, size.height),
       Paint()..color = const Color(0xFF1E1E1E),
     );
-    // Radial glow — positioned at center-right
-    final center = Offset(size.width * 0.75, size.height * 0.55);
-    final radius = size.width * 0.7;
+    // Radial glow — centered in the card
+    final center = Offset(size.width * 0.5, size.height * 0.5);
+    final radius = size.width * 0.55;
     final paint = Paint()
       ..shader = RadialGradient(
         colors: [
-          const Color(0xFFBB2625).withValues(alpha: 0.65),
-          const Color(0xFFBB2625).withValues(alpha: 0.0),
+          const Color(0xFFBB2625).withValues(alpha: 0.55),
+          const Color(0xFFBB2625).withValues(alpha: 0.15),
+          const Color(0xFF1E1E1E).withValues(alpha: 0.0),
         ],
-        stops: const [0.0, 1.0],
+        stops: const [0.0, 0.45, 1.0],
       ).createShader(Rect.fromCircle(center: center, radius: radius));
     canvas.drawCircle(center, radius, paint);
   }
@@ -771,108 +860,134 @@ class _InspectionBanner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => Get.toNamed(AppRoutes.inspectionHome),
+      onTap: () => Get.toNamed(AppRoutes.inspectionDetail),
       child: Container(
         margin: EdgeInsets.symmetric(horizontal: 16.w),
-        height: 230.h,
-        clipBehavior: Clip.antiAlias,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(18.r),
-          color: const Color(0xFF1E1E1E),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.3),
-              blurRadius: 16,
-              offset: const Offset(0, 6),
-            ),
-          ],
-        ),
+        // bottom padding gives room for the overflowing 3D image
+        padding: EdgeInsets.only(bottom: 28.h),
         child: Stack(
+          clipBehavior: Clip.none,
           children: [
-            // Radial red glow from center-right
-            Positioned.fill(child: CustomPaint(painter: _RadialGlowPainter())),
-            // Main content column
-            Padding(
-              padding: EdgeInsets.fromLTRB(20.w, 20.h, 20.w, 0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Title — full width top
-                  Text(
-                    context.l10n.isYourVehicleReadyForInspection,
-                    style: TextStyle(
-                      fontFamily: 'Montserrat',
-                      fontSize: 18.sp,
-                      fontWeight: FontWeight.w700,
-                      color: Colors.white,
-                      height: 1.3,
-                    ),
+            // ── Card ─────────────────────────────────────────────
+            Container(
+              height: 200.h,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(4.r),
+                color: const Color(0xFF1E1E1E),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.35),
+                    blurRadius: 20,
+                    offset: const Offset(0, 8),
                   ),
-                  SizedBox(height: 12.h),
-                  // Bottom row: image left + text+button right
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      // Inspector image
-                      Image.asset(
-                        AppAssets.inspectionDashboardIcon,
-                        height: 130.h,
-                        fit: BoxFit.contain,
-                      ),
-                      SizedBox(width: 12.w),
-                      // Subtitle + button
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              context.l10n.inspectionBannerSubtitle,
-                              maxLines: 3,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                fontFamily: 'Plus Jakarta Sans',
-                                fontSize: 13.sp,
-                                color: Colors.white.withValues(alpha: 0.85),
-                                height: 1.4,
-                              ),
+                ],
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(18.r),
+                child: Stack(
+                  children: [
+                    // Radial glow — centered
+                    Positioned.fill(
+                      child: CustomPaint(painter: _RadialGlowPainter()),
+                    ),
+                    // Content
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(20.w, 20.h, 20.w, 20.h),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Title spans full width
+                          Text(
+                            context.l10n.isYourVehicleReadyForInspection,
+                            style: TextStyle(
+                              fontFamily: 'Montserrat',
+                              fontSize: 14.sp,
+                              fontWeight: FontWeight.w700,
+                              color: Colors.white,
+                              height: 1.3,
                             ),
-                            SizedBox(height: 16.h),
-                            Container(
-                              width: double.infinity,
-                              padding: EdgeInsets.symmetric(vertical: 12.h),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(28.r),
-                              ),
-                              child: Row(
+                          ),
+                          SizedBox(height: 12.h),
+                          // Subtitle + button pushed to the right of the figure
+                          Expanded(
+                            child: Padding(
+                              padding: EdgeInsets.only(left: 155.w),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Text(
-                                    context.l10n.inspectNow,
+                                    context.l10n.inspectionBannerSubtitle,
+                                    maxLines: 3,
+                                    overflow: TextOverflow.ellipsis,
                                     style: TextStyle(
-                                      fontFamily: 'Montserrat',
-                                      fontSize: 14.sp,
-                                      fontWeight: FontWeight.w700,
-                                      color: AppColors.primary,
+                                      fontFamily: 'Plus Jakarta Sans',
+                                      fontSize: 11.sp,
+                                      color: Colors.white.withValues(
+                                        alpha: 0.85,
+                                      ),
+                                      height: 1.45,
                                     ),
                                   ),
-                                  SizedBox(width: 6.w),
-                                  Icon(
-                                    Icons.arrow_forward_rounded,
-                                    size: 16.r,
-                                    color: AppColors.primary,
+                                  SizedBox(height: 14.h),
+                                  Container(
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: 16.w,
+                                      vertical: 6.h,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(28.r),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: const Color(
+                                            0xFFBB2625,
+                                          ).withValues(alpha: 0.45),
+                                          blurRadius: 10,
+                                          offset: const Offset(0, 4),
+                                        ),
+                                      ],
+                                    ),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Text(
+                                          context.l10n.inspectNow,
+                                          style: TextStyle(
+                                            fontFamily: 'Montserrat',
+                                            fontSize: 12.sp,
+                                            fontWeight: FontWeight.w700,
+                                            color: AppColors.primary,
+                                          ),
+                                        ),
+                                        SizedBox(width: 6.w),
+                                        Icon(
+                                          Icons.arrow_forward_rounded,
+                                          size: 14.r,
+                                          color: AppColors.primary,
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ],
                               ),
                             ),
-                            SizedBox(height: 20.h),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            // ── 3D figure — overflows bottom of card ─────────────
+            Positioned(
+              left: -4.w,
+              bottom: -28.h,
+              child: Image.asset(
+                AppAssets.inspectionDashboardIcon,
+                height: 185.h,
+                fit: BoxFit.contain,
               ),
             ),
           ],
@@ -1006,105 +1121,131 @@ class _InsuranceBanner extends StatelessWidget {
       onTap: () => Get.toNamed(AppRoutes.insuranceFinance),
       child: Container(
         margin: EdgeInsets.symmetric(horizontal: 16.w),
-        height: 230.h,
-        clipBehavior: Clip.antiAlias,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(18.r),
-          color: const Color(0xFF1E1E1E),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.3),
-              blurRadius: 16,
-              offset: const Offset(0, 6),
-            ),
-          ],
-        ),
+        // bottom padding gives room for the overflowing 3D image
+        padding: EdgeInsets.only(bottom: 28.h),
         child: Stack(
+          clipBehavior: Clip.none,
           children: [
-            // Radial red glow from center-right
-            Positioned.fill(child: CustomPaint(painter: _RadialGlowPainter())),
-            // Main content column
-            Padding(
-              padding: EdgeInsets.fromLTRB(20.w, 20.h, 20.w, 0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Title — full width top
-                  Text(
-                    context.l10n.isYourVehicleLookingForInsurance,
-                    style: TextStyle(
-                      fontFamily: 'Montserrat',
-                      fontSize: 18.sp,
-                      fontWeight: FontWeight.w700,
-                      color: Colors.white,
-                      height: 1.3,
-                    ),
+            // ── Card ─────────────────────────────────────────────
+            Container(
+              height: 200.h,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(4.r),
+                color: const Color(0xFF1E1E1E),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.35),
+                    blurRadius: 20,
+                    offset: const Offset(0, 8),
                   ),
-                  SizedBox(height: 12.h),
-                  // Bottom row: image left + text+button right
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      // Insurance image
-                      Image.asset(
-                        AppAssets.insuranceDashboardIcon,
-                        height: 130.h,
-                        fit: BoxFit.contain,
-                      ),
-                      SizedBox(width: 12.w),
-                      // Subtitle + button
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              context.l10n.insuranceBannerSubtitle,
-                              maxLines: 3,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                fontFamily: 'Plus Jakarta Sans',
-                                fontSize: 13.sp,
-                                color: Colors.white.withValues(alpha: 0.85),
-                                height: 1.4,
-                              ),
+                ],
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(18.r),
+                child: Stack(
+                  children: [
+                    // Radial glow — same as inspection
+                    Positioned.fill(
+                      child: CustomPaint(painter: _RadialGlowPainter()),
+                    ),
+                    // Content
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(20.w, 20.h, 20.w, 20.h),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Title spans full width
+                          Text(
+                            context.l10n.isYourVehicleLookingForInsurance,
+                            style: TextStyle(
+                              fontFamily: 'Montserrat',
+                              fontSize: 14.sp,
+                              fontWeight: FontWeight.w700,
+                              color: Colors.white,
+                              height: 1.3,
                             ),
-                            SizedBox(height: 16.h),
-                            Container(
-                              width: double.infinity,
-                              padding: EdgeInsets.symmetric(vertical: 12.h),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(28.r),
-                              ),
-                              child: Row(
+                          ),
+                          SizedBox(height: 12.h),
+                          // Subtitle + button pushed to the right of the image
+                          Expanded(
+                            child: Padding(
+                              padding: EdgeInsets.only(left: 180.w),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Text(
-                                    context.l10n.applyNow,
+                                    context.l10n.insuranceBannerSubtitle,
+                                    maxLines: 3,
+                                    overflow: TextOverflow.ellipsis,
                                     style: TextStyle(
-                                      fontFamily: 'Montserrat',
-                                      fontSize: 14.sp,
-                                      fontWeight: FontWeight.w700,
-                                      color: AppColors.primary,
+                                      fontFamily: 'Plus Jakarta Sans',
+                                      fontSize: 11.sp,
+                                      color: Colors.white.withValues(
+                                        alpha: 0.85,
+                                      ),
+                                      height: 1.45,
                                     ),
                                   ),
-                                  SizedBox(width: 6.w),
-                                  Icon(
-                                    Icons.arrow_forward_rounded,
-                                    size: 16.r,
-                                    color: AppColors.primary,
+                                  SizedBox(height: 14.h),
+                                  Container(
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: 16.w,
+                                      vertical: 6.h,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(28.r),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: const Color(
+                                            0xFFBB2625,
+                                          ).withValues(alpha: 0.45),
+                                          blurRadius: 10,
+                                          offset: const Offset(0, 4),
+                                        ),
+                                      ],
+                                    ),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Text(
+                                          context.l10n.applyNow,
+                                          style: TextStyle(
+                                            fontFamily: 'Montserrat',
+                                            fontSize: 12.sp,
+                                            fontWeight: FontWeight.w700,
+                                            color: AppColors.primary,
+                                          ),
+                                        ),
+                                        SizedBox(width: 6.w),
+                                        Icon(
+                                          Icons.arrow_forward_rounded,
+                                          size: 14.r,
+                                          color: AppColors.primary,
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ],
                               ),
                             ),
-                            SizedBox(height: 20.h),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            // ── 3D vehicle + clipboard — overflows bottom ─────────
+            Positioned(
+              left: -4.w,
+              bottom: -28.h,
+              child: Image.asset(
+                AppAssets.insuranceDashboardIcon,
+                height: 185.h,
+                fit: BoxFit.contain,
               ),
             ),
           ],
@@ -1277,6 +1418,449 @@ class _ErrorState extends StatelessWidget {
               width: 120.w,
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Mechanics Marquee — 2 rows, infinite auto-scroll, row 2 reversed direction
+// ─────────────────────────────────────────────────────────────────────────────
+
+// Static mechanic data — city labels paired with SVG assets
+const _kMechanicCities = [
+  'Vijayawada',
+  'Hyderabad',
+  'Vizag',
+  'Guntur',
+  'Vijayawada',
+  'Hyderabad',
+  'Vizag',
+  'Guntur',
+];
+
+class _MechanicsMarquee extends StatelessWidget {
+  const _MechanicsMarquee();
+
+  @override
+  Widget build(BuildContext context) {
+    final icons = AppAssets.mechanicIcons;
+    // Build a sufficiently long list by repeating to ensure seamless loop
+    final row1 = List.generate(
+      24,
+      (i) => _MechanicCardData(
+        svgPath: icons[i % icons.length],
+        city: _kMechanicCities[i % _kMechanicCities.length],
+      ),
+    );
+    final row2 = List.generate(
+      24,
+      (i) => _MechanicCardData(
+        svgPath: icons[(i + 3) % icons.length],
+        city: _kMechanicCities[(i + 2) % _kMechanicCities.length],
+      ),
+    );
+
+    return Column(
+      children: [
+        // Row 1 — scrolls left
+        _MarqueeRow(items: row1, reverse: false),
+        SizedBox(height: 12.h),
+        // Row 2 — scrolls right (opposite)
+        _MarqueeRow(items: row2, reverse: true),
+      ],
+    );
+  }
+}
+
+class _MechanicCardData {
+  final String svgPath;
+  final String city;
+  const _MechanicCardData({required this.svgPath, required this.city});
+}
+
+class _MarqueeRow extends StatefulWidget {
+  final List<_MechanicCardData> items;
+  final bool reverse;
+  const _MarqueeRow({required this.items, required this.reverse});
+
+  @override
+  State<_MarqueeRow> createState() => _MarqueeRowState();
+}
+
+class _MarqueeRowState extends State<_MarqueeRow> {
+  late final ScrollController _ctrl;
+  // Each card width + gap
+  static const double _cardW = 110;
+  static const double _gap = 10;
+  static const double _itemStride = _cardW + _gap;
+
+  @override
+  void initState() {
+    super.initState();
+    // Start at the midpoint so we can scroll both ways
+    final mid = widget.items.length / 2 * _itemStride;
+    _ctrl = ScrollController(initialScrollOffset: mid);
+    WidgetsBinding.instance.addPostFrameCallback((_) => _startScroll());
+  }
+
+  @override
+  void dispose() {
+    _ctrl.dispose();
+    super.dispose();
+  }
+
+  void _startScroll() {
+    if (!mounted || !_ctrl.hasClients) return;
+    _loop();
+  }
+
+  Future<void> _loop() async {
+    while (mounted && _ctrl.hasClients) {
+      final current = _ctrl.offset;
+      final total = widget.items.length * _itemStride;
+      final half = total / 2;
+
+      double target;
+      if (!widget.reverse) {
+        target = current + half;
+      } else {
+        target = current - half;
+      }
+
+      // Clamp to valid range
+      final max = _ctrl.position.maxScrollExtent;
+      final min = _ctrl.position.minScrollExtent;
+      target = target.clamp(min, max);
+
+      await _ctrl.animateTo(
+        target,
+        duration: Duration(milliseconds: (half * 18).round()),
+        curve: Curves.linear,
+      );
+
+      if (!mounted || !_ctrl.hasClients) break;
+
+      // Jump back to midpoint to create seamless infinite illusion
+      _ctrl.jumpTo(half);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 160.h,
+      child: ListView.separated(
+        controller: _ctrl,
+        scrollDirection: Axis.horizontal,
+        padding: EdgeInsets.symmetric(horizontal: 16.w),
+        physics: const NeverScrollableScrollPhysics(),
+        itemCount: widget.items.length,
+        separatorBuilder: (_, __) => SizedBox(width: _gap.w),
+        itemBuilder: (_, i) => _MechanicCard(data: widget.items[i]),
+      ),
+    );
+  }
+}
+
+class _MechanicCard extends StatelessWidget {
+  final _MechanicCardData data;
+  const _MechanicCard({required this.data});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () => Get.toNamed(AppRoutes.serviceSupportListView),
+      child: SizedBox(
+        width: 110.w,
+        child: Image.asset(
+          data.svgPath,
+          fit: BoxFit.contain,
+          width: 110.w,
+          errorBuilder: (_, __, ___) => Container(
+            width: 110.w,
+            decoration: BoxDecoration(
+              color: AppColors.grey100,
+              borderRadius: BorderRadius.circular(10.r),
+            ),
+            child: Center(
+              child: Icon(
+                Icons.engineering_outlined,
+                color: AppColors.grey400,
+                size: 40.r,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Dashboard Shimmer — mirrors the real dashboard layout
+// ─────────────────────────────────────────────────────────────────────────────
+
+class _DashboardShimmer extends StatefulWidget {
+  const _DashboardShimmer();
+
+  @override
+  State<_DashboardShimmer> createState() => _DashboardShimmerState();
+}
+
+class _DashboardShimmerState extends State<_DashboardShimmer>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _ctrl;
+  late final Animation<double> _anim;
+
+  @override
+  void initState() {
+    super.initState();
+    _ctrl = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1200),
+    )..repeat(reverse: true);
+    _anim = Tween<double>(
+      begin: 0.3,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _ctrl, curve: Curves.easeInOut));
+  }
+
+  @override
+  void dispose() {
+    _ctrl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _anim,
+      builder: (_, __) => SingleChildScrollView(
+        physics: const NeverScrollableScrollPhysics(),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // ── Header shimmer ───────────────────────────────────
+            Container(
+              padding: EdgeInsets.fromLTRB(16.w, 12.h, 16.w, 12.h),
+              color: AppColors.white,
+              child: Row(
+                children: [
+                  _Bone(width: 40.w, height: 40.w, radius: 20, anim: _anim),
+                  SizedBox(width: 10.w),
+                  Expanded(
+                    child: _Bone(
+                      width: double.infinity,
+                      height: 40.h,
+                      radius: 20,
+                      anim: _anim,
+                    ),
+                  ),
+                  SizedBox(width: 10.w),
+                  _Bone(width: 26.r, height: 26.r, radius: 4, anim: _anim),
+                  SizedBox(width: 12.w),
+                  _Bone(width: 36.w, height: 36.w, radius: 18, anim: _anim),
+                ],
+              ),
+            ),
+            SizedBox(height: 16.h),
+
+            // ── Auction banner shimmer ───────────────────────────
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.w),
+              child: _Bone(
+                width: double.infinity,
+                height: 180.h,
+                radius: 18,
+                anim: _anim,
+              ),
+            ),
+            SizedBox(height: 8.h),
+            // Dot indicators
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: List.generate(
+                3,
+                (i) => Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 3.w),
+                  child: _Bone(
+                    width: i == 0 ? 16.w : 6.w,
+                    height: 6.h,
+                    radius: 3,
+                    anim: _anim,
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(height: 24.h),
+
+            // ── Section header shimmer ───────────────────────────
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.w),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  _Bone(width: 160.w, height: 18.h, radius: 4, anim: _anim),
+                  _Bone(width: 60.w, height: 14.h, radius: 4, anim: _anim),
+                ],
+              ),
+            ),
+            SizedBox(height: 12.h),
+
+            // ── Most Bought Vehicles shimmer (2 cards) ───────────
+            ...List.generate(
+              2,
+              (_) => Padding(
+                padding: EdgeInsets.fromLTRB(16.w, 0, 16.w, 12.h),
+                child: Column(
+                  children: [
+                    _Bone(
+                      width: double.infinity,
+                      height: 180.h,
+                      radius: 16,
+                      anim: _anim,
+                    ),
+                    SizedBox(height: 1.h),
+                    Container(
+                      padding: EdgeInsets.fromLTRB(12.w, 10.h, 12.w, 10.h),
+                      decoration: BoxDecoration(
+                        color: AppColors.white,
+                        borderRadius: BorderRadius.vertical(
+                          bottom: Radius.circular(16.r),
+                        ),
+                        border: Border.all(color: AppColors.grey200),
+                      ),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                _Bone(
+                                  width: 80.w,
+                                  height: 10.h,
+                                  radius: 4,
+                                  anim: _anim,
+                                ),
+                                SizedBox(height: 4.h),
+                                _Bone(
+                                  width: 120.w,
+                                  height: 14.h,
+                                  radius: 4,
+                                  anim: _anim,
+                                ),
+                              ],
+                            ),
+                          ),
+                          SizedBox(width: 8.w),
+                          _Bone(
+                            width: 60.w,
+                            height: 32.h,
+                            radius: 16,
+                            anim: _anim,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            SizedBox(height: 12.h),
+
+            // ── Inspection banner shimmer ────────────────────────
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.w),
+              child: _Bone(
+                width: double.infinity,
+                height: 220.h,
+                radius: 18,
+                anim: _anim,
+              ),
+            ),
+            SizedBox(height: 24.h),
+
+            // ── FMS section header shimmer ───────────────────────
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.w),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  _Bone(width: 100.w, height: 18.h, radius: 4, anim: _anim),
+                  _Bone(width: 60.w, height: 14.h, radius: 4, anim: _anim),
+                ],
+              ),
+            ),
+            SizedBox(height: 12.h),
+
+            // ── FMS items grid shimmer (2×2) ─────────────────────
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.w),
+              child: GridView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  mainAxisSpacing: 12.h,
+                  crossAxisSpacing: 12.w,
+                  childAspectRatio: 1.1,
+                ),
+                itemCount: 4,
+                itemBuilder: (_, __) => _Bone(
+                  width: double.infinity,
+                  height: double.infinity,
+                  radius: 12,
+                  anim: _anim,
+                ),
+              ),
+            ),
+            SizedBox(height: 24.h),
+
+            // ── Insurance banner shimmer ─────────────────────────
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.w),
+              child: _Bone(
+                width: double.infinity,
+                height: 220.h,
+                radius: 18,
+                anim: _anim,
+              ),
+            ),
+            SizedBox(height: 32.h),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// ── Single shimmer bone ────────────────────────────────────────────────────
+
+class _Bone extends StatelessWidget {
+  final double width;
+  final double height;
+  final double radius;
+  final Animation<double> anim;
+
+  const _Bone({
+    required this.width,
+    required this.height,
+    required this.radius,
+    required this.anim,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Opacity(
+      opacity: anim.value,
+      child: Container(
+        width: width,
+        height: height,
+        decoration: BoxDecoration(
+          color: AppColors.grey200,
+          borderRadius: BorderRadius.circular(radius),
         ),
       ),
     );

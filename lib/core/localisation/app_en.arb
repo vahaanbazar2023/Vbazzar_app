@@ -1168,11 +1168,15 @@
   "isYourVehicleLookingForInsurance": "Is Your Vehicle Looking For Insurance?",
   "insuranceBannerSubtitle": "Get the best insurance rates with high claim success support.",
   "applyNow": "Apply Now",
+  "isYourVehicleLookingForFinance": "Need Finance For Your Vehicle?",
+  "financeBannerSubtitle": "Quick approvals from top NBFCs and banks at competitive rates.",
+  "applyForFinance": "Apply For Finance",
   "constructionEquipmentCe": "Construction Equipment (CE)",
   "commercialVehicleCv": "Commercial Vehicle (CV)",
   "spareSupportTileSubtitle": "Find nearby shops and spare parts near you.",
   "vehicleModel": "Vehicle Model",
   "availableVehicles": "Available Vehicles",
   "buyNow": "Buy Now",
-  "liveAuction": "Live Auction"
+  "liveAuction": "Live Auction",
+  "mechanicsNearYou": "Mechanics Near You"
 }

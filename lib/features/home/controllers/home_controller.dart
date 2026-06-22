@@ -11,8 +11,9 @@ class HomeController extends GetxController {
   final dashboardData = Rxn<DashboardData>();
 
   @override
-  void onInit() {
-    super.onInit();
+  void onReady() {
+    super.onReady();
+    // Always fetch fresh data every time the home tab is opened
     fetchDashboard();
   }
 
@@ -20,6 +21,7 @@ class HomeController extends GetxController {
     isLoading.value = true;
     hasError.value = false;
     errorMessage.value = '';
+    dashboardData.value = null; // clear stale data so shimmer shows
     try {
       final data = await _repository.getDashboardHome();
       if (data != null) {

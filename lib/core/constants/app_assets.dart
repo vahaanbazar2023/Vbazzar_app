@@ -77,7 +77,26 @@ class AppAssets {
       '${_images}inspection_dasboard_icon.png';
   static const String insuranceDashboardIcon =
       '${_images}insurance_dashboard_icon.png';
+  static const String financeDashboardIcon =
+      '${_images}insurance_dashboard_icon.png'; // swap to dedicated asset when available
   static const String yellowBulldoser = '${_images}yellow_bulldoser.png';
+
+  // ── Mechanic icons ────────────────────────────────────────────────────────
+  static const List<String> mechanicIcons = [
+    '${_images}m1.png',
+    '${_images}m2.png',
+    '${_images}m3.png',
+    '${_images}m4.png',
+    '${_images}m5.png',
+    '${_images}m6.png',
+  ];
+
+  // ── Promo posters ─────────────────────────────────────────────────────────
+  static const String poster1 = '${_images}Poster1.png';
+  static const String poster2 = '${_images}Poster2.png';
+  static const String poster3 = '${_images}Poster3.png';
+
+  static const List<String> promoPosterImages = [poster1, poster2, poster3];
 
   // ── Miscellaneous images ──────────────────────────────────────────────────
   static const String vbLogo = '${_images}vb_logo.png';
