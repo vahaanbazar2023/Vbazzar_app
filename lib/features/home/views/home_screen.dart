@@ -18,6 +18,15 @@ import '../../../features/spare_and_fms/domain/entities/spare_part_entity.dart';
 import '../controllers/home_controller.dart';
 import '../data/models/dashboard_model.dart';
 
+/// Returns up to 2 uppercase initials from a full name string.
+/// "Prem Kumar" → "PK", "John" → "J", "" → ""
+String _initials(String fullName) {
+  final parts = fullName.trim().split(RegExp(r'\s+'));
+  if (parts.isEmpty || parts.first.isEmpty) return '';
+  if (parts.length == 1) return parts.first[0].toUpperCase();
+  return '${parts.first[0]}${parts.last[0]}'.toUpperCase();
+}
+
 class HomeScreen extends GetView<HomeController> {
   const HomeScreen({super.key});
 
@@ -135,15 +144,36 @@ class _HomeHeader extends StatelessWidget {
       ),
       child: Row(
         children: [
-          // Avatar
-          Container(
-            width: 40.w,
-            height: 40.w,
-            decoration: const BoxDecoration(
-              color: Color(0xFFFFE5E5),
-              shape: BoxShape.circle,
-            ),
-            child: Icon(Icons.person, color: AppColors.primary, size: 22.sp),
+          // Avatar — initials from user name
+          GetX<HomeController>(
+            builder: (ctrl) {
+              final initials = _initials(ctrl.userName.value);
+              return Container(
+                width: 40.w,
+                height: 40.w,
+                decoration: const BoxDecoration(
+                  color: Color(0xFFFFE5E5),
+                  shape: BoxShape.circle,
+                ),
+                child: Center(
+                  child: initials.isNotEmpty
+                      ? Text(
+                          initials,
+                          style: TextStyle(
+                            fontFamily: 'Montserrat',
+                            fontSize: 13.sp,
+                            fontWeight: FontWeight.w700,
+                            color: AppColors.primary,
+                          ),
+                        )
+                      : Icon(
+                          Icons.person,
+                          color: AppColors.primary,
+                          size: 22.sp,
+                        ),
+                ),
+              );
+            },
           ),
           SizedBox(width: 10.w),
           // Search bar

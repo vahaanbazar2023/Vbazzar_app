@@ -23,7 +23,7 @@ class SpareSupportTab extends GetView<SpareAndFmsController> {
         children: [
           // ── Header ────────────────────────────────────────────
           Text(
-            'Spare Support',
+            'Spare',
             style: AppFonts.titleLarge.copyWith(
               fontWeight: FontWeight.w800,
               letterSpacing: -0.3,
@@ -32,9 +32,7 @@ class SpareSupportTab extends GetView<SpareAndFmsController> {
           SizedBox(height: 4.h),
           Text(
             'Find trusted spare part shops near your location',
-            style: AppFonts.bodySmall.copyWith(
-              color: AppColors.grey500,
-            ),
+            style: AppFonts.bodySmall.copyWith(color: AppColors.grey500),
           ),
           SizedBox(height: 24.h),
 
@@ -45,10 +43,7 @@ class SpareSupportTab extends GetView<SpareAndFmsController> {
             description:
                 'Browse shops selling parts for JCBs, excavators, loaders & more',
             icon: Icons.construction_rounded,
-            gradientColors: const [
-              AppColors.primary,
-              AppColors.primaryDark,
-            ],
+            gradientColors: const [AppColors.primary, AppColors.primaryDark],
             badgeColor: AppColors.lightOrange,
             badgeTextColor: AppColors.primaryDark,
             onTap: () => _navigateToShopList('CE'),
@@ -165,8 +160,9 @@ class _CategoryCard extends StatelessWidget {
                         ),
                         decoration: BoxDecoration(
                           color: badgeColor,
-                          borderRadius:
-                              BorderRadius.circular(AppSizes.radiusFull),
+                          borderRadius: BorderRadius.circular(
+                            AppSizes.radiusFull,
+                          ),
                         ),
                         child: Text(
                           title,
@@ -225,4 +221,3 @@ class _CategoryCard extends StatelessWidget {
     );
   }
 }
-

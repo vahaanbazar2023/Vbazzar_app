@@ -32,7 +32,7 @@ class SpareAndFmsController extends GetxController
 
   late TabController tabController;
   final currentTabIndex = 0.obs;
-  static const tabs = ['FMS', 'Spare Support'];
+  static const tabs = ['FMS', 'Spare'];
 
   // ─── User ───────────────────────────────────────────────────
 
@@ -307,6 +307,14 @@ class SpareAndFmsController extends GetxController
     isShopsLoading.value = true;
     shopsListData.clear();
 
+    // Ensure userId is loaded before proceeding — _initializeData is async
+    // and may not have completed when this is called right after onInit.
+    if (_currentUserId == null || _currentUserId!.isEmpty) {
+      _currentUserId = await SecureStorageService.instance.read(
+        StorageKeys.userId,
+      );
+    }
+
     final location = await _getUserLocation();
     if (location == null) {
       isShopsLoading.value = false;
@@ -575,9 +583,13 @@ class SpareAndFmsController extends GetxController
       }
 
       LocationPermission permission = await Geolocator.checkPermission();
+
+      // Request permission if not yet granted
       if (permission == LocationPermission.denied) {
-        _showLocationPermissionDialog();
-        return null;
+        permission = await Geolocator.requestPermission();
+        if (permission == LocationPermission.denied) {
+          return null;
+        }
       }
 
       if (permission == LocationPermission.deniedForever) {
@@ -592,6 +604,7 @@ class SpareAndFmsController extends GetxController
       _userLongitude = position.longitude;
       return (latitude: position.latitude, longitude: position.longitude);
     } catch (e) {
+      debugPrint('❌ [location] error: $e');
       return null;
     }
   }
