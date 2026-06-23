@@ -131,7 +131,7 @@ class _HomeHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.fromLTRB(16.w, 12.h, 16.w, 12.h),
+      padding: EdgeInsets.fromLTRB(16.w, 10.h, 16.w, 12.h),
       decoration: BoxDecoration(
         color: AppColors.white,
         boxShadow: [
@@ -142,89 +142,131 @@ class _HomeHeader extends StatelessWidget {
           ),
         ],
       ),
-      child: Row(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Avatar — initials from user name
+          // ── Location row ────────────────────────────────────
           GetX<HomeController>(
             builder: (ctrl) {
-              final initials = _initials(ctrl.userName.value);
-              return Container(
-                width: 40.w,
-                height: 40.w,
-                decoration: const BoxDecoration(
-                  color: Color(0xFFFFE5E5),
-                  shape: BoxShape.circle,
-                ),
-                child: Center(
-                  child: initials.isNotEmpty
-                      ? Text(
-                          initials,
-                          style: TextStyle(
-                            fontFamily: 'Montserrat',
-                            fontSize: 13.sp,
-                            fontWeight: FontWeight.w700,
-                            color: AppColors.primary,
-                          ),
-                        )
-                      : Icon(
-                          Icons.person,
-                          color: AppColors.primary,
-                          size: 22.sp,
-                        ),
+              final label = ctrl.locationLabel.value;
+              return GestureDetector(
+                onTap: () => ctrl.refreshLocation(),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      Icons.location_on,
+                      color: AppColors.primary,
+                      size: 16.r,
+                    ),
+                    SizedBox(width: 4.w),
+                    Text(
+                      label.isNotEmpty ? label : 'Locating...',
+                      style: TextStyle(
+                        fontFamily: 'Montserrat',
+                        fontSize: 13.sp,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.textPrimary,
+                      ),
+                    ),
+                    SizedBox(width: 4.w),
+                    Icon(
+                      Icons.keyboard_arrow_down_rounded,
+                      color: AppColors.textPrimary,
+                      size: 18.r,
+                    ),
+                  ],
                 ),
               );
             },
           ),
-          SizedBox(width: 10.w),
-          // Search bar
-          Expanded(
-            child: Container(
-              height: 40.h,
-              padding: EdgeInsets.symmetric(horizontal: 12.w),
-              decoration: BoxDecoration(
-                color: AppColors.grey100,
-                borderRadius: BorderRadius.circular(20.r),
-                border: Border.all(color: AppColors.grey200),
-              ),
-              child: Row(
-                children: [
-                  Icon(Icons.search, color: AppColors.grey500, size: 18.r),
-                  SizedBox(width: 8.w),
-                  Expanded(
-                    child: Text(
-                      context.l10n.searchByServiceVehicle,
-                      style: TextStyle(
-                        fontFamily: 'Montserrat',
-                        fontSize: 12.sp,
-                        color: AppColors.grey500,
-                      ),
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 1,
+          SizedBox(height: 10.h),
+          // ── Avatar + Search + Icons row ─────────────────────
+          Row(
+            children: [
+              // Avatar — initials from user name
+              GetX<HomeController>(
+                builder: (ctrl) {
+                  final initials = _initials(ctrl.userName.value);
+                  return Container(
+                    width: 40.w,
+                    height: 40.w,
+                    decoration: const BoxDecoration(
+                      color: Color(0xFFFFE5E5),
+                      shape: BoxShape.circle,
                     ),
-                  ),
-                ],
+                    child: Center(
+                      child: initials.isNotEmpty
+                          ? Text(
+                              initials,
+                              style: TextStyle(
+                                fontFamily: 'Montserrat',
+                                fontSize: 13.sp,
+                                fontWeight: FontWeight.w700,
+                                color: AppColors.primary,
+                              ),
+                            )
+                          : Icon(
+                              Icons.person,
+                              color: AppColors.primary,
+                              size: 22.sp,
+                            ),
+                    ),
+                  );
+                },
               ),
-            ),
-          ),
-          SizedBox(width: 10.w),
-          // Notification — SVG has badge and colours baked in
-          SvgPicture.asset(
-            AppAssets.iconNotification,
-            width: 24.r,
-            height: 24.r,
-          ),
-          SizedBox(width: 12.w),
-          // Customer care — tap to open dialer
-          GestureDetector(
-            onTap: () async {
-              final uri = Uri(scheme: 'tel', path: '+918008801806');
-              if (await canLaunchUrl(uri)) launchUrl(uri);
-            },
-            child: Image.asset(
-              AppAssets.customerCare,
-              width: 28.r,
-              height: 28.r,
-            ),
+              SizedBox(width: 10.w),
+              // Search bar
+              Expanded(
+                child: Container(
+                  height: 40.h,
+                  padding: EdgeInsets.symmetric(horizontal: 12.w),
+                  decoration: BoxDecoration(
+                    color: AppColors.grey100,
+                    borderRadius: BorderRadius.circular(20.r),
+                    border: Border.all(color: AppColors.grey200),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(Icons.search, color: AppColors.grey500, size: 18.r),
+                      SizedBox(width: 8.w),
+                      Expanded(
+                        child: Text(
+                          context.l10n.searchByServiceVehicle,
+                          style: TextStyle(
+                            fontFamily: 'Montserrat',
+                            fontSize: 12.sp,
+                            color: AppColors.grey500,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              SizedBox(width: 10.w),
+              // Notification — SVG has badge and colours baked in
+              SvgPicture.asset(
+                AppAssets.iconNotification,
+                width: 24.r,
+                height: 24.r,
+              ),
+              SizedBox(width: 12.w),
+              // Customer care — tap to open dialer
+              GestureDetector(
+                onTap: () async {
+                  final uri = Uri(scheme: 'tel', path: '+918008801806');
+                  if (await canLaunchUrl(uri)) launchUrl(uri);
+                },
+                child: Image.asset(
+                  AppAssets.customerCare,
+                  width: 28.r,
+                  height: 28.r,
+                ),
+              ),
+            ],
           ),
         ],
       ),
