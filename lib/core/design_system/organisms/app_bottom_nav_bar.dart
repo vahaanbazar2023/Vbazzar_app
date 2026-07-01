@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-enum BottomNavTab { home, subscriptions, categories, settings }
+enum BottomNavTab { home, subscriptions, categories, rewards, settings }
 
 // ── Layout constants ──────────────────────────────────────────────────────────
-const int _kCount = 4;
+const int _kCount = 5;
 const double _kBarH = 90.0; // dark bar height
 const double _kOverlap = 2.0; // vertical space reserved above bar for wave
 const double _kCircleSize = 48.0; // active red circle diameter
@@ -296,6 +296,7 @@ class _ActiveCircle extends StatelessWidget {
     'assets/images/png/home.png',
     'assets/images/png/subscriptions.png',
     'assets/images/png/category.png',
+    'assets/images/png/rewards.png',
     'assets/images/png/settings.png',
   ];
 
@@ -336,6 +337,7 @@ class _ActiveLabel extends StatelessWidget {
     'Home',
     'Subscriptions',
     'Categories',
+    'Rewards',
     'Settings',
   ];
 
@@ -370,6 +372,7 @@ class _InactiveIcon extends StatelessWidget {
     'assets/images/png/home.png',
     'assets/images/png/subscriptions.png',
     'assets/images/png/category.png',
+    'assets/images/png/rewards.png',
     'assets/images/png/settings.png',
   ];
 

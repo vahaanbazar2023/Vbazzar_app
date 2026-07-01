@@ -64,6 +64,7 @@ class AuctionRepositoryImpl implements AuctionRepository {
     if (regionId.isNotEmpty) body['region_id'] = regionId;
 
     _logRequest(ApiEndpoints.auctionListings, body);
+    print('Request  $body');
     try {
       final response = await _network.post(
         ApiEndpoints.auctionListings,
@@ -404,6 +405,8 @@ class AuctionRepositoryImpl implements AuctionRepository {
       rethrow;
     }
   }
+
+
 
   // ─── Vehicle Search ──────────────────────────────────────────
 

@@ -26,6 +26,43 @@ class AuctionUtils {
     'Trailer',
   ];
 
+  // ─── Category → vehicle_type mapping ─────────────────────────
+  static const Map<String, String> categoryVehicleTypeMap = {
+    // Exact names returned by the API
+    'Commercial Vehicles': 'CV',
+    'Commercial': 'CV',
+    'Passenger Vehicles': '4w',
+    'Passenger': '4w',
+    'Two Wheeler': '2w',
+    'Two Wheelers': '2w',
+    'Three Wheeler': '3w',
+    'Three Wheelers': '3w',
+    'Construction Equipment': 'CE',
+    'Construction Equipments': 'CE',
+    // By category code
+    'CV': 'CV',
+    '4W': '4w',
+    '2W': '2w',
+    '3W': '3w',
+    'CE': 'CE',
+  };
+
+  /// Returns the API vehicle_type string for a given category name or code.
+  /// Returns empty string if not found (API will return all types).
+  static String vehicleTypeForCategory(String category) {
+    if (category.isEmpty || category.toLowerCase() == 'all') return '';
+    // Exact match first
+    if (categoryVehicleTypeMap.containsKey(category)) {
+      return categoryVehicleTypeMap[category]!;
+    }
+    // Case-insensitive fallback
+    final lower = category.toLowerCase();
+    for (final entry in categoryVehicleTypeMap.entries) {
+      if (entry.key.toLowerCase() == lower) return entry.value;
+    }
+    return '';
+  }
+
   // ─── Helpers ──────────────────────────────────────────────────
 
   /// Returns a human-readable status label for an auction.

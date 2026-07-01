@@ -226,38 +226,38 @@ class _CategoryCard extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                   ),
                   SizedBox(height: 4.h),
-                  if (category.approvedVehAvailableCount > 0)
-                    Row(
-                      children: [
-                        Container(
-                          width: 5.w,
-                          height: 5.w,
-                          decoration: const BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: AppColors.success,
-                          ),
-                        ),
-                        SizedBox(width: 5.w),
-                        Text(
-                          context.l10n.vehiclesAvailableCount(
-                            category.approvedVehAvailableCount,
-                          ),
-                          style: AppFonts.bodySmall.copyWith(
-                            color: Colors.white.withValues(alpha: 0.8),
-                            fontSize: 11.sp,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ],
-                    )
-                  else
-                    Text(
-                      context.l10n.noVehiclesYet,
-                      style: AppFonts.bodySmall.copyWith(
-                        color: Colors.white.withValues(alpha: 0.55),
-                        fontSize: 11.sp,
-                      ),
-                    ),
+                  // if (category.approvedVehAvailableCount > 0)
+                  //   Row(
+                  //     children: [
+                  //       Container(
+                  //         width: 5.w,
+                  //         height: 5.w,
+                  //         decoration: const BoxDecoration(
+                  //           shape: BoxShape.circle,
+                  //           color: AppColors.success,
+                  //         ),
+                  //       ),
+                  //       SizedBox(width: 5.w),
+                  //       Text(
+                  //         context.l10n.vehiclesAvailableCount(
+                  //           category.approvedVehAvailableCount,
+                  //         ),
+                  //         style: AppFonts.bodySmall.copyWith(
+                  //           color: Colors.white.withValues(alpha: 0.8),
+                  //           fontSize: 11.sp,
+                  //           fontWeight: FontWeight.w500,
+                  //         ),
+                  //       ),
+                  //     ],
+                  //   )
+                  // else
+                  //   Text(
+                  //     context.l10n.noVehiclesYet,
+                  //     style: AppFonts.bodySmall.copyWith(
+                  //       color: Colors.white.withValues(alpha: 0.55),
+                  //       fontSize: 11.sp,
+                  //     ),
+                  //   ),
                 ],
               ),
             ),

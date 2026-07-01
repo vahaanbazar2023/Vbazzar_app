@@ -46,8 +46,14 @@ class AuctionController extends GetxController
   /// Index of the initially selected tab (passed when navigating).
   final int initialTabIndex;
 
-  AuctionController({required this.initialTabIndex, AuctionService? service})
-    : _service = service ?? AuctionService();
+  /// Vehicle type derived from the category tapped on the category screen.
+  final String selectedVehicleType;
+
+  AuctionController({
+    required this.initialTabIndex,
+    this.selectedVehicleType = '',
+    AuctionService? service,
+  }) : _service = service ?? AuctionService();
 
   late final TabController tabController;
 
@@ -60,13 +66,14 @@ class AuctionController extends GetxController
   RxBool isLoadingMore(int i) => _tabs[i].isLoadingMore;
   RxString errorMessage(int i) => _tabs[i].errorMessage;
 
-  final  TextEditingController searchController = TextEditingController();
+  final TextEditingController searchController = TextEditingController();
 
   final scrollControllers = List.generate(3, (_) => ScrollController());
 
   @override
   void onInit() {
     super.onInit();
+
     tabController = TabController(
       length: 3,
       vsync: this,
@@ -122,6 +129,7 @@ class AuctionController extends GetxController
       final result = await _service.fetchListings(
         userId: userId,
         auctionType: AuctionType.all[tabIndex],
+        vehicleType: selectedVehicleType,
         page: 1,
       );
       tab.auctions.assignAll(result.auctions);
@@ -145,6 +153,7 @@ class AuctionController extends GetxController
       final result = await _service.fetchListings(
         userId: userId,
         auctionType: AuctionType.all[tabIndex],
+        vehicleType: selectedVehicleType,
         page: nextPage,
       );
       tab.auctions.addAll(result.auctions);

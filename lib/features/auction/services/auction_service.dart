@@ -22,18 +22,23 @@ class AuctionService {
     int page = 1,
     int limit = 20,
   }) async {
+    final body = {
+      'user_id': userId,
+      'auction_type': auctionType,
+      'category': category,
+      'vehicle_type': vehicleType,
+      'region_id': regionId,
+      'state_id': stateId,
+      'page': page,
+      'limit': limit,
+    };
+
+    // ignore: avoid_print
+    print('📤 [auction-listings] REQUEST → $_listingsPath\n$body');
+
     final response = await _network.post<Map<String, dynamic>>(
       _listingsPath,
-      data: {
-        'user_id': userId,
-        'auction_type': auctionType,
-        'category': category,
-        'vehicle_type': vehicleType,
-        'region_id': regionId,
-        'state_id': stateId,
-        'page': page,
-        'limit': limit,
-      },
+      data: body,
     );
 
     final data = response.data?['data'] as Map<String, dynamic>?;

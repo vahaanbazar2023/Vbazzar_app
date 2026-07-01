@@ -10,3 +10,5 @@ class ApprovedVehicleBinding extends Bindings {
         ));
   }
 }
+
+

@@ -159,15 +159,6 @@ class AuctionFilterBottomSheet extends StatelessWidget {
                   _CategoryField(controller: controller),
                   SizedBox(height: 20.h),
 
-                  // ── Vehicle Type ────────────────────────────────
-                  _FilterSectionLabel(
-                    label: context.l10n.selectVehicleTypeFilter,
-                    icon: Icons.directions_car_outlined,
-                  ),
-                  SizedBox(height: 8.h),
-                  _VehicleTypeField(controller: controller),
-                  SizedBox(height: 20.h),
-
                   // ── Region ──────────────────────────────────────
                   _FilterSectionLabel(
                     label: context.l10n.selectRegion,
@@ -305,27 +296,6 @@ class _CategoryField extends StatelessWidget {
         prefixIcon: Icons.category_outlined,
         itemLabel: (v) => v,
         onChanged: (val) => controller.onCategoryChanged(val),
-      ),
-    );
-  }
-}
-
-// ─── Vehicle Type — InlineDropdownField ────────────────────────────────────
-
-class _VehicleTypeField extends StatelessWidget {
-  final AuctionListController controller;
-  const _VehicleTypeField({required this.controller});
-
-  @override
-  Widget build(BuildContext context) {
-    return Obx(
-      () => InlineDropdownField<String>(
-        value: controller.selectedVehicleType.value,
-        items: AuctionUtils.vehicleTypeOptions,
-        placeholder: context.l10n.selectVehicleTypeFilter,
-        prefixIcon: Icons.directions_car_outlined,
-        itemLabel: (v) => v,
-        onChanged: (val) => controller.onVehicleTypeChanged(val),
       ),
     );
   }

@@ -44,11 +44,13 @@ class MainShellScreen extends GetView<MainShellController> {
       case BottomNavTab.categories:
         CategoriesBinding().dependencies();
         return const CategoriesScreen();
+      case BottomNavTab.rewards:
+        return const _PlaceholderScreen(title: 'Rewards');
       case BottomNavTab.settings:
         if (!Get.isRegistered<ProfileController>()) {
           Get.put(ProfileController());
         }
-        return const ProfileScreen(); // Settings uses profile for now
+        return const ProfileScreen();
     }
   }
 }

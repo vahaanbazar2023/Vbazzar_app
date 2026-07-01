@@ -201,7 +201,7 @@ class _TabContent extends StatelessWidget {
               ),
             );
           }
-          return _AuctionCard(listing: auctions[index]);
+          return _AuctionCard(listing: auctions[index], tabIndex: tabIndex);
         },
       );
     });
@@ -212,8 +212,11 @@ class _TabContent extends StatelessWidget {
 
 class _AuctionCard extends StatelessWidget {
   final AuctionListing listing;
+  final int tabIndex;
 
-  const _AuctionCard({required this.listing});
+  const _AuctionCard({required this.listing, required this.tabIndex});
+
+  bool get _isUpcoming => tabIndex == 2; // 0=Live, 1=Closing Today, 2=Upcoming
 
   @override
   Widget build(BuildContext context) {
@@ -315,15 +318,22 @@ class _AuctionCard extends StatelessWidget {
                 ),
                 SizedBox(height: AppSpacing.md),
 
-                // Tap to Bid — gradient button
-                GradientButton.filled(
-                  text: context.l10n.tapToBid,
-                  onPressed: () => Get.toNamed(
-                    AppRoutes.vehicleListings,
-                    arguments: {'auction': listing},
+                // Tap to Bid — disabled for upcoming auctions
+                Opacity(
+                  opacity: _isUpcoming ? 0.45 : 1.0,
+                  child: GradientButton.filled(
+                    text: _isUpcoming
+                        ? context.l10n.upcomingTab
+                        : context.l10n.tapToBid,
+                    onPressed: _isUpcoming
+                        ? null
+                        : () => Get.toNamed(
+                            AppRoutes.vehicleListings,
+                            arguments: {'auction': listing},
+                          ),
+                    isLoading: false,
+                    width: double.infinity,
                   ),
-                  isLoading: false,
-                  width: double.infinity,
                 ),
               ],
             ),

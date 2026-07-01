@@ -176,40 +176,65 @@ class _BidCard extends StatelessWidget {
                   child: Column(
                     children: [
                       Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          _BidInfoChip(
-                            label: context.l10n.your_bid,
-                            value: '₹ ${_fmt(item.userBidAmount)}',
-                            highlight: isWinning,
+                          // Your bid — expands to fill available space
+                          Expanded(
+                            child: _BidInfoChip(
+                              label: context.l10n.your_bid,
+                              value: '₹ ${_fmt(item.userBidAmount)}',
+                              highlight: isWinning,
+                            ),
                           ),
-                          SizedBox(width: AppSpacing.lg),
-                          _BidInfoChip(
-                            label: context.l10n.status,
-                            value: _capitalize(item.bidStatus),
-                            statusColor: _statusColor(item.bidStatus),
+                          SizedBox(width: AppSpacing.sm),
+                          // Status badge — fixed size, no label
+                          Container(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 10.w,
+                              vertical: 4.h,
+                            ),
+                            decoration: BoxDecoration(
+                              color: _statusColor(
+                                item.bidStatus,
+                              ).withValues(alpha: 0.12),
+                              borderRadius: BorderRadius.circular(20.r),
+                            ),
+                            child: Text(
+                              _statusLabel(item.bidStatus),
+                              style: TextStyle(
+                                fontFamily: 'Montserrat',
+                                fontSize: 12.sp,
+                                fontWeight: FontWeight.w700,
+                                color: _statusColor(item.bidStatus),
+                              ),
+                            ),
                           ),
                         ],
                       ),
                       SizedBox(height: AppSpacing.xs),
                       Row(
                         children: [
-                          Text(
-                            context.l10n.highestBid,
-                            style: TextStyle(
-                              fontFamily: 'Montserrat',
-                              fontSize: 14.sp,
-                              color: AppColors.lightOrangeDark,
-                              fontWeight: FontWeight.w500,
+                          Flexible(
+                            child: Text(
+                              context.l10n.highestBid,
+                              style: TextStyle(
+                                fontFamily: 'Montserrat',
+                                fontSize: 14.sp,
+                                color: AppColors.lightOrangeDark,
+                                fontWeight: FontWeight.w500,
+                              ),
                             ),
                           ),
                           SizedBox(width: AppSpacing.sm),
-                          GradientText(
-                            '₹ ${_fmt(item.currentHighestBid)}',
-                            style: TextStyle(
-                              fontFamily: 'Montserrat',
-                              fontSize: 16.sp,
-                              fontWeight: FontWeight.w700,
-                              color: AppColors.black,
+                          Flexible(
+                            child: GradientText(
+                              '₹ ${_fmt(item.currentHighestBid)}',
+                              style: TextStyle(
+                                fontFamily: 'Montserrat',
+                                fontSize: 16.sp,
+                                fontWeight: FontWeight.w700,
+                                color: AppColors.black,
+                              ),
                             ),
                           ),
                         ],
@@ -287,6 +312,24 @@ class _BidCard extends StatelessWidget {
     }
   }
 
+  /// Maps raw API bid status to plain readable text.
+  String _statusLabel(String status) {
+    switch (status.toLowerCase()) {
+      case 'approved':
+        return 'Winning';
+      case 'rejected':
+        return 'Outbid';
+      case 'pending':
+        return 'Pending';
+      case 'won':
+        return 'Won';
+      case 'lost':
+        return 'Lost';
+      default:
+        return status.isEmpty ? '—' : _capitalize(status);
+    }
+  }
+
   String _capitalize(String s) =>
       s.isEmpty ? s : '${s[0].toUpperCase()}${s.substring(1)}';
 
@@ -337,15 +380,17 @@ class _BidInfoChip extends StatelessWidget {
               fontWeight: FontWeight.w500,
             ),
           ),
-          Text(
-            value,
-            style: TextStyle(
-              fontFamily: 'Montserrat',
-              fontSize: 13.sp,
-              fontWeight: FontWeight.w700,
-              color:
-                  statusColor ??
-                  (highlight ? AppColors.success : AppColors.black),
+          Flexible(
+            child: Text(
+              value,
+              style: TextStyle(
+                fontFamily: 'Montserrat',
+                fontSize: 13.sp,
+                fontWeight: FontWeight.w700,
+                color:
+                    statusColor ??
+                    (highlight ? AppColors.success : AppColors.black),
+              ),
             ),
           ),
         ],
