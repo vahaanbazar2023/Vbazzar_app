@@ -3,6 +3,8 @@ import 'package:get/get.dart';
 import '../../../core/design_system/templates/app_layout.dart';
 import '../../../core/design_system/tokens/app_spacing.dart';
 import '../../../core/extensions/context_extensions.dart';
+import '../../../core/storage/secure_storage_service.dart';
+import '../../../core/storage/storage_keys.dart';
 import '../../../routes/app_routes.dart';
 import '../controllers/auction_controller.dart';
 
@@ -61,10 +63,17 @@ class _TypeCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {
+      onTap: () async {
         if (tabIndex == 1) {
-          // Navigate to Approved Vehicles module
-          Get.toNamed(AppRoutes.approvedVehicleCategory);
+          // Role-based routing for Approved Vehicles
+          final userType =
+              await SecureStorageService.to.read(StorageKeys.userType) ?? '';
+          final normalized = userType.toUpperCase().trim();
+          if (normalized == 'VENDOR') {
+            Get.toNamed(AppRoutes.approvedVehicleBuySell);
+          } else {
+            Get.toNamed(AppRoutes.approvedVehicleCategory);
+          }
         } else {
           // Navigate to Auction category screen first
           Get.toNamed(AppRoutes.auctionCategory);
