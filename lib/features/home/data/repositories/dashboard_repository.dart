@@ -33,7 +33,7 @@ class DashboardRepository {
           debugPrint('🏠 Dashboard data keys: ${dataMap.keys.toList()}');
           debugPrint(
             '🏠 Dashboard: live_auctions=${(dataMap['live_auctions'] as List?)?.length ?? 0}'
-            ', most_bought_veh=${(dataMap['most_bought_veh'] as List?)?.length ?? 0}'
+            ', most_bought_categories=${(dataMap['most_bought_categories'] as List?)?.length ?? 0}'
             ', spares_fms=${(dataMap['spares_fms'] as List?)?.length ?? 0}',
           );
           final data = DashboardData.fromJson(dataMap);

@@ -13,6 +13,7 @@ import '../../../core/extensions/context_extensions.dart';
 import '../../../core/storage/secure_storage_service.dart';
 import '../../../core/storage/storage_keys.dart';
 import '../../../routes/app_routes.dart';
+import '../../../features/buy_and_sell/domain/entities/vehicle_category_entity.dart';
 import '../../../features/auction/models/auction_listing.dart';
 import '../../../features/spare_and_fms/domain/entities/spare_part_entity.dart';
 import '../controllers/home_controller.dart';
@@ -70,15 +71,15 @@ class HomeScreen extends GetView<HomeController> {
                     // ── Live Auction Carousel ────────────────────
                     _LiveAuctionCarousel(auctions: data.liveAuctions),
                     SizedBox(height: 24.h),
-                    // ── Most Bought Vehicles ─────────────────────
-                    if (data.mostBoughtVehicles.isNotEmpty) ...[
+                    // ── Most Bought Categories ───────────────────
+                    if (data.mostBoughtCategories.isNotEmpty) ...[
                       _SectionHeader(
                         title: context.l10n.mostBoughtVehicles,
                         onViewAll: () => Get.toNamed(AppRoutes.auctionListings),
                       ),
                       SizedBox(height: 12.h),
-                      _MostBoughtVehiclesList(
-                        vehicles: data.mostBoughtVehicles,
+                      _MostBoughtCategoriesGrid(
+                        categories: data.mostBoughtCategories,
                       ),
                       SizedBox(height: 24.h),
                     ],
@@ -403,6 +404,9 @@ class _LiveAuctionCarouselState extends State<_LiveAuctionCarousel> {
         children: [
           PageView.builder(
             controller: _pageCtrl,
+            physics: _itemCount <= 1
+                ? const NeverScrollableScrollPhysics()
+                : const BouncingScrollPhysics(),
             onPageChanged: (i) => setState(() => _currentPage = i),
             itemCount: _itemCount,
             itemBuilder: (_, i) => _showPosters
@@ -616,9 +620,13 @@ class _AuctionBannerCard extends StatelessWidget {
 // Most Bought Vehicles List
 // ─────────────────────────────────────────────────────────────────────────────
 
-class _MostBoughtVehiclesList extends StatelessWidget {
-  final List<DashboardVehicle> vehicles;
-  const _MostBoughtVehiclesList({required this.vehicles});
+// ─────────────────────────────────────────────────────────────────────────────
+// Most Bought Categories Grid — 2-column
+// ─────────────────────────────────────────────────────────────────────────────
+
+class _MostBoughtCategoriesGrid extends StatelessWidget {
+  final List<DashboardCategory> categories;
+  const _MostBoughtCategoriesGrid({required this.categories});
 
   @override
   Widget build(BuildContext context) {
@@ -626,27 +634,33 @@ class _MostBoughtVehiclesList extends StatelessWidget {
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       padding: EdgeInsets.symmetric(horizontal: 16.w),
-      itemCount: vehicles.length,
+      itemCount: categories.length,
       separatorBuilder: (_, __) => SizedBox(height: 12.h),
-      itemBuilder: (_, i) => _MostBoughtVehicleCard(vehicle: vehicles[i]),
+      itemBuilder: (_, i) => _CategoryCard(category: categories[i]),
     );
   }
 }
 
-class _MostBoughtVehicleCard extends StatelessWidget {
-  final DashboardVehicle vehicle;
-  const _MostBoughtVehicleCard({required this.vehicle});
+class _CategoryCard extends StatelessWidget {
+  final DashboardCategory category;
+  const _CategoryCard({required this.category});
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => Get.toNamed(
-        AppRoutes.vehicleDetail,
-        arguments: {
-          'vehicle_id': vehicle.vehicleId,
-          'auction_id': vehicle.auctionId,
-        },
-      ),
+      onTap: () {
+        final entity = VehicleCategoryEntity(
+          categoryCode: category.categoryCode,
+          categoryName: category.categoryName,
+          vehicleCount: category.vehicleCount,
+          categoryPlan: category.categoryPlan,
+          subscriptionAmount: category.subscriptionAmount,
+        );
+        Get.toNamed(
+          AppRoutes.buyVehicleListings,
+          arguments: {'category': entity},
+        );
+      },
       child: Container(
         decoration: BoxDecoration(
           color: AppColors.white,
@@ -654,33 +668,34 @@ class _MostBoughtVehicleCard extends StatelessWidget {
           border: Border.all(color: AppColors.grey200),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.05),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
+              color: Colors.black.withValues(alpha: 0.08),
+              blurRadius: 10,
+              spreadRadius: 1,
+              offset: const Offset(0, 3),
             ),
           ],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Image
+            // ── Image with overlay badges ────────────────────
             Stack(
               children: [
                 ClipRRect(
                   borderRadius: BorderRadius.vertical(
                     top: Radius.circular(16.r),
                   ),
-                  child: vehicle.primaryImage.isNotEmpty
+                  child: category.appDashImageUrl.isNotEmpty
                       ? Image.network(
-                          vehicle.primaryImage,
+                          category.appDashImageUrl,
                           height: 180.h,
                           width: double.infinity,
                           fit: BoxFit.cover,
-                          errorBuilder: (_, __, ___) => _imagePlaceholder(),
+                          errorBuilder: (_, __, ___) => _placeholder(),
                         )
-                      : _imagePlaceholder(),
+                      : _placeholder(),
                 ),
-                // Rating badge
+                // Rating badge — top left
                 Positioned(
                   top: 10,
                   left: 10,
@@ -694,7 +709,7 @@ class _MostBoughtVehicleCard extends StatelessWidget {
                       borderRadius: BorderRadius.circular(20.r),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.1),
+                          color: Colors.black.withValues(alpha: 0.10),
                           blurRadius: 4,
                         ),
                       ],
@@ -709,7 +724,7 @@ class _MostBoughtVehicleCard extends StatelessWidget {
                         ),
                         SizedBox(width: 2.w),
                         Text(
-                          vehicle.bidCount.toString(),
+                          '${category.vehicleCount}',
                           style: TextStyle(
                             fontFamily: 'Montserrat',
                             fontSize: 11.sp,
@@ -721,7 +736,7 @@ class _MostBoughtVehicleCard extends StatelessWidget {
                     ),
                   ),
                 ),
-                // Favourite
+                // Wishlist icon — top right
                 Positioned(
                   top: 10,
                   right: 10,
@@ -733,7 +748,7 @@ class _MostBoughtVehicleCard extends StatelessWidget {
                       shape: BoxShape.circle,
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.1),
+                          color: Colors.black.withValues(alpha: 0.10),
                           blurRadius: 4,
                         ),
                       ],
@@ -747,20 +762,19 @@ class _MostBoughtVehicleCard extends StatelessWidget {
                 ),
               ],
             ),
-            // Info row
+            // ── Info row ─────────────────────────────────────
             Padding(
               padding: EdgeInsets.fromLTRB(12.w, 10.h, 12.w, 10.h),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  // Vehicle model
+                  // Vehicle Model + name
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
                       children: [
                         Text(
-                          context.l10n.vehicleModel,
+                          'Vehicle Model',
                           style: TextStyle(
                             fontFamily: 'Plus Jakarta Sans',
                             fontSize: 10.sp,
@@ -769,36 +783,36 @@ class _MostBoughtVehicleCard extends StatelessWidget {
                         ),
                         SizedBox(height: 2.h),
                         Text(
-                          vehicle.displayTitle,
+                          category.categoryName,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                           style: TextStyle(
                             fontFamily: 'Montserrat',
                             fontSize: 13.sp,
                             fontWeight: FontWeight.w700,
                             color: AppColors.textPrimary,
                           ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
                         ),
                       ],
                     ),
                   ),
                   SizedBox(width: 8.w),
-                  // Available vehicles
+                  // Available Vehicles count
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
-                        context.l10n.availableVehicles,
+                        'Available\nVehicles',
                         style: TextStyle(
                           fontFamily: 'Plus Jakarta Sans',
                           fontSize: 10.sp,
                           color: AppColors.grey500,
+                          height: 1.3,
                         ),
                       ),
                       SizedBox(height: 2.h),
                       Text(
-                        vehicle.bidsReceived.toString(),
+                        '${category.vehicleCount}',
                         style: TextStyle(
                           fontFamily: 'Montserrat',
                           fontSize: 13.sp,
@@ -808,50 +822,48 @@ class _MostBoughtVehicleCard extends StatelessWidget {
                       ),
                     ],
                   ),
-                  SizedBox(width: 8.w),
+                  SizedBox(width: 20.w),
                   // Buy Now button
-                  GestureDetector(
-                    onTap: () => Get.toNamed(
-                      AppRoutes.vehicleDetail,
-                      arguments: {
-                        'vehicle_id': vehicle.vehicleId,
-                        'auction_id': vehicle.auctionId,
-                      },
+                  Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 14.w,
+                      vertical: 8.h,
                     ),
-                    child: Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 12.w,
-                        vertical: 7.h,
-                      ),
-                      decoration: BoxDecoration(
-                        gradient: const LinearGradient(
-                          colors: [
-                            AppColors.ctaGradientStart,
-                            AppColors.ctaGradientEnd,
-                          ],
-                        ),
-                        borderRadius: BorderRadius.circular(20.r),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            context.l10n.buyNow,
-                            style: TextStyle(
-                              fontFamily: 'Montserrat',
-                              fontSize: 12.sp,
-                              fontWeight: FontWeight.w700,
-                              color: Colors.white,
-                            ),
-                          ),
-                          SizedBox(width: 4.w),
-                          Icon(
-                            Icons.arrow_forward_rounded,
-                            size: 12.r,
-                            color: Colors.white,
-                          ),
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        colors: [
+                          AppColors.ctaGradientStart,
+                          AppColors.ctaGradientEnd,
                         ],
                       ),
+                      borderRadius: BorderRadius.circular(20.r),
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppColors.primary.withValues(alpha: 0.3),
+                          blurRadius: 8,
+                          offset: const Offset(0, 3),
+                        ),
+                      ],
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          'Buy Now',
+                          style: TextStyle(
+                            fontFamily: 'Montserrat',
+                            fontSize: 12.sp,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.white,
+                          ),
+                        ),
+                        SizedBox(width: 4.w),
+                        Icon(
+                          Icons.arrow_forward_rounded,
+                          size: 12.r,
+                          color: Colors.white,
+                        ),
+                      ],
                     ),
                   ),
                 ],
@@ -863,26 +875,21 @@ class _MostBoughtVehicleCard extends StatelessWidget {
     );
   }
 
-  Widget _imagePlaceholder() {
-    return Container(
-      height: 180.h,
-      width: double.infinity,
-      color: AppColors.grey100,
-      child: Center(
-        child: Icon(
-          Icons.directions_car_outlined,
-          size: 48.r,
-          color: AppColors.grey400,
-        ),
+  Widget _placeholder() => Container(
+    color: AppColors.grey100,
+    child: Center(
+      child: Icon(
+        Icons.directions_car_outlined,
+        size: 36.r,
+        color: AppColors.grey400,
       ),
-    );
-  }
+    ),
+  );
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Radial Glow Painter — #1E1E1E base with #BB2625 glow from center-right
 // ─────────────────────────────────────────────────────────────────────────────
-
 class _RadialGlowPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
