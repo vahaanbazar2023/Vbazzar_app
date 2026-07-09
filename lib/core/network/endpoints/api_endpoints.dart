@@ -67,6 +67,8 @@ class ApiEndpoints {
 
   // ─── Auction ──────────────────────────────────────────────────
   static const String auctionPrefix = '/api/v1/auctions';
+  static const String liveAuctionCategoryCounts =
+      '$auctionPrefix/live-auction-category-counts';
   static const String auctionListings =
       '$auctionPrefix/auction-listings-pagination';
   static const String auctionVehicleListings =

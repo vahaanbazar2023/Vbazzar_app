@@ -6,7 +6,6 @@ import '../../../core/design_system/templates/app_layout.dart';
 import '../../../core/design_system/tokens/app_spacing.dart';
 import '../../../core/extensions/context_extensions.dart';
 import '../../../theme/app_fonts.dart';
-import '../../approved_vehicles/domain/entities/approved_vehicle_category_entity.dart';
 import '../controllers/auction_category_controller.dart';
 
 class AuctionCategoryScreen extends StatelessWidget {
@@ -59,17 +58,15 @@ class AuctionCategoryScreen extends StatelessWidget {
         vertical: AppSpacing.lg,
       ),
       physics: const NeverScrollableScrollPhysics(),
-      itemCount: 4,
+      itemCount: 6,
       separatorBuilder: (_, __) => SizedBox(height: 16.h),
-      itemBuilder: (context, index) {
-        return Container(
-          height: 130.h,
-          decoration: BoxDecoration(
-            color: AppColors.grey100,
-            borderRadius: BorderRadius.circular(20.r),
-          ),
-        );
-      },
+      itemBuilder: (_, __) => Container(
+        height: 80.h,
+        decoration: BoxDecoration(
+          color: AppColors.grey100,
+          borderRadius: BorderRadius.circular(16.r),
+        ),
+      ),
     );
   }
 
@@ -150,11 +147,34 @@ class AuctionCategoryScreen extends StatelessWidget {
   }
 }
 
-/// Brand gradient matching CTA colours.
+// ─────────────────────────────────────────────────────────────────────────────
+// Category Card
+// ─────────────────────────────────────────────────────────────────────────────
+
 const List<Color> _cardGradient = [Color(0xFFBB2625), Color(0xFF67100B)];
 
+/// Icon asset path derived from category code.
+String _iconForCode(String code) {
+  switch (code.toUpperCase()) {
+    case '2W':
+      return 'assets/images/png/auction.png';
+    case '3W':
+      return 'assets/images/png/auction.png';
+    case '4W':
+      return 'assets/images/png/auction.png';
+    case 'CV':
+      return 'assets/images/png/auction.png';
+    case 'CE':
+      return 'assets/images/png/auction.png';
+    case 'FE':
+      return 'assets/images/png/auction.png';
+    default:
+      return 'assets/images/png/auction.png';
+  }
+}
+
 class _CategoryCard extends StatelessWidget {
-  final ApprovedVehicleCategoryEntity category;
+  final AuctionLiveCategory category;
   final VoidCallback onTap;
 
   const _CategoryCard({required this.category, required this.onTap});
@@ -182,7 +202,7 @@ class _CategoryCard extends StatelessWidget {
         ),
         child: Row(
           children: [
-            // Left: icon
+            // Icon container
             Container(
               width: 52.w,
               height: 52.w,
@@ -190,33 +210,22 @@ class _CategoryCard extends StatelessWidget {
                 color: Colors.white.withValues(alpha: 0.15),
                 borderRadius: BorderRadius.circular(14.r),
               ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(14.r),
-                child: Padding(
-                  padding: EdgeInsets.all(10.w),
-                  child: Image.network(
-                    category.iconName,
-                    fit: BoxFit.contain,
-                    errorBuilder: (context, error, stackTrace) => Icon(
-                      Icons.local_shipping_outlined,
-                      size: 26.w,
-                      color: Colors.white,
-                    ),
-                  ),
+              child: Center(
+                child: Text(
+                  _badge(category.categoryCode),
+                  style: TextStyle(fontSize: 20.sp),
                 ),
               ),
             ),
-
             SizedBox(width: 14.w),
-
-            // Center: name + availability
+            // Name + count
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    category.categoryName,
+                    category.displayName,
                     style: AppFonts.bodyMedium.copyWith(
                       color: Colors.white,
                       fontWeight: FontWeight.w700,
@@ -226,43 +235,35 @@ class _CategoryCard extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                   ),
                   SizedBox(height: 4.h),
-                  // if (category.approvedVehAvailableCount > 0)
-                  //   Row(
-                  //     children: [
-                  //       Container(
-                  //         width: 5.w,
-                  //         height: 5.w,
-                  //         decoration: const BoxDecoration(
-                  //           shape: BoxShape.circle,
-                  //           color: AppColors.success,
-                  //         ),
-                  //       ),
-                  //       SizedBox(width: 5.w),
-                  //       Text(
-                  //         context.l10n.vehiclesAvailableCount(
-                  //           category.approvedVehAvailableCount,
-                  //         ),
-                  //         style: AppFonts.bodySmall.copyWith(
-                  //           color: Colors.white.withValues(alpha: 0.8),
-                  //           fontSize: 11.sp,
-                  //           fontWeight: FontWeight.w500,
-                  //         ),
-                  //       ),
-                  //     ],
-                  //   )
-                  // else
-                  //   Text(
-                  //     context.l10n.noVehiclesYet,
-                  //     style: AppFonts.bodySmall.copyWith(
-                  //       color: Colors.white.withValues(alpha: 0.55),
-                  //       fontSize: 11.sp,
-                  //     ),
-                  //   ),
+                  Row(
+                    children: [
+                      Container(
+                        width: 6.w,
+                        height: 6.w,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: category.count > 0
+                              ? AppColors.success
+                              : Colors.white.withValues(alpha: 0.4),
+                        ),
+                      ),
+                      SizedBox(width: 5.w),
+                      Text(
+                        category.count > 0
+                            ? '${category.count} live auction${category.count == 1 ? '' : 's'}'
+                            : 'No live auctions',
+                        style: AppFonts.bodySmall.copyWith(
+                          color: Colors.white.withValues(alpha: 0.8),
+                          fontSize: 11.sp,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
                 ],
               ),
             ),
-
-            // Right: arrow
+            // Arrow
             Icon(
               Icons.arrow_forward_ios_rounded,
               color: Colors.white.withValues(alpha: 0.7),
@@ -272,5 +273,24 @@ class _CategoryCard extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  String _badge(String code) {
+    switch (code.toUpperCase()) {
+      case '2W':
+        return '🏍';
+      case '3W':
+        return '🛺';
+      case '4W':
+        return '🚗';
+      case 'CV':
+        return '🚚';
+      case 'CE':
+        return '🏗';
+      case 'FE':
+        return '🚜';
+      default:
+        return '🚘';
+    }
   }
 }

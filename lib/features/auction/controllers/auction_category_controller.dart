@@ -1,21 +1,57 @@
 import 'package:get/get.dart';
+import '../../../core/network/endpoints/api_endpoints.dart';
+import '../../../core/network/network_service.dart';
 import '../../../core/storage/secure_storage_service.dart';
 import '../../../core/storage/storage_keys.dart';
 import '../../../routes/app_routes.dart';
-import '../../approved_vehicles/data/repositories/approved_vehicle_repository_impl.dart';
-import '../../approved_vehicles/domain/entities/approved_vehicle_category_entity.dart';
+
+// ─── Model ───────────────────────────────────────────────────────────────────
+
+class AuctionLiveCategory {
+  final String categoryCode; // e.g. "2w", "cv", "ce", "fe"
+  final int count;
+
+  const AuctionLiveCategory({required this.categoryCode, required this.count});
+
+  factory AuctionLiveCategory.fromJson(Map<String, dynamic> json) {
+    return AuctionLiveCategory(
+      categoryCode: (json['category'] as String? ?? '').toUpperCase(),
+      count: (json['count'] as num?)?.toInt() ?? 0,
+    );
+  }
+
+  /// Human-readable display name for the category code.
+  String get displayName {
+    switch (categoryCode.toUpperCase()) {
+      case '2W':
+        return 'Two Wheeler';
+      case '3W':
+        return 'Three Wheeler';
+      case '4W':
+        return 'Four Wheeler';
+      case 'CV':
+        return 'Commercial Vehicles';
+      case 'CE':
+        return 'Construction Equipments';
+      case 'FE':
+        return 'Farm Equipments';
+      default:
+        return categoryCode;
+    }
+  }
+}
+
+// ─── Controller ──────────────────────────────────────────────────────────────
 
 class AuctionCategoryController extends GetxController {
-  final ApprovedVehicleRepositoryImpl _repository;
+  final NetworkService _network;
 
-  AuctionCategoryController({ApprovedVehicleRepositoryImpl? repository})
-      : _repository = repository ?? ApprovedVehicleRepositoryImpl();
+  AuctionCategoryController({NetworkService? network})
+    : _network = network ?? NetworkService.to;
 
-  // Categories fetched from the same API as approved vehicles
-  final categories = <ApprovedVehicleCategoryEntity>[].obs;
+  final categories = <AuctionLiveCategory>[].obs;
   final isLoadingCategories = false.obs;
   final categoriesError = ''.obs;
-  final categoriesTotalCount = 0.obs;
 
   @override
   void onInit() {
@@ -31,9 +67,22 @@ class AuctionCategoryController extends GetxController {
     try {
       final userId =
           await SecureStorageService.to.read(StorageKeys.userId) ?? '';
-      final result = await _repository.getCategories(userId: userId);
-      categories.assignAll(result.categories);
-      categoriesTotalCount.value = result.totalCount;
+      final response = await _network.post(
+        ApiEndpoints.liveAuctionCategoryCounts,
+        data: {'user_id': userId},
+      );
+
+      final data = response.data as Map<String, dynamic>?;
+      final raw =
+          ((data?['data'] as Map<String, dynamic>?)?['categories']
+              as List<dynamic>?) ??
+          [];
+
+      categories.assignAll(
+        raw
+            .map((e) => AuctionLiveCategory.fromJson(e as Map<String, dynamic>))
+            .toList(),
+      );
     } catch (e) {
       categoriesError.value = 'Failed to load categories. Pull to refresh.';
     } finally {
@@ -41,12 +90,11 @@ class AuctionCategoryController extends GetxController {
     }
   }
 
-  /// Called when a category is tapped — navigates to auction listings
-  /// passing the selected category.
-  void onCategoryTapped(ApprovedVehicleCategoryEntity category) {
+  /// Navigate to auction listings filtered by the selected category code.
+  void onCategoryTapped(AuctionLiveCategory category) {
     Get.toNamed(
       AppRoutes.auctionListings,
-      arguments: {'category': category},
+      arguments: {'category': category.categoryCode},
     );
   }
 }

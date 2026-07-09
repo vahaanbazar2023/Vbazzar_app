@@ -81,6 +81,7 @@ class NetworkService extends GetxService {
     '/api/v1/approved-veh/appr-veh-submit',
     '/api/v1/approved-veh/appr-veh-user-interest',
     '/api/v1/approved-veh/appr-veh-user-booked',
+    '/api/v1/auctions/live-auction-category-counts',
 
     // Subscription endpoints
     '/api/v1/subscription/subscription-listing',

@@ -16,6 +16,8 @@ import '../../../routes/app_routes.dart';
 import '../../../features/buy_and_sell/domain/entities/vehicle_category_entity.dart';
 import '../../../features/auction/models/auction_listing.dart';
 import '../../../features/spare_and_fms/domain/entities/spare_part_entity.dart';
+import '../../../features/subscription/models/user_subscription.dart';
+import '../../../features/subscription/services/subscription_guard_service.dart';
 import '../controllers/home_controller.dart';
 import '../data/models/dashboard_model.dart';
 
@@ -26,6 +28,29 @@ String _initials(String fullName) {
   if (parts.isEmpty || parts.first.isEmpty) return '';
   if (parts.length == 1) return parts.first[0].toUpperCase();
   return '${parts.first[0]}${parts.last[0]}'.toUpperCase();
+}
+
+/// Gate for any auction navigation from the home screen.
+/// Checks SUBT001 — if not active, redirects to the subscription screen.
+Future<void> _openAuction({Map<String, dynamic>? arguments}) async {
+  final guard = SubscriptionGuardService.to;
+  await guard.ensureLoaded(forceRefresh: false);
+
+  final hasAccess = guard.hasActiveSubscription(SubscriptionTypeCode.auction);
+
+  if (hasAccess) {
+    Get.toNamed(AppRoutes.auctionListings, arguments: arguments);
+    return;
+  }
+
+  Get.toNamed(
+    AppRoutes.subscription,
+    arguments: {
+      'subscription_source': SubscriptionTypeCode.auction,
+      'title': 'Choose Subscription Plan',
+      'subtitle': 'Choose a subscription plan to unlock features of auction',
+    },
+  );
 }
 
 class HomeScreen extends GetView<HomeController> {
@@ -75,7 +100,7 @@ class HomeScreen extends GetView<HomeController> {
                     if (data.mostBoughtCategories.isNotEmpty) ...[
                       _SectionHeader(
                         title: context.l10n.mostBoughtVehicles,
-                        onViewAll: () => Get.toNamed(AppRoutes.auctionListings),
+                        onViewAll: () => _openAuction(),
                       ),
                       SizedBox(height: 12.h),
                       _MostBoughtCategoriesGrid(
@@ -399,7 +424,7 @@ class _LiveAuctionCarouselState extends State<_LiveAuctionCarousel> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 180.h,
+      height: 210.h,
       child: Stack(
         children: [
           PageView.builder(
@@ -476,142 +501,261 @@ class _AuctionBannerCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => Get.toNamed(
-        AppRoutes.auctionListings,
-        arguments: {'auction': auction},
-      ),
+      onTap: () => _openAuction(arguments: {'auction': auction}),
       child: Container(
         margin: EdgeInsets.symmetric(horizontal: 16.w),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16.r),
-          gradient: const LinearGradient(
-            begin: Alignment.centerLeft,
-            end: Alignment.centerRight,
-            colors: [Color(0xFF8B1A1A), Color(0xFFBB2625)],
-          ),
+          color: const Color(0xFF6B0000),
           boxShadow: [
             BoxShadow(
-              color: const Color(0xFFBB2625).withValues(alpha: 0.35),
-              blurRadius: 12,
-              offset: const Offset(0, 5),
+              color: const Color(0xFF8B1A1A).withValues(alpha: 0.45),
+              blurRadius: 16,
+              offset: const Offset(0, 6),
             ),
           ],
         ),
-        child: Stack(
-          children: [
-            // Bulldozer image — right side
-            Positioned(
-              right: 0,
-              bottom: 0,
-              top: 0,
-              child: Image.asset(
-                AppAssets.yellowBulldoser,
-                fit: BoxFit.contain,
-                width: 160.w,
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(16.r),
+          child: Stack(
+            children: [
+              // Radial glow background
+              Positioned.fill(
+                child: CustomPaint(painter: _RadialGlowPainter()),
               ),
-            ),
-            // Content — left side
-            Padding(
-              padding: EdgeInsets.fromLTRB(16.w, 16.h, 155.w, 12.h),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  // Live badge
-                  Container(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 8.w,
-                      vertical: 3.h,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.2),
-                      borderRadius: BorderRadius.circular(20.r),
-                      border: Border.all(
-                        color: Colors.white.withValues(alpha: 0.5),
+              // Bulldozer — right side, fills height
+              Positioned(
+                right: -8.w,
+                bottom: 0,
+                top: 0,
+                child: Image.asset(
+                  AppAssets.yellowBulldoser,
+                  fit: BoxFit.contain,
+                  width: 170.w,
+                ),
+              ),
+              // Content — left side
+              Padding(
+                padding: EdgeInsets.fromLTRB(16.w, 14.h, 170.w, 14.h),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // Live badge
+                    Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 10.w,
+                        vertical: 5.h,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.transparent,
+                        borderRadius: BorderRadius.circular(20.r),
+                        border: Border.all(
+                          color: Colors.white.withValues(alpha: 0.7),
+                          width: 1.2,
+                        ),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Container(
+                            width: 7.w,
+                            height: 7.w,
+                            decoration: const BoxDecoration(
+                              color: AppColors.success,
+                              shape: BoxShape.circle,
+                            ),
+                          ),
+                          SizedBox(width: 5.w),
+                          Text(
+                            context.l10n.liveAuction.toUpperCase(),
+                            style: TextStyle(
+                              fontFamily: 'Montserrat',
+                              fontSize: 10.sp,
+                              fontWeight: FontWeight.w700,
+                              color: Colors.white,
+                              letterSpacing: 0.8,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Container(
-                          width: 6.w,
-                          height: 6.w,
-                          decoration: const BoxDecoration(
-                            color: AppColors.success,
-                            shape: BoxShape.circle,
+                    SizedBox(height: 6.h),
+                    // Title — large
+                    Text(
+                      auction.auctionTitle.isNotEmpty
+                          ? auction.auctionTitle
+                          : '${auction.category} Auction',
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontFamily: 'Montserrat',
+                        fontSize: 17.sp,
+                        fontWeight: FontWeight.w800,
+                        color: Colors.white,
+                        height: 1.2,
+                      ),
+                    ),
+                    SizedBox(height: 10.h),
+                    // Timer — hourglass + countdown inline
+                    _AuctionTimer(endAt: auction.endAt),
+                    SizedBox(height: 35.h),
+                    // Bid Now — white pill, red text
+                    Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 20.w,
+                        vertical: 6.h,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(28.r),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.15),
+                            blurRadius: 8,
+                            offset: const Offset(0, 3),
                           ),
-                        ),
-                        SizedBox(width: 4.w),
-                        Text(
-                          context.l10n.liveAuction.toUpperCase(),
-                          style: TextStyle(
-                            fontFamily: 'Montserrat',
-                            fontSize: 8.sp,
-                            fontWeight: FontWeight.w700,
-                            color: Colors.white,
-                            letterSpacing: 0.6,
+                        ],
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            context.l10n.bid_now,
+                            style: TextStyle(
+                              fontFamily: 'Montserrat',
+                              fontSize: 14.sp,
+                              fontWeight: FontWeight.w700,
+                              color: AppColors.primary,
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(height: 8.h),
-                  // Title
-                  Text(
-                    auction.auctionTitle.isNotEmpty
-                        ? auction.auctionTitle
-                        : '${auction.category} Auction',
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      fontFamily: 'Montserrat',
-                      fontSize: 13.sp,
-                      fontWeight: FontWeight.w700,
-                      color: Colors.white,
-                      height: 1.25,
-                    ),
-                  ),
-                  SizedBox(height: 8.h),
-                  // Timer row — clipped to available width
-                  TimerBadge(endAt: auction.endAt),
-                  SizedBox(height: 10.h),
-                  // Bid Now button
-                  Container(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 12.w,
-                      vertical: 6.h,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(20.r),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          context.l10n.bid_now,
-                          style: TextStyle(
-                            fontFamily: 'Montserrat',
-                            fontSize: 11.sp,
-                            fontWeight: FontWeight.w700,
+                          SizedBox(width: 6.w),
+                          Icon(
+                            Icons.arrow_forward_rounded,
+                            size: 14.r,
                             color: AppColors.primary,
                           ),
-                        ),
-                        SizedBox(width: 4.w),
-                        Icon(
-                          Icons.arrow_forward_rounded,
-                          size: 12.r,
-                          color: AppColors.primary,
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Auction timer — hourglass emoji + "XXh XXm left" plain text
+// ─────────────────────────────────────────────────────────────────────────────
+
+class _AuctionTimer extends StatefulWidget {
+  final String endAt;
+  const _AuctionTimer({required this.endAt});
+
+  @override
+  State<_AuctionTimer> createState() => _AuctionTimerState();
+}
+
+class _AuctionTimerState extends State<_AuctionTimer> {
+  Timer? _timer;
+  String _label = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _update();
+    _timer = Timer.periodic(const Duration(seconds: 30), (_) => _update());
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  void _update() {
+    if (!mounted) return;
+    setState(() => _label = _remaining(widget.endAt));
+  }
+
+  static String _remaining(String endAt) {
+    try {
+      DateTime end;
+      if (endAt.contains('T')) {
+        end = DateTime.parse(endAt).toLocal();
+      } else {
+        // "29 Jun 2029 - 06:00PM"
+        final parts = endAt.split(' - ');
+        final dp = parts[0].trim().split(' ');
+        const m = {
+          'Jan': 1,
+          'Feb': 2,
+          'Mar': 3,
+          'Apr': 4,
+          'May': 5,
+          'Jun': 6,
+          'Jul': 7,
+          'Aug': 8,
+          'Sep': 9,
+          'Oct': 10,
+          'Nov': 11,
+          'Dec': 12,
+        };
+        final day = int.parse(dp[0]);
+        final month = m[dp[1]] ?? 1;
+        final year = int.parse(dp[2]);
+        int h = 0, min = 0;
+        if (parts.length > 1) {
+          final t = parts[1].trim().toUpperCase();
+          final isPm = t.endsWith('PM');
+          final nums = t
+              .replaceAll('AM', '')
+              .replaceAll('PM', '')
+              .trim()
+              .split(':');
+          h = int.parse(nums[0]);
+          min = int.parse(nums[1]);
+          if (isPm && h != 12) h += 12;
+          if (!isPm && h == 12) h = 0;
+        }
+        end = DateTime(year, month, day, h, min);
+      }
+      final diff = end.difference(DateTime.now());
+      if (diff.isNegative) return 'Ended';
+      final totalH = diff.inHours;
+      final mins = diff.inMinutes % 60;
+      if (totalH >= 24) {
+        final days = totalH ~/ 24;
+        return '${days}d ${totalH % 24}h left';
+      }
+      return '${totalH}h ${mins}m left';
+    } catch (_) {
+      return endAt;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        const Text('⏳', style: TextStyle(fontSize: 14)),
+        SizedBox(width: 5.w),
+        Text(
+          _label,
+          style: TextStyle(
+            fontFamily: 'Montserrat',
+            fontSize: 13.sp,
+            fontWeight: FontWeight.w600,
+            color: Colors.white,
+          ),
+        ),
+      ],
     );
   }
 }
@@ -630,13 +774,22 @@ class _MostBoughtCategoriesGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView.separated(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
+    // Only top 4
+    final items = categories.take(4).toList();
+    return Padding(
       padding: EdgeInsets.symmetric(horizontal: 16.w),
-      itemCount: categories.length,
-      separatorBuilder: (_, __) => SizedBox(height: 12.h),
-      itemBuilder: (_, i) => _CategoryCard(category: categories[i]),
+      child: GridView.builder(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          mainAxisSpacing: 12.h,
+          crossAxisSpacing: 12.w,
+          childAspectRatio: 0.78,
+        ),
+        itemCount: items.length,
+        itemBuilder: (_, i) => _CategoryCard(category: items[i]),
+      ),
     );
   }
 }
@@ -678,193 +831,119 @@ class _CategoryCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // ── Image with overlay badges ────────────────────
-            Stack(
-              children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.vertical(
-                    top: Radius.circular(16.r),
-                  ),
-                  child: category.appDashImageUrl.isNotEmpty
-                      ? Image.network(
-                          category.appDashImageUrl,
-                          height: 180.h,
-                          width: double.infinity,
-                          fit: BoxFit.cover,
-                          errorBuilder: (_, __, ___) => _placeholder(),
-                        )
-                      : _placeholder(),
-                ),
-                // Rating badge — top left
-                Positioned(
-                  top: 10,
-                  left: 10,
-                  child: Container(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 8.w,
-                      vertical: 4.h,
-                    ),
-                    decoration: BoxDecoration(
-                      color: AppColors.white,
-                      borderRadius: BorderRadius.circular(20.r),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.10),
-                          blurRadius: 4,
-                        ),
-                      ],
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(
-                          Icons.star_rounded,
-                          color: const Color(0xFFFFC107),
-                          size: 14.r,
-                        ),
-                        SizedBox(width: 2.w),
-                        Text(
-                          '${category.vehicleCount}',
-                          style: TextStyle(
-                            fontFamily: 'Montserrat',
-                            fontSize: 11.sp,
-                            fontWeight: FontWeight.w700,
-                            color: AppColors.textPrimary,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                // Wishlist icon — top right
-                Positioned(
-                  top: 10,
-                  right: 10,
-                  child: Container(
-                    width: 32.w,
-                    height: 32.w,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      shape: BoxShape.circle,
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.10),
-                          blurRadius: 4,
-                        ),
-                      ],
-                    ),
-                    child: Icon(
-                      Icons.favorite_border_rounded,
-                      color: AppColors.primary,
-                      size: 16.r,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            // ── Info row ─────────────────────────────────────
-            Padding(
-              padding: EdgeInsets.fromLTRB(12.w, 10.h, 12.w, 10.h),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
+            // ── Image + badges ───────────────────────────────
+            Expanded(
+              child: Stack(
                 children: [
-                  // Vehicle Model + name
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Vehicle Model',
-                          style: TextStyle(
-                            fontFamily: 'Plus Jakarta Sans',
-                            fontSize: 10.sp,
-                            color: AppColors.grey500,
-                          ),
-                        ),
-                        SizedBox(height: 2.h),
-                        Text(
-                          category.categoryName,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            fontFamily: 'Montserrat',
-                            fontSize: 13.sp,
-                            fontWeight: FontWeight.w700,
-                            color: AppColors.textPrimary,
-                          ),
-                        ),
-                      ],
+                  ClipRRect(
+                    borderRadius: BorderRadius.vertical(
+                      top: Radius.circular(16.r),
+                    ),
+                    child: ColoredBox(
+                      color: AppColors.grey50,
+                      child: category.appDashImageUrl.isNotEmpty
+                          ? Image.network(
+                              category.appDashImageUrl,
+                              height: double.infinity,
+                              width: double.infinity,
+                              fit: BoxFit.contain,
+                              errorBuilder: (_, __, ___) => _placeholder(),
+                            )
+                          : _placeholder(),
                     ),
                   ),
-                  SizedBox(width: 8.w),
-                  // Available Vehicles count
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                ],
+              ),
+            ),
+            // ── Info ─────────────────────────────────────────
+            Padding(
+              padding: EdgeInsets.fromLTRB(8.w, 6.h, 8.w, 8.h),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(height: 1.h),
+                  Text(
+                    category.categoryName,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontFamily: 'Montserrat',
+                      fontSize: 11.sp,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.textPrimary,
+                    ),
+                  ),
+                  SizedBox(height: 6.h),
+                  Row(
                     children: [
-                      Text(
-                        'Available\nVehicles',
-                        style: TextStyle(
-                          fontFamily: 'Plus Jakarta Sans',
-                          fontSize: 10.sp,
-                          color: AppColors.grey500,
-                          height: 1.3,
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Available',
+                              style: TextStyle(
+                                fontFamily: 'Plus Jakarta Sans',
+                                fontSize: 9.sp,
+                                color: AppColors.grey500,
+                              ),
+                            ),
+                            Text(
+                              '${category.vehicleCount}',
+                              style: TextStyle(
+                                fontFamily: 'Montserrat',
+                                fontSize: 11.sp,
+                                fontWeight: FontWeight.w700,
+                                color: AppColors.textPrimary,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                      SizedBox(height: 2.h),
-                      Text(
-                        '${category.vehicleCount}',
-                        style: TextStyle(
-                          fontFamily: 'Montserrat',
-                          fontSize: 13.sp,
-                          fontWeight: FontWeight.w700,
-                          color: AppColors.textPrimary,
+                      // Buy Now pill
+                      Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 8.w,
+                          vertical: 5.h,
+                        ),
+                        decoration: BoxDecoration(
+                          gradient: const LinearGradient(
+                            colors: [
+                              AppColors.ctaGradientStart,
+                              AppColors.ctaGradientEnd,
+                            ],
+                          ),
+                          borderRadius: BorderRadius.circular(20.r),
+                          boxShadow: [
+                            BoxShadow(
+                              color: AppColors.primary.withValues(alpha: 0.3),
+                              blurRadius: 6,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              'Buy Now',
+                              style: TextStyle(
+                                fontFamily: 'Montserrat',
+                                fontSize: 9.sp,
+                                fontWeight: FontWeight.w700,
+                                color: Colors.white,
+                              ),
+                            ),
+                            SizedBox(width: 3.w),
+                            Icon(
+                              Icons.arrow_forward_rounded,
+                              size: 9.r,
+                              color: Colors.white,
+                            ),
+                          ],
                         ),
                       ),
                     ],
-                  ),
-                  SizedBox(width: 20.w),
-                  // Buy Now button
-                  Container(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 14.w,
-                      vertical: 8.h,
-                    ),
-                    decoration: BoxDecoration(
-                      gradient: const LinearGradient(
-                        colors: [
-                          AppColors.ctaGradientStart,
-                          AppColors.ctaGradientEnd,
-                        ],
-                      ),
-                      borderRadius: BorderRadius.circular(20.r),
-                      boxShadow: [
-                        BoxShadow(
-                          color: AppColors.primary.withValues(alpha: 0.3),
-                          blurRadius: 8,
-                          offset: const Offset(0, 3),
-                        ),
-                      ],
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          'Buy Now',
-                          style: TextStyle(
-                            fontFamily: 'Montserrat',
-                            fontSize: 12.sp,
-                            fontWeight: FontWeight.w700,
-                            color: Colors.white,
-                          ),
-                        ),
-                        SizedBox(width: 4.w),
-                        Icon(
-                          Icons.arrow_forward_rounded,
-                          size: 12.r,
-                          color: Colors.white,
-                        ),
-                      ],
-                    ),
                   ),
                 ],
               ),
@@ -880,15 +959,13 @@ class _CategoryCard extends StatelessWidget {
     child: Center(
       child: Icon(
         Icons.directions_car_outlined,
-        size: 36.r,
+        size: 28.r,
         color: AppColors.grey400,
       ),
     ),
   );
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Radial Glow Painter — #1E1E1E base with #BB2625 glow from center-right
 // ─────────────────────────────────────────────────────────────────────────────
 class _RadialGlowPainter extends CustomPainter {
   @override
