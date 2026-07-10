@@ -31,8 +31,8 @@ class VahaanApp extends StatelessWidget {
 
             // Theme
             theme: ThemeConfig.lightTheme,
-            darkTheme: ThemeConfig.darkTheme,
-            themeMode: ThemeMode.system,
+            darkTheme: ThemeConfig.lightTheme, // always use light theme
+            themeMode: ThemeMode.light,
 
             // Flutter Localization
             localizationsDelegates: const [

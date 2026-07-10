@@ -22,6 +22,21 @@ class AuctionTab extends GetView<AuctionController> {
     return AppLayout(
       title: context.l10n.auction,
       subtitle: context.l10n.auctionKnowCondition,
+      actions: [
+        // Filter icon in the red header bar
+        GestureDetector(
+          onTap: () => AuctionFilterBottomSheet.show(context),
+          child: Padding(
+            padding: EdgeInsets.only(right: AppSpacing.md),
+            child: Image.asset(
+              AppAssets.filterPng,
+              width: 24.r,
+              height: 24.r,
+              color: Colors.white,
+            ),
+          ),
+        ),
+      ],
       body: Column(
         children: [
           SizedBox(height: 8.h),
@@ -49,26 +64,7 @@ class AuctionTab extends GetView<AuctionController> {
               Tab(text: context.l10n.upcomingTab),
             ],
           ),
-          SizedBox(height: AppSpacing.md),
-          // ── Search bar ───────────────────────────────────────
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: AppSpacing.md),
-            child: Row(
-              children: [
-                Expanded(child: _SearchBar()),
-                SizedBox(width: AppSpacing.sm),
-                GestureDetector(
-                  onTap: () => AuctionFilterBottomSheet.show(context),
-                  child: Image.asset(
-                    AppAssets.filterPng,
-                    width: 28.r,
-                    height: 28.r,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          SizedBox(height: AppSpacing.md),
+          SizedBox(height: AppSpacing.sm),
           // ── Tab content ──────────────────────────────────────
           Expanded(
             child: TabBarView(
@@ -83,56 +79,6 @@ class AuctionTab extends GetView<AuctionController> {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-
-class _SearchBar extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    final radius = BorderRadius.circular(24.r);
-    return SizedBox(
-      height: 44.h,
-      child: TextField(
-        keyboardType: TextInputType.text,
-        textInputAction: TextInputAction.search,
-        textAlign: TextAlign.start,
-        textAlignVertical: TextAlignVertical.center,
-        style: TextStyle(
-          fontFamily: 'Montserrat',
-          fontSize: 13.sp,
-          color: AppColors.grey900,
-        ),
-        decoration: InputDecoration(
-          prefixIcon: Icon(
-            Icons.search_rounded,
-            size: 20.r,
-            color: AppColors.grey500,
-          ),
-          hintText: context.l10n.search,
-          hintStyle: TextStyle(
-            fontFamily: 'Montserrat',
-            fontSize: 13.sp,
-            color: AppColors.grey500,
-          ),
-          contentPadding: EdgeInsets.symmetric(vertical: 12.h),
-          isDense: true,
-          filled: true,
-          fillColor: AppColors.white,
-          border: OutlineInputBorder(
-            borderRadius: radius,
-            borderSide: BorderSide(color: AppColors.grey300),
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: radius,
-            borderSide: BorderSide(color: AppColors.grey300),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: radius,
-            borderSide: BorderSide(color: AppColors.primary, width: 1.5),
-          ),
-        ),
-      ),
-    );
-  }
-}
 
 // ─────────────────────────────────────────────────────────────────────────────
 

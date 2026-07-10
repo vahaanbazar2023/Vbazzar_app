@@ -286,18 +286,37 @@ class _CategoryField extends StatelessWidget {
   final AuctionListController controller;
   const _CategoryField({required this.controller});
 
+  /// Reverse-lookup: given the stored API value, find the display label.
+  String _labelForValue(String? apiValue) {
+    if (apiValue == null || apiValue.isEmpty) return 'All';
+    return AuctionUtils.auctionCategoryOptions.entries
+        .firstWhere(
+          (e) => e.value == apiValue,
+          orElse: () => const MapEntry('All', ''),
+        )
+        .key;
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Obx(
-      () => InlineDropdownField<String>(
-        value: controller.selectedCategory.value,
-        items: AuctionUtils.categoryOptions,
+    return Obx(() {
+      final currentLabel = _labelForValue(controller.selectedCategory.value);
+      return InlineDropdownField<String>(
+        value: currentLabel == 'All' ? null : currentLabel,
+        items: AuctionUtils.auctionCategoryLabels,
         placeholder: context.l10n.selectCategory,
-        prefixIcon: Icons.category_outlined,
+        prefixIcon: Icons.business_outlined,
         itemLabel: (v) => v,
-        onChanged: (val) => controller.onCategoryChanged(val),
-      ),
-    );
+        onChanged: (label) {
+          if (label == null) {
+            controller.onCategoryChanged(null);
+          } else {
+            final apiValue = AuctionUtils.auctionCategoryApiValue(label);
+            controller.onCategoryChanged(apiValue.isEmpty ? null : apiValue);
+          }
+        },
+      );
+    });
   }
 }
 

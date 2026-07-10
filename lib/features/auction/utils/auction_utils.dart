@@ -2,16 +2,22 @@
 class AuctionUtils {
   AuctionUtils._();
 
-  // ─── Filter option constants ──────────────────────────────────
+  // ─── Auction source/category options ────────────────────────
+  // Display label → API value sent in the `category` field.
+  static const Map<String, String> auctionCategoryOptions = {
+    'All': '',
+    'Bank': 'bank',
+    'Insurance': 'insurance',
+    'Customer': 'customer',
+  };
 
-  static const List<String> categoryOptions = [
-    'All',
-    'Commercial',
-    'Passenger',
-    'Two Wheeler',
-    'Three Wheeler',
-    'Construction Equipment',
-  ];
+  /// Display labels shown in the dropdown.
+  static List<String> get auctionCategoryLabels =>
+      auctionCategoryOptions.keys.toList();
+
+  /// Returns the API value for a display label. Returns '' for 'All'/unknown.
+  static String auctionCategoryApiValue(String label) =>
+      auctionCategoryOptions[label] ?? '';
 
   static const List<String> vehicleTypeOptions = [
     'All',
