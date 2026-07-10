@@ -60,6 +60,38 @@ class BuyVehicleController extends GetxController {
   final subscribedVehicles = <SubscribedVehicleEntity>[].obs;
   final isLoadingSubscribed = false.obs;
   final isLoadingMoreSubscribed = false.obs;
+
+  // ─── Wishlist (local session state) ──────────────────────────
+
+  /// Set of vehicle IDs the user has wishlisted this session.
+  final wishlistedIds = <String>{}.obs;
+
+  bool isWishlisted(String vehicleId) => wishlistedIds.contains(vehicleId);
+
+  /// Toggles wishlist state and calls the interest API (isInterested: yes).
+  /// Keeps the heart filled optimistically; reverts on failure.
+  Future<void> toggleWishlist(BuyVehicleEntity vehicle) async {
+    final id = vehicle.sbVehicleId;
+    final wasWishlisted = wishlistedIds.contains(id);
+
+    // Optimistic toggle
+    if (wasWishlisted) {
+      wishlistedIds.remove(id);
+    } else {
+      wishlistedIds.add(id);
+    }
+
+    if (!wasWishlisted) {
+      // Only call the API when adding to wishlist (interest = yes)
+      try {
+        await submitInterest(vehicle);
+      } catch (_) {
+        // Revert on failure
+        wishlistedIds.remove(id);
+      }
+    }
+  }
+
   final hasErrorSubscribed = false.obs;
   final errorMessageSubscribed = ''.obs;
   final subscribedPage = 1.obs;

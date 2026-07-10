@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+
 import '../../../core/constants/app_colors.dart';
+import '../../../core/design_system/design_system.dart';
+import '../../../core/design_system/organisms/network_image_carousel.dart';
 import '../../../core/design_system/templates/app_layout.dart';
 import '../../../core/design_system/tokens/app_radius.dart';
 import '../../../core/design_system/tokens/app_spacing.dart';
@@ -28,265 +31,289 @@ class VehicleDetailScreen extends StatelessWidget {
             children: [
               Icon(Icons.error_outline, size: 48.w, color: AppColors.error),
               SizedBox(height: 12.h),
-              Text('Vehicle details not available',
-                  style: AppFonts.bodyMedium
-                      .copyWith(color: AppColors.textSecondary)),
+              Text(
+                'Vehicle details not available',
+                style: AppFonts.bodyMedium.copyWith(
+                  color: AppColors.textSecondary,
+                ),
+              ),
               SizedBox(height: 16.h),
-              _actionButton('Go Back', () => Get.back(), AppColors.primary),
+              GradientButton.filled(
+                text: 'Go Back',
+                onPressed: () => Get.back(),
+                width: 140.w,
+              ),
             ],
           ),
         ),
       );
     }
+
+    return _ApprVehicleDetail(listing: listing, ctrl: ctrl);
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Main detail widget
+// ─────────────────────────────────────────────────────────────────────────────
+
+class _ApprVehicleDetail extends StatelessWidget {
+  final ApprovedVehicleListingEntity listing;
+  final ApprovedVehicleController ctrl;
+
+  const _ApprVehicleDetail({required this.listing, required this.ctrl});
+
+  @override
+  Widget build(BuildContext context) {
+    final imageUrls =
+        listing.files?.images
+            .map((e) => e.fileUrl)
+            .where((u) => u.isNotEmpty)
+            .toList() ??
+        [];
+
+    final title = listing.displayTitle.isNotEmpty
+        ? listing.displayTitle
+        : listing.registrationNumber;
 
     return AppLayout(
-      title: 'Vehicle Details',
-      subtitle: listing.registrationNumber,
-      body: SingleChildScrollView(
-        padding: EdgeInsets.all(AppSpacing.md),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // ── Image Carousel ──────────────────────────────────
-            _buildImageCarousel(listing),
-            SizedBox(height: AppSpacing.lg),
-
-            // ── Title Section ───────────────────────────────────
-            _buildTitleSection(listing),
-            SizedBox(height: AppSpacing.md),
-            Divider(color: AppColors.grey200, thickness: 1),
-            SizedBox(height: AppSpacing.md),
-
-            // ── Detail Rows ─────────────────────────────────────
-            _buildDetailRows(listing),
-            SizedBox(height: AppSpacing.xl),
-
-            // ── Action Buttons ──────────────────────────────────
-            _buildActionButtons(listing, ctrl),
-            SizedBox(height: AppSpacing.xl),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildImageCarousel(ApprovedVehicleListingEntity listing) {
-    final images = listing.files?.images ?? [];
-    if (images.isEmpty) {
-      return Container(
-        height: 220.h,
-        width: double.infinity,
-        decoration: BoxDecoration(
-          color: AppColors.grey100,
-          borderRadius: AppRadius.borderRadiusMd,
-        ),
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(Icons.image_not_supported_outlined,
-                  size: 48.w, color: AppColors.grey400),
-              SizedBox(height: 8.h),
-              Text('No Images Available',
-                  style:
-                      AppFonts.bodyMedium.copyWith(color: AppColors.grey400)),
-            ],
-          ),
-        ),
-      );
-    }
-
-    return _ImageCarousel(images: images.map((e) => e.fileUrl).toList());
-  }
-
-  Widget _buildTitleSection(ApprovedVehicleListingEntity listing) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          '${listing.brand ?? "Vehicle"} | ${listing.yearOfManufacturing}',
-          style: TextStyle(
-            fontFamily: 'Montserrat',
-            fontSize: 18.sp,
-            fontWeight: FontWeight.w700,
-            color: AppColors.black,
-          ),
-        ),
-        SizedBox(height: 4.h),
-        Text(
-          '${listing.approvedVehicleId} • ${listing.assetDescription}',
-          style: TextStyle(
-            fontFamily: 'Montserrat',
-            fontSize: 13.sp,
-            color: AppColors.grey600,
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildDetailRows(ApprovedVehicleListingEntity listing) {
-    final rows = <_DetailRowData>[
-      _DetailRowData('Category', listing.categoryType),
-      _DetailRowData('Price', '₹${_formatPrice(listing.price)}'),
-      _DetailRowData('Registration No.', listing.registrationNumber),
-      _DetailRowData('Chassis Number', listing.chassisNumber),
-      _DetailRowData('State', listing.stateName),
-      _DetailRowData('City', listing.cityName),
-      _DetailRowData('Fitness Certificate', listing.fitnessAvailable),
-      _DetailRowData('Original Invoice', listing.originalInvoiceAvailable),
-      _DetailRowData(
-        'Insurance Valid Until',
-        _formatDate(listing.vehicleInsuranceDate),
-      ),
-      _DetailRowData('GST Applicable', listing.gstApplicable),
-      _DetailRowData(
-        'RC Document',
-        (listing.files?.rcDocuments.isNotEmpty == true) ? 'Yes' : 'No',
-      ),
-      _DetailRowData(
-        'Insurance Document',
-        (listing.files?.insuranceDocuments.isNotEmpty == true) ? 'Yes' : 'No',
-      ),
-      _DetailRowData(
-        'Offer Ends On',
-        '${_formatDate(listing.offerEndDate)} ${listing.offerEndTime}',
-      ),
-      _DetailRowData('Status', listing.vehicleStatus.toUpperCase()),
-    ];
-
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: AppRadius.borderRadiusMd,
-        border: Border.all(color: AppColors.grey200),
-      ),
-      child: ClipRRect(
-        borderRadius: AppRadius.borderRadiusMd,
-        child: Column(
-          children: List.generate(rows.length, (index) {
-            final row = rows[index];
-            final isEven = index % 2 == 0;
-            // Hide null/empty values
-            if (row.value.isEmpty || row.value.toLowerCase() == 'null') {
-              return const SizedBox.shrink();
-            }
-            return Container(
-              padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
-              color: isEven ? Colors.white : AppColors.grey100.withOpacity(0.5),
-              child: Row(
+      title: title,
+      subtitle: listing.approvedVehicleId,
+      showBack: true,
+      bodyColor: AppColors.cardBackground,
+      body: Column(
+        children: [
+          Expanded(
+            child: SingleChildScrollView(
+              padding: EdgeInsets.fromLTRB(
+                AppSpacing.md,
+                AppSpacing.md,
+                AppSpacing.md,
+                AppSpacing.sm,
+              ),
+              child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SizedBox(
-                    width: 130.w,
-                    child: Text(
-                      row.label,
-                      style: TextStyle(
-                        fontFamily: 'Montserrat',
-                        fontSize: 12.sp,
-                        fontWeight: FontWeight.w500,
-                        color: AppColors.grey600,
-                      ),
+                  // ── Image carousel ─────────────────────────────
+                  ClipRRect(
+                    borderRadius: AppRadius.borderRadiusMd,
+                    child: Stack(
+                      children: [
+                        imageUrls.isNotEmpty
+                            ? NetworkImageCarousel(
+                                imageUrls: imageUrls,
+                                height: 220.h,
+                              )
+                            : Container(
+                                height: 220.h,
+                                color: AppColors.grey100,
+                                child: Center(
+                                  child: Icon(
+                                    Icons.directions_car_outlined,
+                                    size: 56.r,
+                                    color: AppColors.grey400,
+                                  ),
+                                ),
+                              ),
+                        // Category badge — top left
+                        Positioned(
+                          top: 10,
+                          left: 10,
+                          child: Container(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 10.w,
+                              vertical: 5.h,
+                            ),
+                            decoration: BoxDecoration(
+                              color: AppColors.primary,
+                              borderRadius: BorderRadius.circular(20.r),
+                            ),
+                            child: Text(
+                              listing.categoryType.toUpperCase(),
+                              style: TextStyle(
+                                fontFamily: 'Montserrat',
+                                fontSize: 9.sp,
+                                fontWeight: FontWeight.w800,
+                                color: Colors.white,
+                                letterSpacing: 1.2,
+                              ),
+                            ),
+                          ),
+                        ),
+                        // Status badge — top right
+                        Positioned(
+                          top: 10,
+                          right: 10,
+                          child: _ApprStatusBadge(
+                            status: listing.vehicleStatus,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                  Expanded(
+                  SizedBox(height: AppSpacing.sm),
+
+                  // ── Title + underline ───────────────────────────
+                  Center(
                     child: Text(
-                      row.value,
+                      title,
                       style: TextStyle(
                         fontFamily: 'Montserrat',
-                        fontSize: 13.sp,
-                        fontWeight: FontWeight.w600,
+                        fontSize: 16.sp,
+                        fontWeight: FontWeight.w700,
                         color: AppColors.black,
                       ),
+                      textAlign: TextAlign.center,
                     ),
                   ),
+                  Center(
+                    child: Container(
+                      margin: EdgeInsets.only(top: 5.h, bottom: AppSpacing.sm),
+                      height: 3.h,
+                      width: 55.w,
+                      decoration: BoxDecoration(
+                        color: AppColors.primary,
+                        borderRadius: BorderRadius.circular(2.r),
+                      ),
+                    ),
+                  ),
+
+                  // ── 2×2 Info boxes ──────────────────────────────
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _ApprInfoBox(
+                          icon: Icons.fingerprint_rounded,
+                          label: 'Vehicle ID',
+                          value: listing.approvedVehicleId,
+                        ),
+                      ),
+                      SizedBox(width: 8.w),
+                      Expanded(
+                        child: _ApprInfoBox(
+                          icon: Icons.category_outlined,
+                          label: 'Category',
+                          value: listing.categoryType,
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 8.h),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _ApprInfoBox(
+                          icon: Icons.location_city_outlined,
+                          label: 'Location',
+                          value: [
+                            listing.cityName,
+                            listing.stateName,
+                          ].where((s) => s.isNotEmpty).join(', '),
+                        ),
+                      ),
+                      SizedBox(width: 8.w),
+                      Expanded(
+                        child: _ApprInfoBox(
+                          icon: Icons.calendar_month_rounded,
+                          label: 'Year',
+                          value: listing.yearOfManufacturing > 0
+                              ? '${listing.yearOfManufacturing}'
+                              : 'N/A',
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: AppSpacing.md),
+
+                  // ── Details accordion ───────────────────────────
+                  _ApprDetailsAccordion(listing: listing),
+                  SizedBox(height: AppSpacing.md),
+
+                  // ── Actions ──────────────────────────────────────
+                  SizedBox(height: AppSpacing.sm),
+                  Row(
+                    children: [
+                      // Book Now
+                      Expanded(
+                        child: listing.isBookedVehicle
+                            ? _disabledBtn('Booked ✓')
+                            : GradientButton.filled(
+                                text: 'Book Now',
+                                height: 48.h,
+                                isLoading: false,
+                                onPressed: () => _showPaymentDialog(
+                                  context: context,
+                                  title: 'Book Vehicle',
+                                  description:
+                                      'Pay to book this vehicle and access full details.',
+                                  amount: listing
+                                      .categorySubscription
+                                      ?.subscriptionAmount,
+                                  planCode: listing
+                                      .categorySubscription
+                                      ?.apprVehCommonSubPlan,
+                                  approvedVehicleId: listing.approvedVehicleId,
+                                  subscriptionType: 'category',
+                                  ctrl: ctrl,
+                                ),
+                              ),
+                      ),
+                      SizedBox(width: 12.w),
+                      // Request Inspection
+                      Expanded(
+                        child: listing.isInspectionRequested
+                            ? _disabledBtn('Requested ✓')
+                            : GradientButton.filled(
+                                text: 'Inspection',
+                                height: 48.h,
+                                isLoading: false,
+                                onPressed: () => _showPaymentDialog(
+                                  context: context,
+                                  title: 'Request Inspection',
+                                  description:
+                                      'Pay to request professional inspection.',
+                                  amount: listing
+                                      .inspectionSubscription
+                                      ?.inspectionAmount,
+                                  planCode: listing
+                                      .inspectionSubscription
+                                      ?.categoryPlan,
+                                  approvedVehicleId: listing.approvedVehicleId,
+                                  subscriptionType: 'inspection',
+                                  ctrl: ctrl,
+                                ),
+                              ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 32.h),
                 ],
               ),
-            );
-          }),
-        ),
+            ),
+          ),
+        ],
       ),
-    );
-  }
-
-  Widget _buildActionButtons(
-      ApprovedVehicleListingEntity listing, ApprovedVehicleController ctrl) {
-    final isBooked = listing.isBooked == 'yes';
-    final isInspectionRequested = listing.inspectionRequested == 'yes';
-
-    return Row(
-      children: [
-        // ── Book Now ──────────────────────────────────────────
-        Expanded(
-          child: _actionButton(
-            isBooked ? 'Booked' : 'Book Now',
-            isBooked
-                ? null
-                : () => _showPaymentDialog(
-                      title: 'Book Vehicle',
-                      description:
-                          'Pay to book this vehicle and access full details.',
-                      amount: listing.categorySubscription?.subscriptionAmount,
-                      planCode:
-                          listing.categorySubscription?.apprVehCommonSubPlan,
-                      approvedVehicleId: listing.approvedVehicleId,
-                      subscriptionType: 'category',
-                      regNo: listing.registrationNumber,
-                      ctrl: ctrl,
-                    ),
-            isBooked ? AppColors.grey400 : AppColors.primary,
-          ),
-        ),
-        SizedBox(width: 12.w),
-        // ── Inspection ────────────────────────────────────────
-        Expanded(
-          child: _actionButton(
-            isInspectionRequested ? 'Requested' : 'Inspection',
-            isInspectionRequested
-                ? null
-                : () => _showPaymentDialog(
-                      title: 'Request Vehicle Inspection',
-                      description:
-                          'Pay to request professional inspection for this vehicle.',
-                      amount: listing
-                          .inspectionSubscription?.inspectionAmount,
-                      planCode:
-                          listing.inspectionSubscription?.categoryPlan,
-                      approvedVehicleId: listing.approvedVehicleId,
-                      subscriptionType: 'inspection',
-                      regNo: listing.registrationNumber,
-                      ctrl: ctrl,
-                    ),
-            isInspectionRequested ? AppColors.grey400 : AppColors.success,
-          ),
-        ),
-      ],
     );
   }
 
   void _showPaymentDialog({
+    required BuildContext context,
     required String title,
     required String description,
     required double? amount,
     required String? planCode,
     required String approvedVehicleId,
     required String subscriptionType,
-    required String regNo,
     required ApprovedVehicleController ctrl,
   }) {
     if (amount == null || planCode == null) {
       Get.snackbar(
         'Error',
-        subscriptionType == 'category'
-            ? 'Category subscription not available'
-            : 'Inspection subscription not available',
+        '$subscriptionType subscription not available',
         snackPosition: SnackPosition.TOP,
-        backgroundColor: Colors.red.shade100,
-        colorText: Colors.red.shade900,
       );
       return;
     }
-
     Get.dialog(
       Dialog(
         shape: RoundedRectangleBorder(
@@ -297,8 +324,11 @@ class VehicleDetailScreen extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(Icons.verified_rounded,
-                  size: 48.w, color: AppColors.primary),
+              Icon(
+                Icons.verified_rounded,
+                size: 48.w,
+                color: AppColors.primary,
+              ),
               SizedBox(height: 12.h),
               Text(
                 title,
@@ -306,33 +336,23 @@ class VehicleDetailScreen extends StatelessWidget {
                   fontFamily: 'Montserrat',
                   fontSize: 18.sp,
                   fontWeight: FontWeight.w700,
-                  color: AppColors.black,
                 ),
                 textAlign: TextAlign.center,
               ),
               SizedBox(height: 8.h),
               Text(
                 description,
-                style:
-                    AppFonts.bodyMedium.copyWith(color: AppColors.grey600),
+                style: AppFonts.bodyMedium.copyWith(color: AppColors.grey600),
                 textAlign: TextAlign.center,
               ),
               SizedBox(height: 16.h),
-              Container(
-                padding: EdgeInsets.symmetric(
-                    horizontal: 20.w, vertical: 10.h),
-                decoration: BoxDecoration(
-                  color: AppColors.primary.withOpacity(0.08),
-                  borderRadius: BorderRadius.circular(12.r),
-                ),
-                child: Text(
-                  '₹${_formatPrice(amount)}',
-                  style: TextStyle(
-                    fontFamily: 'Montserrat',
-                    fontSize: 24.sp,
-                    fontWeight: FontWeight.w700,
-                    color: AppColors.primary,
-                  ),
+              Text(
+                '₹${_fmtPrice(amount)}',
+                style: TextStyle(
+                  fontFamily: 'Montserrat',
+                  fontSize: 24.sp,
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.primary,
                 ),
               ),
               SizedBox(height: 20.h),
@@ -341,51 +361,38 @@ class VehicleDetailScreen extends StatelessWidget {
                   Expanded(
                     child: OutlinedButton(
                       onPressed: () => Get.back(),
-                      style: OutlinedButton.styleFrom(
-                        side: BorderSide(color: AppColors.grey300),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8.r),
-                        ),
-                        padding: EdgeInsets.symmetric(vertical: 12.h),
-                      ),
-                      child: Text(
-                        'Cancel',
-                        style: AppFonts.bodyMedium.copyWith(
-                          color: AppColors.grey600,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
+                      child: const Text('Cancel'),
                     ),
                   ),
                   SizedBox(width: 12.w),
                   Expanded(
                     child: ElevatedButton(
-                      onPressed: () {
+                      onPressed: () async {
                         Get.back();
-                        _processPayment(
-                          planCode: planCode,
-                          approvedVehicleId: approvedVehicleId,
-                          subscriptionType: subscriptionType,
-                          regNo: regNo,
-                          ctrl: ctrl,
+                        final ok = subscriptionType == 'category'
+                            ? await ctrl.bookVehicle(approvedVehicleId)
+                            : await ctrl.requestInspection(approvedVehicleId);
+                        Get.snackbar(
+                          ok ? 'Success' : 'Error',
+                          ok
+                              ? (subscriptionType == 'category'
+                                    ? 'Vehicle booked!'
+                                    : 'Inspection requested!')
+                              : 'Something went wrong. Try again.',
+                          snackPosition: SnackPosition.TOP,
+                          backgroundColor: ok
+                              ? Colors.green.shade100
+                              : Colors.red.shade100,
+                          colorText: ok
+                              ? Colors.green.shade900
+                              : Colors.red.shade900,
                         );
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.primary,
                         foregroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8.r),
-                        ),
-                        padding: EdgeInsets.symmetric(vertical: 12.h),
-                        elevation: 0,
                       ),
-                      child: Text(
-                        'Pay Now',
-                        style: AppFonts.bodyMedium.copyWith(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
+                      child: const Text('Pay Now'),
                     ),
                   ),
                 ],
@@ -398,230 +405,372 @@ class VehicleDetailScreen extends StatelessWidget {
     );
   }
 
-  Future<void> _processPayment({
-    required String planCode,
-    required String approvedVehicleId,
-    required String subscriptionType,
-    required String regNo,
-    required ApprovedVehicleController ctrl,
-  }) async {
-    try {
-      // Direct book/inspection without PayU for now
-      bool success;
-      if (subscriptionType == 'category') {
-        success = await ctrl.bookVehicle(approvedVehicleId);
-      } else {
-        success = await ctrl.requestInspection(approvedVehicleId);
-      }
-
-      if (success) {
-        Get.snackbar(
-          'Success',
-          subscriptionType == 'category'
-              ? 'Vehicle booked successfully!'
-              : 'Inspection requested successfully!',
-          snackPosition: SnackPosition.TOP,
-          backgroundColor: Colors.green.shade100,
-          colorText: Colors.green.shade900,
-        );
-        // Refresh listings
-        if (ctrl.listings.isNotEmpty) {
-          // Update local listing state
-        }
-      }
-    } catch (e) {
-      Get.snackbar(
-        'Error',
-        'Payment processing failed. Please try again.',
-        snackPosition: SnackPosition.TOP,
-        backgroundColor: Colors.red.shade100,
-        colorText: Colors.red.shade900,
-      );
-    }
+  static String _fmtPrice(double price) {
+    final formatter = NumberFormat('#,##,###', 'en_IN');
+    return formatter.format(price.toInt());
   }
 
-  static Widget _actionButton(String text, VoidCallback? onPressed, Color color) {
+  static Widget _disabledBtn(String text) {
     return SizedBox(
-      height: 46.h,
-      child: ElevatedButton(
-        onPressed: onPressed,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: onPressed == null ? color.withOpacity(0.2) : color,
-          foregroundColor: onPressed == null ? AppColors.grey600 : Colors.white,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10.r),
-          ),
-          elevation: 0,
+      height: 48.h,
+      child: Container(
+        decoration: BoxDecoration(
+          color: AppColors.grey200,
+          borderRadius: BorderRadius.circular(30.r),
         ),
-        child: Text(
-          text,
-          style: TextStyle(
-            fontFamily: 'Montserrat',
-            fontSize: 14.sp,
-            fontWeight: FontWeight.w600,
+        child: Center(
+          child: Text(
+            text,
+            style: TextStyle(
+              fontFamily: 'Montserrat',
+              fontSize: 13.sp,
+              fontWeight: FontWeight.w600,
+              color: AppColors.grey600,
+            ),
           ),
         ),
       ),
     );
   }
-
-  String _formatPrice(double price) {
-    if (price == 0) return '0';
-    final formatter = NumberFormat('#,##,###', 'en_IN');
-    return formatter.format(price.toInt());
-  }
-
-  String _formatDate(String dateStr) {
-    if (dateStr.isEmpty || dateStr.toLowerCase() == 'null') return '';
-    try {
-      final date = DateTime.parse(dateStr);
-      return DateFormat('dd MMM yyyy').format(date);
-    } catch (_) {
-      return dateStr;
-    }
-  }
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Image Carousel
+// Status badge
 // ─────────────────────────────────────────────────────────────────────────────
 
-class _ImageCarousel extends StatefulWidget {
-  final List<String> images;
-  const _ImageCarousel({required this.images});
-
-  @override
-  State<_ImageCarousel> createState() => _ImageCarouselState();
-}
-
-class _ImageCarouselState extends State<_ImageCarousel> {
-  final _pageController = PageController();
-  int _currentIndex = 0;
-
-  @override
-  void dispose() {
-    _pageController.dispose();
-    super.dispose();
-  }
+class _ApprStatusBadge extends StatelessWidget {
+  final String status;
+  const _ApprStatusBadge({required this.status});
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Container(
-          height: 220.h,
-          decoration: BoxDecoration(
-            borderRadius: AppRadius.borderRadiusMd,
-            border: Border.all(color: AppColors.grey200),
-          ),
-          child: ClipRRect(
-            borderRadius: AppRadius.borderRadiusMd,
-            child: Stack(
-              children: [
-                PageView.builder(
-                  controller: _pageController,
-                  itemCount: widget.images.length,
-                  onPageChanged: (i) => setState(() => _currentIndex = i),
-                  itemBuilder: (_, i) {
-                    return Image.network(
-                      widget.images[i],
-                      fit: BoxFit.cover,
-                      width: double.infinity,
-                      errorBuilder: (_, __, ___) => Container(
-                        color: AppColors.grey100,
-                        child: Center(
-                          child: Icon(Icons.broken_image_outlined,
-                              size: 40.w, color: AppColors.grey400),
-                        ),
-                      ),
-                    );
-                  },
-                ),
-                // Left arrow
-                if (_currentIndex > 0)
-                  Positioned(
-                    left: 8.w,
-                    top: 0,
-                    bottom: 0,
-                    child: Center(
-                      child: GestureDetector(
-                        onTap: () => _pageController.previousPage(
-                          duration: const Duration(milliseconds: 300),
-                          curve: Curves.easeInOut,
-                        ),
-                        child: Container(
-                          padding: EdgeInsets.all(4.w),
-                          decoration: BoxDecoration(
-                            color: Colors.black45,
-                            shape: BoxShape.circle,
-                          ),
-                          child: Icon(Icons.arrow_back_ios_new,
-                              size: 16.w, color: Colors.white),
-                        ),
-                      ),
-                    ),
-                  ),
-                // Right arrow
-                if (_currentIndex < widget.images.length - 1)
-                  Positioned(
-                    right: 8.w,
-                    top: 0,
-                    bottom: 0,
-                    child: Center(
-                      child: GestureDetector(
-                        onTap: () => _pageController.nextPage(
-                          duration: const Duration(milliseconds: 300),
-                          curve: Curves.easeInOut,
-                        ),
-                        child: Container(
-                          padding: EdgeInsets.all(4.w),
-                          decoration: BoxDecoration(
-                            color: Colors.black45,
-                            shape: BoxShape.circle,
-                          ),
-                          child: Icon(Icons.arrow_forward_ios,
-                              size: 16.w, color: Colors.white),
-                        ),
-                      ),
-                    ),
-                  ),
-                // Page indicator dots
-                if (widget.images.length > 1)
-                  Positioned(
-                    bottom: 8.h,
-                    left: 0,
-                    right: 0,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: List.generate(
-                        widget.images.length,
-                        (i) => Container(
-                          width: i == _currentIndex ? 16.w : 6.w,
-                          height: 6.h,
-                          margin: EdgeInsets.symmetric(horizontal: 2.w),
-                          decoration: BoxDecoration(
-                            color: i == _currentIndex
-                                ? AppColors.primary
-                                : Colors.white54,
-                            borderRadius: BorderRadius.circular(3.r),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-              ],
+    final isActive = status.toLowerCase() == 'active';
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 5.h),
+      decoration: BoxDecoration(
+        color: (isActive ? AppColors.success : AppColors.grey500).withValues(
+          alpha: 0.88,
+        ),
+        borderRadius: BorderRadius.circular(20.r),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 6.w,
+            height: 6.w,
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              shape: BoxShape.circle,
             ),
           ),
-        ),
-      ],
+          SizedBox(width: 5.w),
+          Text(
+            status.toUpperCase(),
+            style: TextStyle(
+              fontFamily: 'Montserrat',
+              fontSize: 9.sp,
+              fontWeight: FontWeight.w700,
+              color: Colors.white,
+              letterSpacing: 0.8,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+// Info box
+// ─────────────────────────────────────────────────────────────────────────────
 
-class _DetailRowData {
+class _ApprInfoBox extends StatelessWidget {
+  final IconData icon;
   final String label;
   final String value;
-  _DetailRowData(this.label, this.value);
+  const _ApprInfoBox({
+    required this.icon,
+    required this.label,
+    required this.value,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.fromLTRB(16.r, 12.r, 12.r, 16.r),
+      decoration: BoxDecoration(
+        color: AppColors.grey50,
+        borderRadius: BorderRadius.circular(8.r),
+        border: Border.all(color: AppColors.grey200),
+      ),
+      child: Column(
+        children: [
+          Icon(icon, size: 20.r, color: AppColors.grey600),
+          SizedBox(height: 4.h),
+          Text(
+            label,
+            style: TextStyle(
+              fontFamily: 'Plus Jakarta Sans',
+              fontSize: 10.sp,
+              color: AppColors.grey500,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          SizedBox(height: 2.h),
+          Text(
+            value.isNotEmpty ? value : 'N/A',
+            style: TextStyle(
+              fontFamily: 'Montserrat',
+              fontSize: 12.sp,
+              fontWeight: FontWeight.w700,
+              color: AppColors.black,
+            ),
+            textAlign: TextAlign.center,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ],
+      ),
+    );
+  }
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Details accordion
+// ─────────────────────────────────────────────────────────────────────────────
+
+class _ApprDetailsAccordion extends StatefulWidget {
+  final ApprovedVehicleListingEntity listing;
+  const _ApprDetailsAccordion({required this.listing});
+
+  @override
+  State<_ApprDetailsAccordion> createState() => _ApprDetailsAccordionState();
+}
+
+class _ApprDetailsAccordionState extends State<_ApprDetailsAccordion> {
+  bool _expanded = true;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: AppColors.white,
+        borderRadius: AppRadius.borderRadiusMd,
+        border: Border.all(color: AppColors.grey200),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x0A000000),
+            blurRadius: 8,
+            offset: Offset(0, 2),
+          ),
+        ],
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: Column(
+        children: [
+          InkWell(
+            onTap: () => setState(() => _expanded = !_expanded),
+            child: Container(
+              padding: EdgeInsets.symmetric(
+                horizontal: AppSpacing.md,
+                vertical: 14.h,
+              ),
+              color: _expanded
+                  ? AppColors.lightOrange.withValues(alpha: 0.18)
+                  : AppColors.white,
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.directions_car_outlined,
+                    size: 18.r,
+                    color: AppColors.primary,
+                  ),
+                  SizedBox(width: 8.w),
+                  Expanded(
+                    child: Text(
+                      'Vehicle Details',
+                      style: TextStyle(
+                        fontFamily: 'Montserrat',
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.black,
+                      ),
+                    ),
+                  ),
+                  AnimatedRotation(
+                    turns: _expanded ? 0.5 : 0,
+                    duration: const Duration(milliseconds: 250),
+                    child: Icon(
+                      Icons.keyboard_arrow_down_rounded,
+                      size: 22.r,
+                      color: AppColors.grey600,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          AnimatedCrossFade(
+            firstChild: const SizedBox.shrink(),
+            secondChild: _buildRows(),
+            crossFadeState: _expanded
+                ? CrossFadeState.showSecond
+                : CrossFadeState.showFirst,
+            duration: const Duration(milliseconds: 280),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildRows() {
+    final l = widget.listing;
+    final rows = <_ApprDetailRow>[
+      _ApprDetailRow(
+        Icons.tag_rounded,
+        'Registration No.',
+        l.registrationNumber,
+      ),
+      if ((l.brand ?? '').isNotEmpty)
+        _ApprDetailRow(Icons.branding_watermark_outlined, 'Brand', l.brand!),
+      if (l.yearOfManufacturing > 0)
+        _ApprDetailRow(
+          Icons.calendar_today_outlined,
+          'Year',
+          '${l.yearOfManufacturing}',
+        ),
+      _ApprDetailRow(Icons.category_outlined, 'Category', l.categoryType),
+      if (l.chassisNumber.isNotEmpty)
+        _ApprDetailRow(Icons.numbers_rounded, 'Chassis No.', l.chassisNumber),
+      if (l.cityName.isNotEmpty)
+        _ApprDetailRow(Icons.location_city_outlined, 'City', l.cityName),
+      if (l.stateName.isNotEmpty)
+        _ApprDetailRow(Icons.map_outlined, 'State', l.stateName),
+      _ApprDetailRow(
+        Icons.currency_rupee_rounded,
+        'Price',
+        '₹${NumberFormat('#,##,###', 'en_IN').format(l.price.toInt())}',
+      ),
+      _ApprDetailRow(
+        Icons.verified_outlined,
+        'Fitness Certificate',
+        l.hasFitnessCertificate ? 'Yes' : 'No',
+      ),
+      _ApprDetailRow(
+        Icons.receipt_long_outlined,
+        'Original Invoice',
+        l.hasOriginalInvoice ? 'Yes' : 'No',
+      ),
+      _ApprDetailRow(
+        Icons.receipt_outlined,
+        'GST Applicable',
+        l.isGstApplicable ? 'Yes' : 'No',
+      ),
+      if (l.vehicleInsuranceDate.isNotEmpty &&
+          l.vehicleInsuranceDate.toLowerCase() != 'null')
+        _ApprDetailRow(
+          Icons.shield_outlined,
+          'Insurance Valid Until',
+          _fmtDate(l.vehicleInsuranceDate),
+        ),
+      if (l.offerEndDate.isNotEmpty && l.offerEndDate.toLowerCase() != 'null')
+        _ApprDetailRow(
+          Icons.timer_outlined,
+          'Offer Ends',
+          '${_fmtDate(l.offerEndDate)} ${l.offerEndTime}',
+        ),
+      _ApprDetailRow(
+        Icons.description_outlined,
+        'RC Document',
+        l.hasRcDocument ? 'Available' : 'Not available',
+      ),
+      _ApprDetailRow(
+        Icons.policy_outlined,
+        'Insurance Doc',
+        l.hasInsuranceDocument ? 'Available' : 'Not available',
+      ),
+      _ApprDetailRow(
+        Icons.info_outline,
+        'Status',
+        l.vehicleStatus.toUpperCase(),
+      ),
+    ];
+
+    return Column(
+      children: [
+        Divider(height: 1, thickness: 1, color: AppColors.grey100),
+        ...rows.asMap().entries.map(
+          (e) => _buildRow(e.value, e.key == rows.length - 1),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildRow(_ApprDetailRow r, bool isLast) {
+    return Column(
+      children: [
+        Padding(
+          padding: EdgeInsets.symmetric(
+            horizontal: AppSpacing.md,
+            vertical: 11.h,
+          ),
+          child: Row(
+            children: [
+              Icon(r.icon, size: 16.r, color: AppColors.grey500),
+              SizedBox(width: 8.w),
+              Expanded(
+                flex: 2,
+                child: Text(
+                  r.label,
+                  style: TextStyle(
+                    fontFamily: 'Plus Jakarta Sans',
+                    fontSize: 12.sp,
+                    color: AppColors.grey600,
+                  ),
+                ),
+              ),
+              Expanded(
+                flex: 3,
+                child: Text(
+                  r.value,
+                  textAlign: TextAlign.end,
+                  style: TextStyle(
+                    fontFamily: 'Montserrat',
+                    fontSize: 12.sp,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.black,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        if (!isLast)
+          Divider(
+            height: 1,
+            thickness: 1,
+            color: AppColors.grey100,
+            indent: AppSpacing.md,
+            endIndent: AppSpacing.md,
+          ),
+      ],
+    );
+  }
+
+  static String _fmtDate(String d) {
+    try {
+      return DateFormat('dd MMM yyyy').format(DateTime.parse(d));
+    } catch (_) {
+      return d;
+    }
+  }
+}
+
+class _ApprDetailRow {
+  final IconData icon;
+  final String label;
+  final String value;
+  const _ApprDetailRow(this.icon, this.label, this.value);
+}
+

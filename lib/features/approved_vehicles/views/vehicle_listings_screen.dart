@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import '../../../core/constants/app_colors.dart';
+import '../../../core/design_system/design_system.dart';
 import '../../../core/design_system/loaders/loading_widget.dart';
+import '../../../core/design_system/organisms/network_image_carousel.dart';
 import '../../../core/design_system/templates/app_layout.dart';
 import '../../../core/design_system/tokens/app_radius.dart';
 import '../../../core/design_system/tokens/app_spacing.dart';
@@ -212,23 +214,29 @@ class _VehicleListingCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final imageUrl = listing.files?.images.isNotEmpty == true
-        ? listing.files!.images.first.fileUrl
-        : null;
+    final imageUrls =
+        listing.files?.images
+            .map((f) => f.fileUrl)
+            .where((u) => u.isNotEmpty)
+            .toList() ??
+        [];
+
+    final title = listing.registrationNumber.isNotEmpty
+        ? listing.registrationNumber
+        : listing.assetDescription;
 
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        clipBehavior: Clip.antiAlias,
         decoration: BoxDecoration(
-          color: AppColors.white,
-          borderRadius: AppRadius.borderRadiusMd,
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(AppRadius.lg),
           border: Border.all(color: AppColors.grey200),
           boxShadow: [
             BoxShadow(
-              color: const Color(0x0A000000),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
+              color: Colors.black.withValues(alpha: 0.05),
+              blurRadius: 10,
+              offset: const Offset(0, 3),
             ),
           ],
         ),
@@ -236,138 +244,122 @@ class _VehicleListingCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // ── Image ────────────────────────────────────────────
-            SizedBox(
-              height: 180.h,
-              width: double.infinity,
-              child: imageUrl != null
-                  ? Image.network(
-                      imageUrl,
-                      fit: BoxFit.cover,
-                      errorBuilder: (_, __, ___) => _imagePlaceholder(context),
-                    )
-                  : _imagePlaceholder(context),
-            ),
-
-            // ── Info ─────────────────────────────────────────────
-            Container(
-              decoration: BoxDecoration(
-                color: AppColors.lightOrangeBackground.withOpacity(0.3),
+            ClipRRect(
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(AppRadius.lg),
+                topRight: Radius.circular(AppRadius.lg),
               ),
-              child: Padding(
-                padding: EdgeInsets.all(AppSpacing.md),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Registration + Year
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Text(
-                            listing.registrationNumber,
-                            style: TextStyle(
-                              fontFamily: 'Montserrat',
-                              fontSize: 15.sp,
-                              fontWeight: FontWeight.w700,
-                              color: AppColors.black,
-                            ),
-                          ),
+              child: imageUrls.isNotEmpty
+                  ? NetworkImageCarousel(imageUrls: imageUrls, height: 180.h)
+                  : Container(
+                      height: 180.h,
+                      color: AppColors.grey100,
+                      child: Center(
+                        child: Icon(
+                          Icons.directions_car_outlined,
+                          size: 48.r,
+                          color: AppColors.grey400,
                         ),
-                        Container(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 8.w,
-                            vertical: 3.h,
-                          ),
-                          decoration: BoxDecoration(
-                            color: AppColors.success.withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(6.r),
-                          ),
-                          child: Text(
-                            '${listing.yearOfManufacturing}',
-                            style: AppFonts.bodySmall.copyWith(
-                              color: AppColors.successDark,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 4.h),
-                    Text(
-                      listing.assetDescription,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        fontFamily: 'Montserrat',
-                        fontSize: 13.sp,
-                        color: AppColors.grey600,
                       ),
                     ),
-                    SizedBox(height: 8.h),
-
-                    // Location + Price Row
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Row(
-                            children: [
-                              Icon(
-                                Icons.location_on_outlined,
-                                size: 14.w,
-                                color: AppColors.grey500,
-                              ),
-                              SizedBox(width: 4.w),
-                              Flexible(
-                                child: Text(
-                                  '${listing.cityName}, ${listing.stateName}',
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: AppFonts.bodySmall.copyWith(
-                                    color: AppColors.grey600,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
+            ),
+            // ── Details ──────────────────────────────────────────
+            Padding(
+              padding: EdgeInsets.all(AppSpacing.md),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Title
+                  Text(
+                    title,
+                    style: TextStyle(
+                      fontFamily: 'Montserrat',
+                      fontSize: 15.sp,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.textPrimary,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  SizedBox(height: AppSpacing.xs),
+                  // Description subtitle
+                  if (listing.assetDescription.isNotEmpty &&
+                      listing.assetDescription != title)
+                    Padding(
+                      padding: EdgeInsets.only(bottom: AppSpacing.xs),
+                      child: Text(
+                        listing.assetDescription,
+                        style: TextStyle(
+                          fontFamily: 'Montserrat',
+                          fontSize: 12.sp,
+                          color: AppColors.grey500,
                         ),
-                        SizedBox(width: 8.w),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  // Chips — year + location + price
+                  Row(
+                    children: [
+                      if (listing.yearOfManufacturing > 0)
+                        _chip(
+                          Icons.calendar_today_outlined,
+                          '${listing.yearOfManufacturing}',
+                        ),
+                      if (listing.yearOfManufacturing > 0)
+                        SizedBox(width: AppSpacing.sm),
+                      if (listing.stateName.isNotEmpty)
+                        _chip(Icons.location_on_outlined, listing.stateName),
+                      const Spacer(),
+                      if (listing.price > 0)
                         Text(
                           '₹${_formatPrice(listing.price)}',
                           style: TextStyle(
                             fontFamily: 'Montserrat',
-                            fontSize: 16.sp,
+                            fontSize: 13.sp,
                             fontWeight: FontWeight.w700,
                             color: AppColors.primary,
                           ),
                         ),
-                      ],
-                    ),
-                    SizedBox(height: 12.h),
-                    // Know More Button
-                    SizedBox(
-                      width: double.infinity,
-                      height: 40.h,
-                      child: ElevatedButton(
-                        onPressed: onTap,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.primary,
-                          foregroundColor: Colors.white,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8.r),
-                          ),
-                          elevation: 0,
+                    ],
+                  ),
+                  SizedBox(height: AppSpacing.sm),
+                  // View Details button
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 14.w,
+                        vertical: 7.h,
+                      ),
+                      decoration: BoxDecoration(
+                        gradient: const LinearGradient(
+                          colors: [
+                            AppColors.ctaGradientStart,
+                            AppColors.ctaGradientEnd,
+                          ],
                         ),
-                        child: Text(
-                          context.l10n.knowMore,
-                          style: TextStyle(
-                            fontFamily: 'Montserrat',
-                            fontSize: 13.sp,
-                            fontWeight: FontWeight.w600,
+                        borderRadius: BorderRadius.circular(20.r),
+                        boxShadow: [
+                          BoxShadow(
+                            color: AppColors.primary.withValues(alpha: 0.3),
+                            blurRadius: 6,
+                            offset: const Offset(0, 2),
                           ),
+                        ],
+                      ),
+                      child: Text(
+                        context.l10n.knowMore,
+                        style: TextStyle(
+                          fontFamily: 'Montserrat',
+                          fontSize: 12.sp,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white,
                         ),
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
           ],
@@ -376,28 +368,21 @@ class _VehicleListingCard extends StatelessWidget {
     );
   }
 
-  Widget _imagePlaceholder(BuildContext context) {
-    return Container(
-      color: AppColors.grey100,
-      child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.directions_car_outlined,
-              size: 40.w,
-              color: AppColors.grey400,
-            ),
-            SizedBox(height: 4.h),
-            Text(
-              context.l10n.noImage,
-              style: AppFonts.bodySmall.copyWith(color: AppColors.grey400),
-            ),
-          ],
+  Widget _chip(IconData icon, String text) => Row(
+    mainAxisSize: MainAxisSize.min,
+    children: [
+      Icon(icon, size: 12, color: AppColors.grey500),
+      SizedBox(width: 3.w),
+      Text(
+        text,
+        style: TextStyle(
+          fontFamily: 'Montserrat',
+          fontSize: 11.sp,
+          color: AppColors.grey600,
         ),
       ),
-    );
-  }
+    ],
+  );
 
   String _formatPrice(double price) {
     if (price == 0) return '0';

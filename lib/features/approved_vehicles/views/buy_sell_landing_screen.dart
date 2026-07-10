@@ -45,8 +45,7 @@ class _BuySellLandingScreenState extends State<BuySellLandingScreen> {
           return _buildShimmerList();
         }
         // ── Error state ────────────────────────────────────────
-        if (ctrl.categoriesError.value.isNotEmpty &&
-            ctrl.categories.isEmpty) {
+        if (ctrl.categoriesError.value.isNotEmpty && ctrl.categories.isEmpty) {
           return _buildErrorState();
         }
         // ── Empty state ────────────────────────────────────────
@@ -113,8 +112,11 @@ class _BuySellLandingScreenState extends State<BuySellLandingScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.error_outline_rounded,
-                size: 48.w, color: AppColors.error),
+            Icon(
+              Icons.error_outline_rounded,
+              size: 48.w,
+              color: AppColors.error,
+            ),
             SizedBox(height: 12.h),
             Text(
               ctrl.categoriesError.value,
@@ -127,8 +129,7 @@ class _BuySellLandingScreenState extends State<BuySellLandingScreen> {
             GestureDetector(
               onTap: () => ctrl.fetchCategories(isRefresh: true),
               child: Container(
-                padding: EdgeInsets.symmetric(
-                    horizontal: 24.w, vertical: 10.h),
+                padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 10.h),
                 decoration: BoxDecoration(
                   color: AppColors.primary,
                   borderRadius: BorderRadius.circular(8.r),
@@ -156,8 +157,11 @@ class _BuySellLandingScreenState extends State<BuySellLandingScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.inventory_2_outlined,
-                size: 56.w, color: AppColors.grey400),
+            Icon(
+              Icons.inventory_2_outlined,
+              size: 56.w,
+              color: AppColors.grey400,
+            ),
             SizedBox(height: 12.h),
             Text(
               'No categories found',
@@ -168,9 +172,7 @@ class _BuySellLandingScreenState extends State<BuySellLandingScreen> {
             SizedBox(height: 8.h),
             Text(
               'Pull down to refresh',
-              style: AppFonts.bodySmall.copyWith(
-                color: AppColors.textDisabled,
-              ),
+              style: AppFonts.bodySmall.copyWith(color: AppColors.textDisabled),
             ),
           ],
         ),
@@ -212,28 +214,24 @@ class _VendorCategoryCard extends StatelessWidget {
       ),
       child: Row(
         children: [
-          // ── Category Icon ────────────────────────────────────
-          Container(
-            width: 56.w,
-            height: 56.w,
-            decoration: BoxDecoration(
-              color: AppColors.primary.withOpacity(0.08),
-              borderRadius: BorderRadius.circular(14.r),
-            ),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(14.r),
-              child: category.iconName.isNotEmpty
-                  ? Image.network(
-                      category.iconName,
-                      fit: BoxFit.contain,
-                      errorBuilder: (_, __, ___) =>
-                          Icon(Icons.local_shipping_outlined,
-                              size: 28.w, color: AppColors.primary),
-                    )
-                  : Icon(Icons.local_shipping_outlined,
-                      size: 28.w, color: AppColors.primary),
-            ),
-          ),
+          // ── Category Icon — direct, no background ───────────────────────
+          category.iconName.isNotEmpty
+              ? Image.network(
+                  category.iconName,
+                  width: 56.w,
+                  height: 56.w,
+                  fit: BoxFit.contain,
+                  errorBuilder: (_, __, ___) => Icon(
+                    Icons.local_shipping_outlined,
+                    size: 32.w,
+                    color: AppColors.primary,
+                  ),
+                )
+              : Icon(
+                  Icons.local_shipping_outlined,
+                  size: 32.w,
+                  color: AppColors.primary,
+                ),
           SizedBox(width: 14.w),
 
           // ── Category Info ────────────────────────────────────
@@ -252,12 +250,32 @@ class _VendorCategoryCard extends StatelessWidget {
                     color: AppColors.black,
                   ),
                 ),
-                SizedBox(height: 3.h),
-                Text(
-                  'Available: ${category.approvedVehAvailableCount} vehicles',
-                  style: AppFonts.bodySmall.copyWith(
-                    color: AppColors.grey600,
-                  ),
+                SizedBox(height: 5.h),
+                Row(
+                  children: [
+                    Container(
+                      width: 6.w,
+                      height: 6.w,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: category.approvedVehAvailableCount > 0
+                            ? AppColors.primary
+                            : AppColors.grey400,
+                      ),
+                    ),
+                    SizedBox(width: 5.w),
+                    Text(
+                      category.approvedVehAvailableCount > 0
+                          ? '${category.approvedVehAvailableCount} vehicles available'
+                          : 'No vehicles available',
+                      style: AppFonts.bodySmall.copyWith(
+                        color: category.approvedVehAvailableCount > 0
+                            ? AppColors.primary
+                            : AppColors.grey500,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -293,8 +311,11 @@ class _VendorCategoryCard extends StatelessWidget {
                         ),
                       ),
                       SizedBox(width: 3.w),
-                      Icon(Icons.arrow_forward_ios_rounded,
-                          size: 10.w, color: AppColors.primary),
+                      Icon(
+                        Icons.arrow_forward_ios_rounded,
+                        size: 10.w,
+                        color: AppColors.primary,
+                      ),
                     ],
                   ),
                 ),
@@ -326,8 +347,11 @@ class _VendorCategoryCard extends StatelessWidget {
                         ),
                       ),
                       SizedBox(width: 3.w),
-                      Icon(Icons.arrow_forward_ios_rounded,
-                          size: 10.w, color: Colors.white),
+                      Icon(
+                        Icons.arrow_forward_ios_rounded,
+                        size: 10.w,
+                        color: Colors.white,
+                      ),
                     ],
                   ),
                 ),

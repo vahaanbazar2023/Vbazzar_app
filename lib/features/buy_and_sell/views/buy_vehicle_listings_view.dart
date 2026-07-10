@@ -375,15 +375,31 @@ class _VehicleCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // ── Image Carousel ─────────────────────────────────────────────
-            ClipRRect(
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(AppRadius.lg),
-                topRight: Radius.circular(AppRadius.lg),
-              ),
-              child: NetworkImageCarousel(
-                imageUrls: vehicle.allImageUrls,
-                height: 180.h,
-              ),
+            Stack(
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(AppRadius.lg),
+                    topRight: Radius.circular(AppRadius.lg),
+                  ),
+                  child: NetworkImageCarousel(
+                    imageUrls: vehicle.allImageUrls,
+                    height: 180.h,
+                  ),
+                ),
+                // Wishlist button — top right
+                Positioned(
+                  top: 10,
+                  right: 10,
+                  child: Obx(() {
+                    final ctrl = Get.find<BuyVehicleController>();
+                    return WishlistButton(
+                      isWishlisted: ctrl.isWishlisted(vehicle.sbVehicleId),
+                      onTap: () => ctrl.toggleWishlist(vehicle),
+                    );
+                  }),
+                ),
+              ],
             ),
             // ── Details ────────────────────────────────────────────────────
             Padding(

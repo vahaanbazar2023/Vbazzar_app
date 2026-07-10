@@ -203,6 +203,19 @@ class _BuyVehicleDetailsViewState extends State<BuyVehicleDetailsView> {
                             right: 10,
                             child: _StatusBadge(status: vehicle.status!),
                           ),
+                        // Wishlist button — below status badge
+                        Positioned(
+                          top: vehicle.status != null ? 48 : 10,
+                          right: 10,
+                          child: Obx(
+                            () => WishlistButton(
+                              isWishlisted: ctrl.isWishlisted(
+                                vehicle.sbVehicleId,
+                              ),
+                              onTap: () => ctrl.toggleWishlist(vehicle),
+                            ),
+                          ),
+                        ),
                       ],
                     ),
                   ),

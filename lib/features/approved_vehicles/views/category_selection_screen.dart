@@ -86,12 +86,17 @@ class CategorySelectionScreen extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.error_outline_rounded,
-                size: 48.w, color: AppColors.error),
+            Icon(
+              Icons.error_outline_rounded,
+              size: 48.w,
+              color: AppColors.error,
+            ),
             SizedBox(height: 12.h),
             Text(
               ctrl.categoriesError.value,
-              style: AppFonts.bodyMedium.copyWith(color: AppColors.textSecondary),
+              style: AppFonts.bodyMedium.copyWith(
+                color: AppColors.textSecondary,
+              ),
               textAlign: TextAlign.center,
             ),
             SizedBox(height: 16.h),
@@ -125,12 +130,13 @@ class CategorySelectionScreen extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.category_outlined,
-                size: 48.w, color: AppColors.grey400),
+            Icon(Icons.category_outlined, size: 48.w, color: AppColors.grey400),
             SizedBox(height: 12.h),
             Text(
               'No categories available',
-              style: AppFonts.bodyMedium.copyWith(color: AppColors.textSecondary),
+              style: AppFonts.bodyMedium.copyWith(
+                color: AppColors.textSecondary,
+              ),
             ),
             SizedBox(height: 8.h),
             Text(
@@ -170,27 +176,24 @@ class _CategoryCard extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // Icon
-            Container(
-              width: 64.w,
-              height: 64.w,
-              decoration: BoxDecoration(
-                color: AppColors.primary.withValues(alpha: 0.08),
-                borderRadius: BorderRadius.circular(16.r),
-              ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(16.r),
-                child: Image.network(
-                  category.iconName,
-                  fit: BoxFit.contain,
-                  errorBuilder: (context, error, stackTrace) => Icon(
+            // Icon — direct, no background
+            category.iconName.isNotEmpty
+                ? Image.network(
+                    category.iconName,
+                    width: 64.w,
+                    height: 64.w,
+                    fit: BoxFit.contain,
+                    errorBuilder: (_, __, ___) => Icon(
+                      Icons.local_shipping_outlined,
+                      size: 36.w,
+                      color: AppColors.primary,
+                    ),
+                  )
+                : Icon(
                     Icons.local_shipping_outlined,
-                    size: 32.w,
+                    size: 36.w,
                     color: AppColors.primary,
                   ),
-                ),
-              ),
-            ),
             SizedBox(height: 12.h),
             // Category name
             Padding(
@@ -206,24 +209,37 @@ class _CategoryCard extends StatelessWidget {
                 overflow: TextOverflow.ellipsis,
               ),
             ),
-            SizedBox(height: 4.h),
-            // Count badge
-            if (category.approvedVehAvailableCount > 0)
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 3.h),
-                decoration: BoxDecoration(
-                  color: AppColors.success.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(20.r),
-                ),
-                child: Text(
-                  '${category.approvedVehAvailableCount} available',
-                  style: AppFonts.bodySmall.copyWith(
-                    color: AppColors.successDark,
-                    fontWeight: FontWeight.w500,
-                    fontSize: 11.sp,
+            SizedBox(height: 6.h),
+            // Vehicle count — dot + number
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  width: 6.w,
+                  height: 6.w,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: category.approvedVehAvailableCount > 0
+                        ? AppColors.primary
+                        : AppColors.grey400,
                   ),
                 ),
-              ),
+                SizedBox(width: 5.w),
+                Text(
+                  category.approvedVehAvailableCount > 0
+                      ? '${category.approvedVehAvailableCount} vehicles'
+                      : 'Unavailable',
+                  style: AppFonts.bodySmall.copyWith(
+                    fontSize: 10.sp,
+                    color: category.approvedVehAvailableCount > 0
+                        ? AppColors.primary
+                        : AppColors.grey500,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
+            ),
           ],
         ),
       ),

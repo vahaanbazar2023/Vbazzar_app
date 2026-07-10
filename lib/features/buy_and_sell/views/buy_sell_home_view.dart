@@ -98,28 +98,23 @@ class _CategoryCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 // ── Category image / icon ───────────────────────────────────
-                Container(
-                  width: 90,
-                  height: 90,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(14),
-                  ),
-                  clipBehavior: Clip.antiAlias,
-                  child:
-                      category.iconUrl != null && category.iconUrl!.isNotEmpty
-                      ? Image.network(
-                          category.iconUrl!,
-                          fit: BoxFit.cover,
-                          errorBuilder: (_, __, ___) => Center(
-                            child: Icon(
-                              _iconForCategory(category.categoryCode),
-                              color: AppColors.primary,
-                              size: 36,
-                            ),
-                          ),
-                          loadingBuilder: (_, child, progress) {
-                            if (progress == null) return child;
-                            return Center(
+                category.iconUrl != null && category.iconUrl!.isNotEmpty
+                    ? Image.network(
+                        category.iconUrl!,
+                        width: 90,
+                        height: 90,
+                        fit: BoxFit.contain,
+                        errorBuilder: (_, __, ___) => Icon(
+                          _iconForCategory(category.categoryCode),
+                          color: AppColors.primary,
+                          size: 56,
+                        ),
+                        loadingBuilder: (_, child, progress) {
+                          if (progress == null) return child;
+                          return SizedBox(
+                            width: 90,
+                            height: 90,
+                            child: Center(
                               child: SizedBox(
                                 width: 24,
                                 height: 24,
@@ -132,17 +127,15 @@ class _CategoryCard extends StatelessWidget {
                                       : null,
                                 ),
                               ),
-                            );
-                          },
-                        )
-                      : Center(
-                          child: Icon(
-                            _iconForCategory(category.categoryCode),
-                            color: AppColors.primary,
-                            size: 36,
-                          ),
-                        ),
-                ),
+                            ),
+                          );
+                        },
+                      )
+                    : Icon(
+                        _iconForCategory(category.categoryCode),
+                        color: AppColors.primary,
+                        size: 56,
+                      ),
                 SizedBox(width: AppSpacing.lg),
                 // ── Category info ───────────────────────────────────────────
                 Expanded(
