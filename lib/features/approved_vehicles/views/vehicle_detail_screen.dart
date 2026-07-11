@@ -9,6 +9,8 @@ import '../../../core/design_system/organisms/network_image_carousel.dart';
 import '../../../core/design_system/templates/app_layout.dart';
 import '../../../core/design_system/tokens/app_radius.dart';
 import '../../../core/design_system/tokens/app_spacing.dart';
+import '../../../features/subscription/models/subscription_plan.dart';
+import '../../../features/subscription/views/single_plan_payment_screen.dart';
 import '../../../theme/app_fonts.dart';
 import '../controllers/approved_vehicle_controller.dart';
 import '../domain/entities/approved_vehicle_listing_entity.dart';
@@ -306,102 +308,66 @@ class _ApprVehicleDetail extends StatelessWidget {
     required String subscriptionType,
     required ApprovedVehicleController ctrl,
   }) {
-    if (amount == null || planCode == null) {
-      Get.snackbar(
-        'Error',
-        '$subscriptionType subscription not available',
-        snackPosition: SnackPosition.TOP,
+    // No plan configured — call API directly (payment gateway not yet set up)
+    if (amount == null || amount <= 0 || planCode == null) {
+      _callApi(
+        approvedVehicleId: approvedVehicleId,
+        subscriptionType: subscriptionType,
+        ctrl: ctrl,
       );
       return;
     }
-    Get.dialog(
-      Dialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16.r),
-        ),
-        child: Padding(
-          padding: EdgeInsets.all(AppSpacing.lg),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(
-                Icons.verified_rounded,
-                size: 48.w,
-                color: AppColors.primary,
-              ),
-              SizedBox(height: 12.h),
-              Text(
-                title,
-                style: TextStyle(
-                  fontFamily: 'Montserrat',
-                  fontSize: 18.sp,
-                  fontWeight: FontWeight.w700,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              SizedBox(height: 8.h),
-              Text(
-                description,
-                style: AppFonts.bodyMedium.copyWith(color: AppColors.grey600),
-                textAlign: TextAlign.center,
-              ),
-              SizedBox(height: 16.h),
-              Text(
-                '₹${_fmtPrice(amount)}',
-                style: TextStyle(
-                  fontFamily: 'Montserrat',
-                  fontSize: 24.sp,
-                  fontWeight: FontWeight.w700,
-                  color: AppColors.primary,
-                ),
-              ),
-              SizedBox(height: 20.h),
-              Row(
-                children: [
-                  Expanded(
-                    child: OutlinedButton(
-                      onPressed: () => Get.back(),
-                      child: const Text('Cancel'),
-                    ),
-                  ),
-                  SizedBox(width: 12.w),
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: () async {
-                        Get.back();
-                        final ok = subscriptionType == 'category'
-                            ? await ctrl.bookVehicle(approvedVehicleId)
-                            : await ctrl.requestInspection(approvedVehicleId);
-                        Get.snackbar(
-                          ok ? 'Success' : 'Error',
-                          ok
-                              ? (subscriptionType == 'category'
-                                    ? 'Vehicle booked!'
-                                    : 'Inspection requested!')
-                              : 'Something went wrong. Try again.',
-                          snackPosition: SnackPosition.TOP,
-                          backgroundColor: ok
-                              ? Colors.green.shade100
-                              : Colors.red.shade100,
-                          colorText: ok
-                              ? Colors.green.shade900
-                              : Colors.red.shade900,
-                        );
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.primary,
-                        foregroundColor: Colors.white,
-                      ),
-                      child: const Text('Pay Now'),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
+
+    // Build plan and navigate to SinglePlanPaymentScreen (PayU)
+    final plan = SubscriptionPlan(
+      typeCode: subscriptionType == 'category' ? 'APPR_BOOK' : 'APPR_INSP',
+      planCode: planCode,
+      name: title,
+      price: amount,
+      displayOrder: 1,
+      status: 'active',
+      featDescription: description,
+      planMetric: 'days',
+      planMetricValue: '30',
+    );
+
+    Get.to(
+      () => SinglePlanPaymentScreen(
+        plan: plan,
+        title: title,
+        subtitle: description,
+        source: subscriptionType == 'category' ? 'APPR_BOOK' : 'APPR_INSP',
+        onPaymentSuccess: () {
+          Get.back();
+          _callApi(
+            approvedVehicleId: approvedVehicleId,
+            subscriptionType: subscriptionType,
+            ctrl: ctrl,
+          );
+        },
       ),
-      barrierDismissible: false,
+      transition: Transition.rightToLeft,
+    );
+  }
+
+  static Future<void> _callApi({
+    required String approvedVehicleId,
+    required String subscriptionType,
+    required ApprovedVehicleController ctrl,
+  }) async {
+    final ok = subscriptionType == 'category'
+        ? await ctrl.bookVehicle(approvedVehicleId)
+        : await ctrl.requestInspection(approvedVehicleId);
+    Get.snackbar(
+      ok ? 'Success' : 'Error',
+      ok
+          ? (subscriptionType == 'category'
+                ? 'Vehicle booked successfully!'
+                : 'Inspection requested successfully!')
+          : 'Something went wrong. Please try again.',
+      snackPosition: SnackPosition.TOP,
+      backgroundColor: ok ? Colors.green.shade100 : Colors.red.shade100,
+      colorText: ok ? Colors.green.shade900 : Colors.red.shade900,
     );
   }
 
@@ -773,4 +739,3 @@ class _ApprDetailRow {
   final String value;
   const _ApprDetailRow(this.icon, this.label, this.value);
 }
-
