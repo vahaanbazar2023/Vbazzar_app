@@ -136,6 +136,26 @@ class ProfileScreen extends GetView<ProfileController> {
                       ),
                       SizedBox(height: 24.h),
                       _MenuSection(
+                        title: 'Approved Vehicles',
+                        items: [
+                          _MenuItem(
+                            icon: Icons.bookmark_added_outlined,
+                            label: 'Booked Vehicles',
+                            onTap: () => Get.toNamed(
+                              AppRoutes.approvedVehicleMyBookings,
+                            ),
+                          ),
+                          _MenuItem(
+                            icon: Icons.search_outlined,
+                            label: 'Inspection Vehicles',
+                            onTap: () => Get.toNamed(
+                              AppRoutes.approvedVehicleMyInspections,
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 24.h),
+                      _MenuSection(
                         title: context.l10n.inspectionAndValuation,
                         items: [
                           _MenuItem(

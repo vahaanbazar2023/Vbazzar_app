@@ -216,8 +216,8 @@ class ApprovedVehicleController extends GetxController {
       await _repository.updateUserInterest(
         userId: userId,
         approvedVehicleId: approvedVehicleId,
-        isInterested: 'yes',
-        isBooked: 'yes',
+        isInterested: 'Yes',
+        isBooked: 'Yes',
       );
       if (_currentCategoryType.isNotEmpty) {
         fetchListings(categoryType: _currentCategoryType, isRefresh: true);
@@ -242,8 +242,8 @@ class ApprovedVehicleController extends GetxController {
       await _repository.updateUserInterest(
         userId: userId,
         approvedVehicleId: approvedVehicleId,
-        isInterested: 'yes',
-        isBooked: 'no',
+        isInterested: 'Yes',
+        isBooked: 'No',
       );
       if (_currentCategoryType.isNotEmpty) {
         fetchListings(categoryType: _currentCategoryType, isRefresh: true);
@@ -536,22 +536,22 @@ class ApprovedVehicleController extends GetxController {
       // Build dio.FormData with multipart files
       final dioFormData = dio.FormData.fromMap(formData);
       for (final path in sellVehicleImages) {
-        dioFormData.files.add(MapEntry(
-          'vehicle_images',
-          await dio.MultipartFile.fromFile(path),
-        ));
+        dioFormData.files.add(
+          MapEntry('vehicle_images', await dio.MultipartFile.fromFile(path)),
+        );
       }
       for (final path in sellRCFiles) {
-        dioFormData.files.add(MapEntry(
-          'rc_documents',
-          await dio.MultipartFile.fromFile(path),
-        ));
+        dioFormData.files.add(
+          MapEntry('rc_documents', await dio.MultipartFile.fromFile(path)),
+        );
       }
       for (final path in sellInsuranceFiles) {
-        dioFormData.files.add(MapEntry(
-          'insurance_documents',
-          await dio.MultipartFile.fromFile(path),
-        ));
+        dioFormData.files.add(
+          MapEntry(
+            'insurance_documents',
+            await dio.MultipartFile.fromFile(path),
+          ),
+        );
       }
 
       final success = await _repository.submitVehicle(dioFormData);
