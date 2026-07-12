@@ -89,7 +89,6 @@ class AppAssets {
 
   // ── Mechanic icons ────────────────────────────────────────────────────────
   static const List<String> mechanicIcons = [
-    '${_images}m1.png',
     '${_images}m2.png',
     '${_images}m3.png',
     '${_images}m4.png',

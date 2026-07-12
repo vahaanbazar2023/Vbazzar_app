@@ -100,7 +100,7 @@ class HomeScreen extends GetView<HomeController> {
                     if (data.mostBoughtCategories.isNotEmpty) ...[
                       _SectionHeader(
                         title: context.l10n.mostBoughtVehicles,
-                        onViewAll: () => _openAuction(),
+                        onViewAll: () => Get.toNamed(AppRoutes.buySellHome),
                       ),
                       SizedBox(height: 12.h),
                       _MostBoughtCategoriesGrid(
