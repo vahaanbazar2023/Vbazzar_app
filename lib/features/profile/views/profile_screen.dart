@@ -49,15 +49,15 @@ class ProfileScreen extends GetView<ProfileController> {
                             label: context.l10n.manageProfile,
                             onTap: () => controller.openManageProfile(),
                           ),
-                          _MenuItem(
-                            icon: Icons.lock_outline,
-                            label: context.l10n.passwordAndSecurity,
-                          ),
-                          _MenuItem(
-                            icon: Icons.account_balance_wallet_outlined,
-                            label: context.l10n.myWallet,
-                            onTap: () => Get.toNamed(AppRoutes.walletDashboard),
-                          ),
+                          // _MenuItem(
+                          //   icon: Icons.lock_outline,
+                          //   label: context.l10n.passwordAndSecurity,
+                          // ),
+                          // _MenuItem(
+                          //   icon: Icons.account_balance_wallet_outlined,
+                          //   label: context.l10n.myWallet,
+                          //   onTap: () => Get.toNamed(AppRoutes.walletDashboard),
+                          // ),
                           _MenuItem(
                             icon: Icons.card_membership_outlined,
                             label: context.l10n.my_subscriptions_title,

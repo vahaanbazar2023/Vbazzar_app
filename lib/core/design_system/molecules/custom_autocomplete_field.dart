@@ -125,8 +125,30 @@ class _CustomAutocompleteFieldState<T extends Object>
   @override
   void didUpdateWidget(CustomAutocompleteField<T> oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.options != oldWidget.options) {
-      _filteredOptions = widget.options;
+    // NOTE: `widget.options` is often an RxList (GetX) that is mutated in
+    // place via assignAll() rather than reassigned. That means reference
+    // equality (`!=`) never detects the change once data finishes loading
+    // asynchronously, leaving an already-open dropdown stuck on stale/empty
+    // data. Compare length + loading state as well so we always pick up
+    // freshly-loaded options.
+    final optionsChanged =
+        widget.options != oldWidget.options ||
+        widget.options.length != oldWidget.options.length;
+    final loadingChanged = widget.isLoading != oldWidget.isLoading;
+
+    if (optionsChanged || loadingChanged) {
+      final query = widget.controller.text.toLowerCase();
+      _filteredOptions = query.isEmpty
+          ? List<T>.from(widget.options)
+          : widget.options
+                .where(
+                  (option) => widget
+                      .displayStringForOption(option)
+                      .toLowerCase()
+                      .contains(query),
+                )
+                .toList();
+
       if (_overlayEntry != null) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           if (mounted && _overlayEntry != null) {

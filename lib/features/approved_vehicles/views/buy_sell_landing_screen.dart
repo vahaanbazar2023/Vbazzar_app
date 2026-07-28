@@ -199,7 +199,8 @@ class _VendorCategoryCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(AppSpacing.md),
+      height: 80,
+       padding: EdgeInsets.only(left:AppSpacing.md),
       decoration: BoxDecoration(
         color: AppColors.white,
         borderRadius: AppRadius.borderRadiusMd,
@@ -213,6 +214,8 @@ class _VendorCategoryCard extends StatelessWidget {
         ],
       ),
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           // ── Category Icon — direct, no background ───────────────────────
           category.iconName.isNotEmpty
@@ -238,6 +241,7 @@ class _VendorCategoryCard extends StatelessWidget {
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
                   category.categoryName,
@@ -320,7 +324,7 @@ class _VendorCategoryCard extends StatelessWidget {
                   ),
                 ),
               ),
-              SizedBox(height: 6.h),
+              SizedBox(height: 10.h),
               // BUY button
               GestureDetector(
                 onTap: onBuyTap,
@@ -328,7 +332,7 @@ class _VendorCategoryCard extends StatelessWidget {
                   width: 80.w,
                   height: 34.h,
                   decoration: BoxDecoration(
-                    color: const Color(0xFF469C15),
+                    color: AppColors.ctaGradientEnd,
                     borderRadius: BorderRadius.only(
                       topLeft: Radius.circular(16.r),
                       bottomRight: Radius.circular(10.r),
@@ -343,7 +347,7 @@ class _VendorCategoryCard extends StatelessWidget {
                           fontFamily: 'Montserrat',
                           fontSize: 11.sp,
                           fontWeight: FontWeight.w700,
-                          color: Colors.white,
+                          color: AppColors.white,
                         ),
                       ),
                       SizedBox(width: 3.w),

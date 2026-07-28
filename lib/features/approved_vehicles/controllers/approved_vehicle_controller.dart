@@ -2,6 +2,8 @@ import 'package:dio/dio.dart' as dio;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import '../../../core/network/endpoints/api_endpoints.dart';
+import '../../../core/network/network_service.dart';
 import '../../../core/storage/secure_storage_service.dart';
 import '../../../core/storage/storage_keys.dart';
 import '../domain/entities/approved_vehicle_category_entity.dart';
@@ -73,6 +75,18 @@ class ApprovedVehicleController extends GetxController {
   final sellStateC = TextEditingController();
   final sellCityC = TextEditingController();
 
+  // ── Sell Form — State/City dropdown data ──────────────────────
+  final sellStates = <Map<String, String>>[].obs; // [{state_id, state_name}]
+  final sellCities = <Map<String, String>>[].obs; // [{city_id, city_name}]
+  final isLoadingSellStates = false.obs;
+  final isLoadingSellCities = false.obs;
+  final selectedSellStateId = ''.obs;
+  final selectedSellCityId = ''.obs;
+
+  // ── Sell Form — Brand dropdown data ────────────────────────────
+  final sellBrands = <Map<String, String>>[].obs; // [{brand_code, brand_name}]
+  final isLoadingSellBrands = false.obs;
+
   // ── Sell Form — File Paths ────────────────────────────────────
   final sellVehicleImages = <String>[].obs;
   final sellRCFiles = <String>[].obs;
@@ -102,6 +116,7 @@ class ApprovedVehicleController extends GetxController {
   void onInit() {
     super.onInit();
     fetchCategories();
+    fetchSellStates();
   }
 
   @override
@@ -338,13 +353,15 @@ class ApprovedVehicleController extends GetxController {
   }
 
   void validateSellState() {
-    sellStateError.value = sellStateC.text.trim().isEmpty
+    sellStateError.value =
+        (selectedSellStateId.value.isEmpty && sellStateC.text.trim().isEmpty)
         ? 'State is required'
         : '';
   }
 
   void validateSellCity() {
-    sellCityError.value = sellCityC.text.trim().isEmpty
+    sellCityError.value =
+        (selectedSellCityId.value.isEmpty && sellCityC.text.trim().isEmpty)
         ? 'City is required'
         : '';
   }
@@ -494,8 +511,12 @@ class ApprovedVehicleController extends GetxController {
         'user_id': userId,
         'category_type': sellCategoryCodeC.text.trim(),
         'registration_number': sellRegNumberC.text.trim(),
-        'state_code': sellStateC.text.trim(),
-        'city_code': sellCityC.text.trim(),
+        'state_code': selectedSellStateId.value.isNotEmpty
+            ? selectedSellStateId.value
+            : sellStateC.text.trim(),
+        'city_code': selectedSellCityId.value.isNotEmpty
+            ? selectedSellCityId.value
+            : sellCityC.text.trim(),
         'fitness_available': sellFitness.value.isEmpty
             ? 'No'
             : sellFitness.value,
@@ -607,6 +628,11 @@ class ApprovedVehicleController extends GetxController {
     sellRCFiles.clear();
     sellInsuranceFiles.clear();
 
+    selectedSellStateId.value = '';
+    selectedSellCityId.value = '';
+    sellCities.clear();
+    sellBrands.clear();
+
     // Clear all errors
     sellRegNumberError.value = '';
     sellStateError.value = '';
@@ -629,5 +655,146 @@ class ApprovedVehicleController extends GetxController {
   void initSellForm(String categoryName, String categoryCode) {
     sellCategoryNameC.text = categoryName;
     sellCategoryCodeC.text = categoryCode;
+    sellBrands.clear();
+    if (categoryCode.isNotEmpty) {
+      fetchSellBrands(categoryCode);
+    }
+  }
+
+  // ═══════════════════════════════════════════════════════════════
+  // Sell Form — Location (State / City)
+  // ═══════════════════════════════════════════════════════════════
+
+  Future<void> fetchSellStates() async {
+    isLoadingSellStates.value = true;
+    try {
+      final response = await NetworkService.to.get(ApiEndpoints.states);
+      if (response.statusCode == 200) {
+        final raw = response.data;
+        final List<dynamic> list = (raw is Map)
+            ? ((raw['data']?['states'] ?? raw['data'] ?? []) as List)
+            : (raw is List ? raw : []);
+        sellStates.assignAll(
+          list
+              .map(
+                (e) => {
+                  'state_id': e['state_id']?.toString() ?? '',
+                  'state_name': e['state_name']?.toString() ?? '',
+                },
+              )
+              .toList(),
+        );
+      }
+    } catch (e) {
+      debugPrint('🔴 [SELL STATES ERROR] $e');
+    } finally {
+      isLoadingSellStates.value = false;
+    }
+  }
+
+  Future<void> fetchSellCities(String stateId) async {
+    selectedSellStateId.value = stateId;
+    selectedSellCityId.value = '';
+    sellCityC.clear();
+    sellCities.clear();
+    isLoadingSellCities.value = true;
+    try {
+      final response = await NetworkService.to.get(
+        ApiEndpoints.cities,
+        queryParameters: {'state_id': stateId},
+      );
+      if (response.statusCode == 200) {
+        final raw = response.data;
+        final List<dynamic> list = (raw is Map)
+            ? ((raw['data']?['cities'] ?? raw['data'] ?? []) as List)
+            : (raw is List ? raw : []);
+        sellCities.assignAll(
+          list
+              .map(
+                (e) => {
+                  'city_id': e['city_id']?.toString() ?? '',
+                  'city_name': e['city_name']?.toString() ?? '',
+                },
+              )
+              .toList(),
+        );
+      }
+    } catch (e) {
+      debugPrint('🔴 [SELL CITIES ERROR] $e');
+    } finally {
+      isLoadingSellCities.value = false;
+    }
+  }
+
+  void selectSellCity(String cityId) {
+    selectedSellCityId.value = cityId;
+  }
+
+  // ═══════════════════════════════════════════════════════════════
+  // Sell Form — Brand
+  // ═══════════════════════════════════════════════════════════════
+
+  Future<void> fetchSellBrands(String categoryCode) async {
+    isLoadingSellBrands.value = true;
+    sellBrands.clear();
+    final userId = await SecureStorageService.to.read(StorageKeys.userId) ?? '';
+    final requestBody = {
+      'category_code': categoryCode,
+      'user_id': userId,
+      'status': 'active',
+    };
+    debugPrint(
+      '🟡 [SELL BRANDS REQUEST] POST ${ApiEndpoints.vehicleBrands} body=$requestBody',
+    );
+    try {
+      final response = await NetworkService.to.post(
+        ApiEndpoints.vehicleBrands,
+        data: requestBody,
+      );
+      debugPrint(
+        '🟢 [SELL BRANDS] categoryCode=$categoryCode response=${response.data}',
+      );
+      if (response.statusCode == 200) {
+        final raw = response.data;
+        // API returns: { "brands": [...] } or wrapped:
+        // { "status": "success", "data": { "brands": [...] } } or { "data": [...] }
+        List<dynamic> list = [];
+        if (raw is Map) {
+          if (raw['brands'] is List) {
+            list = raw['brands'] as List<dynamic>;
+          } else if (raw['data'] is Map &&
+              (raw['data'] as Map)['brands'] is List) {
+            list = (raw['data'] as Map)['brands'] as List<dynamic>;
+          } else if (raw['data'] is List) {
+            list = raw['data'] as List<dynamic>;
+          }
+        } else if (raw is List) {
+          list = raw;
+        }
+        sellBrands.assignAll(
+          list
+              .whereType<Map>()
+              .map(
+                (e) => {
+                  'brand_code': e['brand_code']?.toString() ?? '',
+                  'brand_name': e['brand_name']?.toString() ?? '',
+                },
+              )
+              .toList(),
+        );
+      }
+      debugPrint('🟢 [SELL BRANDS] parsed count=${sellBrands.length}');
+    } on dio.DioException catch (e) {
+      debugPrint(
+        '🔴 [SELL BRANDS ERROR] status=${e.response?.statusCode} '
+        'requestBody=${e.requestOptions.data} '
+        'responseBody=${e.response?.data} '
+        'message=${e.message}',
+      );
+    } catch (e) {
+      debugPrint('🔴 [SELL BRANDS ERROR] $e');
+    } finally {
+      isLoadingSellBrands.value = false;
+    }
   }
 }
