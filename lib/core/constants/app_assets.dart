@@ -14,6 +14,8 @@ class AppAssets {
   static const String CE = '${_images}CE.png';
   static const String CV = '${_images}CV.png';
   static const String CC = '${_images}cc.png';
+  static const String homeCE = '${_images}excavators_img.png';
+  static const String homeCV = '${_images}icv_img.png';
 
   // category Images
   static const String auction = '${_images}auction.png';

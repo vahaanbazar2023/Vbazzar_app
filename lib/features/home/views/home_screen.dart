@@ -723,7 +723,7 @@ class _MostBoughtCategoriesGrid extends StatelessWidget {
           crossAxisCount: 2,
           mainAxisSpacing: 12.h,
           crossAxisSpacing: 12.w,
-          childAspectRatio: 0.78,
+          childAspectRatio: 0.9,
         ),
         itemCount: items.length,
         itemBuilder: (_, i) => _CategoryCard(category: items[i]),
@@ -795,7 +795,7 @@ class _CategoryCard extends StatelessWidget {
             ),
             // ── Info ─────────────────────────────────────────
             Padding(
-              padding: EdgeInsets.fromLTRB(8.w, 6.h, 8.w, 8.h),
+              padding: EdgeInsets.fromLTRB(12.w, 6.h, 8.w, 12.h),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -1362,7 +1362,7 @@ class _SpareSupportSection extends StatelessWidget {
         children: [
           Expanded(
             child: _SpareSupportTile(
-              icon: AppAssets.CE,
+              icon: AppAssets.homeCE,
               title: context.l10n.constructionEquipmentCe,
               subtitle: context.l10n.spareSupportTileSubtitle,
               onTap: () => Get.toNamed(
@@ -1374,7 +1374,7 @@ class _SpareSupportSection extends StatelessWidget {
           SizedBox(width: 12.w),
           Expanded(
             child: _SpareSupportTile(
-              icon: AppAssets.CV,
+              icon: AppAssets.homeCV,
               title: context.l10n.commercialVehicleCv,
               subtitle: context.l10n.spareSupportTileSubtitle,
               onTap: () => Get.toNamed(
@@ -1436,7 +1436,7 @@ class _SpareSupportTile extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Image.asset(icon, height: 48.h, fit: BoxFit.contain),
+                  Image.asset(icon, height: 54.h, fit: BoxFit.contain),
                   SizedBox(height: 10.h),
                   Text(
                     title,
