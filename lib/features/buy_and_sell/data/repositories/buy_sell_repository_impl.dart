@@ -455,6 +455,8 @@ class BuySellRepositoryImpl implements BuySellRepository {
         ApiEndpoints.listBuySubscribedVehicles,
         data: {'user_id': userId, 'page': page, 'limit': limit},
       );
+      print('📤 listSubscribedVehicles request data: user_id=$userId, page=$page, limit=$limit');
+      print('🔵 listSubscribedVehicles raw response: ${response.data}');
       if (response.statusCode == 200) {
         final data = response.data;
         if (data['status'] == 'success' && data['data'] != null) {

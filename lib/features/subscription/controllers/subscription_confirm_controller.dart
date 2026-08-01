@@ -3,6 +3,7 @@ import '../../../core/design_system/molecules/custom_snackbar.dart';
 import '../../../core/storage/secure_storage_service.dart';
 import '../../../core/storage/storage_keys.dart';
 import '../../../features/auction/controllers/vehicle_listing_controller.dart';
+import '../../../features/auction/controllers/my_bids_wins_controller.dart';
 import '../../../features/buy_and_sell/controllers/vehicle_detail_controller.dart';
 import '../../../features/payment/controllers/payment_controller.dart';
 import '../../../features/spare_and_fms/controllers/spare_and_fms_controller.dart';
@@ -179,9 +180,11 @@ class SubscriptionConfirmController extends GetxController {
         break;
 
       case SubscriptionTypeCode.auctionBidLimit: // SUBT002
-        if (Get.isRegistered<VehicleListingController>()) {
-          final ctrl = Get.find<VehicleListingController>();
+        // Check both VehicleListingController (main auction) and MyBidsController
+        final hasVehicleCtrl = Get.isRegistered<VehicleListingController>();
+        final hasMyBidsCtrl = Get.isRegistered<MyBidsController>();
 
+        if (hasVehicleCtrl || hasMyBidsCtrl) {
           // Pop subscription screens immediately — user is back on vehicle
           // detail/listing screen right away.
           Get.until(
@@ -191,10 +194,15 @@ class SubscriptionConfirmController extends GetxController {
                 route.settings.name != AppRoutes.walletPayment,
           );
 
-          // Now run the full refresh + bid revalidation pipeline in the
-          // background. The vehicle detail screen's isPlacingBid spinner
-          // shows while the bid is being placed.
-          _runSUBT002BackgroundFlow(ctrl);
+          // Run the full refresh + bid revalidation pipeline in the background
+          if (hasVehicleCtrl) {
+            final ctrl = Get.find<VehicleListingController>();
+            _runSUBT002BackgroundFlow(ctrl);
+          }
+          if (hasMyBidsCtrl) {
+            final ctrl = Get.find<MyBidsController>();
+            _runMyBidsSUBT002BackgroundFlow(ctrl);
+          }
         } else {
           // Fallback: controller was disposed — just clean the stack.
           Get.until(
@@ -370,6 +378,29 @@ class SubscriptionConfirmController extends GetxController {
 
     // 2. Refresh vehicle list so availableBalance is up to date in the UI
     await ctrl.silentRefresh();
+
+    // 3. Revalidate pending bid
+    await ctrl.revalidatePendingBid();
+  }
+
+  /// Background flow for My Bids SUBT002 revalidation:
+  /// 1. Refresh subscription cache
+  /// 2. Refresh bids list
+  /// 3. Revalidate the pending bid (Case A: place it / Case B: show error)
+  Future<void> _runMyBidsSUBT002BackgroundFlow(MyBidsController ctrl) async {
+    // 1. Refresh subscription cache
+    try {
+      await SubscriptionGuardService.to.invalidateAndReload();
+    } catch (_) {
+      CustomSnackbar.show(
+        message: 'Could not refresh subscription. Please try again.',
+        type: SnackbarType.error,
+      );
+      return;
+    }
+
+    // 2. Refresh bids list
+    await ctrl.refresh();
 
     // 3. Revalidate pending bid
     await ctrl.revalidatePendingBid();

@@ -12,6 +12,7 @@ import '../../../core/extensions/context_extensions.dart';
 import '../../../core/storage/secure_storage_service.dart';
 import '../../../core/storage/storage_keys.dart';
 import '../../../features/auction/controllers/vehicle_listing_controller.dart';
+import '../../../features/auction/controllers/my_bids_wins_controller.dart';
 import '../../../features/buy_and_sell/controllers/vehicle_detail_controller.dart';
 import '../../../features/main_shell/controllers/main_shell_controller.dart';
 import '../../../features/payment/controllers/payment_controller.dart';
@@ -56,6 +57,10 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     if (widget.subscriptionSource != 'SUBT002') {
       if (Get.isRegistered<VehicleListingController>()) {
         Get.find<VehicleListingController>().pendingBid.value = null;
+      }
+      // Also clear pending bid from My Bids screen if applicable
+      if (Get.isRegistered<MyBidsController>()) {
+        Get.find<MyBidsController>().pendingBid.value = null;
       }
     }
     super.dispose();
@@ -222,15 +227,25 @@ class _SubscriptionBodyState extends State<_SubscriptionBody> {
         type: SnackbarType.success,
       );
     } else if (source == 'SUBT002') {
-      if (Get.isRegistered<VehicleListingController>()) {
-        final ctrl = Get.find<VehicleListingController>();
+      // Check both VehicleListingController (main auction) and MyBidsController
+      final hasVehicleCtrl = Get.isRegistered<VehicleListingController>();
+      final hasMyBidsCtrl = Get.isRegistered<MyBidsController>();
+
+      if (hasVehicleCtrl || hasMyBidsCtrl) {
         Get.until(
           (route) =>
               route.settings.name != AppRoutes.subscription &&
               route.settings.name != AppRoutes.subscriptionConfirm &&
               route.settings.name != AppRoutes.walletPayment,
         );
-        _runSUBT002Background(ctrl);
+        if (hasVehicleCtrl) {
+          final ctrl = Get.find<VehicleListingController>();
+          _runSUBT002Background(ctrl);
+        }
+        if (hasMyBidsCtrl) {
+          final ctrl = Get.find<MyBidsController>();
+          _runMyBidsSUBT002Background(ctrl);
+        }
       } else {
         Get.until(
           (route) =>
@@ -332,6 +347,19 @@ class _SubscriptionBodyState extends State<_SubscriptionBody> {
       return;
     }
     await ctrl.silentRefresh();
+    await ctrl.revalidatePendingBid();
+  }
+
+  Future<void> _runMyBidsSUBT002Background(MyBidsController ctrl) async {
+    try {
+      await SubscriptionGuardService.to.invalidateAndReload();
+    } catch (_) {
+      CustomSnackbar.show(
+        message: context.l10n.couldNotRefreshSubscription,
+        type: SnackbarType.error,
+      );
+      return;
+    }
     await ctrl.revalidatePendingBid();
   }
 

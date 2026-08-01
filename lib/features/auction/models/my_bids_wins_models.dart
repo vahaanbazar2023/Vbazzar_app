@@ -61,6 +61,12 @@ class MyBidItem {
   }
 
   bool get isWinning => userBidAmount > 0 && userBidAmount >= currentHighestBid;
+
+  /// Convenience getter for the user's current bid amount
+  int get yourBid => userBidAmount;
+
+  /// Convenience getter for minimum bid price from vehicle details
+  int get minimumPrice => vehicleDetails.minimumPrice;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────

@@ -21,6 +21,7 @@ class MyBidDetailView extends StatefulWidget {
 
 class _MyBidDetailViewState extends State<MyBidDetailView> {
   final _bidCtrl = TextEditingController();
+  String? _errorText;
 
   @override
   void dispose() {
@@ -222,15 +223,29 @@ class _MyBidDetailViewState extends State<MyBidDetailView> {
                     ),
                   )
                 : Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       // Bid amount input
-                      Expanded(child: _BidAmountField(controller: _bidCtrl)),
+                      Expanded(
+                        child: _BidAmountField(
+                          controller: _bidCtrl,
+                          errorText: _errorText,
+                          onChanged: (_) {
+                            if (_errorText != null) {
+                              setState(() => _errorText = null);
+                            }
+                          },
+                        ),
+                      ),
                       SizedBox(width: AppSpacing.sm),
                       // Bid Now button
                       Obx(() {
                         final ctrl = Get.find<MyBidsController>();
                         return GradientButton.filled(
                           text: context.l10n.bid_now,
+                          width: 110.w,
+                          height: 48.h,
+                          fontSize: 14.sp,
                           isLoading: ctrl.isPlacingBid.value,
                           onPressed: ctrl.isPlacingBid.value
                               ? null
@@ -245,21 +260,32 @@ class _MyBidDetailViewState extends State<MyBidDetailView> {
     );
   }
 
-  void _onBidNow(MyBidsController ctrl) {
-    final amount = int.tryParse(_bidCtrl.text.replaceAll(',', '').trim()) ?? 0;
-    if (amount <= 0) {
-      Get.snackbar(
-        context.l10n.invalidAmount,
-        context.l10n.invalidBidAmount,
-        snackPosition: SnackPosition.TOP,
-      );
+  Future<void> _onBidNow(MyBidsController ctrl) async {
+    final raw = _bidCtrl.text.replaceAll(',', '').trim();
+    final amount = int.tryParse(raw);
+    if (amount == null || amount <= 0) {
+      setState(() => _errorText = context.l10n.enterValidBidAmount);
       return;
     }
-    ctrl.placeBid(
-      vehicleId: widget.item.vehicleId,
-      auctionId: widget.item.auctionId,
+    if (amount % 100 != 0) {
+      setState(() => _errorText = context.l10n.bidMultipleOf100);
+      return;
+    }
+    setState(() => _errorText = null);
+
+    final error = await ctrl.placeBid(
+      bidItem: widget.item,
       bidAmount: amount,
     );
+
+    if (!mounted) return;
+    if (error == '__navigated__') {
+      // Already navigated to subscription screen.
+    } else if (error == null) {
+      _bidCtrl.clear();
+    } else {
+      setState(() => _errorText = error);
+    }
   }
 
   static String _fmt(int n) {
@@ -298,7 +324,13 @@ class _MyBidDetailViewState extends State<MyBidDetailView> {
 
 class _BidAmountField extends StatelessWidget {
   final TextEditingController controller;
-  const _BidAmountField({required this.controller});
+  final String? errorText;
+  final ValueChanged<String>? onChanged;
+  const _BidAmountField({
+    required this.controller,
+    this.errorText,
+    this.onChanged,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -309,6 +341,7 @@ class _BidAmountField extends StatelessWidget {
         controller: controller,
         keyboardType: TextInputType.number,
         textAlignVertical: TextAlignVertical.center,
+        onChanged: onChanged,
         style: TextStyle(
           fontFamily: 'Montserrat',
           fontSize: 14.sp,
@@ -329,6 +362,7 @@ class _BidAmountField extends StatelessWidget {
             fontSize: 13.sp,
             color: AppColors.grey400,
           ),
+          errorText: errorText,
           contentPadding: EdgeInsets.symmetric(
             horizontal: 16.w,
             vertical: 12.h,
@@ -347,6 +381,10 @@ class _BidAmountField extends StatelessWidget {
           focusedBorder: OutlineInputBorder(
             borderRadius: radius,
             borderSide: BorderSide(color: AppColors.primary, width: 1.5),
+          ),
+          errorBorder: OutlineInputBorder(
+            borderRadius: radius,
+            borderSide: const BorderSide(color: AppColors.error),
           ),
         ),
       ),
