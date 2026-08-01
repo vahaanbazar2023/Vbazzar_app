@@ -24,7 +24,7 @@ class CategoriesScreen extends GetView<CategoriesController> {
                   crossAxisCount: 2,
                   mainAxisSpacing: 16,
                   crossAxisSpacing: 16,
-                  childAspectRatio: 1.0,
+                  childAspectRatio: 1,
                 ),
                 delegate: SliverChildBuilderDelegate((context, index) {
                   final item = CategoriesController.categories[index];
@@ -48,7 +48,7 @@ class _Header extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 24, 16, 20),
+      padding: const EdgeInsets.fromLTRB(18, 8, 8, 24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -61,7 +61,7 @@ class _Header extends StatelessWidget {
               color: AppColors.black,
             ),
           ),
-          const SizedBox(height: 6),
+          const SizedBox(height: 4),
           Text(
             context.l10n.exploreServicesYourVehicle,
             style: TextStyle(
@@ -121,7 +121,7 @@ class _CategoryCard extends StatelessWidget {
               Positioned.fill(
                 bottom: 48,
                 child: Padding(
-                  padding: const EdgeInsets.fromLTRB(12, 12, 12, 0),
+                  padding: const EdgeInsets.fromLTRB(12, 12, 12, 8),
                   child: Image.asset(item.assetPath, fit: BoxFit.contain),
                 ),
               ),
@@ -130,10 +130,11 @@ class _CategoryCard extends StatelessWidget {
               Positioned(
                 left: 0,
                 right: 0,
-                bottom: -4,
+                bottom: 8,
+
                 child: Center(
                   child: Container(
-                    height: 52,
+                    height: 42,
                     constraints: const BoxConstraints(
                       maxWidth: 150,
                       minWidth: 100,
@@ -142,7 +143,7 @@ class _CategoryCard extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: Colors.black,
                       borderRadius: BorderRadius.circular(72),
-                      border: Border.all(color: Colors.white, width: 4),
+                      border: Border.all(color: Colors.white, width: 2),
                     ),
                     alignment: Alignment.center,
                     child: Text(
