@@ -36,9 +36,9 @@ class CategorySelectionScreen extends StatelessWidget {
             padding: EdgeInsets.all(AppSpacing.lg),
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2,
-              mainAxisSpacing: 14.h,
-              crossAxisSpacing: 14.w,
-              childAspectRatio: 0.95,
+              mainAxisSpacing: 16.h,
+              crossAxisSpacing: 16.w,
+              childAspectRatio: 1,
             ),
             itemCount: ctrl.categories.length,
             itemBuilder: (context, index) {
@@ -65,7 +65,7 @@ class CategorySelectionScreen extends StatelessWidget {
         crossAxisCount: 2,
         mainAxisSpacing: 14.h,
         crossAxisSpacing: 14.w,
-        childAspectRatio: 0.95,
+        childAspectRatio: 0.8,
       ),
       itemCount: 6,
       itemBuilder: (context, index) {
@@ -180,8 +180,7 @@ class _CategoryCard extends StatelessWidget {
             category.iconName.isNotEmpty
                 ? Image.network(
                     category.iconName,
-                    width: 64.w,
-                    height: 64.w,
+
                     fit: BoxFit.contain,
                     errorBuilder: (_, __, ___) => Icon(
                       Icons.local_shipping_outlined,

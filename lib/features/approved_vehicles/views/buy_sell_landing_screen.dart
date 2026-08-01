@@ -199,8 +199,7 @@ class _VendorCategoryCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 80,
-       padding: EdgeInsets.only(left:AppSpacing.md),
+      padding: EdgeInsets.fromLTRB(12.w, 12.h, 12.w, 12.h),
       decoration: BoxDecoration(
         color: AppColors.white,
         borderRadius: AppRadius.borderRadiusMd,
@@ -214,35 +213,48 @@ class _VendorCategoryCard extends StatelessWidget {
         ],
       ),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          // ── Category Icon — direct, no background ───────────────────────
-          category.iconName.isNotEmpty
-              ? Image.network(
-                  category.iconName,
-                  width: 56.w,
-                  height: 56.w,
-                  fit: BoxFit.contain,
-                  errorBuilder: (_, __, ___) => Icon(
-                    Icons.local_shipping_outlined,
-                    size: 32.w,
-                    color: AppColors.primary,
+          // ── Vehicle image ──────────────────────────────────────
+          ClipRRect(
+            borderRadius: BorderRadius.circular(10.r),
+            child: category.iconName.isNotEmpty
+                ? Image.network(
+                    category.iconName,
+                    width: 90.w,
+                    height: 80.h,
+                    fit: BoxFit.contain,
+                    errorBuilder: (_, __, ___) => Container(
+                      width: 90.w,
+                      height: 80.h,
+                      color: AppColors.grey100,
+                      child: Icon(
+                        Icons.local_shipping_outlined,
+                        size: 36.w,
+                        color: AppColors.grey400,
+                      ),
+                    ),
+                  )
+                : Container(
+                    width: 90.w,
+                    height: 80.h,
+                    color: AppColors.grey100,
+                    child: Icon(
+                      Icons.local_shipping_outlined,
+                      size: 36.w,
+                      color: AppColors.grey400,
+                    ),
                   ),
-                )
-              : Icon(
-                  Icons.local_shipping_outlined,
-                  size: 32.w,
-                  color: AppColors.primary,
-                ),
+          ),
           SizedBox(width: 14.w),
 
-          // ── Category Info ────────────────────────────────────
+          // ── Name + count + buttons ─────────────────────────────
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
               children: [
+                // Category name
                 Text(
                   category.categoryName,
                   maxLines: 1,
@@ -254,113 +266,94 @@ class _VendorCategoryCard extends StatelessWidget {
                     color: AppColors.black,
                   ),
                 ),
-                SizedBox(height: 5.h),
+                SizedBox(height: 4.h),
+                // Available count
+                Text(
+                  'Available : ${category.approvedVehAvailableCount}',
+                  style: TextStyle(
+                    fontFamily: 'Plus Jakarta Sans',
+                    fontSize: 12.sp,
+                    fontWeight: FontWeight.w500,
+                    color: AppColors.textSecondary,
+                  ),
+                ),
+                SizedBox(height: 10.h),
+                // Buy + Sell buttons side by side
                 Row(
                   children: [
-                    Container(
-                      width: 6.w,
-                      height: 6.w,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: category.approvedVehAvailableCount > 0
-                            ? AppColors.primary
-                            : AppColors.grey400,
+                    // BUY — filled gradient
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: onBuyTap,
+                        child: Container(
+                          height: 34.h,
+                          decoration: BoxDecoration(
+                            gradient: const LinearGradient(
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                              colors: [
+                                AppColors.ctaGradientStart,
+                                AppColors.ctaGradientEnd,
+                              ],
+                            ),
+                            borderRadius: BorderRadius.circular(20.r),
+                            boxShadow: [
+                              BoxShadow(
+                                color: AppColors.ctaGradientStart.withValues(
+                                  alpha: 0.3,
+                                ),
+                                blurRadius: 6,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
+                          ),
+                          child: Center(
+                            child: Text(
+                              'Buy',
+                              style: TextStyle(
+                                fontFamily: 'Montserrat',
+                                fontSize: 13.sp,
+                                fontWeight: FontWeight.w700,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ),
                       ),
                     ),
-                    SizedBox(width: 5.w),
-                    Text(
-                      category.approvedVehAvailableCount > 0
-                          ? '${category.approvedVehAvailableCount} vehicles available'
-                          : 'No vehicles available',
-                      style: AppFonts.bodySmall.copyWith(
-                        color: category.approvedVehAvailableCount > 0
-                            ? AppColors.primary
-                            : AppColors.grey500,
-                        fontWeight: FontWeight.w500,
+                    SizedBox(width: 8.w),
+                    // SELL — outlined
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: onSellTap,
+                        child: Container(
+                          height: 34.h,
+                          decoration: BoxDecoration(
+                            color: AppColors.white,
+                            border: Border.all(
+                              color: AppColors.ctaGradientStart,
+                              width: 1.5,
+                            ),
+                            borderRadius: BorderRadius.circular(20.r),
+                          ),
+                          child: Center(
+                            child: Text(
+                              'Sell',
+                              style: TextStyle(
+                                fontFamily: 'Montserrat',
+                                fontSize: 13.sp,
+                                fontWeight: FontWeight.w700,
+                                color: AppColors.ctaGradientStart,
+                              ),
+                            ),
+                          ),
+                        ),
                       ),
                     ),
                   ],
                 ),
               ],
             ),
-          ),
-
-          // ── SELL & BUY buttons ───────────────────────────────
-          Column(
-            children: [
-              // SELL button
-              GestureDetector(
-                onTap: onSellTap,
-                child: Container(
-                  width: 80.w,
-                  height: 34.h,
-                  decoration: BoxDecoration(
-                    color: AppColors.white,
-                    border: Border.all(color: AppColors.primary),
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(16.r),
-                      bottomRight: Radius.circular(10.r),
-                    ),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        'SELL',
-                        style: TextStyle(
-                          fontFamily: 'Montserrat',
-                          fontSize: 11.sp,
-                          fontWeight: FontWeight.w700,
-                          color: AppColors.primary,
-                        ),
-                      ),
-                      SizedBox(width: 3.w),
-                      Icon(
-                        Icons.arrow_forward_ios_rounded,
-                        size: 10.w,
-                        color: AppColors.primary,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              SizedBox(height: 10.h),
-              // BUY button
-              GestureDetector(
-                onTap: onBuyTap,
-                child: Container(
-                  width: 80.w,
-                  height: 34.h,
-                  decoration: BoxDecoration(
-                    color: AppColors.ctaGradientEnd,
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(16.r),
-                      bottomRight: Radius.circular(10.r),
-                    ),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        'BUY',
-                        style: TextStyle(
-                          fontFamily: 'Montserrat',
-                          fontSize: 11.sp,
-                          fontWeight: FontWeight.w700,
-                          color: AppColors.white,
-                        ),
-                      ),
-                      SizedBox(width: 3.w),
-                      Icon(
-                        Icons.arrow_forward_ios_rounded,
-                        size: 10.w,
-                        color: Colors.white,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
           ),
         ],
       ),

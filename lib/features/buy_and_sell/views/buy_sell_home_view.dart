@@ -78,122 +78,106 @@ class _CategoryCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      padding: EdgeInsets.fromLTRB(12.w, 16.h, 12.w, 16.h),
       decoration: BoxDecoration(
-        color: AppColors.cardBackground,
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: AppColors.grey200),
+        color: AppColors.white,
+        borderRadius: BorderRadius.circular(16.r),
+        border: Border.all(color: AppColors.grey300,width: 1),
         boxShadow: [
           BoxShadow(
+            color: Colors.black.withValues(alpha: 0.12),
+            blurRadius: 20,
+            spreadRadius: 1,
+            offset: const Offset(0, 6),
+          ),
+          BoxShadow(
             color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
+            blurRadius: 6,
+            offset: const Offset(0, 1),
           ),
         ],
       ),
-      child: Padding(
-        padding: const EdgeInsets.all(14),
-        child: Column(
-          children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          // ── Category image ──────────────────────────────────────────
+          category.iconUrl != null && category.iconUrl!.isNotEmpty
+              ? Image.network(
+                  category.iconUrl!,
+                  width: 140,
+                  fit: BoxFit.cover,
+                  errorBuilder: (_, __, ___) => SizedBox(
+                    child: Icon(
+                      _iconForCategory(category.categoryCode),
+                      color: AppColors.primary,
+                      size: 48.r,
+                    ),
+                  ),
+                )
+              : SizedBox(
+                  child: Icon(
+                    _iconForCategory(category.categoryCode),
+                    color: AppColors.primary,
+                    size: 48.r,
+                  ),
+                ),
+          SizedBox(width: 12.w),
+
+          // ── Name + count + buttons ──────────────────────────────────
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
               children: [
-                // ── Category image / icon ───────────────────────────────────
-                category.iconUrl != null && category.iconUrl!.isNotEmpty
-                    ? Image.network(
-                        category.iconUrl!,
-                        width: 90,
-                        height: 90,
-                        fit: BoxFit.contain,
-                        errorBuilder: (_, __, ___) => Icon(
-                          _iconForCategory(category.categoryCode),
-                          color: AppColors.primary,
-                          size: 56,
-                        ),
-                        loadingBuilder: (_, child, progress) {
-                          if (progress == null) return child;
-                          return SizedBox(
-                            width: 90,
-                            height: 90,
-                            child: Center(
-                              child: SizedBox(
-                                width: 24,
-                                height: 24,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                  color: AppColors.primary,
-                                  value: progress.expectedTotalBytes != null
-                                      ? progress.cumulativeBytesLoaded /
-                                            progress.expectedTotalBytes!
-                                      : null,
-                                ),
-                              ),
-                            ),
-                          );
-                        },
-                      )
-                    : Icon(
-                        _iconForCategory(category.categoryCode),
-                        color: AppColors.primary,
-                        size: 56,
-                      ),
-                SizedBox(width: AppSpacing.lg),
-                // ── Category info ───────────────────────────────────────────
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.center,
+                Text(
+                  category.categoryName,
+                  style: TextStyle(
+                    fontFamily: 'Montserrat',
+                    fontSize: 18.sp,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.black,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                SizedBox(height: 6.h),
+                RichText(
+                  text: TextSpan(
                     children: [
-                      Text(
-                        category.categoryName,
-                        style: TextStyle(
-                          fontFamily: 'Montserrat',
-                          fontSize: 16.sp,
-                          fontWeight: FontWeight.w700,
-                          color: AppColors.textPrimary,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      if (category.description != null &&
-                          category.description!.isNotEmpty) ...[
-                        SizedBox(height: AppSpacing.xs),
-                        Text(
-                          category.description!,
-                          style: TextStyle(
-                            fontFamily: 'Montserrat',
-                            fontSize: 16.sp,
-                            color: AppColors.grey600,
-                          ),
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ],
-                      SizedBox(height: AppSpacing.xs),
-                      Text(
-                        'Available Vehicles : ${category.vehicleCount}',
+                      TextSpan(
+                        text: 'Available : ',
                         style: TextStyle(
                           fontFamily: 'Montserrat',
                           fontSize: 14.sp,
-                          color: AppColors.grey700,
                           fontWeight: FontWeight.w500,
+                          color: AppColors.textSecondary,
+                        ),
+                      ),
+                      TextSpan(
+                        text: '${category.vehicleCount}',
+                        style: TextStyle(
+                          fontFamily: 'Montserrat',
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.textPrimary,
                         ),
                       ),
                     ],
                   ),
                 ),
+                SizedBox(height: 16.h),
+                // Buy + Sell side by side
+                Row(
+                  children: [
+                    Expanded(child: _buildBuyButton()),
+                    SizedBox(width: 8.w),
+                    Expanded(child: _buildSellButton()),
+                  ],
+                ),
               ],
             ),
-            SizedBox(height: AppSpacing.sm),
-            // ── Buy / Sell buttons ──────────────────────────────────────────
-            Row(
-              children: [
-                Expanded(child: _buildBuyButton()),
-                SizedBox(width: AppSpacing.sm),
-                Expanded(child: _buildSellButton()),
-              ],
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -205,17 +189,19 @@ class _CategoryCard extends StatelessWidget {
         arguments: {'category': category},
       ),
       child: Container(
-        height: 42,
+        height: 20.h,
         decoration: BoxDecoration(
           gradient: const LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
             colors: [AppColors.ctaGradientStart, AppColors.ctaGradientEnd],
           ),
-          borderRadius: BorderRadius.circular(22),
+          borderRadius: BorderRadius.circular(20.r),
           boxShadow: [
             BoxShadow(
-              color: AppColors.primary.withValues(alpha: 0.3),
-              blurRadius: 8,
-              offset: const Offset(0, 3),
+              color: AppColors.ctaGradientStart.withValues(alpha: 0.3),
+              blurRadius: 6,
+              offset: const Offset(0, 2),
             ),
           ],
         ),
@@ -224,10 +210,9 @@ class _CategoryCard extends StatelessWidget {
             'Buy',
             style: TextStyle(
               fontFamily: 'Montserrat',
-              fontSize: 13.sp,
+              fontSize: 14.sp,
               fontWeight: FontWeight.w600,
               color: Colors.white,
-              letterSpacing: 0.3,
             ),
           ),
         ),
@@ -245,21 +230,20 @@ class _CategoryCard extends StatelessWidget {
         },
       ),
       child: Container(
-        height: 42,
+        height: 20.h,
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(22),
-          border: Border.all(color: AppColors.primary, width: 1.5),
+          borderRadius: BorderRadius.circular(20.r),
+          border: Border.all(color: AppColors.ctaGradientStart, width: 1.5),
         ),
         child: Center(
           child: Text(
             'Sell',
             style: TextStyle(
               fontFamily: 'Montserrat',
-              fontSize: 13.sp,
+              fontSize: 14.sp,
               fontWeight: FontWeight.w600,
-              color: AppColors.primary,
-              letterSpacing: 0.3,
+              color: AppColors.ctaGradientStart,
             ),
           ),
         ),
