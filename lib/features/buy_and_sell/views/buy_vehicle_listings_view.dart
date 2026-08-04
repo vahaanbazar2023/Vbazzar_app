@@ -326,20 +326,17 @@ class _VehicleCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () async {
-        // Check SUBT004 (Vehicle Details Access) subscription
         final guard = SubscriptionGuardService.to;
         await guard.ensureLoaded();
 
         if (guard.hasActiveSubscription(
           SubscriptionTypeCode.vehicleDetailsAccess,
         )) {
-          // Has valid subscription — go straight to detail
           Get.toNamed(
             AppRoutes.buyVehicleDetail,
             arguments: {'vehicle': vehicle},
           );
         } else {
-          // No subscription — show warning then redirect to subscription screen.
           CustomSnackbar.show(
             message:
                 'You need a Vehicle Details plan to view full details. Please subscribe to continue.',
@@ -361,36 +358,95 @@ class _VehicleCard extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(AppRadius.lg),
-          border: Border.all(color: AppColors.grey200),
+          borderRadius: BorderRadius.circular(16.r),
+          border: Border.all(color: AppColors.grey300, width: 1),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.05),
-              blurRadius: 10,
-              offset: const Offset(0, 3),
+              color: Colors.black.withValues(alpha: 0.08),
+              blurRadius: 14,
+              spreadRadius: 1,
+              offset: const Offset(0, 4),
+            ),
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.04),
+              blurRadius: 4,
+              offset: const Offset(0, 1),
             ),
           ],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // ── Image Carousel ─────────────────────────────────────────────
+            // ── Image ──────────────────────────────────────────────────────
             Stack(
               children: [
                 ClipRRect(
                   borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(AppRadius.lg),
-                    topRight: Radius.circular(AppRadius.lg),
+                    topLeft: Radius.circular(8.r),
+                    topRight: Radius.circular(8.r),
                   ),
-                  child: NetworkImageCarousel(
-                    imageUrls: vehicle.allImageUrls,
+                  child: Container(
+                    width: double.infinity,
                     height: 180.h,
+                    color: AppColors.grey100,
+                    child: vehicle.allImageUrls.isNotEmpty
+                        ? NetworkImageCarousel(
+                            imageUrls: vehicle.allImageUrls,
+                            height: 180.h,
+                          )
+                        : Icon(
+                            Icons.local_shipping_outlined,
+                            size: 64.r,
+                            color: AppColors.grey400,
+                          ),
                   ),
                 ),
-                // Wishlist button — top right
+                // Star rating badge — top left
+                // Positioned(
+                //   top: 10.h,
+                //   left: 10.w,
+                //   child: Container(
+                //     padding: EdgeInsets.symmetric(
+                //       horizontal: 8.w,
+                //       vertical: 4.h,
+                //     ),
+                //     decoration: BoxDecoration(
+                //       color: Colors.white,
+                //       borderRadius: BorderRadius.circular(20.r),
+                //       boxShadow: [
+                //         BoxShadow(
+                //           color: Colors.black.withValues(alpha: 0.12),
+                //           blurRadius: 6,
+                //           offset: const Offset(0, 2),
+                //         ),
+                //       ],
+                //     ),
+                //     child: Row(
+                //       mainAxisSize: MainAxisSize.min,
+                //       children: [
+                //         Icon(
+                //           Icons.star_rounded,
+                //           color: const Color(0xFFFFC107),
+                //           size: 13.r,
+                //         ),
+                //         SizedBox(width: 3.w),
+                //         Text(
+                //           '4.1',
+                //           style: TextStyle(
+                //             fontFamily: 'Montserrat',
+                //             fontSize: 11.sp,
+                //             fontWeight: FontWeight.w700,
+                //             color: AppColors.textPrimary,
+                //           ),
+                //         ),
+                //       ],
+                //     ),
+                //   ),
+                // ),
+                // Wishlist — top right
                 Positioned(
-                  top: 10,
-                  right: 10,
+                  top: 10.h,
+                  right: 10.w,
                   child: Obx(() {
                     final ctrl = Get.find<BuyVehicleController>();
                     return WishlistButton(
@@ -401,19 +457,16 @@ class _VehicleCard extends StatelessWidget {
                 ),
               ],
             ),
+
             // ── Details ────────────────────────────────────────────────────
             Padding(
-              padding: EdgeInsets.all(AppSpacing.md),
+              padding: EdgeInsets.fromLTRB(14.w, 12.h, 14.w, 14.h),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  // Title
                   Text(
-                    '${vehicle.brandName ?? ''} | ${vehicle.model ?? ''}'
-                            .trim()
-                            .isEmpty
-                        ? vehicle.categoryName
-                        : '${vehicle.brandName ?? ''} ${vehicle.model ?? ''}'
-                              .trim(),
+                    _buildTitle(),
                     style: TextStyle(
                       fontFamily: 'Montserrat',
                       fontSize: 15.sp,
@@ -423,45 +476,60 @@ class _VehicleCard extends StatelessWidget {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  SizedBox(height: AppSpacing.xs),
+                  SizedBox(height: 8.h),
+                  // Year + Location row + View More button
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       if (vehicle.year != null) ...[
                         _chip(Icons.calendar_today_outlined, vehicle.year!),
-                        SizedBox(width: AppSpacing.sm),
+                        SizedBox(width: 10.w),
                       ],
                       if (vehicle.state != null)
-                        _chip(Icons.location_on_outlined, vehicle.state!),
-                    ],
-                  ),
-                  SizedBox(height: AppSpacing.sm),
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 14,
-                        vertical: 7,
-                      ),
-                      decoration: BoxDecoration(
-                        gradient: const LinearGradient(
-                          colors: [
-                            AppColors.ctaGradientStart,
-                            AppColors.ctaGradientEnd,
+                        Expanded(
+                          child: _chip(
+                            Icons.location_on_outlined,
+                            vehicle.state!,
+                          ),
+                        )
+                      else
+                        const Spacer(),
+                      // View More pill
+                      Container(
+                        height: 20.h,
+                        padding: EdgeInsets.symmetric(horizontal: 14.w),
+                        decoration: BoxDecoration(
+                          gradient: const LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: [
+                              AppColors.ctaGradientStart,
+                              AppColors.ctaGradientEnd,
+                            ],
+                          ),
+                          borderRadius: BorderRadius.circular(20.r),
+                          boxShadow: [
+                            BoxShadow(
+                              color: AppColors.ctaGradientStart.withValues(
+                                alpha: 0.3,
+                              ),
+                              blurRadius: 6,
+                              offset: const Offset(0, 2),
+                            ),
                           ],
                         ),
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Text(
-                        'View Details',
-                        style: TextStyle(
-                          fontFamily: 'Montserrat',
-                          fontSize: 12.sp,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.white,
+                        child: Center(
+                          child: Text(
+                            'View More',
+                            style: TextStyle(
+                              fontFamily: 'Montserrat',
+                              fontSize: 12.sp,
+                              fontWeight: FontWeight.w700,
+                              color: Colors.white,
+                            ),
+                          ),
                         ),
                       ),
-                    ),
+                    ],
                   ),
                 ],
               ),
@@ -472,17 +540,31 @@ class _VehicleCard extends StatelessWidget {
     );
   }
 
+  String _buildTitle() {
+    final brand = (vehicle.brandName ?? '').trim();
+    final model = (vehicle.model ?? '').trim();
+    if (brand.isNotEmpty && model.isNotEmpty) return '$brand - $model';
+    if (brand.isNotEmpty) return brand;
+    if (model.isNotEmpty) return model;
+    return vehicle.categoryName;
+  }
+
   Widget _chip(IconData icon, String text) => Row(
     mainAxisSize: MainAxisSize.min,
     children: [
-      Icon(icon, size: 12, color: AppColors.grey500),
-      SizedBox(width: 3),
-      Text(
-        text,
-        style: TextStyle(
-          fontFamily: 'Montserrat',
-          fontSize: 11.sp,
-          color: AppColors.grey600,
+      Icon(icon, size: 13, color: AppColors.grey500),
+      SizedBox(width: 4.w),
+      Flexible(
+        child: Text(
+          text,
+          style: TextStyle(
+            fontFamily: 'Montserrat',
+            fontSize: 12.sp,
+            color: AppColors.grey600,
+            fontWeight: FontWeight.w500,
+          ),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
         ),
       ),
     ],

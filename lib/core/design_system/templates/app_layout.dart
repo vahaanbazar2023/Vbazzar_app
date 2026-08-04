@@ -3,9 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
-import '../../constants/app_assets.dart';
 import '../../constants/app_colors.dart';
-import '../atoms/app_svg_icon.dart';
 import '../organisms/app_bottom_nav_bar.dart';
 import '../tokens/app_radius.dart';
 import '../../../features/main_shell/controllers/main_shell_controller.dart';
@@ -151,11 +149,29 @@ class _AppLayoutHeader extends StatelessWidget {
                       onTap: onBack ?? () => Navigator.of(context).pop(),
                       child: Padding(
                         padding: EdgeInsets.only(right: AppSpacing.sm),
-                        child: AppSvgIcon(
-                          assetPath: AppAssets.arrowBack,
-                          color: Colors.white,
-                          size: 10.w,
-                          semanticLabel: 'Back',
+                        child: Container(
+                          width: 28.r,
+                          height: 28.r,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            gradient: const LinearGradient(
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                              colors: [
+                                AppColors.ctaGradientStart,
+                                AppColors.ctaGradientEnd,
+                              ],
+                            ),
+                            border: Border.all(
+                              color: const Color(0xFFD41F1F),
+                              width: 1,
+                            ),
+                          ),
+                          child: Icon(
+                            Icons.chevron_left_rounded,
+                            color: Colors.white,
+                            size: 20.r,
+                          ),
                         ),
                       ),
                     ),
@@ -176,7 +192,7 @@ class _AppLayoutHeader extends StatelessWidget {
               if (subtitle != null) ...[
                 SizedBox(height: AppSpacing.xs),
                 Padding(
-                  padding: EdgeInsets.only(left: AppSpacing.lg),
+                  padding: EdgeInsets.only(left: 36.w),
                   child: Text(
                     subtitle!,
                     style: TextStyle(
