@@ -5,8 +5,8 @@ import 'package:get/get.dart';
 import '../../../core/constants/app_assets.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/design_system/design_system.dart';
+import '../../../core/design_system/molecules/timer_badge.dart';
 import '../../../core/design_system/templates/app_layout.dart';
-import '../../../core/design_system/tokens/app_radius.dart';
 import '../../../core/design_system/tokens/app_spacing.dart';
 import '../../../core/extensions/context_extensions.dart';
 import '../../../routes/app_routes.dart';
@@ -22,49 +22,55 @@ class AuctionTab extends GetView<AuctionController> {
     return AppLayout(
       title: context.l10n.auction,
       subtitle: context.l10n.auctionKnowCondition,
-      actions: [
-        // Filter icon in the red header bar
-        GestureDetector(
-          onTap: () => AuctionFilterBottomSheet.show(context),
-          child: Padding(
-            padding: EdgeInsets.only(right: AppSpacing.md),
-            child: Image.asset(
-              AppAssets.filterPng,
-              width: 24.r,
-              height: 24.r,
-              color: Colors.white,
-            ),
-          ),
-        ),
-      ],
       body: Column(
         children: [
           SizedBox(height: 8.h),
-          // ── Tab bar ──────────────────────────────────────────
-          TabBar(
-            controller: controller.tabController,
-            labelColor: AppColors.primary,
-            unselectedLabelColor: AppColors.grey600,
-            indicatorColor: AppColors.primary,
-            indicatorWeight: 2,
-            dividerColor: AppColors.grey200,
-            labelStyle: TextStyle(
-              fontFamily: 'Montserrat',
-              fontSize: 13.sp,
-              fontWeight: FontWeight.w600,
-            ),
-            unselectedLabelStyle: TextStyle(
-              fontFamily: 'Montserrat',
-              fontSize: 13.sp,
-              fontWeight: FontWeight.w500,
-            ),
-            tabs: [
-              Tab(text: context.l10n.liveTab),
-              Tab(text: context.l10n.closingTodayTab),
-              Tab(text: context.l10n.upcomingTab),
+          // ── Tab bar + filter icon in same row ─────────────────
+          Row(
+            children: [
+              Expanded(
+                child: TabBar(
+                  controller: controller.tabController,
+                  isScrollable: false,
+                  labelColor: AppColors.primary,
+                  unselectedLabelColor: AppColors.grey600,
+                  indicatorColor: AppColors.primary,
+                  indicatorWeight: 2,
+                  dividerColor: AppColors.grey200,
+                  labelPadding: EdgeInsets.symmetric(horizontal: 4.w),
+                  labelStyle: TextStyle(
+                    fontFamily: 'Montserrat',
+                    fontSize: 11.sp,
+                    fontWeight: FontWeight.w600,
+                  ),
+                  unselectedLabelStyle: TextStyle(
+                    fontFamily: 'Montserrat',
+                    fontSize: 11.sp,
+                    fontWeight: FontWeight.w500,
+                  ),
+                  tabAlignment: TabAlignment.fill,
+                  tabs: [
+                    Tab(text: context.l10n.liveTab),
+                    Tab(text: context.l10n.closingTodayTab),
+                    Tab(text: context.l10n.upcomingTab),
+                  ],
+                ),
+              ),
+              // Filter icon — right of tabs, same row
+              GestureDetector(
+                onTap: () => AuctionFilterBottomSheet.show(context),
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 14.w),
+                  child: Image.asset(
+                    AppAssets.filterPng,
+                    width: 22.r,
+                    height: 22.r,
+                    color: AppColors.primary,
+                  ),
+                ),
+              ),
             ],
           ),
-          SizedBox(height: AppSpacing.sm),
           // ── Tab content ──────────────────────────────────────
           Expanded(
             child: TabBarView(
@@ -79,12 +85,11 @@ class AuctionTab extends GetView<AuctionController> {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-
+// Tab content
 // ─────────────────────────────────────────────────────────────────────────────
 
 class _TabContent extends StatelessWidget {
   final int tabIndex;
-
   const _TabContent({required this.tabIndex});
 
   @override
@@ -105,7 +110,7 @@ class _TabContent extends StatelessWidget {
               error,
               textAlign: TextAlign.center,
               style: TextStyle(
-                fontFamily: 'Plus Jakarta Sans',
+                fontFamily: 'Montserrat',
                 fontSize: 14.sp,
                 color: AppColors.grey600,
               ),
@@ -129,12 +134,7 @@ class _TabContent extends StatelessWidget {
       final loadingMore = ctrl.isLoadingMore(tabIndex).value;
       return ListView.builder(
         controller: ctrl.scrollControllers[tabIndex],
-        padding: EdgeInsets.fromLTRB(
-          AppSpacing.md,
-          0,
-          AppSpacing.md,
-          AppSpacing.md,
-        ),
+        padding: EdgeInsets.fromLTRB(16.w, 12.h, 16.w, 16.h),
         itemCount: auctions.length + (loadingMore ? 1 : 0),
         itemBuilder: (context, index) {
           if (index == auctions.length) {
@@ -155,143 +155,104 @@ class _TabContent extends StatelessWidget {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+// Auction Card — redesigned per screenshot
+// ─────────────────────────────────────────────────────────────────────────────
 
 class _AuctionCard extends StatelessWidget {
   final AuctionListing listing;
   final int tabIndex;
-
   const _AuctionCard({required this.listing, required this.tabIndex});
 
-  bool get _isUpcoming => tabIndex == 2; // 0=Live, 1=Closing Today, 2=Upcoming
+  bool get _isUpcoming => tabIndex == 2;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.only(bottom: AppSpacing.md),
-      padding: EdgeInsets.only(top: AppSpacing.sm),
-      clipBehavior: Clip.antiAlias,
-      decoration: BoxDecoration(
-        color: AppColors.white,
-        borderRadius: AppRadius.borderRadiusMd,
-        border: Border.all(color: AppColors.grey200),
-        boxShadow: [
-          BoxShadow(
-            color: const Color(0x0A000000),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // ── Title row + timer badge ─────────────────────────
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                child: Padding(
-                  padding: EdgeInsets.fromLTRB(
-                    AppSpacing.md,
-                    AppSpacing.xs,
-                    AppSpacing.sm,
-                    0,
-                  ),
-                  child: Text(
+    return GestureDetector(
+      onTap: _isUpcoming
+          ? null
+          : () => Get.toNamed(
+              AppRoutes.vehicleListings,
+              arguments: {'auction': listing},
+            ),
+      child: Container(
+        margin: EdgeInsets.only(bottom: 12.h),
+        decoration: BoxDecoration(
+          color: AppColors.white,
+          borderRadius: BorderRadius.circular(12.r),
+          border: Border.all(color: const Color(0xFFE0E0E0)),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.05),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        clipBehavior: Clip.antiAlias,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // ── Top banner: timer + CTA ──────────────────────────
+            Padding(
+              padding: const EdgeInsets.only(top: 4.0),
+              child: _TopBanner(listing: listing, isUpcoming: _isUpcoming),
+            ),
+            // ── Body: title + info rows ───────────────────────────
+            Padding(
+              padding: EdgeInsets.fromLTRB(14.w, 10.h, 14.w, 14.h),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Title
+                  Text(
                     listing.auctionTitle.isNotEmpty
                         ? listing.auctionTitle
                         : 'Auction',
                     style: TextStyle(
                       fontFamily: 'Montserrat',
-                      fontSize: 18.sp,
+                      fontSize: 15.sp,
                       fontWeight: FontWeight.w700,
                       color: AppColors.black,
                       height: 1.3,
                     ),
                   ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top: 8.0),
-                child: TimerBadge(endAt: listing.endAt),
-              ),
-            ],
-          ),
-
-          // ── Details ─────────────────────────────────────────
-          Padding(
-            padding: EdgeInsets.fromLTRB(
-              AppSpacing.md,
-              AppSpacing.sm,
-              AppSpacing.md,
-              AppSpacing.md,
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: _InfoRow(
-                        icon: Image.asset(
-                          AppAssets.bidPng,
-                          width: 14,
-                          height: 14,
-                          color: AppColors.grey600,
+                  SizedBox(height: 8.h),
+                  // Auction ID + Lot count on same row
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _InfoRow(
+                          icon: AppAssets.bidPng,
+                          label: context.l10n.auctionIdLabel,
+                          value: listing.auctionId,
                         ),
-                        label: context.l10n.auctionIdLabel,
-                        value: listing.auctionId,
                       ),
-                    ),
-                    SizedBox(width: AppSpacing.sm),
-                  ],
-                ),
-                _InfoRow(
-                  icon: Image.asset(AppAssets.bidPng, width: 14, height: 14),
-                  label: context.l10n.lot,
-                  value: listing.vehicleCount.toString().padLeft(2, '0'),
-                ),
-                SizedBox(height: AppSpacing.xs),
-                _InfoRow(
-                  icon: Image.asset(
-                    AppAssets.calendarPng,
-                    width: 14,
-                    height: 14,
-                    color: AppColors.grey600,
+                      SizedBox(width: 8.w),
+                      _InfoRow(
+                        icon: AppAssets.bidPng,
+                        label: '# LOT',
+                        value: listing.vehicleCount.toString().padLeft(2, '0'),
+                      ),
+                    ],
                   ),
-                  label: context.l10n.endDate,
-                  value: _formatDate(listing.endAt),
-                ),
-                SizedBox(height: AppSpacing.md),
-
-                // Tap to Bid — disabled for upcoming auctions
-                Opacity(
-                  opacity: _isUpcoming ? 0.45 : 1.0,
-                  child: GradientButton.filled(
-                    text: _isUpcoming
-                        ? context.l10n.upcomingTab
-                        : context.l10n.tapToBid,
-                    onPressed: _isUpcoming
-                        ? null
-                        : () => Get.toNamed(
-                            AppRoutes.vehicleListings,
-                            arguments: {'auction': listing},
-                          ),
-                    isLoading: false,
-                    width: double.infinity,
+                  SizedBox(height: 6.h),
+                  // End date
+                  _InfoRow(
+                    icon: AppAssets.calendarPng,
+                    label: context.l10n.endDate,
+                    value: _formatDate(listing.endAt),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 
   String _formatDate(String dateStr) {
     try {
-      // Try ISO first, then API format "28 May 2025 - 05:30AM"
       DateTime dt;
       if (dateStr.contains('-') && dateStr.contains('T')) {
         dt = DateTime.parse(dateStr).toLocal();
@@ -315,8 +276,8 @@ class _AuctionCard extends StatelessWidget {
       final h = dt.hour % 12 == 0 ? 12 : dt.hour % 12;
       final min = dt.minute.toString().padLeft(2, '0');
       final ampm = dt.hour < 12 ? 'AM' : 'PM';
-      return '${dt.day.toString().padLeft(2, '0')} ${months[dt.month - 1]} ${dt.year},'
-          ' ${h.toString().padLeft(2, '0')}:$min $ampm';
+      return '${dt.day.toString().padLeft(2, '0')} ${months[dt.month - 1]}'
+          ' ${dt.year}, ${h.toString().padLeft(2, '0')}:$min $ampm';
     } catch (_) {
       return dateStr;
     }
@@ -324,9 +285,88 @@ class _AuctionCard extends StatelessWidget {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+// Top banner — red timer ribbon (left) + "Tap to Bid" pill (right)
+// ─────────────────────────────────────────────────────────────────────────────
+
+class _TopBanner extends StatelessWidget {
+  final AuctionListing listing;
+  final bool isUpcoming;
+  const _TopBanner({required this.listing, required this.isUpcoming});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 38.h,
+      decoration: const BoxDecoration(
+        border: Border(bottom: BorderSide(color: Color(0xFFEEEEEE))),
+      ),
+      child: Row(
+        children: [
+          // ── Timer badge — mirrored so notch points right
+          TimerBadge(endAt: listing.endAt, mirrored: true),
+          const Spacer(),
+          // ── CTA pill
+          if (!isUpcoming)
+            GestureDetector(
+              onTap: () => Get.toNamed(
+                AppRoutes.vehicleListings,
+                arguments: {'auction': listing},
+              ),
+              child: Container(
+                margin: EdgeInsets.only(right: 10.w),
+                padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 5.h),
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      AppColors.ctaGradientStart,
+                      AppColors.ctaGradientEnd,
+                    ],
+                  ),
+                  borderRadius: BorderRadius.circular(20.r),
+                ),
+                child: Text(
+                  context.l10n.tapToBid,
+                  style: TextStyle(
+                    fontFamily: 'Montserrat',
+                    fontSize: 12.sp,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            )
+          else
+            Container(
+              margin: EdgeInsets.only(right: 10.w),
+              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 6.h),
+              decoration: BoxDecoration(
+                color: AppColors.grey200,
+                borderRadius: BorderRadius.circular(20.r),
+              ),
+              child: Text(
+                context.l10n.upcomingTab,
+                style: TextStyle(
+                  fontFamily: 'Montserrat',
+                  fontSize: 12.sp,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.grey600,
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Info row
+// ─────────────────────────────────────────────────────────────────────────────
 
 class _InfoRow extends StatelessWidget {
-  final Widget icon;
+  final String icon;
   final String label;
   final String value;
 
@@ -340,17 +380,16 @@ class _InfoRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        icon,
-        SizedBox(width: 6),
+        Image.asset(icon, width: 13.r, height: 13.r, color: AppColors.grey600),
+        SizedBox(width: 5.w),
         Text(
           '$label : ',
           style: TextStyle(
             fontFamily: 'Montserrat',
-            fontSize: 14.sp,
+            fontSize: 12.sp,
             fontWeight: FontWeight.w500,
-            color: AppColors.black,
+            color: AppColors.grey600,
           ),
         ),
         Flexible(
@@ -358,9 +397,9 @@ class _InfoRow extends StatelessWidget {
             value,
             style: TextStyle(
               fontFamily: 'Montserrat',
-              fontSize: 14.sp,
-              fontWeight: FontWeight.w600,
-              color: AppColors.grey850,
+              fontSize: 12.sp,
+              fontWeight: FontWeight.w700,
+              color: AppColors.black,
             ),
             overflow: TextOverflow.ellipsis,
           ),
@@ -369,6 +408,10 @@ class _InfoRow extends StatelessWidget {
     );
   }
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Date parser
+// ─────────────────────────────────────────────────────────────────────────────
 
 DateTime _parseApiDate(String s) {
   const monthMap = {

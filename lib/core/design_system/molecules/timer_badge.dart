@@ -8,21 +8,27 @@ import '../../constants/app_colors.dart';
 ///
 /// Supports ISO-8601 strings, API date strings ("28 May 2025 - 05:30AM"),
 /// and an empty string (shows "Live").
+///
+/// Set [mirrored] = true to flip the V-notch to the right side
+/// (use when the badge is anchored to the left edge of a card).
 class TimerBadge extends StatelessWidget {
   /// ISO-8601 or API-format date string. Pass empty string for "Live".
   final String endAt;
 
-  const TimerBadge({super.key, required this.endAt});
+  /// When true the arrow notch is on the right; when false (default) on the left.
+  final bool mirrored;
+
+  const TimerBadge({super.key, required this.endAt, this.mirrored = false});
 
   @override
   Widget build(BuildContext context) {
     return ClipPath(
-      clipper: _ArrowBadgeClipper(),
+      clipper: _ArrowBadgeClipper(mirrored: mirrored),
       child: Container(
         color: AppColors.red,
         padding: EdgeInsets.only(
-          left: 30.w,
-          right: 10.w,
+          left: mirrored ? 10.w : 30.w,
+          right: mirrored ? 30.w : 10.w,
           top: 6.h,
           bottom: 6.h,
         ),
@@ -111,9 +117,23 @@ class TimerBadge extends StatelessWidget {
 }
 
 class _ArrowBadgeClipper extends CustomClipper<Path> {
+  final bool mirrored;
+  const _ArrowBadgeClipper({this.mirrored = false});
+
   @override
   Path getClip(Size size) {
     const notch = 12.0;
+    if (mirrored) {
+      // Notch on the RIGHT — badge sits on left edge, points right
+      return Path()
+        ..moveTo(0, 0)
+        ..lineTo(size.width, 0)
+        ..lineTo(size.width - notch, size.height / 2)
+        ..lineTo(size.width, size.height)
+        ..lineTo(0, size.height)
+        ..close();
+    }
+    // Notch on the LEFT (default) — badge sits on right edge, points left
     return Path()
       ..moveTo(0, 0)
       ..lineTo(size.width, 0)
@@ -124,5 +144,5 @@ class _ArrowBadgeClipper extends CustomClipper<Path> {
   }
 
   @override
-  bool shouldReclip(_ArrowBadgeClipper old) => false;
+  bool shouldReclip(_ArrowBadgeClipper old) => old.mirrored != mirrored;
 }

@@ -63,7 +63,7 @@ class AppAssets {
   static const String bidPng = '${_images}bid.png';
   static const String hourglassPng = '${_images}hourglass.png';
   static const String calendarPng = '${_images}calender.png';
-  static const String filterPng = '${_images}filter.png';
+  static const String filterPng = '${_images}filter_icon.png';
 
   // ── Bottom nav bar icons ──────────────────────────────────────────────────
   static const String navHome = '${_images}home.png';
