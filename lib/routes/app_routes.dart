@@ -57,6 +57,9 @@ class AppRoutes {
   // Initiate Refund
   static const initiateRefund = '/initiate-refund';
 
+  // Search
+  static const search = '/search';
+
   // Inspection & Valuation
   static const inspectionHome = '/inspection-home';
   static const customerValuationForm = '/customer-valuation-form';

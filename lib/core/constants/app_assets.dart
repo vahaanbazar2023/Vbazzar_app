@@ -88,6 +88,8 @@ class AppAssets {
   static const String financeDashboardIcon =
       '${_images}insurance_dashboard_icon.png'; // swap to dedicated asset when available
   static const String yellowBulldoser = '${_images}yellow_bulldoser.png';
+  static const String dashboardProfileAvatar =
+      '${_images}dashboard_profile_avatar.png';
 
   // ── Mechanic icons ────────────────────────────────────────────────────────
   static const List<String> mechanicIcons = [

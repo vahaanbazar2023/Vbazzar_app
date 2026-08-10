@@ -20,15 +20,8 @@ import '../../../features/subscription/models/user_subscription.dart';
 import '../../../features/subscription/services/subscription_guard_service.dart';
 import '../controllers/home_controller.dart';
 import '../data/models/dashboard_model.dart';
-
-/// Returns up to 2 uppercase initials from a full name string.
-/// "Prem Kumar" → "PK", "John" → "J", "" → ""
-String _initials(String fullName) {
-  final parts = fullName.trim().split(RegExp(r'\s+'));
-  if (parts.isEmpty || parts.first.isEmpty) return '';
-  if (parts.length == 1) return parts.first[0].toUpperCase();
-  return '${parts.first[0]}${parts.last[0]}'.toUpperCase();
-}
+import '../../categories/controllers/categories_controller.dart';
+import '../../categories/models/category_item.dart';
 
 /// Gate for any auction navigation from the home screen.
 /// Checks SUBT001 — if not active, redirects to the subscription screen.
@@ -96,6 +89,9 @@ class HomeScreen extends GetView<HomeController> {
                     // ── Live Auction Carousel ────────────────────
                     _LiveAuctionCarousel(auctions: data.liveAuctions),
                     SizedBox(height: 24.h),
+                    // ── Service Categories (static, 3-col) ───────
+                    _HomeCategoriesGrid(),
+                    SizedBox(height: 24.h),
                     // ── Most Bought Categories ───────────────────
                     if (data.mostBoughtCategories.isNotEmpty) ...[
                       _SectionHeader(
@@ -162,23 +158,25 @@ class _HomeHeader extends StatelessWidget {
       padding: EdgeInsets.fromLTRB(16.w, 12.h, 16.w, 12.h),
       decoration: BoxDecoration(
         color: AppColors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 4,
-            offset: const Offset(0, 2),
-          ),
-        ],
+        // boxShadow: [
+        //   BoxShadow(
+        //     color: Colors.black.withValues(alpha: 0.05),
+        //     blurRadius: 4,
+        //     offset: const Offset(0, 2),
+        //   ),
+        // ],
       ),
       child: GetX<HomeController>(
         builder: (ctrl) {
           final label = ctrl.locationLabel.value;
-          return Row(
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Location — left side
-              Expanded(
-                child: GestureDetector(
-                  onTap: () => ctrl.refreshLocation(),
+              // ── Row 1: location only ─────────────────────────
+              GestureDetector(
+                onTap: () => ctrl.refreshLocation(),
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 8),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -211,24 +209,87 @@ class _HomeHeader extends StatelessWidget {
                   ),
                 ),
               ),
-              // Notification
-              SvgPicture.asset(
-                AppAssets.iconNotification,
-                width: 26.r,
-                height: 26.r,
-              ),
-              SizedBox(width: 14.w),
-              // Customer care
-              GestureDetector(
-                onTap: () async {
-                  final uri = Uri(scheme: 'tel', path: '+918008801806');
-                  if (await canLaunchUrl(uri)) launchUrl(uri);
-                },
-                child: Image.asset(
-                  AppAssets.customerCare,
-                  width: 28.r,
-                  height: 28.r,
-                ),
+              SizedBox(height: 10.h),
+              // ── Row 2: profile + search bar + notification + support ──
+              Row(
+                children: [
+                  // Profile avatar
+                  GestureDetector(
+                    onTap: () => Get.toNamed(AppRoutes.profile),
+                    child: Image.asset(
+                      AppAssets.dashboardProfileAvatar,
+                      width: 40.r,
+                      height: 40.r,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                  SizedBox(width: 10.w),
+                  // Search bar with gradient border — takes remaining space
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () => Get.toNamed(AppRoutes.search),
+                      child: AbsorbPointer(
+                        child: Container(
+                          height: 44.h,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(12.r),
+                            border: GradientBorder(
+                              gradient: const LinearGradient(
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                                colors: [
+                                  AppColors.ctaGradientStart,
+                                  AppColors.ctaGradientEnd,
+                                ],
+                              ),
+                              width: 1.5,
+                            ),
+                          ),
+                          child: Row(
+                            children: [
+                              SizedBox(width: 14.w),
+                              Icon(
+                                Icons.search,
+                                color: AppColors.grey400,
+                                size: 20.r,
+                              ),
+                              SizedBox(width: 8.w),
+                              Text(
+                                'Search by service, vehicle...',
+                                style: TextStyle(
+                                  fontFamily: 'Montserrat',
+                                  fontSize: 12.sp,
+                                  color: AppColors.grey400,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 10.w),
+                  // Notification icon
+                  SvgPicture.asset(
+                    AppAssets.iconNotification,
+                    width: 26.r,
+                    height: 26.r,
+                  ),
+                  SizedBox(width: 10.w),
+                  // Customer care / support icon
+                  GestureDetector(
+                    onTap: () async {
+                      final uri = Uri(scheme: 'tel', path: '+918008801806');
+                      if (await canLaunchUrl(uri)) launchUrl(uri);
+                    },
+                    child: Image.asset(
+                      AppAssets.customerCare,
+                      width: 28.r,
+                      height: 28.r,
+                    ),
+                  ),
+                ],
               ),
             ],
           );
@@ -362,7 +423,7 @@ class _LiveAuctionCarouselState extends State<_LiveAuctionCarousel> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 210.h,
+      height: 160.h,
       child: Stack(
         children: [
           PageView.builder(
@@ -410,7 +471,7 @@ class _PromoPostCard extends StatelessWidget {
         child: Image.asset(
           imagePath,
           width: double.infinity,
-          height: 180.h,
+          height: 160.h,
           fit: BoxFit.cover,
           errorBuilder: (_, __, ___) => Container(
             color: AppColors.grey100,
@@ -443,18 +504,18 @@ class _AuctionBannerCard extends StatelessWidget {
       child: Container(
         margin: EdgeInsets.symmetric(horizontal: 16.w),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(16.r),
+          borderRadius: BorderRadius.circular(8.r),
           color: const Color(0xFF6B0000),
-          boxShadow: [
-            BoxShadow(
-              color: const Color(0xFF8B1A1A).withValues(alpha: 0.45),
-              blurRadius: 16,
-              offset: const Offset(0, 6),
-            ),
-          ],
+          // boxShadow: [
+          //   BoxShadow(
+          //     color: const Color(0xFF8B1A1A).withValues(alpha: 0.45),
+          //     blurRadius: 16,
+          //     offset: const Offset(0, 6),
+          //   ),
+          // ],
         ),
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(16.r),
+          borderRadius: BorderRadius.circular(8.r),
           child: Stack(
             children: [
               // Radial glow background
@@ -474,7 +535,7 @@ class _AuctionBannerCard extends StatelessWidget {
               ),
               // Content — left side
               Padding(
-                padding: EdgeInsets.fromLTRB(16.w, 14.h, 170.w, 14.h),
+                padding: EdgeInsets.fromLTRB(16.w, 10.h, 170.w, 10.h),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
@@ -483,7 +544,7 @@ class _AuctionBannerCard extends StatelessWidget {
                     Container(
                       padding: EdgeInsets.symmetric(
                         horizontal: 10.w,
-                        vertical: 5.h,
+                        vertical: 4.h,
                       ),
                       decoration: BoxDecoration(
                         color: Colors.transparent,
@@ -509,7 +570,7 @@ class _AuctionBannerCard extends StatelessWidget {
                             context.l10n.liveAuction.toUpperCase(),
                             style: TextStyle(
                               fontFamily: 'Montserrat',
-                              fontSize: 10.sp,
+                              fontSize: 8.sp,
                               fontWeight: FontWeight.w700,
                               color: Colors.white,
                               letterSpacing: 0.8,
@@ -518,8 +579,8 @@ class _AuctionBannerCard extends StatelessWidget {
                         ],
                       ),
                     ),
-                    SizedBox(height: 6.h),
-                    // Title — large
+                    SizedBox(height: 12.h),
+                    // Title
                     Text(
                       auction.auctionTitle.isNotEmpty
                           ? auction.auctionTitle
@@ -528,21 +589,21 @@ class _AuctionBannerCard extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                         fontFamily: 'Montserrat',
-                        fontSize: 17.sp,
+                        fontSize: 14.sp,
                         fontWeight: FontWeight.w800,
                         color: Colors.white,
                         height: 1.2,
                       ),
                     ),
-                    SizedBox(height: 10.h),
-                    // Timer — hourglass + countdown inline
+                    SizedBox(height: 8.h),
+                    // Timer
                     _AuctionTimer(endAt: auction.endAt),
-                    SizedBox(height: 35.h),
-                    // Bid Now — white pill, red text
+                    SizedBox(height: 14.h),
+                    // Bid Now pill
                     Container(
                       padding: EdgeInsets.symmetric(
-                        horizontal: 20.w,
-                        vertical: 6.h,
+                        horizontal: 16.w,
+                        vertical: 5.h,
                       ),
                       decoration: BoxDecoration(
                         color: Colors.white,
@@ -562,15 +623,15 @@ class _AuctionBannerCard extends StatelessWidget {
                             context.l10n.bid_now,
                             style: TextStyle(
                               fontFamily: 'Montserrat',
-                              fontSize: 14.sp,
+                              fontSize: 10.sp,
                               fontWeight: FontWeight.w700,
                               color: AppColors.primary,
                             ),
                           ),
-                          SizedBox(width: 6.w),
+                          SizedBox(width: 5.w),
                           Icon(
                             Icons.arrow_forward_rounded,
-                            size: 14.r,
+                            size: 13.r,
                             color: AppColors.primary,
                           ),
                         ],
@@ -712,7 +773,6 @@ class _MostBoughtCategoriesGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Only top 4
     final items = categories.take(4).toList();
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 16.w),
@@ -769,31 +829,23 @@ class _CategoryCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // ── Image + badges ───────────────────────────────
             Expanded(
-              child: Stack(
-                children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.vertical(
-                      top: Radius.circular(16.r),
-                    ),
-                    child: ColoredBox(
-                      color: AppColors.grey50,
-                      child: category.appDashImageUrl.isNotEmpty
-                          ? Image.network(
-                              category.appDashImageUrl,
-                              height: double.infinity,
-                              width: double.infinity,
-                              fit: BoxFit.contain,
-                              errorBuilder: (_, __, ___) => _placeholder(),
-                            )
-                          : _placeholder(),
-                    ),
-                  ),
-                ],
+              child: ClipRRect(
+                borderRadius: BorderRadius.vertical(top: Radius.circular(16.r)),
+                child: ColoredBox(
+                  color: AppColors.grey50,
+                  child: category.appDashImageUrl.isNotEmpty
+                      ? Image.network(
+                          category.appDashImageUrl,
+                          height: double.infinity,
+                          width: double.infinity,
+                          fit: BoxFit.contain,
+                          errorBuilder: (_, __, ___) => _placeholder(),
+                        )
+                      : _placeholder(),
+                ),
               ),
             ),
-            // ── Info ─────────────────────────────────────────
             Padding(
               padding: EdgeInsets.fromLTRB(12.w, 6.h, 8.w, 12.h),
               child: Column(
@@ -838,7 +890,6 @@ class _CategoryCard extends StatelessWidget {
                           ],
                         ),
                       ),
-                      // Buy Now pill
                       Container(
                         padding: EdgeInsets.symmetric(
                           horizontal: 8.w,
@@ -902,6 +953,90 @@ class _CategoryCard extends StatelessWidget {
       ),
     ),
   );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Home Categories Grid — static 6 items, 3-col, same style as CategoriesScreen
+// ─────────────────────────────────────────────────────────────────────────────
+
+class _HomeCategoriesGrid extends StatelessWidget {
+  const _HomeCategoriesGrid();
+
+  @override
+  Widget build(BuildContext context) {
+    final items = CategoriesController.categories;
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 16.w),
+      child: GridView.builder(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 3,
+          mainAxisSpacing: 12.h,
+          crossAxisSpacing: 12.w,
+          childAspectRatio: 1,
+        ),
+        itemCount: items.length,
+        itemBuilder: (_, i) => _HomeCategoryCard(item: items[i]),
+      ),
+    );
+  }
+}
+
+class _HomeCategoryCard extends StatelessWidget {
+  final CategoryItem item;
+  const _HomeCategoryCard({required this.item});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () => Get.find<CategoriesController>().onCategoryTapped(item),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16.r),
+          border: Border.all(color: const Color(0xFF9A0800), width: 1.2),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.06),
+              blurRadius: 8,
+              offset: const Offset(0, 3),
+            ),
+          ],
+        ),
+        child: LayoutBuilder(
+          builder: (_, constraints) {
+            final cardWidth = constraints.maxWidth;
+            final pillWidth = cardWidth - 16.w; // 8w padding each side
+            return Column(
+              children: [
+                // Character image — upper portion
+                Expanded(
+                  child: Padding(
+                    padding: EdgeInsets.fromLTRB(8.w, 10.h, 8.w, 4.h),
+                    child: Image.asset(item.assetPath, fit: BoxFit.contain),
+                  ),
+                ),
+                // Gradient filled pill label at the bottom
+                Padding(
+                  padding: EdgeInsets.fromLTRB(8.w, 0, 8.w, 8.h),
+                  child: GradientButton.filled(
+                    text: item.shortTitle ?? item.title,
+                    onPressed: () =>
+                        Get.find<CategoriesController>().onCategoryTapped(item),
+                    width: pillWidth,
+                    height: 24.h,
+                    fontSize: 9.sp,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            );
+          },
+        ),
+      ),
+    );
+  }
 }
 
 // ─────────────────────────────────────────────────────────────────────────────

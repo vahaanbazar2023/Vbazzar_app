@@ -117,11 +117,7 @@ class _AppLayoutHeader extends StatelessWidget {
     return Container(
       width: double.infinity,
       height: 120.h + topPad,
-      padding: EdgeInsets.only(
-        left: AppSpacing.xl,
-        right: AppSpacing.xl,
-        bottom: AppSpacing.lg,
-      ),
+      padding: EdgeInsets.only(left: 20.w, right: 20.w, bottom: AppSpacing.lg),
       decoration: const BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topCenter,

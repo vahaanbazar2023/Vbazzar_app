@@ -27,6 +27,7 @@ class CategoriesController extends GetxController {
     CategoryItem(
       id: 'insurance',
       title: 'Insurance & Finance',
+      shortTitle: 'Insurance',
       assetPath: 'assets/images/png/insurance_finanace.png',
     ),
     CategoryItem(

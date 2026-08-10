@@ -8,17 +8,28 @@ import '../../../routes/app_routes.dart';
 // ─── Model ───────────────────────────────────────────────────────────────────
 
 class AuctionLiveCategory {
-  final String categoryCode; // e.g. "2w", "cv", "ce", "fe"
+  final String categoryCode;
   final int count;
+  final String? iconUrl;
+  final int? bidIncrementAmount;
 
-  const AuctionLiveCategory({required this.categoryCode, required this.count});
+  const AuctionLiveCategory({
+    required this.categoryCode,
+    required this.count,
+    this.iconUrl,
+    this.bidIncrementAmount,
+  });
 
   factory AuctionLiveCategory.fromJson(Map<String, dynamic> json) {
     return AuctionLiveCategory(
       categoryCode: (json['category'] as String? ?? '').toUpperCase(),
       count: (json['count'] as num?)?.toInt() ?? 0,
+      iconUrl: json['icon_url'] as String?,
+      bidIncrementAmount: (json['bid_increment_amount'] as num?)?.toInt(),
     );
   }
+
+  bool get isLive => count > 0;
 
   /// Human-readable display name for the category code.
   String get displayName {
@@ -30,11 +41,11 @@ class AuctionLiveCategory {
       case '4W':
         return 'Four Wheeler';
       case 'CV':
-        return 'Commercial Vehicles';
+        return 'Commercial Vehicle';
       case 'CE':
-        return 'Construction Equipments';
+        return 'Construction Equipment';
       case 'FE':
-        return 'Farm Equipments';
+        return 'Farm Equipment';
       default:
         return categoryCode;
     }

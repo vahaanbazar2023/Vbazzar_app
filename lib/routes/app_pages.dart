@@ -68,6 +68,7 @@ import '../features/inspection_valuation/views/customer_valuation_form_view.dart
 import '../features/inspection_valuation/views/agent_valuation_form_view.dart';
 import '../features/inspection_valuation/views/my_inspections_view.dart';
 import '../features/inspection_valuation/views/inspection_detail_view.dart';
+import '../features/search/views/search_screen.dart';
 
 class AppPages {
   AppPages._();
@@ -425,6 +426,12 @@ class AppPages {
       name: AppRoutes.inspectionDetail,
       page: () => const InspectionDetailView(),
       binding: InspectionValuationBinding(),
+      transition: Transition.rightToLeft,
+    ),
+    // ── Search ─────────────────────────────────────────────────
+    GetPage(
+      name: AppRoutes.search,
+      page: () => const SearchScreen(),
       transition: Transition.rightToLeft,
     ),
   ];
