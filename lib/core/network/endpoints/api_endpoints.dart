@@ -23,6 +23,7 @@ class ApiEndpoints {
   static const String mySubscriptions = '$subscriptionPrefix/my-subscriptions';
   static const String subscriptionListing =
       '$subscriptionPrefix/subscription-listing';
+  static const String comboListing = '$subscriptionPrefix/combo-listing';
   static const String walletEligibility = '/api/v1/wallet/eligibility';
   static const String walletDashboard = '/api/v1/wallet/dashboard';
 

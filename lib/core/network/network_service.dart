@@ -87,6 +87,7 @@ class NetworkService extends GetxService {
     '/api/v1/subscription/subscription-listing',
     '/api/v1/subscription/my-subscriptions',
     '/api/v1/subscription/profile-subscription-categories',
+    '/api/v1/subscription/combo-listing',
 
     // Location endpoints that require authentication
     '/api/v1/locations/regions',

@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/design_system/atoms/custom_loader.dart';
+import '../../../core/design_system/templates/shell_layout.dart';
 import '../../../core/extensions/context_extensions.dart';
 import '../../profile/controllers/profile_controller.dart';
 import '../../profile/models/wallet_models.dart';
@@ -37,65 +38,68 @@ class _RewardsScreenState extends State<RewardsScreen>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      body: Column(
-        children: [
-          // ── Status bar fill ─────────────────────────────────
-          Container(
-            color: AppColors.primary,
-            height: MediaQuery.of(context).padding.top,
+    return ShellLayout(
+      title: context.l10n.myWallet,
+      subtitle: context.l10n.shareCodeEarnCredits,
+      showBack: false,
+      actions: [
+        GestureDetector(
+          onTap: _ctrl.fetchWalletDashboard,
+          child: Padding(
+            padding: EdgeInsets.only(right: 4.w),
+            child: Container(
+              padding: EdgeInsets.all(6.r),
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.15),
+                borderRadius: BorderRadius.circular(8.r),
+              ),
+              child: Icon(
+                Icons.refresh_rounded,
+                color: Colors.white,
+                size: 20.r,
+              ),
+            ),
           ),
-          // ── Header ──────────────────────────────────────────
-          _RewardsHeader(onRefresh: _ctrl.fetchWalletDashboard),
-          // ── Body ────────────────────────────────────────────
-          Expanded(
-            child: Obx(() {
-              if (_ctrl.isLoadingWallet.value) {
-                return const Center(child: CustomLoader());
-              }
-              final wallet = _ctrl.walletData.value;
-              if (wallet == null) {
-                return _EmptyState(onRetry: _ctrl.fetchWalletDashboard);
-              }
-              return RefreshIndicator(
-                onRefresh: () => _ctrl.fetchWalletDashboard(),
-                color: AppColors.primary,
-                child: CustomScrollView(
-                  physics: const AlwaysScrollableScrollPhysics(
-                    parent: BouncingScrollPhysics(),
+        ),
+      ],
+      body: Obx(() {
+        if (_ctrl.isLoadingWallet.value) {
+          return const Center(child: CustomLoader());
+        }
+        final wallet = _ctrl.walletData.value;
+        if (wallet == null) {
+          return _EmptyState(onRetry: _ctrl.fetchWalletDashboard);
+        }
+        return RefreshIndicator(
+          onRefresh: () => _ctrl.fetchWalletDashboard(),
+          color: AppColors.primary,
+          child: CustomScrollView(
+            physics: const AlwaysScrollableScrollPhysics(
+              parent: BouncingScrollPhysics(),
+            ),
+            slivers: [
+              SliverToBoxAdapter(child: _ReferralCard(wallet: wallet)),
+              SliverToBoxAdapter(child: _TransactionHeader(wallet: wallet)),
+              if (wallet.transactions.isEmpty)
+                const SliverFillRemaining(
+                  hasScrollBody: false,
+                  child: _NoTransactions(),
+                )
+              else
+                SliverPadding(
+                  padding: EdgeInsets.fromLTRB(16.w, 0, 16.w, 32.h),
+                  sliver: SliverList(
+                    delegate: SliverChildBuilderDelegate(
+                      (_, i) =>
+                          _TransactionCard(transaction: wallet.transactions[i]),
+                      childCount: wallet.transactions.length,
+                    ),
                   ),
-                  slivers: [
-                    SliverToBoxAdapter(
-                      child: _ReferralCard(wallet: wallet),
-                    ),
-                    SliverToBoxAdapter(
-                      child: _TransactionHeader(wallet: wallet),
-                    ),
-                    if (wallet.transactions.isEmpty)
-                      const SliverFillRemaining(
-                        hasScrollBody: false,
-                        child: _NoTransactions(),
-                      )
-                    else
-                      SliverPadding(
-                        padding: EdgeInsets.fromLTRB(16.w, 0, 16.w, 32.h),
-                        sliver: SliverList(
-                          delegate: SliverChildBuilderDelegate(
-                            (_, i) => _TransactionCard(
-                              transaction: wallet.transactions[i],
-                            ),
-                            childCount: wallet.transactions.length,
-                          ),
-                        ),
-                      ),
-                  ],
                 ),
-              );
-            }),
+            ],
           ),
-        ],
-      ),
+        );
+      }),
     );
   }
 }
@@ -534,8 +538,11 @@ class _TransactionCard extends StatelessWidget {
                 SizedBox(height: 4.h),
                 Row(
                   children: [
-                    Icon(Icons.calendar_today_rounded,
-                        size: 11.r, color: AppColors.grey400),
+                    Icon(
+                      Icons.calendar_today_rounded,
+                      size: 11.r,
+                      color: AppColors.grey400,
+                    ),
                     SizedBox(width: 4.w),
                     Text(
                       transaction.transactionDate,
@@ -546,8 +553,11 @@ class _TransactionCard extends StatelessWidget {
                       ),
                     ),
                     SizedBox(width: 10.w),
-                    Icon(Icons.access_time_rounded,
-                        size: 11.r, color: AppColors.grey400),
+                    Icon(
+                      Icons.access_time_rounded,
+                      size: 11.r,
+                      color: AppColors.grey400,
+                    ),
                     SizedBox(width: 4.w),
                     Text(
                       transaction.transactionTime,
@@ -737,10 +747,7 @@ class _EmptyState extends StatelessWidget {
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.primary,
                 foregroundColor: AppColors.white,
-                padding: EdgeInsets.symmetric(
-                  horizontal: 32.w,
-                  vertical: 12.h,
-                ),
+                padding: EdgeInsets.symmetric(horizontal: 32.w, vertical: 12.h),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12.r),
                 ),

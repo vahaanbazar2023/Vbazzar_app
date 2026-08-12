@@ -5,6 +5,7 @@ import '../models/subscription_plan.dart';
 import '../models/subscription_image.dart';
 import '../models/user_subscription.dart';
 import '../models/wallet_eligibility.dart';
+import '../models/combo_listing_model.dart';
 
 class SubscriptionService {
   final NetworkService _network;
@@ -63,6 +64,27 @@ class SubscriptionService {
       );
     }
     return MySubscriptionsData.fromJson(raw);
+  }
+
+  Future<ComboListingData> fetchComboListing({
+    required String userId,
+    String listingType = 'all',
+  }) async {
+    final response = await _network.post<Map<String, dynamic>>(
+      ApiEndpoints.comboListing,
+      data: {'user_id': userId, 'listing_type': listingType},
+    );
+    final raw = response.data;
+    if (raw == null) {
+      return const ComboListingData(
+        combos: [],
+        ownerPacks: [],
+        totalCount: 0,
+        comboCount: 0,
+        ownerPackCount: 0,
+      );
+    }
+    return ComboListingData.fromJson(raw);
   }
 
   Future<WalletEligibility> checkWalletEligibility({

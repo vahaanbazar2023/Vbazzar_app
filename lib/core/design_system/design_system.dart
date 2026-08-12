@@ -47,3 +47,4 @@ export 'organisms/zoomable_image_viewer.dart';
 // ── Templates ──────────────────────────────────────────────────
 export 'templates/auth_layout.dart';
 export 'templates/dashboard_layout.dart';
+export 'templates/shell_layout.dart';
