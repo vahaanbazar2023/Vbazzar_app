@@ -44,6 +44,7 @@ class AppAssets {
   static const String subIconRewards = '${_images}rewards.png';
   static const String subIconWallet = '${_images}wallet.png';
   static const String subIconWallet1 = '${_images}wallet1.png';
+  static const String subIconWallet111 = '${_images}wallet111.png';
   static const String subIconGift = '${_images}gift.png';
   static const String subIconPending = '${_images}pending.png';
   static const String subIconMore = '${_images}more.png';

@@ -34,10 +34,18 @@ class WalletDashboardResponse {
 class WalletDashboardData {
   final String myReferralCode;
   final List<WalletTransaction> transactions;
+  final double totalBalance;
+  final double availableBalance;
+  final double pendingBalance;
+  final double thisMonthEarned;
 
   const WalletDashboardData({
     required this.myReferralCode,
     required this.transactions,
+    this.totalBalance = 0,
+    this.availableBalance = 0,
+    this.pendingBalance = 0,
+    this.thisMonthEarned = 0,
   });
 
   factory WalletDashboardData.fromJson(Map<String, dynamic> json) {
@@ -46,6 +54,10 @@ class WalletDashboardData {
       transactions: (json['transactions'] as List<dynamic>? ?? [])
           .map((e) => WalletTransaction.fromJson(e as Map<String, dynamic>))
           .toList(),
+      totalBalance: (json['total_balance'] as num?)?.toDouble() ?? 0,
+      availableBalance: (json['available_balance'] as num?)?.toDouble() ?? 0,
+      pendingBalance: (json['pending_balance'] as num?)?.toDouble() ?? 0,
+      thisMonthEarned: (json['this_month_earned'] as num?)?.toDouble() ?? 0,
     );
   }
 }

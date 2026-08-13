@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:vahaan_mobile_2_0/core/design_system/molecules/gradient_button.dart';
+
+import '../../../core/constants/app_assets.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/design_system/atoms/custom_loader.dart';
 import '../../../core/design_system/templates/shell_layout.dart';
@@ -9,8 +12,6 @@ import '../../../core/extensions/context_extensions.dart';
 import '../../profile/controllers/profile_controller.dart';
 import '../../profile/models/wallet_models.dart';
 
-/// Rewards tab — embedded wallet dashboard (referral code + transaction list).
-/// Reuses ProfileController which is already registered by MainShellBinding.
 class RewardsScreen extends StatefulWidget {
   const RewardsScreen({super.key});
 
@@ -29,7 +30,6 @@ class _RewardsScreenState extends State<RewardsScreen>
   void initState() {
     super.initState();
     _ctrl = Get.find<ProfileController>();
-    // Fetch wallet data when tab is first opened
     WidgetsBinding.instance.addPostFrameCallback(
       (_) => _ctrl.fetchWalletDashboard(),
     );
@@ -39,29 +39,11 @@ class _RewardsScreenState extends State<RewardsScreen>
   Widget build(BuildContext context) {
     super.build(context);
     return ShellLayout(
-      title: context.l10n.myWallet,
+      title: 'Referral & Rewards',
       subtitle: context.l10n.shareCodeEarnCredits,
       showBack: false,
-      actions: [
-        GestureDetector(
-          onTap: _ctrl.fetchWalletDashboard,
-          child: Padding(
-            padding: EdgeInsets.only(right: 4.w),
-            child: Container(
-              padding: EdgeInsets.all(6.r),
-              decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.15),
-                borderRadius: BorderRadius.circular(8.r),
-              ),
-              child: Icon(
-                Icons.refresh_rounded,
-                color: Colors.white,
-                size: 20.r,
-              ),
-            ),
-          ),
-        ),
-      ],
+      actions: [],
+      bodyColor: const Color(0xFFF5F5F5),
       body: Obx(() {
         if (_ctrl.isLoadingWallet.value) {
           return const Center(child: CustomLoader());
@@ -73,30 +55,43 @@ class _RewardsScreenState extends State<RewardsScreen>
         return RefreshIndicator(
           onRefresh: () => _ctrl.fetchWalletDashboard(),
           color: AppColors.primary,
-          child: CustomScrollView(
+          child: SingleChildScrollView(
             physics: const AlwaysScrollableScrollPhysics(
               parent: BouncingScrollPhysics(),
             ),
-            slivers: [
-              SliverToBoxAdapter(child: _ReferralCard(wallet: wallet)),
-              SliverToBoxAdapter(child: _TransactionHeader(wallet: wallet)),
-              if (wallet.transactions.isEmpty)
-                const SliverFillRemaining(
-                  hasScrollBody: false,
-                  child: _NoTransactions(),
-                )
-              else
-                SliverPadding(
-                  padding: EdgeInsets.fromLTRB(16.w, 0, 16.w, 32.h),
-                  sliver: SliverList(
-                    delegate: SliverChildBuilderDelegate(
-                      (_, i) =>
-                          _TransactionCard(transaction: wallet.transactions[i]),
-                      childCount: wallet.transactions.length,
-                    ),
-                  ),
+            padding: EdgeInsets.fromLTRB(16.w, 16.h, 16.w, 32.h),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // ── Total wallet balance card ─────────────────────
+                _WalletBalanceCard(wallet: wallet),
+                SizedBox(height: 14.h),
+
+                // ── Available / Pending balance row ───────────────
+
+                // ── Referral banner ───────────────────────────────
+                _ReferralBanner(referralCode: wallet.myReferralCode),
+                SizedBox(height: 20.h),
+                // ── Recent Transactions ───────────────────────────
+                _SectionHeader(
+                  title: 'Recent Transactions',
+                  actionLabel: 'View All',
+                  onAction: () {},
                 ),
-            ],
+                SizedBox(height: 10.h),
+                if (wallet.transactions.isEmpty)
+                  _NoTransactions()
+                else
+                  ...wallet.transactions
+                      .take(5)
+                      .map((t) => _TransactionCard(tx: t)),
+                SizedBox(height: 20.h),
+                // ── How it works ──────────────────────────────────
+                _SectionHeader(title: 'How it works'),
+                SizedBox(height: 14.h),
+                _HowItWorks(),
+              ],
+            ),
           ),
         );
       }),
@@ -105,109 +100,173 @@ class _RewardsScreenState extends State<RewardsScreen>
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Header
+// Wallet balance card
 // ─────────────────────────────────────────────────────────────────────────────
 
-class _RewardsHeader extends StatelessWidget {
-  final VoidCallback onRefresh;
-  const _RewardsHeader({required this.onRefresh});
+class _WalletBalanceCard extends StatelessWidget {
+  final WalletDashboardData wallet;
+  const _WalletBalanceCard({required this.wallet});
+
+  String _fmt(double v) {
+    return v
+        .toStringAsFixed(2)
+        .replaceAllMapped(RegExp(r'(\d)(?=(\d{3})+\.)'), (m) => '${m[1]},');
+  }
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [Color(0xFFBB2625), Color(0xFF8B1A1A), Color(0xFF5C1010)],
-        ),
+      padding: EdgeInsets.all(16.r),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16.r),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 3),
+          ),
+        ],
       ),
-      child: Stack(
+      child: Column(
         children: [
-          // Decorative orbs
-          Positioned(
-            top: -20,
-            right: -20,
-            child: Container(
-              width: 100.w,
-              height: 100.w,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.white.withValues(alpha: 0.06),
+          Row(
+            children: [
+              // Wallet icon
+              Image.asset(
+                AppAssets.subIconWallet111,
+                width: 64.r,
+                height: 64.r,
+                fit: BoxFit.contain,
               ),
-            ),
-          ),
-          Positioned(
-            bottom: -10,
-            left: 40,
-            child: Container(
-              width: 60.w,
-              height: 60.w,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.white.withValues(alpha: 0.04),
-              ),
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.fromLTRB(16.w, 14.h, 16.w, 18.h),
-            child: Row(
-              children: [
-                // Wallet icon
-                Container(
-                  padding: EdgeInsets.all(10.r),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.15),
-                    borderRadius: BorderRadius.circular(12.r),
-                  ),
-                  child: Icon(
-                    Icons.account_balance_wallet_rounded,
-                    color: Colors.white,
-                    size: 22.r,
-                  ),
+              SizedBox(width: 14.w),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Total Wallet Balance',
+                      style: TextStyle(
+                        fontFamily: 'Montserrat',
+                        fontSize: 10.sp,
+                        fontWeight: FontWeight.w500,
+                        color: AppColors.grey700,
+                      ),
+                    ),
+                    SizedBox(height: 4.h),
+                    Text(
+                      '₹${_fmt(wallet.totalBalance)}',
+                      style: TextStyle(
+                        fontFamily: 'Montserrat',
+                        fontWeight: FontWeight.w600,
+                        fontSize: 20.sp,
+                        color: AppColors.black,
+                      ),
+                    ),
+                    SizedBox(height: 4.h),
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.arrow_upward_rounded,
+                          size: 14.r,
+                          color: AppColors.success,
+                        ),
+                        SizedBox(width: 2.w),
+                        Text(
+                          '₹${_fmt(wallet.thisMonthEarned)} this month',
+                          style: TextStyle(
+                            fontFamily: 'Montserrat',
+                            fontSize: 11.sp,
+                            color: AppColors.success,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
-                SizedBox(width: 12.w),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+              ),
+              // Withdraw button
+              GestureDetector(
+                onTap: () {},
+                child: Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 12.w,
+                    vertical: 8.h,
+                  ),
+                  decoration: BoxDecoration(
+                    color: AppColors.lightOrange.withOpacity(0.3),
+                    borderRadius: BorderRadius.circular(8.r),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
                     children: [
+                      Icon(
+                        Icons.download_rounded,
+                        color: AppColors.primary,
+                        size: 14.r,
+                      ),
+                      SizedBox(width: 4.w),
                       Text(
-                        context.l10n.myWallet,
+                        'Withdraw',
                         style: TextStyle(
                           fontFamily: 'Montserrat',
-                          fontSize: 18.sp,
-                          fontWeight: FontWeight.w700,
-                          color: Colors.white,
-                        ),
-                      ),
-                      Text(
-                        context.l10n.shareCodeEarnCredits,
-                        style: TextStyle(
-                          fontFamily: 'Plus Jakarta Sans',
-                          fontSize: 11.sp,
-                          color: Colors.white.withValues(alpha: 0.75),
+                          fontSize: 12.sp,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.primary,
                         ),
                       ),
                     ],
                   ),
                 ),
-                // Refresh button
-                GestureDetector(
-                  onTap: onRefresh,
-                  child: Container(
-                    padding: EdgeInsets.all(8.r),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.15),
-                      borderRadius: BorderRadius.circular(10.r),
-                    ),
-                    child: Icon(
-                      Icons.refresh_rounded,
-                      color: Colors.white,
-                      size: 20.r,
-                    ),
-                  ),
-                ),
-              ],
+              ),
+            ],
+          ),
+          SizedBox(height: 24.h),
+          const Divider(height: 1, thickness: 1, color: AppColors.grey300),
+          SizedBox(height: 14.h),
+          _BalanceRow(wallet: wallet),
+          SizedBox(height: 14.h),
+        ],
+      ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Available / Pending balance row
+// ─────────────────────────────────────────────────────────────────────────────
+
+class _BalanceRow extends StatelessWidget {
+  final WalletDashboardData wallet;
+  const _BalanceRow({required this.wallet});
+
+  String _fmt(double v) => v
+      .toStringAsFixed(2)
+      .replaceAllMapped(RegExp(r'(\d)(?=(\d{3})+\.)'), (m) => '${m[1]},');
+
+  @override
+  Widget build(BuildContext context) {
+    return IntrinsicHeight(
+      child: Row(
+        children: [
+          Expanded(
+            child: _BalanceChip(
+              iconAsset: AppAssets.subIconWallet,
+              label: 'Available Balance',
+              value: '₹${_fmt(wallet.availableBalance)}',
+              valueColor: AppColors.primary,
+            ),
+          ),
+          VerticalDivider(width: 1, thickness: 1, color: AppColors.grey300),
+          SizedBox(width: 8.w),
+          Expanded(
+            child: _BalanceChip(
+              iconAsset: AppAssets.subIconPending,
+              label: 'Pending Balance',
+              value: '₹${_fmt(wallet.pendingBalance)}',
+              valueColor: const Color(0xFFFF9800),
+              showInfo: true,
             ),
           ),
         ],
@@ -216,186 +275,173 @@ class _RewardsHeader extends StatelessWidget {
   }
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Referral Card
-// ─────────────────────────────────────────────────────────────────────────────
+class _BalanceChip extends StatelessWidget {
+  final String iconAsset;
+  final String label;
+  final String value;
+  final Color valueColor;
+  final bool showInfo;
 
-class _ReferralCard extends StatelessWidget {
-  final WalletDashboardData wallet;
-  const _ReferralCard({required this.wallet});
+  const _BalanceChip({
+    required this.iconAsset,
+    required this.label,
+    required this.value,
+    required this.valueColor,
+    this.showInfo = false,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.fromLTRB(16.w, 16.h, 16.w, 0),
-      decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [Color(0xFFBB2625), Color(0xFF8B1A1A), Color(0xFF67100B)],
-        ),
-        borderRadius: BorderRadius.circular(20.r),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.primary.withValues(alpha: 0.30),
-            blurRadius: 20,
-            offset: const Offset(0, 8),
+      // decoration: BoxDecoration(
+      //   color: Colors.white,
+      //   borderRadius: BorderRadius.circular(14.r),
+      //   boxShadow: [
+      //     BoxShadow(
+      //       color: Colors.black.withValues(alpha: 0.04),
+      //       blurRadius: 8,
+      //       offset: const Offset(0, 2),
+      //     ),
+      //   ],
+      // ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Image.asset(
+                iconAsset,
+                width: 28.r,
+                height: 28.r,
+                fit: BoxFit.contain,
+              ),
+              SizedBox(width: 12),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    label,
+                    style: TextStyle(
+                      fontFamily: 'Montserrat',
+                      fontSize: 10.sp,
+                      color: AppColors.black,
+                    ),
+                  ),
+                  SizedBox(height: 3.h),
+                  Text(
+                    value,
+                    style: TextStyle(
+                      fontFamily: 'Montserrat',
+                      fontWeight: FontWeight.w500,
+                      fontSize: 16.sp,
+                      color: valueColor,
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ),
         ],
       ),
-      child: Stack(
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Referral banner
+// ─────────────────────────────────────────────────────────────────────────────
+
+class _ReferralBanner extends StatelessWidget {
+  final String referralCode;
+  const _ReferralBanner({required this.referralCode});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
+      decoration: BoxDecoration(
+        color: AppColors.lightOrange.withOpacity(0.15),
+        borderRadius: BorderRadius.circular(14.r),
+      ),
+      child: Row(
         children: [
-          Positioned(
-            top: -30,
-            right: -30,
-            child: Container(
-              width: 120.w,
-              height: 120.w,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.white.withValues(alpha: 0.06),
-              ),
-            ),
+          Image.asset(
+            AppAssets.subIconGift,
+            width: 40.r,
+            height: 40.r,
+            fit: BoxFit.contain,
           ),
-          Positioned(
-            bottom: -20,
-            left: -20,
-            child: Container(
-              width: 80.w,
-              height: 80.w,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.white.withValues(alpha: 0.04),
-              ),
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.all(24.r),
+          SizedBox(width: 12.w),
+          Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Header row
-                Row(
-                  children: [
-                    Container(
-                      padding: EdgeInsets.all(10.r),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.15),
-                        borderRadius: BorderRadius.circular(12.r),
-                      ),
-                      child: Icon(
-                        Icons.card_giftcard_rounded,
-                        color: Colors.white,
-                        size: 22.r,
-                      ),
-                    ),
-                    SizedBox(width: 12.w),
-                    Expanded(
-                      child: Text(
-                        context.l10n.yourReferralCode,
-                        style: TextStyle(
-                          fontFamily: 'Montserrat',
-                          fontSize: 14.sp,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.white.withValues(alpha: 0.85),
-                        ),
-                      ),
-                    ),
-                    _CopyIconButton(code: wallet.myReferralCode),
-                  ],
-                ),
-                SizedBox(height: 18.h),
-                // Code box
-                Container(
-                  width: double.infinity,
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 20.w,
-                    vertical: 16.h,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.12),
-                    borderRadius: BorderRadius.circular(14.r),
-                    border: Border.all(
-                      color: Colors.white.withValues(alpha: 0.2),
-                    ),
-                  ),
-                  child: Column(
-                    children: [
-                      Text(
-                        wallet.myReferralCode.isEmpty
-                            ? '—'
-                            : wallet.myReferralCode,
-                        style: TextStyle(
-                          fontFamily: 'Montserrat',
-                          fontSize: 28.sp,
-                          fontWeight: FontWeight.w800,
-                          letterSpacing: 6,
-                          color: Colors.white,
-                        ),
-                      ),
-                      SizedBox(height: 4.h),
-                      Text(
-                        context.l10n.shareCodeEarnCredits,
-                        style: TextStyle(
-                          fontFamily: 'Plus Jakarta Sans',
-                          fontSize: 11.sp,
-                          color: Colors.white.withValues(alpha: 0.6),
-                        ),
-                      ),
-                    ],
+                Text(
+                  'Earn more, grow your wallet!',
+                  style: TextStyle(
+                    fontFamily: 'Montserrat',
+                    fontWeight: FontWeight.w700,
+                    fontSize: 12.sp,
+                    color: AppColors.black,
                   ),
                 ),
-                SizedBox(height: 16.h),
-                // Copy button
-                SizedBox(
-                  width: double.infinity,
-                  height: 44.h,
-                  child: ElevatedButton.icon(
-                    onPressed: () {
-                      if (wallet.myReferralCode.isEmpty) return;
-                      Clipboard.setData(
-                        ClipboardData(text: wallet.myReferralCode),
-                      );
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(
-                            context.l10n.referralCodeCopied,
-                            style: const TextStyle(
-                              fontFamily: 'Montserrat',
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                          backgroundColor: AppColors.success,
-                          behavior: SnackBarBehavior.floating,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10.r),
-                          ),
-                          duration: const Duration(seconds: 2),
-                        ),
-                      );
-                    },
-                    icon: Icon(Icons.copy_rounded, size: 18.r),
-                    label: Text(
-                      context.l10n.copyReferralCode,
-                      style: TextStyle(
-                        fontFamily: 'Montserrat',
-                        fontSize: 14.sp,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white,
-                      foregroundColor: AppColors.primary,
-                      elevation: 0,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12.r),
-                      ),
-                    ),
+                SizedBox(height: 2.h),
+                Text(
+                  'Invite more friends and earn exciting rewards.',
+                  style: TextStyle(
+                    fontFamily: 'Montserrat',
+                    fontSize: 11.sp,
+                    color: AppColors.grey500,
                   ),
                 ),
               ],
             ),
           ),
+
+          GestureDetector(
+            onTap: () {
+              if (referralCode.isNotEmpty) {
+                Clipboard.setData(ClipboardData(text: referralCode));
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Referral code copied!'),
+                    backgroundColor: AppColors.success,
+                    behavior: SnackBarBehavior.floating,
+                    duration: const Duration(seconds: 2),
+                  ),
+                );
+              }
+            },
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 7.h),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(8.r),
+                border: Border.all(color: AppColors.primary),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'Refer Now',
+                    style: TextStyle(
+                      fontFamily: 'Montserrat',
+                      fontSize: 12.sp,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.primary,
+                    ),
+                  ),
+                  SizedBox(width: 4.w),
+                  Icon(
+                    Icons.chevron_right_rounded,
+                    size: 16.r,
+                    color: AppColors.primary,
+                  ),
+                ],
+              ),
+            ),
+          ),
         ],
       ),
     );
@@ -403,192 +449,158 @@ class _ReferralCard extends StatelessWidget {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Transaction section header
+// Section header
 // ─────────────────────────────────────────────────────────────────────────────
 
-class _TransactionHeader extends StatelessWidget {
-  final WalletDashboardData wallet;
-  const _TransactionHeader({required this.wallet});
+class _SectionHeader extends StatelessWidget {
+  final String title;
+  final String? actionLabel;
+  final VoidCallback? onAction;
+  const _SectionHeader({required this.title, this.actionLabel, this.onAction});
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.fromLTRB(16.w, 24.h, 16.w, 12.h),
-      child: Row(
-        children: [
-          Container(
-            width: 4.w,
-            height: 20.h,
-            decoration: BoxDecoration(
-              color: AppColors.primary,
-              borderRadius: BorderRadius.circular(2.r),
-            ),
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          title,
+          style: TextStyle(
+            fontFamily: 'Montserrat',
+            fontWeight: FontWeight.w700,
+            fontSize: 15.sp,
+            color: AppColors.black,
           ),
-          SizedBox(width: 10.w),
-          Text(
-            context.l10n.transactions,
-            style: TextStyle(
-              fontFamily: 'Montserrat',
-              fontSize: 16.sp,
-              fontWeight: FontWeight.w700,
-              color: AppColors.textPrimary,
-            ),
-          ),
-          const Spacer(),
-          if (wallet.transactions.isNotEmpty)
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
-              decoration: BoxDecoration(
-                color: AppColors.primary.withValues(alpha: 0.10),
-                borderRadius: BorderRadius.circular(12.r),
-              ),
-              child: Text(
-                '${wallet.transactions.length}',
-                style: TextStyle(
-                  fontFamily: 'Montserrat',
-                  fontSize: 12.sp,
-                  fontWeight: FontWeight.w600,
+        ),
+        if (actionLabel != null)
+          GestureDetector(
+            onTap: onAction,
+            child: Row(
+              children: [
+                Text(
+                  actionLabel!,
+                  style: TextStyle(
+                    fontFamily: 'Montserrat',
+                    fontSize: 12.sp,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.primary,
+                  ),
+                ),
+                Icon(
+                  Icons.chevron_right_rounded,
+                  size: 16.r,
                   color: AppColors.primary,
                 ),
-              ),
+              ],
             ),
-        ],
-      ),
+          ),
+      ],
     );
   }
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Transaction Card
+// Transaction card
 // ─────────────────────────────────────────────────────────────────────────────
 
 class _TransactionCard extends StatelessWidget {
-  final WalletTransaction transaction;
-  const _TransactionCard({required this.transaction});
+  final WalletTransaction tx;
+  const _TransactionCard({required this.tx});
 
   @override
   Widget build(BuildContext context) {
-    final isCredit = transaction.isCredit;
+    final isCredit = tx.isCredit;
     final color = isCredit ? AppColors.success : AppColors.error;
     final prefix = isCredit ? '+' : '-';
 
     return Container(
       margin: EdgeInsets.only(bottom: 10.h),
-      padding: EdgeInsets.all(16.r),
+      padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
       decoration: BoxDecoration(
-        color: AppColors.white,
+        color: Colors.white,
         borderRadius: BorderRadius.circular(14.r),
-        border: Border.all(color: AppColors.grey200),
         boxShadow: [
           BoxShadow(
-            color: AppColors.black.withValues(alpha: 0.03),
-            blurRadius: 8,
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 6,
             offset: const Offset(0, 2),
           ),
         ],
       ),
       child: Row(
         children: [
-          // Icon
+          // Icon circle
           Container(
-            width: 44.r,
-            height: 44.r,
+            width: 40.r,
+            height: 40.r,
             decoration: BoxDecoration(
+              shape: BoxShape.circle,
               color: color.withValues(alpha: 0.10),
-              borderRadius: BorderRadius.circular(12.r),
             ),
             child: Icon(
               isCredit
                   ? Icons.arrow_downward_rounded
                   : Icons.arrow_upward_rounded,
               color: color,
-              size: 22.r,
+              size: 20.r,
             ),
           ),
-          SizedBox(width: 14.w),
-          // Details
+          SizedBox(width: 12.w),
+          // Name + sub-name
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  transaction.transactionName,
+                  tx.transactionName,
                   style: TextStyle(
                     fontFamily: 'Montserrat',
-                    fontSize: 14.sp,
                     fontWeight: FontWeight.w600,
+                    fontSize: 13.sp,
                     color: AppColors.textPrimary,
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
-                if (transaction.subscriptionName.isNotEmpty) ...[
-                  SizedBox(height: 2.h),
+                SizedBox(height: 2.h),
+                if (tx.subscriptionName.isNotEmpty)
                   Text(
-                    transaction.subscriptionName,
+                    'From ${tx.subscriptionName}',
                     style: TextStyle(
                       fontFamily: 'Montserrat',
-                      fontSize: 12.sp,
-                      color: AppColors.grey600,
+                      fontSize: 11.sp,
+                      color: AppColors.grey500,
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
-                ],
-                SizedBox(height: 4.h),
-                Row(
-                  children: [
-                    Icon(
-                      Icons.calendar_today_rounded,
-                      size: 11.r,
-                      color: AppColors.grey400,
-                    ),
-                    SizedBox(width: 4.w),
-                    Text(
-                      transaction.transactionDate,
-                      style: TextStyle(
-                        fontFamily: 'Montserrat',
-                        fontSize: 11.sp,
-                        color: AppColors.grey500,
-                      ),
-                    ),
-                    SizedBox(width: 10.w),
-                    Icon(
-                      Icons.access_time_rounded,
-                      size: 11.r,
-                      color: AppColors.grey400,
-                    ),
-                    SizedBox(width: 4.w),
-                    Text(
-                      transaction.transactionTime,
-                      style: TextStyle(
-                        fontFamily: 'Montserrat',
-                        fontSize: 11.sp,
-                        color: AppColors.grey500,
-                      ),
-                    ),
-                  ],
-                ),
               ],
             ),
           ),
-          SizedBox(width: 10.w),
-          // Amount
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 6.h),
-            decoration: BoxDecoration(
-              color: color.withValues(alpha: 0.08),
-              borderRadius: BorderRadius.circular(8.r),
-            ),
-            child: Text(
-              '$prefix₹${transaction.amount}',
-              style: TextStyle(
-                fontFamily: 'Montserrat',
-                fontSize: 14.sp,
-                fontWeight: FontWeight.w700,
-                color: color,
+          SizedBox(width: 8.w),
+          // Amount + date
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Text(
+                '$prefix₹${tx.amount}',
+                style: TextStyle(
+                  fontFamily: 'Montserrat',
+                  fontWeight: FontWeight.w700,
+                  fontSize: 13.sp,
+                  color: color,
+                ),
               ),
-            ),
+              SizedBox(height: 2.h),
+              Text(
+                '${tx.transactionDate}, ${tx.transactionTime}',
+                style: TextStyle(
+                  fontFamily: 'Montserrat',
+                  fontSize: 9.sp,
+                  color: AppColors.grey400,
+                ),
+              ),
+            ],
           ),
         ],
       ),
@@ -597,106 +609,184 @@ class _TransactionCard extends StatelessWidget {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Copy icon button
+// How it works
 // ─────────────────────────────────────────────────────────────────────────────
 
-class _CopyIconButton extends StatelessWidget {
-  final String code;
-  const _CopyIconButton({required this.code});
+class _HowItWorks extends StatelessWidget {
+  const _HowItWorks();
+
+  static const _steps = [
+    _Step(
+      n: '1',
+      imageAsset: AppAssets.subIconStep1,
+      title: 'Refer Friends',
+      desc: 'Share your referral link with your friends',
+    ),
+    _Step(
+      n: '2',
+      imageAsset: AppAssets.subIconStep2,
+      title: 'They Join',
+      desc: 'Your friends sign up using your link',
+    ),
+    _Step(
+      n: '3',
+      imageAsset: AppAssets.subIconStep3,
+      title: 'They Actively Use',
+      desc: 'They explore, participate and place bids',
+    ),
+    _Step(
+      n: '4',
+      imageAsset: AppAssets.subIconStep4,
+      title: 'You Earn',
+      desc: 'You earn rewards which reflect in your wallet',
+    ),
+  ];
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        if (code.isEmpty) return;
-        Clipboard.setData(ClipboardData(text: code));
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              context.l10n.referralCodeCopied,
-              style: const TextStyle(
-                fontFamily: 'Montserrat',
-                fontWeight: FontWeight.w500,
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: _steps.asMap().entries.map((e) {
+        final step = e.value;
+        final isLast = e.key == _steps.length - 1;
+        return Expanded(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: Column(
+                  children: [
+                    Container(
+                      width: 40.r,
+                      height: 40.r,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: AppColors.lightOrange.withOpacity(0.3)
+                      ),
+                      child: Stack(
+                        children: [
+                          Center(
+                            child: Image.asset(
+                              step.imageAsset,
+                              width: 22.r,
+                              height: 22.r,
+                              fit: BoxFit.contain,
+                            ),
+                          ),
+                         
+                          Positioned(
+                            top: 0,
+                            left: 0,
+                            child: Container(
+                              width: 14.r,
+                              height: 14.r,
+                              decoration: const BoxDecoration(
+                                shape: BoxShape.circle,
+                                color:AppColors.ctaGradientStart
+                              ),
+                              child: Center(
+                                child: Text(
+                                  step.n,
+                                  style: TextStyle(
+                                    fontFamily: 'Montserrat',
+                                    fontSize: 8.sp,
+                                    fontWeight: FontWeight.w800,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(height: 8.h),
+                    Text(
+                      step.title,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontFamily: 'Montserrat',
+                        fontWeight: FontWeight.w700,
+                        fontSize: 10.sp,
+                        color: AppColors.black,
+                      ),
+                    ),
+                    SizedBox(height: 3.h),
+                    Text(
+                      step.desc,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontFamily: 'Montserrat',
+                        fontSize: 9.sp,
+                        color: AppColors.grey500,
+                        height: 1.3,
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-            backgroundColor: AppColors.success,
-            behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
-            duration: const Duration(seconds: 2),
+              if (!isLast)
+                Padding(
+                  padding: EdgeInsets.only(top: 18.h),
+                  child: Container(
+                    decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: AppColors.lightOrange.withOpacity(0.3)
+                      ),
+                    child: Icon(
+                      Icons.chevron_right_rounded,
+                      size: 16.r,
+                      color: AppColors.primaryDark,
+                    ),
+                  ),
+                ),
+            ],
           ),
         );
-      },
-      child: Container(
-        padding: EdgeInsets.all(8.r),
-        decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.15),
-          borderRadius: BorderRadius.circular(10.r),
-        ),
-        child: Icon(Icons.copy_rounded, color: Colors.white, size: 18.r),
-      ),
+      }).toList(),
     );
   }
 }
 
+class _Step {
+  final String n;
+  final String imageAsset;
+  final String title;
+  final String desc;
+  const _Step({
+    required this.n,
+    required this.imageAsset,
+    required this.title,
+    required this.desc,
+  });
+}
+
 // ─────────────────────────────────────────────────────────────────────────────
-// No transactions
+// Empty / no transactions
 // ─────────────────────────────────────────────────────────────────────────────
 
 class _NoTransactions extends StatelessWidget {
-  const _NoTransactions();
-
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: EdgeInsets.all(40.r),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              padding: EdgeInsets.all(20.r),
-              decoration: const BoxDecoration(
-                color: AppColors.grey100,
-                shape: BoxShape.circle,
-              ),
-              child: Icon(
-                Icons.receipt_long_outlined,
-                size: 48.r,
-                color: AppColors.grey400,
-              ),
-            ),
-            SizedBox(height: 20.h),
-            Text(
-              context.l10n.noTransactionsYet,
-              style: TextStyle(
-                fontFamily: 'Montserrat',
-                fontSize: 16.sp,
-                fontWeight: FontWeight.w600,
-                color: AppColors.textPrimary,
-              ),
-            ),
-            SizedBox(height: 8.h),
-            Text(
-              context.l10n.walletTransactionsAppearHere,
-              style: TextStyle(
-                fontFamily: 'Montserrat',
-                fontSize: 13.sp,
-                color: AppColors.grey500,
-              ),
-              textAlign: TextAlign.center,
-            ),
-          ],
+    return Container(
+      padding: EdgeInsets.all(24.r),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(14.r),
+      ),
+      child: Center(
+        child: Text(
+          'No transactions yet',
+          style: TextStyle(
+            fontFamily: 'Montserrat',
+            fontSize: 13.sp,
+            color: AppColors.grey400,
+          ),
         ),
       ),
     );
   }
 }
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Empty / error state
-// ─────────────────────────────────────────────────────────────────────────────
 
 class _EmptyState extends StatelessWidget {
   final VoidCallback onRetry;
@@ -706,57 +796,47 @@ class _EmptyState extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: Padding(
-        padding: EdgeInsets.all(40.r),
+        padding: EdgeInsets.all(32.w),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
           children: [
-            Container(
-              padding: EdgeInsets.all(24.r),
-              decoration: BoxDecoration(
-                color: AppColors.primary.withValues(alpha: 0.08),
-                shape: BoxShape.circle,
-              ),
-              child: Icon(
-                Icons.account_balance_wallet_outlined,
-                size: 64.r,
-                color: AppColors.primary.withValues(alpha: 0.5),
-              ),
-            ),
-            SizedBox(height: 24.h),
+            Image.asset(AppAssets.subIconWallet111, width: 80.r, height: 80.r),
+            SizedBox(height: 16.h),
             Text(
-              context.l10n.unableToLoadWallet,
+              'Unable to load wallet',
               style: TextStyle(
                 fontFamily: 'Montserrat',
-                fontSize: 18.sp,
                 fontWeight: FontWeight.w700,
+                fontSize: 16.sp,
                 color: AppColors.textPrimary,
               ),
             ),
             SizedBox(height: 8.h),
             Text(
-              context.l10n.pleaseTryAgainLater,
+              'Please try again later.',
               style: TextStyle(
                 fontFamily: 'Montserrat',
-                fontSize: 14.sp,
+                fontSize: 13.sp,
                 color: AppColors.grey500,
               ),
             ),
-            SizedBox(height: 24.h),
-            ElevatedButton(
-              onPressed: onRetry,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primary,
-                foregroundColor: AppColors.white,
-                padding: EdgeInsets.symmetric(horizontal: 32.w, vertical: 12.h),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12.r),
+            SizedBox(height: 20.h),
+            GestureDetector(
+              onTap: onRetry,
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 12.h),
+                decoration: BoxDecoration(
+                  color: AppColors.primary,
+                  borderRadius: BorderRadius.circular(8.r),
                 ),
-              ),
-              child: Text(
-                context.l10n.retry,
-                style: const TextStyle(
-                  fontFamily: 'Montserrat',
-                  fontWeight: FontWeight.w600,
+                child: Text(
+                  context.l10n.retry,
+                  style: TextStyle(
+                    fontFamily: 'Montserrat',
+                    fontWeight: FontWeight.w700,
+                    fontSize: 13.sp,
+                    color: Colors.white,
+                  ),
                 ),
               ),
             ),
