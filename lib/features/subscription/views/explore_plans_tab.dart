@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
+import '../../../core/constants/app_assets.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/extensions/context_extensions.dart';
 import '../../../core/storage/secure_storage_service.dart';
@@ -51,11 +52,13 @@ class _ExplorePlansTabState extends State<ExplorePlansTab> {
       SubscriptionGuardService.to.invalidateAndReload();
     };
     pc.onFailure = (msg, __) => Get.snackbar(
-      context.l10n.paymentFailed, msg,
+      context.l10n.paymentFailed,
+      msg,
       backgroundColor: Colors.red.shade100,
     );
     pc.onCancelled = () => Get.snackbar(
-      context.l10n.paymentCancelled, context.l10n.youCancelledPayment,
+      context.l10n.paymentCancelled,
+      context.l10n.youCancelledPayment,
       backgroundColor: Colors.orange.shade100,
     );
     await pc.initiatePayment(
@@ -108,14 +111,19 @@ class _ExplorePlansTabState extends State<ExplorePlansTab> {
           (Get.arguments as Map<String, dynamic>? ?? {})['pending_vehicle'];
       Get.until(until);
       if (pending != null)
-        Get.toNamed(AppRoutes.buyVehicleDetail, arguments: {'vehicle': pending});
+        Get.toNamed(
+          AppRoutes.buyVehicleDetail,
+          arguments: {'vehicle': pending},
+        );
       CustomSnackbar.show(
         message: context.l10n.vehicleDetailsUnlocked,
         type: SnackbarType.success,
       );
       SubscriptionGuardService.to.invalidateAndReload();
     } else if (source == 'SUBT005' || source == 'INSPECTION') {
-      final vid = (Get.arguments as Map<String, dynamic>? ?? {})['pending_vehicle_id'] as String?;
+      final vid =
+          (Get.arguments as Map<String, dynamic>? ?? {})['pending_vehicle_id']
+              as String?;
       Get.until(until);
       if (vid != null && Get.isRegistered<BuyVehicleController>())
         Get.find<BuyVehicleController>().unlockInspectionAndRequest(vid);
@@ -135,13 +143,21 @@ class _ExplorePlansTabState extends State<ExplorePlansTab> {
   }
 
   Future<void> _runSUBT002(VehicleListingController c) async {
-    try { await SubscriptionGuardService.to.invalidateAndReload(); } catch (_) { return; }
+    try {
+      await SubscriptionGuardService.to.invalidateAndReload();
+    } catch (_) {
+      return;
+    }
     await c.silentRefresh();
     await c.revalidatePendingBid();
   }
 
   Future<void> _runMyBids(MyBidsController c) async {
-    try { await SubscriptionGuardService.to.invalidateAndReload(); } catch (_) { return; }
+    try {
+      await SubscriptionGuardService.to.invalidateAndReload();
+    } catch (_) {
+      return;
+    }
     await c.revalidatePendingBid();
   }
 
@@ -149,7 +165,9 @@ class _ExplorePlansTabState extends State<ExplorePlansTab> {
   Widget build(BuildContext context) {
     return Obx(() {
       if (widget.ctrl.isLoading.value) {
-        return const Center(child: CircularProgressIndicator(color: AppColors.primary));
+        return const Center(
+          child: CircularProgressIndicator(color: AppColors.primary),
+        );
       }
       if (widget.ctrl.errorMessage.value.isNotEmpty) {
         return _ErrorWidget(
@@ -159,33 +177,27 @@ class _ExplorePlansTabState extends State<ExplorePlansTab> {
       }
       if (widget.ctrl.plans.isEmpty) {
         return Center(
-          child: Text('No plans available',
-            style: TextStyle(fontFamily: 'Montserrat', fontSize: 14.sp,
-              color: AppColors.grey500)),
-        );
-      }
-      return Column(
-        children: [
-          Expanded(
-            child: ListView.builder(
-              padding: EdgeInsets.fromLTRB(16.w, 16.h, 16.w, 8.h),
-              itemCount: widget.ctrl.plans.length,
-              itemBuilder: (_, i) => Padding(
-                padding: EdgeInsets.only(bottom: 12.h),
-                child: ExploreCard(
-                  plan: widget.ctrl.plans[i],
-                  isSelected: widget.ctrl.selectedPlanIndex.value == i,
-                  onTap: () => widget.ctrl.selectPlan(i),
-                ),
-              ),
+          child: Text(
+            'No plans available',
+            style: TextStyle(
+              fontFamily: 'Montserrat',
+              fontSize: 14.sp,
+              color: AppColors.grey500,
             ),
           ),
-          ProceedBar(
-            ctrl: widget.ctrl,
-            referralCtrl: _referralCtrl,
-            onProceed: _onProceed,
+        );
+      }
+      return ListView.builder(
+        padding: EdgeInsets.fromLTRB(16.w, 16.h, 16.w, 16.h),
+        itemCount: widget.ctrl.plans.length,
+        itemBuilder: (_, i) => Padding(
+          padding: EdgeInsets.only(bottom: 12.h),
+          child: ExploreCard(
+            plan: widget.ctrl.plans[i],
+            isSelected: widget.ctrl.selectedPlanIndex.value == i,
+            onTap: () => widget.ctrl.selectPlan(i),
           ),
-        ],
+        ),
       );
     });
   }
@@ -206,15 +218,41 @@ class ExploreCard extends StatelessWidget {
     required this.onTap,
   });
 
-  IconData get _icon {
+  String get _displayName {
     switch (plan.typeCode) {
-      case 'SUBT001': return Icons.gavel_rounded;
-      case 'SUBT002': return Icons.bar_chart_rounded;
-      case 'SUBT003': return Icons.handshake_rounded;
-      case 'SUBT004': return Icons.shield_rounded;
-      case 'SUBT005': return Icons.search_rounded;
-      case 'SUBT006': return Icons.build_rounded;
-      default:        return Icons.workspace_premium_rounded;
+      case 'SUBT001':
+        return 'Auction Access Plan';
+      case 'SUBT002':
+        return 'Bid Limit Plan';
+      case 'SUBT003':
+        return 'Owner Contact Plan';
+      case 'SUBT004':
+        return 'Vehicle Details Plan';
+      case 'SUBT005':
+        return 'Inspection Plan';
+      case 'SUBT006':
+        return 'Mechanic Contact Plan';
+      default:
+        return plan.name;
+    }
+  }
+
+  String get _iconAsset {
+    switch (plan.typeCode) {
+      case 'SUBT001':
+        return AppAssets.subIconKing;
+      case 'SUBT002':
+        return AppAssets.subIconBidLimit;
+      case 'SUBT003':
+        return AppAssets.subIconOwnerPack;
+      case 'SUBT004':
+        return AppAssets.subIconShield;
+      case 'SUBT005':
+        return AppAssets.subIconInspection;
+      case 'SUBT006':
+        return AppAssets.subIconMechanic;
+      default:
+        return AppAssets.subIconKing;
     }
   }
 
@@ -224,70 +262,76 @@ class ExploreCard extends StatelessWidget {
       onTap: onTap,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 180),
-        padding: EdgeInsets.all(14.r),
+        padding: EdgeInsets.all(16.r),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(14.r),
-          border: Border.all(
-            color: isSelected ? AppColors.primary : const Color(0xFFEEEEEE),
-            width: isSelected ? 1.5 : 1,
-          ),
+          borderRadius: BorderRadius.circular(16.r),
+          border: Border.all(color: AppColors.grey400, width: 1),
           boxShadow: [
-            BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 6),
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.04),
+              blurRadius: 6,
+            ),
           ],
         ),
         child: Row(
           children: [
-            // Gradient circle icon
+            // Rounded square icon — pink bg + PNG
             Container(
-              width: 44.r, height: 44.r,
-              decoration: const BoxDecoration(
-                shape: BoxShape.circle,
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [AppColors.ctaGradientStart, AppColors.ctaGradientEnd],
-                ),
+              width: 52.r,
+              height: 52.r,
+              decoration: BoxDecoration(
+                color: const Color(0xFFFFF0F0),
+                borderRadius: BorderRadius.circular(12.r),
               ),
-              child: Icon(_icon, color: Colors.white, size: 22.r),
+              padding: EdgeInsets.all(10.r),
+              child: Image.asset(_iconAsset, fit: BoxFit.contain),
             ),
-            SizedBox(width: 12.w),
+            SizedBox(width: 14.w),
             // Name + description
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(plan.name,
-                    style: TextStyle(fontFamily: 'Montserrat',
-                      fontWeight: FontWeight.w700, fontSize: 14.sp,
-                      color: AppColors.black)),
-                  SizedBox(height: 3.h),
+                  Text(
+                    _displayName,
+                    style: TextStyle(
+                      fontFamily: 'Montserrat',
+                      fontWeight: FontWeight.w700,
+                      fontSize: 15.sp,
+                      color: AppColors.black,
+                    ),
+                  ),
+                  SizedBox(height: 4.h),
                   Text(
                     plan.featDescription.isNotEmpty
                         ? plan.featDescription
                         : 'Unlock unlimited access to live auctions',
-                    style: TextStyle(fontFamily: 'Montserrat',
-                      fontSize: 11.sp, color: AppColors.grey500),
-                    maxLines: 1, overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontFamily: 'Montserrat',
+                      fontSize: 12.sp,
+                      color: AppColors.grey500,
+                      height: 1.4,
+                    ),
+                    maxLines: 2,
                   ),
                 ],
               ),
             ),
-            SizedBox(width: 10.w),
-            // Radio circle
+            SizedBox(width: 12.w),
+            // Radio circle — plain outline always, filled dot when selected
             Container(
-              width: 22.r, height: 22.r,
+              width: 24.r,
+              height: 24.r,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                border: Border.all(
-                  color: isSelected ? AppColors.primary : AppColors.grey300,
-                  width: 1.5,
-                ),
+                border: Border.all(color: AppColors.grey400, width: 1.5),
               ),
               child: isSelected
                   ? Center(
                       child: Container(
-                        width: 12.r, height: 12.r,
+                        width: 12.r,
+                        height: 12.r,
                         decoration: const BoxDecoration(
                           shape: BoxShape.circle,
                           color: AppColors.primary,
@@ -332,22 +376,36 @@ class ProceedBar extends StatelessWidget {
               TextField(
                 controller: referralCtrl,
                 textCapitalization: TextCapitalization.characters,
-                style: TextStyle(fontFamily: 'Montserrat',
-                  fontWeight: FontWeight.w500, fontSize: 13.sp,
-                  color: AppColors.black),
+                style: TextStyle(
+                  fontFamily: 'Montserrat',
+                  fontWeight: FontWeight.w500,
+                  fontSize: 13.sp,
+                  color: AppColors.black,
+                ),
                 decoration: InputDecoration(
                   hintText: context.l10n.enterHere,
-                  hintStyle: TextStyle(fontFamily: 'Montserrat',
-                    fontSize: 13.sp, color: AppColors.grey400),
+                  hintStyle: TextStyle(
+                    fontFamily: 'Montserrat',
+                    fontSize: 13.sp,
+                    color: AppColors.grey400,
+                  ),
                   contentPadding: EdgeInsets.symmetric(
-                    horizontal: 16.w, vertical: 12.h),
-                  filled: true, fillColor: const Color(0xFFF8F8F8),
+                    horizontal: 16.w,
+                    vertical: 12.h,
+                  ),
+                  filled: true,
+                  fillColor: const Color(0xFFF8F8F8),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10.r),
-                    borderSide: const BorderSide(color: Color(0xFFEEEEEE))),
+                    borderSide: const BorderSide(color: Color(0xFFEEEEEE)),
+                  ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10.r),
-                    borderSide: BorderSide(color: AppColors.primary, width: 1.5)),
+                    borderSide: BorderSide(
+                      color: AppColors.primary,
+                      width: 1.5,
+                    ),
+                  ),
                 ),
               ),
               SizedBox(height: 10.h),
@@ -360,17 +418,27 @@ class ProceedBar extends StatelessWidget {
                 decoration: BoxDecoration(
                   gradient: hasPlan
                       ? const LinearGradient(
-                          colors: [AppColors.ctaGradientStart, AppColors.ctaGradientEnd],
-                          begin: Alignment.topCenter, end: Alignment.bottomCenter)
+                          colors: [
+                            AppColors.ctaGradientStart,
+                            AppColors.ctaGradientEnd,
+                          ],
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                        )
                       : null,
                   color: hasPlan ? null : AppColors.grey200,
                   borderRadius: BorderRadius.circular(24.r),
                 ),
                 child: Center(
-                  child: Text(context.l10n.proceedPayment,
-                    style: TextStyle(fontFamily: 'Montserrat',
-                      fontWeight: FontWeight.w700, fontSize: 14.sp,
-                      color: hasPlan ? Colors.white : AppColors.grey400)),
+                  child: Text(
+                    context.l10n.proceedPayment,
+                    style: TextStyle(
+                      fontFamily: 'Montserrat',
+                      fontWeight: FontWeight.w700,
+                      fontSize: 14.sp,
+                      color: hasPlan ? Colors.white : AppColors.grey400,
+                    ),
+                  ),
                 ),
               ),
             ),
@@ -380,21 +448,32 @@ class ProceedBar extends StatelessWidget {
                 final plan = ctrl.selectedPlan;
                 if (plan == null) return;
                 final args = Get.arguments as Map<String, dynamic>? ?? {};
-                Get.toNamed(AppRoutes.walletPayment, arguments: {
-                  ...args, 'plan': plan, 'source': ctrl.subscriptionSource,
-                });
+                Get.toNamed(
+                  AppRoutes.walletPayment,
+                  arguments: {
+                    ...args,
+                    'plan': plan,
+                    'source': ctrl.subscriptionSource,
+                  },
+                );
               },
               child: RichText(
                 text: TextSpan(
-                  style: TextStyle(fontFamily: 'Montserrat',
-                    fontSize: 11.sp, color: AppColors.grey500),
+                  style: TextStyle(
+                    fontFamily: 'Montserrat',
+                    fontSize: 11.sp,
+                    color: AppColors.grey500,
+                  ),
                   children: [
                     TextSpan(text: context.l10n.orPayFromWallet),
                     TextSpan(
                       text: context.l10n.myWalletLink,
                       style: TextStyle(
                         fontWeight: FontWeight.w700,
-                        color: hasPlan ? AppColors.primaryLight : AppColors.grey400),
+                        color: hasPlan
+                            ? AppColors.primaryLight
+                            : AppColors.grey400,
+                      ),
                     ),
                   ],
                 ),
@@ -426,9 +505,16 @@ class _ErrorWidget extends StatelessWidget {
           children: [
             Icon(Icons.wifi_off_rounded, size: 48.r, color: AppColors.grey300),
             SizedBox(height: 16.h),
-            Text(message, textAlign: TextAlign.center,
-              style: TextStyle(fontFamily: 'Montserrat', fontSize: 13.sp,
-                color: AppColors.grey500, height: 1.5)),
+            Text(
+              message,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontFamily: 'Montserrat',
+                fontSize: 13.sp,
+                color: AppColors.grey500,
+                height: 1.5,
+              ),
+            ),
             SizedBox(height: 16.h),
             GestureDetector(
               onTap: onRetry,
@@ -438,10 +524,15 @@ class _ErrorWidget extends StatelessWidget {
                   color: AppColors.primary,
                   borderRadius: BorderRadius.circular(8.r),
                 ),
-                child: Text('Retry',
-                  style: TextStyle(fontFamily: 'Montserrat',
-                    fontWeight: FontWeight.w700, fontSize: 13.sp,
-                    color: Colors.white)),
+                child: Text(
+                  'Retry',
+                  style: TextStyle(
+                    fontFamily: 'Montserrat',
+                    fontWeight: FontWeight.w700,
+                    fontSize: 13.sp,
+                    color: Colors.white,
+                  ),
+                ),
               ),
             ),
           ],

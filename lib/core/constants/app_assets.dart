@@ -21,9 +21,65 @@ class AppAssets {
   static const String auction = '${_images}auction.png';
   static const String buySell = '${_images}buy_sell.png';
   static const String fms = '${_images}fms.png';
-  static const String insuranceFinance = '${_images}insurance_finance.png';
+  static const String insuranceFinance = '${_images}insurance_finanace.png';
   static const String inspection = '${_images}inspection.png';
   static const String spareParts = '${_images}spare_parts.png';
+
+  // ── Subscription icons ────────────────────────────────────────────────────
+  // Plan type icons (mapped to SUBT codes)
+  static const String subIconAuction = '${_images}auction.png';
+  static const String subIconBidLimit = '${_images}bid.png';
+  static const String subIconOwnerPack = '${_images}gift.png';
+  static const String subIconVehicle = '${_images}shield.png';
+  static const String subIconInspection = '${_images}inspection.png';
+  static const String subIconMechanic = '${_images}spare_parts.png';
+
+  // Combo icons
+  static const String subIconCombo = '${_images}combo.png';
+  static const String subIconAllAccess = '${_images}all aaccess combo.png';
+  static const String subIconEssential = '${_images}essential combo.png';
+
+  // Misc subscription UI icons
+  static const String subIconSubscriptions = '${_images}subscriptions.png';
+  static const String subIconRewards = '${_images}rewards.png';
+  static const String subIconWallet = '${_images}wallet.png';
+  static const String subIconWallet1 = '${_images}wallet1.png';
+  static const String subIconGift = '${_images}gift.png';
+  static const String subIconPending = '${_images}pending.png';
+  static const String subIconMore = '${_images}more.png';
+  static const String subIconStar = '${_images}star1.png';
+
+  // Crown / king tier icons
+  static const String subIconKing = '${_images}king.png';
+  static const String subIconKing1 = '${_images}king-1.png';
+  static const String subIconKing2 = '${_images}king-2.png';
+  static const String subIconKing11 = '${_images}king11.png';
+  static const String subIconKing12 = '${_images}king12.png';
+
+  // Shield variants
+  static const String subIconShield = '${_images}shield.png';
+  static const String subIconShield1 = '${_images}shield 1.png';
+  static const String subIconShield2 = '${_images}shield 2.png';
+  static const String subIconShield4 = '${_images}shield 4.png';
+
+  // Bronze tier
+  static const String subIconBronze = '${_images}bronz 1.png';
+
+  // Support icons
+  static const String subIconSupport = '${_images}support.png';
+  static const String subIconSupport1 = '${_images}support-1.png';
+  static const String subIconSupport2 = '${_images}support-2.png';
+
+  // Step / onboarding icons
+  static const String subIconStep1 = '${_images}step1.png';
+  static const String subIconStep2 = '${_images}step2.png';
+  static const String subIconStep3 = '${_images}step3.png';
+  static const String subIconStep4 = '${_images}step4.png';
+
+  // Group illustration icons
+  static const String subIconGroup1 = '${_images}Group 1261155679.png';
+  static const String subIconGroup2 = '${_images}Group 1261155680.png';
+  static const String subIconGroup3 = '${_images}Group 1261155681.png';
 
   // Intro screen vehicle images
   static const String intro1 = '${_images}white_truck.png';

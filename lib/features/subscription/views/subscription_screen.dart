@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+
 import '../controllers/subscription_controller.dart';
 import '../models/subscription_plan.dart';
 import '../services/subscription_guard_service.dart';
 import '../../../core/constants/app_assets.dart';
 import '../../../core/constants/app_colors.dart';
-import '../../../core/constants/app_sizes.dart';
+import '../../../core/design_system/design_system.dart';
 import '../../../core/design_system/organisms/app_bottom_nav_bar.dart';
 import '../../../core/design_system/molecules/custom_snackbar.dart';
 import '../../../core/extensions/context_extensions.dart';
@@ -19,24 +21,21 @@ import '../../../features/payment/controllers/payment_controller.dart';
 import '../../../routes/app_routes.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Subscription plan listing screen — light theme
+// SubscriptionScreen
 // ─────────────────────────────────────────────────────────────────────────────
+
 class SubscriptionScreen extends StatefulWidget {
   final String subscriptionSource;
   final String title;
   final String subtitle;
-
-  /// When set, the listing API is skipped and this plan is used directly.
   final SubscriptionPlan? prebuiltPlan;
-
-  /// Extra args passed through to the confirm screen after plan selection.
   final Map<String, dynamic> extraArgs;
 
   const SubscriptionScreen({
     super.key,
     required this.subscriptionSource,
-    this.title = 'Choose Subscription Plan',
-    this.subtitle = '',
+    this.title = 'Subscription',
+    this.subtitle = 'Choose Your Subscription',
     this.prebuiltPlan,
     this.extraArgs = const {},
   });
@@ -48,17 +47,10 @@ class SubscriptionScreen extends StatefulWidget {
 class _SubscriptionScreenState extends State<SubscriptionScreen> {
   @override
   void dispose() {
-    // Only clear the pending bid when the SubscriptionScreen itself is
-    // dismissed (user pressed Back to leave the subscription flow entirely).
-    // Do NOT clear it here for the SUBT002 flow — Case B pops subscriptionConfirm
-    // back to this screen, and the screen is NOT disposed in that case.
-    // The pendingBid is already cleared inside revalidatePendingBid() for Case B,
-    // and for a genuine back-press the user is leaving the flow so clearing is correct.
     if (widget.subscriptionSource != 'SUBT002') {
       if (Get.isRegistered<VehicleListingController>()) {
         Get.find<VehicleListingController>().pendingBid.value = null;
       }
-      // Also clear pending bid from My Bids screen if applicable
       if (Get.isRegistered<MyBidsController>()) {
         Get.find<MyBidsController>().pendingBid.value = null;
       }
@@ -77,8 +69,10 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
       tag: widget.subscriptionSource,
     );
 
+    final topPad = MediaQuery.of(context).padding.top;
+
     return Scaffold(
-      backgroundColor: AppColors.white,
+      backgroundColor: const Color(0xFFF5F5F5),
       bottomNavigationBar: Obx(() {
         final shell = Get.isRegistered<MainShellController>()
             ? Get.find<MainShellController>()
@@ -93,62 +87,165 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
           },
         );
       }),
-      appBar: AppBar(
-        backgroundColor: AppColors.white,
-        elevation: AppSizes.elevationNone,
-        surfaceTintColor: Colors.transparent,
-        leading: GestureDetector(
-          onTap: () => Get.back(),
-          child: const Icon(
-            Icons.arrow_back,
-            color: AppColors.black,
-            size: AppSizes.iconMd,
+      body: Column(
+        children: [
+          // ── Red gradient header ───────────────────────────────
+          _SubHeader(
+            topPad: topPad,
+            title: widget.title,
+            subtitle: widget.subtitle.isEmpty
+                ? 'Choose Your Subscription'
+                : widget.subtitle,
           ),
-        ),
-        title: Text(
-          widget.title,
-          style: const TextStyle(
-            fontFamily: 'Montserrat',
-            fontWeight: FontWeight.w600,
-            fontSize: 18,
-            color: AppColors.textPrimary,
+          // ── White rounded body ────────────────────────────────
+          Expanded(
+            child: Transform.translate(
+              offset: const Offset(0, -24),
+              child: Container(
+                decoration: const BoxDecoration(
+                  color: Color(0xFFF5F5F5),
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(24),
+                    topRight: Radius.circular(24),
+                  ),
+                ),
+                clipBehavior: Clip.antiAlias,
+                child: Obx(() {
+                  if (controller.isLoading.value) {
+                    return const Center(
+                      child: CircularProgressIndicator(
+                        color: AppColors.primary,
+                      ),
+                    );
+                  }
+                  if (controller.errorMessage.value.isNotEmpty) {
+                    return _ErrorState(
+                      message: controller.errorMessage.value,
+                      onRetry: controller.retry,
+                    );
+                  }
+                  return _SubscriptionBody(
+                    controller: controller,
+                    subscriptionSource: widget.subscriptionSource,
+                  );
+                }),
+              ),
+            ),
           ),
-        ),
-        centerTitle: false,
+        ],
       ),
-      body: Obx(() {
-        if (controller.isLoading.value) {
-          return const Center(
-            child: CircularProgressIndicator(color: AppColors.primaryLight),
-          );
-        }
-        if (controller.errorMessage.value.isNotEmpty) {
-          return _ErrorState(
-            message: controller.errorMessage.value,
-            onRetry: controller.retry,
-          );
-        }
-        return _SubscriptionBody(
-          controller: controller,
-          subtitle: widget.subtitle,
-          subscriptionSource: widget.subscriptionSource,
-        );
-      }),
     );
   }
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Body with plan list + referral + proceed button
+// Red gradient header
 // ─────────────────────────────────────────────────────────────────────────────
+
+class _SubHeader extends StatelessWidget {
+  final double topPad;
+  final String title;
+  final String subtitle;
+  const _SubHeader({
+    required this.topPad,
+    required this.title,
+    required this.subtitle,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.only(
+        top: topPad + 12.h,
+        left: 20.w,
+        right: 20.w,
+        bottom: 32.h,
+      ),
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            AppColors.authHeaderGradientStart,
+            AppColors.authHeaderGradientEnd,
+          ],
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Row(
+            children: [
+              GestureDetector(
+                onTap: () => Get.back(),
+                child: Container(
+                  width: 28.r,
+                  height: 28.r,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: const LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        AppColors.ctaGradientStart,
+                        AppColors.ctaGradientEnd,
+                      ],
+                    ),
+                    border: Border.all(
+                      color: const Color(0xFFD41F1F),
+                      width: 1,
+                    ),
+                  ),
+                  child: Icon(
+                    Icons.chevron_left_rounded,
+                    color: Colors.white,
+                    size: 20.r,
+                  ),
+                ),
+              ),
+              SizedBox(width: 12.w),
+              Expanded(
+                child: Text(
+                  title,
+                  style: TextStyle(
+                    fontFamily: 'Montserrat',
+                    fontSize: 20.sp,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 4.h),
+          Padding(
+            padding: EdgeInsets.only(left: 40.w),
+            child: Text(
+              subtitle,
+              style: TextStyle(
+                fontFamily: 'Montserrat',
+                fontSize: 13.sp,
+                color: Colors.white70,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Body — plan cards list + proceed button
+// ─────────────────────────────────────────────────────────────────────────────
+
 class _SubscriptionBody extends StatefulWidget {
   final SubscriptionController controller;
-  final String subtitle;
   final String subscriptionSource;
-
   const _SubscriptionBody({
     required this.controller,
-    required this.subtitle,
     required this.subscriptionSource,
   });
 
@@ -165,27 +262,20 @@ class _SubscriptionBodyState extends State<_SubscriptionBody> {
     super.dispose();
   }
 
-  void _onProceed(BuildContext context) async {
+  void _onProceed() async {
     final plan = widget.controller.selectedPlan;
     if (plan == null) return;
-
     final userId = await SecureStorageService.to.read(StorageKeys.userId) ?? '';
-
     if (userId.isEmpty) {
       Get.snackbar('Error', context.l10n.pleaseLoginToContinue);
       return;
     }
-
-    // Register / find payment controller
-    final paymentController = Get.put(PaymentController());
-
-    paymentController.onSuccess = (data, callback) async {
-      // Navigate immediately — refresh guard cache in background.
-      _navigateAfterPayment(context, widget.subscriptionSource);
+    final pc = Get.put(PaymentController());
+    pc.onSuccess = (data, callback) async {
+      _navigateAfterPayment(widget.subscriptionSource);
       SubscriptionGuardService.to.invalidateAndReload();
     };
-
-    paymentController.onFailure = (message, callback) {
+    pc.onFailure = (message, callback) {
       Get.snackbar(
         context.l10n.paymentFailed,
         message,
@@ -193,8 +283,7 @@ class _SubscriptionBodyState extends State<_SubscriptionBody> {
         duration: const Duration(seconds: 3),
       );
     };
-
-    paymentController.onCancelled = () {
+    pc.onCancelled = () {
       Get.snackbar(
         context.l10n.paymentCancelled,
         context.l10n.youCancelledPayment,
@@ -202,8 +291,7 @@ class _SubscriptionBodyState extends State<_SubscriptionBody> {
         duration: const Duration(seconds: 2),
       );
     };
-
-    await paymentController.initiatePayment(
+    await pc.initiatePayment(
       userId: userId,
       planCode: plan.planCode,
       forPayment: plan.price,
@@ -213,115 +301,66 @@ class _SubscriptionBodyState extends State<_SubscriptionBody> {
     );
   }
 
-  void _navigateAfterPayment(BuildContext context, String source) {
+  void _navigateAfterPayment(String source) {
+    if (!mounted) return;
+    final until = (route) =>
+        route.settings.name != AppRoutes.subscription &&
+        route.settings.name != AppRoutes.subscriptionConfirm &&
+        route.settings.name != AppRoutes.walletPayment;
     if (source == 'SUBT001') {
-      Get.until(
-        (route) =>
-            route.settings.name != AppRoutes.subscription &&
-            route.settings.name != AppRoutes.subscriptionConfirm &&
-            route.settings.name != AppRoutes.walletPayment,
-      );
+      Get.until(until);
       Get.toNamed(AppRoutes.auctionType);
       CustomSnackbar.show(
         message: context.l10n.auctionAccessActivated,
         type: SnackbarType.success,
       );
     } else if (source == 'SUBT002') {
-      // Check both VehicleListingController (main auction) and MyBidsController
-      final hasVehicleCtrl = Get.isRegistered<VehicleListingController>();
-      final hasMyBidsCtrl = Get.isRegistered<MyBidsController>();
-
-      if (hasVehicleCtrl || hasMyBidsCtrl) {
-        Get.until(
-          (route) =>
-              route.settings.name != AppRoutes.subscription &&
-              route.settings.name != AppRoutes.subscriptionConfirm &&
-              route.settings.name != AppRoutes.walletPayment,
-        );
-        if (hasVehicleCtrl) {
-          final ctrl = Get.find<VehicleListingController>();
-          _runSUBT002Background(ctrl);
-        }
-        if (hasMyBidsCtrl) {
-          final ctrl = Get.find<MyBidsController>();
-          _runMyBidsSUBT002Background(ctrl);
-        }
-      } else {
-        Get.until(
-          (route) =>
-              route.settings.name != AppRoutes.subscription &&
-              route.settings.name != AppRoutes.subscriptionConfirm &&
-              route.settings.name != AppRoutes.walletPayment,
-        );
+      final hasV = Get.isRegistered<VehicleListingController>();
+      final hasM = Get.isRegistered<MyBidsController>();
+      Get.until(until);
+      if (hasV) _runSUBT002(Get.find<VehicleListingController>());
+      if (hasM) _runMyBids(Get.find<MyBidsController>());
+      if (!hasV && !hasM)
         CustomSnackbar.show(
           message: context.l10n.buyingLimitUpdated,
           type: SnackbarType.success,
         );
-      }
     } else if (source == 'SUBT003') {
-      final args003 = Get.arguments as Map<String, dynamic>? ?? {};
-      final vehicleId = args003['pending_vehicle_id'] as String?;
-      final categoryCode003 = args003['category_code'] as String? ?? '';
-
-      Get.until(
-        (route) =>
-            route.settings.name != AppRoutes.subscription &&
-            route.settings.name != AppRoutes.subscriptionConfirm &&
-            route.settings.name != AppRoutes.walletPayment,
-      );
-
+      final args = Get.arguments as Map<String, dynamic>? ?? {};
+      Get.until(until);
       CustomSnackbar.show(
         message: context.l10n.membershipActivated,
         type: SnackbarType.success,
       );
-
       SubscriptionGuardService.to.invalidateAndReload();
-      if (vehicleId != null && Get.isRegistered<BuyVehicleController>()) {
+      final vid = args['pending_vehicle_id'] as String?;
+      if (vid != null && Get.isRegistered<BuyVehicleController>())
         Get.find<BuyVehicleController>().unlockOwnerContactAndRefresh(
-          vehicleId,
-          categoryCode: categoryCode003,
+          vid,
+          categoryCode: args['category_code'] as String? ?? '',
         );
-      }
     } else if (source == 'SUBT005' || source == 'INSPECTION') {
-      final args005 = Get.arguments as Map<String, dynamic>? ?? {};
-      final vehicleId = args005['pending_vehicle_id'] as String?;
-
-      Get.until(
-        (route) =>
-            route.settings.name != AppRoutes.subscription &&
-            route.settings.name != AppRoutes.subscriptionConfirm &&
-            route.settings.name != AppRoutes.walletPayment,
-      );
-
-      if (vehicleId != null && Get.isRegistered<BuyVehicleController>()) {
-        Get.find<BuyVehicleController>().unlockInspectionAndRequest(vehicleId);
-      } else {
+      final vid =
+          (Get.arguments as Map<String, dynamic>? ?? {})['pending_vehicle_id']
+              as String?;
+      Get.until(until);
+      if (vid != null && Get.isRegistered<BuyVehicleController>())
+        Get.find<BuyVehicleController>().unlockInspectionAndRequest(vid);
+      else
         CustomSnackbar.show(
           message: context.l10n.inspectionSubmitted,
           type: SnackbarType.success,
         );
-      }
       SubscriptionGuardService.to.invalidateAndReload();
     } else if (source == 'SUBT004') {
-      // Retrieve the vehicle passed when the user was redirected here from
-      // the buy vehicle listings screen.
-      final pendingVehicle =
+      final pending =
           (Get.arguments as Map<String, dynamic>? ?? {})['pending_vehicle'];
-
-      Get.until(
-        (route) =>
-            route.settings.name != AppRoutes.subscription &&
-            route.settings.name != AppRoutes.subscriptionConfirm &&
-            route.settings.name != AppRoutes.walletPayment,
-      );
-
-      if (pendingVehicle != null) {
+      Get.until(until);
+      if (pending != null)
         Get.toNamed(
           AppRoutes.buyVehicleDetail,
-          arguments: {'vehicle': pendingVehicle},
+          arguments: {'vehicle': pending},
         );
-      }
-
       CustomSnackbar.show(
         message: context.l10n.vehicleDetailsUnlocked,
         type: SnackbarType.success,
@@ -336,7 +375,7 @@ class _SubscriptionBodyState extends State<_SubscriptionBody> {
     }
   }
 
-  Future<void> _runSUBT002Background(VehicleListingController ctrl) async {
+  Future<void> _runSUBT002(VehicleListingController ctrl) async {
     try {
       await SubscriptionGuardService.to.invalidateAndReload();
     } catch (_) {
@@ -350,7 +389,7 @@ class _SubscriptionBodyState extends State<_SubscriptionBody> {
     await ctrl.revalidatePendingBid();
   }
 
-  Future<void> _runMyBidsSUBT002Background(MyBidsController ctrl) async {
+  Future<void> _runMyBids(MyBidsController ctrl) async {
     try {
       await SubscriptionGuardService.to.invalidateAndReload();
     } catch (_) {
@@ -366,213 +405,41 @@ class _SubscriptionBodyState extends State<_SubscriptionBody> {
   @override
   Widget build(BuildContext context) {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Scrollable plan list + referral field
         Expanded(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Subtitle
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(4, 12, 12, 0),
-                  child: Text(
-                    widget.subtitle.isEmpty
-                        ? context.l10n.selectSubscriptionSubtitle
-                        : widget.subtitle,
-                    style: const TextStyle(
-                      fontFamily: 'Montserrat',
-                      fontWeight: FontWeight.w400,
-                      fontSize: 14,
-                      color: AppColors.grey650,
-                      height: 1.4,
-                    ),
+          child: ListView.builder(
+            padding: EdgeInsets.fromLTRB(16.w, 16.h, 16.w, 8.h),
+            itemCount: widget.controller.plans.length,
+            itemBuilder: (_, i) {
+              return Padding(
+                padding: EdgeInsets.only(bottom: 14.h),
+                child: Obx(
+                  () => _PlanCard(
+                    plan: widget.controller.plans[i],
+                    index: i,
+                    isSelected: widget.controller.selectedPlanIndex.value == i,
+                    isMostPopular: i == 0,
+                    subscriptionSource: widget.subscriptionSource,
+                    onTap: () => widget.controller.selectPlan(i),
                   ),
                 ),
-                const SizedBox(height: AppSizes.spaceLg),
-
-                // Plan cards
-                Obx(
-                  () => Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: List.generate(
-                      widget.controller.plans.length,
-                      (i) => Padding(
-                        padding: const EdgeInsets.only(bottom: 14),
-                        child: _PlanCard(
-                          plan: widget.controller.plans[i],
-                          isSelected:
-                              widget.controller.selectedPlanIndex.value == i,
-                          onTap: () => widget.controller.selectPlan(i),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 4),
-
-                // Referral code — appears after plan is selected
-                Obx(() {
-                  if (widget.controller.selectedPlan == null) {
-                    return const SizedBox.shrink();
-                  }
-                  return AnimatedSize(
-                    duration: const Duration(milliseconds: 250),
-                    curve: Curves.easeOut,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          context.l10n.haveReferralCode,
-                          style: const TextStyle(
-                            fontFamily: 'Montserrat',
-                            fontWeight: FontWeight.w500,
-                            fontSize: 12,
-                            color: AppColors.grey900,
-                          ),
-                        ),
-                        const SizedBox(height: AppSizes.spaceSm),
-                        TextField(
-                          controller: _referralController,
-                          textCapitalization: TextCapitalization.characters,
-                          style: const TextStyle(
-                            fontFamily: 'Montserrat',
-                            fontWeight: FontWeight.w500,
-                            fontSize: 13,
-                            color: AppColors.black,
-                          ),
-                          decoration: InputDecoration(
-                            hintText: context.l10n.enterHere,
-                            hintStyle: const TextStyle(
-                              fontFamily: 'Montserrat',
-                              fontWeight: FontWeight.w400,
-                              fontSize: 13,
-                              color: AppColors.grey400,
-                            ),
-                            contentPadding: const EdgeInsets.symmetric(
-                              horizontal: AppSizes.spaceMd,
-                              vertical: 14,
-                            ),
-                            filled: true,
-                            fillColor: AppColors.white,
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(
-                                AppSizes.radiusMd,
-                              ),
-                              borderSide: const BorderSide(
-                                color: AppColors.border,
-                              ),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(
-                                AppSizes.radiusMd,
-                              ),
-                              borderSide: const BorderSide(
-                                color: AppColors.primaryLight,
-                                width: 1.5,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  );
-                }),
-              ],
-            ),
+              );
+            },
           ),
         ),
-
-        // Bottom: Proceed Payment + My Wallet
+        // ── Pay Now button ────────────────────────────────────
         Obx(() {
           final hasPlan = widget.controller.selectedPlan != null;
           return Container(
-            color: AppColors.white,
-            padding: const EdgeInsets.fromLTRB(
-              AppSizes.spaceMd,
-              0,
-              AppSizes.spaceMd,
-              AppSizes.space64,
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                GestureDetector(
-                  onTap: hasPlan ? () => _onProceed(context) : null,
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 200),
-                    height: AppSizes.buttonHeightLg,
-                    decoration: BoxDecoration(
-                      gradient: hasPlan
-                          ? const LinearGradient(
-                              colors: [
-                                AppColors.ctaGradientStart,
-                                AppColors.ctaGradientEnd,
-                              ],
-                              begin: Alignment.centerLeft,
-                              end: Alignment.centerRight,
-                            )
-                          : null,
-                      color: hasPlan ? null : AppColors.grey200,
-                      borderRadius: BorderRadius.circular(AppSizes.radiusFull),
-                    ),
-                    child: Center(
-                      child: Text(
-                        context.l10n.proceedPayment,
-                        style: TextStyle(
-                          fontFamily: 'Montserrat',
-                          fontWeight: FontWeight.w700,
-                          fontSize: 14,
-                          color: hasPlan ? AppColors.white : AppColors.grey400,
-                          letterSpacing: 0.3,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: AppSizes.spaceSm),
-                GestureDetector(
-                  onTap: () {
-                    final plan = widget.controller.selectedPlan;
-                    if (plan == null) return;
-                    final currentArgs =
-                        Get.arguments as Map<String, dynamic>? ?? {};
-                    Get.toNamed(
-                      AppRoutes.walletPayment,
-                      arguments: {
-                        ...currentArgs,
-                        'plan': plan,
-                        'source': widget.subscriptionSource,
-                      },
-                    );
-                  },
-                  child: RichText(
-                    text: TextSpan(
-                      style: const TextStyle(
-                        fontFamily: 'Montserrat',
-                        fontWeight: FontWeight.w400,
-                        fontSize: 11,
-                        color: AppColors.grey650,
-                      ),
-                      children: [
-                        TextSpan(text: context.l10n.orPayFromWallet),
-                        TextSpan(
-                          text: context.l10n.myWalletLink,
-                          style: TextStyle(
-                            fontWeight: FontWeight.w700,
-                            color: hasPlan
-                                ? AppColors.primaryLight
-                                : AppColors.grey650,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
+            color: Colors.white,
+            padding: EdgeInsets.fromLTRB(16.w, 12.h, 16.w, 28.h),
+            child: GradientButton.filled(
+              text: 'Pay Now',
+              onPressed: hasPlan ? _onProceed : null,
+              height: 30.h,
+              width: 150,
+              fontSize: 15.sp,
+              fontWeight: FontWeight.w700,
             ),
           );
         }),
@@ -582,43 +449,142 @@ class _SubscriptionBodyState extends State<_SubscriptionBody> {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Plan card — light theme
+// Plan card — matches screenshot
 // ─────────────────────────────────────────────────────────────────────────────
+
 class _PlanCard extends StatelessWidget {
   final SubscriptionPlan plan;
+  final int index;
   final bool isSelected;
+  final bool isMostPopular;
+  final String subscriptionSource;
   final VoidCallback onTap;
 
   const _PlanCard({
     required this.plan,
+    required this.index,
     required this.isSelected,
+    required this.isMostPopular,
+    required this.subscriptionSource,
     required this.onTap,
   });
 
-  String? get _tierAsset {
+  bool get _isBidLimit => subscriptionSource == 'SUBT002';
+
+  // Tier asset
+  // Tier asset — matches API plan names: Basic/Premium/Elite (also gold/silver/bronze)
+  String get _tierAsset {
     switch (plan.name.toLowerCase()) {
       case 'gold':
-        return AppAssets.tierGold;
+      case 'elite':
+        return AppAssets.tierGold; // gold.png
       case 'silver':
-        return AppAssets.tierSilver;
+      case 'premium':
+        return AppAssets.tierSilver; // silver.png
       case 'bronze':
-        return AppAssets.tierBronze;
+      case 'basic':
+        return AppAssets.tierBronze; // bronze.png
       default:
-        return null;
+        return AppAssets.tierGold; // safe fallback
     }
   }
 
-  Color get _tierColor {
+  // Card bg
+  Color get _bgColor {
+    if (!isSelected) return Colors.white;
     switch (plan.name.toLowerCase()) {
       case 'gold':
-        return const Color(0xFFD4A017);
+      case 'elite':
+        return const Color(0xFFFFF9EE);
       case 'silver':
-        return AppColors.grey500;
+      case 'premium':
+        return const Color(0xFFF8F8F8);
       case 'bronze':
-        return const Color(0xFFCD7F32);
+      case 'basic':
+        return const Color(0xFFFFF5EE);
       default:
-        return AppColors.primaryLight;
+        return const Color(0xFFFFF9EE);
     }
+  }
+
+  // Card border & accent color
+  Color get _borderColor {
+    if (isSelected) {
+      switch (plan.name.toLowerCase()) {
+        case 'gold':
+        case 'elite':
+          return const Color(0xFFD4A017);
+        case 'silver':
+        case 'premium':
+          return AppColors.grey400;
+        case 'bronze':
+        case 'basic':
+          return const Color(0xFFCD7F32);
+        default:
+          return AppColors.primary;
+      }
+    }
+    return const Color(0xFFEEEEEE);
+  }
+
+  // Support label
+  String get _supportLabel {
+    switch (plan.name.toLowerCase()) {
+      case 'gold':
+      case 'elite':
+        return 'Elite Support';
+      case 'silver':
+      case 'premium':
+        return 'Premium Support';
+      default:
+        return 'Basic Support';
+    }
+  }
+
+  // Badge label
+  String get _badgeLabel {
+    switch (plan.name.toLowerCase()) {
+      case 'gold':
+      case 'elite':
+        return 'Elite Plan';
+      case 'silver':
+      case 'premium':
+        return 'Premium Plan';
+      default:
+        return 'Basic Plan';
+    }
+  }
+
+  // Support icon — support.png for basic, support-2.png for premium/elite
+  String get _supportIcon {
+    switch (plan.name.toLowerCase()) {
+      case 'gold':
+      case 'elite':
+        return AppAssets.subIconSupport1; // support-1.png
+      case 'silver':
+      case 'premium':
+        return AppAssets.subIconSupport2; // support-2.png
+      default:
+        return AppAssets.subIconSupport; // support.png  (shield2 alias)
+    }
+  }
+
+  // Original price for display (20% above)
+  String get _originalPrice {
+    final orig = (plan.price * 1.20).round();
+    final s = orig.toString();
+    if (s.length <= 3) return s;
+    final last = s.substring(s.length - 3);
+    final rest = s.substring(0, s.length - 3);
+    return '$rest,$last';
+  }
+
+  String _fmtPrice(double p) {
+    final s = p.toStringAsFixed(0);
+    if (s.length <= 3) return s;
+    final last = s.substring(s.length - 3);
+    final rest = s.substring(0, s.length - 3);
+    return '$rest,$last';
   }
 
   @override
@@ -626,96 +592,249 @@ class _PlanCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: AnimatedContainer(
-        height: 85,
         duration: const Duration(milliseconds: 180),
         decoration: BoxDecoration(
-          color: isSelected ? const Color(0xFFFFF0F0) : AppColors.grey50,
-          borderRadius: BorderRadius.circular(AppSizes.radiusLg),
-          border: Border.all(
-            color: isSelected
-                ? AppColors.primaryLight
-                : const Color(0xFFEADDDD),
-          ),
-        ),
-        padding: const EdgeInsets.symmetric(
-          horizontal: AppSizes.spaceMd,
-          vertical: 14,
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            // Tier icon
-            SizedBox(
-              width: 38,
-              height: 38,
-              child: _tierAsset != null
-                  ? Image.asset(_tierAsset!, fit: BoxFit.contain)
-                  : Container(
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: _tierColor.withOpacity(0.12),
-                        border: Border.all(color: _tierColor, width: 1.8),
-                      ),
-                      child: Center(
-                        child: Text(
-                          plan.name[0].toUpperCase(),
-                          style: TextStyle(
-                            fontFamily: 'Montserrat',
-                            fontWeight: FontWeight.w700,
-                            fontSize: 18,
-                            color: _tierColor,
-                          ),
-                        ),
-                      ),
-                    ),
+          color: _bgColor,
+          borderRadius: BorderRadius.circular(16.r),
+          border: Border.all(color: _borderColor, width: isSelected ? 2 : 1),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.06),
+              blurRadius: 10,
+              offset: const Offset(0, 3),
             ),
-            const SizedBox(width: 12),
-
-            // Name + validity
-            Expanded(
+          ],
+        ),
+        clipBehavior: Clip.antiAlias,
+        child: Stack(
+          children: [
+            Padding(
+              padding: EdgeInsets.fromLTRB(14.w, 18.h, 14.w, 14.h),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(
-                    plan.name,
-                    style: const TextStyle(
-                      fontFamily: 'Montserrat',
-                      fontWeight: FontWeight.w600,
-                      fontSize: 18,
-                      color: AppColors.textPrimary,
+                  // ── Top row: badge + name/desc + radio/price ──────
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Tier badge — always show PNG
+                      Image.asset(
+                        _tierAsset,
+                        width: 44.r,
+                        height: 44.r,
+                        fit: BoxFit.contain,
+                      ),
+                      SizedBox(width: 14.w),
+                      // Name + description
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            SizedBox(height: 4.h),
+                            Text(
+                              plan.name,
+                              style: TextStyle(
+                                fontFamily: 'Montserrat',
+                                fontWeight: FontWeight.w700,
+                                fontSize: 18.sp,
+                                color: AppColors.black,
+                              ),
+                            ),
+                            SizedBox(height: 2.h),
+                            Text(
+                              plan.featDescription.isNotEmpty
+                                  ? plan.featDescription
+                                  : 'Unlimited Auction Access',
+                              style: TextStyle(
+                                fontFamily: 'Montserrat',
+                                fontSize: 12.sp,
+                                color: AppColors.grey800,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(width: 4.w),
+                      // Radio/check + price column (right)
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          if (isSelected)
+                            Container(
+                              width: 24.r,
+                              height: 24.r,
+                              decoration: const BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: AppColors.primary,
+                              ),
+                              child: Icon(
+                                Icons.check_rounded,
+                                color: Colors.white,
+                                size: 14.r,
+                              ),
+                            )
+                          else
+                            Container(
+                              width: 24.r,
+                              height: 24.r,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                  color: AppColors.grey300,
+                                  width: 1.5,
+                                ),
+                              ),
+                            ),
+                          SizedBox(height: 8.h),
+                          Text(
+                            '₹${_fmtPrice(plan.price)}',
+                            style: TextStyle(
+                              fontFamily: 'Montserrat',
+                              fontWeight: FontWeight.w600,
+                              fontSize: 20.sp,
+                              color: AppColors.black,
+                            ),
+                          ),
+                          Text(
+                            '₹$_originalPrice',
+                            style: TextStyle(
+                              fontFamily: 'Montserrat',
+                              fontSize: 12.sp,
+                              color: AppColors.grey600,
+                              decoration: TextDecoration.lineThrough,
+                              decorationColor: AppColors.grey600,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+
+                  // ── Support row ────────────────────────────────────
+                  Padding(
+                    padding: const EdgeInsets.only(left: 16.0),
+                    child: Row(
+                      children: [
+                        Image.asset(
+                          _supportIcon,
+                          width: 20.r,
+                          height: 20.r,
+                          fit: BoxFit.contain,
+                        ),
+                        SizedBox(width: 8.w),
+                        Text(
+                          _supportLabel,
+                          style: TextStyle(
+                            fontFamily: 'Montserrat',
+                            fontSize: 12.sp,
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.textPrimary,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                  const SizedBox(height: 2),
-                  Text(
-                    context.l10n.validity(plan.metricLabel),
-                    style: const TextStyle(
-                      fontFamily: 'Montserrat',
-                      fontWeight: FontWeight.w400,
-                      fontSize: 14,
-                      color: AppColors.black,
-                    ),
+                  SizedBox(height: 4.h),
+                  const Divider(height: 1, color: Color(0xFFF0F0F0)),
+                  SizedBox(height: 4.h),
+                  // ── Feature chips — different layout for bid-limit plans ──
+                  IntrinsicHeight(
+                    child: _isBidLimit
+                        ? Row(
+                            children: [
+                              Expanded(
+                                child: _FeatureChip(
+                                  icon: AppAssets.bidPng,
+                                  label: 'Bid Limit',
+                                  value: plan.metricLabel,
+                                ),
+                              ),
+                              VerticalDivider(
+                                width: 1,
+                                thickness: 1,
+                                color: const Color(0xFFF0F0F0),
+                              ),
+                              Expanded(
+                                child: _FeatureChip(
+                                  icon: AppAssets.subIconShield2,
+                                  label: 'Secure & Trusted',
+                                  value: '100% Safe',
+                                ),
+                              ),
+                            ],
+                          )
+                        : Row(
+                            children: [
+                              Expanded(
+                                child: _FeatureChip(
+                                  icon: AppAssets.calendarPng,
+                                  label: 'Validity',
+                                  value: plan.metricLabel,
+                                ),
+                              ),
+                              VerticalDivider(
+                                width: 1,
+                                thickness: 1,
+                                color: const Color(0xFFF0F0F0),
+                              ),
+                              Expanded(
+                                child: _FeatureChip(
+                                  icon: AppAssets.subIconShield2,
+                                  label: 'Secure & Trusted',
+                                  value: '100% Safe',
+                                ),
+                              ),
+                              VerticalDivider(
+                                width: 1,
+                                thickness: 1,
+                                color: const Color(0xFFF0F0F0),
+                              ),
+                              Expanded(
+                                child: _FeatureChip(
+                                  icon: AppAssets.subIconStar,
+                                  label: isMostPopular ? 'Elite Benefits' : '',
+                                  value: _badgeLabel,
+                                ),
+                              ),
+                            ],
+                          ),
                   ),
                 ],
               ),
             ),
-
-            // Price
-            Row(
-              children: [
-                Icon(Icons.currency_rupee, color: AppColors.grey800, size: 18),
-                Text(
-                  plan.price.toStringAsFixed(plan.price % 1 == 0 ? 0 : 2),
-                  style: const TextStyle(
-                    fontFamily: 'Montserrat',
-                    fontWeight: FontWeight.w700,
-                    fontSize: 18,
-                    color: AppColors.grey800,
+            // ── MOST POPULAR ribbon ────────────────────────────────
+            if (isMostPopular)
+              Positioned(
+                top: 0,
+                left: 0,
+                child: Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 10.w,
+                    vertical: 5.h,
+                  ),
+                  decoration: const BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [Color(0xFFE6A817), Color(0xFFB8730A)],
+                    ),
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(14),
+                      bottomRight: Radius.circular(10),
+                    ),
+                  ),
+                  child: Text(
+                    'MOST POPULAR',
+                    style: TextStyle(
+                      fontFamily: 'Montserrat',
+                      fontSize: 9.sp,
+                      fontWeight: FontWeight.w800,
+                      color: Colors.white,
+                      letterSpacing: 0.8,
+                    ),
                   ),
                 ),
-              ],
-            ),
+              ),
           ],
         ),
       ),
@@ -724,65 +843,109 @@ class _PlanCard extends StatelessWidget {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+// Feature chip — icon + label + value stacked vertically
+// ─────────────────────────────────────────────────────────────────────────────
+
+class _FeatureChip extends StatelessWidget {
+  final String icon;
+  final String label;
+  final String value;
+  const _FeatureChip({
+    required this.icon,
+    required this.label,
+    required this.value,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 4.h),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Image.asset(icon, width: 18.r, height: 18.r, fit: BoxFit.contain),
+          SizedBox(width: 5.w),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                if (label.isNotEmpty)
+                  Text(
+                    label,
+                    style: TextStyle(
+                      fontFamily: 'Montserrat',
+                      fontSize: 9.sp,
+                      color: AppColors.grey600,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                Text(
+                  value,
+                  style: TextStyle(
+                    fontFamily: 'Montserrat',
+                    fontSize: 11.sp,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.textPrimary,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 // Error state
 // ─────────────────────────────────────────────────────────────────────────────
+
 class _ErrorState extends StatelessWidget {
   final String message;
   final VoidCallback onRetry;
-
   const _ErrorState({required this.message, required this.onRetry});
 
   @override
   Widget build(BuildContext context) {
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(AppSizes.spaceXl),
+        padding: EdgeInsets.all(32.w),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Container(
-              width: 72,
-              height: 72,
-              decoration: BoxDecoration(
-                color: AppColors.primaryLight.withOpacity(0.08),
-                shape: BoxShape.circle,
-              ),
-              child: const Icon(
-                Icons.wifi_off_rounded,
-                color: AppColors.primaryLight,
-                size: AppSizes.spaceXl,
-              ),
-            ),
-            const SizedBox(height: AppSizes.spaceLg),
+            Icon(Icons.wifi_off_rounded, size: 48.r, color: AppColors.grey300),
+            SizedBox(height: 16.h),
             Text(
               message,
               textAlign: TextAlign.center,
-              style: const TextStyle(
-                fontFamily: 'Plus Jakarta Sans',
-                fontSize: 13,
+              style: TextStyle(
+                fontFamily: 'Montserrat',
+                fontSize: 13.sp,
                 color: AppColors.grey500,
                 height: 1.5,
               ),
             ),
-            const SizedBox(height: AppSizes.spaceLg),
+            SizedBox(height: 16.h),
             GestureDetector(
               onTap: onRetry,
               child: Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: AppSizes.spaceXl,
-                  vertical: 14,
-                ),
+                padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 12.h),
                 decoration: BoxDecoration(
-                  color: AppColors.primaryLight,
-                  borderRadius: BorderRadius.circular(AppSizes.radiusMd),
+                  color: AppColors.primary,
+                  borderRadius: BorderRadius.circular(8.r),
                 ),
                 child: Text(
                   context.l10n.retry,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontFamily: 'Montserrat',
                     fontWeight: FontWeight.w700,
-                    fontSize: 13,
-                    color: AppColors.white,
+                    fontSize: 13.sp,
+                    color: Colors.white,
                   ),
                 ),
               ),

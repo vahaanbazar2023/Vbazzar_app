@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 import '../../../core/constants/app_colors.dart';
+import '../../../core/constants/app_assets.dart';
 import '../controllers/subscription_controller.dart';
 import '../models/user_subscription.dart';
 
@@ -61,22 +62,22 @@ class MyPlanCard extends StatelessWidget {
   final UserSubscription sub;
   const MyPlanCard({super.key, required this.sub});
 
-  IconData get _icon {
+  String get _iconAsset {
     switch (sub.typeCode) {
       case 'SUBT001':
-        return Icons.gavel_rounded;
+        return AppAssets.subIconKing2;
       case 'SUBT002':
-        return Icons.bar_chart_rounded;
+        return AppAssets.subIconKing2;
       case 'SUBT003':
-        return Icons.handshake_rounded;
+        return AppAssets.subIconStep1;
       case 'SUBT004':
-        return Icons.shield_rounded;
+        return AppAssets.subIconShield2;
       case 'SUBT005':
-        return Icons.search_rounded;
+        return AppAssets.subIconInspection;
       case 'SUBT006':
-        return Icons.build_rounded;
+        return AppAssets.subIconMechanic;
       default:
-        return Icons.workspace_premium_rounded;
+        return AppAssets.subIconAuction;
     }
   }
 
@@ -125,7 +126,7 @@ class MyPlanCard extends StatelessWidget {
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Rounded square icon
+              // Rounded square icon — PNG asset
               Container(
                 width: 52.r,
                 height: 52.r,
@@ -133,7 +134,8 @@ class MyPlanCard extends StatelessWidget {
                   color: const Color(0xFFFFF0F0),
                   borderRadius: BorderRadius.circular(12.r),
                 ),
-                child: Icon(_icon, color: AppColors.primary, size: 26.r),
+                padding: EdgeInsets.all(10.r),
+                child: Image.asset(_iconAsset, fit: BoxFit.contain),
               ),
               SizedBox(width: 14.w),
               // Name + description
@@ -198,7 +200,7 @@ class MyPlanCard extends StatelessWidget {
             ],
           ),
           SizedBox(height: 14.h),
-          const Divider(height: 1, color:AppColors.grey300),
+          const Divider(height: 1, color: AppColors.grey300),
           SizedBox(height: 12.h),
           // ── Valid Until row ─────────────────────────────────
           Row(
