@@ -24,7 +24,6 @@ class _MySubscriptionScreenState extends State<MySubscriptionScreen>
     with SingleTickerProviderStateMixin {
   late final TabController _tabController;
   late final MySubscriptionController _myCtrl;
-  late final SubscriptionController _exploreCtrl;
 
   static const _subtitles = ['My Plans', 'Explore Plans', 'Combo Plans'];
 
@@ -35,13 +34,6 @@ class _MySubscriptionScreenState extends State<MySubscriptionScreen>
     _myCtrl = Get.isRegistered<MySubscriptionController>()
         ? Get.find<MySubscriptionController>()
         : Get.put(MySubscriptionController());
-    _exploreCtrl =
-        Get.isRegistered<SubscriptionController>(tag: 'MY_SUB_EXPLORE')
-        ? Get.find<SubscriptionController>(tag: 'MY_SUB_EXPLORE')
-        : Get.put(
-            SubscriptionController(subscriptionSource: 'SUBT001'),
-            tag: 'MY_SUB_EXPLORE',
-          );
   }
 
   @override
@@ -52,8 +44,6 @@ class _MySubscriptionScreenState extends State<MySubscriptionScreen>
 
   @override
   Widget build(BuildContext context) {
-    // true when pushed as a named route; false when embedded as a shell tab
-    final isPushed = ModalRoute.of(context)?.settings.name != null;
     return AnimatedBuilder(
       animation: _tabController,
       builder: (_, __) {
@@ -61,7 +51,6 @@ class _MySubscriptionScreenState extends State<MySubscriptionScreen>
           title: 'Subscription',
           subtitle: _subtitles[_tabController.index],
           showBack: false,
-          // Tab bar pinned inside the white body via headerExtra
           headerExtra: _SubTabBar(controller: _tabController),
           body: TabBarView(
             controller: _tabController,
@@ -70,7 +59,7 @@ class _MySubscriptionScreenState extends State<MySubscriptionScreen>
                 ctrl: _myCtrl,
                 onGoExplore: () => _tabController.animateTo(1),
               ),
-              ExplorePlansTab(ctrl: _exploreCtrl),
+              const ExplorePlansTab(),
               const ComboPlansTab(),
             ],
           ),

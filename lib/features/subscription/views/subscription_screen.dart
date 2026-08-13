@@ -300,7 +300,8 @@ class _SubscriptionPlanBodyState extends State<SubscriptionPlanBody> {
             child: GradientButton.filled(
               text: 'Pay Now',
               onPressed: hasPlan ? _onProceed : null,
-              height: 50.h,
+              height: 36.h,
+              width: 120,
               fontSize: 15.sp,
               fontWeight: FontWeight.w700,
             ),
