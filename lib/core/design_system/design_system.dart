@@ -31,6 +31,7 @@ export 'molecules/custom_dropdown_field.dart';
 export 'molecules/custom_autocomplete_field.dart';
 export 'molecules/custom_phone_input_field.dart';
 export 'molecules/search_bar.dart';
+export 'molecules/custom_search_bar.dart';
 export 'molecules/custom_snackbar.dart';
 export 'molecules/custom_file_upload_field.dart';
 export 'molecules/inline_dropdown_field.dart';

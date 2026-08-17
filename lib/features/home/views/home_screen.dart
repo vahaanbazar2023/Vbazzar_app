@@ -9,6 +9,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../../core/constants/app_assets.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/design_system/design_system.dart';
+import '../../../core/design_system/molecules/custom_search_bar.dart';
 import '../../../core/extensions/context_extensions.dart';
 import '../../../core/storage/secure_storage_service.dart';
 import '../../../core/storage/storage_keys.dart';
@@ -216,10 +217,15 @@ class _HomeHeader extends StatelessWidget {
                         ),
                       ),
                       SizedBox(width: 2.w),
-                      Icon(
-                        Icons.keyboard_arrow_down_rounded,
-                        color: AppColors.grey600,
-                        size: 18.r,
+                      Container(
+                        width: 20.r,
+                        height: 20.r,
+                        
+                        child: Icon(
+                          Icons.keyboard_arrow_down_rounded,
+                          color: Colors.black,
+                          size: 20.r,
+                        ),
                       ),
                     ],
                   ),
@@ -240,47 +246,18 @@ class _HomeHeader extends StatelessWidget {
                     ),
                   ),
                   SizedBox(width: 10.w),
-                  // Search bar with gradient border — takes remaining space
+                  // Search bar — _VehicleSearchBar style, taps → search screen
                   Expanded(
                     child: GestureDetector(
                       onTap: () => Get.toNamed(AppRoutes.search),
                       child: AbsorbPointer(
-                        child: Container(
-                          height: 44.h,
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(12.r),
-                            border: GradientBorder(
-                              gradient: const LinearGradient(
-                                begin: Alignment.topCenter,
-                                end: Alignment.bottomCenter,
-                                colors: [
-                                  AppColors.ctaGradientStart,
-                                  AppColors.ctaGradientEnd,
-                                ],
-                              ),
-                              width: 1.5,
-                            ),
-                          ),
-                          child: Row(
-                            children: [
-                              SizedBox(width: 14.w),
-                              Icon(
-                                Icons.search,
-                                color: AppColors.grey400,
-                                size: 20.r,
-                              ),
-                              SizedBox(width: 8.w),
-                              Text(
-                                'Search by service, vehicle...',
-                                style: TextStyle(
-                                  fontFamily: 'Montserrat',
-                                  fontSize: 12.sp,
-                                  color: AppColors.grey400,
-                                ),
-                              ),
-                            ],
-                          ),
+                        child: CustomSearchBar(
+                          enabled: false,
+                          hint: 'Search by service, vehicle...',
+                          showGradientBorder: true,
+                          alwaysShowGradientBorder: true,
+                          borderRadius: 12,
+                          height: 40,
                         ),
                       ),
                     ),
