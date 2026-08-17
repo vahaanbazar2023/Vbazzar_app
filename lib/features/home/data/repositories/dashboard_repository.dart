@@ -20,7 +20,7 @@ class DashboardRepository {
     final userId = await _getUserId();
     try {
       final response = await _network.post(
-        '/api/v2/dashboard/home',
+        '/api/v1/dashboard/home',
         data: {if (userId != null) 'user_id': userId},
       );
       if (response.statusCode == 200) {
@@ -30,14 +30,10 @@ class DashboardRepository {
             raw['status'] == 'success' &&
             raw['data'] != null) {
           final dataMap = raw['data'] as Map<String, dynamic>;
-          debugPrint('🏠 Dashboard data keys: ${dataMap.keys.toList()}');
           debugPrint(
-            '🏠 Dashboard: live_auctions=${(dataMap['live_auctions'] as List?)?.length ?? 0}'
-            ', most_bought_categories=${(dataMap['most_bought_categories'] as List?)?.length ?? 0}'
-            ', spares_fms=${(dataMap['spares_fms'] as List?)?.length ?? 0}',
+            '🏠 Dashboard feed items: ${(dataMap['feed'] as List?)?.length ?? 0}',
           );
-          final data = DashboardData.fromJson(dataMap);
-          return data;
+          return DashboardData.fromJson(dataMap);
         }
         debugPrint(
           '🏠 Dashboard: unexpected structure - status=${raw['status']}, hasData=${raw['data'] != null}',

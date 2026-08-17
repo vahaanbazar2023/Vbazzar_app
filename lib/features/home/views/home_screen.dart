@@ -15,7 +15,8 @@ import '../../../core/storage/storage_keys.dart';
 import '../../../routes/app_routes.dart';
 import '../../../features/buy_and_sell/domain/entities/vehicle_category_entity.dart';
 import '../../../features/auction/models/auction_listing.dart';
-import '../../../features/spare_and_fms/domain/entities/spare_part_entity.dart';
+import '../data/models/dashboard_model.dart'
+    show SparePartDashboard, DashboardAdvertisement;
 import '../../../features/subscription/models/user_subscription.dart';
 import '../../../features/subscription/services/subscription_guard_service.dart';
 import '../controllers/home_controller.dart';
@@ -92,6 +93,11 @@ class HomeScreen extends GetView<HomeController> {
                     // ── Service Categories (static, 3-col) ───────
                     _HomeCategoriesGrid(),
                     SizedBox(height: 24.h),
+                    // ── Ad after categories ───────────────────────
+                    if (data.adAfter('live_auctions') != null) ...[
+                      _AdBanner(ad: data.adAfter('live_auctions')!),
+                      SizedBox(height: 24.h),
+                    ],
                     // ── Most Bought Categories ───────────────────
                     if (data.mostBoughtCategories.isNotEmpty) ...[
                       _SectionHeader(
@@ -102,6 +108,11 @@ class HomeScreen extends GetView<HomeController> {
                       _MostBoughtCategoriesGrid(
                         categories: data.mostBoughtCategories,
                       ),
+                      SizedBox(height: 24.h),
+                    ],
+                    // ── Ad after most_bought_categories ──────────
+                    if (data.adAfter('most_bought_categories') != null) ...[
+                      _AdBanner(ad: data.adAfter('most_bought_categories')!),
                       SizedBox(height: 24.h),
                     ],
                     // ── Inspection Banner ────────────────────────
@@ -115,6 +126,11 @@ class HomeScreen extends GetView<HomeController> {
                       ),
                       SizedBox(height: 12.h),
                       _FmsItemsGrid(spares: data.sparesFms),
+                      SizedBox(height: 24.h),
+                    ],
+                    // ── Ad after spares_fms ──────────────────────
+                    if (data.adAfter('spares_fms') != null) ...[
+                      _AdBanner(ad: data.adAfter('spares_fms')!),
                       SizedBox(height: 24.h),
                     ],
                     // ── Insurance Banner ─────────────────────────
@@ -527,8 +543,8 @@ class _AuctionBannerCard extends StatelessWidget {
                 right: -8.w,
                 bottom: 0,
                 top: 0,
-                child: Image.asset(
-                  AppAssets.yellowBulldoser,
+                child: Image.network(
+                  auction.dashboardImageUrl,
                   fit: BoxFit.contain,
                   width: 170.w,
                 ),
@@ -834,9 +850,9 @@ class _CategoryCard extends StatelessWidget {
                 borderRadius: BorderRadius.vertical(top: Radius.circular(16.r)),
                 child: ColoredBox(
                   color: AppColors.grey50,
-                  child: category.appDashImageUrl.isNotEmpty
+                  child: category.iconUrl.isNotEmpty
                       ? Image.network(
-                          category.appDashImageUrl,
+                          category.iconUrl,
                           height: double.infinity,
                           width: double.infinity,
                           fit: BoxFit.contain,
@@ -1230,7 +1246,7 @@ class _InspectionBanner extends StatelessWidget {
 // ─────────────────────────────────────────────────────────────────────────────
 
 class _FmsItemsGrid extends StatelessWidget {
-  final List<SparePartEntity> spares;
+  final List<SparePartDashboard> spares;
   const _FmsItemsGrid({required this.spares});
 
   @override
@@ -1255,7 +1271,7 @@ class _FmsItemsGrid extends StatelessWidget {
 }
 
 class _FmsItemCard extends StatelessWidget {
-  final SparePartEntity spare;
+  final SparePartDashboard spare;
   const _FmsItemCard({required this.spare});
 
   @override
@@ -1337,6 +1353,78 @@ class _FmsItemCard extends StatelessWidget {
       child: Icon(Icons.build_outlined, color: AppColors.grey400, size: 28.r),
     ),
   );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Ad Banner — renders a full-width image banner from DashboardAdvertisement
+// ─────────────────────────────────────────────────────────────────────────────
+
+class _AdBanner extends StatelessWidget {
+  final DashboardAdvertisement ad;
+  const _AdBanner({required this.ad});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () async {
+        if (ad.isInternal) {
+          // Internal route — map redirect_value string to route
+          final route = _resolveRoute(ad.redirectValue);
+          if (route != null) Get.toNamed(route);
+        } else {
+          // External URL
+          final uri = Uri.tryParse(ad.redirectValue);
+          if (uri != null && await canLaunchUrl(uri)) {
+            launchUrl(uri, mode: LaunchMode.externalApplication);
+          }
+        }
+      },
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(6.r),
+          child: SizedBox(
+            height: 160.h,
+            width: double.maxFinite,
+            child: ad.bannerImageUrl.isNotEmpty
+                ? Image.network(
+                    ad.bannerImageUrl,
+                    width: double.infinity,
+                    fit: BoxFit.cover,
+                    errorBuilder: (_, __, ___) => const SizedBox.shrink(),
+                    loadingBuilder: (_, child, progress) =>
+                        progress == null ? child : const SizedBox.shrink(),
+                  )
+                : const SizedBox.shrink(),
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// Map the redirect_value string from the API to an actual route constant.
+  String? _resolveRoute(String value) {
+    switch (value) {
+      case 'AppRoutes.auctionListings':
+        return AppRoutes.auctionListings;
+      case 'AppRoutes.auctionType':
+        return AppRoutes.auctionType;
+      case 'AppRoutes.buySellHome':
+        return AppRoutes.buySellHome;
+      case 'AppRoutes.spareFms':
+        return AppRoutes.spareFms;
+      case 'AppRoutes.insuranceFinance':
+        return AppRoutes.insuranceFinance;
+      case 'AppRoutes.inspectionHome':
+        return AppRoutes.inspectionHome;
+      case 'AppRoutes.serviceSupport':
+        return AppRoutes.serviceSupport;
+      default:
+        // If the value itself looks like a route path, use it directly
+        if (value.startsWith('/')) return value;
+        return null;
+    }
+  }
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
