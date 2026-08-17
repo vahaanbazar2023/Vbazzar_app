@@ -4,6 +4,7 @@ import 'package:get/get.dart' hide Response;
 import '../../../../core/network/endpoints/api_endpoints.dart';
 import '../../../../core/network/network_service.dart';
 import 'package:flutter/foundation.dart' show debugPrint;
+import '../../../buy_and_sell/domain/entities/paginated_buy_vehicles_response.dart';
 import '../../domain/entities/shop_entity.dart';
 import '../../domain/entities/spare_order_entity.dart';
 import '../../domain/entities/spare_part_entity.dart';
@@ -161,6 +162,7 @@ class SpareFmsRepositoryImpl implements SpareFmsRepository {
   Future<
     ({
       List<ShopEntity> shops,
+      List<ListingAd> ads,
       PaginationMeta pagination,
       UserLocationEntity? userLocation,
     })
@@ -211,16 +213,27 @@ class SpareFmsRepositoryImpl implements SpareFmsRepository {
       }
 
       final data = responseData['data'] as Map<String, dynamic>? ?? {};
-      final shopsList = (data['shops'] as List<dynamic>? ?? [])
-          .map((e) => ShopModel.fromJson(e as Map<String, dynamic>))
-          .toList();
+      final rawShops = data['shops'] as List<dynamic>? ?? [];
+
+      final shopsList = <ShopEntity>[];
+      final adsList = <ListingAd>[];
+
+      for (final item in rawShops) {
+        final map = item as Map<String, dynamic>;
+        if (map['is_advertisement'] == true) {
+          adsList.add(ListingAd.fromJson(map));
+        } else {
+          shopsList.add(ShopModel.fromJson(map));
+        }
+      }
 
       final paginationData = data['pagination'] as Map<String, dynamic>? ?? {};
 
       final userLocationData = data['user_location'] as Map<String, dynamic>?;
 
       return (
-        shops: shopsList.cast<ShopEntity>(),
+        shops: shopsList,
+        ads: adsList,
         pagination: PaginationMeta(
           currentPage: _parseInt(paginationData['current_page']),
           totalPages: _parseInt(paginationData['total_pages']),

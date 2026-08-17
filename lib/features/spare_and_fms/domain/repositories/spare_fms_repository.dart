@@ -1,3 +1,4 @@
+import '../../../buy_and_sell/domain/entities/paginated_buy_vehicles_response.dart';
 import '../entities/shop_entity.dart';
 import '../entities/spare_order_entity.dart';
 import '../entities/spare_part_entity.dart';
@@ -27,11 +28,7 @@ class PaginationMeta {
 abstract class SpareFmsRepository {
   /// Fetch paginated spare parts list.
   Future<({List<SparePartEntity> spares, PaginationMeta pagination})>
-      getSparesList({
-    required int page,
-    required int limit,
-    String? userId,
-  });
+  getSparesList({required int page, required int limit, String? userId});
 
   /// Record user interest in a spare part.
   /// Returns the created spare order ID on success.
@@ -48,11 +45,15 @@ abstract class SpareFmsRepository {
   });
 
   /// Fetch shops list filtered by location and category (CE/CV).
-  Future<({
-    List<ShopEntity> shops,
-    PaginationMeta pagination,
-    UserLocationEntity? userLocation,
-  })> getShopsListByCategory({
+  Future<
+    ({
+      List<ShopEntity> shops,
+      PaginationMeta pagination,
+      List<ListingAd> ads,
+      UserLocationEntity? userLocation,
+    })
+  >
+  getShopsListByCategory({
     required double latitude,
     required double longitude,
     required String shopCategoryType,
@@ -75,7 +76,7 @@ abstract class SpareFmsRepository {
 
   /// Fetch user's spare orders (My Bookings).
   Future<({List<SpareOrderEntity> orders, PaginationMeta pagination})>
-      getUserSparesOrders({
+  getUserSparesOrders({
     required String userId,
     required int page,
     required int limit,

@@ -407,12 +407,19 @@ class BuySellRepositoryImpl implements BuySellRepository {
               : resultData['data'] is List
               ? resultData['data']
               : [];
-          final vehicles = items
-              .map(
-                (json) =>
-                    BuyVehicleModel.fromJson(json as Map<String, dynamic>),
-              )
-              .toList();
+
+          // Separate vehicle items from advertisement items
+          final vehicles = <BuyVehicleModel>[];
+          final ads = <ListingAd>[];
+          for (final raw in items) {
+            final json = raw as Map<String, dynamic>;
+            if (json['is_advertisement'] == true ||
+                json['item_type'] == 'advertisement') {
+              ads.add(ListingAd.fromJson(json));
+            } else {
+              vehicles.add(BuyVehicleModel.fromJson(json));
+            }
+          }
           final totalPages = _parseInt(
             resultData['total_pages'] ?? resultData['totalPages'] ?? 1,
           );
@@ -424,6 +431,7 @@ class BuySellRepositoryImpl implements BuySellRepository {
           );
           return PaginatedBuyVehiclesResponse(
             vehicles: vehicles,
+            ads: ads,
             totalPages: totalPages,
             totalCount: totalCount,
             currentPage: currentPage,
@@ -433,6 +441,7 @@ class BuySellRepositoryImpl implements BuySellRepository {
       }
       return PaginatedBuyVehiclesResponse(
         vehicles: [],
+        ads: [],
         totalPages: 1,
         totalCount: 0,
         currentPage: page,
@@ -455,7 +464,9 @@ class BuySellRepositoryImpl implements BuySellRepository {
         ApiEndpoints.listBuySubscribedVehicles,
         data: {'user_id': userId, 'page': page, 'limit': limit},
       );
-      print('📤 listSubscribedVehicles request data: user_id=$userId, page=$page, limit=$limit');
+      print(
+        '📤 listSubscribedVehicles request data: user_id=$userId, page=$page, limit=$limit',
+      );
       print('🔵 listSubscribedVehicles raw response: ${response.data}');
       if (response.statusCode == 200) {
         final data = response.data;
@@ -698,19 +709,31 @@ class BuySellRepositoryImpl implements BuySellRepository {
 
       // Add optional fields only if not null and not empty
       if (chassisNumber.isNotEmpty) jsonData['chassis_number'] = chassisNumber;
-      if (odometer != null && odometer.toString().isNotEmpty) jsonData['odometer'] = odometer;
-      if (noOfTyres != null && noOfTyres.toString().isNotEmpty) jsonData['no_of_tyres'] = noOfTyres;
-      if (tonnage != null && tonnage.toString().isNotEmpty) jsonData['tonnage'] = tonnage;
-      if (hours != null && hours.toString().isNotEmpty) jsonData['hours'] = hours;
-      if (bodyType != null && bodyType.toString().isNotEmpty) jsonData['body_type'] = bodyType;
-      if (bodyLength != null && bodyLength.toString().isNotEmpty) jsonData['body_length'] = bodyLength;
-      if (fuelType != null && fuelType.toString().isNotEmpty) jsonData['fuel_type'] = fuelType;
-      if (insuranceDates != null && insuranceDates.toString().isNotEmpty) jsonData['insurance_dates'] = insuranceDates;
+      if (odometer != null && odometer.toString().isNotEmpty)
+        jsonData['odometer'] = odometer;
+      if (noOfTyres != null && noOfTyres.toString().isNotEmpty)
+        jsonData['no_of_tyres'] = noOfTyres;
+      if (tonnage != null && tonnage.toString().isNotEmpty)
+        jsonData['tonnage'] = tonnage;
+      if (hours != null && hours.toString().isNotEmpty)
+        jsonData['hours'] = hours;
+      if (bodyType != null && bodyType.toString().isNotEmpty)
+        jsonData['body_type'] = bodyType;
+      if (bodyLength != null && bodyLength.toString().isNotEmpty)
+        jsonData['body_length'] = bodyLength;
+      if (fuelType != null && fuelType.toString().isNotEmpty)
+        jsonData['fuel_type'] = fuelType;
+      if (insuranceDates != null && insuranceDates.toString().isNotEmpty)
+        jsonData['insurance_dates'] = insuranceDates;
       if (kv != null && kv.toString().isNotEmpty) jsonData['kv'] = kv;
-      if (otherBrand != null && otherBrand.toString().isNotEmpty) jsonData['other_brand'] = otherBrand;
-      if (otherTipper != null && otherTipper.toString().isNotEmpty) jsonData['other_tipper'] = otherTipper;
-      if (otherBodyType != null && otherBodyType.toString().isNotEmpty) jsonData['other_body_type'] = otherBodyType;
-      if (otherTyre != null && otherTyre.toString().isNotEmpty) jsonData['other_tyre'] = otherTyre;
+      if (otherBrand != null && otherBrand.toString().isNotEmpty)
+        jsonData['other_brand'] = otherBrand;
+      if (otherTipper != null && otherTipper.toString().isNotEmpty)
+        jsonData['other_tipper'] = otherTipper;
+      if (otherBodyType != null && otherBodyType.toString().isNotEmpty)
+        jsonData['other_body_type'] = otherBodyType;
+      if (otherTyre != null && otherTyre.toString().isNotEmpty)
+        jsonData['other_tyre'] = otherTyre;
 
       // Build FormData combining JSON data with file uploads
       final formDataMap = <String, dynamic>{...jsonData};
@@ -741,7 +764,9 @@ class BuySellRepositoryImpl implements BuySellRepository {
       final formData = FormData.fromMap(formDataMap);
 
       print('📤 [createSellVehicle] Sending data: $jsonData');
-      print('📤 [createSellVehicle] Files - images:${vehicleImages?.length ?? 0}, rc:${rcDocument != null}, insurance:${insuranceDocument != null}');
+      print(
+        '📤 [createSellVehicle] Files - images:${vehicleImages?.length ?? 0}, rc:${rcDocument != null}, insurance:${insuranceDocument != null}',
+      );
 
       final response = await _network.post(
         ApiEndpoints.sellVehicle,
@@ -763,7 +788,9 @@ class BuySellRepositoryImpl implements BuySellRepository {
         print('❌ createSellVehicle response data: ${e.response?.data}');
         print('❌ createSellVehicle request data: ${e.requestOptions.data}');
       }
-      throw Exception('Failed to create vehicle: ${e.response?.data ?? e.message}');
+      throw Exception(
+        'Failed to create vehicle: ${e.response?.data ?? e.message}',
+      );
     }
   }
 

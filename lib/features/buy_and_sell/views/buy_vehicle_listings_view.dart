@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/design_system/design_system.dart';
 import '../../../core/design_system/molecules/custom_snackbar.dart';
@@ -8,6 +9,7 @@ import '../../../core/design_system/organisms/network_image_carousel.dart';
 import '../widgets/buy_filter_sheet.dart';
 import '../../../core/design_system/templates/app_layout.dart';
 import '../../../routes/app_routes.dart';
+import '../domain/entities/paginated_buy_vehicles_response.dart';
 import '../../subscription/models/user_subscription.dart';
 import '../../subscription/services/subscription_guard_service.dart';
 import '../controllers/vehicle_detail_controller.dart';
@@ -186,9 +188,13 @@ class BuyVehicleListingsView extends GetView<BuyVehicleController> {
                     ),
                     itemCount:
                         controller.buyVehicles.length +
+                        _adCount(controller) +
                         (controller.isLoadingMoreBuyVehicles.value ? 1 : 0),
                     itemBuilder: (_, i) {
-                      if (i == controller.buyVehicles.length) {
+                      // Loading spinner at end
+                      final totalVehicles = controller.buyVehicles.length;
+                      final totalAds = _adCount(controller);
+                      if (i == totalVehicles + totalAds) {
                         return Padding(
                           padding: EdgeInsets.symmetric(
                             vertical: AppSpacing.md,
@@ -201,9 +207,18 @@ class BuyVehicleListingsView extends GetView<BuyVehicleController> {
                           ),
                         );
                       }
+                      // Resolve actual item accounting for inserted ads
+                      final resolved = _resolveItem(i, controller);
+                      if (resolved is ListingAd) {
+                        return Padding(
+                          padding: EdgeInsets.only(bottom: AppSpacing.md),
+                          child: _ListingAdBanner(ad: resolved),
+                        );
+                      }
+                      final vehicle = resolved as BuyVehicleEntity;
                       return Padding(
                         padding: EdgeInsets.only(bottom: AppSpacing.md),
-                        child: _VehicleCard(vehicle: controller.buyVehicles[i]),
+                        child: _VehicleCard(vehicle: vehicle),
                       );
                     },
                   ),
@@ -316,6 +331,98 @@ class _ActiveFiltersStrip extends StatelessWidget {
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Vehicle Card
+// ─────────────────────────────────────────────────────────────────────────────
+// Ad interleaving helpers
+// ─────────────────────────────────────────────────────────────────────────────
+
+/// How many ad slots will be inserted given the current vehicle count.
+int _adCount(BuyVehicleController ctrl) {
+  if (ctrl.feedAds.isEmpty) return 0;
+  final n = ctrl.feedAds.first.insertEveryN;
+  if (n <= 0) return 0;
+  return ctrl.buyVehicles.length ~/ n;
+}
+
+/// Maps a flat list index (vehicles + ads combined) to either a
+/// [BuyVehicleEntity] or a [ListingAd].
+dynamic _resolveItem(int flatIndex, BuyVehicleController ctrl) {
+  if (ctrl.feedAds.isEmpty) return ctrl.buyVehicles[flatIndex];
+  final n = ctrl.feedAds.first.insertEveryN;
+  if (n <= 0) return ctrl.buyVehicles[flatIndex];
+
+  // Every (n+1) slots: n vehicles then 1 ad
+  final slot = flatIndex % (n + 1);
+  if (slot == n) {
+    // Cycle through all available ads
+    final adSlotIndex = flatIndex ~/ (n + 1);
+    return ctrl.feedAds[adSlotIndex % ctrl.feedAds.length];
+  }
+
+  // Vehicle slot — count how many ads have been inserted before this index
+  final adsInserted = flatIndex ~/ (n + 1);
+  final vehicleIndex = flatIndex - adsInserted;
+  if (vehicleIndex >= ctrl.buyVehicles.length) {
+    return ctrl.feedAds[0];
+  }
+  return ctrl.buyVehicles[vehicleIndex];
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Listing Ad Banner
+// ─────────────────────────────────────────────────────────────────────────────
+
+class _ListingAdBanner extends StatelessWidget {
+  final ListingAd ad;
+  const _ListingAdBanner({required this.ad});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () async {
+        if (ad.isInternal) {
+          final route = _resolveRoute(ad.redirectValue);
+          if (route != null) Get.toNamed(route);
+        } else {
+          final uri = Uri.tryParse(ad.redirectValue);
+          if (uri != null && await canLaunchUrl(uri)) {
+            launchUrl(uri, mode: LaunchMode.externalApplication);
+          }
+        }
+      },
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(12),
+        child: ad.bannerImageUrl.isNotEmpty
+            ? Image.network(
+                ad.bannerImageUrl,
+                width: double.infinity,
+                height: 160,
+                fit: BoxFit.cover,
+                errorBuilder: (_, __, ___) => const SizedBox.shrink(),
+              )
+            : const SizedBox.shrink(),
+      ),
+    );
+  }
+
+  String? _resolveRoute(String value) {
+    switch (value) {
+      case 'AppRoutes.auctionListings':
+        return AppRoutes.auctionListings;
+      case 'AppRoutes.auctionType':
+        return AppRoutes.auctionType;
+      case 'AppRoutes.buySellHome':
+        return AppRoutes.buySellHome;
+      case 'AppRoutes.spareFms':
+        return AppRoutes.spareFms;
+      case 'AppRoutes.insuranceFinance':
+        return AppRoutes.insuranceFinance;
+      default:
+        if (value.startsWith('/')) return value;
+        return null;
+    }
+  }
+}
+
 // ─────────────────────────────────────────────────────────────────────────────
 
 class _VehicleCard extends StatelessWidget {

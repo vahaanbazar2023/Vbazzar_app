@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_sizes.dart';
 import '../../../core/design_system/templates/app_layout.dart';
 import '../../../core/design_system/tokens/app_spacing.dart';
 import '../../../core/extensions/context_extensions.dart';
+import '../../../routes/app_routes.dart';
 import '../../../theme/app_fonts.dart';
+import '../../buy_and_sell/domain/entities/paginated_buy_vehicles_response.dart';
 import '../controllers/spare_and_fms_controller.dart';
+import '../domain/entities/shop_entity.dart';
 import '../widgets/shop_card.dart';
 
 /// Shop listing screen filtered by category (CE/CV).
@@ -75,9 +79,17 @@ class _ShopListViewState extends State<ShopListView> {
           onRefresh: () async => _controller.refreshShopsData(),
           child: ListView.builder(
             padding: EdgeInsets.all(AppSpacing.md),
-            itemCount: _controller.shopsListData.length,
+            itemCount:
+                _controller.shopsListData.length + _shopAdCount(_controller),
             itemBuilder: (_, index) {
-              final shop = _controller.shopsListData[index];
+              final resolved = _resolveShopItem(index, _controller);
+              if (resolved is ListingAd) {
+                return Padding(
+                  padding: EdgeInsets.only(bottom: AppSpacing.md),
+                  child: _ShopAdBanner(ad: resolved),
+                );
+              }
+              final shop = resolved as ShopEntity;
               return ShopCard(
                 shop: shop,
                 onContact: () => _controller.contactShop(shop),
@@ -128,6 +140,98 @@ class _ShopListViewState extends State<ShopListView> {
         ),
       ),
     );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Ad interleaving helpers
+// ─────────────────────────────────────────────────────────────────────────────
+
+/// How many ad slots will be inserted given the current shop count.
+int _shopAdCount(SpareAndFmsController ctrl) {
+  if (ctrl.shopFeedAds.isEmpty) return 0;
+  final n = ctrl.shopFeedAds.first.insertEveryN;
+  if (n <= 0) return 0;
+  return ctrl.shopsListData.length ~/ n;
+}
+
+/// Maps a flat list index (shops + ads combined) to either a
+/// [ShopEntity] or a [ListingAd].
+dynamic _resolveShopItem(int flatIndex, SpareAndFmsController ctrl) {
+  if (ctrl.shopFeedAds.isEmpty) return ctrl.shopsListData[flatIndex];
+  final n = ctrl.shopFeedAds.first.insertEveryN;
+  if (n <= 0) return ctrl.shopsListData[flatIndex];
+
+  // Every (n+1) slots: n shops then 1 ad
+  final slot = flatIndex % (n + 1);
+  if (slot == n) {
+    // Cycle through all available ads
+    final adSlotIndex = flatIndex ~/ (n + 1);
+    return ctrl.shopFeedAds[adSlotIndex % ctrl.shopFeedAds.length];
+  }
+
+  // Shop slot — count how many ads have been inserted before this index
+  final adsInserted = flatIndex ~/ (n + 1);
+  final shopIndex = flatIndex - adsInserted;
+  if (shopIndex >= ctrl.shopsListData.length) {
+    return ctrl.shopFeedAds[0];
+  }
+  return ctrl.shopsListData[shopIndex];
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Shop Ad Banner
+// ─────────────────────────────────────────────────────────────────────────────
+
+class _ShopAdBanner extends StatelessWidget {
+  final ListingAd ad;
+  const _ShopAdBanner({required this.ad});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () async {
+        if (ad.isInternal) {
+          final route = _resolveRoute(ad.redirectValue);
+          if (route != null) Get.toNamed(route);
+        } else {
+          final uri = Uri.tryParse(ad.redirectValue);
+          if (uri != null && await canLaunchUrl(uri)) {
+            launchUrl(uri, mode: LaunchMode.externalApplication);
+          }
+        }
+      },
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(12),
+        child: ad.bannerImageUrl.isNotEmpty
+            ? Image.network(
+                ad.bannerImageUrl,
+                width: double.infinity,
+                height: 160.h,
+                fit: BoxFit.cover,
+                errorBuilder: (_, __, ___) => const SizedBox.shrink(),
+              )
+            : const SizedBox.shrink(),
+      ),
+    );
+  }
+
+  String? _resolveRoute(String value) {
+    switch (value) {
+      case 'AppRoutes.auctionListings':
+        return AppRoutes.auctionListings;
+      case 'AppRoutes.auctionType':
+        return AppRoutes.auctionType;
+      case 'AppRoutes.buySellHome':
+        return AppRoutes.buySellHome;
+      case 'AppRoutes.spareFms':
+        return AppRoutes.spareFms;
+      case 'AppRoutes.insuranceFinance':
+        return AppRoutes.insuranceFinance;
+      default:
+        if (value.startsWith('/')) return value;
+        return null;
+    }
   }
 }
 

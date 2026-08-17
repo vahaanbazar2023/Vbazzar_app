@@ -9,6 +9,7 @@ import '../../../core/storage/storage_keys.dart';
 import '../../../features/subscription/models/subscription_plan.dart';
 import '../../../features/subscription/views/single_plan_payment_screen.dart';
 import '../domain/entities/buy_vehicle_entity.dart';
+import '../domain/entities/paginated_buy_vehicles_response.dart';
 import '../domain/entities/subscribed_vehicle_entity.dart';
 import '../domain/entities/vehicle_brand_entity.dart';
 import '../domain/entities/vehicle_category_entity.dart';
@@ -50,6 +51,9 @@ class BuyVehicleController extends GetxController {
   final isLoadingMoreBuyVehicles = false.obs;
   final hasErrorBuyVehicles = false.obs;
   final errorMessageBuyVehicles = ''.obs;
+
+  /// Ads returned from the API for this listing — used to interleave in the view.
+  final feedAds = <ListingAd>[].obs;
   final buyPage = 1.obs;
   final buyTotalPages = 1.obs;
   final buyTotalCount = 0.obs;
@@ -377,6 +381,7 @@ class BuyVehicleController extends GetxController {
 
       if (isFirstPage) {
         buyVehicles.assignAll(result.vehicles);
+        feedAds.assignAll(result.ads); // store ads on first page load
       } else {
         buyVehicles.addAll(result.vehicles);
       }

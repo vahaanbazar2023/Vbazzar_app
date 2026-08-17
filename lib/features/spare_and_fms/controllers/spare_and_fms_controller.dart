@@ -8,6 +8,7 @@ import '../../../core/design_system/molecules/custom_snackbar.dart';
 import '../../../core/storage/secure_storage_service.dart';
 import '../../../core/storage/storage_keys.dart';
 import '../../../routes/app_routes.dart';
+import '../../buy_and_sell/domain/entities/paginated_buy_vehicles_response.dart';
 import '../../subscription/models/subscription_plan.dart';
 import '../../subscription/services/subscription_service.dart';
 import '../../subscription/views/single_plan_payment_screen.dart';
@@ -59,6 +60,7 @@ class SpareAndFmsController extends GetxController
   // ─── Shops (Tab 1 — Spare Support) ─────────────────────────
 
   final shopsListData = <ShopEntity>[].obs;
+  final shopFeedAds = <ListingAd>[].obs;
   final isShopsLoading = false.obs;
   final hasShopsInitiallyLoaded = false.obs;
   final currentShopCategory = ''.obs;
@@ -333,6 +335,7 @@ class SpareAndFmsController extends GetxController
       );
 
       shopsListData.assignAll(result.shops);
+      shopFeedAds.assignAll(result.ads);
     } catch (e) {
       Get.snackbar(
         'Error',
@@ -370,6 +373,7 @@ class SpareAndFmsController extends GetxController
         limit: 20,
       );
       shopsListData.assignAll(result.shops);
+      shopFeedAds.assignAll(result.ads);
     } catch (_) {
       // Silently fail — user still sees old data
     }
