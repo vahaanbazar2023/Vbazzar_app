@@ -6,6 +6,7 @@ import '../../../core/network/endpoints/api_endpoints.dart';
 import '../../../core/network/network_service.dart';
 import '../../../core/storage/secure_storage_service.dart';
 import '../../../core/storage/storage_keys.dart';
+import '../../buy_and_sell/domain/entities/paginated_buy_vehicles_response.dart';
 import '../domain/entities/approved_vehicle_category_entity.dart';
 import '../domain/entities/approved_vehicle_listing_entity.dart';
 import '../domain/repositories/approved_vehicle_repository.dart';
@@ -28,6 +29,7 @@ class ApprovedVehicleController extends GetxController {
   // Listings
   // ═══════════════════════════════════════════════════════════════
   final listings = <ApprovedVehicleListingEntity>[].obs;
+  final apprVehicleFeedAds = <ListingAd>[].obs;
   final isLoadingListings = false.obs;
   final isLoadingMoreListings = false.obs;
   final listingsError = ''.obs;
@@ -187,6 +189,7 @@ class ApprovedVehicleController extends GetxController {
       );
       if (isRefresh || listingsPage.value == 1) {
         listings.assignAll(result.listings);
+        apprVehicleFeedAds.assignAll(result.ads);
       } else {
         listings.addAll(result.listings);
       }
@@ -212,6 +215,7 @@ class ApprovedVehicleController extends GetxController {
         page: listingsPage.value,
       );
       listings.addAll(result.listings);
+      if (result.ads.isNotEmpty) apprVehicleFeedAds.assignAll(result.ads);
       hasMoreListings.value = listings.length < result.totalCount;
     } catch (_) {
       listingsPage.value--;

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/design_system/design_system.dart';
 import '../../../core/design_system/loaders/loading_widget.dart';
@@ -11,6 +12,7 @@ import '../../../core/design_system/tokens/app_spacing.dart';
 import '../../../core/extensions/context_extensions.dart';
 import '../../../routes/app_routes.dart';
 import '../../../theme/app_fonts.dart';
+import '../../buy_and_sell/domain/entities/paginated_buy_vehicles_response.dart';
 import '../controllers/approved_vehicle_controller.dart';
 import '../domain/entities/approved_vehicle_category_entity.dart';
 import '../domain/entities/approved_vehicle_listing_entity.dart';
@@ -83,9 +85,12 @@ class _VehicleListingsScreenState extends State<VehicleListingsScreen> {
             padding: EdgeInsets.all(AppSpacing.md),
             itemCount:
                 ctrl.listings.length +
+                _apprAdCount(ctrl) +
                 (ctrl.isLoadingMoreListings.value ? 1 : 0),
             itemBuilder: (context, index) {
-              if (index >= ctrl.listings.length) {
+              final totalVehicles = ctrl.listings.length;
+              final totalAds = _apprAdCount(ctrl);
+              if (index == totalVehicles + totalAds) {
                 return Padding(
                   padding: EdgeInsets.symmetric(vertical: 16.h),
                   child: const Center(
@@ -93,13 +98,21 @@ class _VehicleListingsScreenState extends State<VehicleListingsScreen> {
                   ),
                 );
               }
+              final resolved = _resolveApprItem(index, ctrl);
+              if (resolved is ListingAd) {
+                return Padding(
+                  padding: EdgeInsets.only(bottom: AppSpacing.md),
+                  child: _ApprAdBanner(ad: resolved),
+                );
+              }
+              final listing = resolved as ApprovedVehicleListingEntity;
               return Padding(
                 padding: EdgeInsets.only(bottom: AppSpacing.md),
                 child: _VehicleListingCard(
-                  listing: ctrl.listings[index],
+                  listing: listing,
                   onTap: () => Get.toNamed(
                     AppRoutes.approvedVehicleDetail,
-                    arguments: {'listing': ctrl.listings[index]},
+                    arguments: {'listing': listing},
                   ),
                 ),
               );
@@ -456,5 +469,93 @@ class _ShimmerCard extends StatelessWidget {
         ],
       ),
     );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Ad interleaving helpers
+// ─────────────────────────────────────────────────────────────────────────────
+
+int _apprAdCount(ApprovedVehicleController ctrl) {
+  if (ctrl.apprVehicleFeedAds.isEmpty) return 0;
+  final n = ctrl.apprVehicleFeedAds.first.insertEveryN;
+  if (n <= 0) return 0;
+  return ctrl.listings.length ~/ n;
+}
+
+dynamic _resolveApprItem(int flatIndex, ApprovedVehicleController ctrl) {
+  if (ctrl.apprVehicleFeedAds.isEmpty) return ctrl.listings[flatIndex];
+  final n = ctrl.apprVehicleFeedAds.first.insertEveryN;
+  if (n <= 0) return ctrl.listings[flatIndex];
+
+  // Every (n+1) slots: n vehicles then 1 ad
+  final slot = flatIndex % (n + 1);
+  if (slot == n) {
+    final adSlotIndex = flatIndex ~/ (n + 1);
+    return ctrl.apprVehicleFeedAds[adSlotIndex %
+        ctrl.apprVehicleFeedAds.length];
+  }
+
+  final adsInserted = flatIndex ~/ (n + 1);
+  final vehicleIndex = flatIndex - adsInserted;
+  if (vehicleIndex >= ctrl.listings.length) {
+    return ctrl.apprVehicleFeedAds[0];
+  }
+  return ctrl.listings[vehicleIndex];
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Approved Vehicles Ad Banner
+// ─────────────────────────────────────────────────────────────────────────────
+
+class _ApprAdBanner extends StatelessWidget {
+  final ListingAd ad;
+  const _ApprAdBanner({required this.ad});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () async {
+        if (ad.isInternal) {
+          final route = _resolveRoute(ad.redirectValue);
+          if (route != null) Get.toNamed(route);
+        } else {
+          final uri = Uri.tryParse(ad.redirectValue);
+          if (uri != null && await canLaunchUrl(uri)) {
+            launchUrl(uri, mode: LaunchMode.externalApplication);
+          }
+        }
+      },
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(12),
+        child: ad.bannerImageUrl.isNotEmpty
+            ? Image.network(
+                ad.bannerImageUrl,
+                width: double.infinity,
+                height: 160.h,
+                fit: BoxFit.cover,
+                errorBuilder: (_, __, ___) => const SizedBox.shrink(),
+              )
+            : const SizedBox.shrink(),
+      ),
+    );
+  }
+
+  String? _resolveRoute(String value) {
+    switch (value) {
+      case 'AppRoutes.auctionListings':
+        return AppRoutes.auctionListings;
+      case 'AppRoutes.auctionType':
+        return AppRoutes.auctionType;
+      case 'AppRoutes.buySellHome':
+        return AppRoutes.buySellHome;
+      case 'AppRoutes.spareFms':
+        return AppRoutes.spareFms;
+      case 'AppRoutes.insuranceFinance':
+        return AppRoutes.insuranceFinance;
+      default:
+        if (value.startsWith('/')) return value;
+        return null;
+    }
   }
 }

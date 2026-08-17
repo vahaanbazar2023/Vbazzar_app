@@ -1,5 +1,7 @@
 import 'package:dio/dio.dart' as dio;
 import '../../../../core/network/network_service.dart';
+import '../../../buy_and_sell/domain/entities/paginated_buy_vehicles_response.dart';
+import '../../domain/entities/approved_vehicle_listing_entity.dart';
 import '../../domain/repositories/approved_vehicle_repository.dart';
 import '../models/approved_vehicle_category_model.dart';
 import '../models/approved_vehicle_listing_model.dart';
@@ -11,8 +13,7 @@ import '../models/approved_vehicle_listing_model.dart';
 class ApprovedVehicleRepositoryImpl implements ApprovedVehicleRepository {
   static const String _categoriesPath =
       '/api/v1/approved-veh/appr-veh-categories';
-  static const String _listingsPath =
-      '/api/v1/approved-veh/appr-veh-listings';
+  static const String _listingsPath = '/api/v1/approved-veh/appr-veh-listings';
   static const String _submitPath = '/api/v1/approved-veh/appr-veh-submit';
   static const String _userInterestPath =
       '/api/v1/approved-veh/appr-veh-user-interest';
@@ -22,7 +23,7 @@ class ApprovedVehicleRepositoryImpl implements ApprovedVehicleRepository {
   final NetworkService _network;
 
   ApprovedVehicleRepositoryImpl({NetworkService? network})
-      : _network = network ?? NetworkService.to;
+    : _network = network ?? NetworkService.to;
 
   // ── Categories ──────────────────────────────────────────────
 
@@ -35,12 +36,7 @@ class ApprovedVehicleRepositoryImpl implements ApprovedVehicleRepository {
   }) async {
     final response = await _network.post<Map<String, dynamic>>(
       _categoriesPath,
-      data: {
-        'user_id': userId,
-        'status': status,
-        'page': page,
-        'limit': limit,
-      },
+      data: {'user_id': userId, 'status': status, 'page': page, 'limit': limit},
     );
 
     final data = response.data?['data'] as Map<String, dynamic>?;
@@ -53,8 +49,11 @@ class ApprovedVehicleRepositoryImpl implements ApprovedVehicleRepository {
 
     return PaginatedCategoriesResult(
       categories: rawCategories
-          .map((e) =>
-              ApprovedVehicleCategoryModel.fromJson(e as Map<String, dynamic>))
+          .map(
+            (e) => ApprovedVehicleCategoryModel.fromJson(
+              e as Map<String, dynamic>,
+            ),
+          )
           .toList(),
       totalCount: totalCount,
     );
@@ -108,16 +107,24 @@ class ApprovedVehicleRepositoryImpl implements ApprovedVehicleRepository {
     final rawListings = data['listings'] as List<dynamic>? ?? [];
     final totalCount = _parseInt(data['total_count']);
 
-    // Filter out booked vehicles (client-side per documentation)
-    final allListings = rawListings
-        .map((e) =>
-            ApprovedVehicleListingModel.fromJson(e as Map<String, dynamic>))
-        .toList();
-    final filteredListings =
-        allListings.where((l) => l.isBooked.toLowerCase() != 'yes').toList();
+    final vehicleListings = <ApprovedVehicleListingEntity>[];
+    final adsList = <ListingAd>[];
+
+    for (final item in rawListings) {
+      final map = item as Map<String, dynamic>;
+      if (map['is_advertisement'] == true) {
+        adsList.add(ListingAd.fromJson(map));
+      } else {
+        final listing = ApprovedVehicleListingModel.fromJson(map);
+        if (listing.isBooked.toLowerCase() != 'yes') {
+          vehicleListings.add(listing);
+        }
+      }
+    }
 
     return PaginatedListingsResult(
-      listings: filteredListings,
+      listings: vehicleListings,
+      ads: adsList,
       totalCount: totalCount,
     );
   }
@@ -189,8 +196,10 @@ class ApprovedVehicleRepositoryImpl implements ApprovedVehicleRepository {
 
     return PaginatedListingsResult(
       listings: rawVehicles
-          .map((e) =>
-              ApprovedVehicleListingModel.fromJson(e as Map<String, dynamic>))
+          .map(
+            (e) =>
+                ApprovedVehicleListingModel.fromJson(e as Map<String, dynamic>),
+          )
           .toList(),
       totalCount: totalCount,
     );

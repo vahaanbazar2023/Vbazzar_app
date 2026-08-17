@@ -9,7 +9,9 @@ import '../../../core/design_system/atoms/custom_loader.dart';
 import '../../../core/design_system/molecules/gradient_button.dart';
 import '../../../core/design_system/templates/app_layout.dart';
 import '../../../core/extensions/context_extensions.dart';
+import '../../../routes/app_routes.dart';
 import '../../../theme/app_fonts.dart';
+import '../../buy_and_sell/domain/entities/paginated_buy_vehicles_response.dart';
 import '../controllers/service_support_controller.dart';
 import '../data/models/mechanic_model.dart';
 
@@ -106,9 +108,14 @@ class ServiceProviderListView extends GetView<ServiceSupportController> {
                     vertical: 12.h,
                   ),
                   itemCount:
-                      filtered.length + (controller.hasMore.value ? 1 : 0),
+                      filtered.length +
+                      (query.isEmpty ? _mechAdCount(controller) : 0) +
+                      (controller.hasMore.value ? 1 : 0),
                   itemBuilder: (context, index) {
-                    if (index >= filtered.length) {
+                    final totalItems =
+                        filtered.length +
+                        (query.isEmpty ? _mechAdCount(controller) : 0);
+                    if (index >= totalItems) {
                       return Obx(
                         () => controller.isLoadingMore.value
                             ? Padding(
@@ -127,7 +134,18 @@ class ServiceProviderListView extends GetView<ServiceSupportController> {
                               ),
                       );
                     }
-                    return _buildMechanicCard(context, filtered[index]);
+                    // No ads when search is active — use filtered directly
+                    if (query.isNotEmpty) {
+                      return _buildMechanicCard(context, filtered[index]);
+                    }
+                    final resolved = _resolveMechItem(index, controller);
+                    if (resolved is ListingAd) {
+                      return Padding(
+                        padding: EdgeInsets.only(bottom: 16.h),
+                        child: _MechanicAdBanner(ad: resolved),
+                      );
+                    }
+                    return _buildMechanicCard(context, resolved as Mechanic);
                   },
                 ),
               );
@@ -647,5 +665,90 @@ class ServiceProviderListView extends GetView<ServiceSupportController> {
         ),
       ),
     );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Ad interleaving helpers
+// ─────────────────────────────────────────────────────────────────────────────
+
+int _mechAdCount(ServiceSupportController ctrl) {
+  if (ctrl.mechanicFeedAds.isEmpty) return 0;
+  final n = ctrl.mechanicFeedAds.first.insertEveryN;
+  if (n <= 0) return 0;
+  return ctrl.mechanics.length ~/ n;
+}
+
+dynamic _resolveMechItem(int flatIndex, ServiceSupportController ctrl) {
+  if (ctrl.mechanicFeedAds.isEmpty) return ctrl.mechanics[flatIndex];
+  final n = ctrl.mechanicFeedAds.first.insertEveryN;
+  if (n <= 0) return ctrl.mechanics[flatIndex];
+
+  // Every (n+1) slots: n mechanics then 1 ad
+  final slot = flatIndex % (n + 1);
+  if (slot == n) {
+    final adSlotIndex = flatIndex ~/ (n + 1);
+    return ctrl.mechanicFeedAds[adSlotIndex % ctrl.mechanicFeedAds.length];
+  }
+
+  final adsInserted = flatIndex ~/ (n + 1);
+  final mechIndex = flatIndex - adsInserted;
+  if (mechIndex >= ctrl.mechanics.length) return ctrl.mechanicFeedAds[0];
+  return ctrl.mechanics[mechIndex];
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Mechanic Ad Banner
+// ─────────────────────────────────────────────────────────────────────────────
+
+class _MechanicAdBanner extends StatelessWidget {
+  final ListingAd ad;
+  const _MechanicAdBanner({required this.ad});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () async {
+        if (ad.isInternal) {
+          final route = _resolveRoute(ad.redirectValue);
+          if (route != null) Get.toNamed(route);
+        } else {
+          final uri = Uri.tryParse(ad.redirectValue);
+          if (uri != null && await canLaunchUrl(uri)) {
+            launchUrl(uri, mode: LaunchMode.externalApplication);
+          }
+        }
+      },
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(12),
+        child: ad.bannerImageUrl.isNotEmpty
+            ? Image.network(
+                ad.bannerImageUrl,
+                width: double.infinity,
+                height: 160.h,
+                fit: BoxFit.cover,
+                errorBuilder: (_, __, ___) => const SizedBox.shrink(),
+              )
+            : const SizedBox.shrink(),
+      ),
+    );
+  }
+
+  String? _resolveRoute(String value) {
+    switch (value) {
+      case 'AppRoutes.auctionListings':
+        return AppRoutes.auctionListings;
+      case 'AppRoutes.auctionType':
+        return AppRoutes.auctionType;
+      case 'AppRoutes.buySellHome':
+        return AppRoutes.buySellHome;
+      case 'AppRoutes.spareFms':
+        return AppRoutes.spareFms;
+      case 'AppRoutes.insuranceFinance':
+        return AppRoutes.insuranceFinance;
+      default:
+        if (value.startsWith('/')) return value;
+        return null;
+    }
   }
 }

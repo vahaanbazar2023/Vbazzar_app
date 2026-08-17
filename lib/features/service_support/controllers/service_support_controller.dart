@@ -8,6 +8,7 @@ import '../../../core/design_system/molecules/custom_snackbar.dart';
 import '../../../core/services/gps_location_service.dart';
 import '../../../core/storage/secure_storage_service.dart';
 import '../../../core/storage/storage_keys.dart';
+import '../../buy_and_sell/domain/entities/paginated_buy_vehicles_response.dart';
 import '../data/models/mechanic_model.dart';
 import '../data/services/service_support_service.dart';
 import '../../subscription/models/subscription_plan.dart';
@@ -24,6 +25,7 @@ class ServiceSupportController extends GetxController
   final isLoading = false.obs;
   final isLoadingMore = false.obs;
   final mechanics = <Mechanic>[].obs;
+  final mechanicFeedAds = <ListingAd>[].obs;
   final currentPage = 1.obs;
   final hasMore = true.obs;
   final totalCount = 0.obs;
@@ -231,8 +233,10 @@ class ServiceSupportController extends GetxController
       totalCount.value = data.count;
       if (refresh) {
         mechanics.assignAll(data.mechanics);
+        mechanicFeedAds.assignAll(data.ads);
       } else {
         mechanics.addAll(data.mechanics);
+        if (data.ads.isNotEmpty) mechanicFeedAds.assignAll(data.ads);
       }
 
       hasMore.value = data.pagination.hasNext;
@@ -273,6 +277,7 @@ class ServiceSupportController extends GetxController
         page: 1,
       );
       mechanics.assignAll(data.mechanics);
+      if (data.ads.isNotEmpty) mechanicFeedAds.assignAll(data.ads);
     } catch (_) {
       // Silently fail — user still sees stale data
     }
@@ -637,4 +642,3 @@ class ServiceSupportController extends GetxController
     );
   }
 }
-

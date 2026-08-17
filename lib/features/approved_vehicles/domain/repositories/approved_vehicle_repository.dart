@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart' as dio;
+import '../../../buy_and_sell/domain/entities/paginated_buy_vehicles_response.dart';
 import '../entities/approved_vehicle_category_entity.dart';
 import '../entities/approved_vehicle_listing_entity.dart';
 
@@ -71,10 +72,12 @@ class PaginatedCategoriesResult {
 /// Typed result for paginated listings.
 class PaginatedListingsResult {
   final List<ApprovedVehicleListingEntity> listings;
+  final List<ListingAd> ads;
   final int totalCount;
 
   const PaginatedListingsResult({
     required this.listings,
+    this.ads = const [],
     required this.totalCount,
   });
 }
