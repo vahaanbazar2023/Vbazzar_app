@@ -71,14 +71,17 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.put(
-      SubscriptionController(
-        subscriptionSource: widget.subscriptionSource,
-        prebuiltPlan: widget.prebuiltPlan,
-        extraArgs: widget.extraArgs,
-      ),
-      tag: widget.subscriptionSource,
-    );
+    final controller =
+        Get.isRegistered<SubscriptionController>(tag: widget.subscriptionSource)
+        ? Get.find<SubscriptionController>(tag: widget.subscriptionSource)
+        : Get.put(
+            SubscriptionController(
+              subscriptionSource: widget.subscriptionSource,
+              prebuiltPlan: widget.prebuiltPlan,
+              extraArgs: widget.extraArgs,
+            ),
+            tag: widget.subscriptionSource,
+          );
 
     return AppLayout(
       title: widget.title,
