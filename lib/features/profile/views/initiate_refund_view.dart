@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/design_system/design_system.dart';
+import '../../../core/design_system/organisms/app_header.dart';
 import '../../../core/extensions/context_extensions.dart';
 import '../controllers/initiate_refund_controller.dart';
 
@@ -13,14 +14,15 @@ class InitiateRefundView extends GetView<InitiateRefundController> {
   @override
   Widget build(BuildContext context) {
     return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: SystemUiOverlayStyle.light,
+      value: SystemUiOverlayStyle.dark,
       child: Stack(
         children: [
           Scaffold(
-            backgroundColor: const Color(0xFFFDF0F0),
+            backgroundColor: AppColors.white,
             body: Column(
               children: [
-                _Header(),
+                SizedBox(height: MediaQuery.of(context).padding.top),
+                AppHeader(title: context.l10n.initiateRefundTitle),
                 Expanded(
                   child: SingleChildScrollView(
                     physics: const BouncingScrollPhysics(),
@@ -164,48 +166,7 @@ class InitiateRefundView extends GetView<InitiateRefundController> {
 
 // ── Header ────────────────────────────────────────────────────────────────────
 
-class _Header extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    final topPadding = MediaQuery.of(context).padding.top;
-    return Container(
-      width: double.infinity,
-      padding: EdgeInsets.only(
-        top: topPadding + 12.h,
-        bottom: 20.h,
-        left: 16.w,
-        right: 16.w,
-      ),
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [
-            AppColors.authHeaderGradientStart,
-            AppColors.authHeaderGradientEnd,
-          ],
-        ),
-      ),
-      child: Row(
-        children: [
-          GestureDetector(
-            onTap: () => Get.back(),
-            child: Icon(Icons.arrow_back, color: AppColors.white, size: 24.sp),
-          ),
-          SizedBox(width: 16.w),
-          Text(
-            context.l10n.initiateRefundTitle,
-            style: AppTextStyles.headingMedium.copyWith(
-              fontSize: 20.sp,
-              fontWeight: FontWeight.w700,
-              color: AppColors.white,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
+// ── Header replaced by AppHeader ─────────────────────────────────────────────
 
 // ── Field Label ───────────────────────────────────────────────────────────────
 

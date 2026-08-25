@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 
 import '../../../core/constants/app_assets.dart';
 import '../../../core/constants/app_colors.dart';
+import '../../../core/design_system/organisms/app_header.dart';
 import '../../../core/extensions/context_extensions.dart';
 import '../../../routes/app_routes.dart';
 import '../controllers/profile_controller.dart';
@@ -56,37 +57,32 @@ class _ProfilePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final topPad = MediaQuery.of(context).padding.top;
     return CustomScrollView(
       physics: const BouncingScrollPhysics(),
       slivers: [
-        // ============================================================
-        // HEADER + OVERLAPPING STATS
-        // ============================================================
+        // ── AppHeader ────────────────────────────────────────────────
         SliverToBoxAdapter(
-          child: Stack(
-            clipBehavior: Clip.none,
+          child: Column(
             children: [
-              // RED HEADER
-              _ProfileHeader(profile: profile, controller: controller),
-
-              // STATS CARD OVERLAPPING THE HEADER
-              Positioned(
-                left: 16.w,
-                right: 16.w,
-                bottom: -20.h,
-                child: _StatsCard(),
-              ),
+              SizedBox(height: topPad),
+              AppHeader(title: context.l10n.profile, showBack: false),
             ],
           ),
         ),
 
-        // ============================================================
-        // SPACE RESERVED FOR OVERLAPPING STATS CARD
-        // ============================================================
+        // ── Profile info card ────────────────────────────────────────
+        SliverToBoxAdapter(
+          child: _ProfileInfoCard(profile: profile, controller: controller),
+        ),
 
-        // ============================================================
-        // BODY
-        // ============================================================
+        // ── Stats card ───────────────────────────────────────────────
+        SliverToBoxAdapter(
+          child: Padding(
+            padding: EdgeInsets.fromLTRB(16.w, 12.h, 16.w, 0),
+            child: _StatsCard(),
+          ),
+        ),
         SliverToBoxAdapter(
           child: Padding(
             padding: EdgeInsets.fromLTRB(16.w, 0, 16.w, 40.h),
@@ -212,6 +208,7 @@ class _ProfilePage extends StatelessWidget {
       ],
     );
   }
+
   // --------------------------------------------------------------------
   // Bottom floating navigation visual
   //
@@ -276,188 +273,128 @@ Widget _section(BuildContext context, String title, List<_Item> items) {
 // PROFILE HEADER
 // ============================================================================
 
-class _ProfileHeader extends StatelessWidget {
+class _ProfileInfoCard extends StatelessWidget {
   final ProfileData? profile;
   final ProfileController controller;
 
-  const _ProfileHeader({
-    required this.profile,
-    required this.controller,
-  });
+  const _ProfileInfoCard({required this.profile, required this.controller});
 
   @override
   Widget build(BuildContext context) {
-    return ClipRRect(
-      borderRadius: BorderRadius.only(
-        bottomLeft: Radius.circular(52.r),
-        bottomRight: Radius.circular(52.r),
-      ),
-      child: Stack(
-        children: [
-          // ============================================================
-          // CUSTOM DECORATIVE BACKGROUND
-          // ============================================================
-
-          Positioned.fill(
-            child: CustomPaint(
-              painter: _ProfileBackgroundPainter(),
-            ),
-          ),
-
-          // ============================================================
-          // YOUR EXISTING CONTENT
-          // ============================================================
-
-          SafeArea(
-            bottom: false,
-            child: Padding(
-              padding: EdgeInsets.fromLTRB(
-                16.w,
-                12.h,
-                16.w,
-                52.h,
+    return Stack(
+      children: [
+        Container(
+          margin: EdgeInsets.fromLTRB(16.w, 12.h, 16.w, 0),
+          padding: EdgeInsets.all(16.r),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16.r),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.06),
+                blurRadius: 12,
+                offset: const Offset(0, 4),
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    context.l10n.profile,
-                    style: TextStyle(
-                      fontFamily: 'Montserrat',
-                      fontSize: 21.sp,
-                      fontWeight: FontWeight.w700,
-                      color: Colors.white,
-                    ),
-                  ),
-
-                  SizedBox(height: 12.h),
-
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                       _ProfileAvatar(),
-
-                      SizedBox(width: 14.w),
-
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment:
-                              CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Hi, ${profile?.fullName ?? 'User'} 👋',
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                fontFamily: 'Montserrat',
-                                fontSize: 17.sp,
-                                fontWeight: FontWeight.w700,
-                                color: Colors.white,
-                              ),
-                            ),
-
-                            if (profile?.username.isNotEmpty ==
-                                true) ...[
-                              SizedBox(height: 4.h),
-                              Text(
-                                '@${profile!.username}',
-                                style: TextStyle(
-                                  fontFamily: 'Montserrat',
-                                  fontSize: 12.sp,
-                                  color: Colors.white70,
-                                ),
-                              ),
-                            ],
-
-                            if (profile?.phoneNumber.isNotEmpty ==
-                                true) ...[
-                              SizedBox(height: 3.h),
-                              Text(
-                                profile!.phoneNumber,
-                                style: TextStyle(
-                                  fontFamily: 'Montserrat',
-                                  fontSize: 12.sp,
-                                  color: Colors.white70,
-                                ),
-                              ),
-                            ],
-                          ],
-                        ),
-                      ),
-
-                      SizedBox(width: 8.w),
-
-                      GestureDetector(
-                        onTap: () =>
-                            controller.openManageProfile(),
-                        child: Container(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 11.w,
-                            vertical: 4.h,
-                          ),
-                          decoration: BoxDecoration(
-                            color: Colors.white.withValues(
-                              alpha: 0.10,
-                            ),
-                            borderRadius:
-                                BorderRadius.circular(22.r),
-                            border: Border.all(
-                              color: Colors.white38,
-                            ),
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(
-                                Icons.edit_rounded,
-                                color: Colors.white,
-                                size: 13.r,
-                              ),
-                              SizedBox(width: 5.w),
-                              Text(
-                                'Edit',
-                                style: TextStyle(
-                                  fontFamily: 'Montserrat',
-                                  fontSize: 11.sp,
-                                  fontWeight:
-                                      FontWeight.w600,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-
-                  Padding(
-                    padding: EdgeInsets.only(left: 80.w),
-                    child: Row(
+            ],
+          ),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              // ── Avatar ─────────────────────────────────────────────────
+              Image.asset(
+                'assets/images/png/Boy_avatar.png',
+                width: 52.r,
+                height: 52.r,
+                fit: BoxFit.cover,
+              ),
+              SizedBox(width: 14.w),
+              // ── Name + details ─────────────────────────────────────────
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
                       children: [
-                        _Badge(
-                          icon: Icons.verified_rounded,
-                          label: 'Verified',
-                          iconColor: Colors.white,
-                        ),
-                        SizedBox(width: 8.w),
-                        _Badge(
-                          icon: Icons.star_rounded,
-                          label: _memberLabel(
-                            profile?.userType ?? '',
+                        Flexible(
+                          child: Text(
+                            profile?.fullName ?? 'User',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              fontFamily: 'Montserrat',
+                              fontSize: 17.sp,
+                              fontWeight: FontWeight.w700,
+                              color: AppColors.textPrimary,
+                            ),
                           ),
-                          iconColor:
-                              const Color(0xFFFFD700),
+                        ),
+                        SizedBox(width: 4.w),
+                        Icon(
+                          Icons.verified_rounded,
+                          color: AppColors.primary,
+                          size: 16.r,
                         ),
                       ],
                     ),
-                  ),
-                ],
+                    if (profile?.username.isNotEmpty == true) ...[
+                      SizedBox(height: 4.h),
+                      Text(
+                        "@${profile!.username}",
+                        style: TextStyle(
+                          fontFamily: 'Montserrat',
+                          fontSize: 12.sp,
+                          color: AppColors.textSecondary,
+                        ),
+                      ),
+                    ],
+                    if (profile?.phoneNumber.isNotEmpty == true) ...[
+                      SizedBox(height: 3.h),
+                      Text(
+                        profile!.phoneNumber,
+                        style: TextStyle(
+                          fontFamily: 'Montserrat',
+                          fontSize: 12.sp,
+                          color: AppColors.textSecondary,
+                        ),
+                      ),
+                    ],
+                    SizedBox(height: 8.h),
+                    _Badge(
+                      icon: Icons.star_rounded,
+                      label: _memberLabel(profile?.userType ?? ''),
+                      iconColor: const Color(0xFFFFD700),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ), // Container
+        // ── Edit icon top-right ───────────────────────────────────────
+        Positioned(
+          top: 12.h + 8.h,
+          right: 16.w + 8.w,
+          child: GestureDetector(
+            onTap: () => controller.openManageProfile(),
+            child: Container(
+              width: 28.r,
+              height: 28.r,
+              decoration: BoxDecoration(
+                color: AppColors.primary.withValues(alpha: 0.1),
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: AppColors.primary.withValues(alpha: 0.3),
+                ),
+              ),
+              child: Icon(
+                Icons.edit_rounded,
+                color: AppColors.primary,
+                size: 14.r,
               ),
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
@@ -469,329 +406,6 @@ class _ProfileHeader extends StatelessWidget {
       default:
         return 'Premium Member';
     }
-  }
-}
-class _ProfileBackgroundPainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    final double w = size.width;
-    final double h = size.height;
-
-    // ================================================================
-    // 1. BASE RED
-    // ================================================================
-
-    final basePaint = Paint()
-      ..style = PaintingStyle.fill
-      ..color = const Color(0xFF970707);
-
-    canvas.drawRect(
-      Offset.zero & size,
-      basePaint,
-    );
-
-    // ================================================================
-    // 2. DARK RED LARGE WAVE
-    // ================================================================
-
-    final darkWave = Path();
-
-    darkWave.moveTo(0, h * 0.53);
-
-    darkWave.cubicTo(
-      w * 0.13,
-      h * 0.64,
-      w * 0.28,
-      h * 0.69,
-      w * 0.43,
-      h * 0.64,
-    );
-
-    darkWave.cubicTo(
-      w * 0.62,
-      h * 0.58,
-      w * 0.77,
-      h * 0.61,
-      w,
-      h * 0.48,
-    );
-
-    darkWave.lineTo(w, h);
-    darkWave.lineTo(0, h);
-    darkWave.close();
-
-    final darkWavePaint = Paint()
-      ..style = PaintingStyle.fill
-      ..color = const Color(0xFF760505);
-
-    canvas.drawPath(
-      darkWave,
-      darkWavePaint,
-    );
-
-    // ================================================================
-    // 3. BRIGHT RED WAVE
-    // ================================================================
-
-    final brightWave = Path();
-
-    brightWave.moveTo(0, h * 0.61);
-
-    brightWave.cubicTo(
-      w * 0.15,
-      h * 0.73,
-      w * 0.30,
-      h * 0.76,
-      w * 0.46,
-      h * 0.69,
-    );
-
-    brightWave.cubicTo(
-      w * 0.63,
-      h * 0.62,
-      w * 0.78,
-      h * 0.66,
-      w,
-      h * 0.53,
-    );
-
-    brightWave.lineTo(w, h);
-    brightWave.lineTo(0, h);
-    brightWave.close();
-
-    final brightPaint = Paint()
-      ..style = PaintingStyle.fill
-      ..color = const Color(0xFFE31313);
-
-    canvas.drawPath(
-      brightWave,
-      brightPaint,
-    );
-
-    // ================================================================
-    // 4. SECOND DARK WAVE
-    // ================================================================
-
-    final secondWave = Path();
-
-    secondWave.moveTo(0, h * 0.57);
-
-    secondWave.cubicTo(
-      w * 0.18,
-      h * 0.69,
-      w * 0.34,
-      h * 0.72,
-      w * 0.51,
-      h * 0.65,
-    );
-
-    secondWave.cubicTo(
-      w * 0.68,
-      h * 0.58,
-      w * 0.83,
-      h * 0.60,
-      w,
-      h * 0.51,
-    );
-
-    final secondWavePaint = Paint()
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 2
-      ..color = const Color(0xFFB70B0B);
-
-    canvas.drawPath(
-      secondWave,
-      secondWavePaint,
-    );
-
-    // ================================================================
-    // 5. FLOWING CURVES
-    // ================================================================
-
-    for (int i = 0; i < 10; i++) {
-      final path = Path();
-
-      final double startY =
-          h * 0.53 + (i * 5.0);
-
-      final double endY =
-          h * 0.18 + (i * 4.0);
-
-      path.moveTo(
-        w * 0.34,
-        startY,
-      );
-
-      path.cubicTo(
-        w * 0.88,
-        h * 0.60 - i * 2,
-        w * 0.62,
-        h * 0.31 + i * 1.5,
-        w * 0.82,
-        endY,
-      );
-
-      path.cubicTo(
-        w * 0.91,
-        endY - 5,
-        w * 0.96,
-        endY + 2,
-        w,
-        endY - 4,
-      );
-
-      final curvePaint = Paint()
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 1.0
-        ..color = const Color(0xFFE62A2A)
-            .withValues(alpha: 0.20);
-
-      canvas.drawPath(
-        path,
-        curvePaint,
-      );
-    }
-
-    // ================================================================
-    // 6. MORE SUBTLE CURVES
-    // ================================================================
-
-    for (int i = 0; i < 5; i++) {
-      final path = Path();
-
-      path.moveTo(
-        w * 0.48,
-        h * 0.97 + i * 5,
-      );
-
-      path.cubicTo(
-        w * 0.62,
-        h * 0.32 + i * 3,
-        w * 0.76,
-        h * 0.28 + i * 3,
-        w * 0.96,
-        h * 0.20 + i * 4,
-      );
-
-      final paint = Paint()
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 0.8
-        ..color = Colors.red.withValues(
-          alpha: 0.16,
-        );
-
-      canvas.drawPath(
-        path,
-        paint,
-      );
-    }
-
-    // ================================================================
-    // 7. RIGHT-SIDE DOT PATTERN
-    // ================================================================
-
-    final dotPaint = Paint()
-      ..style = PaintingStyle.fill
-      ..color = const Color(0xFFFF3B3B)
-          .withValues(alpha: 0.20);
-
-    const int rows = 13;
-    const int columns = 13;
-
-    for (int row = 0; row < rows; row++) {
-      for (int column = 0;
-          column < columns;
-          column++) {
-        final double x =
-            w * 0.78 + column * 7.0;
-
-        final double y =
-            h * 0.18 + row * 7.0;
-
-        // Fade dots toward the edges
-        final double distance =
-            ((column - 5).abs() +
-                (row - 5).abs()) /
-            12;
-
-        final double opacity =
-            (0.22 * (1 - distance))
-                .clamp(0.02, 0.22);
-
-        final paint = Paint()
-          ..color = const Color(0xFFFF4A4A)
-              .withValues(alpha: opacity);
-
-        canvas.drawCircle(
-          Offset(x, y),
-          1.0,
-          paint,
-        );
-      }
-    }
-
-    // ================================================================
-    // 8. SMALL DECORATIVE ARC
-    // ================================================================
-
-    final arcPaint = Paint()
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 1.2
-      ..color = const Color(0xFFE92828)
-          .withValues(alpha: 0.22);
-
-    final arcRect = Rect.fromLTWH(
-      w * 0.58,
-      h * 0.13,
-      w * 0.52,
-      h * 0.38,
-    );
-
-    canvas.drawArc(
-      arcRect,
-      6.25,
-      2.3,
-      false,
-      arcPaint,
-    );
-
-    // ================================================================
-    // 9. SOFT HIGHLIGHT CURVE
-    // ================================================================
-
-    final highlightPath = Path();
-
-    highlightPath.moveTo(
-      w * 0.50,
-      h * 0.49,
-    );
-
-    highlightPath.cubicTo(
-      w * 0.64,
-      h * 0.61,
-      w * 0.78,
-      h * 0.59,
-      w,
-      h * 0.17,
-    );
-
-    final highlightPaint = Paint()
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 1.6
-      ..color = const Color(0xFFFF4545)
-          .withValues(alpha: 0.17);
-
-    canvas.drawPath(
-      highlightPath,
-      highlightPaint,
-    );
-  }
-
-  @override
-  bool shouldRepaint(
-    covariant CustomPainter oldDelegate,
-  ) {
-    return false;
   }
 }
 
@@ -896,7 +510,6 @@ class _ProfileBackgroundPainter extends CustomPainter {
 
 //                         SizedBox(height: 10.h),
 
-                      
 //                       ],
 //                     ),
 //                   ),
@@ -940,11 +553,11 @@ class _ProfileBackgroundPainter extends CustomPainter {
 //                   ),
 //                 ],
 //               ),
-            
+
 //               Padding(
 //                 padding: const EdgeInsets.only(left: 88),
 //                 child: Row(
-                           
+
 //                             children: [
 //                               _Badge(
 //                                 icon: Icons.verified_rounded,
@@ -967,17 +580,16 @@ class _ProfileBackgroundPainter extends CustomPainter {
 //     );
 //   }
 
-  String _memberLabel(String type) {
-    switch (type.toUpperCase()) {
-      case 'VENDOR':
-      case 'AGENT':
-        return 'Agent';
+String _memberLabel(String type) {
+  switch (type.toUpperCase()) {
+    case 'VENDOR':
+    case 'AGENT':
+      return 'Agent';
 
-      default:
-        return 'Premium Member';
-    }
+    default:
+      return 'Premium Member';
   }
-
+}
 
 // ============================================================================
 // PROFILE AVATAR
@@ -1052,7 +664,7 @@ class _StatsCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-    
+
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16.r),
@@ -1113,59 +725,55 @@ class _StatCell extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: 8.h, horizontal: 4.w),
+      padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 4.w),
       child: Column(
         children: [
           Row(
             children: [
               Container(
-              width: 32.r,
-                              height: 32.r,
-                              decoration:  BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: AppColors.lightOrange.withOpacity(0.5)
-                              ),
+                width: 36.r,
+                height: 36.r,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: AppColors.lightOrange.withOpacity(0.5),
+                ),
                 padding: EdgeInsets.all(7.r),
                 child: Image.asset(iconAsset, fit: BoxFit.contain),
               ),
-SizedBox(width: 8.w,),
-               Column(
+              SizedBox(width: 8.w),
+              Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                value,
-                style: TextStyle(
-                  fontFamily: 'Montserrat',
-                  fontWeight: FontWeight.w700,
-                  fontSize: 14.sp,
-                  color: AppColors.black,
-                ),
+                children: [
+                  Text(
+                    value,
+                    style: TextStyle(
+                      fontFamily: 'Montserrat',
+                      fontWeight: FontWeight.w700,
+                      fontSize: 14.sp,
+                      color: AppColors.black,
+                    ),
+                  ),
+
+                  SizedBox(height: 2.h),
+
+                  Text(
+                    label,
+                    textAlign: TextAlign.center,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontFamily: 'Montserrat',
+                      fontSize: 10.5.sp,
+                      color: AppColors.grey500,
+                    ),
+                  ),
+                ],
               ),
-
-               SizedBox(height: 3.h),
-
-          Text(
-            label,
-            textAlign: TextAlign.center,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: TextStyle(
-              fontFamily: 'Montserrat',
-              fontSize: 10.5.sp,
-              color: AppColors.grey500,
-            ),
-          ),
-            ],
-          ),
             ],
           ),
 
           SizedBox(height: 2.h),
-
-         
-
-         
         ],
       ),
     );

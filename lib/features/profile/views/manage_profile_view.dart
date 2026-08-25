@@ -4,27 +4,44 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/design_system/design_system.dart';
+import '../../../core/design_system/organisms/app_header.dart';
 import '../../../core/extensions/context_extensions.dart';
 import '../../../core/models/location_models.dart';
 import '../controllers/profile_controller.dart';
 
-class ManageProfileView extends GetView<ProfileController> {
+class ManageProfileView extends StatefulWidget {
   const ManageProfileView({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    // Initialize form with existing profile data
+  State<ManageProfileView> createState() => _ManageProfileViewState();
+}
+
+class _ManageProfileViewState extends State<ManageProfileView> {
+  late final ProfileController controller;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = Get.find<ProfileController>();
+    // Recreate text controllers synchronously before the widget tree builds —
+    // this ensures CustomAutocompleteField never receives a disposed controller.
+    controller.recreateFormControllers();
+    // Fetch states + prefill form data after the first frame
     WidgetsBinding.instance.addPostFrameCallback((_) {
       controller.initManageProfileForm();
     });
+  }
 
+  @override
+  Widget build(BuildContext context) {
     return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: SystemUiOverlayStyle.light,
+      value: SystemUiOverlayStyle.dark,
       child: Scaffold(
-        backgroundColor: const Color(0xFFFDF0F0),
+        backgroundColor: AppColors.white,
         body: Column(
           children: [
-            _Header(),
+            SizedBox(height: MediaQuery.of(context).padding.top),
+            AppHeader(title: context.l10n.edit_profile_term),
             Expanded(
               child: SingleChildScrollView(
                 physics: const BouncingScrollPhysics(),
@@ -161,48 +178,7 @@ class ManageProfileView extends GetView<ProfileController> {
 
 // ── Header ────────────────────────────────────────────────────────────────────
 
-class _Header extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    final topPadding = MediaQuery.of(context).padding.top;
-    return Container(
-      width: double.infinity,
-      padding: EdgeInsets.only(
-        top: topPadding + 12.h,
-        bottom: 20.h,
-        left: 16.w,
-        right: 16.w,
-      ),
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [
-            AppColors.authHeaderGradientStart,
-            AppColors.authHeaderGradientEnd,
-          ],
-        ),
-      ),
-      child: Row(
-        children: [
-          GestureDetector(
-            onTap: () => Get.back(),
-            child: Icon(Icons.arrow_back, color: AppColors.white, size: 24.sp),
-          ),
-          SizedBox(width: 16.w),
-          Text(
-            context.l10n.edit_profile_term,
-            style: AppTextStyles.headingMedium.copyWith(
-              fontSize: 20.sp,
-              fontWeight: FontWeight.w700,
-              color: AppColors.white,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
+// ── Header replaced by AppHeader ─────────────────────────────────────────────
 
 // ── Field Label ───────────────────────────────────────────────────────────────
 

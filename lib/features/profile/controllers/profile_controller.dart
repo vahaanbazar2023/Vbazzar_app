@@ -26,12 +26,12 @@ class ProfileController extends GetxController {
   final isLoadingWallet = false.obs;
 
   // ── Manage Profile form ───────────────────────────────────────
-  final firstNameController = TextEditingController();
-  final lastNameController = TextEditingController();
-  final emailController = TextEditingController();
-  final phoneNumberController = TextEditingController();
-  final stateTextController = TextEditingController();
-  final cityTextController = TextEditingController();
+  TextEditingController firstNameController = TextEditingController();
+  TextEditingController lastNameController = TextEditingController();
+  TextEditingController emailController = TextEditingController();
+  TextEditingController phoneNumberController = TextEditingController();
+  TextEditingController stateTextController = TextEditingController();
+  TextEditingController cityTextController = TextEditingController();
 
   final firstNameText = ''.obs;
   final lastNameText = ''.obs;
@@ -179,6 +179,31 @@ class ProfileController extends GetxController {
   }
 
   // ── Initialize manage profile form ────────────────────────────
+
+  /// Synchronously recreates all form TextEditingControllers.
+  /// Call this BEFORE building the form widget tree (e.g. in initState)
+  /// so widgets never receive a disposed controller instance.
+  void recreateFormControllers() {
+    try {
+      firstNameController.removeListener(_firstNameListener);
+      emailController.removeListener(_emailListener);
+      firstNameController.dispose();
+      lastNameController.dispose();
+      emailController.dispose();
+      phoneNumberController.dispose();
+      stateTextController.dispose();
+      cityTextController.dispose();
+    } catch (_) {}
+    firstNameController = TextEditingController();
+    lastNameController = TextEditingController();
+    emailController = TextEditingController();
+    phoneNumberController = TextEditingController();
+    stateTextController = TextEditingController();
+    cityTextController = TextEditingController();
+    firstNameController.addListener(_firstNameListener);
+    emailController.addListener(_emailListener);
+  }
+
   Future<void> initManageProfileForm() async {
     // Fetch states first
     await fetchStates();
