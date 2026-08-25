@@ -4,9 +4,9 @@ enum BottomNavTab { home, subscriptions, categories, rewards, settings }
 
 // ── Layout constants ──────────────────────────────────────────────────────────
 const int _kCount = 5;
-const double _kBarH = 90.0; // dark bar height
+const double _kBarH = 60.0; // dark bar height
 const double _kOverlap = 2.0; // vertical space reserved above bar for wave
-const double _kCircleSize = 48.0; // active red circle diameter
+const double _kCircleSize = 40.0; // active red circle diameter
 const double _kWaveW = 100.0; // total horizontal span of the wave arch
 const double _kWaveH = 28.0; // wave arch height above bar top edge
 const double _kCircleLift =
@@ -14,7 +14,7 @@ const double _kCircleLift =
 const double _kPadH = 4.0; // bar left / right padding from screen edges
 const double _kIconPad =
     16.0; // extra horizontal padding for icons inside the bar
-const double _kPadB = 0.0; // bottom padding
+const double _kPadB = 2.0; // bottom padding
 
 class AppBottomNavBar extends StatefulWidget {
   final BottomNavTab currentTab;
@@ -160,7 +160,7 @@ class _AppBottomNavBarState extends State<AppBottomNavBar>
 //   3. Red border stroke (4 px) along the wave arch – on top of bar fill
 class _WavePainter extends CustomPainter {
   final double cx;
-  _WavePainter(this.cx);
+  const _WavePainter(this.cx);
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -169,46 +169,38 @@ class _WavePainter extends CustomPainter {
     const barTop = _kOverlap;
     final barBottom = size.height - _kPadB;
 
-    // Always full wave width — edge tabs overflow naturally and are clipped
-    // by the viewport, giving identical arch shape for every tab.
     final halfW = _kWaveW / 2;
     final waveL = cx - halfW;
     final waveR = cx + halfW;
-    const wavePeak = barTop - _kWaveH; // Y of arch peak (above bar top)
+    const wavePeak = barTop - _kWaveH;
 
-    // ── Reusable wave-arch path (open curve, left foot → peak → right foot) ──
-    Path _makeWavePath() {
+    Path makeWavePath() {
       return Path()
         ..moveTo(waveL, barTop)
         ..cubicTo(
           cx - halfW * 0.55,
-          barTop, // CP1 – horizontal tangent at left foot
+          barTop,
           cx - halfW * 0.55,
-          wavePeak, // CP2 – same X as CP1 → smooth arch, horizontal at peak
+          wavePeak,
           cx,
-          wavePeak, // arch peak
+          wavePeak,
         )
         ..cubicTo(
           cx + halfW * 0.55,
-          wavePeak, // CP3 – same X as CP4 → smooth arch, horizontal at peak
+          wavePeak,
           cx + halfW * 0.55,
-          barTop, // CP4 – horizontal tangent at right foot
+          barTop,
           waveR,
-          barTop, // right foot
+          barTop,
         );
     }
 
-    // ── Full bar outline path (top edge = wave arch + flat segments) ──────────
-    // pathWaveL/R are clamped only for the fill shape so we never draw a
-    // backwards horizontal segment when the arch overflows the bar edges.
     final pathWaveL = waveL.clamp(barLeft + 6.0, cx - 1.0);
     final pathWaveR = waveR.clamp(cx + 1.0, barRight - 6.0);
 
     final barPath = Path();
     barPath.moveTo(barLeft + 6, barTop);
-    // flat line to wave left foot only when it sits inside the bar
     if (pathWaveL > barLeft + 6) barPath.lineTo(pathWaveL, barTop);
-    // wave arch (upward) — control points always based on full halfW
     barPath.cubicTo(
       cx - halfW * 0.55,
       barTop,
@@ -225,29 +217,24 @@ class _WavePainter extends CustomPainter {
       pathWaveR,
       barTop,
     );
-    // flat line from wave right foot to TR corner only when needed
     if (pathWaveR < barRight - 6) barPath.lineTo(barRight - 6, barTop);
-    // TR corner
     barPath.arcToPoint(
       Offset(barRight, barTop + 6),
       radius: const Radius.circular(6),
       clockwise: true,
     );
-    // right edge → BR corner
     barPath.lineTo(barRight, barBottom - 24);
     barPath.arcToPoint(
       Offset(barRight - 24, barBottom),
       radius: const Radius.circular(24),
       clockwise: true,
     );
-    // bottom edge → BL corner
     barPath.lineTo(barLeft + 24, barBottom);
     barPath.arcToPoint(
       Offset(barLeft, barBottom - 24),
       radius: const Radius.circular(24),
       clockwise: true,
     );
-    // left edge → TL corner
     barPath.lineTo(barLeft, barTop + 6);
     barPath.arcToPoint(
       Offset(barLeft + 6, barTop),
@@ -256,9 +243,9 @@ class _WavePainter extends CustomPainter {
     );
     barPath.close();
 
-    final wavePath = _makeWavePath();
+    final wavePath = makeWavePath();
 
-    // ── 1. Red glow – drawn BEFORE bar fill so the bar covers the inner blur ──
+    // 1. Red glow
     canvas.drawPath(
       wavePath,
       Paint()
@@ -269,10 +256,10 @@ class _WavePainter extends CustomPainter {
         ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 10),
     );
 
-    // ── 2. Dark bar fill (top edge IS the wave arch) ──────────────────────────
+    // 2. Dark bar fill
     canvas.drawPath(barPath, Paint()..color = const Color(0xFF1E1E1E));
 
-    // ── 3. Red wave border on top of bar fill ────────────────────────────────
+    // 3. Red wave border stroke
     canvas.drawPath(
       wavePath,
       Paint()
@@ -346,7 +333,7 @@ class _ActiveLabel extends StatelessWidget {
     return Align(
       alignment: Alignment.bottomCenter,
       child: Padding(
-        padding: const EdgeInsets.only(bottom: 28),
+        padding: const EdgeInsets.only(bottom: 20),
         child: Text(
           _labels[tab.index],
           style: const TextStyle(

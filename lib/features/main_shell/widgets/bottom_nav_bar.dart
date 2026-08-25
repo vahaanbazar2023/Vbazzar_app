@@ -9,13 +9,13 @@ import '../controllers/main_shell_controller.dart';
 // Arc ellipse (Ellipse 205 large): 84.5 × 29.5, center 13.55px ABOVE bar top
 // Circle (Frame 47): 48px diameter, protrudes 18px above bar top
 const double _kOverlap = 0; // widget height reserved ABOVE bar top
-const double _kBarH = 90; // bar height
-const double _kCircle = 40; // floating red circle diameter
-const double _kCircleAbove = 18; // px the circle protrudes above bar top
-const double _kDomeW = 72;
-const double _kDomeH = 67.75;
-const double _kArcW = 84.5;
-const double _kArcH = 29.5;
+const double _kBarH = 60; // bar height
+const double _kCircle = 30; // floating red circle diameter
+const double _kCircleAbove = 10; // px the circle protrudes above bar top
+const double _kDomeW = 52;
+const double _kDomeH = 48;
+const double _kArcW = 62;
+const double _kArcH = 22;
 const int _kCount = 5;
 // ────────────────────────────────────────────────────────────────────────────
 
@@ -198,7 +198,7 @@ class _BottomNavContentState extends State<_BottomNavContent>
 
                   // ── Layer 3: floating red circle (protrudes above bar) ────
                   Positioned(
-                    // Circle top = bar_top - circleAbove = overlap - 18 = 22
+                    // Circle vertically centred so half sits above bar top
                     top: _kOverlap - _kCircleAbove,
                     left: cx - _kCircle / 2,
                     width: _kCircle,
@@ -270,7 +270,7 @@ class _BumpPainter extends CustomPainter {
     );
 
     // ── 2. Red glow blur behind the arc ─────────────────────────────────────
-    // Arc center is 13.55px above bar top (from Figma)
+    // Arc center is scaled above bar top to match bigger circle
     final arcCy = barTop - 13.55;
     canvas.drawOval(
       Rect.fromCenter(
@@ -295,7 +295,7 @@ class _BumpPainter extends CustomPainter {
     );
 
     // ── 4. Dark dome oval (same colour as bar → seamless bump) ───────────────
-    // Dome center is 5.545px above bar top (from Figma)
+    // Dome center scaled above bar top to match bigger circle
     final domeCy = barTop - 5.545;
     canvas.drawOval(
       Rect.fromCenter(
