@@ -4,7 +4,7 @@ enum BottomNavTab { home, subscriptions, categories, rewards, settings }
 
 // ── Layout constants ──────────────────────────────────────────────────────────
 const int _kCount = 5;
-const double _kBarH = 60.0; // dark bar height
+const double _kBarH = 64.0; // dark bar height
 const double _kOverlap = 2.0; // vertical space reserved above bar for wave
 const double _kCircleSize = 40.0; // active red circle diameter
 const double _kWaveW = 100.0; // total horizontal span of the wave arch
