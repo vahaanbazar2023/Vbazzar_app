@@ -11,7 +11,7 @@ const double _kWaveW = 100.0; // total horizontal span of the wave arch
 const double _kWaveH = 28.0; // wave arch height above bar top edge
 const double _kCircleLift =
     -4.0; // negative = centre is 4 px inside bar → ~40 % protrusion (≈20 px)
-const double _kPadH = 4.0; // bar left / right padding from screen edges
+const double _kPadH = 0.0; // no left/right padding — full screen width
 const double _kIconPad =
     16.0; // extra horizontal padding for icons inside the bar
 const double _kPadB = 2.0; // bottom padding
@@ -80,7 +80,10 @@ class _AppBottomNavBarState extends State<AppBottomNavBar>
     final w = MediaQuery.of(context).size.width;
     final usableW = w - _kPadH * 2 - _kIconPad * 2;
     final itemW = usableW / _kCount;
-    return _kPadH + _kIconPad + itemW * index + itemW / 2;
+    final cx = _kPadH + _kIconPad + itemW * index + itemW / 2;
+    // Clamp so the wave arch never overflows the bar edges
+    final halfW = _kWaveW / 2;
+    return cx.clamp(_kPadH + halfW + 6, w - _kPadH - halfW - 6);
   }
 
   @override
@@ -90,13 +93,13 @@ class _AppBottomNavBarState extends State<AppBottomNavBar>
     const circleTop = _kOverlap - _kCircleLift - _kCircleSize / 2;
 
     return SizedBox(
-      height: _kBarH + safePad,
+      height: _kBarH + safePad, // total widget height includes safe area
       child: OverflowBox(
         alignment: Alignment.bottomCenter,
-        minHeight: _kOverlap + _kBarH + safePad,
-        maxHeight: _kOverlap + _kBarH + safePad,
+        minHeight: _kOverlap + _kBarH, // painter only gets 60px
+        maxHeight: _kOverlap + _kBarH,
         child: SizedBox(
-          height: _kOverlap + _kBarH + safePad,
+          height: _kOverlap + _kBarH,
           child: AnimatedBuilder(
             animation: _anim,
             builder: (_, __) {
@@ -107,10 +110,7 @@ class _AppBottomNavBarState extends State<AppBottomNavBar>
                 children: [
                   // ── Layer 1: bar shape + wave + red wave border ────────────────
                   Positioned.fill(
-                    child: Padding(
-                      padding: const EdgeInsets.only(bottom: 28.0, top: 4),
-                      child: CustomPaint(painter: _WavePainter(cx)),
-                    ),
+                    child: CustomPaint(painter: _WavePainter(cx)),
                   ),
 
                   // ── Layer 2: inactive icons + active label (inside the bar) ───
@@ -167,7 +167,8 @@ class _WavePainter extends CustomPainter {
     final barLeft = _kPadH;
     final barRight = size.width - _kPadH;
     const barTop = _kOverlap;
-    final barBottom = size.height - _kPadB;
+    final barBottom =
+        size.height; // painter is always exactly _kOverlap + _kBarH
 
     final halfW = _kWaveW / 2;
     final waveL = cx - halfW;
@@ -175,8 +176,11 @@ class _WavePainter extends CustomPainter {
     const wavePeak = barTop - _kWaveH;
 
     Path makeWavePath() {
+      // Clamp wave feet to stay within bar bounds
+      final clampedL = waveL.clamp(barLeft, barRight).toDouble();
+      final clampedR = waveR.clamp(barLeft, barRight).toDouble();
       return Path()
-        ..moveTo(waveL, barTop)
+        ..moveTo(clampedL, barTop)
         ..cubicTo(
           cx - halfW * 0.55,
           barTop,
@@ -190,7 +194,7 @@ class _WavePainter extends CustomPainter {
           wavePeak,
           cx + halfW * 0.55,
           barTop,
-          waveR,
+          clampedR,
           barTop,
         );
     }

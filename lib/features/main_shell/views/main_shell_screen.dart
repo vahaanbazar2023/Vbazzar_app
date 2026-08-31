@@ -29,9 +29,13 @@ class MainShellScreen extends GetView<MainShellController> {
         ),
       ),
       bottomNavigationBar: Obx(
-        () => AppBottomNavBar(
-          currentTab: BottomNavTab.values[controller.currentIndex.value],
-          onTabSelected: (tab) => controller.changePage(tab.index),
+        () => MediaQuery.removePadding(
+          context: context,
+          removeBottom: true,
+          child: AppBottomNavBar(
+            currentTab: BottomNavTab.values[controller.currentIndex.value],
+            onTabSelected: (tab) => controller.changePage(tab.index),
+          ),
         ),
       ),
     );

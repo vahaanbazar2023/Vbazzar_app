@@ -56,7 +56,7 @@ class HomeScreen extends GetView<HomeController> {
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle.light,
       child: Scaffold(
-        backgroundColor: AppColors.background,
+        backgroundColor: AppColors.white,
         body: SafeArea(
           child: Obx(() {
             if (controller.isLoading.value) {
