@@ -1,176 +1,359 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../core/design_system/molecules/custom_snackbar.dart';
+import '../../../core/network/endpoints/api_endpoints.dart';
+import '../../../core/network/network_service.dart';
 import '../../../core/storage/secure_storage_service.dart';
 import '../../../core/storage/storage_keys.dart';
 import '../../../features/subscription/models/user_subscription.dart';
 import '../../../features/subscription/services/subscription_guard_service.dart';
 import '../../../routes/app_routes.dart';
 import '../data/repositories/auction_repository_impl.dart';
+import '../domain/entities/auction_entity.dart';
 import '../domain/entities/bid_entity.dart';
 import '../domain/repositories/auction_repository.dart';
-import '../models/auction_listing.dart';
 import '../models/auction_pagination.dart';
 import '../models/pending_bid.dart';
 import '../models/vehicle_listing.dart';
 import '../services/vehicle_listing_service.dart';
 
-class VehicleListingController extends GetxController {
+class VehicleListingController extends GetxController
+    with GetTickerProviderStateMixin {
   final VehicleListingService _service;
   final AuctionRepository _repository;
-  final AuctionListing auction;
+
+  /// Vehicle type from the selected category, e.g. '2w', '4w', 'cv'
+  final String vehicleType;
+
+  /// Display title shown in the screen header
+  final String auctionTitle;
+
+  /// Bid increment amount for this vehicle category
+  final int bidIncrementAmount;
+
+  static const _tabTypes = [
+    'live_auctions',
+    'closing_today',
+    'upcoming_auctions',
+  ];
 
   VehicleListingController({
-    required this.auction,
+    String auctionType =
+        'live_auctions', // kept for compat, ignored (tab drives it)
+    required this.vehicleType,
+    this.auctionTitle = '',
+    this.bidIncrementAmount = 5000,
     VehicleListingService? service,
     AuctionRepository? repository,
   }) : _service = service ?? VehicleListingService(),
        _repository = repository ?? AuctionRepositoryImpl();
 
+  // ─── Tab state ────────────────────────────────────────────────
+  late final TabController tabController;
+
+  final _tabVehicles = [
+    <VehicleListing>[].obs,
+    <VehicleListing>[].obs,
+    <VehicleListing>[].obs,
+  ];
+  final _tabPagination = [
+    Rx<AuctionPagination>(AuctionPagination.empty()),
+    Rx<AuctionPagination>(AuctionPagination.empty()),
+    Rx<AuctionPagination>(AuctionPagination.empty()),
+  ];
+  final _tabLoading = [true.obs, false.obs, false.obs];
+  final _tabLoadingMore = [false.obs, false.obs, false.obs];
+  final _tabError = [''.obs, ''.obs, ''.obs];
+  final _tabPage = [1, 1, 1];
+  final _tabInitialized = [false, false, false];
+
+  final scrollControllers = List.generate(3, (_) => ScrollController());
+
+  RxList<VehicleListing> tabVehicles(int i) => _tabVehicles[i];
+  Rx<AuctionPagination> tabPagination(int i) => _tabPagination[i];
+  RxBool tabLoading(int i) => _tabLoading[i];
+  RxBool tabLoadingMore(int i) => _tabLoadingMore[i];
+  RxString tabError(int i) => _tabError[i];
+
+  // ─── Filter state ─────────────────────────────────────────────
+  final selectedRegion = Rxn<RegionEntity>();
+  final selectedState = Rxn<StateByRegionEntity>();
+  final regions = <RegionEntity>[].obs;
+  final statesByRegion = <StateByRegionEntity>[].obs;
+  final isLoadingRegions = false.obs;
+  final isLoadingStatesByRegion = false.obs;
+
+  // backup for cancel
+  RegionEntity? _backupRegion;
+  StateByRegionEntity? _backupState;
+
+  bool get hasActiveFilters =>
+      selectedRegion.value != null || selectedState.value != null;
+
+  // ─── Search ───────────────────────────────────────────────────
+  final searchQuery = ''.obs;
+  final TextEditingController searchController = TextEditingController();
+
+  // ─── Bid placement ────────────────────────────────────────────
+  final isPlacingBid = false.obs;
+  final pendingBid = Rxn<PendingBid>();
+
+  // Legacy fields kept for compat with detail screen
   final vehicles = <VehicleListing>[].obs;
   final pagination = Rx<AuctionPagination>(AuctionPagination.empty());
   final isLoading = true.obs;
   final isLoadingMore = false.obs;
   final errorMessage = ''.obs;
-  final searchQuery = ''.obs;
   final currentIndex = 0.obs;
-  final isPlacingBid = false.obs;
-
-  /// Holds the bid the user attempted before being redirected to SUBT002.
-  /// Null means no pending bid. Cleared before any auto-submission.
-  final pendingBid = Rxn<PendingBid>();
-
   int _currentPage = 1;
-
   late final ScrollController scrollController;
-  final TextEditingController searchController = TextEditingController();
+  final currentTabIndex = 0.obs;
 
   @override
   void onInit() {
     super.onInit();
-    scrollController = ScrollController()..addListener(_onScroll);
-    searchController.addListener(() {
-      searchQuery.value = searchController.text;
+    tabController = TabController(length: 3, vsync: this);
+    scrollController = ScrollController()..addListener(_onScrollLegacy);
+    searchController.addListener(
+      () => searchQuery.value = searchController.text,
+    );
+
+    for (int i = 0; i < 3; i++) {
+      scrollControllers[i].addListener(() => _onScroll(i));
+    }
+
+    tabController.addListener(() {
+      if (!tabController.indexIsChanging) {
+        currentTabIndex.value = tabController.index;
+        _loadTab(tabController.index);
+      }
     });
-    _load();
+
+    _loadTab(0); // load live tab immediately
+    _fetchRegions();
   }
 
   @override
   void onClose() {
+    tabController.dispose();
     scrollController.dispose();
     searchController.dispose();
+    for (final sc in scrollControllers) sc.dispose();
     super.onClose();
   }
 
-  void _onScroll() {
-    if (!scrollController.hasClients) return;
-    final nearBottom =
-        scrollController.position.pixels >=
-        scrollController.position.maxScrollExtent - 200;
-    if (nearBottom && !isLoadingMore.value && pagination.value.hasNext) {
-      _loadMore();
+  void _onScrollLegacy() {}
+
+  void _onScroll(int i) {
+    final sc = scrollControllers[i];
+    if (!sc.hasClients) return;
+    final nearBottom = sc.position.pixels >= sc.position.maxScrollExtent - 200;
+    if (nearBottom &&
+        !_tabLoadingMore[i].value &&
+        _tabPagination[i].value.hasNext) {
+      _loadMoreTab(i);
     }
   }
 
-  Future<void> _load({bool refresh = false}) async {
-    isLoading.value = true;
-    errorMessage.value = '';
-    _currentPage = 1;
+  Future<void> _loadTab(int i, {bool refresh = false}) async {
+    if (_tabInitialized[i] && !refresh) return;
+    _tabLoading[i].value = true;
+    _tabError[i].value = '';
+    _tabPage[i] = 1;
     try {
       final userId =
           await SecureStorageService.to.read(StorageKeys.userId) ?? '';
       final result = await _service.fetchVehicles(
         userId: userId,
-        auctionId: auction.auctionId,
+        auctionType: _tabTypes[i],
+        vehicleType: vehicleType,
+        regionId: selectedRegion.value?.regionId ?? '',
+        stateId: selectedState.value?.stateId ?? '',
         page: 1,
       );
-      vehicles.assignAll(result.vehicles);
-      pagination.value = result.pagination;
-      currentIndex.value = 0;
+      _tabVehicles[i].assignAll(result.vehicles);
+      _tabPagination[i].value = result.pagination;
+      _tabInitialized[i] = true;
+      // sync legacy fields for tab 0
+      if (i == 0) {
+        vehicles.assignAll(result.vehicles);
+        pagination.value = result.pagination;
+      }
     } catch (e, st) {
-      debugPrint('❌ [VehicleListingController._load] error: $e\n$st');
-      errorMessage.value = 'Failed to load vehicles. Please try again.';
+      debugPrint('❌ [VehicleListing._loadTab($i)] $e\n$st');
+      _tabError[i].value = 'Failed to load vehicles. Please try again.';
     } finally {
+      _tabLoading[i].value = false;
       isLoading.value = false;
     }
   }
 
-  Future<void> _loadMore() async {
-    if (!pagination.value.hasNext) return;
-    isLoadingMore.value = true;
+  Future<void> _loadMoreTab(int i) async {
+    if (!_tabPagination[i].value.hasNext) return;
+    _tabLoadingMore[i].value = true;
     try {
       final userId =
           await SecureStorageService.to.read(StorageKeys.userId) ?? '';
-      final nextPage = _currentPage + 1;
+      final nextPage = _tabPage[i] + 1;
       final result = await _service.fetchVehicles(
         userId: userId,
-        auctionId: auction.auctionId,
+        auctionType: _tabTypes[i],
+        vehicleType: vehicleType,
+        regionId: selectedRegion.value?.regionId ?? '',
+        stateId: selectedState.value?.stateId ?? '',
         page: nextPage,
       );
-      vehicles.addAll(result.vehicles);
-      pagination.value = result.pagination;
-      _currentPage = nextPage;
+      _tabVehicles[i].addAll(result.vehicles);
+      _tabPagination[i].value = result.pagination;
+      _tabPage[i] = nextPage;
     } catch (_) {
-      // Silently ignore load-more failures
     } finally {
-      isLoadingMore.value = false;
+      _tabLoadingMore[i].value = false;
     }
   }
 
-  Future<void> refresh() => _load(refresh: true);
+  Future<void> refresh() => _reloadAll();
 
-  /// Refreshes the vehicle list silently — no loading spinner, existing
-  /// vehicles stay visible until the new data arrives.
-  /// Public so external callers (e.g. after subscription purchase) can
-  /// trigger a refresh to update availableBalance.
-  Future<void> silentRefresh() => _silentRefresh();
+  Future<void> silentRefresh() => _loadTab(tabController.index, refresh: true);
 
-  Future<void> _silentRefresh() async {
+  Future<void> _reloadAll() async {
+    for (int i = 0; i < 3; i++) {
+      _tabInitialized[i] = false;
+    }
+    await _loadTab(tabController.index, refresh: true);
+  }
+
+  Future<void> _silentRefresh() => silentRefresh();
+
+  // ─── Filter helpers ───────────────────────────────────────────
+
+  void backupCurrentFilters() {
+    _backupRegion = selectedRegion.value;
+    _backupState = selectedState.value;
+  }
+
+  void restoreFilters() {
+    selectedRegion.value = _backupRegion;
+    selectedState.value = _backupState;
+  }
+
+  void applyFilters() {
+    for (int i = 0; i < 3; i++) _tabInitialized[i] = false;
+    _loadTab(tabController.index, refresh: true);
+  }
+
+  void resetFiltersWithoutReload() {
+    selectedRegion.value = null;
+    selectedState.value = null;
+    selectedState.value = null;
+  }
+
+  void resetFilters() {
+    resetFiltersWithoutReload();
+    for (int i = 0; i < 3; i++) _tabInitialized[i] = false;
+    _loadTab(tabController.index, refresh: true);
+  }
+
+  Future<void> _fetchRegions() async {
+    isLoadingRegions.value = true;
     try {
-      final userId =
-          await SecureStorageService.to.read(StorageKeys.userId) ?? '';
-      final result = await _service.fetchVehicles(
-        userId: userId,
-        auctionId: auction.auctionId,
-        page: 1,
-      );
-      vehicles.assignAll(result.vehicles);
-      pagination.value = result.pagination;
-      _currentPage = 1;
-    } catch (e, st) {
-      debugPrint('⚠️ [VehicleListingController._silentRefresh] error: $e\n$st');
-      // Silent — don't show an error; the stale list remains visible.
+      final network = Get.find<NetworkService>();
+      final response = await network.get(ApiEndpoints.regions);
+      final raw = response.data;
+      final data = raw is Map ? raw['data'] : null;
+      List<dynamic> list = [];
+      if (data is Map<String, dynamic>) {
+        list =
+            data['regions'] as List<dynamic>? ??
+            data['data'] as List<dynamic>? ??
+            [];
+      } else if (data is List) {
+        list = data;
+      }
+      regions.value = list
+          .map(
+            (e) => RegionEntity(
+              regionId: e['region_id']?.toString() ?? '',
+              name: e['name']?.toString() ?? '',
+            ),
+          )
+          .toList();
+    } catch (_) {
+    } finally {
+      isLoadingRegions.value = false;
     }
   }
 
-  void goNext() {
-    final list = filteredVehicles;
-    if (currentIndex.value < list.length - 1) {
-      currentIndex.value++;
-    } else if (pagination.value.hasNext && !isLoadingMore.value) {
-      _loadMore().then((_) {
-        if (currentIndex.value < filteredVehicles.length - 1) {
-          currentIndex.value++;
-        }
-      });
+  Future<void> loadAllStates() async {
+    if (statesByRegion.isNotEmpty) return;
+    isLoadingStatesByRegion.value = true;
+    try {
+      final network = Get.find<NetworkService>();
+      final response = await network.get(ApiEndpoints.states);
+      final raw = response.data;
+      final data = raw is Map ? raw['data'] : null;
+      List<dynamic> list = [];
+      if (data is Map<String, dynamic>) {
+        list = data['states'] as List<dynamic>? ?? [];
+      } else if (data is List) {
+        list = data;
+      }
+      statesByRegion.value = list
+          .map(
+            (e) => StateByRegionEntity(
+              stateId: e['state_id']?.toString() ?? '',
+              stateName: e['state_name']?.toString() ?? '',
+              regionId: e['region_id']?.toString() ?? '',
+            ),
+          )
+          .toList();
+    } catch (_) {
+    } finally {
+      isLoadingStatesByRegion.value = false;
     }
   }
 
-  void goPrev() {
-    if (currentIndex.value > 0) currentIndex.value--;
+  void onRegionSelected(RegionEntity? region) {
+    selectedRegion.value = region;
+    selectedState.value = null;
+    statesByRegion.clear();
+    if (region != null) _fetchStatesByRegion(region.regionId);
   }
 
-  VehicleListing? get currentVehicle {
-    final list = filteredVehicles;
-    if (list.isEmpty) return null;
-    final idx = currentIndex.value.clamp(0, list.length - 1);
-    return list[idx];
+  Future<void> _fetchStatesByRegion(String regionId) async {
+    isLoadingStatesByRegion.value = true;
+    try {
+      final network = Get.find<NetworkService>();
+      final response = await network.get(ApiEndpoints.statesByRegion(regionId));
+      final data = response.data['data'];
+      List<dynamic> list = data is Map
+          ? data['states'] as List<dynamic>? ?? []
+          : data is List
+          ? data
+          : [];
+      statesByRegion.value = list
+          .map(
+            (e) => StateByRegionEntity(
+              stateId: e['state_id'] as String? ?? '',
+              stateName: e['state_name'] as String? ?? '',
+              regionId: e['region_id'] as String? ?? '',
+            ),
+          )
+          .toList();
+    } catch (_) {
+    } finally {
+      isLoadingStatesByRegion.value = false;
+    }
   }
+
+  // ─── Search / filter ─────────────────────────────────────────
 
   List<VehicleListing> get filteredVehicles {
     final q = searchQuery.value.trim().toLowerCase();
-    if (q.isEmpty) return vehicles;
-    return vehicles
+    final tab = tabController.index.clamp(0, 2);
+    final list = _tabVehicles[tab];
+    if (q.isEmpty) return list;
+    return list
         .where(
           (v) =>
               v.displayTitle.toLowerCase().contains(q) ||
@@ -178,6 +361,24 @@ class VehicleListingController extends GetxController {
               v.vehicleId.toLowerCase().contains(q),
         )
         .toList();
+  }
+
+  VehicleListing? get currentVehicle {
+    final list = filteredVehicles;
+    if (list.isEmpty) return null;
+    return list[currentIndex.value.clamp(0, list.length - 1)];
+  }
+
+  void goNext() {
+    final tab = tabController.index.clamp(0, 2);
+    final list = _tabVehicles[tab];
+    if (currentIndex.value < list.length - 1) {
+      currentIndex.value++;
+    }
+  }
+
+  void goPrev() {
+    if (currentIndex.value > 0) currentIndex.value--;
   }
 
   // ─── Bid placement ────────────────────────────────────────────

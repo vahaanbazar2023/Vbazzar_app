@@ -101,11 +101,16 @@ class AuctionCategoryController extends GetxController {
     }
   }
 
-  /// Navigate to auction listings filtered by the selected category code.
+  /// Navigate directly to vehicle listings for the selected category.
   void onCategoryTapped(AuctionLiveCategory category) {
     Get.toNamed(
-      AppRoutes.auctionListings,
-      arguments: {'category': category.categoryCode},
+      AppRoutes.vehicleListings,
+      arguments: {
+        'auctionType': 'live_auctions',
+        'vehicleType': category.categoryCode.toLowerCase(),
+        'auctionTitle': category.displayName,
+        'bidIncrementAmount': category.bidIncrementAmount ?? 5000,
+      },
     );
   }
 }

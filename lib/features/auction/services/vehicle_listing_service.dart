@@ -1,11 +1,10 @@
 import 'package:flutter/foundation.dart';
 import '../../../core/network/network_service.dart';
+import '../../../core/network/endpoints/api_endpoints.dart';
 import '../models/auction_pagination.dart';
 import '../models/vehicle_listing.dart';
 
 class VehicleListingService {
-  static const String _path = '/api/v1/auctions/vehicle-listings-pagination';
-
   final NetworkService _network;
 
   VehicleListingService({NetworkService? network})
@@ -14,38 +13,48 @@ class VehicleListingService {
   Future<({List<VehicleListing> vehicles, AuctionPagination pagination})>
   fetchVehicles({
     required String userId,
-    required String auctionId,
+    required String auctionType,
+    required String vehicleType,
+    String category = '',
+    String regionId = '',
+    String stateId = '',
     int page = 1,
     int limit = 20,
   }) async {
+    final body = <String, dynamic>{
+      'user_id': userId,
+      'auction_type': auctionType,
+      'vehicle_type': vehicleType,
+      'category': category,
+      'region_id': regionId,
+      'state_id': stateId,
+      'page': page,
+      'limit': limit,
+    };
+
+    debugPrint(
+      '📤 [VehicleListingService] REQUEST → ${ApiEndpoints.auctionVehicleListings}\n$body',
+    );
+
     final response = await _network.post<Map<String, dynamic>>(
-      _path,
-      data: {
-        'user_id': userId,
-        'auction_id': auctionId,
-        'page': page,
-        'limit': limit,
-      },
+      ApiEndpoints.auctionVehicleListings,
+      data: body,
     );
 
     final responseBody = response.data ?? {};
-    print(responseBody);
 
-    // API wraps payload under a top-level "data" key:
-    // { status, code, message, data: { vehicles: [...], pagination: {...} } }
-    // Fall back to the root body so the service works if the API ever changes.
-    final body = (responseBody['data'] is Map<String, dynamic>
+    // API wraps payload under a top-level "data" key.
+    final bodyData = (responseBody['data'] is Map<String, dynamic>
         ? responseBody['data'] as Map<String, dynamic>
         : responseBody);
 
-    debugPrint('📦 [VehicleListingService] keys: ${body.keys.toList()}');
     debugPrint(
       '📦 [VehicleListingService] vehicle count: '
-      '${(body['vehicles'] as List<dynamic>? ?? []).length}',
+      '${(bodyData['vehicles'] as List<dynamic>? ?? []).length}',
     );
 
-    final rawVehicles = body['vehicles'] as List<dynamic>? ?? [];
-    final rawPagination = body['pagination'] as Map<String, dynamic>? ?? {};
+    final rawVehicles = bodyData['vehicles'] as List<dynamic>? ?? [];
+    final rawPagination = bodyData['pagination'] as Map<String, dynamic>? ?? {};
 
     final vehicles = <VehicleListing>[];
     for (int i = 0; i < rawVehicles.length; i++) {
@@ -57,7 +66,6 @@ class VehicleListingService {
         debugPrint(
           '❌ [VehicleListingService] failed to parse vehicle[$i]: $e\n$st',
         );
-        debugPrint('   Raw: ${rawVehicles[i]}');
       }
     }
 

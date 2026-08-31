@@ -35,20 +35,9 @@ class AuctionVehicleDetailScreen extends StatelessWidget {
         ? Get.find<VehicleListingController>()
         : Get.put(
             VehicleListingController(
-              auction: AuctionListing(
-                auctionId: v.auctionId,
-                auctionTitle: '',
-                startAt: '',
-                endAt: endAt,
-                vehicleCount: 0,
-                status: '',
-                insertedAt: '',
-                updatedAt: '',
-                category: '',
-                vehicleType: '',
-                regionId: '',
-                stateId: '',
-              ),
+              auctionType: 'live_auctions',
+              vehicleType: v.vehicleType.toLowerCase(),
+              auctionTitle: '',
             ),
             tag: v.vehicleId,
           );

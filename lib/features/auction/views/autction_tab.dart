@@ -170,10 +170,22 @@ class _AuctionCard extends StatelessWidget {
     return GestureDetector(
       onTap: _isUpcoming
           ? null
-          : () => Get.toNamed(
-              AppRoutes.vehicleListings,
-              arguments: {'auction': listing},
-            ),
+          : () {
+              final ctrl = Get.find<AuctionController>();
+              final tabType = [
+                'live_auctions',
+                'closing_today',
+                'upcoming_auctions',
+              ][tabIndex];
+              Get.toNamed(
+                AppRoutes.vehicleListings,
+                arguments: {
+                  'auctionType': tabType,
+                  'vehicleType': ctrl.selectedVehicleType.toLowerCase(),
+                  'auctionTitle': listing.auctionTitle,
+                },
+              );
+            },
       child: Container(
         margin: EdgeInsets.only(bottom: 12.h),
         decoration: BoxDecoration(
