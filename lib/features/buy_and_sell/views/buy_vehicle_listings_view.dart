@@ -6,6 +6,7 @@ import '../../../core/constants/app_colors.dart';
 import '../../../core/design_system/design_system.dart';
 import '../../../core/design_system/molecules/custom_snackbar.dart';
 import '../../../core/design_system/organisms/network_image_carousel.dart';
+import '../../../core/services/share_service.dart';
 import '../widgets/buy_filter_sheet.dart';
 import '../../../core/design_system/templates/app_layout.dart';
 import '../../../routes/app_routes.dart';
@@ -561,6 +562,47 @@ class _VehicleCard extends StatelessWidget {
                       onTap: () => ctrl.toggleWishlist(vehicle),
                     );
                   }),
+                ),
+                // Share — top left
+                Positioned(
+                  top: 10.h,
+                  left: 10.w,
+                  child: GestureDetector(
+                    onTap: () async {
+                      if (Get.isRegistered<ShareService>()) {
+                        await ShareService.to.shareVehicle(
+                          sbVehicleId: vehicle.sbVehicleId,
+                          brandName: vehicle.brandName,
+                          modelName: vehicle.model,
+                          year: vehicle.year,
+                          categoryName: vehicle.categoryName,
+                          imageUrl: vehicle.allImageUrls.isNotEmpty
+                              ? vehicle.allImageUrls.first
+                              : null,
+                        );
+                      }
+                    },
+                    child: Container(
+                      width: 34.r,
+                      height: 34.r,
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.92),
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.12),
+                            blurRadius: 6,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: Icon(
+                        Icons.share_rounded,
+                        size: 17.r,
+                        color: AppColors.textPrimary,
+                      ),
+                    ),
+                  ),
                 ),
               ],
             ),

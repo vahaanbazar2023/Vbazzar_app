@@ -4,11 +4,13 @@ import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/constants/app_colors.dart';
+import '../data/repositories/buy_sell_repository_impl.dart';
 import '../../../core/design_system/design_system.dart';
 import '../../../core/design_system/templates/app_layout.dart';
 import '../../../core/design_system/tokens/app_radius.dart';
 import '../../../core/design_system/tokens/app_spacing.dart';
 import '../../../core/extensions/context_extensions.dart';
+import '../../../core/services/share_service.dart';
 import '../../../routes/app_routes.dart';
 import '../../subscription/models/user_subscription.dart';
 import '../controllers/vehicle_detail_controller.dart';
@@ -36,6 +38,13 @@ class _BuyVehicleDetailsViewState extends State<BuyVehicleDetailsView> {
         vehicle?.categoryCode ?? args['category_code'] as String? ?? '';
     if (vehicleId.isNotEmpty) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
+        // Ensure controller exists — may be missing on deep-link cold start
+        if (!Get.isRegistered<BuyVehicleController>()) {
+          Get.put(
+            BuyVehicleController(repository: BuySellRepositoryImpl()),
+            permanent: false,
+          );
+        }
         final ctrl = Get.find<BuyVehicleController>();
         // Skip fetch if we already have fresh data for this vehicle.
         if (ctrl.currentVehicleDetail.value?.sbVehicleId == vehicleId &&
@@ -55,6 +64,12 @@ class _BuyVehicleDetailsViewState extends State<BuyVehicleDetailsView> {
 
   @override
   Widget build(BuildContext context) {
+    if (!Get.isRegistered<BuyVehicleController>()) {
+      Get.put(
+        BuyVehicleController(repository: BuySellRepositoryImpl()),
+        permanent: false,
+      );
+    }
     final ctrl = Get.find<BuyVehicleController>();
 
     return Obx(() {
@@ -143,12 +158,33 @@ class _BuyVehicleDetailsViewState extends State<BuyVehicleDetailsView> {
     BuyVehicleController ctrl,
   ) {
     final title = '${vehicle.brandName ?? ''} ${vehicle.model ?? ''}'.trim();
+    final vehicleName = title.isEmpty ? vehicle.categoryName : title;
 
     return AppLayout(
-      title: title.isEmpty ? vehicle.categoryName : title,
+      title: vehicleName,
       subtitle: vehicle.sbVehicleId.isNotEmpty ? vehicle.sbVehicleId : '',
       showBack: true,
       bodyColor: AppColors.cardBackground,
+      actions: [
+        IconButton(
+          icon: Icon(Icons.share_rounded, size: 22.r, color: AppColors.black),
+          tooltip: 'Share Vehicle',
+          onPressed: () async {
+            if (Get.isRegistered<ShareService>()) {
+              await ShareService.to.shareVehicle(
+                sbVehicleId: vehicle.sbVehicleId,
+                brandName: vehicle.brandName,
+                modelName: vehicle.model,
+                year: vehicle.year,
+                categoryName: vehicle.categoryName,
+                imageUrl: vehicle.allImageUrls.isNotEmpty
+                    ? vehicle.allImageUrls.first
+                    : null,
+              );
+            }
+          },
+        ),
+      ],
       body: Column(
         children: [
           Expanded(

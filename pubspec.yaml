@@ -76,6 +76,10 @@ dependencies:
   shimmer: ^3.0.0
   url_launcher: ^6.3.2
 
+  # Deep linking & sharing
+  app_links: ^6.3.3
+  share_plus: ^10.1.4
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

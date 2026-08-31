@@ -121,6 +121,7 @@ class NetworkService extends GetxService {
     '/api/v1/sell-buy/vehicle-category-list-by-filters',
     '/api/v1/sell-buy/sb-vehicle-sold',
     '/api/v1/sell-buy/user-interest',
+    '/api/v1/sell-buy/vehicle/',
 
     // Payment v2
     '/api/v2/payments/initiate',
@@ -155,6 +156,36 @@ class NetworkService extends GetxService {
     // wallet
     '/api/v1/wallet/eligibility',
     '/api/v1/wallet/dashboard',
+    '/api/v1/wallet/cash-out',
+    '/api/v1/wallet/cash-out/eligibility',
+
+    // Share & Refer
+    '/api/v1/share/generate-link',
+    '/api/v1/share/referral-link',
+
+    // Reward Coins
+    '/api/v1/reward-coins/balance',
+    '/api/v1/reward-coins/transactions',
+    '/api/v1/reward-coins/conversion-eligibility',
+    '/api/v1/reward-coins/convert-to-wallet',
+
+    // Leads
+    '/api/v1/leads',
+    '/api/v1/leads/my-list',
+    '/api/v1/leads/admin',
+    '/api/v1/leads/admin/list',
+
+    // Revvot
+    '/api/v1/revvot/sessions',
+
+    // Approved vehicles (additional)
+    '/api/v1/approved-veh',
+
+    // Auction (additional)
+    '/api/v1/auctions/auction-my-bids-pagination',
+    '/api/v1/auctions/auction-my-wins-pagination',
+    '/api/v1/auctions/my-bids',
+    '/api/v1/auctions/my-wins',
   ];
 
   /// Check if a path requires authentication

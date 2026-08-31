@@ -1,6 +1,8 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/widgets.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
+import '../../../core/services/deep_link_service.dart';
 import '../../../core/storage/secure_storage_service.dart';
 import '../../../core/storage/storage_keys.dart';
 import '../../../features/profile/repositories/profile_repository.dart';
@@ -24,6 +26,12 @@ class HomeController extends GetxController {
     _loadUserName();
     _loadLocationLabel();
     fetchDashboard();
+    // Handle any pending deep link from cold start (e.g. shared vehicle link)
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (Get.isRegistered<DeepLinkService>()) {
+        DeepLinkService.to.resumePendingNavigation();
+      }
+    });
   }
 
   // ─── Location ────────────────────────────────────────────────

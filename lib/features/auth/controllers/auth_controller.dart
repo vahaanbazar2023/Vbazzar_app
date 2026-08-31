@@ -13,6 +13,7 @@ import '../repositories/auth_repository.dart';
 import '../models/otp_response.dart';
 import '../models/otp_verify_models.dart';
 import '../models/complete_profile_models.dart';
+import '../../../core/services/deep_link_service.dart';
 import '../../../routes/app_routes.dart';
 import '../../language/controllers/language_controller.dart';
 
@@ -317,12 +318,25 @@ class AuthController extends GetxController {
         'Verifying OTP for transaction: ${transactionId.value}',
       );
 
+      // Pick up any deep-link referral code saved before login
+      String? pendingRef;
+      String? pendingContentType;
+      String? pendingContentId;
+      if (Get.isRegistered<DeepLinkService>()) {
+        pendingRef = DeepLinkService.to.consumePendingReferralCode();
+        pendingContentType = DeepLinkService.to.consumePendingContentType();
+        pendingContentId = DeepLinkService.to.consumePendingContentId();
+      }
+
       final OtpVerifyResponse response = await authRepository.verifyOtp(
         userId: uid,
         phone: phone,
         otpCode: otp,
         transactionId: transactionId.value!,
         fcmToken: fcmToken,
+        referralCode: pendingRef,
+        contentType: pendingContentType,
+        contentId: pendingContentId,
       );
 
       if (response.isSuccess && response.data != null) {

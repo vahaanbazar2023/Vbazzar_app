@@ -110,4 +110,35 @@ class BuyVehicleEntity {
     final prefix = buffer.toString().split('').reversed.join();
     return '$prefix,$last3';
   }
+
+  /// Build a BuyVehicleEntity from the GET /sell-buy/vehicle/{id} response.
+  /// Used for deep-link navigation where only the vehicle ID is known.
+  factory BuyVehicleEntity.fromSingleVehicleJson(Map<String, dynamic> j) {
+    final filesList = (j['vehicle_files'] as List? ?? []);
+    final imageUrls = filesList
+        .where((f) => (f as Map)['file_type'] == 'image')
+        .map<String>((f) => (f['file_url'] as String?) ?? '')
+        .where((u) => u.isNotEmpty)
+        .toList();
+
+    return BuyVehicleEntity(
+      id: (j['sb_vehicle_id'] as String?) ?? '',
+      categoryCode: (j['category_code'] as String?) ?? '',
+      categoryName: (j['category_name'] as String?) ?? '',
+      brandCode: j['brand_code'] as String?,
+      brandName: j['brand_name'] as String?,
+      model: j['asset_desc_or_model'] as String?,
+      year: j['manufacturing_year']?.toString(),
+      noOfTyres: j['no_of_tyres'] as String?,
+      fuelType: j['fuel_type'] as String?,
+      bodyType: j['body_type'] as String?,
+      state: j['state_name'] as String?,
+      city: j['city_name'] as String?,
+      price: (j['price'] as num?)?.toDouble(),
+      status: j['status'] as String?,
+      imageUrls: imageUrls,
+      vehicleFileUrls: imageUrls,
+      inspectionRequested: 'no',
+    );
+  }
 }

@@ -293,6 +293,14 @@ class AppPages {
     GetPage(
       name: AppRoutes.buyVehicleDetail,
       page: () => const BuyVehicleDetailsView(),
+      binding: BindingsBuilder(() {
+        if (!Get.isRegistered<BuyVehicleController>()) {
+          Get.put(
+            BuyVehicleController(repository: BuySellRepositoryImpl()),
+            permanent: false,
+          );
+        }
+      }),
       transition: Transition.rightToLeft,
     ),
     // ── Approved Vehicles ─────────────────────────────────────

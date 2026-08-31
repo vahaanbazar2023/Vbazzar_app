@@ -9,6 +9,7 @@ import '../../../core/constants/app_colors.dart';
 import '../../../core/design_system/atoms/custom_loader.dart';
 import '../../../core/design_system/templates/shell_layout.dart';
 import '../../../core/extensions/context_extensions.dart';
+import '../../../core/services/share_service.dart';
 import '../../profile/controllers/profile_controller.dart';
 import '../../profile/models/wallet_models.dart';
 
@@ -400,15 +401,18 @@ class _ReferralBanner extends StatelessWidget {
           ),
 
           GestureDetector(
-            onTap: () {
-              if (referralCode.isNotEmpty) {
-                Clipboard.setData(ClipboardData(text: referralCode));
+            onTap: () async {
+              if (Get.isRegistered<ShareService>()) {
+                await ShareService.to.shareReferral(referralCode: referralCode);
+              } else if (referralCode.isNotEmpty) {
+                // Fallback — copy to clipboard
+                await Clipboard.setData(ClipboardData(text: referralCode));
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
+                  const SnackBar(
                     content: Text('Referral code copied!'),
                     backgroundColor: AppColors.success,
                     behavior: SnackBarBehavior.floating,
-                    duration: const Duration(seconds: 2),
+                    duration: Duration(seconds: 2),
                   ),
                 );
               }
@@ -661,7 +665,7 @@ class _HowItWorks extends StatelessWidget {
                       height: 40.r,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: AppColors.lightOrange.withOpacity(0.3)
+                        color: AppColors.lightOrange.withOpacity(0.3),
                       ),
                       child: Stack(
                         children: [
@@ -673,7 +677,7 @@ class _HowItWorks extends StatelessWidget {
                               fit: BoxFit.contain,
                             ),
                           ),
-                         
+
                           Positioned(
                             top: 0,
                             left: 0,
@@ -682,7 +686,7 @@ class _HowItWorks extends StatelessWidget {
                               height: 14.r,
                               decoration: const BoxDecoration(
                                 shape: BoxShape.circle,
-                                color:AppColors.ctaGradientStart
+                                color: AppColors.ctaGradientStart,
                               ),
                               child: Center(
                                 child: Text(
@@ -730,9 +734,9 @@ class _HowItWorks extends StatelessWidget {
                   padding: EdgeInsets.only(top: 18.h),
                   child: Container(
                     decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: AppColors.lightOrange.withOpacity(0.3)
-                      ),
+                      shape: BoxShape.circle,
+                      color: AppColors.lightOrange.withOpacity(0.3),
+                    ),
                     child: Icon(
                       Icons.chevron_right_rounded,
                       size: 16.r,

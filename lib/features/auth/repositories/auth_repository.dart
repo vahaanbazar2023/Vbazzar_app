@@ -15,8 +15,8 @@ class AuthRepository {
   AuthRepository({
     AuthDataSource? dataSource,
     SecureStorageService? secureStorage,
-  })  : _dataSource = dataSource ?? AuthDataSource(),
-        _secureStorage = secureStorage ?? SecureStorageService.to;
+  }) : _dataSource = dataSource ?? AuthDataSource(),
+       _secureStorage = secureStorage ?? SecureStorageService.to;
 
   /// POST /api/v2/auth/login — sends OTP (creates user if new)
   Future<OtpResponse> sendOtp({
@@ -34,6 +34,9 @@ class AuthRepository {
     required String otpCode,
     required String transactionId,
     String? fcmToken,
+    String? referralCode,
+    String? contentType,
+    String? contentId,
   }) async {
     final request = OtpVerifyRequest(
       userId: userId,
@@ -41,6 +44,9 @@ class AuthRepository {
       otpCode: otpCode,
       transactionId: transactionId,
       fcmToken: fcmToken,
+      referralCode: referralCode,
+      contentType: contentType,
+      contentId: contentId,
     );
 
     final response = await _dataSource.verifyOtp(request);

@@ -5,6 +5,10 @@ class OtpVerifyRequest {
   final String otpCode;
   final String transactionId;
   final String? fcmToken;
+  // Deep-link / referral fields
+  final String? referralCode;
+  final String? contentType;
+  final String? contentId;
 
   const OtpVerifyRequest({
     required this.userId,
@@ -12,6 +16,9 @@ class OtpVerifyRequest {
     required this.otpCode,
     required this.transactionId,
     this.fcmToken,
+    this.referralCode,
+    this.contentType,
+    this.contentId,
   });
 
   bool isValid() {
@@ -30,9 +37,13 @@ class OtpVerifyRequest {
       'otp_code': otpCode,
       'transaction_id': transactionId,
     };
-    if (fcmToken != null && fcmToken!.isNotEmpty) {
-      json['fcm_token'] = fcmToken!;
-    }
+    if (fcmToken != null && fcmToken!.isNotEmpty) json['fcm_token'] = fcmToken!;
+    if (referralCode != null && referralCode!.isNotEmpty)
+      json['referral_code'] = referralCode!;
+    if (contentType != null && contentType!.isNotEmpty)
+      json['content_type'] = contentType!;
+    if (contentId != null && contentId!.isNotEmpty)
+      json['content_id'] = contentId!;
     return json;
   }
 

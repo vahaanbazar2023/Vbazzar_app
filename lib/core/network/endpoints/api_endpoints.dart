@@ -60,6 +60,8 @@ class ApiEndpoints {
       '$buySellPrefix/vehicle-category-list-by-filters';
   static const String sbVehicleSold = '$buySellPrefix/sb-vehicle-sold';
   static const String userInterest = '$buySellPrefix/user-interest';
+  static String sellBuyVehicleById(String sbVehicleId) =>
+      '$buySellPrefix/vehicle/$sbVehicleId';
 
   // ─── Locations ────────────────────────────────────────────────
   static const String locationPrefix = '/api/v1/locations';
@@ -121,6 +123,23 @@ class ApiEndpoints {
   static const String vehicleQuotes = '$insuranceFinancePrefix/vehicle-quotes';
   static const String vehicleListingsQuotes =
       '$insuranceFinancePrefix/vehicle-listings-quotes';
+
+  // ─── Share & Refer ────────────────────────────────────────────
+  static const String sharePrefix = '/api/v1/share';
+  static const String generateShareLink = '$sharePrefix/generate-link';
+  static const String referralLink = '$sharePrefix/referral-link';
+  static const String resolveShareLink = '$sharePrefix/resolve';
+  static const String attributionSession = '$sharePrefix/attribution-session';
+
+  // ─── Reward Coins ─────────────────────────────────────────────
+  static const String rewardCoinsPrefix = '/api/v1/reward-coins';
+  static const String rewardCoinsBalance = '$rewardCoinsPrefix/balance';
+  static const String rewardCoinsTransactions =
+      '$rewardCoinsPrefix/transactions';
+  static const String rewardCoinsConversionEligibility =
+      '$rewardCoinsPrefix/conversion-eligibility';
+  static const String rewardCoinsConvertToWallet =
+      '$rewardCoinsPrefix/convert-to-wallet';
 
   // ─── Inspection & Valuation ────────────────────────────────
   static const String inspectionValuationPrefix =

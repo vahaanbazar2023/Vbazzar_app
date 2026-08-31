@@ -2,6 +2,8 @@ import 'package:get/get.dart';
 import '../core/services/connectivity_service.dart';
 import '../core/services/gps_location_service.dart';
 import '../core/services/location_service.dart';
+import '../core/services/share_service.dart';
+import '../core/services/deep_link_service.dart';
 import '../core/network/network_service.dart';
 import '../features/main_shell/controllers/main_shell_controller.dart';
 import '../features/subscription/services/subscription_guard_service.dart';
@@ -58,6 +60,16 @@ class AppBinding extends Bindings {
     // Register SubscriptionGuardService — permanent singleton for access-checks.
     // The .to getter also self-registers on first access as a safety net.
     SubscriptionGuardService.to;
+
+    // Register ShareService
+    if (!Get.isRegistered<ShareService>()) {
+      Get.put<ShareService>(ShareService(), permanent: true);
+    }
+
+    // Register DeepLinkService
+    if (!Get.isRegistered<DeepLinkService>()) {
+      Get.put<DeepLinkService>(DeepLinkService(), permanent: true);
+    }
 
     // Register AppLifecycle
     if (!Get.isRegistered<AppLifecycle>()) {

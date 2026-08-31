@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../core/services/analytics_service.dart';
+import '../core/services/deep_link_service.dart';
 import '../core/services/logger_service.dart';
 
 class AppLifecycle extends GetxController with WidgetsBindingObserver {
@@ -11,6 +12,12 @@ class AppLifecycle extends GetxController with WidgetsBindingObserver {
     super.onInit();
     WidgetsBinding.instance.addObserver(this);
     LoggerService.to.info('AppLifecycle initialized');
+    // Initialize deep link handling after first frame
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (Get.isRegistered<DeepLinkService>()) {
+        await DeepLinkService.to.initialize();
+      }
+    });
   }
 
   @override

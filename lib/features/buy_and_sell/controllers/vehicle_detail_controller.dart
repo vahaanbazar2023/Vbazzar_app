@@ -682,7 +682,7 @@ class BuyVehicleController extends GetxController {
   Future<void> fetchVehicleDetail(
     String sbVehicleId, {
     String categoryCode = '',
-    bool silent = false, // if true, no loading spinner
+    bool silent = false,
   }) async {
     if (!silent) {
       isLoadingDetail.value = true;
@@ -690,6 +690,29 @@ class BuyVehicleController extends GetxController {
       currentVehicleDetail.value = null;
     }
     try {
+      // If no category code — call the listing API with just sb_vehicle_id
+      // (deep link case where category is unknown — backend now supports this)
+      if (categoryCode.isEmpty) {
+        final uid = await _userId;
+        final result = await repository.listVehiclesByCategoryFilters(
+          userId: uid,
+          categoryCode: '',
+          limit: 1,
+          page: 1,
+          filters: {'sb_vehicle_id': sbVehicleId},
+        );
+        if (result.vehicles.isNotEmpty) {
+          currentVehicleDetail.value = result.vehicles.first;
+          final v = result.vehicles.first;
+          if (v.hasOwnerAccess && (v.sellerPhone?.isNotEmpty ?? false)) {
+            ownerPhones[sbVehicleId] = v.sellerPhone!;
+          }
+        } else if (!silent) {
+          detailError.value = 'Vehicle not found.';
+        }
+        return;
+      }
+
       final uid = await _userId;
       final result = await repository.listVehiclesByCategoryFilters(
         userId: uid,
