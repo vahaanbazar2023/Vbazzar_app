@@ -407,14 +407,13 @@ class ProfileController extends GetxController {
     if (confirmed != true) return;
 
     isLoading.value = true;
+    // Navigate immediately — don't wait for API response
+    Get.offAllNamed(AppRoutes.login);
     try {
-      final response = await _repository.logout();
-      if (response.isSuccess) {
-        Get.offAllNamed(AppRoutes.login);
-      }
+      await _repository.logout();
     } catch (e) {
       LoggerService.to.error('logout error: $e');
-      Get.offAllNamed(AppRoutes.login);
+      // Already navigated — silently ignore API errors
     } finally {
       isLoading.value = false;
     }

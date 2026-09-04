@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/design_system/design_system.dart';
+import '../../../core/design_system/organisms/app_header.dart';
 import '../../../core/extensions/context_extensions.dart';
 import '../controllers/language_controller.dart';
 import '../models/language_model.dart';
@@ -15,160 +16,95 @@ class LanguageSelectionScreen extends GetView<LanguageController> {
     final fromProfile = Get.arguments?['fromProfile'] == true;
 
     return Scaffold(
-      backgroundColor: AppColors.black,
+      backgroundColor: Colors.white,
       body: Column(
         children: [
-          /// RED HEADER
-          Container(
-            width: double.infinity,
-            height: fromProfile ? 256.h : 240.h,
-            padding: EdgeInsets.only(
-              top: MediaQuery.of(context).padding.top + AppSpacing.lg,
-              left: AppSpacing.xl,
-              right: AppSpacing.xl,
-              bottom: AppSpacing.xl,
-            ),
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [Color(0xFF6B1111), Color(0xFF4A0B0B)],
-              ),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                if (fromProfile)
-                  GestureDetector(
-                    onTap: () => Get.back(),
-                    child: Padding(
-                      padding: EdgeInsets.only(bottom: 12.h),
-                      child: Icon(
-                        Icons.arrow_back,
-                        color: AppColors.white,
-                        size: 24.sp,
-                      ),
-                    ),
-                  ),
-                Text(
-                  context.l10n.languagePreference,
-                  style: AppTextStyles.headingLarge.copyWith(
-                    color: AppColors.white,
-                    fontSize: 28.sp,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                SizedBox(height: AppSpacing.xs),
-                Text(
-                  context.l10n.weWillUseThisAcrossTheApp,
-                  style: AppTextStyles.bodyMedium.copyWith(
-                    color: AppColors.white.withOpacity(0.9),
-                    fontWeight: FontWeight.w500,
-                    fontSize: 14.sp,
-                  ),
-                ),
-                SizedBox(height: AppSpacing.xl),
-              ],
+          // ── AppHeader ──────────────────────────────────────────
+          SafeArea(
+            bottom: false,
+            child: AppHeader(
+              title: context.l10n.languagePreference,
+              showBack: fromProfile,
+              onBack: fromProfile ? () => Get.back() : null,
             ),
           ),
 
-          /// WHITE SECTION WITH OVERLAP
+          // ── Content ───────────────────────────────────────────
           Expanded(
-            child: Transform.translate(
-              offset: Offset(0, -AppRadius.xxl),
-              child: Container(
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(AppRadius.xxl),
-                    topRight: Radius.circular(AppRadius.xxl),
-                    bottomLeft: Radius.circular(AppRadius.xl),
-                    bottomRight: Radius.circular(AppRadius.xl),
+            child: Column(
+              children: [
+                SizedBox(height: AppSpacing.lg),
+
+                // Sub-title
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: AppSpacing.xl),
+                  child: Text(
+                    context.l10n.chooseYourPreferredLanguage,
+                    style: AppTextStyles.headingMedium.copyWith(
+                      color: AppColors.black,
+                      fontSize: 18.sp,
+                      fontWeight: FontWeight.w700,
+                    ),
+                    textAlign: TextAlign.center,
                   ),
                 ),
-                child: Column(
-                  children: [
-                    SizedBox(height: AppSpacing.xxl),
 
-                    /// TITLE
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: AppSpacing.xl),
-                      child: Text(
-                        context.l10n.chooseYourPreferredLanguage,
-                        style: AppTextStyles.headingMedium.copyWith(
-                          color: AppColors.black,
-                          fontSize: 18.sp,
-                          fontWeight: FontWeight.w700,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
+                SizedBox(height: AppSpacing.xl),
 
-                    SizedBox(height: AppSpacing.xxl),
-
-                    /// LANGUAGE LIST
-                    Expanded(
-                      child: ListView.separated(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: AppSpacing.xl,
-                        ),
-                        itemCount: controller.languages.length,
-                        separatorBuilder: (_, __) =>
-                            SizedBox(height: AppSpacing.lg),
-                        itemBuilder: (context, index) {
-                          final language = controller.languages[index];
-
-                          return Obx(() {
-                            final isSelected =
-                                controller.selectedLanguage.value == language;
-
-                            return _LanguageCard(
-                              language: language,
-                              isSelected: isSelected,
-                              onTap: () => controller.selectLanguage(language),
-                            );
-                          });
-                        },
-                      ),
-                    ),
-
-                    /// CONTINUE / SAVE BUTTON
-                    Padding(
-                      padding: EdgeInsets.only(
-                        left: AppSpacing.xl,
-                        right: AppSpacing.xl,
-                        top: AppSpacing.lg,
-                        bottom:
-                            MediaQuery.of(context).padding.bottom +
-                            AppSpacing.xl,
-                      ),
-                      child: Obx(() {
-                        final isLanguageSelected =
-                            controller.selectedLanguage.value != null;
-                        final buttonAction = fromProfile
-                            ? controller.switchLanguageAndGoBack
-                            : controller.continueToHome;
-
-                        return isLanguageSelected
-                            ? GradientButton.filled(
-                                text: fromProfile
-                                    ? context.l10n.save
-                                    : context.l10n.continueButton,
-                                onPressed: buttonAction,
-                              )
-                            : GradientButton.outlined(
-                                text: fromProfile
-                                    ? context.l10n.save
-                                    : context.l10n.continueButton,
-                                onPressed: buttonAction,
-                              );
-                      }),
-                    ),
-                  ],
+                // Language list
+                Expanded(
+                  child: ListView.separated(
+                    padding: EdgeInsets.symmetric(horizontal: AppSpacing.xl),
+                    itemCount: controller.languages.length,
+                    separatorBuilder: (_, __) =>
+                        SizedBox(height: AppSpacing.lg),
+                    itemBuilder: (context, index) {
+                      final language = controller.languages[index];
+                      return Obx(() {
+                        final isSelected =
+                            controller.selectedLanguage.value == language;
+                        return _LanguageCard(
+                          language: language,
+                          isSelected: isSelected,
+                          onTap: () => controller.selectLanguage(language),
+                        );
+                      });
+                    },
+                  ),
                 ),
-              ),
+
+                // Continue / Save button
+                Padding(
+                  padding: EdgeInsets.only(
+                    left: AppSpacing.xl,
+                    right: AppSpacing.xl,
+                    top: AppSpacing.lg,
+                    bottom:
+                        MediaQuery.of(context).padding.bottom + AppSpacing.xl,
+                  ),
+                  child: Obx(() {
+                    final isLanguageSelected =
+                        controller.selectedLanguage.value != null;
+                    final buttonAction = fromProfile
+                        ? controller.switchLanguageAndGoBack
+                        : controller.continueToHome;
+
+                    return isLanguageSelected
+                        ? GradientButton.filled(
+                            text: fromProfile
+                                ? context.l10n.save
+                                : context.l10n.continueButton,
+                            onPressed: buttonAction,
+                          )
+                        : GradientButton.outlined(
+                            text: fromProfile
+                                ? context.l10n.save
+                                : context.l10n.continueButton,
+                            onPressed: buttonAction,
+                          );
+                  }),
+                ),
+              ],
             ),
           ),
         ],
