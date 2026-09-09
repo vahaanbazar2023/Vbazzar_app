@@ -69,6 +69,7 @@ import '../features/inspection_valuation/views/agent_valuation_form_view.dart';
 import '../features/inspection_valuation/views/my_inspections_view.dart';
 import '../features/inspection_valuation/views/inspection_detail_view.dart';
 import '../features/search/views/search_screen.dart';
+import '../features/search/controllers/search_controller.dart' as sc;
 
 class AppPages {
   AppPages._();
@@ -440,6 +441,9 @@ class AppPages {
     GetPage(
       name: AppRoutes.search,
       page: () => const SearchScreen(),
+      binding: BindingsBuilder(() {
+        Get.lazyPut(() => sc.SearchController());
+      }),
       transition: Transition.rightToLeft,
     ),
   ];
