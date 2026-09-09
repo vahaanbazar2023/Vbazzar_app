@@ -386,36 +386,14 @@ class ProfileController extends GetxController {
   }
 
   // ── Logout ────────────────────────────────────────────────────
+  /// Called directly after user confirms logout in the UI.
+  /// No dialog here — the caller (_LogoutButton) handles confirmation.
   Future<void> logout() async {
-    final confirmed = await Get.dialog<bool>(
-      AlertDialog(
-        title: const Text('Logout'),
-        content: const Text('Are you sure you want to logout?'),
-        actions: [
-          TextButton(
-            onPressed: () => Get.back(result: false),
-            child: const Text('Cancel'),
-          ),
-          TextButton(
-            onPressed: () => Get.back(result: true),
-            child: const Text('Logout'),
-          ),
-        ],
+    unawaited(
+      _repository.logout().catchError(
+        (e) => LoggerService.to.error('logout error: $e'),
       ),
     );
-
-    if (confirmed != true) return;
-
-    isLoading.value = true;
-    // Navigate immediately — don't wait for API response
     Get.offAllNamed(AppRoutes.login);
-    try {
-      await _repository.logout();
-    } catch (e) {
-      LoggerService.to.error('logout error: $e');
-      // Already navigated — silently ignore API errors
-    } finally {
-      isLoading.value = false;
-    }
   }
 }
