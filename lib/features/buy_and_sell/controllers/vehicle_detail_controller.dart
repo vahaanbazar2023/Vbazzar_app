@@ -7,7 +7,9 @@ import '../../../core/network/endpoints/api_endpoints.dart';
 import '../../../core/storage/secure_storage_service.dart';
 import '../../../core/storage/storage_keys.dart';
 import '../../../features/subscription/models/subscription_plan.dart';
+import '../../../features/subscription/models/user_subscription.dart';
 import '../../../features/subscription/views/single_plan_payment_screen.dart';
+import '../../../routes/app_routes.dart';
 import '../domain/entities/buy_vehicle_entity.dart';
 import '../domain/entities/paginated_buy_vehicles_response.dart';
 import '../domain/entities/subscribed_vehicle_entity.dart';
@@ -120,6 +122,25 @@ class BuyVehicleController extends GetxController {
   final ownerPhones = <String, String>{}.obs;
   final isFetchingOwnerPhone = false.obs;
 
+  // ─── Vehicle Access Quota (SUBT004 + free views) ─────────────
+
+  /// Access status fetched from /vehicle-access-status
+  final freeViewsAllowed = 0.obs;
+  final freeViewsUsed = 0.obs;
+  final freeViewsRemaining = 0.obs;
+  final hasVehicleDetailsPlan = false.obs;
+  final ownerContactCredits = 0.obs;
+  final ownerContactAccessesPerPlan = 0.obs;
+  final isLoadingAccessStatus = false.obs;
+
+  /// Vehicles for which this user has already unlocked details this session
+  /// (avoids double-counting free views on repeat opens).
+  final unlockedDetailVehicleIds = <String>{};
+
+  /// Vehicles for which owner contact has been unlocked (avoids credit deduction
+  /// on re-open of same seller).
+  final unlockedOwnerVehicleIds = <String>{};
+
   // ─── Vehicle Detail (single vehicle fetch) ───────────────────
   final currentVehicleDetail = Rxn<BuyVehicleEntity>();
   final isLoadingDetail = false.obs;
@@ -155,6 +176,7 @@ class BuyVehicleController extends GetxController {
     super.onInit();
     searchController.addListener(_onSearchChanged);
     fetchCategories();
+    fetchAccessStatus(); // load quota on Buy & Sell entry
     fetchSubscribedVehicles();
   }
 
@@ -791,6 +813,222 @@ class BuyVehicleController extends GetxController {
       count++;
     }
     return '${buf.toString().split('').reversed.join()},$last3';
+  }
+
+  // ─── Vehicle Access Quota Methods ────────────────────────────
+
+  /// Fetches the user's current quota status from the access-status API.
+  /// Should be called on Buy & Sell entry and after any plan purchase.
+  Future<void> fetchAccessStatus() async {
+    isLoadingAccessStatus.value = true;
+    try {
+      final uid = await _userId;
+      final response = await repository.getVehicleAccessStatus(userId: uid);
+      // Map exact API field names from /vehicle-access-status response
+      freeViewsAllowed.value =
+          (response['free_vehicle_details_limit'] as num?)?.toInt() ?? 0;
+      freeViewsUsed.value =
+          (response['free_vehicle_details_used'] as num?)?.toInt() ?? 0;
+      freeViewsRemaining.value =
+          (response['free_vehicle_details_remaining'] as num?)?.toInt() ?? 0;
+      hasVehicleDetailsPlan.value =
+          response['has_vehicle_details_plan'] == true ||
+          response['has_vehicle_details_plan'] == 'true';
+      ownerContactCredits.value =
+          (response['owner_contact_credits_remaining'] as num?)?.toInt() ?? 0;
+      ownerContactAccessesPerPlan.value =
+          (response['owner_contact_accesses_per_plan'] as num?)?.toInt() ?? 0;
+    } catch (e) {
+      debugPrint('⚠️ fetchAccessStatus error: $e');
+    } finally {
+      isLoadingAccessStatus.value = false;
+    }
+  }
+
+  /// Calls user-interest with vehicle_details_access: "yes".
+  /// Handles 402 responses:
+  ///   - VEHICLE_DETAILS_PLAN_REQUIRED → push SUBT004 subscription screen
+  /// Returns true if access was granted, false if paywall was shown.
+  Future<bool> requestVehicleDetails(BuyVehicleEntity vehicle) async {
+    final vehicleId = vehicle.sbVehicleId;
+
+    // Already unlocked this session — free re-open
+    if (unlockedDetailVehicleIds.contains(vehicleId) ||
+        vehicle.hasVehicleDetailsAccess) {
+      unlockedDetailVehicleIds.add(vehicleId);
+      return true;
+    }
+
+    // Has active plan — no quota deduction needed
+    if (hasVehicleDetailsPlan.value) {
+      unlockedDetailVehicleIds.add(vehicleId);
+      return true;
+    }
+
+    // No remaining free views — show paywall
+    if (freeViewsRemaining.value <= 0) {
+      _showVehicleDetailsPlanPaywall(vehicle);
+      return false;
+    }
+
+    // Use a free view
+    try {
+      final uid = await _userId;
+      final result = await repository.userInterest(
+        vehicleId: vehicleId,
+        userId: uid,
+        vehicleDetailsAccess: 'yes',
+      );
+
+      final code = _extractErrorCode(result);
+
+      if (result['status'] == 'success') {
+        unlockedDetailVehicleIds.add(vehicleId);
+        // Decrement local counter optimistically
+        if (freeViewsRemaining.value > 0) {
+          freeViewsRemaining.value--;
+          freeViewsUsed.value++;
+        }
+        return true;
+      } else if (_is402(result) || code == 'VEHICLE_DETAILS_PLAN_REQUIRED') {
+        _showVehicleDetailsPlanPaywall(vehicle);
+        return false;
+      } else {
+        CustomSnackbar.show(
+          message:
+              result['message']?.toString() ??
+              'Could not access vehicle details.',
+          type: SnackbarType.error,
+        );
+        return false;
+      }
+    } catch (e) {
+      debugPrint('❌ requestVehicleDetails error: $e');
+      return false;
+    }
+  }
+
+  /// Calls user-interest with owner_details_access: "yes".
+  /// Handles 402 responses:
+  ///   - OWNER_CONTACT_PACK_REQUIRED → push SUBT003 pack screen
+  /// Returns true if phone was granted.
+  Future<bool> requestOwnerContact(BuyVehicleEntity vehicle) async {
+    final vehicleId = vehicle.sbVehicleId;
+
+    // Already revealed this session — free re-open
+    if (unlockedOwnerVehicleIds.contains(vehicleId) || vehicle.hasOwnerAccess) {
+      if (vehicle.sellerPhone?.isNotEmpty == true) {
+        ownerPhones[vehicleId] = vehicle.sellerPhone!;
+      }
+      unlockedOwnerVehicleIds.add(vehicleId);
+      return true;
+    }
+
+    // No credits — show paywall
+    if (ownerContactCredits.value <= 0 && !hasVehicleDetailsPlan.value) {
+      _showOwnerContactPaywall(vehicle);
+      return false;
+    }
+
+    try {
+      final uid = await _userId;
+      final result = await repository.userInterest(
+        vehicleId: vehicleId,
+        userId: uid,
+        ownerDetailsAccess: 'yes',
+      );
+
+      final code = _extractErrorCode(result);
+
+      if (result['status'] == 'success') {
+        // Try to get phone directly from response
+        final data = result['data'] as Map<String, dynamic>?;
+        final phoneFromResponse =
+            data?['owner_mobile']?.toString() ??
+            data?['seller_phone']?.toString() ??
+            data?['mobile']?.toString();
+
+        if (phoneFromResponse != null && phoneFromResponse.isNotEmpty) {
+          ownerPhones[vehicleId] = phoneFromResponse;
+        }
+
+        unlockedOwnerVehicleIds.add(vehicleId);
+        if (ownerContactCredits.value > 0) ownerContactCredits.value--;
+
+        // Always do a silent refresh to get the fresh vehicle with owner_mobile
+        // populated — same pattern as unlockOwnerContactAndRefresh
+        final catCode =
+            currentVehicleDetail.value?.categoryCode ?? vehicle.categoryCode;
+        fetchVehicleDetail(vehicleId, categoryCode: catCode, silent: true).then(
+          (_) {
+            // Seed from freshly fetched vehicle if not already set
+            final fresh = currentVehicleDetail.value;
+            if (fresh != null &&
+                fresh.sbVehicleId == vehicleId &&
+                fresh.hasOwnerAccess &&
+                (fresh.sellerPhone?.isNotEmpty ?? false)) {
+              ownerPhones[vehicleId] = fresh.sellerPhone!;
+            }
+          },
+        );
+
+        return true;
+        return true;
+      } else if (_is402(result) ||
+          code == 'OWNER_CONTACT_PACK_REQUIRED' ||
+          code == 'VEHICLE_DETAILS_PLAN_REQUIRED') {
+        _showOwnerContactPaywall(vehicle);
+        return false;
+      } else {
+        CustomSnackbar.show(
+          message: result['message']?.toString() ?? 'Could not reveal contact.',
+          type: SnackbarType.error,
+        );
+        return false;
+      }
+    } catch (e) {
+      debugPrint('❌ requestOwnerContact error: $e');
+      return false;
+    }
+  }
+
+  void _showVehicleDetailsPlanPaywall(BuyVehicleEntity vehicle) {
+    Get.toNamed(
+      AppRoutes.subscription,
+      arguments: {
+        'subscription_source': SubscriptionTypeCode.vehicleDetailsAccess,
+        'title': 'Vehicle Details Access',
+        'subtitle':
+            'Get full vehicle details + 5 owner contact credits. Pay once, use for the plan period.',
+        'pending_vehicle': vehicle,
+      },
+    );
+  }
+
+  void _showOwnerContactPaywall(BuyVehicleEntity vehicle) {
+    final planCode = vehicle.categoryPlan;
+    Get.toNamed(
+      AppRoutes.subscription,
+      arguments: {
+        'subscription_source': SubscriptionTypeCode.ownerContact,
+        'title': 'Owner Contact Pack',
+        'subtitle':
+            'Your contact credits are exhausted. Buy a pack to reveal owner phone numbers.',
+        'pending_vehicle_id': vehicle.sbVehicleId,
+        'category_code': vehicle.categoryCode,
+        if (planCode != null) 'plan_code_override': planCode,
+      },
+    );
+  }
+
+  bool _is402(Map<String, dynamic> result) {
+    final status = result['code'];
+    return status == 402 || status == '402';
+  }
+
+  String? _extractErrorCode(Map<String, dynamic> result) {
+    return result['error']?['details']?['code']?.toString() ??
+        result['error_code']?.toString();
   }
 
   // ─── Helpers ─────────────────────────────────────────────────

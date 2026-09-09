@@ -190,12 +190,72 @@ class BuyVehicleListingsView extends GetView<BuyVehicleController> {
                     itemCount:
                         controller.buyVehicles.length +
                         _adCount(controller) +
-                        (controller.isLoadingMoreBuyVehicles.value ? 1 : 0),
+                        (controller.isLoadingMoreBuyVehicles.value ? 1 : 0) +
+                        1, // +1 for the quota meter header
                     itemBuilder: (_, i) {
-                      // Loading spinner at end
+                      // ── Quota meter as first item ─────────────────────
+                      if (i == 0) {
+                        return Obx(() {
+                          final ctrl = controller;
+                          if (ctrl.hasVehicleDetailsPlan.value)
+                            return const SizedBox.shrink();
+                          final remaining = ctrl.freeViewsRemaining.value;
+                          final allowed = ctrl.freeViewsAllowed.value;
+                          return Container(
+                            margin: EdgeInsets.only(bottom: 12.h),
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 14.w,
+                              vertical: 10.h,
+                            ),
+                            decoration: BoxDecoration(
+                              color: remaining > 0
+                                  ? AppColors.primary.withValues(alpha: 0.06)
+                                  : AppColors.error.withValues(alpha: 0.06),
+                              borderRadius: BorderRadius.circular(10.r),
+                              border: Border.all(
+                                color: remaining > 0
+                                    ? AppColors.primary.withValues(alpha: 0.2)
+                                    : AppColors.error.withValues(alpha: 0.2),
+                              ),
+                            ),
+                            child: Row(
+                              children: [
+                                Icon(
+                                  remaining > 0
+                                      ? Icons.visibility_outlined
+                                      : Icons.lock_outline_rounded,
+                                  size: 16.r,
+                                  color: remaining > 0
+                                      ? AppColors.primary
+                                      : AppColors.error,
+                                ),
+                                SizedBox(width: 8.w),
+                                Expanded(
+                                  child: Text(
+                                    remaining > 0
+                                        ? '$remaining of $allowed free detail views remaining'
+                                        : 'Free views used up — buy Vehicle Details Plan to continue',
+                                    style: TextStyle(
+                                      fontFamily: 'Montserrat',
+                                      fontSize: 11.sp,
+                                      fontWeight: FontWeight.w600,
+                                      color: remaining > 0
+                                          ? AppColors.primary
+                                          : AppColors.error,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        });
+                      }
+
+                      // Adjust index for the quota meter offset
+                      final adjustedIndex = i - 1;
                       final totalVehicles = controller.buyVehicles.length;
                       final totalAds = _adCount(controller);
-                      if (i == totalVehicles + totalAds) {
+                      if (adjustedIndex == totalVehicles + totalAds) {
                         return Padding(
                           padding: EdgeInsets.symmetric(
                             vertical: AppSpacing.md,
@@ -209,7 +269,7 @@ class BuyVehicleListingsView extends GetView<BuyVehicleController> {
                         );
                       }
                       // Resolve actual item accounting for inserted ads
-                      final resolved = _resolveItem(i, controller);
+                      final resolved = _resolveItem(adjustedIndex, controller);
                       if (resolved is ListingAd) {
                         return Padding(
                           padding: EdgeInsets.only(bottom: AppSpacing.md),
@@ -434,34 +494,15 @@ class _VehicleCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () async {
-        final guard = SubscriptionGuardService.to;
-        await guard.ensureLoaded();
-
-        if (guard.hasActiveSubscription(
-          SubscriptionTypeCode.vehicleDetailsAccess,
-        )) {
+        final ctrl = Get.find<BuyVehicleController>();
+        final granted = await ctrl.requestVehicleDetails(vehicle);
+        if (granted) {
           Get.toNamed(
             AppRoutes.buyVehicleDetail,
             arguments: {'vehicle': vehicle},
           );
-        } else {
-          CustomSnackbar.show(
-            message:
-                'You need a Vehicle Details plan to view full details. Please subscribe to continue.',
-            type: SnackbarType.warning,
-          );
-          await Future.delayed(const Duration(milliseconds: 600));
-          Get.toNamed(
-            AppRoutes.subscription,
-            arguments: {
-              'subscription_source': SubscriptionTypeCode.vehicleDetailsAccess,
-              'title': 'Vehicle Details Access',
-              'subtitle':
-                  'Subscribe to view full vehicle details and connect with the owner.',
-              'pending_vehicle': vehicle,
-            },
-          );
         }
+        // If not granted, requestVehicleDetails already showed the paywall
       },
       child: Container(
         decoration: BoxDecoration(

@@ -23,6 +23,9 @@ class BuyVehicleModel extends BuyVehicleEntity {
     super.vehicleFileUrls,
     super.sellerPhone,
     super.ownerDetailsAccess,
+    super.vehicleDetailsAccess,
+    super.registrationNumber,
+    super.chassisNumber,
     super.categoryPlan,
     super.subscriptionAmount,
     super.inspectionRequested,
@@ -80,6 +83,11 @@ class BuyVehicleModel extends BuyVehicleEntity {
           json['seller_phone']?.toString() ??
           json['owner_mobile']?.toString(),
       ownerDetailsAccess: json['owner_details_access']?.toString(),
+      vehicleDetailsAccess: json['vehicle_details_access']?.toString(),
+      registrationNumber:
+          json['registration_number']?.toString() ?? json['reg_no']?.toString(),
+      chassisNumber:
+          json['chassis_number']?.toString() ?? json['chassis_no']?.toString(),
       categoryPlan: json['category_plan']?.toString(),
       subscriptionAmount: json['subscription_amount'] is num
           ? (json['subscription_amount'] as num).toDouble()

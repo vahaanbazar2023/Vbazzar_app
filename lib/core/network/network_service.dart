@@ -123,6 +123,7 @@ class NetworkService extends GetxService {
     '/api/v1/sell-buy/vehicle-category-list-by-filters',
     '/api/v1/sell-buy/sb-vehicle-sold',
     '/api/v1/sell-buy/user-interest',
+    '/api/v1/sell-buy/vehicle-access-status',
     '/api/v1/sell-buy/vehicle/',
 
     // Payment v2

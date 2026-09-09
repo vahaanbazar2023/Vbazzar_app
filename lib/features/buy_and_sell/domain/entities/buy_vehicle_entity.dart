@@ -27,6 +27,16 @@ class BuyVehicleEntity {
   /// owner contact. "yes" = phone already unlocked, "no" = needs subscription.
   final String? ownerDetailsAccess;
 
+  /// Whether the API has granted vehicle details access to this user for this vehicle.
+  /// "yes" = registration/chassis visible, "no" = locked.
+  final String? vehicleDetailsAccess;
+
+  /// Vehicle registration number — only visible when vehicleDetailsAccess == "yes".
+  final String? registrationNumber;
+
+  /// Vehicle chassis number — only visible when vehicleDetailsAccess == "yes".
+  final String? chassisNumber;
+
   /// Per-category plan code used when subscribing for owner contact.
   final String? categoryPlan;
 
@@ -59,6 +69,9 @@ class BuyVehicleEntity {
     this.vehicleFileUrls = const [],
     this.sellerPhone,
     this.ownerDetailsAccess,
+    this.vehicleDetailsAccess,
+    this.registrationNumber,
+    this.chassisNumber,
     this.categoryPlan,
     this.subscriptionAmount,
     this.inspectionRequested = 'no',
@@ -69,6 +82,10 @@ class BuyVehicleEntity {
 
   /// Returns true when the owner's phone is already accessible.
   bool get hasOwnerAccess => ownerDetailsAccess?.toLowerCase() == 'yes';
+
+  /// Returns true when vehicle details (reg no, chassis) are accessible.
+  bool get hasVehicleDetailsAccess =>
+      vehicleDetailsAccess?.toLowerCase() == 'yes';
 
   /// Backward-compatible alias used by some views.
   String get sbVehicleId => id;

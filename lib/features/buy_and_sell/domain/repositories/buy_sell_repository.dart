@@ -63,6 +63,9 @@ abstract class BuySellRepository {
 
   // ─── New methods used by controllers ──────────────────────
 
+  /// Fetches the user's vehicle access quota status
+  Future<Map<String, dynamic>> getVehicleAccessStatus({required String userId});
+
   /// Fetches category filter options (raw map for controller consumption)
   Future<Map<String, dynamic>> getCategoryFilters({
     required String categoryCode,

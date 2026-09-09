@@ -337,6 +337,37 @@ class _BuyVehicleDetailsViewState extends State<BuyVehicleDetailsView> {
                       ],
                     ),
                   ),
+                  // ── Registration & Chassis — shown when details unlocked ──
+                  if (vehicle.hasVehicleDetailsAccess) ...[
+                    SizedBox(height: 8.h),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: _InfoBox(
+                              icon: Icons.badge_outlined,
+                              label: 'Reg. Number',
+                              value:
+                                  vehicle.registrationNumber?.isNotEmpty == true
+                                  ? vehicle.registrationNumber!
+                                  : 'N/A',
+                            ),
+                          ),
+                          SizedBox(width: 8.w),
+                          Expanded(
+                            child: _InfoBox(
+                              icon: Icons.settings_outlined,
+                              label: 'Chassis No.',
+                              value: vehicle.chassisNumber?.isNotEmpty == true
+                                  ? vehicle.chassisNumber!
+                                  : 'N/A',
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                   SizedBox(height: 8.h),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -1678,19 +1709,15 @@ class _ConnectWithOwnerCardState extends State<_ConnectWithOwnerCard> {
                 ),
               )
             else
-              // Not yet subscribed — show Subscribe button with price
+              // Not yet subscribed / no credits — use requestOwnerContact
+              // which handles both credit deduction and paywall
               GestureDetector(
-                onTap: () => Get.toNamed(
-                  AppRoutes.subscription,
-                  arguments: {
-                    'subscription_source': SubscriptionTypeCode.ownerContact,
-                    'title': context.l10n.connectWithOwnerTitle,
-                    'subtitle': context.l10n.connectWithOwnerSubtitle,
-                    'pending_vehicle_id': vehicleId,
-                    'category_code': widget.vehicle.categoryCode,
-                    if (planCode != null) 'plan_code_override': planCode,
-                  },
-                ),
+                onTap: () async {
+                  final ctrl = Get.find<BuyVehicleController>();
+                  await ctrl.requestOwnerContact(widget.vehicle);
+                  // If granted, ownerPhones[vehicleId] will be populated
+                  // and the Obx rebuilds automatically to show the phone.
+                },
                 child: Container(
                   padding: EdgeInsets.symmetric(
                     horizontal: 14.w,
@@ -1700,15 +1727,24 @@ class _ConnectWithOwnerCardState extends State<_ConnectWithOwnerCard> {
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(20.r),
                   ),
-                  child: Text(
-                    context.l10n.subscribe,
-                    style: TextStyle(
-                      fontFamily: 'Montserrat',
-                      fontSize: 12.sp,
-                      fontWeight: FontWeight.w700,
-                      color: const Color(0xFF7209B7),
-                    ),
-                  ),
+                  child: Obx(() {
+                    final ctrl = Get.find<BuyVehicleController>();
+                    final credits = ctrl.ownerContactCredits.value;
+                    final hasPlan = ctrl.hasVehicleDetailsPlan.value;
+                    return Text(
+                      hasPlan && credits > 0
+                          ? 'Reveal ($credits left)'
+                          : credits > 0
+                          ? 'Reveal ($credits credits)'
+                          : 'Get Contact',
+                      style: TextStyle(
+                        fontFamily: 'Montserrat',
+                        fontSize: 12.sp,
+                        fontWeight: FontWeight.w700,
+                        color: const Color(0xFF7209B7),
+                      ),
+                    );
+                  }),
                 ),
               ),
           ],

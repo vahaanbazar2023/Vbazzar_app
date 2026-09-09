@@ -61,6 +61,8 @@ class ApiEndpoints {
       '$buySellPrefix/vehicle-category-list-by-filters';
   static const String sbVehicleSold = '$buySellPrefix/sb-vehicle-sold';
   static const String userInterest = '$buySellPrefix/user-interest';
+  static const String vehicleAccessStatus =
+      '$buySellPrefix/vehicle-access-status';
   static String sellBuyVehicleById(String sbVehicleId) =>
       '$buySellPrefix/vehicle/$sbVehicleId';
 

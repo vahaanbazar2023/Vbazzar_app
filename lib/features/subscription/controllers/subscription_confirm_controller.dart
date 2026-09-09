@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:get/get.dart';
 import '../../../core/design_system/molecules/custom_snackbar.dart';
 import '../../../core/storage/secure_storage_service.dart';
@@ -233,7 +235,7 @@ class SubscriptionConfirmController extends GetxController {
         );
 
         CustomSnackbar.show(
-          message: 'Membership activated! Fetching owner contact...',
+          message: 'Contact pack activated! Fetching owner contact...',
           type: SnackbarType.success,
         );
 
@@ -241,10 +243,13 @@ class SubscriptionConfirmController extends GetxController {
         // owner_details_access: "yes" and owner_mobile populated.
         // The card's Obx updates automatically when the phone arrives.
         if (vehicleId003 != null && Get.isRegistered<BuyVehicleController>()) {
-          Get.find<BuyVehicleController>().unlockOwnerContactAndRefresh(
+          final ctrl003 = Get.find<BuyVehicleController>();
+          ctrl003.unlockOwnerContactAndRefresh(
             vehicleId003,
             categoryCode: categoryCode003,
           );
+          // Reload quota so credits update in the UI
+          unawaited(ctrl003.fetchAccessStatus());
         }
         SubscriptionGuardService.to.invalidateAndReload();
         break;
@@ -340,11 +345,15 @@ class SubscriptionConfirmController extends GetxController {
         }
 
         CustomSnackbar.show(
-          message: 'Vehicle Details unlocked! You can now view full details.',
+          message:
+              'Vehicle Details unlocked! You now have full details access + 5 owner contact credits.',
           type: SnackbarType.success,
         );
-        // Refresh guard cache in background.
+        // Refresh guard cache + quota status in background.
         SubscriptionGuardService.to.invalidateAndReload();
+        if (Get.isRegistered<BuyVehicleController>()) {
+          unawaited(Get.find<BuyVehicleController>().fetchAccessStatus());
+        }
         break;
 
       default:

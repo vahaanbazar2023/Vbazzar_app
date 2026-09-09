@@ -312,6 +312,23 @@ class BuySellRepositoryImpl implements BuySellRepository {
   }
 
   @override
+  Future<Map<String, dynamic>> getVehicleAccessStatus({
+    required String userId,
+  }) async {
+    try {
+      final response = await _network.post(
+        ApiEndpoints.vehicleAccessStatus,
+        data: {'user_id': userId},
+      );
+      final data = response.data?['data'] as Map<String, dynamic>?;
+      return data ?? {};
+    } on DioException catch (e) {
+      print('❌ getVehicleAccessStatus error: ${e.message}');
+      return {};
+    }
+  }
+
+  @override
   Future<Map<String, dynamic>> userInterest({
     required String vehicleId,
     String? userId,
