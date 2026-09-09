@@ -36,6 +36,7 @@ class VehicleListing {
   final int? currentBid;
   final int? minimumNextBid;
   final int? bidIncrementAmount;
+  final String auctionEndDate;
   final int availableBalance;
   final int maxUserVehiclesBidLimit;
   final int userVehicleBidCount;
@@ -81,6 +82,7 @@ class VehicleListing {
     this.currentBid,
     this.minimumNextBid,
     this.bidIncrementAmount,
+    this.auctionEndDate = '',
     required this.availableBalance,
     required this.maxUserVehiclesBidLimit,
     required this.userVehicleBidCount,
@@ -145,6 +147,7 @@ class VehicleListing {
       currentBid: _parseInt(json['current_bid']),
       minimumNextBid: _parseInt(json['minimum_next_bid']),
       bidIncrementAmount: _parseInt(json['bid_increment_amount']),
+      auctionEndDate: json['auction_end_date']?.toString() ?? '',
       availableBalance: (json['available_balance'] as num?)?.toInt() ?? 0,
       maxUserVehiclesBidLimit:
           (json['max_user_vehicles_bid_limit'] as num?)?.toInt() ?? 10,

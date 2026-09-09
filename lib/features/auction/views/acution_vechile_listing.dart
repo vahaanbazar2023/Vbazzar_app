@@ -304,41 +304,65 @@ class _VehicleCardState extends State<_VehicleCard> {
                 color: const Color(0xFFF0F0F0),
                 child: NetworkImageCarousel(imageUrls: v.images, height: 200.h),
               ),
-              // VHID badge — top-left, white bg, primary border
+              // VHID badge — split: red icon | white text
               Positioned(
                 top: 10.h,
                 left: 10.w,
                 child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+                  height: 28.h,
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(6.r),
-                    border: Border.all(color: AppColors.primary, width: 1.2),
+                    border: Border.all(color: AppColors.primary, width: 1.5),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.10),
+                        blurRadius: 4,
+                        offset: const Offset(0, 1),
+                      ),
+                    ],
                   ),
+                  clipBehavior: Clip.antiAlias,
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(
-                        Icons.directions_car_outlined,
-                        size: 12.r,
+                      // Red icon section
+                      Container(
+                        width: 28.h,
+                        height: 28.h,
                         color: AppColors.primary,
+                        child: Center(
+                          child: Icon(
+                            Icons.directions_car_rounded,
+                            size: 15.r,
+                            color: Colors.white,
+                          ),
+                        ),
                       ),
-                      SizedBox(width: 4.w),
-                      Text(
-                        'VHID: ${v.vehicleId}',
-                        style: TextStyle(
-                          fontFamily: 'Montserrat',
-                          fontSize: 10.sp,
-                          fontWeight: FontWeight.w700,
-                          color: AppColors.primary,
+                      // Text section
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 8.w),
+                        child: Text(
+                          'VHID: ${v.vehicleId}',
+                          style: TextStyle(
+                            fontFamily: 'Montserrat',
+                            fontSize: 11.sp,
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.black,
+                            letterSpacing: 0.2,
+                          ),
                         ),
                       ),
                     ],
                   ),
                 ),
               ),
-              // Timer badge — top-right (uses existing TimerBadge widget)
-              Positioned(top: 0, right: 0, child: TimerBadge(endAt: '')),
+              // Timer badge — top-right, uses auction_end_date for countdown
+              Positioned(
+                top: 0,
+                right: 0,
+                child: TimerBadge(endAt: v.auctionEndDate),
+              ),
               // Winning / Losing chip — bottom-left of image — glassmorphism
               if (hasBid)
                 Positioned(
