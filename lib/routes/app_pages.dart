@@ -69,6 +69,9 @@ import '../features/inspection_valuation/views/agent_valuation_form_view.dart';
 import '../features/inspection_valuation/views/my_inspections_view.dart';
 import '../features/inspection_valuation/views/inspection_detail_view.dart';
 import '../features/search/views/search_screen.dart';
+import '../features/notifications/views/notification_screen.dart';
+import '../features/notifications/controllers/notification_controller.dart'
+    as nc;
 import '../features/search/controllers/search_controller.dart' as sc;
 
 class AppPages {
@@ -435,6 +438,14 @@ class AppPages {
       name: AppRoutes.inspectionDetail,
       page: () => const InspectionDetailView(),
       binding: InspectionValuationBinding(),
+      transition: Transition.rightToLeft,
+    ),
+    GetPage(
+      name: AppRoutes.notifications,
+      page: () => const NotificationScreen(),
+      binding: BindingsBuilder(() {
+        Get.lazyPut(() => nc.NotificationController());
+      }),
       transition: Transition.rightToLeft,
     ),
     // ── Search ─────────────────────────────────────────────────

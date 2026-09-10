@@ -60,6 +60,9 @@ class AppRoutes {
   // Search
   static const search = '/search';
 
+  // Notifications
+  static const notifications = '/notifications';
+
   // Inspection & Valuation
   static const inspectionHome = '/inspection-home';
   static const customerValuationForm = '/customer-valuation-form';

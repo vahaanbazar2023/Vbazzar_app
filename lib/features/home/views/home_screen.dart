@@ -16,6 +16,7 @@ import '../../../core/storage/storage_keys.dart';
 import '../../../routes/app_routes.dart';
 import '../../../features/buy_and_sell/domain/entities/vehicle_category_entity.dart';
 import '../../../features/auction/models/auction_listing.dart';
+import '../../notifications/controllers/notification_controller.dart';
 import '../data/models/dashboard_model.dart'
     show SparePartDashboard, DashboardAdvertisement;
 import '../../../features/subscription/models/user_subscription.dart';
@@ -220,7 +221,7 @@ class _HomeHeader extends StatelessWidget {
                       Container(
                         width: 20.r,
                         height: 20.r,
-                        
+
                         child: Icon(
                           Icons.keyboard_arrow_down_rounded,
                           color: Colors.black,
@@ -263,11 +264,52 @@ class _HomeHeader extends StatelessWidget {
                     ),
                   ),
                   SizedBox(width: 10.w),
-                  // Notification icon
-                  SvgPicture.asset(
-                    AppAssets.iconNotification,
-                    width: 26.r,
-                    height: 26.r,
+                  // Notification icon with unread badge
+                  GestureDetector(
+                    onTap: () => Get.toNamed(AppRoutes.notifications),
+                    child: Stack(
+                      clipBehavior: Clip.none,
+                      children: [
+                        SvgPicture.asset(
+                          AppAssets.iconNotification,
+                          width: 26.r,
+                          height: 26.r,
+                        ),
+                        // Badge — shown only when unread count > 0
+                        if (Get.isRegistered<NotificationController>())
+                          Obx(() {
+                            final count = Get.find<NotificationController>()
+                                .unreadCount
+                                .value;
+                            if (count == 0) return const SizedBox.shrink();
+                            return Positioned(
+                              top: -4.h,
+                              right: -4.w,
+                              child: Container(
+                                padding: EdgeInsets.all(3.r),
+                                decoration: const BoxDecoration(
+                                  color: AppColors.primary,
+                                  shape: BoxShape.circle,
+                                ),
+                                constraints: BoxConstraints(
+                                  minWidth: 16.r,
+                                  minHeight: 16.r,
+                                ),
+                                child: Text(
+                                  count > 99 ? '99+' : '$count',
+                                  style: TextStyle(
+                                    fontFamily: 'Montserrat',
+                                    fontSize: 8.sp,
+                                    fontWeight: FontWeight.w700,
+                                    color: Colors.white,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
+                            );
+                          }),
+                      ],
+                    ),
                   ),
                   SizedBox(width: 10.w),
                   // Customer care / support icon

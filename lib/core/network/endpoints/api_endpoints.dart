@@ -20,6 +20,13 @@ class ApiEndpoints {
   static const String dashboardHome = '/api/v2/dashboard/home';
   static const String globalSearch = '/api/v1/dashboard/global-search';
 
+  // ─── Push Notifications ──────────────────────────────────────
+  static const String notificationPrefix = '/api/v1/push-notifications';
+  static const String notificationHistory =
+      '$notificationPrefix/history/search';
+  static const String notificationMarkRead =
+      '$notificationPrefix/history/read-status/by-user';
+
   // ─── Subscription ───────────────────────────────────────────────
   static const String mySubscriptions = '$subscriptionPrefix/my-subscriptions';
   static const String subscriptionListing =
