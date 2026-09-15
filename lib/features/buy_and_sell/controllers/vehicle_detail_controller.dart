@@ -1005,6 +1005,9 @@ class BuyVehicleController extends GetxController {
     );
   }
 
+  void showOwnerContactPaywall(BuyVehicleEntity vehicle) =>
+      _showOwnerContactPaywall(vehicle);
+
   void _showOwnerContactPaywall(BuyVehicleEntity vehicle) {
     final planCode = vehicle.categoryPlan;
     Get.toNamed(

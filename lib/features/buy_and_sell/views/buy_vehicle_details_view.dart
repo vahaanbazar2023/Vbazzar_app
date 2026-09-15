@@ -1712,11 +1712,9 @@ class _ConnectWithOwnerCardState extends State<_ConnectWithOwnerCard> {
               // Not yet subscribed / no credits — use requestOwnerContact
               // which handles both credit deduction and paywall
               GestureDetector(
-                onTap: () async {
+                onTap: () {
                   final ctrl = Get.find<BuyVehicleController>();
-                  await ctrl.requestOwnerContact(widget.vehicle);
-                  // If granted, ownerPhones[vehicleId] will be populated
-                  // and the Obx rebuilds automatically to show the phone.
+                  ctrl.showOwnerContactPaywall(widget.vehicle);
                 },
                 child: Container(
                   padding: EdgeInsets.symmetric(
@@ -1727,24 +1725,17 @@ class _ConnectWithOwnerCardState extends State<_ConnectWithOwnerCard> {
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(20.r),
                   ),
-                  child: Obx(() {
-                    final ctrl = Get.find<BuyVehicleController>();
-                    final credits = ctrl.ownerContactCredits.value;
-                    final hasPlan = ctrl.hasVehicleDetailsPlan.value;
-                    return Text(
-                      hasPlan && credits > 0
-                          ? 'Reveal ($credits left)'
-                          : credits > 0
-                          ? 'Reveal ($credits credits)'
-                          : 'Get Contact',
+                  child: Builder(
+                    builder: (context) => Text(
+                      context.l10n.subscribe,
                       style: TextStyle(
                         fontFamily: 'Montserrat',
                         fontSize: 12.sp,
                         fontWeight: FontWeight.w700,
                         color: const Color(0xFF7209B7),
                       ),
-                    );
-                  }),
+                    ),
+                  ),
                 ),
               ),
           ],
