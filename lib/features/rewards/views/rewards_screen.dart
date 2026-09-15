@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:vahaan_mobile_2_0/core/design_system/molecules/gradient_button.dart';
 
 import '../../../core/constants/app_assets.dart';
 import '../../../core/constants/app_colors.dart';
@@ -10,6 +9,7 @@ import '../../../core/design_system/atoms/custom_loader.dart';
 import '../../../core/design_system/templates/shell_layout.dart';
 import '../../../core/extensions/context_extensions.dart';
 import '../../../core/services/share_service.dart';
+import '../../../routes/app_routes.dart';
 import '../../profile/controllers/profile_controller.dart';
 import '../../profile/models/wallet_models.dart';
 
@@ -31,9 +31,10 @@ class _RewardsScreenState extends State<RewardsScreen>
   void initState() {
     super.initState();
     _ctrl = Get.find<ProfileController>();
-    WidgetsBinding.instance.addPostFrameCallback(
-      (_) => _ctrl.fetchWalletDashboard(),
-    );
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _ctrl.fetchWalletDashboard();
+      _ctrl.fetchCoinConversionEligibility();
+    });
   }
 
   @override
@@ -65,10 +66,8 @@ class _RewardsScreenState extends State<RewardsScreen>
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // ── Total wallet balance card ─────────────────────
-                _WalletBalanceCard(wallet: wallet),
+                _WalletBalanceCard(wallet: wallet, ctrl: _ctrl),
                 SizedBox(height: 14.h),
-
-                // ── Available / Pending balance row ───────────────
 
                 // ── Referral banner ───────────────────────────────
                 _ReferralBanner(referralCode: wallet.myReferralCode),
@@ -106,7 +105,8 @@ class _RewardsScreenState extends State<RewardsScreen>
 
 class _WalletBalanceCard extends StatelessWidget {
   final WalletDashboardData wallet;
-  const _WalletBalanceCard({required this.wallet});
+  final ProfileController ctrl;
+  const _WalletBalanceCard({required this.wallet, required this.ctrl});
 
   String _fmt(double v) {
     return v
@@ -189,7 +189,7 @@ class _WalletBalanceCard extends StatelessWidget {
               ),
               // Withdraw button
               GestureDetector(
-                onTap: () {},
+                onTap: () => Get.toNamed(AppRoutes.cashOut),
                 child: Container(
                   padding: EdgeInsets.symmetric(
                     horizontal: 12.w,
@@ -226,7 +226,7 @@ class _WalletBalanceCard extends StatelessWidget {
           SizedBox(height: 24.h),
           const Divider(height: 1, thickness: 1, color: AppColors.grey300),
           SizedBox(height: 14.h),
-          _BalanceRow(wallet: wallet),
+          _BalanceRow(wallet: wallet, ctrl: ctrl),
           SizedBox(height: 14.h),
         ],
       ),
@@ -235,40 +235,184 @@ class _WalletBalanceCard extends StatelessWidget {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Available / Pending balance row
+// Available / Reward coins balance row
 // ─────────────────────────────────────────────────────────────────────────────
 
 class _BalanceRow extends StatelessWidget {
   final WalletDashboardData wallet;
-  const _BalanceRow({required this.wallet});
+  final ProfileController ctrl;
+  const _BalanceRow({required this.wallet, required this.ctrl});
 
   String _fmt(double v) => v
       .toStringAsFixed(2)
       .replaceAllMapped(RegExp(r'(\d)(?=(\d{3})+\.)'), (m) => '${m[1]},');
+
+  void _showConvertDialog(BuildContext context) {
+    final coinBalance = wallet.rewardCoinBalance;
+    final eligibility = ctrl.coinConversionEligibility.value;
+    final rate = eligibility?.conversionRate ?? 5.0;
+    // Always calculate from current balance — API's max_wallet_credit_inr
+    // may be stale if eligibility was fetched before coins were earned.
+    final rupeesValue = coinBalance / rate;
+    showDialog<void>(
+      context: context,
+      builder: (_) => AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16.r),
+        ),
+        title: Text(
+          'Convert Coins',
+          style: TextStyle(
+            fontFamily: 'Montserrat',
+            fontWeight: FontWeight.w700,
+            fontSize: 16.sp,
+          ),
+        ),
+        content: Text(
+          'Convert ${coinBalance.toStringAsFixed(0)} coins into '
+          '₹${rupeesValue.toStringAsFixed(2)} wallet balance?\n\n'
+          'Rate: ${rate.toInt()} coins = ₹1  ·  Once per 24 h',
+          style: TextStyle(fontFamily: 'Montserrat', fontSize: 13.sp),
+        ),
+        actions: [
+          TextButton(
+            onPressed: Get.back,
+            child: Text(
+              'Cancel',
+              style: TextStyle(
+                fontFamily: 'Montserrat',
+                color: AppColors.grey600,
+              ),
+            ),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.primary,
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8.r),
+              ),
+            ),
+            onPressed: () {
+              Get.back();
+              ctrl.convertCoins(coinBalance.toInt());
+            },
+            child: const Text(
+              'Confirm',
+              style: TextStyle(fontFamily: 'Montserrat'),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return IntrinsicHeight(
       child: Row(
         children: [
+          // ── Wallet balance chip ───────────────────────────
           Expanded(
             child: _BalanceChip(
               iconAsset: AppAssets.subIconWallet,
-              label: 'Available Balance',
-              value: '₹${_fmt(wallet.availableBalance)}',
+              label: 'Wallet Balance',
+              value: '₹${_fmt(wallet.walletBalance)}',
               valueColor: AppColors.primary,
             ),
           ),
           VerticalDivider(width: 1, thickness: 1, color: AppColors.grey300),
           SizedBox(width: 8.w),
+          // ── Reward Coins chip ─────────────────────────────
           Expanded(
-            child: _BalanceChip(
-              iconAsset: AppAssets.subIconPending,
-              label: 'Pending Balance',
-              value: '₹${_fmt(wallet.pendingBalance)}',
-              valueColor: const Color(0xFFFF9800),
-              showInfo: true,
-            ),
+            child: Obx(() {
+              final loading = ctrl.isConvertingCoins.value;
+              final eligibility = ctrl.coinConversionEligibility.value;
+              final canConvert = eligibility?.canConvert ?? false;
+              final hasCoins = wallet.rewardCoinBalance > 0;
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Image.asset(
+                        AppAssets.subIconPending,
+                        width: 28.r,
+                        height: 28.r,
+                        fit: BoxFit.contain,
+                      ),
+                      SizedBox(width: 8.w),
+                      Flexible(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Reward Coins',
+                              style: TextStyle(
+                                fontFamily: 'Montserrat',
+                                fontSize: 10.sp,
+                                color: AppColors.black,
+                              ),
+                            ),
+                            SizedBox(height: 3.h),
+                            Text(
+                              wallet.rewardCoinBalance.toStringAsFixed(0),
+                              style: TextStyle(
+                                fontFamily: 'Montserrat',
+                                fontWeight: FontWeight.w500,
+                                fontSize: 16.sp,
+                                color: const Color(0xFFFF9800),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  // Convert button below — only when coins > 0
+                  if (hasCoins) ...[
+                    SizedBox(height: 6.h),
+                    GestureDetector(
+                      onTap: loading ? null : () => _showConvertDialog(context),
+                      child: Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 10.w,
+                          vertical: 4.h,
+                        ),
+                        decoration: BoxDecoration(
+                          color: canConvert
+                              ? const Color(0xFFFF9800)
+                              : AppColors.grey200,
+                          borderRadius: BorderRadius.circular(6.r),
+                        ),
+                        child: loading
+                            ? SizedBox(
+                                width: 10.r,
+                                height: 10.r,
+                                child: const CircularProgressIndicator(
+                                  strokeWidth: 1.5,
+                                  color: Colors.white,
+                                ),
+                              )
+                            : Text(
+                                canConvert ? 'Convert Now' : 'Convert',
+                                style: TextStyle(
+                                  fontFamily: 'Montserrat',
+                                  fontSize: 9.sp,
+                                  fontWeight: FontWeight.w700,
+                                  color: canConvert
+                                      ? Colors.white
+                                      : AppColors.grey600,
+                                ),
+                              ),
+                      ),
+                    ),
+                  ],
+                ],
+              );
+            }),
           ),
         ],
       ),
@@ -281,14 +425,12 @@ class _BalanceChip extends StatelessWidget {
   final String label;
   final String value;
   final Color valueColor;
-  final bool showInfo;
 
   const _BalanceChip({
     required this.iconAsset,
     required this.label,
     required this.value,
     required this.valueColor,
-    this.showInfo = false,
   });
 
   @override
@@ -316,31 +458,33 @@ class _BalanceChip extends StatelessWidget {
                 height: 28.r,
                 fit: BoxFit.contain,
               ),
-              SizedBox(width: 12),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    label,
-                    style: TextStyle(
-                      fontFamily: 'Montserrat',
-                      fontSize: 10.sp,
-                      color: AppColors.black,
+              SizedBox(width: 8.w),
+              Flexible(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      label,
+                      style: TextStyle(
+                        fontFamily: 'Montserrat',
+                        fontSize: 10.sp,
+                        color: AppColors.black,
+                      ),
                     ),
-                  ),
-                  SizedBox(height: 3.h),
-                  Text(
-                    value,
-                    style: TextStyle(
-                      fontFamily: 'Montserrat',
-                      fontWeight: FontWeight.w500,
-                      fontSize: 16.sp,
-                      color: valueColor,
+                    SizedBox(height: 3.h),
+                    Text(
+                      value,
+                      style: TextStyle(
+                        fontFamily: 'Montserrat',
+                        fontWeight: FontWeight.w500,
+                        fontSize: 16.sp,
+                        color: valueColor,
+                      ),
                     ),
-                  ),
-                ],
-              ),
+                  ],
+                ), // Column
+              ), // Flexible
             ],
           ),
         ],

@@ -385,15 +385,131 @@ class ProfileController extends GetxController {
     }
   }
 
+  // ── Cash-Out ──────────────────────────────────────────────────
+  final cashOutEligibility = Rxn<CashOutEligibility>();
+  final isLoadingCashOutEligibility = false.obs;
+  final cashOutHistory = <CashOutHistoryEntry>[].obs;
+  final isLoadingCashOutHistory = false.obs;
+  final isSubmittingCashOut = false.obs;
+
+  // ── Coin Conversion ───────────────────────────────────────────
+  final coinConversionEligibility = Rxn<CoinConversionEligibility>();
+  final isLoadingCoinEligibility = false.obs;
+  final isConvertingCoins = false.obs;
+
+  Future<void> fetchCashOutEligibility() async {
+    isLoadingCashOutEligibility.value = true;
+    try {
+      cashOutEligibility.value = await _repository.fetchCashOutEligibility();
+    } catch (e) {
+      LoggerService.to.error('fetchCashOutEligibility error: $e');
+    } finally {
+      isLoadingCashOutEligibility.value = false;
+    }
+  }
+
+  Future<bool> requestCashOut(CashOutRequest request) async {
+    isSubmittingCashOut.value = true;
+    try {
+      final result = await _repository.requestCashOut(request);
+      final status = result['status'] as String? ?? '';
+      final isSuccess =
+          status == 'success' ||
+          (result['code'] as int? ?? 0) == 200 ||
+          (result['code'] as int? ?? 0) == 201;
+      if (isSuccess) {
+        // Refresh wallet and history after successful cash-out
+        await Future.wait([fetchWalletDashboard(), fetchCashOutHistory()]);
+        CustomSnackbar.show(
+          message: result['message'] as String? ?? 'Cash-out request placed!',
+          type: SnackbarType.success,
+        );
+        return true;
+      } else {
+        CustomSnackbar.show(
+          message: result['message'] as String? ?? 'Cash-out request failed.',
+          type: SnackbarType.error,
+        );
+        return false;
+      }
+    } catch (e) {
+      LoggerService.to.error('requestCashOut error: $e');
+      CustomSnackbar.show(
+        message: e.toString().replaceFirst('Exception: ', ''),
+        type: SnackbarType.error,
+      );
+      return false;
+    } finally {
+      isSubmittingCashOut.value = false;
+    }
+  }
+
+  Future<void> fetchCashOutHistory() async {
+    isLoadingCashOutHistory.value = true;
+    try {
+      cashOutHistory.value = await _repository.fetchCashOutHistory();
+    } catch (e) {
+      LoggerService.to.error('fetchCashOutHistory error: $e');
+    } finally {
+      isLoadingCashOutHistory.value = false;
+    }
+  }
+
+  Future<void> fetchCoinConversionEligibility() async {
+    isLoadingCoinEligibility.value = true;
+    try {
+      coinConversionEligibility.value = await _repository
+          .fetchCoinConversionEligibility();
+    } catch (e) {
+      LoggerService.to.error('fetchCoinConversionEligibility error: $e');
+    } finally {
+      isLoadingCoinEligibility.value = false;
+    }
+  }
+
+  Future<bool> convertCoins(int coinAmount) async {
+    isConvertingCoins.value = true;
+    try {
+      final result = await _repository.convertCoinsToWallet(coinAmount);
+      final status = result['status'] as String? ?? '';
+      final isSuccess =
+          status == 'success' || (result['code'] as int? ?? 0) == 200;
+      final message =
+          result['message'] as String? ?? result['error'] as String? ?? '';
+      if (isSuccess) {
+        await fetchWalletDashboard();
+        CustomSnackbar.show(
+          message: message.isNotEmpty ? message : 'Coins converted!',
+          type: SnackbarType.success,
+        );
+        return true;
+      } else {
+        CustomSnackbar.show(
+          message: message.isNotEmpty ? message : 'Conversion failed.',
+          type: SnackbarType.error,
+        );
+        return false;
+      }
+    } catch (e) {
+      LoggerService.to.error('convertCoins error: $e');
+      CustomSnackbar.show(
+        message: e.toString().replaceFirst('Exception: ', ''),
+        type: SnackbarType.error,
+      );
+      return false;
+    } finally {
+      isConvertingCoins.value = false;
+    }
+  }
+
   // ── Logout ────────────────────────────────────────────────────
   /// Called directly after user confirms logout in the UI.
   /// No dialog here — the caller (_LogoutButton) handles confirmation.
   Future<void> logout() async {
-    unawaited(
-      _repository.logout().catchError(
-        (e) => LoggerService.to.error('logout error: $e'),
-      ),
-    );
+    _repository.logout().catchError((Object e) {
+      LoggerService.to.error('logout error: $e');
+      return LogoutResponse(status: 'error', code: 0, message: e.toString());
+    }).ignore();
     Get.offAllNamed(AppRoutes.login);
   }
 }

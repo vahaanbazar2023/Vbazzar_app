@@ -146,6 +146,121 @@ class ProfileDataSource {
     }
   }
 
+  /// GET /api/v1/wallet/cash-out/eligibility
+  Future<CashOutEligibility> fetchCashOutEligibility() async {
+    try {
+      final response = await networkService.get(
+        ApiEndpoints.walletCashOutEligibility,
+      );
+      if (response.data == null) throw Exception('Empty response');
+      final body = response.data as Map<String, dynamic>;
+      final data = body['data'] as Map<String, dynamic>? ?? body;
+      return CashOutEligibility.fromJson(data);
+    } on DioException catch (e) {
+      final msg =
+          e.response?.data?['message'] as String? ??
+          e.message ??
+          'Failed to fetch cash-out eligibility';
+      LoggerService.to.error('fetchCashOutEligibility DioException: $msg');
+      throw Exception(msg);
+    }
+  }
+
+  /// POST /api/v1/wallet/cash-out — request a cash-out
+  Future<Map<String, dynamic>> requestCashOut(CashOutRequest request) async {
+    try {
+      final response = await networkService.post(
+        ApiEndpoints.walletCashOut,
+        data: request.toJson(),
+      );
+      if (response.data == null) throw Exception('Empty response');
+      return response.data as Map<String, dynamic>;
+    } on DioException catch (e) {
+      final msg =
+          e.response?.data?['message'] as String? ??
+          e.message ??
+          'Failed to request cash-out';
+      LoggerService.to.error('requestCashOut DioException: $msg');
+      throw Exception(msg);
+    }
+  }
+
+  /// GET /api/v1/wallet/cash-out/history
+  Future<List<CashOutHistoryEntry>> fetchCashOutHistory() async {
+    try {
+      final response = await networkService.get(
+        ApiEndpoints.walletCashOutHistory,
+      );
+      if (response.data == null) throw Exception('Empty response');
+      final body = response.data as Map<String, dynamic>;
+      // API wraps in data:{} — handle both flat list and nested object shapes
+      final raw = body['data'];
+      List<dynamic> list;
+      if (raw is List) {
+        list = raw;
+      } else if (raw is Map) {
+        list =
+            (raw['cash_out_requests'] as List<dynamic>?) ??
+            (raw['history'] as List<dynamic>?) ??
+            (raw['items'] as List<dynamic>?) ??
+            [];
+      } else {
+        list = [];
+      }
+      return list
+          .map((e) => CashOutHistoryEntry.fromJson(e as Map<String, dynamic>))
+          .toList();
+    } on DioException catch (e) {
+      final msg =
+          e.response?.data?['message'] as String? ??
+          e.message ??
+          'Failed to fetch cash-out history';
+      LoggerService.to.error('fetchCashOutHistory DioException: $msg');
+      throw Exception(msg);
+    }
+  }
+
+  /// GET /api/v1/reward-coins/conversion-eligibility
+  Future<CoinConversionEligibility> fetchCoinConversionEligibility() async {
+    try {
+      final response = await networkService.get(
+        ApiEndpoints.rewardCoinsConversionEligibility,
+      );
+      if (response.data == null) throw Exception('Empty response');
+      final body = response.data as Map<String, dynamic>;
+      final data = body['data'] as Map<String, dynamic>? ?? body;
+      return CoinConversionEligibility.fromJson(data);
+    } on DioException catch (e) {
+      final msg =
+          e.response?.data?['message'] as String? ??
+          e.message ??
+          'Failed to fetch coin conversion eligibility';
+      LoggerService.to.error(
+        'fetchCoinConversionEligibility DioException: $msg',
+      );
+      throw Exception(msg);
+    }
+  }
+
+  /// POST /api/v1/reward-coins/convert-to-wallet
+  Future<Map<String, dynamic>> convertCoinsToWallet(int coinAmount) async {
+    try {
+      final response = await networkService.post(
+        ApiEndpoints.rewardCoinsConvertToWallet,
+        data: {'coins': coinAmount},
+      );
+      if (response.data == null) throw Exception('Empty response');
+      return response.data as Map<String, dynamic>;
+    } on DioException catch (e) {
+      final msg =
+          e.response?.data?['message'] as String? ??
+          e.message ??
+          'Failed to convert coins';
+      LoggerService.to.error('convertCoinsToWallet DioException: $msg');
+      throw Exception(msg);
+    }
+  }
+
   /// POST /api/v1/auth/logout — revoke token for the given user_id
   Future<LogoutResponse> logout(String userId) async {
     try {

@@ -69,4 +69,7 @@ class AppRoutes {
   static const agentValuationForm = '/agent-valuation-form';
   static const myInspections = '/my-inspections';
   static const inspectionDetail = '/inspection-detail';
+
+  // Wallet Cash-Out
+  static const cashOut = '/wallet/cash-out';
 }

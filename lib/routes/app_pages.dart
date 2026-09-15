@@ -73,6 +73,7 @@ import '../features/notifications/views/notification_screen.dart';
 import '../features/notifications/controllers/notification_controller.dart'
     as nc;
 import '../features/search/controllers/search_controller.dart' as sc;
+import '../features/profile/views/cash_out_screen.dart';
 
 class AppPages {
   AppPages._();
@@ -455,6 +456,12 @@ class AppPages {
       binding: BindingsBuilder(() {
         Get.lazyPut(() => sc.SearchController());
       }),
+      transition: Transition.rightToLeft,
+    ),
+    // ── Wallet Cash-Out ────────────────────────────────────────
+    GetPage(
+      name: AppRoutes.cashOut,
+      page: () => const CashOutScreen(),
       transition: Transition.rightToLeft,
     ),
   ];

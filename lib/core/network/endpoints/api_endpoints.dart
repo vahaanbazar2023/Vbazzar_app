@@ -143,6 +143,13 @@ class ApiEndpoints {
   static const String resolveShareLink = '$sharePrefix/resolve';
   static const String attributionSession = '$sharePrefix/attribution-session';
 
+  // ─── Wallet Cash-Out ──────────────────────────────────────────
+  static const String walletCashOutPrefix = '/api/v1/wallet/cash-out';
+  static const String walletCashOutEligibility =
+      '$walletCashOutPrefix/eligibility';
+  static const String walletCashOut = walletCashOutPrefix;
+  static const String walletCashOutHistory = '$walletCashOutPrefix/history';
+
   // ─── Reward Coins ─────────────────────────────────────────────
   static const String rewardCoinsPrefix = '/api/v1/reward-coins';
   static const String rewardCoinsBalance = '$rewardCoinsPrefix/balance';

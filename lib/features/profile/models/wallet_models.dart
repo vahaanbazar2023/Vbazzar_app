@@ -41,8 +41,8 @@ class WalletDashboardData {
 
   const WalletDashboardData({
     required this.myReferralCode,
-    this.walletBalance = 0,
-    this.rewardCoinBalance = 0,
+    this.walletBalance = 0.0,
+    this.rewardCoinBalance = 0.0,
     required this.transactions,
     this.coinTransactions = const [],
     required this.referralStats,
@@ -52,9 +52,10 @@ class WalletDashboardData {
     return WalletDashboardData(
       myReferralCode: json['my_referral_code'] as String? ?? '',
       walletBalance:
-          double.tryParse(json['wallet_balance']?.toString() ?? '0') ?? 0,
+          double.tryParse(json['wallet_balance']?.toString() ?? '0') ?? 0.0,
       rewardCoinBalance:
-          double.tryParse(json['reward_coin_balance']?.toString() ?? '0') ?? 0,
+          double.tryParse(json['reward_coin_balance']?.toString() ?? '0') ??
+          0.0,
       transactions: (json['transactions'] as List<dynamic>? ?? [])
           .map((e) => WalletTransaction.fromJson(e as Map<String, dynamic>))
           .toList(),
@@ -139,6 +140,177 @@ class WalletTransaction {
       transactionDate: json['transaction_date'] as String? ?? '',
       transactionTime: json['transaction_time'] as String? ?? '',
       amount: json['amount'] as String? ?? '0.00',
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Cash-Out Models
+// ─────────────────────────────────────────────────────────────────────────────
+
+/// GET /api/v1/wallet/cash-out/eligibility
+class CashOutEligibility {
+  final double walletBalance;
+  final double maximumCashOut; // 50% of wallet
+  final double minimumCashOut;
+  final bool isEligible;
+  final String? ineligibilityReason;
+
+  const CashOutEligibility({
+    this.walletBalance = 0.0,
+    this.maximumCashOut = 0.0,
+    this.minimumCashOut = 1.0,
+    this.isEligible = false,
+    this.ineligibilityReason,
+  });
+
+  factory CashOutEligibility.fromJson(Map<String, dynamic> json) {
+    final balance =
+        double.tryParse(json['wallet_balance']?.toString() ?? '0') ?? 0.0;
+    // API returns maximum_cashout_amount
+    final maximum =
+        double.tryParse(
+          json['maximum_cashout_amount']?.toString() ??
+              json['maximum_cash_out']?.toString() ??
+              '0',
+        ) ??
+        0.0;
+    // API returns minimum_amount
+    final minimum =
+        double.tryParse(
+          json['minimum_amount']?.toString() ??
+              json['minimum_cash_out']?.toString() ??
+              '1',
+        ) ??
+        1.0;
+    // API returns can_cash_out
+    final eligible =
+        json['can_cash_out'] as bool? ?? json['is_eligible'] as bool? ?? false;
+    return CashOutEligibility(
+      walletBalance: balance,
+      maximumCashOut: maximum,
+      minimumCashOut: minimum,
+      isEligible: eligible,
+      ineligibilityReason: json['ineligibility_reason'] as String?,
+    );
+  }
+}
+
+/// POST /api/v1/wallet/cash-out — request body
+class CashOutRequest {
+  final double amount;
+  final String accountNumber;
+  final String ifscCode;
+  final String accountHolderName;
+  final String bankName;
+  final String branchName;
+
+  const CashOutRequest({
+    required this.amount,
+    required this.accountNumber,
+    required this.ifscCode,
+    required this.accountHolderName,
+    required this.bankName,
+    this.branchName = '',
+  });
+
+  Map<String, dynamic> toJson() => {
+    'amount': amount,
+    'account_number': accountNumber,
+    'ifsc_code': ifscCode,
+    'account_holder_name': accountHolderName,
+    'bank_name': bankName,
+    'branch_name': branchName,
+  };
+}
+
+/// Single cash-out history entry (GET /api/v1/wallet/cash-out/history)
+class CashOutHistoryEntry {
+  final String id;
+  final double amount;
+  final String status; // 'requested' | 'paid' | 'rejected'
+  final String accountNumber;
+  final String bankName;
+  final String ifscCode;
+  final String accountHolderName;
+  final String requestedAt;
+
+  const CashOutHistoryEntry({
+    required this.id,
+    required this.amount,
+    required this.status,
+    required this.accountNumber,
+    required this.bankName,
+    required this.ifscCode,
+    required this.accountHolderName,
+    required this.requestedAt,
+  });
+
+  bool get isPaid => status == 'paid';
+  bool get isRejected => status == 'rejected';
+  bool get isPending => status == 'requested';
+
+  factory CashOutHistoryEntry.fromJson(Map<String, dynamic> json) {
+    return CashOutHistoryEntry(
+      id: json['payout_id']?.toString() ?? json['id']?.toString() ?? '',
+      // API returns wallet_amount (amount debited from wallet)
+      amount:
+          double.tryParse(
+            json['wallet_amount']?.toString() ??
+                json['amount']?.toString() ??
+                '0',
+          ) ??
+          0.0,
+      status: json['status'] as String? ?? 'requested',
+      accountNumber: json['account_number'] as String? ?? '',
+      bankName: json['bank_name'] as String? ?? json['bank'] as String? ?? '',
+      ifscCode: json['ifsc_code'] as String? ?? '',
+      accountHolderName:
+          json['account_holder_name'] as String? ??
+          json['name'] as String? ??
+          '',
+      requestedAt:
+          json['requested_at'] as String? ??
+          json['created_at'] as String? ??
+          '',
+    );
+  }
+}
+
+/// Reward coin conversion eligibility (GET /api/v1/reward-coins/conversion-eligibility)
+class CoinConversionEligibility {
+  final double coinBalance;
+  final double conversionRate; // coins per INR, e.g. 5 coins = ₹1
+  final double minimumCoins; // minimum coins per conversion
+  final bool canConvert; // can_convert from API
+  final int hoursUntilNext; // hours_until_next_conversion (0 = ready)
+  final double maxWalletCreditInr; // max_wallet_credit_inr
+
+  const CoinConversionEligibility({
+    this.coinBalance = 0.0,
+    this.conversionRate = 5.0,
+    this.minimumCoins = 5.0,
+    this.canConvert = false,
+    this.hoursUntilNext = 0,
+    this.maxWalletCreditInr = 0.0,
+  });
+
+  factory CoinConversionEligibility.fromJson(Map<String, dynamic> json) {
+    return CoinConversionEligibility(
+      coinBalance:
+          double.tryParse(json['reward_coin_balance']?.toString() ?? '0') ??
+          0.0,
+      conversionRate:
+          double.tryParse(json['coin_to_wallet_rate']?.toString() ?? '5') ??
+          5.0,
+      minimumCoins:
+          double.tryParse(json['minimum_coins']?.toString() ?? '5') ?? 5.0,
+      canConvert: json['can_convert'] as bool? ?? false,
+      hoursUntilNext:
+          (json['hours_until_next_conversion'] as num?)?.toInt() ?? 0,
+      maxWalletCreditInr:
+          double.tryParse(json['max_wallet_credit_inr']?.toString() ?? '0') ??
+          0.0,
     );
   }
 }

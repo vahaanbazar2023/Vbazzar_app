@@ -63,6 +63,21 @@ class ProfileRepository {
     );
   }
 
+  Future<CashOutEligibility> fetchCashOutEligibility() =>
+      _dataSource.fetchCashOutEligibility();
+
+  Future<Map<String, dynamic>> requestCashOut(CashOutRequest request) =>
+      _dataSource.requestCashOut(request);
+
+  Future<List<CashOutHistoryEntry>> fetchCashOutHistory() =>
+      _dataSource.fetchCashOutHistory();
+
+  Future<CoinConversionEligibility> fetchCoinConversionEligibility() =>
+      _dataSource.fetchCoinConversionEligibility();
+
+  Future<Map<String, dynamic>> convertCoinsToWallet(int coinAmount) =>
+      _dataSource.convertCoinsToWallet(coinAmount);
+
   Future<LogoutResponse> logout() async {
     final userId = await _secureStorage.read(StorageKeys.userId) ?? '';
     final response = await _dataSource.logout(userId);
