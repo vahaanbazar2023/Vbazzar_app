@@ -13,10 +13,9 @@ class NotificationScreen extends GetView<NotificationController> {
 
   @override
   Widget build(BuildContext context) {
-    // Mark all read + fetch when screen opens
+    // Fetch when screen opens — don't auto-mark all read
     WidgetsBinding.instance.addPostFrameCallback((_) {
       controller.fetchNotifications(refresh: true);
-      controller.markAllRead();
     });
 
     return Scaffold(
@@ -27,6 +26,44 @@ class NotificationScreen extends GetView<NotificationController> {
             bottom: false,
             child: AppHeader(title: 'Notifications', showBack: true),
           ),
+          // ── Mark all read — right-aligned, below header ──────
+          Obx(() {
+            if (controller.unreadCount.value == 0) {
+              return const SizedBox.shrink();
+            }
+            return Align(
+              alignment: Alignment.centerRight,
+              child: GestureDetector(
+                onTap: controller.markAllRead,
+                child: Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 16.w,
+                    vertical: 6.h,
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        Icons.done_all_rounded,
+                        size: 14.r,
+                        color: AppColors.primary,
+                      ),
+                      SizedBox(width: 4.w),
+                      Text(
+                        'Mark all read',
+                        style: TextStyle(
+                          fontFamily: 'Montserrat',
+                          fontSize: 11.sp,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.primary,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          }),
           Expanded(
             child: Obx(() {
               if (controller.isLoading.value) {
@@ -63,11 +100,11 @@ class NotificationScreen extends GetView<NotificationController> {
                 },
                 child: RefreshIndicator(
                   color: AppColors.primary,
-                  onRefresh: () =>
-                      controller.fetchNotifications(refresh: true),
+                  onRefresh: () => controller.fetchNotifications(refresh: true),
                   child: ListView.builder(
                     padding: EdgeInsets.fromLTRB(16.w, 12.h, 16.w, 32.h),
-                    itemCount: _countItems(grouped) +
+                    itemCount:
+                        _countItems(grouped) +
                         (controller.isLoadingMore.value ? 1 : 0),
                     itemBuilder: (_, i) {
                       if (i == _countItems(grouped)) {
@@ -75,7 +112,8 @@ class NotificationScreen extends GetView<NotificationController> {
                           padding: EdgeInsets.symmetric(vertical: 16.h),
                           child: const Center(
                             child: CircularProgressIndicator(
-                                color: AppColors.primary),
+                              color: AppColors.primary,
+                            ),
                           ),
                         );
                       }
@@ -101,7 +139,10 @@ class NotificationScreen extends GetView<NotificationController> {
 
     for (final item in items) {
       final d = DateTime(
-          item.createdAt.year, item.createdAt.month, item.createdAt.day);
+        item.createdAt.year,
+        item.createdAt.month,
+        item.createdAt.day,
+      );
       String label;
       if (d == today) {
         label = 'Today';
@@ -140,7 +181,10 @@ class NotificationScreen extends GetView<NotificationController> {
         if (flatIndex == pos) {
           return _NotificationTile(
             notification: item,
-            onTap: () => controller.handleTap(item),
+            onTap: () {
+              controller.markOneRead(item);
+              controller.handleTap(item);
+            },
           );
         }
         pos++;
@@ -186,8 +230,7 @@ class _DayHeader extends StatelessWidget {
 class _NotificationTile extends StatelessWidget {
   final AppNotification notification;
   final VoidCallback onTap;
-  const _NotificationTile(
-      {required this.notification, required this.onTap});
+  const _NotificationTile({required this.notification, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -197,8 +240,8 @@ class _NotificationTile extends StatelessWidget {
     final timeLabel = diff.inMinutes < 60
         ? '${diff.inMinutes} min ago'
         : diff.inHours < 24
-            ? '${diff.inHours} hr ago'
-            : timeStr;
+        ? '${diff.inHours} hr ago'
+        : timeStr;
 
     return GestureDetector(
       onTap: onTap,
@@ -227,9 +270,7 @@ class _NotificationTile extends StatelessWidget {
                 height: 8.r,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: n.isRead
-                      ? Colors.transparent
-                      : AppColors.primary,
+                  color: n.isRead ? Colors.transparent : AppColors.primary,
                 ),
               ),
             ),
@@ -241,11 +282,7 @@ class _NotificationTile extends StatelessWidget {
                 color: _iconBg(n),
                 shape: BoxShape.circle,
               ),
-              child: Icon(
-                _iconData(n),
-                size: 18.r,
-                color: _iconColor(n),
-              ),
+              child: Icon(_iconData(n), size: 18.r, color: _iconColor(n)),
             ),
             SizedBox(width: 12.w),
             // Content
@@ -265,7 +302,7 @@ class _NotificationTile extends StatelessWidget {
                               style: TextStyle(
                                 fontFamily: 'Montserrat',
                                 fontSize: 10.sp,
-                                fontWeight: FontWeight.w700,
+                                fontWeight: FontWeight.w600,
                                 color: _iconColor(n),
                                 letterSpacing: 0.3,
                               ),
@@ -276,7 +313,7 @@ class _NotificationTile extends StatelessWidget {
                               style: TextStyle(
                                 fontFamily: 'Montserrat',
                                 fontSize: 13.sp,
-                                fontWeight: FontWeight.w700,
+                                fontWeight: FontWeight.w500,
                                 color: AppColors.black,
                               ),
                             ),
@@ -308,8 +345,11 @@ class _NotificationTile extends StatelessWidget {
               ),
             ),
             SizedBox(width: 8.w),
-            Icon(Icons.chevron_right_rounded,
-                size: 18.r, color: AppColors.grey400),
+            Icon(
+              Icons.chevron_right_rounded,
+              size: 18.r,
+              color: AppColors.grey400,
+            ),
           ],
         ),
       ),
@@ -355,7 +395,7 @@ class _NotificationTile extends StatelessWidget {
       return AppColors.primary;
     }
     if (onclick.contains('buySell') || onclick.contains('buy')) {
-      return const Color(0xFF1976D2);
+      return AppColors.ctaGradientStart;
     }
     if (onclick.contains('wallet')) return const Color(0xFF388E3C);
     if (onclick.contains('referral')) return const Color(0xFF7B1FA2);
@@ -379,8 +419,11 @@ class _EmptyState extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.notifications_off_outlined,
-              size: 56.r, color: AppColors.grey300),
+          Icon(
+            Icons.notifications_off_outlined,
+            size: 56.r,
+            color: AppColors.grey300,
+          ),
           SizedBox(height: 16.h),
           Text(
             'No notifications yet',

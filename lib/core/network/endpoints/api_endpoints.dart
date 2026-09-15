@@ -26,6 +26,8 @@ class ApiEndpoints {
       '$notificationPrefix/history/search';
   static const String notificationMarkRead =
       '$notificationPrefix/history/read-status/by-user';
+  static String notificationMarkOneRead(int id) =>
+      '$notificationPrefix/history/$id/read-status';
 
   // ─── Subscription ───────────────────────────────────────────────
   static const String mySubscriptions = '$subscriptionPrefix/my-subscriptions';

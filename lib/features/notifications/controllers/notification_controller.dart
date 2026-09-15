@@ -11,7 +11,7 @@ class NotificationController extends GetxController {
   final NetworkService _network;
 
   NotificationController({NetworkService? network})
-      : _network = network ?? NetworkService.to;
+    : _network = network ?? NetworkService.to;
 
   final notifications = <AppNotification>[].obs;
   final unreadCount = 0.obs;
@@ -26,7 +26,8 @@ class NotificationController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    fetchUnreadCount();
+    // Delay slightly to ensure auth token is stored after login
+    Future.delayed(const Duration(milliseconds: 500), fetchUnreadCount);
   }
 
   Future<String> get _userId async =>
@@ -37,12 +38,22 @@ class NotificationController extends GetxController {
   Future<void> fetchUnreadCount() async {
     try {
       final uid = await _userId;
+      if (uid.isEmpty) return;
       final response = await _network.post<Map<String, dynamic>>(
         ApiEndpoints.notificationHistory,
-        data: {'user_id': uid, 'is_read': '0', 'page': 1, 'limit': 1},
+        data: {'user_id': uid, 'is_read': 'all', 'page': 1, 'limit': 100},
       );
       final data = response.data?['data'] as Map<String, dynamic>?;
-      unreadCount.value = (data?['total'] as num?)?.toInt() ?? 0;
+      final rawList = (data?['notifications'] as List<dynamic>?) ?? [];
+      // Count items the API hasn't marked read yet
+      final unread = rawList.where((e) {
+        final isRead = (e as Map<String, dynamic>)['is_read'];
+        return isRead == 0 || isRead == '0' || isRead == false;
+      }).length;
+      unreadCount.value = unread > 0
+          ? unread
+          : (data?['total'] as num?)?.toInt() ?? 0;
+      debugPrint('🔔 unread notifications: ${unreadCount.value}');
     } catch (e) {
       debugPrint('⚠️ fetchUnreadCount error: $e');
     }
@@ -104,30 +115,60 @@ class NotificationController extends GetxController {
     }
   }
 
-  // ── Mark all read (called when user opens notification screen) ──
+  // ── Mark single notification read ────────────────────────────
+
+  Future<void> markOneRead(AppNotification notification) async {
+    if (notification.isRead) return; // already read — idempotent, skip API call
+    try {
+      await _network.patch<Map<String, dynamic>>(
+        ApiEndpoints.notificationMarkOneRead(notification.id),
+        data: {'is_read': 1},
+      );
+      // Update local state
+      final idx = notifications.indexWhere((n) => n.id == notification.id);
+      if (idx != -1) {
+        final n = notifications[idx];
+        notifications[idx] = AppNotification(
+          id: n.id,
+          userId: n.userId,
+          title: n.title,
+          body: n.body,
+          data: n.data,
+          createdAt: n.createdAt,
+          isRead: true,
+        );
+        if (unreadCount.value > 0) unreadCount.value--;
+      }
+    } catch (e) {
+      debugPrint('⚠️ markOneRead error: $e');
+    }
+  }
+
+  // ── Mark all read ─────────────────────────────────────────────
 
   Future<void> markAllRead() async {
-    if (unreadCount.value == 0) return;
     try {
       final uid = await _userId;
-      await _network.post<Map<String, dynamic>>(
+      if (uid.isEmpty) return;
+      await _network.patch<Map<String, dynamic>>(
         ApiEndpoints.notificationMarkRead,
         data: {'user_id': uid, 'is_read': 1},
       );
       unreadCount.value = 0;
-      // Update local list
       final updated = notifications
-          .map((n) => n.isRead
-              ? n
-              : AppNotification(
-                  id: n.id,
-                  userId: n.userId,
-                  title: n.title,
-                  body: n.body,
-                  data: n.data,
-                  createdAt: n.createdAt,
-                  isRead: true,
-                ))
+          .map(
+            (n) => n.isRead
+                ? n
+                : AppNotification(
+                    id: n.id,
+                    userId: n.userId,
+                    title: n.title,
+                    body: n.body,
+                    data: n.data,
+                    createdAt: n.createdAt,
+                    isRead: true,
+                  ),
+          )
           .toList();
       notifications.assignAll(updated);
     } catch (e) {
@@ -145,8 +186,8 @@ class NotificationController extends GetxController {
     final path = route.startsWith('AppRoutes.')
         ? _resolveRoute(route)
         : route.startsWith('/')
-            ? route
-            : null;
+        ? route
+        : null;
 
     if (path != null) Get.toNamed(path);
   }
