@@ -33,31 +33,80 @@ class WalletDashboardResponse {
 
 class WalletDashboardData {
   final String myReferralCode;
+  final double walletBalance;
+  final double rewardCoinBalance;
   final List<WalletTransaction> transactions;
-  final double totalBalance;
-  final double availableBalance;
-  final double pendingBalance;
-  final double thisMonthEarned;
+  final List<WalletTransaction> coinTransactions;
+  final WalletReferralStats referralStats;
 
   const WalletDashboardData({
     required this.myReferralCode,
+    this.walletBalance = 0,
+    this.rewardCoinBalance = 0,
     required this.transactions,
-    this.totalBalance = 0,
-    this.availableBalance = 0,
-    this.pendingBalance = 0,
-    this.thisMonthEarned = 0,
+    this.coinTransactions = const [],
+    required this.referralStats,
   });
 
   factory WalletDashboardData.fromJson(Map<String, dynamic> json) {
     return WalletDashboardData(
       myReferralCode: json['my_referral_code'] as String? ?? '',
+      walletBalance:
+          double.tryParse(json['wallet_balance']?.toString() ?? '0') ?? 0,
+      rewardCoinBalance:
+          double.tryParse(json['reward_coin_balance']?.toString() ?? '0') ?? 0,
       transactions: (json['transactions'] as List<dynamic>? ?? [])
           .map((e) => WalletTransaction.fromJson(e as Map<String, dynamic>))
           .toList(),
-      totalBalance: (json['total_balance'] as num?)?.toDouble() ?? 0,
-      availableBalance: (json['available_balance'] as num?)?.toDouble() ?? 0,
-      pendingBalance: (json['pending_balance'] as num?)?.toDouble() ?? 0,
-      thisMonthEarned: (json['this_month_earned'] as num?)?.toDouble() ?? 0,
+      coinTransactions: (json['coin_transactions'] as List<dynamic>? ?? [])
+          .map((e) => WalletTransaction.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      referralStats: json['referral_stats'] != null
+          ? WalletReferralStats.fromJson(
+              json['referral_stats'] as Map<String, dynamic>,
+            )
+          : const WalletReferralStats(),
+    );
+  }
+
+  // Legacy compat getters used by existing view
+  double get totalBalance => walletBalance;
+  double get availableBalance => walletBalance;
+  double get pendingBalance => 0;
+  double get thisMonthEarned => 0;
+}
+
+class WalletReferralStats {
+  final int totalReferrals;
+  final int successfulRegistrations;
+  final int activeReferrals;
+  final double totalCoinsEarned;
+  final double totalCommissionEarned;
+  final double totalWalletEarnings;
+
+  const WalletReferralStats({
+    this.totalReferrals = 0,
+    this.successfulRegistrations = 0,
+    this.activeReferrals = 0,
+    this.totalCoinsEarned = 0,
+    this.totalCommissionEarned = 0,
+    this.totalWalletEarnings = 0,
+  });
+
+  factory WalletReferralStats.fromJson(Map<String, dynamic> json) {
+    return WalletReferralStats(
+      totalReferrals: (json['total_referrals'] as num?)?.toInt() ?? 0,
+      successfulRegistrations:
+          (json['successful_registrations'] as num?)?.toInt() ?? 0,
+      activeReferrals: (json['active_referrals'] as num?)?.toInt() ?? 0,
+      totalCoinsEarned:
+          double.tryParse(json['total_coins_earned']?.toString() ?? '0') ?? 0,
+      totalCommissionEarned:
+          double.tryParse(json['total_commission_earned']?.toString() ?? '0') ??
+          0,
+      totalWalletEarnings:
+          double.tryParse(json['total_wallet_earnings']?.toString() ?? '0') ??
+          0,
     );
   }
 }
