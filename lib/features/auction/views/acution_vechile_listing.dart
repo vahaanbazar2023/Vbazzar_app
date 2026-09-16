@@ -271,7 +271,6 @@ class _VehicleCardState extends State<_VehicleCard> {
   @override
   Widget build(BuildContext context) {
     final v = widget.vehicle;
-    // Determine bid status for border + image chip
     final bool hasBid = v.yourBid > 0;
     final bool isWinning =
         hasBid &&
@@ -282,16 +281,16 @@ class _VehicleCardState extends State<_VehicleCard> {
         ? const Color(0xFF2E7D32)
         : isLosing
         ? const Color(0xFFC62828)
-        : AppColors.grey300;
+        : AppColors.grey200;
 
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(14.r),
-        border: Border.all(width: hasBid ? 1.0 : 1.0, color: cardBorderColor),
+        border: Border.all(color: cardBorderColor, width: hasBid ? 1.5 : 1.0),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.2),
+            color: Colors.black.withValues(alpha: 0.07),
             blurRadius: 10,
             offset: const Offset(0, 3),
           ),
@@ -301,305 +300,241 @@ class _VehicleCardState extends State<_VehicleCard> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // ── Image + overlays ──────────────────────────────────
-          Stack(
+          // ══════════════════════════════════════════════════
+          // ROW 1: image (left) + title / timer / yard (right)
+          // ══════════════════════════════════════════════════
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Light grey bg so white vehicles are visible
-              Container(
-                height: 200.h,
-                color: const Color(0xFFF0F0F0),
-                child: NetworkImageCarousel(imageUrls: v.images, height: 200.h),
-              ),
-              // VHID badge — split: red icon | white text
-              Positioned(
-                top: 10.h,
-                left: 10.w,
-                child: Container(
-                  height: 28.h,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(6.r),
-                    border: Border.all(color: AppColors.primary, width: 1.5),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.10),
-                        blurRadius: 4,
-                        offset: const Offset(0, 1),
+              // ── Image panel ──────────────────────────────
+              SizedBox(
+                width: 171.w,
+                height: 99.h,
+                child: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    Container(
+                      color: const Color(0xFFF0F0F0),
+                      child: NetworkImageCarousel(
+                        imageUrls: v.images,
+                        height: 99.h,
                       ),
-                    ],
-                  ),
-                  clipBehavior: Clip.antiAlias,
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      // Red icon section
-                      Container(
-                        width: 28.h,
-                        height: 28.h,
-                        color: AppColors.primary,
-                        child: Center(
-                          child: Icon(
-                            Icons.directions_car_rounded,
-                            size: 15.r,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                      // Text section
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 8.w),
-                        child: Text(
-                          'VHID: ${v.vehicleId}',
-                          style: TextStyle(
-                            fontFamily: 'Montserrat',
-                            fontSize: 11.sp,
-                            fontWeight: FontWeight.w600,
-                            color: AppColors.black,
-                            letterSpacing: 0.2,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              // Timer badge — top-right, uses auction_end_date for countdown
-              Positioned(
-                top: 0,
-                right: 0,
-                child: TimerBadge(endAt: v.auctionEndDate),
-              ),
-              // Winning / Losing chip — bottom-left of image — glassmorphism
-              if (hasBid)
-                Positioned(
-                  bottom: 10.h,
-                  left: 10.w,
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(20.r),
-                    child: BackdropFilter(
-                      filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
-                      child: Container(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 10.w,
-                          vertical: 5.h,
-                        ),
-                        decoration: BoxDecoration(
-                          color: isWinning
-                              ? const Color(0xFF2E7D32).withValues(alpha: 0.35)
-                              : const Color(0xFFC62828).withValues(alpha: 0.35),
-                          borderRadius: BorderRadius.circular(20.r),
-                          border: Border.all(
-                            color: isWinning
-                                ? const Color(0xFF66BB6A).withValues(alpha: 0.6)
-                                : const Color(
-                                    0xFFEF9A9A,
-                                  ).withValues(alpha: 0.6),
-                            width: 0.5,
-                          ),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              isWinning
-                                  ? Icons.emoji_events_rounded
-                                  : Icons.trending_down_rounded,
-                              size: 12.r,
-                              color: Colors.white,
-                            ),
-                            SizedBox(width: 4.w),
-                            Text(
-                              isWinning ? 'Winning' : 'Losing',
-                              style: TextStyle(
-                                fontFamily: 'Montserrat',
-                                fontSize: 11.sp,
-                                fontWeight: FontWeight.w700,
-                                color: Colors.white,
-                                shadows: const [
-                                  Shadow(color: Colors.black54, blurRadius: 4),
+                    ),
+                    // VEH ID pill — bottom-center
+                    // Positioned(
+                    //   bottom: 0,
+                    //   left: 0,
+                    //   right: 0,
+                    //   child: Container(
+                    //     color: AppColors.primary,
+                    //     padding: EdgeInsets.symmetric(
+                    //       horizontal: 6.w,
+                    //       vertical: 4.h,
+                    //     ),
+                    //     child: Text(
+                    //       v.vehicleId,
+                    //       textAlign: TextAlign.center,
+                    //       style: TextStyle(
+                    //         fontFamily: 'Montserrat',
+                    //         fontSize: 9.sp,
+                    //         fontWeight: FontWeight.w700,
+                    //         color: Colors.white,
+                    //         letterSpacing: 0.3,
+                    //       ),
+                    //       overflow: TextOverflow.ellipsis,
+                    //     ),
+                    //   ),
+                    // ),
+                    // Winning/Losing chip
+                    if (hasBid)
+                      Positioned(
+                        top: 8.h,
+                        left: 6.w,
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(12.r),
+                          child: BackdropFilter(
+                            filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                            child: Container(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 7.w,
+                                vertical: 3.h,
+                              ),
+                              decoration: BoxDecoration(
+                                color: isWinning
+                                    ? const Color(
+                                        0xFF2E7D32,
+                                      ).withValues(alpha: 0.45)
+                                    : const Color(
+                                        0xFFC62828,
+                                      ).withValues(alpha: 0.45),
+                                borderRadius: BorderRadius.circular(12.r),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(
+                                    isWinning
+                                        ? Icons.emoji_events_rounded
+                                        : Icons.trending_down_rounded,
+                                    size: 10.r,
+                                    color: Colors.white,
+                                  ),
+                                  SizedBox(width: 3.w),
+                                  Text(
+                                    isWinning ? 'Winning' : 'Losing',
+                                    style: TextStyle(
+                                      fontFamily: 'Montserrat',
+                                      fontSize: 9.sp,
+                                      fontWeight: FontWeight.w700,
+                                      color: Colors.white,
+                                    ),
+                                  ),
                                 ],
                               ),
                             ),
-                          ],
+                          ),
                         ),
                       ),
-                    ),
+                  ],
+                ),
+              ),
+
+              // ── Right: title + timer + yard ──────────────
+              Expanded(
+                child: Padding(
+                  padding: EdgeInsets.fromLTRB(12.w, 4.h, 12.w, 12.h),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Make + Model (bold)
+                      Text(
+                        '${v.make} ${v.model}',
+                        style: TextStyle(
+                          fontFamily: 'Montserrat',
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.black,
+                        ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      SizedBox(height: 2.h),
+                      // Reg No · Year
+                      Text(
+                        '${v.registrationNo}  ·  ${v.year}',
+                        style: TextStyle(
+                          fontFamily: 'Montserrat',
+                          fontSize: 11.sp,
+                          color: AppColors.grey600,
+                        ),
+                      ),
+                      SizedBox(height: 8.h),
+                      // Timer badge
+                      TimerBadge(endAt: v.auctionEndDate),
+                    ],
                   ),
                 ),
+              ),
             ],
           ),
 
-          // ── Content ───────────────────────────────────────────
+          // ══════════════════════════════════════════════════
+          // ROW 2: always-visible 2-col info grid
+          // Yard Name | Yard Location  /  Auction ID | Vehicle ID
+          // ══════════════════════════════════════════════════
           Padding(
-            padding: EdgeInsets.fromLTRB(14.w, 12.h, 14.w, 14.h),
+            padding: EdgeInsets.fromLTRB(12.w, 10.h, 12.w, 0),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                // Title: Make Model  -  RegNo  -  Year
-                Text(
-                  '${v.make} | ${v.model}  ',
-                  style: TextStyle(
-                    fontFamily: 'Montserrat',
-                    fontSize: 12.sp,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.black,
-                  ),
+                _GridRow(
+                  'Yard Name',
+                  v.yardName,
+                  'Yard Location',
+                  v.yardLocation,
+                  singleLine: true,
                 ),
-                SizedBox(height: 4.h),
-                Text(
-                  ' ${v.registrationNo}  |  ${v.year}',
-                  style: TextStyle(
-                    fontFamily: 'Montserrat',
-                    fontSize: 12.sp,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.black,
-                  ),
+                SizedBox(height: 2.h),
+                _GridRow(
+                  'Auction ID',
+                  v.auctionId,
+                  'Vehicle ID',
+                  v.vehicleId,
+                  singleLine: true,
                 ),
-                SizedBox(height: 12.h),
-                // ── Always-visible info rows ───────────────────
-                _InfoRow(
-                  icon: Icons.business_rounded,
-                  label: 'Yard Name',
-                  value: v.yardName,
-                  isEven: true,
-                  truncate: !_expanded,
-                ),
-                _InfoRow(
-                  icon: Icons.location_on_outlined,
-                  label: 'Yard Location',
-                  value: _expanded
-                      ? v.yardLocation
-                      : v.yardLocation.split(',').first.trim(),
-                  isEven: false,
-                  truncate: !_expanded,
-                ),
-                // ── Expanded details ───────────────────────────
-                if (_expanded) ...[
-                  _InfoRow(
-                    icon: Icons.vpn_key_outlined,
-                    label: 'Vehicle ID',
-                    value: v.vehicleId,
-                    isEven: true,
+              ],
+            ),
+          ),
+
+          // ══════════════════════════════════════════════════
+          // EXPANDED DETAILS
+          // ══════════════════════════════════════════════════
+          if (_expanded)
+            Padding(
+              padding: EdgeInsets.fromLTRB(12.w, 4.h, 12.w, 0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _GridRow('RC Availability', '—', 'Repo Date', v.repoDate),
+                       SizedBox(height: 2.h),
+                  _GridRow(
+                    'Registered RTO',
+                    v.registeredRto,
+                    'Transmission',
+                    v.transmission,
                   ),
-                  _InfoRow(
-                    icon: Icons.fingerprint,
-                    label: 'Chassis No',
-                    value: v.chassisNo,
-                    isEven: false,
+                       SizedBox(height: 2.h),
+                  _GridRow('Variant', v.variant, 'Colour', v.colour),
+                       SizedBox(height: 2.h),
+                  _GridRow('Fuel Type', v.fuelType, 'Owner', v.owner),
+                       SizedBox(height: 2.h),
+                  _GridRow(
+                    'Contact Person',
+                    v.contactPersonName,
+                    'Mobile',
+                    v.contactPersonNumber,
                   ),
-                  _InfoRow(
-                    icon: Icons.settings_outlined,
-                    label: 'Engine No',
-                    value: v.engineNo,
-                    isEven: true,
-                  ),
-                  _InfoRow(
-                    icon: Icons.description_outlined,
-                    label: 'RC Availability',
-                    value: '—',
-                    isEven: false,
-                  ),
-                  _InfoRow(
-                    icon: Icons.person_outline_rounded,
-                    label: 'Owner',
-                    value: v.owner,
-                    isEven: true,
-                  ),
-                  _InfoRow(
-                    icon: Icons.calendar_today_outlined,
-                    label: 'Repo Date',
-                    value: v.repoDate,
-                    isEven: false,
-                  ),
-                  _InfoRow(
-                    icon: Icons.local_parking_rounded,
-                    label: 'Parking Charges',
-                    value: '0.0',
-                    isEven: true,
-                  ),
-                  _InfoRow(
-                    icon: Icons.location_city_outlined,
-                    label: 'Registered RTO',
-                    value: v.registeredRto,
-                    isEven: false,
-                  ),
-                  _InfoRow(
-                    icon: Icons.swap_horiz_rounded,
-                    label: 'Transmission',
-                    value: v.transmission,
-                    isEven: true,
-                  ),
-                  _InfoRow(
-                    icon: Icons.tune_rounded,
-                    label: 'Variant',
-                    value: v.variant,
-                    isEven: false,
-                  ),
-                  _InfoRow(
-                    icon: Icons.palette_outlined,
-                    label: 'Colour',
-                    value: v.colour,
-                    isEven: true,
-                  ),
-                  _InfoRow(
-                    icon: Icons.local_gas_station_outlined,
-                    label: 'Fuel Type',
-                    value: v.fuelType,
-                    isEven: false,
-                  ),
-                  _InfoRow(
-                    icon: Icons.receipt_outlined,
-                    label: 'Transaction Fees',
-                    value: '0.0',
-                    isEven: true,
-                  ),
-                  _InfoRow(
-                    icon: Icons.badge_outlined,
-                    label: 'Contact Person',
-                    value: v.contactPersonName,
-                    isEven: false,
-                  ),
-                  _InfoRow(
-                    icon: Icons.phone_outlined,
-                    label: 'Mobile',
-                    value: v.contactPersonNumber,
-                    isEven: true,
-                  ),
-                  _InfoRow(
-                    icon: Icons.category_outlined,
-                    label: 'Category',
-                    value: v.category,
-                    isEven: false,
-                  ),
-                  _InfoRow(
-                    icon: Icons.attach_money_rounded,
-                    label: 'Start Price',
-                    value: '₹ ${_fmt(v.minimumPrice)}',
-                    isEven: true,
-                  ),
-                  _InfoRow(
-                    icon: Icons.gavel_rounded,
-                    label: 'Highest Bid',
-                    value: v.currentHighestBid != null
+                  //      SizedBox(height: 2.h),
+                  // _GridRow(
+                  //   'Category',
+                  //   v.category,
+                  //   'Market Value',
+                  //   '₹ ${_fmt(v.minimumPrice)}',
+                  // ),
+                       SizedBox(height: 2.h),
+                  _GridRow(
+                    'Start Price',
+                    '₹ ${_fmt(v.minimumPrice)}',
+                    'Highest Bid',
+                    v.currentHighestBid != null
                         ? '₹ ${_fmt(v.currentHighestBid!)}'
-                        : 'No bids yet',
-                    isEven: false,
+                        : 'No bids',
                   ),
+                       SizedBox(height: 2.h),
+                  _GridRow('Parking Charges', '0.0', 'Transaction Fees', '0.0'),
+                                    _GridRow('Chassis No', v.chassisNo, 'Engine No', v.engineNo),
+
+                  // Yard name/location — full values in expanded
+                  _GridRow(
+                    'Yard Name',
+                    v.yardName,
+                    'Yard Location',
+                    v.yardLocation,
+                  ),
+                       SizedBox(height: 2.h),
                   if (v.remarks.isNotEmpty)
-                    _InfoRow(
-                      icon: Icons.notes_rounded,
-                      label: 'Remarks',
-                      value: v.remarks,
-                      isEven: true,
-                    ),
-                  SizedBox(height: 14.h),
-                  // ── Available Buying Limit ────────────────────
+                    _GridRow('Remarks', v.remarks, '', ''),
+                  SizedBox(height: 4.h),
+                  // Available buying limit
                   Container(
+                    width: double.infinity,
                     padding: EdgeInsets.symmetric(
-                      horizontal: 4.w,
-                      vertical: 6.h,
+                      horizontal: 12.w,
+                      vertical: 8.h,
                     ),
-                    color: AppColors.grey100,
+                    decoration: BoxDecoration(
+                      color: AppColors.grey100,
+                      borderRadius: BorderRadius.circular(8.r),
+                    ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -607,7 +542,7 @@ class _VehicleCardState extends State<_VehicleCard> {
                           'Available Buying Limit: ',
                           style: TextStyle(
                             fontFamily: 'Montserrat',
-                            fontSize: 13.sp,
+                            fontSize: 12.sp,
                             color: AppColors.grey600,
                           ),
                         ),
@@ -615,7 +550,7 @@ class _VehicleCardState extends State<_VehicleCard> {
                           '₹ ${_fmt(v.availableBalance)}',
                           style: TextStyle(
                             fontFamily: 'Montserrat',
-                            fontSize: 13.sp,
+                            fontSize: 12.sp,
                             fontWeight: FontWeight.w700,
                             color: AppColors.black,
                           ),
@@ -623,242 +558,211 @@ class _VehicleCardState extends State<_VehicleCard> {
                       ],
                     ),
                   ),
-                  SizedBox(height: 10.h),
-                  // ── 2×2 chips grid ────────────────────────────
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _BidChip(
-                          label: 'Your Bid',
-                          value: v.yourBid > 0 ? '₹ ${_fmt(v.yourBid)}' : '₹ 0',
-                          showNoBid: v.yourBid == 0,
-                          winStatus: v.yourBid > 0
-                              ? (v.currentHighestBid == null ||
-                                    v.yourBid >= v.currentHighestBid!)
-                              : null,
-                        ),
-                      ),
-                      SizedBox(width: 10.w),
-                      Expanded(
-                        child: _BidChip(
-                          label: 'Max Bids',
-                          value: v.maxBids.toString(),
-                        ),
-                      ),
-                    ],
+
+                    Padding(
+            padding: EdgeInsets.fromLTRB(12.w, 0, 12.w, 10.h),
+            child: Row(
+              children: [
+                Expanded(
+                  child: _BidChip(
+                    label: 'Your Bid',
+                    value: v.yourBid > 0 ? '₹ ${_fmt(v.yourBid)}' : '₹ 0',
                   ),
-                  SizedBox(height: 8.h),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _BidChip(
-                          label: 'Start Price',
-                          value: '₹ ${_fmt(v.minimumPrice)}',
-                        ),
-                      ),
-                      SizedBox(width: 10.w),
-                      Expanded(
-                        child: _BidChip(
-                          label: 'Bids Received',
-                          value: v.bidsReceived.toString(),
-                        ),
-                      ),
-                    ],
+                ),
+                SizedBox(width: 8.w),
+                Expanded(
+                  child: _BidChip(
+                    label: 'Bids Left',
+                    value: v.bidsLeft.toString(),
                   ),
-                  SizedBox(height: 4.h),
+                ),
+                SizedBox(width: 8.w),
+                Expanded(
+                  child: _BidChip(
+                    label: 'Bids',
+                    value: v.bidsReceived.toString(),
+                  ),
+                ),
+              ],
+            ),
+          ),
+
                 ],
-                SizedBox(height: 8.h),
-                // ── See More with divider lines on both sides ─────
-                Row(
-                  children: [
-                    Expanded(
-                      child: Divider(color: AppColors.grey400, thickness: 1),
-                    ),
-                    SizedBox(width: 10.w),
-                    GestureDetector(
-                      onTap: () => setState(() => _expanded = !_expanded),
-                      child: Container(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 16.w,
-                          vertical: 3.h,
-                        ),
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            color: AppColors.grey400,
-                            width: 1,
+              ),
+            ),
+SizedBox(height: 8.h,),
+          // ════════════════════════════════════════════Fyard══════
+          // See More / Less
+          // ══════════════════════════════════════════════════
+          GestureDetector(
+            onTap: () => setState(() => _expanded = !_expanded),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Divider(color: AppColors.grey300, thickness: 1),
+                ),
+                SizedBox(width: 8.w),
+                Container(
+                  height: 20,
+                  decoration: BoxDecoration(
+                    border: Border.all(width: 1,color: AppColors.grey400),
+                        borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 8.0,right: 8),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          _expanded ? 'See Less' : 'See More',
+                          style: TextStyle(
+                            fontFamily: 'Montserrat',
+                            fontSize: 11.sp,
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.grey700,
                           ),
-                          borderRadius: BorderRadius.circular(20.r),
                         ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              _expanded ? 'See Less' : 'See More',
-                              style: TextStyle(
-                                fontFamily: 'Montserrat',
-                                fontSize: 12.sp,
-                                fontWeight: FontWeight.w600,
-                                color: AppColors.grey700,
-                              ),
-                            ),
-                            SizedBox(width: 4.w),
-                            Icon(
-                              _expanded
-                                  ? Icons.keyboard_arrow_up_rounded
-                                  : Icons.keyboard_arrow_down_rounded,
+                        SizedBox(width: 4.w),
+                        Icon(
+                          _expanded
+                              ? Icons.keyboard_arrow_up_rounded
+                              : Icons.keyboard_arrow_down_rounded,
+                          size: 16.r,
+                          color: AppColors.grey700,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                SizedBox(width: 8.w),
+                Expanded(
+                  child: Divider(color: AppColors.grey300, thickness: 1),
+                ),
+              ],
+            ),
+          ),
+
+          // ══════════════════════════════════════════════════
+          // ROW 3: always-visible 3-chip bid summary
+          // Your Bid | Bids Left | Bids
+          // ══════════════════════════════════════════════════
+         SizedBox(height: 8.h),
+          // ══════════════════════════════════════════════════
+          // ROW 4: bid input + PLACE BID
+          // ══════════════════════════════════════════════════
+          Padding(
+            padding: EdgeInsets.fromLTRB(12.w, 0, 12.w, 14.h),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Container(
+                    height: 32.h,
+                    decoration: BoxDecoration(
+                      border: Border.all(color: AppColors.grey300),
+                      borderRadius: BorderRadius.circular(8.r),
+                    ),
+                    child: Row(
+                      children: [
+                        GestureDetector(
+                          onTap: _decreaseBid,
+                          behavior: HitTestBehavior.opaque,
+                          child: SizedBox(
+                            width: 40.r,
+                            height: 30.h,
+                            child: Icon(
+                              Icons.remove_rounded,
                               size: 18.r,
                               color: AppColors.grey700,
                             ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    SizedBox(width: 10.w),
-                    Expanded(
-                      child: Divider(color: AppColors.grey400, thickness: 1),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 12.h),
-                // ── Bid row ──────────────────────────────────────
-                Row(
-                  children: [
-                    // [-  ₹ amount  +] single pill
-                    Expanded(
-                      child: Container(
-                        height: 36.h,
-                        decoration: BoxDecoration(
-                          border: Border.all(color: const Color(0xFFCCCCCC)),
-                          borderRadius: BorderRadius.circular(8.r),
-                        ),
-                        child: Row(
-                          children: [
-                            GestureDetector(
-                              onTap: _decreaseBid,
-                              behavior: HitTestBehavior.opaque,
-                              child: Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 8.w),
-                                child: Container(
-                                  width: 28.r,
-                                  height: 28.r,
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    border: Border.all(
-                                      color: AppColors.grey400,
-                                      width: 1.5,
-                                    ),
-                                  ),
-                                  child: Icon(
-                                    Icons.remove,
-                                    size: 16.r,
-                                    color: AppColors.black,
-                                  ),
-                                ),
-                              ),
-                            ),
-                            Expanded(
-                              child: TextField(
-                                controller: _bidController,
-                                keyboardType: TextInputType.number,
-                                textAlign: TextAlign.center,
-                                inputFormatters: [
-                                  FilteringTextInputFormatter.digitsOnly,
-                                ],
-                                onChanged: _onBidTextChanged,
-                                style: TextStyle(
-                                  fontFamily: 'Montserrat',
-                                  fontSize: 15.sp,
-                                  fontWeight: FontWeight.w700,
-                                  color: AppColors.black,
-                                ),
-                                decoration: InputDecoration(
-                                  prefixText: '₹  ',
-                                  prefixStyle: TextStyle(
-                                    fontFamily: 'Montserrat',
-                                    fontSize: 15.sp,
-                                    fontWeight: FontWeight.w700,
-                                    color: AppColors.black,
-                                  ),
-                                  border: InputBorder.none,
-                                  enabledBorder: InputBorder.none,
-                                  focusedBorder: InputBorder.none,
-                                  isDense: true,
-                                  contentPadding: EdgeInsets.zero,
-                                ),
-                              ),
-                            ),
-                            GestureDetector(
-                              onTap: _increaseBid,
-                              behavior: HitTestBehavior.opaque,
-                              child: Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 8.w),
-                                child: Container(
-                                  width: 28.r,
-                                  height: 28.r,
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    border: Border.all(
-                                      color: AppColors.grey400,
-                                      width: 1.5,
-                                    ),
-                                  ),
-                                  child: Icon(
-                                    Icons.add,
-                                    size: 16.r,
-                                    color: AppColors.black,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    SizedBox(width: 10.w),
-                    // BID NOW pill
-                    // BID NOW pill — uses per-card _isPlacingBid (not shared controller state)
-                    GestureDetector(
-                      onTap: _isPlacingBid ? null : () => _placeBid(context),
-                      child: Container(
-                        height: 32.h,
-                        padding: EdgeInsets.symmetric(horizontal: 18.w),
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: _isPlacingBid
-                                ? [
-                                    const Color(0xFFAA5555),
-                                    const Color(0xFF884444),
-                                  ]
-                                : [
-                                    const Color(0xFF8B1212),
-                                    const Color(0xFF5C0A0A),
-                                  ],
                           ),
-                          borderRadius: BorderRadius.circular(30.r),
                         ),
-                        alignment: Alignment.center,
-                        child: _isPlacingBid
-                            ? SizedBox(
-                                width: 16.r,
-                                height: 16.r,
-                                child: const CircularProgressIndicator(
-                                  color: Colors.white,
-                                  strokeWidth: 2,
-                                ),
-                              )
-                            : Text(
-                                'BID NOW',
-                                style: TextStyle(
-                                  fontFamily: 'Montserrat',
-                                  fontSize: 12.sp,
-                                  fontWeight: FontWeight.w800,
-                                  color: Colors.white,
-                                  letterSpacing: 0.3,
-                                ),
+                        Expanded(
+                          child: TextField(
+                            
+                            controller: _bidController,
+                            keyboardType: TextInputType.number,
+                            textAlign: TextAlign.center,
+                            inputFormatters: [
+                              FilteringTextInputFormatter.digitsOnly,
+                            ],
+                            onChanged: _onBidTextChanged,
+                            style: TextStyle(
+                              fontFamily: 'Montserrat',
+                              fontSize: 14.sp,
+                              fontWeight: FontWeight.w700,
+                              color: AppColors.black,
+                            ),
+                            decoration: InputDecoration(
+                              prefixText: '₹  ',
+                              prefixStyle: TextStyle(
+                                fontFamily: 'Montserrat',
+                                fontSize: 14.sp,
+                                fontWeight: FontWeight.w700,
+                                color: AppColors.black,
                               ),
-                      ),
+                              border: InputBorder.none,
+                              enabledBorder: InputBorder.none,
+                              focusedBorder: InputBorder.none,
+                              isDense: true,
+                              contentPadding: EdgeInsets.zero,
+                            ),
+                          ),
+                        ),
+                        GestureDetector(
+                          onTap: _increaseBid,
+                          behavior: HitTestBehavior.opaque,
+                          child: SizedBox(
+                            width: 40.r,
+                            height: 30.h,
+                            child: Icon(
+                              Icons.add_rounded,
+                              size: 18.r,
+                              color: AppColors.grey700,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
+                  ),
+                ),
+                SizedBox(width: 10.w),
+                GestureDetector(
+                  onTap: _isPlacingBid ? null : () => _placeBid(context),
+                  child: Container(
+                    height: 28.h,
+                    padding: EdgeInsets.symmetric(horizontal: 20.w),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: _isPlacingBid
+                            ? [const Color(0xFFAA5555), const Color(0xFF884444)]
+                            : [
+                                AppColors.ctaGradientStart,
+                                AppColors.ctaGradientEnd,
+                              ],
+                      ),
+                      borderRadius: BorderRadius.circular(20.r),
+                    ),
+                    alignment: Alignment.center,
+                    child: _isPlacingBid
+                        ? SizedBox(
+                            width: 16.r,
+                            height: 16.r,
+                            child: const CircularProgressIndicator(
+                              color: Colors.white,
+                              strokeWidth: 2,
+                            ),
+                          )
+                        : Text(
+                            'PLACE BID',
+                            style: TextStyle(
+                              fontFamily: 'Montserrat',
+                              fontSize: 12.sp,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.white,
+                              letterSpacing: 0.5,
+                            ),
+                          ),
+                  ),
                 ),
               ],
             ),
@@ -900,62 +804,117 @@ class _VehicleCardState extends State<_VehicleCard> {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+// Mini info row inside the card header (icon + text)
+// ─────────────────────────────────────────────────────────────────────────────
 
-class _InfoRow extends StatelessWidget {
+class _MiniInfo extends StatelessWidget {
   final IconData icon;
-  final String label;
-  final String value;
-  final bool isEven;
-  final bool truncate;
+  final String text;
+  const _MiniInfo({required this.icon, required this.text});
 
-  const _InfoRow({
-    required this.icon,
-    required this.label,
-    required this.value,
-    this.isEven = false,
-    this.truncate = false,
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Icon(icon, size: 11.r, color: AppColors.grey500),
+        SizedBox(width: 4.w),
+        Expanded(
+          child: Text(
+            text.isNotEmpty ? text : '—',
+            style: TextStyle(
+              fontFamily: 'Montserrat',
+              fontSize: 10.sp,
+              color: AppColors.grey700,
+            ),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 2-column detail grid row
+// ─────────────────────────────────────────────────────────────────────────────
+
+class _GridRow extends StatelessWidget {
+  final String label1;
+  final String value1;
+  final String label2;
+  final String value2;
+  final bool singleLine;
+  const _GridRow(
+    this.label1,
+    this.value1,
+    this.label2,
+    this.value2, {
+    this.singleLine = false,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: isEven ? Colors.white : AppColors.grey200.withOpacity(0.9),
-      padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 4.h),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Icon(icon, size: 12.r, color: AppColors.grey1),
-          SizedBox(width: 6.w),
-          SizedBox(
-            width: 100.w,
-            child: Text(
-              label,
-              style: TextStyle(
-                fontFamily: 'Montserrat',
-                fontSize: 12.sp,
-                color: AppColors.black,
-              ),
-            ),
-          ),
+    return Row(
+      children: [
+        Expanded(
+          child: _Cell(label: label1, value: value1, singleLine: singleLine),
+        ),
+        SizedBox(width: 8.w),
+        if (label2.isNotEmpty)
           Expanded(
-            child: Text(
-              value.isNotEmpty ? value : '\u2014',
-              textAlign: TextAlign.right,
-              maxLines: truncate ? 1 : null,
-              overflow: truncate ? TextOverflow.ellipsis : TextOverflow.visible,
-              style: TextStyle(
-                fontFamily: 'Montserrat',
-                fontSize: 12.sp,
-                fontWeight: FontWeight.w500,
-                color: AppColors.black,
-              ),
-            ),
-          ),
-        ],
-      ),
+            child: _Cell(label: label2, value: value2, singleLine: singleLine),
+          )
+        else
+          const Expanded(child: SizedBox()),
+      ],
     );
   }
 }
+
+class _Cell extends StatelessWidget {
+  final String label;
+  final String value;
+  final bool singleLine;
+  const _Cell({
+    required this.label,
+    required this.value,
+    this.singleLine = false,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: TextStyle(
+            fontFamily: 'Montserrat',
+            fontSize: 12.sp,
+            color: AppColors.black,
+            fontWeight: FontWeight.w400,
+          ),
+        ),
+    
+        Text(
+          value.isNotEmpty ? value : '—',
+          style: TextStyle(
+            fontFamily: 'Montserrat',
+            fontSize: 12.sp,
+            fontWeight: FontWeight.w600,
+            color: AppColors.black,
+          ),
+          maxLines: singleLine ? 1 : 6,
+          overflow: TextOverflow.ellipsis,
+        ),
+      ],
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 
 class _CircleBidButton extends StatelessWidget {
   final IconData icon;
@@ -1217,91 +1176,39 @@ class AuctionFilterBottomSheetV2 extends StatelessWidget {
 class _BidChip extends StatelessWidget {
   final String label;
   final String value;
-  final bool showNoBid;
-  // null = no bid placed, true = winning, false = losing
-  final bool? winStatus;
 
-  const _BidChip({
-    required this.label,
-    required this.value,
-    this.showNoBid = false,
-    this.winStatus,
-  });
+  const _BidChip({required this.label, required this.value});
 
   @override
   Widget build(BuildContext context) {
-    final borderColor = winStatus == null
-        ? AppColors.grey300
-        : winStatus!
-        ? const Color(0xFF2E7D32) // green
-        : const Color(0xFFC62828); // red
-
     return Container(
-      height: 52.h,
-      clipBehavior: Clip.antiAlias,
+      height: 36.h,
       decoration: BoxDecoration(
-        color: Colors.white,
-        border: Border.all(
-          color: borderColor,
-          width: winStatus != null ? 1.5 : 1,
-        ),
-        borderRadius: BorderRadius.circular(24.r),
+        color: AppColors.grey200,
+        border: Border.all(color: AppColors.grey300),
+        borderRadius: BorderRadius.circular(10.r),
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          // Status chip (Winning / Losing) or label
-          if (winStatus != null)
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 1.h),
-              decoration: BoxDecoration(
-                color: winStatus!
-                    ? const Color(0xFF2E7D32)
-                    : const Color(0xFFC62828),
-                borderRadius: BorderRadius.circular(10.r),
-              ),
-              child: Text(
-                winStatus! ? 'Winning' : 'Losing',
-                style: TextStyle(
-                  fontFamily: 'Montserrat',
-                  fontSize: 8.sp,
-                  fontWeight: FontWeight.w700,
-                  color: Colors.white,
-                ),
-              ),
-            )
-          else
-            Text(
-              label,
-              style: TextStyle(
-                fontFamily: 'Montserrat',
-                fontSize: 11.sp,
-                color: AppColors.black,
-              ),
+          Text(
+            label,
+            style: TextStyle(
+              fontFamily: 'Montserrat',
+              fontSize: 10.sp,
+              color: AppColors.grey500,
             ),
-          SizedBox(height: 2.h),
+          ),
+   
           Text(
             value,
             style: TextStyle(
               fontFamily: 'Montserrat',
               fontSize: 12.sp,
-              fontWeight: FontWeight.w700,
-              color: winStatus == null
-                  ? AppColors.black
-                  : winStatus!
-                  ? const Color(0xFF2E7D32)
-                  : const Color(0xFFC62828),
+              fontWeight: FontWeight.w600,
+              color: AppColors.black,
             ),
           ),
-          if (showNoBid)
-            Text(
-              'No Bid',
-              style: TextStyle(
-                fontFamily: 'Montserrat',
-                fontSize: 8.sp,
-                color: AppColors.grey500,
-              ),
-            ),
         ],
       ),
     );

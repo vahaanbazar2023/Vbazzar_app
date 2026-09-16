@@ -96,36 +96,43 @@ class _TimerBadgeState extends State<TimerBadge> {
 
   @override
   Widget build(BuildContext context) {
-    return ClipPath(
-      clipper: _ArrowBadgeClipper(mirrored: widget.mirrored),
-      child: Container(
-        color: AppColors.red,
-        padding: EdgeInsets.only(
-          left: widget.mirrored ? 10.w : 20.w,
-          right: widget.mirrored ? 10.w : 10.w,
-          top: 6.h,
-          bottom: 6.h,
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Image.asset(
-              AppAssets.hourglassPng,
-              width: 12.r,
-              height: 12.r,
-              color: AppColors.white,
-            ),
-            SizedBox(width: 4.w),
-            Text(
-              _timeLeft(),
-              style: TextStyle(
-                fontFamily: 'Montserrat',
-                fontSize: 10.sp,
-                fontWeight: FontWeight.w600,
+    return SizedBox(
+      width: 160.w,
+      child: ClipPath(
+        clipper: _ArrowBadgeClipper(mirrored: widget.mirrored),
+        child: Container(
+          color: AppColors.red,
+          padding: EdgeInsets.only(
+            left: widget.mirrored ? 10.w : 20.w,
+            right: widget.mirrored ? 10.w : 10.w,
+            top: 6.h,
+            bottom: 6.h,
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Image.asset(
+                AppAssets.hourglassPng,
+                width: 12.r,
+                height: 12.r,
                 color: AppColors.white,
               ),
-            ),
-          ],
+              SizedBox(width: 4.w),
+              Flexible(
+                child: Text(
+                  _timeLeft(),
+                  style: TextStyle(
+                    fontFamily: 'Montserrat',
+                    fontSize: 10.sp,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.white,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
