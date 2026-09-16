@@ -29,6 +29,9 @@ class VehicleListing {
   final String yardLocation;
   final String contactPersonName;
   final String contactPersonNumber;
+  final String rcAvailability;
+  final String transactionFees;
+  final String parkingCharges;
   final int yourBid;
   final int bidsLeft;
   final int bidsReceived;
@@ -75,6 +78,9 @@ class VehicleListing {
     required this.yardLocation,
     required this.contactPersonName,
     required this.contactPersonNumber,
+    this.rcAvailability = '',
+    this.transactionFees = '0.00',
+    this.parkingCharges = '0.00',
     required this.yourBid,
     required this.bidsLeft,
     required this.bidsReceived,
@@ -140,6 +146,9 @@ class VehicleListing {
       yardLocation: json['yard_location']?.toString() ?? '',
       contactPersonName: json['contact_person_name']?.toString() ?? '',
       contactPersonNumber: json['contact_person_number']?.toString() ?? '',
+      rcAvailability: json['rc_availability']?.toString() ?? '',
+      transactionFees: json['transaction_fees']?.toString() ?? '0.00',
+      parkingCharges: json['parking_charges']?.toString() ?? '0.00',
       yourBid: (json['your_bid'] as num?)?.toInt() ?? 0,
       bidsLeft: (json['bids_left'] as num?)?.toInt() ?? 0,
       bidsReceived: (json['bids_received'] as num?)?.toInt() ?? 0,

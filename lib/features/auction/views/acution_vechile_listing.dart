@@ -290,7 +290,7 @@ class _VehicleCardState extends State<_VehicleCard> {
         border: Border.all(color: cardBorderColor, width: hasBid ? 1.5 : 1.0),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.07),
+            color: Colors.black.withValues(alpha: 0.2),
             blurRadius: 10,
             offset: const Offset(0, 3),
           ),
@@ -440,20 +440,24 @@ class _VehicleCardState extends State<_VehicleCard> {
 
           // ══════════════════════════════════════════════════
           // ROW 2: always-visible 2-col info grid
-          // Yard Name | Yard Location  /  Auction ID | Vehicle ID
+          // Yard Name | Yard Location (truncated, hidden when expanded)
+          // Auction ID | Vehicle ID
           // ══════════════════════════════════════════════════
           Padding(
             padding: EdgeInsets.fromLTRB(12.w, 10.h, 12.w, 0),
             child: Column(
               children: [
-                _GridRow(
-                  'Yard Name',
-                  v.yardName,
-                  'Yard Location',
-                  v.yardLocation,
-                  singleLine: true,
-                ),
-                SizedBox(height: 2.h),
+                // Show truncated yard rows only when collapsed
+                if (!_expanded) ...[
+                  _GridRow(
+                    'Yard Name',
+                    v.yardName,
+                    'Yard Location',
+                    v.yardLocation,
+                    singleLine: true,
+                  ),
+                  SizedBox(height: 2.h),
+                ],
                 _GridRow(
                   'Auction ID',
                   v.auctionId,
@@ -474,34 +478,33 @@ class _VehicleCardState extends State<_VehicleCard> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _GridRow('RC Availability', '—', 'Repo Date', v.repoDate),
-                       SizedBox(height: 2.h),
-                  _GridRow(
+                  _OptGridRow(
+                    'RC Availability',
+                    v.rcAvailability,
+                    'Repo Date',
+                    v.repoDate,
+                  ),
+                  _OptGridRow(
+                    'Chassis No',
+                    v.chassisNo,
+                    'Engine No',
+                    v.engineNo,
+                  ),
+                  _OptGridRow(
                     'Registered RTO',
                     v.registeredRto,
                     'Transmission',
                     v.transmission,
                   ),
-                       SizedBox(height: 2.h),
-                  _GridRow('Variant', v.variant, 'Colour', v.colour),
-                       SizedBox(height: 2.h),
-                  _GridRow('Fuel Type', v.fuelType, 'Owner', v.owner),
-                       SizedBox(height: 2.h),
-                  _GridRow(
+                  _OptGridRow('Variant', v.variant, 'Colour', v.colour),
+                  _OptGridRow('Fuel Type', v.fuelType, 'Owner', v.owner),
+                  _OptGridRow(
                     'Contact Person',
                     v.contactPersonName,
                     'Mobile',
                     v.contactPersonNumber,
                   ),
-                  //      SizedBox(height: 2.h),
-                  // _GridRow(
-                  //   'Category',
-                  //   v.category,
-                  //   'Market Value',
-                  //   '₹ ${_fmt(v.minimumPrice)}',
-                  // ),
-                       SizedBox(height: 2.h),
-                  _GridRow(
+                  _OptGridRow(
                     'Start Price',
                     '₹ ${_fmt(v.minimumPrice)}',
                     'Highest Bid',
@@ -509,20 +512,24 @@ class _VehicleCardState extends State<_VehicleCard> {
                         ? '₹ ${_fmt(v.currentHighestBid!)}'
                         : 'No bids',
                   ),
-                       SizedBox(height: 2.h),
-                  _GridRow('Parking Charges', '0.0', 'Transaction Fees', '0.0'),
-                                    _GridRow('Chassis No', v.chassisNo, 'Engine No', v.engineNo),
-
-                  // Yard name/location — full values in expanded
-                  _GridRow(
+                  _OptGridRow(
+                    'Parking Charges',
+                    v.parkingCharges,
+                    'Transaction Fees',
+                    v.transactionFees,
+                  ),
+                  // Full Yard Name + Yard Location above remarks
+                  _OptGridRow(
                     'Yard Name',
                     v.yardName,
                     'Yard Location',
                     v.yardLocation,
                   ),
-                       SizedBox(height: 2.h),
                   if (v.remarks.isNotEmpty)
-                    _GridRow('Remarks', v.remarks, '', ''),
+                    Padding(
+                      padding: EdgeInsets.only(bottom: 6.h),
+                      child: _Cell(label: 'Remarks', value: v.remarks),
+                    ),
                   SizedBox(height: 4.h),
                   // Available buying limit
                   Container(
@@ -559,38 +566,39 @@ class _VehicleCardState extends State<_VehicleCard> {
                     ),
                   ),
 
-                    Padding(
-            padding: EdgeInsets.fromLTRB(12.w, 0, 12.w, 10.h),
-            child: Row(
-              children: [
-                Expanded(
-                  child: _BidChip(
-                    label: 'Your Bid',
-                    value: v.yourBid > 0 ? '₹ ${_fmt(v.yourBid)}' : '₹ 0',
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(12.w, 0, 12.w, 10.h),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: _BidChip(
+                            label: 'Your Bid',
+                            value: v.yourBid > 0
+                                ? '₹ ${_fmt(v.yourBid)}'
+                                : '₹ 0',
+                          ),
+                        ),
+                        SizedBox(width: 8.w),
+                        Expanded(
+                          child: _BidChip(
+                            label: 'Bids Left',
+                            value: v.bidsLeft.toString(),
+                          ),
+                        ),
+                        SizedBox(width: 8.w),
+                        Expanded(
+                          child: _BidChip(
+                            label: 'Bids',
+                            value: v.bidsReceived.toString(),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-                SizedBox(width: 8.w),
-                Expanded(
-                  child: _BidChip(
-                    label: 'Bids Left',
-                    value: v.bidsLeft.toString(),
-                  ),
-                ),
-                SizedBox(width: 8.w),
-                Expanded(
-                  child: _BidChip(
-                    label: 'Bids',
-                    value: v.bidsReceived.toString(),
-                  ),
-                ),
-              ],
-            ),
-          ),
-
                 ],
               ),
             ),
-SizedBox(height: 8.h,),
+          SizedBox(height: 8.h),
           // ════════════════════════════════════════════Fyard══════
           // See More / Less
           // ══════════════════════════════════════════════════
@@ -605,11 +613,11 @@ SizedBox(height: 8.h,),
                 Container(
                   height: 20,
                   decoration: BoxDecoration(
-                    border: Border.all(width: 1,color: AppColors.grey400),
-                        borderRadius: BorderRadius.circular(16),
+                    border: Border.all(width: 1, color: AppColors.grey400),
+                    borderRadius: BorderRadius.circular(16),
                   ),
                   child: Padding(
-                    padding: const EdgeInsets.only(left: 8.0,right: 8),
+                    padding: const EdgeInsets.only(left: 8.0, right: 8),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
@@ -646,7 +654,7 @@ SizedBox(height: 8.h,),
           // ROW 3: always-visible 3-chip bid summary
           // Your Bid | Bids Left | Bids
           // ══════════════════════════════════════════════════
-         SizedBox(height: 8.h),
+          SizedBox(height: 8.h),
           // ══════════════════════════════════════════════════
           // ROW 4: bid input + PLACE BID
           // ══════════════════════════════════════════════════
@@ -678,7 +686,6 @@ SizedBox(height: 8.h,),
                         ),
                         Expanded(
                           child: TextField(
-                            
                             controller: _bidController,
                             keyboardType: TextInputType.number,
                             textAlign: TextAlign.center,
@@ -873,6 +880,53 @@ class _GridRow extends StatelessWidget {
   }
 }
 
+/// Like _GridRow but skips itself if both values are blank/dash/zero
+class _OptGridRow extends StatelessWidget {
+  final String label1;
+  final String value1;
+  final String label2;
+  final String value2;
+  const _OptGridRow(this.label1, this.value1, this.label2, this.value2);
+
+  static bool _isEmpty(String v) {
+    final t = v.trim();
+    return t.isEmpty ||
+        t == '—' ||
+        t == '-' ||
+        t == '0' ||
+        t == '0.0' ||
+        t == '0.00';
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final v1empty = _isEmpty(value1);
+    final v2empty = label2.isEmpty || _isEmpty(value2);
+    // Skip entire row if both sides are empty
+    if (v1empty && v2empty) return const SizedBox.shrink();
+    return Padding(
+      padding: EdgeInsets.only(bottom: 6.h),
+      child: Row(
+        children: [
+          if (!v1empty)
+            Expanded(
+              child: _Cell(label: label1, value: value1),
+            )
+          else
+            const Expanded(child: SizedBox()),
+          SizedBox(width: 8.w),
+          if (!v2empty && label2.isNotEmpty)
+            Expanded(
+              child: _Cell(label: label2, value: value2),
+            )
+          else
+            const Expanded(child: SizedBox()),
+        ],
+      ),
+    );
+  }
+}
+
 class _Cell extends StatelessWidget {
   final String label;
   final String value;
@@ -897,7 +951,7 @@ class _Cell extends StatelessWidget {
             fontWeight: FontWeight.w400,
           ),
         ),
-    
+
         Text(
           value.isNotEmpty ? value : '—',
           style: TextStyle(
@@ -1199,7 +1253,7 @@ class _BidChip extends StatelessWidget {
               color: AppColors.grey500,
             ),
           ),
-   
+
           Text(
             value,
             style: TextStyle(
