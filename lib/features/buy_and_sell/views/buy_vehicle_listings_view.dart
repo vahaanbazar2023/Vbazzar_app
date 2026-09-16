@@ -16,6 +16,7 @@ import '../../subscription/services/subscription_guard_service.dart';
 import '../controllers/vehicle_detail_controller.dart';
 import '../domain/entities/buy_vehicle_entity.dart';
 import '../domain/entities/vehicle_category_entity.dart';
+import '../widgets/buy_sell_activity_fab.dart';
 
 class BuyVehicleListingsView extends GetView<BuyVehicleController> {
   const BuyVehicleListingsView({super.key});
@@ -39,193 +40,204 @@ class BuyVehicleListingsView extends GetView<BuyVehicleController> {
     return AppLayout(
       title: categoryName,
       subtitle: 'Browse available listings',
-      body: Column(
+      body: Stack(
         children: [
-          // ── Search bar + filter icon (white section) ──────────────────────
-          Padding(
-            padding: EdgeInsets.fromLTRB(
-              AppSpacing.md,
-              AppSpacing.sm,
-              AppSpacing.md,
-              0,
-            ),
-            child: Row(
-              children: [
-                // Search field
-                Expanded(
-                  child: SizedBox(
-                    height: 44.h,
-                    child: TextField(
-                      controller: controller.searchController,
-                      style: TextStyle(
-                        fontFamily: 'Montserrat',
-                        fontSize: 13.sp,
-                        color: AppColors.textPrimary,
-                      ),
-                      decoration: InputDecoration(
-                        hintText: 'Search vehicles...',
-                        hintStyle: TextStyle(
-                          fontFamily: 'Montserrat',
-                          fontSize: 13.sp,
-                          color: AppColors.grey400,
-                        ),
-                        prefixIcon: const Icon(
-                          Icons.search_rounded,
-                          color: AppColors.grey400,
-                          size: 18,
-                        ),
-                        suffixIcon: Obx(
-                          () => controller.searchQuery.value.isNotEmpty
-                              ? GestureDetector(
-                                  onTap: () =>
-                                      controller.searchController.clear(),
-                                  child: const Icon(
-                                    Icons.close_rounded,
-                                    color: AppColors.grey400,
-                                    size: 16,
-                                  ),
-                                )
-                              : const SizedBox.shrink(),
-                        ),
-                        contentPadding: EdgeInsets.symmetric(vertical: 10.h),
-                        isDense: true,
-                        filled: true,
-                        fillColor: AppColors.grey50,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: const BorderSide(
-                            color: AppColors.grey200,
+          Column(
+            children: [
+              // ── Search bar + filter icon (white section) ──────────────────────
+              Padding(
+                padding: EdgeInsets.fromLTRB(
+                  AppSpacing.md,
+                  AppSpacing.sm,
+                  AppSpacing.md,
+                  0,
+                ),
+                child: Row(
+                  children: [
+                    // Search field
+                    Expanded(
+                      child: SizedBox(
+                        height: 44.h,
+                        child: TextField(
+                          controller: controller.searchController,
+                          style: TextStyle(
+                            fontFamily: 'Montserrat',
+                            fontSize: 13.sp,
+                            color: AppColors.textPrimary,
                           ),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: const BorderSide(
-                            color: AppColors.grey200,
-                          ),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: const BorderSide(
-                            color: AppColors.primary,
-                            width: 1.5,
+                          decoration: InputDecoration(
+                            hintText: 'Search vehicles...',
+                            hintStyle: TextStyle(
+                              fontFamily: 'Montserrat',
+                              fontSize: 13.sp,
+                              color: AppColors.grey400,
+                            ),
+                            prefixIcon: const Icon(
+                              Icons.search_rounded,
+                              color: AppColors.grey400,
+                              size: 18,
+                            ),
+                            suffixIcon: Obx(
+                              () => controller.searchQuery.value.isNotEmpty
+                                  ? GestureDetector(
+                                      onTap: () =>
+                                          controller.searchController.clear(),
+                                      child: const Icon(
+                                        Icons.close_rounded,
+                                        color: AppColors.grey400,
+                                        size: 16,
+                                      ),
+                                    )
+                                  : const SizedBox.shrink(),
+                            ),
+                            contentPadding: EdgeInsets.symmetric(
+                              vertical: 10.h,
+                            ),
+                            isDense: true,
+                            filled: true,
+                            fillColor: AppColors.grey50,
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              borderSide: const BorderSide(
+                                color: AppColors.grey200,
+                              ),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              borderSide: const BorderSide(
+                                color: AppColors.grey200,
+                              ),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              borderSide: const BorderSide(
+                                color: AppColors.primary,
+                                width: 1.5,
+                              ),
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                ),
-                SizedBox(width: AppSpacing.sm),
-                // Filter icon button
-                Obx(() {
-                  final hasFilters = controller.appliedFilters.isNotEmpty;
-                  return GestureDetector(
-                    onTap: () => _showFilterSheet(context, controller),
-                    child: Container(
-                      width: 44.h,
-                      height: 44.h,
-                      decoration: BoxDecoration(
-                        color: hasFilters
-                            ? AppColors.primary
-                            : AppColors.grey50,
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(
-                          color: hasFilters
-                              ? AppColors.primary
-                              : AppColors.grey200,
+                    SizedBox(width: AppSpacing.sm),
+                    // Filter icon button
+                    Obx(() {
+                      final hasFilters = controller.appliedFilters.isNotEmpty;
+                      return GestureDetector(
+                        onTap: () => _showFilterSheet(context, controller),
+                        child: Container(
+                          width: 44.h,
+                          height: 44.h,
+                          decoration: BoxDecoration(
+                            color: hasFilters
+                                ? AppColors.primary
+                                : AppColors.grey50,
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(
+                              color: hasFilters
+                                  ? AppColors.primary
+                                  : AppColors.grey200,
+                            ),
+                          ),
+                          child: Icon(
+                            Icons.tune_rounded,
+                            size: 20,
+                            color: hasFilters
+                                ? Colors.white
+                                : AppColors.grey600,
+                          ),
                         ),
-                      ),
-                      child: Icon(
-                        Icons.tune_rounded,
-                        size: 20,
-                        color: hasFilters ? Colors.white : AppColors.grey600,
+                      );
+                    }),
+                  ],
+                ),
+              ),
+              SizedBox(height: AppSpacing.xs),
+              // ── Active filters strip ──────────────────────────────────────────
+              Obx(() {
+                if (controller.appliedFilters.isEmpty)
+                  return const SizedBox.shrink();
+                return _ActiveFiltersStrip(controller: controller);
+              }),
+              // ── Vehicle list ──────────────────────────────────────────────────
+              Expanded(
+                child: Obx(() {
+                  if (controller.isLoadingBuyVehicles.value &&
+                      controller.buyVehicles.isEmpty) {
+                    return _ShimmerList();
+                  }
+                  if (controller.hasErrorBuyVehicles.value &&
+                      controller.buyVehicles.isEmpty) {
+                    return _ErrorState(
+                      message: controller.errorMessageBuyVehicles.value,
+                      onRetry: () => controller.refreshBuyVehiclesList(),
+                    );
+                  }
+                  if (controller.buyVehicles.isEmpty) {
+                    return _EmptyState();
+                  }
+                  return RefreshIndicator(
+                    color: AppColors.primary,
+                    onRefresh: () => controller.refreshBuyVehiclesList(),
+                    child: NotificationListener<ScrollNotification>(
+                      onNotification: (n) {
+                        if (n is ScrollEndNotification &&
+                            n.metrics.pixels >=
+                                n.metrics.maxScrollExtent - 150) {
+                          controller.loadMoreBuyVehicles();
+                        }
+                        return false;
+                      },
+                      child: ListView.builder(
+                        padding: EdgeInsets.fromLTRB(
+                          AppSpacing.md,
+                          AppSpacing.sm,
+                          AppSpacing.md,
+                          100,
+                        ),
+                        itemCount:
+                            controller.buyVehicles.length +
+                            _adCount(controller) +
+                            (controller.isLoadingMoreBuyVehicles.value ? 1 : 0),
+                        itemBuilder: (_, i) {
+                          final totalVehicles = controller.buyVehicles.length;
+                          final totalAds = _adCount(controller);
+                          if (i == totalVehicles + totalAds) {
+                            return Padding(
+                              padding: EdgeInsets.symmetric(
+                                vertical: AppSpacing.md,
+                              ),
+                              child: const Center(
+                                child: CircularProgressIndicator(
+                                  color: AppColors.primary,
+                                  strokeWidth: 2,
+                                ),
+                              ),
+                            );
+                          }
+                          // Resolve actual item accounting for inserted ads
+                          final resolved = _resolveItem(i, controller);
+                          if (resolved is ListingAd) {
+                            return Padding(
+                              padding: EdgeInsets.only(bottom: AppSpacing.md),
+                              child: _ListingAdBanner(ad: resolved),
+                            );
+                          }
+                          final vehicle = resolved as BuyVehicleEntity;
+                          return Padding(
+                            padding: EdgeInsets.only(bottom: AppSpacing.md),
+                            child: _VehicleCard(vehicle: vehicle),
+                          );
+                        },
                       ),
                     ),
                   );
                 }),
-              ],
-            ),
+              ),
+            ],
           ),
-          SizedBox(height: AppSpacing.xs),
-          // ── Active filters strip ──────────────────────────────────────────
-          Obx(() {
-            if (controller.appliedFilters.isEmpty)
-              return const SizedBox.shrink();
-            return _ActiveFiltersStrip(controller: controller);
-          }),
-          // ── Vehicle list ──────────────────────────────────────────────────
-          Expanded(
-            child: Obx(() {
-              if (controller.isLoadingBuyVehicles.value &&
-                  controller.buyVehicles.isEmpty) {
-                return _ShimmerList();
-              }
-              if (controller.hasErrorBuyVehicles.value &&
-                  controller.buyVehicles.isEmpty) {
-                return _ErrorState(
-                  message: controller.errorMessageBuyVehicles.value,
-                  onRetry: () => controller.refreshBuyVehiclesList(),
-                );
-              }
-              if (controller.buyVehicles.isEmpty) {
-                return _EmptyState();
-              }
-              return RefreshIndicator(
-                color: AppColors.primary,
-                onRefresh: () => controller.refreshBuyVehiclesList(),
-                child: NotificationListener<ScrollNotification>(
-                  onNotification: (n) {
-                    if (n is ScrollEndNotification &&
-                        n.metrics.pixels >= n.metrics.maxScrollExtent - 150) {
-                      controller.loadMoreBuyVehicles();
-                    }
-                    return false;
-                  },
-                  child: ListView.builder(
-                    padding: EdgeInsets.fromLTRB(
-                      AppSpacing.md,
-                      AppSpacing.sm,
-                      AppSpacing.md,
-                      100,
-                    ),
-                    itemCount:
-                        controller.buyVehicles.length +
-                        _adCount(controller) +
-                        (controller.isLoadingMoreBuyVehicles.value ? 1 : 0),
-                    itemBuilder: (_, i) {
-                      final totalVehicles = controller.buyVehicles.length;
-                      final totalAds = _adCount(controller);
-                      if (i == totalVehicles + totalAds) {
-                        return Padding(
-                          padding: EdgeInsets.symmetric(
-                            vertical: AppSpacing.md,
-                          ),
-                          child: const Center(
-                            child: CircularProgressIndicator(
-                              color: AppColors.primary,
-                              strokeWidth: 2,
-                            ),
-                          ),
-                        );
-                      }
-                      // Resolve actual item accounting for inserted ads
-                      final resolved = _resolveItem(i, controller);
-                      if (resolved is ListingAd) {
-                        return Padding(
-                          padding: EdgeInsets.only(bottom: AppSpacing.md),
-                          child: _ListingAdBanner(ad: resolved),
-                        );
-                      }
-                      final vehicle = resolved as BuyVehicleEntity;
-                      return Padding(
-                        padding: EdgeInsets.only(bottom: AppSpacing.md),
-                        child: _VehicleCard(vehicle: vehicle),
-                      );
-                    },
-                  ),
-                ),
-              );
-            }),
-          ),
+          // ── Activity FAB ──────────────────────────────────
+          const Positioned(right: 16, bottom: 24, child: BuySellActivityFab()),
         ],
       ),
     );

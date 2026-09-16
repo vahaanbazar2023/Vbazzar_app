@@ -18,6 +18,7 @@ import '../../../routes/app_routes.dart';
 import '../controllers/vehicle_listing_controller.dart';
 import '../domain/entities/auction_entity.dart';
 import '../models/vehicle_listing.dart';
+import 'auction_activity_fab.dart';
 import 'auction_filter_bottom_sheet.dart';
 
 class AuctionVehicleListingScreen extends GetView<VehicleListingController> {
@@ -31,9 +32,14 @@ class AuctionVehicleListingScreen extends GetView<VehicleListingController> {
           : context.l10n.liveAuctions,
       showBack: true,
       headerExtra: _TabAndFilterBar(controller: controller),
-      body: TabBarView(
-        controller: controller.tabController,
-        children: List.generate(3, (i) => _TabContent(tabIndex: i)),
+      body: Stack(
+        children: [
+          TabBarView(
+            controller: controller.tabController,
+            children: List.generate(3, (i) => _TabContent(tabIndex: i)),
+          ),
+          const Positioned(right: 16, bottom: 24, child: AuctionActivityFab()),
+        ],
       ),
     );
   }

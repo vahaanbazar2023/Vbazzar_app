@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 import '../organisms/app_bottom_nav_bar.dart';
@@ -18,6 +17,7 @@ class AppLayout extends StatelessWidget {
   final VoidCallback? onBack;
   final Color? bodyColor;
   final Widget? headerExtra;
+  final Widget? floatingActionButton;
 
   const AppLayout({
     super.key,
@@ -29,6 +29,7 @@ class AppLayout extends StatelessWidget {
     this.onBack,
     this.headerExtra,
     this.bodyColor,
+    this.floatingActionButton,
   });
 
   @override
@@ -39,6 +40,7 @@ class AppLayout extends StatelessWidget {
       value: SystemUiOverlayStyle.dark,
       child: Scaffold(
         backgroundColor: bodyColor ?? Colors.white,
+        floatingActionButton: floatingActionButton,
         bottomNavigationBar: GetBuilder<MainShellController>(
           builder: (ctrl) => MediaQuery.removePadding(
             context: context,

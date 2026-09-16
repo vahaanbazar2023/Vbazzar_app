@@ -12,6 +12,7 @@ import '../../../core/extensions/context_extensions.dart';
 import '../../../routes/app_routes.dart';
 import '../controllers/auction_controller.dart';
 import '../models/auction_listing.dart';
+import 'auction_activity_fab.dart';
 import 'auction_filter_bottom_sheet.dart';
 
 class AuctionTab extends GetView<AuctionController> {
@@ -22,62 +23,68 @@ class AuctionTab extends GetView<AuctionController> {
     return AppLayout(
       title: context.l10n.auction,
       subtitle: context.l10n.auctionKnowCondition,
-      body: Column(
+      body: Stack(
         children: [
-          SizedBox(height: 8.h),
-          // ── Tab bar + filter icon in same row ─────────────────
-          Row(
+          Column(
             children: [
-              Expanded(
-                child: TabBar(
-                  controller: controller.tabController,
-                  isScrollable: false,
-                  labelColor: AppColors.primary,
-                  unselectedLabelColor: AppColors.grey600,
-                  indicatorColor: AppColors.primary,
-                  indicatorWeight: 2,
-                  dividerColor: AppColors.grey200,
-                  labelPadding: EdgeInsets.symmetric(horizontal: 4.w),
-                  labelStyle: TextStyle(
-                    fontFamily: 'Montserrat',
-                    fontSize: 11.sp,
-                    fontWeight: FontWeight.w600,
+              SizedBox(height: 8.h),
+              // ── Tab bar + filter icon in same row ─────────────────
+              Row(
+                children: [
+                  Expanded(
+                    child: TabBar(
+                      controller: controller.tabController,
+                      isScrollable: false,
+                      labelColor: AppColors.primary,
+                      unselectedLabelColor: AppColors.grey600,
+                      indicatorColor: AppColors.primary,
+                      indicatorWeight: 2,
+                      dividerColor: AppColors.grey200,
+                      labelPadding: EdgeInsets.symmetric(horizontal: 4.w),
+                      labelStyle: TextStyle(
+                        fontFamily: 'Montserrat',
+                        fontSize: 11.sp,
+                        fontWeight: FontWeight.w600,
+                      ),
+                      unselectedLabelStyle: TextStyle(
+                        fontFamily: 'Montserrat',
+                        fontSize: 11.sp,
+                        fontWeight: FontWeight.w500,
+                      ),
+                      tabAlignment: TabAlignment.fill,
+                      tabs: [
+                        Tab(text: context.l10n.liveTab),
+                        Tab(text: context.l10n.closingTodayTab),
+                        Tab(text: context.l10n.upcomingTab),
+                      ],
+                    ),
                   ),
-                  unselectedLabelStyle: TextStyle(
-                    fontFamily: 'Montserrat',
-                    fontSize: 11.sp,
-                    fontWeight: FontWeight.w500,
+                  // Filter icon — right of tabs, same row
+                  GestureDetector(
+                    onTap: () => AuctionFilterBottomSheet.show(context),
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 14.w),
+                      child: Image.asset(
+                        AppAssets.filterPng,
+                        width: 22.r,
+                        height: 22.r,
+                        color: AppColors.primary,
+                      ),
+                    ),
                   ),
-                  tabAlignment: TabAlignment.fill,
-                  tabs: [
-                    Tab(text: context.l10n.liveTab),
-                    Tab(text: context.l10n.closingTodayTab),
-                    Tab(text: context.l10n.upcomingTab),
-                  ],
-                ),
+                ],
               ),
-              // Filter icon — right of tabs, same row
-              GestureDetector(
-                onTap: () => AuctionFilterBottomSheet.show(context),
-                child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 14.w),
-                  child: Image.asset(
-                    AppAssets.filterPng,
-                    width: 22.r,
-                    height: 22.r,
-                    color: AppColors.primary,
-                  ),
+              // ── Tab content ──────────────────────────────────────
+              Expanded(
+                child: TabBarView(
+                  controller: controller.tabController,
+                  children: List.generate(3, (i) => _TabContent(tabIndex: i)),
                 ),
               ),
             ],
           ),
-          // ── Tab content ──────────────────────────────────────
-          Expanded(
-            child: TabBarView(
-              controller: controller.tabController,
-              children: List.generate(3, (i) => _TabContent(tabIndex: i)),
-            ),
-          ),
+          // ── Floating activity button ──────────────────────────
+          const Positioned(right: 16, bottom: 24, child: AuctionActivityFab()),
         ],
       ),
     );
@@ -459,3 +466,4 @@ DateTime _parseApiDate(String s) {
   }
   return DateTime(year, month, day, hour, minute);
 }
+
