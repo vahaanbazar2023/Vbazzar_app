@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -60,9 +62,7 @@ class _BuySellActivityFabState extends State<BuySellActivityFab>
       () => const MyVehiclesView(),
       binding: BindingsBuilder(() {
         if (!Get.isRegistered<SellVehicleController>()) {
-          Get.put(
-            SellVehicleController(repository: BuySellRepositoryImpl()),
-          );
+          Get.put(SellVehicleController(repository: BuySellRepositoryImpl()));
         }
       }),
     );
@@ -74,9 +74,7 @@ class _BuySellActivityFabState extends State<BuySellActivityFab>
       () => const SubscribedVehiclesView(),
       binding: BindingsBuilder(() {
         if (!Get.isRegistered<BuyVehicleController>()) {
-          Get.put(
-            BuyVehicleController(repository: BuySellRepositoryImpl()),
-          );
+          Get.put(BuyVehicleController(repository: BuySellRepositoryImpl()));
         }
       }),
     );
@@ -106,21 +104,18 @@ class _BuySellActivityFabState extends State<BuySellActivityFab>
                 _FabItem(
                   label: 'My Vehicles',
                   iconAsset: AppAssets.subIconVehicle,
-                  bgColor: const Color(0xFFEEF4FF),
                   onTap: _goMyVehicles,
                 ),
                 SizedBox(height: 10.h),
                 _FabItem(
                   label: 'Wishlist',
                   iconAsset: AppAssets.subIconWallet,
-                  bgColor: const Color(0xFFFFF8E0),
                   onTap: _goWishlist,
                 ),
                 SizedBox(height: 10.h),
                 _FabItem(
                   label: 'Purchase History',
                   iconAsset: AppAssets.subIconGroup2,
-                  bgColor: const Color(0xFFF0FFF0),
                   onTap: _goPurchaseHistory,
                 ),
                 SizedBox(height: 4.h),
@@ -136,10 +131,7 @@ class _BuySellActivityFabState extends State<BuySellActivityFab>
             height: 52.r,
             decoration: BoxDecoration(
               gradient: const LinearGradient(
-                colors: [
-                  AppColors.ctaGradientStart,
-                  AppColors.ctaGradientEnd,
-                ],
+                colors: [AppColors.ctaGradientStart, AppColors.ctaGradientEnd],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
@@ -171,13 +163,11 @@ class _BuySellActivityFabState extends State<BuySellActivityFab>
 class _FabItem extends StatelessWidget {
   final String label;
   final String iconAsset;
-  final Color bgColor;
   final VoidCallback onTap;
 
   const _FabItem({
     required this.label,
     required this.iconAsset,
-    required this.bgColor,
     required this.onTap,
   });
 
@@ -188,50 +178,78 @@ class _FabItem extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 7.h),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(20.r),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.09),
-                  blurRadius: 8,
-                  offset: const Offset(0, 2),
+          // ── Glassmorphic label pill ───────────────────────
+          ClipRRect(
+            borderRadius: BorderRadius.circular(24.r),
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 16, sigmaY: 16),
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 9.h),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      AppColors.ctaGradientStart.withValues(alpha: 0.75),
+                      AppColors.ctaGradientEnd.withValues(alpha: 0.85),
+                    ],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  borderRadius: BorderRadius.circular(24.r),
+                  border: Border.all(
+                    color: Colors.white.withValues(alpha: 0.25),
+                    width: 1,
+                  ),
                 ),
-              ],
-            ),
-            child: Text(
-              label,
-              style: TextStyle(
-                fontFamily: 'Montserrat',
-                fontSize: 12.sp,
-                fontWeight: FontWeight.w600,
-                color: AppColors.grey800,
+                child: Text(
+                  label,
+                  style: TextStyle(
+                    fontFamily: 'Montserrat',
+                    fontSize: 12.sp,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.white,
+                    shadows: const [
+                      Shadow(color: Colors.black26, blurRadius: 4),
+                    ],
+                  ),
+                ),
               ),
             ),
           ),
           SizedBox(width: 8.w),
-          Container(
-            width: 42.r,
-            height: 42.r,
-            decoration: BoxDecoration(
-              color: bgColor,
-              shape: BoxShape.circle,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.09),
-                  blurRadius: 8,
-                  offset: const Offset(0, 2),
+          // ── Gradient icon circle ──────────────────────────
+          ClipOval(
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+              child: Container(
+                width: 44.r,
+                height: 44.r,
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    colors: [
+                      AppColors.ctaGradientStart,
+                      AppColors.ctaGradientEnd,
+                    ],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppColors.primary.withValues(alpha: 0.45),
+                      blurRadius: 10,
+                      offset: const Offset(0, 3),
+                    ),
+                  ],
                 ),
-              ],
-            ),
-            child: Center(
-              child: Image.asset(
-                iconAsset,
-                width: 22.r,
-                height: 22.r,
-                fit: BoxFit.contain,
+                child: Center(
+                  child: Image.asset(
+                    iconAsset,
+                    width: 22.r,
+                    height: 22.r,
+                    fit: BoxFit.contain,
+                    color: Colors.white,
+                  ),
+                ),
               ),
             ),
           ),
