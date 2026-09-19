@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
@@ -20,13 +21,53 @@ class MyBidDetailView extends StatefulWidget {
 }
 
 class _MyBidDetailViewState extends State<MyBidDetailView> {
-  final _bidCtrl = TextEditingController();
+  int? _bidAmountOverride;
+  TextEditingController? _bidCtrlOverride;
   String? _errorText;
+
+  int get _bidAmount {
+    if (_bidAmountOverride != null) return _bidAmountOverride!;
+    final v = widget.item.vehicleDetails;
+    return v.minimumNextBid ?? v.minimumPrice;
+  }
+
+  TextEditingController get _bidCtrl {
+    _bidCtrlOverride ??= TextEditingController(text: _fmt(_bidAmount));
+    return _bidCtrlOverride!;
+  }
 
   @override
   void dispose() {
-    _bidCtrl.dispose();
+    _bidCtrlOverride?.dispose();
     super.dispose();
+  }
+
+  int get _increment {
+    final v = widget.item.vehicleDetails;
+    if ((v.bidIncrementAmount ?? 0) > 0) return v.bidIncrementAmount!;
+    return 5000;
+  }
+
+  void _decrease() {
+    final v = widget.item.vehicleDetails;
+    final min = v.minimumNextBid ?? v.minimumPrice;
+    final next = _bidAmount - _increment;
+    if (next >= min) {
+      setState(() {
+        _bidAmountOverride = next;
+        _bidCtrl.text = _fmt(next);
+        _errorText = null;
+      });
+    }
+  }
+
+  void _increase() {
+    final next = _bidAmount + _increment;
+    setState(() {
+      _bidAmountOverride = next;
+      _bidCtrl.text = _fmt(next);
+      _errorText = null;
+    });
   }
 
   @override
@@ -203,57 +244,174 @@ class _MyBidDetailViewState extends State<MyBidDetailView> {
                 ),
               ],
             ),
-            child: isClosed
-                ? Container(
-                    width: double.infinity,
-                    height: 48.h,
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      color: AppColors.grey200,
-                      borderRadius: BorderRadius.circular(AppRadius.full),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                if (_errorText != null) ...[
+                  Text(
+                    _errorText!,
+                    style: TextStyle(
+                      fontFamily: 'Montserrat',
+                      fontSize: 11.sp,
+                      color: AppColors.error,
                     ),
-                    child: Text(
-                      context.l10n.auctionClosed,
-                      style: TextStyle(
-                        fontFamily: 'Montserrat',
-                        fontWeight: FontWeight.w600,
-                        fontSize: 15.sp,
-                        color: AppColors.grey600,
-                      ),
-                    ),
-                  )
-                : Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Bid amount input
-                      Expanded(
-                        child: _BidAmountField(
-                          controller: _bidCtrl,
-                          errorText: _errorText,
-                          onChanged: (_) {
-                            if (_errorText != null) {
-                              setState(() => _errorText = null);
-                            }
-                          },
-                        ),
-                      ),
-                      SizedBox(width: AppSpacing.sm),
-                      // Bid Now button
-                      Obx(() {
-                        final ctrl = Get.find<MyBidsController>();
-                        return GradientButton.filled(
-                          text: context.l10n.bid_now,
-                          width: 110.w,
-                          height: 48.h,
-                          fontSize: 14.sp,
-                          isLoading: ctrl.isPlacingBid.value,
-                          onPressed: ctrl.isPlacingBid.value
-                              ? null
-                              : () => _onBidNow(ctrl),
-                        );
-                      }),
-                    ],
                   ),
+                  SizedBox(height: 6.h),
+                ],
+                isClosed
+                    ? Container(
+                        width: double.infinity,
+                        height: 48.h,
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          color: AppColors.grey200,
+                          borderRadius: BorderRadius.circular(AppRadius.full),
+                        ),
+                        child: Text(
+                          context.l10n.auctionClosed,
+                          style: TextStyle(
+                            fontFamily: 'Montserrat',
+                            fontWeight: FontWeight.w600,
+                            fontSize: 15.sp,
+                            color: AppColors.grey600,
+                          ),
+                        ),
+                      )
+                    : Row(
+                        children: [
+                          // [- ₹ amount +]
+                          Expanded(
+                            child: Container(
+                              height: 48.h,
+                              decoration: BoxDecoration(
+                                border: Border.all(color: AppColors.grey300),
+                                borderRadius: BorderRadius.circular(10.r),
+                              ),
+                              child: Row(
+                                children: [
+                                  GestureDetector(
+                                    onTap: _decrease,
+                                    behavior: HitTestBehavior.opaque,
+                                    child: SizedBox(
+                                      width: 44.r,
+                                      height: 48.h,
+                                      child: Icon(
+                                        Icons.remove_rounded,
+                                        size: 20.r,
+                                        color: AppColors.grey700,
+                                      ),
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: TextField(
+                                      controller: _bidCtrl,
+                                      keyboardType: TextInputType.number,
+                                      textAlign: TextAlign.center,
+                                      inputFormatters: [
+                                        FilteringTextInputFormatter.digitsOnly,
+                                      ],
+                                      onChanged: (raw) {
+                                        final parsed = int.tryParse(
+                                          raw.replaceAll(',', ''),
+                                        );
+                                        if (parsed != null) {
+                                          _bidAmountOverride = parsed;
+                                          if (_errorText != null) {
+                                            setState(() => _errorText = null);
+                                          }
+                                        }
+                                      },
+                                      style: TextStyle(
+                                        fontFamily: 'Montserrat',
+                                        fontSize: 15.sp,
+                                        fontWeight: FontWeight.w700,
+                                        color: AppColors.black,
+                                      ),
+                                      decoration: InputDecoration(
+                                        prefixText: '₹  ',
+                                        prefixStyle: TextStyle(
+                                          fontFamily: 'Montserrat',
+                                          fontSize: 15.sp,
+                                          fontWeight: FontWeight.w700,
+                                          color: AppColors.black,
+                                        ),
+                                        border: InputBorder.none,
+                                        enabledBorder: InputBorder.none,
+                                        focusedBorder: InputBorder.none,
+                                        isDense: true,
+                                        contentPadding: EdgeInsets.zero,
+                                      ),
+                                    ),
+                                  ),
+                                  GestureDetector(
+                                    onTap: _increase,
+                                    behavior: HitTestBehavior.opaque,
+                                    child: SizedBox(
+                                      width: 44.r,
+                                      height: 48.h,
+                                      child: Icon(
+                                        Icons.add_rounded,
+                                        size: 20.r,
+                                        color: AppColors.grey700,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          SizedBox(width: AppSpacing.sm),
+                          // PLACE BID
+                          Obx(() {
+                            final ctrl = Get.find<MyBidsController>();
+                            final loading = ctrl.isPlacingBid.value;
+                            return GestureDetector(
+                              onTap: loading ? null : () => _onBidNow(ctrl),
+                              child: Container(
+                                height: 48.h,
+                                padding: EdgeInsets.symmetric(horizontal: 18.w),
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                    colors: loading
+                                        ? [
+                                            const Color(0xFFAA5555),
+                                            const Color(0xFF884444),
+                                          ]
+                                        : [
+                                            AppColors.ctaGradientStart,
+                                            AppColors.ctaGradientEnd,
+                                          ],
+                                  ),
+                                  borderRadius: BorderRadius.circular(10.r),
+                                ),
+                                alignment: Alignment.center,
+                                child: loading
+                                    ? SizedBox(
+                                        width: 18.r,
+                                        height: 18.r,
+                                        child: const CircularProgressIndicator(
+                                          color: Colors.white,
+                                          strokeWidth: 2,
+                                        ),
+                                      )
+                                    : Text(
+                                        'PLACE BID',
+                                        style: TextStyle(
+                                          fontFamily: 'Montserrat',
+                                          fontSize: 13.sp,
+                                          fontWeight: FontWeight.w800,
+                                          color: Colors.white,
+                                          letterSpacing: 0.5,
+                                        ),
+                                      ),
+                              ),
+                            );
+                          }),
+                        ],
+                      ),
+              ],
+            ),
           ),
         ],
       ),
@@ -261,29 +419,19 @@ class _MyBidDetailViewState extends State<MyBidDetailView> {
   }
 
   Future<void> _onBidNow(MyBidsController ctrl) async {
-    final raw = _bidCtrl.text.replaceAll(',', '').trim();
-    final amount = int.tryParse(raw);
-    if (amount == null || amount <= 0) {
+    if (_bidAmount <= 0) {
       setState(() => _errorText = context.l10n.enterValidBidAmount);
       return;
     }
-    if (amount % 100 != 0) {
-      setState(() => _errorText = context.l10n.bidMultipleOf100);
-      return;
-    }
     setState(() => _errorText = null);
-
     final error = await ctrl.placeBid(
       bidItem: widget.item,
-      bidAmount: amount,
+      bidAmount: _bidAmount,
     );
-
     if (!mounted) return;
     if (error == '__navigated__') {
-      // Already navigated to subscription screen.
-    } else if (error == null) {
-      _bidCtrl.clear();
-    } else {
+      // navigated away
+    } else if (error != null) {
       setState(() => _errorText = error);
     }
   }

@@ -1,15 +1,21 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 import '../../../core/constants/app_colors.dart';
+import '../../../core/design_system/atoms/custom_loader.dart';
 import '../../../core/design_system/design_system.dart';
+import '../../../core/design_system/molecules/custom_snackbar.dart';
+import '../../../core/design_system/organisms/network_image_carousel.dart';
 import '../../../core/design_system/templates/app_layout.dart';
-import '../../../core/design_system/tokens/app_radius.dart';
 import '../../../core/design_system/tokens/app_spacing.dart';
 import '../../../core/extensions/context_extensions.dart';
 import '../controllers/my_bids_wins_controller.dart';
 import '../models/my_bids_wins_models.dart';
+import '../../../core/design_system/molecules/timer_badge.dart';
 import 'my_bid_detail_view.dart';
 
 class MyBidsView extends GetView<MyBidsController> {
@@ -23,9 +29,7 @@ class MyBidsView extends GetView<MyBidsController> {
       showBack: true,
       body: Obx(() {
         if (controller.isLoading.value) {
-          return const Center(
-            child: CircularProgressIndicator(color: AppColors.primary),
-          );
+          return const Center(child: CustomLoader());
         }
         if (controller.errorMessage.value != null) {
           return _ErrorState(
@@ -75,246 +79,99 @@ class MyBidsView extends GetView<MyBidsController> {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Bid card — same structure as auction vehicle listing card
+// Bid card — matches auction vehicle listing card layout
 // ─────────────────────────────────────────────────────────────────────────────
 
-class _BidCard extends StatelessWidget {
+class _BidCard extends StatefulWidget {
   final MyBidItem item;
   const _BidCard({required this.item});
 
   @override
-  Widget build(BuildContext context) {
-    final v = item.vehicleDetails;
-    final isClosed = !item.isAuctionActive;
-    final isWinning = item.isWinning;
+  State<_BidCard> createState() => _BidCardState();
+}
 
-    return Container(
-      clipBehavior: Clip.antiAlias,
-      decoration: BoxDecoration(
-        color: AppColors.white,
-        borderRadius: AppRadius.borderRadiusMd,
-        border: Border.all(color: AppColors.grey200),
-        boxShadow: [
-          BoxShadow(
-            color: const Color(0x0A000000),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // ── Image carousel ────────────────────────────────────────────────
-          Stack(
-            children: [
-              NetworkImageCarousel(imageUrls: v.images, height: 200.h),
-              // Auction closed badge
-              if (isClosed)
-                Positioned(
-                  top: 10,
-                  left: 10,
-                  child: Container(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 10.w,
-                      vertical: 4.h,
-                    ),
-                    decoration: BoxDecoration(
-                      color: AppColors.grey800.withValues(alpha: 0.85),
-                      borderRadius: BorderRadius.circular(20.r),
-                    ),
-                    child: Text(
-                      context.l10n.closedBadge,
-                      style: TextStyle(
-                        fontFamily: 'Montserrat',
-                        fontSize: 9.sp,
-                        fontWeight: FontWeight.w800,
-                        color: Colors.white,
-                        letterSpacing: 1,
-                      ),
-                    ),
-                  ),
-                ),
-            ],
-          ),
+class _BidCardState extends State<_BidCard> {
+  bool _expanded = false;
+  bool _isPlacing = false;
+  late int _bidAmount;
+  late TextEditingController _bidCtrl;
 
-          // ── Content — lightOrangeBackground tint like auction card ────────
-          Container(
-            color: AppColors.lightOrangeBackground.withValues(alpha: 0.5),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Title
-                Padding(
-                  padding: EdgeInsets.fromLTRB(
-                    AppSpacing.md,
-                    AppSpacing.sm,
-                    AppSpacing.md,
-                    0,
-                  ),
-                  child: Text(
-                    '${v.make} ${v.model}'.trim().isEmpty
-                        ? item.auctionTitle
-                        : '${v.make} ${v.model} - ${v.registrationNo}',
-                    style: TextStyle(
-                      fontFamily: 'Montserrat',
-                      fontSize: 14.sp,
-                      fontWeight: FontWeight.w700,
-                      color: AppColors.black,
-                    ),
-                  ),
-                ),
-
-                // Bid info rows
-                Padding(
-                  padding: EdgeInsets.fromLTRB(
-                    AppSpacing.md,
-                    AppSpacing.sm,
-                    AppSpacing.md,
-                    0,
-                  ),
-                  child: Column(
-                    children: [
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          // Your bid — expands to fill available space
-                          Expanded(
-                            child: _BidInfoChip(
-                              label: context.l10n.your_bid,
-                              value: '₹ ${_fmt(item.userBidAmount)}',
-                              highlight: isWinning,
-                            ),
-                          ),
-                          SizedBox(width: AppSpacing.sm),
-                          // Status badge — fixed size, no label
-                          Container(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 10.w,
-                              vertical: 4.h,
-                            ),
-                            decoration: BoxDecoration(
-                              color: _statusColor(
-                                item.bidStatus,
-                              ).withValues(alpha: 0.12),
-                              borderRadius: BorderRadius.circular(20.r),
-                            ),
-                            child: Text(
-                              _statusLabel(item.bidStatus),
-                              style: TextStyle(
-                                fontFamily: 'Montserrat',
-                                fontSize: 12.sp,
-                                fontWeight: FontWeight.w700,
-                                color: _statusColor(item.bidStatus),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: AppSpacing.xs),
-                      Row(
-                        children: [
-                          Flexible(
-                            child: Text(
-                              context.l10n.highestBid,
-                              style: TextStyle(
-                                fontFamily: 'Montserrat',
-                                fontSize: 14.sp,
-                                color: AppColors.lightOrangeDark,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ),
-                          SizedBox(width: AppSpacing.sm),
-                          Flexible(
-                            child: GradientText(
-                              '₹ ${_fmt(item.currentHighestBid)}',
-                              style: TextStyle(
-                                fontFamily: 'Montserrat',
-                                fontSize: 16.sp,
-                                fontWeight: FontWeight.w700,
-                                color: AppColors.black,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-
-                SizedBox(height: AppSpacing.sm),
-
-                // Bottom buttons
-                Padding(
-                  padding: EdgeInsets.fromLTRB(
-                    AppSpacing.md,
-                    0,
-                    AppSpacing.md,
-                    AppSpacing.md,
-                  ),
-                  child: isClosed
-                      ? Container(
-                          width: double.infinity,
-                          height: 44.h,
-                          alignment: Alignment.center,
-                          decoration: BoxDecoration(
-                            color: AppColors.grey200,
-                            borderRadius: BorderRadius.circular(AppRadius.full),
-                          ),
-                          child: Text(
-                            context.l10n.auctionClosedButton,
-                            style: TextStyle(
-                              fontFamily: 'Montserrat',
-                              fontWeight: FontWeight.w600,
-                              fontSize: 14.sp,
-                              color: AppColors.grey600,
-                            ),
-                          ),
-                        )
-                      : Column(
-                          children: [
-                            GradientButton.filled(
-                              text: context.l10n.bid_now,
-                              width: double.infinity,
-                              onPressed: () =>
-                                  Get.to(() => MyBidDetailView(item: item)),
-                            ),
-                            SizedBox(height: AppSpacing.sm),
-                            GradientButton.outlined(
-                              text: context.l10n.viewDetails,
-                              backgroundColor: Colors.transparent,
-                              width: double.infinity,
-                              onPressed: () =>
-                                  Get.to(() => MyBidDetailView(item: item)),
-                            ),
-                          ],
-                        ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
+  @override
+  void initState() {
+    super.initState();
+    final v = widget.item.vehicleDetails;
+    _bidAmount = v.minimumNextBid ?? v.minimumPrice;
+    _bidCtrl = TextEditingController(text: _fmt(_bidAmount));
   }
 
-  Color _statusColor(String status) {
-    switch (status.toLowerCase()) {
-      case 'approved':
-        return AppColors.success;
-      case 'rejected':
-        return AppColors.primary;
-      case 'pending':
-        return AppColors.warning;
-      default:
-        return AppColors.grey700;
+  @override
+  void dispose() {
+    _bidCtrl.dispose();
+    super.dispose();
+  }
+
+  int get _increment {
+    final v = widget.item.vehicleDetails;
+    if ((v.bidIncrementAmount ?? 0) > 0) return v.bidIncrementAmount!;
+    return 5000;
+  }
+
+  void _decrease() {
+    final v = widget.item.vehicleDetails;
+    final min = v.minimumNextBid ?? v.minimumPrice;
+    final next = _bidAmount - _increment;
+    if (next >= min) {
+      setState(() {
+        _bidAmount = next;
+        _bidCtrl.text = _fmt(_bidAmount);
+      });
     }
   }
 
-  /// Maps raw API bid status to plain readable text.
-  String _statusLabel(String status) {
-    switch (status.toLowerCase()) {
+  void _increase() {
+    setState(() {
+      _bidAmount += _increment;
+      _bidCtrl.text = _fmt(_bidAmount);
+    });
+  }
+
+  Future<void> _placeBid() async {
+    setState(() => _isPlacing = true);
+    final ctrl = Get.find<MyBidsController>();
+    final error = await ctrl.placeBid(
+      bidItem: widget.item,
+      bidAmount: _bidAmount,
+    );
+    if (mounted) setState(() => _isPlacing = false);
+    if (error != null && error != '__navigated__') {
+      CustomSnackbar.show(message: error, type: SnackbarType.error);
+    } else if (error == null) {
+      CustomSnackbar.show(
+        message: 'Bid placed successfully!',
+        type: SnackbarType.success,
+      );
+    }
+  }
+
+  Color get _statusColor {
+    switch (widget.item.bidStatus.toLowerCase()) {
+      case 'approved':
+        return AppColors.success;
+      case 'rejected':
+        return AppColors.error;
+      case 'pending':
+        return AppColors.warning;
+      case 'won':
+        return AppColors.success;
+      case 'lost':
+        return AppColors.error;
+      default:
+        return AppColors.grey600;
+    }
+  }
+
+  String get _statusLabel {
+    switch (widget.item.bidStatus.toLowerCase()) {
       case 'approved':
         return 'Winning';
       case 'rejected':
@@ -326,12 +183,10 @@ class _BidCard extends StatelessWidget {
       case 'lost':
         return 'Lost';
       default:
-        return status.isEmpty ? '—' : _capitalize(status);
+        final s = widget.item.bidStatus;
+        return s.isEmpty ? '—' : '${s[0].toUpperCase()}${s.substring(1)}';
     }
   }
-
-  String _capitalize(String s) =>
-      s.isEmpty ? s : '${s[0].toUpperCase()}${s.substring(1)}';
 
   static String _fmt(int n) {
     if (n == 0) return '0';
@@ -345,53 +200,661 @@ class _BidCard extends StatelessWidget {
     }
     return buf.toString().split('').reversed.join();
   }
+
+  @override
+  Widget build(BuildContext context) {
+    final item = widget.item;
+    final v = item.vehicleDetails;
+    final isClosed = !item.isAuctionActive;
+
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(14.r),
+        border: Border.all(color: AppColors.grey200),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.07),
+            blurRadius: 10,
+            offset: const Offset(0, 3),
+          ),
+        ],
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // ════════════════════════════════════════════════
+          // ROW 1: image (171w×99h) + title/timer/status
+          // ════════════════════════════════════════════════
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Image
+              SizedBox(
+                width: 171.w,
+                height: 99.h,
+                child: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    Container(
+                      color: const Color(0xFFF0F0F0),
+                      child: NetworkImageCarousel(
+                        imageUrls: v.images,
+                        height: 99.h,
+                      ),
+                    ),
+                    // VEH ID bar at bottom
+                    Positioned(
+                      bottom: 0,
+                      left: 0,
+                      right: 0,
+                      child: Container(
+                        color: AppColors.primary,
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 6.w,
+                          vertical: 3.h,
+                        ),
+                        child: Text(
+                          v.vehicleId,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontFamily: 'Montserrat',
+                            fontSize: 9.sp,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.white,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ),
+                    // Closed overlay
+                    if (isClosed)
+                      Positioned(
+                        top: 6.h,
+                        left: 6.w,
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(12.r),
+                          child: BackdropFilter(
+                            filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+                            child: Container(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 7.w,
+                                vertical: 3.h,
+                              ),
+                              decoration: BoxDecoration(
+                                color: Colors.black.withValues(alpha: 0.5),
+                                borderRadius: BorderRadius.circular(12.r),
+                              ),
+                              child: Text(
+                                'CLOSED',
+                                style: TextStyle(
+                                  fontFamily: 'Montserrat',
+                                  fontSize: 9.sp,
+                                  fontWeight: FontWeight.w700,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+
+              // Right panel
+              Expanded(
+                child: Padding(
+                  padding: EdgeInsets.fromLTRB(12.w, 10.h, 12.w, 10.h),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Make + Model
+                      Text(
+                        '${v.make} ${v.model}'.trim().isEmpty
+                            ? item.auctionTitle
+                            : '${v.make} ${v.model}',
+                        style: TextStyle(
+                          fontFamily: 'Montserrat',
+                          fontSize: 13.sp,
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.black,
+                        ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      SizedBox(height: 2.h),
+                      // Reg No · Year
+                      if (v.registrationNo.isNotEmpty)
+                        Text(
+                          '${v.registrationNo}  ·  ${v.year}',
+                          style: TextStyle(
+                            fontFamily: 'Montserrat',
+                            fontSize: 11.sp,
+                            color: AppColors.grey600,
+                          ),
+                        ),
+                      SizedBox(height: 6.h),
+                      // Timer or Closed
+                      if (!isClosed)
+                        TimerBadge(endAt: v.auctionEndDate)
+                      else
+                        Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 8.w,
+                            vertical: 3.h,
+                          ),
+                          decoration: BoxDecoration(
+                            color: AppColors.grey200,
+                            borderRadius: BorderRadius.circular(4.r),
+                          ),
+                          child: Text(
+                            'Auction Closed',
+                            style: TextStyle(
+                              fontFamily: 'Montserrat',
+                              fontSize: 9.sp,
+                              fontWeight: FontWeight.w600,
+                              color: AppColors.grey600,
+                            ),
+                          ),
+                        ),
+                      SizedBox(height: 6.h),
+                      // Status badge
+                      Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 8.w,
+                          vertical: 3.h,
+                        ),
+                        decoration: BoxDecoration(
+                          color: _statusColor.withValues(alpha: 0.12),
+                          borderRadius: BorderRadius.circular(4.r),
+                        ),
+                        child: Text(
+                          _statusLabel,
+                          style: TextStyle(
+                            fontFamily: 'Montserrat',
+                            fontSize: 10.sp,
+                            fontWeight: FontWeight.w700,
+                            color: _statusColor,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+
+          // ════════════════════════════════════════════════
+          // ROW 2: always-visible 2-col grid
+          // Yard Name | Yard Location  /  Auction ID | Vehicle ID
+          // ════════════════════════════════════════════════
+          Padding(
+            padding: EdgeInsets.fromLTRB(12.w, 10.h, 12.w, 0),
+            child: Column(
+              children: [
+                if (!_expanded) ...[
+                  _GRow(
+                    'Yard Name',
+                    v.yardName,
+                    'Yard Location',
+                    v.yardLocation,
+                    single: true,
+                  ),
+                  SizedBox(height: 6.h),
+                ],
+                _GRow(
+                  'Auction ID',
+                  item.auctionId,
+                  'Vehicle ID',
+                  v.vehicleId,
+                  single: true,
+                ),
+                SizedBox(height: 6.h),
+                // Always-visible bid summary
+                _GRow(
+                  'Your Bid',
+                  v.yourBid > 0 ? '₹ ${_fmt(v.yourBid)}' : '₹ 0',
+                  'Highest Bid',
+                  item.currentHighestBid > 0
+                      ? '₹ ${_fmt(item.currentHighestBid)}'
+                      : 'No bids',
+                ),
+              ],
+            ),
+          ),
+
+          // ════════════════════════════════════════════════
+          // EXPANDED DETAILS
+          // ════════════════════════════════════════════════
+          if (_expanded)
+            Padding(
+              padding: EdgeInsets.fromLTRB(12.w, 6.h, 12.w, 0),
+              child: Column(
+                children: [
+                  _OptRow(
+                    'RC Availability',
+                    v.rcAvailability,
+                    'Repo Date',
+                    v.repoDate,
+                  ),
+                  _OptRow('Chassis No', v.chassisNo, 'Engine No', v.engineNo),
+                  _OptRow(
+                    'Registered RTO',
+                    v.registeredRto,
+                    'Transmission',
+                    v.transmission,
+                  ),
+                  _OptRow('Variant', v.variant, 'Colour', v.colour),
+                  _OptRow('Fuel Type', v.fuelType, 'Owner', v.owner),
+                  _OptRow(
+                    'Contact Person',
+                    v.contactPersonName,
+                    'Mobile',
+                    v.contactPersonNumber,
+                  ),
+                  _OptRow(
+                    'Start Price',
+                    '₹ ${_fmt(v.minimumPrice)}',
+                    'Market Value',
+                    v.marketValue.isNotEmpty ? '₹ ${v.marketValue}' : '',
+                  ),
+                  _OptRow(
+                    'Parking Charges',
+                    v.parkingCharges,
+                    'Transaction Fees',
+                    v.transactionFees,
+                  ),
+                  _OptRow(
+                    'Yard Name',
+                    v.yardName,
+                    'Yard Location',
+                    v.yardLocation,
+                  ),
+                  if (v.remarks.isNotEmpty)
+                    Padding(
+                      padding: EdgeInsets.only(bottom: 6.h),
+                      child: _GCell(label: 'Remarks', value: v.remarks),
+                    ),
+                  // Bid placed + count info
+                  SizedBox(height: 4.h),
+                  _GRow(
+                    'Bids Placed',
+                    item.userBidCount.toString(),
+                    'Bids Left',
+                    v.bidsLeft.toString(),
+                  ),
+                  SizedBox(height: 4.h),
+                  if (v.availableBalance > 0)
+                    Container(
+                      width: double.infinity,
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 12.w,
+                        vertical: 8.h,
+                      ),
+                      decoration: BoxDecoration(
+                        color: AppColors.grey100,
+                        borderRadius: BorderRadius.circular(8.r),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            'Available Buying Limit: ',
+                            style: TextStyle(
+                              fontFamily: 'Montserrat',
+                              fontSize: 12.sp,
+                              color: AppColors.grey600,
+                            ),
+                          ),
+                          Text(
+                            '₹ ${_fmt(v.availableBalance)}',
+                            style: TextStyle(
+                              fontFamily: 'Montserrat',
+                              fontSize: 12.sp,
+                              fontWeight: FontWeight.w700,
+                              color: AppColors.black,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  SizedBox(height: 4.h),
+                ],
+              ),
+            ),
+
+          // ════════════════════════════════════════════════
+          // Details / See Less toggle
+          // ════════════════════════════════════════════════
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
+            child: GestureDetector(
+              onTap: () => setState(() => _expanded = !_expanded),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Divider(color: AppColors.grey300, thickness: 1),
+                  ),
+                  SizedBox(width: 8.w),
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        _expanded ? 'See Less' : 'Details',
+                        style: TextStyle(
+                          fontFamily: 'Montserrat',
+                          fontSize: 11.sp,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.grey700,
+                        ),
+                      ),
+                      SizedBox(width: 4.w),
+                      Icon(
+                        _expanded
+                            ? Icons.keyboard_arrow_up_rounded
+                            : Icons.keyboard_arrow_down_rounded,
+                        size: 16.r,
+                        color: AppColors.grey700,
+                      ),
+                    ],
+                  ),
+                  SizedBox(width: 8.w),
+                  Expanded(
+                    child: Divider(color: AppColors.grey300, thickness: 1),
+                  ),
+                ],
+              ),
+            ),
+          ),
+
+          // ════════════════════════════════════════════════
+          // BID ROW (active) or CLOSED bar
+          // ════════════════════════════════════════════════
+          Padding(
+            padding: EdgeInsets.fromLTRB(12.w, 0, 12.w, 12.h),
+            child: isClosed
+                ? Container(
+                    width: double.infinity,
+                    height: 42.h,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: AppColors.grey200,
+                      borderRadius: BorderRadius.circular(8.r),
+                    ),
+                    child: Text(
+                      'Auction Closed',
+                      style: TextStyle(
+                        fontFamily: 'Montserrat',
+                        fontWeight: FontWeight.w600,
+                        fontSize: 13.sp,
+                        color: AppColors.grey600,
+                      ),
+                    ),
+                  )
+                : Row(
+                    children: [
+                      // [- ₹ amount +]
+                      Expanded(
+                        child: Container(
+                          height: 42.h,
+                          decoration: BoxDecoration(
+                            border: Border.all(color: AppColors.grey300),
+                            borderRadius: BorderRadius.circular(8.r),
+                          ),
+                          child: Row(
+                            children: [
+                              GestureDetector(
+                                onTap: _decrease,
+                                behavior: HitTestBehavior.opaque,
+                                child: SizedBox(
+                                  width: 40.r,
+                                  height: 42.h,
+                                  child: Icon(
+                                    Icons.remove_rounded,
+                                    size: 18.r,
+                                    color: AppColors.grey700,
+                                  ),
+                                ),
+                              ),
+                              Expanded(
+                                child: TextField(
+                                  controller: _bidCtrl,
+                                  keyboardType: TextInputType.number,
+                                  textAlign: TextAlign.center,
+                                  inputFormatters: [
+                                    FilteringTextInputFormatter.digitsOnly,
+                                  ],
+                                  onChanged: (raw) {
+                                    final parsed = int.tryParse(
+                                      raw.replaceAll(',', ''),
+                                    );
+                                    if (parsed != null) _bidAmount = parsed;
+                                  },
+                                  style: TextStyle(
+                                    fontFamily: 'Montserrat',
+                                    fontSize: 14.sp,
+                                    fontWeight: FontWeight.w700,
+                                    color: AppColors.black,
+                                  ),
+                                  decoration: InputDecoration(
+                                    prefixText: '₹  ',
+                                    prefixStyle: TextStyle(
+                                      fontFamily: 'Montserrat',
+                                      fontSize: 14.sp,
+                                      fontWeight: FontWeight.w700,
+                                      color: AppColors.black,
+                                    ),
+                                    border: InputBorder.none,
+                                    enabledBorder: InputBorder.none,
+                                    focusedBorder: InputBorder.none,
+                                    isDense: true,
+                                    contentPadding: EdgeInsets.zero,
+                                  ),
+                                ),
+                              ),
+                              GestureDetector(
+                                onTap: _increase,
+                                behavior: HitTestBehavior.opaque,
+                                child: SizedBox(
+                                  width: 40.r,
+                                  height: 42.h,
+                                  child: Icon(
+                                    Icons.add_rounded,
+                                    size: 18.r,
+                                    color: AppColors.grey700,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      SizedBox(width: 10.w),
+                      // PLACE BID
+                      GestureDetector(
+                        onTap: _isPlacing ? null : _placeBid,
+                        child: Container(
+                          height: 42.h,
+                          padding: EdgeInsets.symmetric(horizontal: 18.w),
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: _isPlacing
+                                  ? [
+                                      const Color(0xFFAA5555),
+                                      const Color(0xFF884444),
+                                    ]
+                                  : [
+                                      AppColors.ctaGradientStart,
+                                      AppColors.ctaGradientEnd,
+                                    ],
+                            ),
+                            borderRadius: BorderRadius.circular(8.r),
+                          ),
+                          alignment: Alignment.center,
+                          child: _isPlacing
+                              ? SizedBox(
+                                  width: 16.r,
+                                  height: 16.r,
+                                  child: const CircularProgressIndicator(
+                                    color: Colors.white,
+                                    strokeWidth: 2,
+                                  ),
+                                )
+                              : Text(
+                                  'PLACE BID',
+                                  style: TextStyle(
+                                    fontFamily: 'Montserrat',
+                                    fontSize: 13.sp,
+                                    fontWeight: FontWeight.w800,
+                                    color: Colors.white,
+                                    letterSpacing: 0.5,
+                                  ),
+                                ),
+                        ),
+                      ),
+                    ],
+                  ),
+          ),
+
+          // View Details link
+          Padding(
+            padding: EdgeInsets.only(left: 12.w, right: 12.w, bottom: 12.h),
+            child: GestureDetector(
+              onTap: () => Get.to(() => MyBidDetailView(item: item)),
+              child: Text(
+                'View Full Details →',
+                style: TextStyle(
+                  fontFamily: 'Montserrat',
+                  fontSize: 11.sp,
+                  color: AppColors.primary,
+                  fontWeight: FontWeight.w600,
+                  decoration: TextDecoration.underline,
+                  decorationColor: AppColors.primary,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Bid info chip (label + value inline)
+// Grid helpers (2-col row)
 // ─────────────────────────────────────────────────────────────────────────────
 
-class _BidInfoChip extends StatelessWidget {
+class _GRow extends StatelessWidget {
+  final String l1, v1, l2, v2;
+  final bool single;
+  const _GRow(this.l1, this.v1, this.l2, this.v2, {this.single = false});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Expanded(
+          child: _GCell(label: l1, value: v1, singleLine: single),
+        ),
+        SizedBox(width: 6.w),
+        if (l2.isNotEmpty)
+          Expanded(
+            child: _GCell(label: l2, value: v2, singleLine: single),
+          )
+        else
+          const Expanded(child: SizedBox()),
+      ],
+    );
+  }
+}
+
+// Optional row — hidden if both values are blank/zero
+class _OptRow extends StatelessWidget {
+  final String l1, v1, l2, v2;
+  const _OptRow(this.l1, this.v1, this.l2, this.v2);
+
+  static bool _empty(String v) {
+    final t = v.trim();
+    return t.isEmpty ||
+        t == '—' ||
+        t == '-' ||
+        t == '0' ||
+        t == '0.0' ||
+        t == '0.00';
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_empty(v1) && (l2.isEmpty || _empty(v2)))
+      return const SizedBox.shrink();
+    return Padding(
+      padding: EdgeInsets.only(bottom: 6.h),
+      child: Row(
+        children: [
+          if (!_empty(v1))
+            Expanded(
+              child: _GCell(label: l1, value: v1),
+            )
+          else
+            const Expanded(child: SizedBox()),
+          SizedBox(width: 6.w),
+          if (l2.isNotEmpty && !_empty(v2))
+            Expanded(
+              child: _GCell(label: l2, value: v2),
+            )
+          else
+            const Expanded(child: SizedBox()),
+        ],
+      ),
+    );
+  }
+}
+
+class _GCell extends StatelessWidget {
   final String label;
   final String value;
-  final bool highlight;
-  final Color? statusColor;
-
-  const _BidInfoChip({
+  final bool singleLine;
+  const _GCell({
     required this.label,
     required this.value,
-    this.highlight = false,
-    this.statusColor,
+    this.singleLine = false,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.symmetric(vertical: 3.h),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 6.h),
+      decoration: BoxDecoration(
+        color: AppColors.grey50,
+        borderRadius: BorderRadius.circular(6.r),
+        border: Border.all(color: AppColors.grey200),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            '$label : ',
+            label,
             style: TextStyle(
               fontFamily: 'Montserrat',
-              fontSize: 13.sp,
-              color: AppColors.lightOrangeDark,
+              fontSize: 9.sp,
+              color: AppColors.grey500,
               fontWeight: FontWeight.w500,
             ),
           ),
-          Flexible(
-            child: Text(
-              value,
-              style: TextStyle(
-                fontFamily: 'Montserrat',
-                fontSize: 13.sp,
-                fontWeight: FontWeight.w700,
-                color:
-                    statusColor ??
-                    (highlight ? AppColors.success : AppColors.black),
-              ),
+          SizedBox(height: 1.h),
+          Text(
+            value.isNotEmpty ? value : '—',
+            style: TextStyle(
+              fontFamily: 'Montserrat',
+              fontSize: 11.sp,
+              fontWeight: FontWeight.w600,
+              color: AppColors.grey800,
             ),
+            maxLines: singleLine ? 1 : 2,
+            overflow: TextOverflow.ellipsis,
           ),
         ],
       ),
@@ -431,7 +894,7 @@ class _EmptyState extends StatelessWidget {
               message,
               textAlign: TextAlign.center,
               style: TextStyle(
-                fontFamily: 'Plus Jakarta Sans',
+                fontFamily: 'Montserrat',
                 fontSize: 13.sp,
                 color: AppColors.grey500,
                 height: 1.5,
@@ -463,7 +926,7 @@ class _ErrorState extends StatelessWidget {
               message,
               textAlign: TextAlign.center,
               style: TextStyle(
-                fontFamily: 'Plus Jakarta Sans',
+                fontFamily: 'Montserrat',
                 fontSize: 13.sp,
                 color: AppColors.grey500,
               ),

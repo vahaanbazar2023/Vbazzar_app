@@ -674,13 +674,20 @@ class _VehicleCardState extends State<_VehicleCard> {
                         GestureDetector(
                           onTap: _decreaseBid,
                           behavior: HitTestBehavior.opaque,
-                          child: SizedBox(
-                            width: 40.r,
-                            height: 30.h,
-                            child: Icon(
-                              Icons.remove_rounded,
-                              size: 18.r,
-                              color: AppColors.grey700,
+                          child: Padding(
+                            padding: const EdgeInsets.all(4.0),
+                            child: Container(
+                              width: 30.r,
+                              height: 30.h,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                border: Border.all(color: AppColors.grey400),
+                              ),
+                              child: Icon(
+                                Icons.remove_rounded,
+                                size: 18.r,
+                                color: AppColors.grey700,
+                              ),
                             ),
                           ),
                         ),
@@ -718,13 +725,20 @@ class _VehicleCardState extends State<_VehicleCard> {
                         GestureDetector(
                           onTap: _increaseBid,
                           behavior: HitTestBehavior.opaque,
-                          child: SizedBox(
-                            width: 40.r,
-                            height: 30.h,
-                            child: Icon(
-                              Icons.add_rounded,
-                              size: 18.r,
-                              color: AppColors.grey700,
+                          child: Padding(
+                            padding: const EdgeInsets.all(4.0),
+                            child: Container(
+                              width: 30.r,
+                                height: 30.h,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  border: Border.all(color: AppColors.grey400),
+                                ),
+                              child: Icon(
+                                Icons.add_rounded,
+                                size: 18.r,
+                                color: AppColors.grey700,
+                              ),
                             ),
                           ),
                         ),
