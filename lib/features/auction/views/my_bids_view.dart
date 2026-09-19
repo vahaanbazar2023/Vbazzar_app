@@ -205,13 +205,39 @@ class _BidCardState extends State<_BidCard> {
   Widget build(BuildContext context) {
     final item = widget.item;
     final v = item.vehicleDetails;
-    final isClosed = !item.isAuctionActive;
+    final isClosed = item.isEnded;
+
+    // Winning / Losing status.
+    // While the auction is live we compare the user's bid to the current
+    // highest. Once it has ended we trust the server's bid status
+    // (approved = won/leading, rejected = outbid). The chip is hidden for
+    // ended auctions with no decisive status.
+    final bool hasBid = item.yourBid > 0;
+    final String status = item.bidStatus.toLowerCase();
+    final bool isWinning = isClosed
+        ? (status == 'approved' || status == 'won')
+        : hasBid &&
+              (item.currentHighestBid <= 0 ||
+                  item.yourBid >= item.currentHighestBid);
+    final bool isLosing = isClosed
+        ? (status == 'rejected' || status == 'lost')
+        : hasBid && !isWinning;
+    final bool showBidChip = hasBid && (isWinning || isLosing);
+
+    final cardBorderColor = isWinning
+        ? const Color(0xFF2E7D32)
+        : isLosing
+        ? const Color(0xFFC62828)
+        : AppColors.grey200;
 
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(14.r),
-        border: Border.all(color: AppColors.grey200),
+        border: Border.all(
+          color: cardBorderColor,
+          width: showBidChip ? 1.5 : 1.0,
+        ),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.07),
@@ -268,11 +294,62 @@ class _BidCardState extends State<_BidCard> {
                         ),
                       ),
                     ),
-                    // Closed overlay
-                    if (isClosed)
+                    // Winning/Losing chip — same as auction listing card
+                    if (showBidChip)
                       Positioned(
                         top: 6.h,
                         left: 6.w,
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(12.r),
+                          child: BackdropFilter(
+                            filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                            child: Container(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 7.w,
+                                vertical: 3.h,
+                              ),
+                              decoration: BoxDecoration(
+                                color: isWinning
+                                    ? const Color(
+                                        0xFF2E7D32,
+                                      ).withValues(alpha: 0.45)
+                                    : const Color(
+                                        0xFFC62828,
+                                      ).withValues(alpha: 0.45),
+                                borderRadius: BorderRadius.circular(12.r),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(
+                                    isWinning
+                                        ? Icons.emoji_events_rounded
+                                        : Icons.trending_down_rounded,
+                                    size: 10.r,
+                                    color: Colors.white,
+                                  ),
+                                  SizedBox(width: 3.w),
+                                  Text(
+                                    isWinning ? 'Winning' : 'Losing',
+                                    style: TextStyle(
+                                      fontFamily: 'Montserrat',
+                                      fontSize: 9.sp,
+                                      fontWeight: FontWeight.w700,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    // Closed overlay — top-right so it doesn't collide with
+                    // the winning/losing chip.
+                    if (isClosed)
+                      Positioned(
+                        top: 6.h,
+                        right: 6.w,
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(12.r),
                           child: BackdropFilter(
@@ -338,7 +415,7 @@ class _BidCardState extends State<_BidCard> {
                       SizedBox(height: 6.h),
                       // Timer or Closed
                       if (!isClosed)
-                        TimerBadge(endAt: v.auctionEndDate)
+                        TimerBadge(endAt: item.auctionEndTime)
                       else
                         Container(
                           padding: EdgeInsets.symmetric(
@@ -606,12 +683,19 @@ class _BidCardState extends State<_BidCard> {
                           ),
                           child: Row(
                             children: [
+                                 SizedBox(width: 4.w),
                               GestureDetector(
                                 onTap: _decrease,
                                 behavior: HitTestBehavior.opaque,
-                                child: SizedBox(
-                                  width: 40.r,
-                                  height: 42.h,
+                                child: Container(
+                                      width: 30.r,
+                                      height: 30.h,
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        border: Border.all(
+                                          color: AppColors.grey400,
+                                        ),
+                                      ),
                                   child: Icon(
                                     Icons.remove_rounded,
                                     size: 18.r,
@@ -658,9 +742,15 @@ class _BidCardState extends State<_BidCard> {
                               GestureDetector(
                                 onTap: _increase,
                                 behavior: HitTestBehavior.opaque,
-                                child: SizedBox(
-                                  width: 40.r,
-                                  height: 42.h,
+                                child: Container(
+                                      width: 30.r,
+                                      height: 30.h,
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        border: Border.all(
+                                          color: AppColors.grey400,
+                                        ),
+                                      ),
                                   child: Icon(
                                     Icons.add_rounded,
                                     size: 18.r,
@@ -668,6 +758,7 @@ class _BidCardState extends State<_BidCard> {
                                   ),
                                 ),
                               ),
+                                 SizedBox(width: 4.w),
                             ],
                           ),
                         ),

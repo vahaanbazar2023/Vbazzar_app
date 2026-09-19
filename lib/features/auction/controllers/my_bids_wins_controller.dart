@@ -67,9 +67,9 @@ class MyBidsController extends GetxController {
         data: {'user_id': uid, 'page': 1, 'limit': _limit},
       );
       _parse(response.data, replace: true);
-    } catch (e) {
+    } catch (e, st) {
       errorMessage.value = 'Failed to load bids. Please try again.';
-      debugPrint('❌ MyBidsController: $e');
+      debugPrint('❌ MyBidsController._load: $e\n$st');
     } finally {
       isLoading.value = false;
     }

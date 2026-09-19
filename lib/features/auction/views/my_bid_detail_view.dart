@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'dart:ui';
+
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -74,7 +76,23 @@ class _MyBidDetailViewState extends State<MyBidDetailView> {
   Widget build(BuildContext context) {
     final item = widget.item;
     final v = item.vehicleDetails;
-    final isClosed = !item.isAuctionActive;
+    final isClosed = item.isEnded;
+
+    // Winning / Losing status.
+    // Live auctions compare the user's bid to the current highest; ended
+    // auctions trust the server's bid status. The chip is hidden when there's
+    // no decisive result on an ended auction.
+    final bool hasBid = item.yourBid > 0;
+    final String status = item.bidStatus.toLowerCase();
+    final bool isWinning = isClosed
+        ? (status == 'approved' || status == 'won')
+        : hasBid &&
+              (item.currentHighestBid <= 0 ||
+                  item.yourBid >= item.currentHighestBid);
+    final bool isLosing = isClosed
+        ? (status == 'rejected' || status == 'lost')
+        : hasBid && !isWinning;
+    final bool showBidChip = hasBid && (isWinning || isLosing);
 
     return AppLayout(
       title: context.l10n.bidDetails,
@@ -97,9 +115,66 @@ class _MyBidDetailViewState extends State<MyBidDetailView> {
                   // ── Image carousel ──────────────────────────────────────
                   ClipRRect(
                     borderRadius: AppRadius.borderRadiusMd,
-                    child: NetworkImageCarousel(
-                      imageUrls: v.images,
-                      height: 200.h,
+                    child: Stack(
+                      children: [
+                        NetworkImageCarousel(
+                          imageUrls: v.images,
+                          height: 200.h,
+                        ),
+                        // Winning/Losing chip — same as auction listing card
+                        if (showBidChip)
+                          Positioned(
+                            top: 10.h,
+                            left: 10.w,
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(12.r),
+                              child: BackdropFilter(
+                                filter: ImageFilter.blur(
+                                  sigmaX: 10,
+                                  sigmaY: 10,
+                                ),
+                                child: Container(
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: 9.w,
+                                    vertical: 4.h,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: isWinning
+                                        ? const Color(
+                                            0xFF2E7D32,
+                                          ).withValues(alpha: 0.45)
+                                        : const Color(
+                                            0xFFC62828,
+                                          ).withValues(alpha: 0.45),
+                                    borderRadius: BorderRadius.circular(12.r),
+                                  ),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Icon(
+                                        isWinning
+                                            ? Icons.emoji_events_rounded
+                                            : Icons.trending_down_rounded,
+                                        size: 13.r,
+                                        color: Colors.white,
+                                      ),
+                                      SizedBox(width: 4.w),
+                                      Text(
+                                        isWinning ? 'Winning' : 'Losing',
+                                        style: TextStyle(
+                                          fontFamily: 'Montserrat',
+                                          fontSize: 11.sp,
+                                          fontWeight: FontWeight.w700,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                      ],
                     ),
                   ),
                   SizedBox(height: AppSpacing.sm),
@@ -290,12 +365,19 @@ class _MyBidDetailViewState extends State<MyBidDetailView> {
                               ),
                               child: Row(
                                 children: [
+                                  SizedBox(width: 4.w),
                                   GestureDetector(
                                     onTap: _decrease,
                                     behavior: HitTestBehavior.opaque,
-                                    child: SizedBox(
-                                      width: 44.r,
-                                      height: 48.h,
+                                    child: Container(
+                                      width: 30.r,
+                                      height: 30.h,
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        border: Border.all(
+                                          color: AppColors.grey400,
+                                        ),
+                                      ),
                                       child: Icon(
                                         Icons.remove_rounded,
                                         size: 20.r,
@@ -347,9 +429,15 @@ class _MyBidDetailViewState extends State<MyBidDetailView> {
                                   GestureDetector(
                                     onTap: _increase,
                                     behavior: HitTestBehavior.opaque,
-                                    child: SizedBox(
-                                      width: 44.r,
-                                      height: 48.h,
+                                    child: Container(
+                                      width: 30.r,
+                                      height: 30.h,
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        border: Border.all(
+                                          color: AppColors.grey400,
+                                        ),
+                                      ),
                                       child: Icon(
                                         Icons.add_rounded,
                                         size: 20.r,
@@ -357,6 +445,7 @@ class _MyBidDetailViewState extends State<MyBidDetailView> {
                                       ),
                                     ),
                                   ),
+                                  SizedBox(width: 4.w),
                                 ],
                               ),
                             ),
