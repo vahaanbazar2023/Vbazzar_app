@@ -161,7 +161,7 @@ class _OrderCard extends StatelessWidget {
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: AppFonts.labelMedium.copyWith(
-                              fontWeight: FontWeight.w700,
+                              fontWeight: FontWeight.w600,
                             ),
                           ),
                         ),
@@ -181,7 +181,7 @@ class _OrderCard extends StatelessWidget {
                             order.orderStatus.toUpperCase(),
                             style: AppFonts.labelSmall.copyWith(
                               color: statusColor,
-                              fontWeight: FontWeight.w700,
+                              fontWeight: FontWeight.w600,
                             ),
                           ),
                         ),

@@ -144,7 +144,7 @@ class _SubmittingOverlay extends StatelessWidget {
             style: TextStyle(
               fontFamily: 'Montserrat',
               fontSize: 16.sp,
-              fontWeight: FontWeight.w700,
+              fontWeight: FontWeight.w600,
               color: AppColors.textPrimary,
             ),
           ),
@@ -519,7 +519,7 @@ class _SectionHeader extends StatelessWidget {
           style: TextStyle(
             fontFamily: 'Montserrat',
             fontSize: 14.sp,
-            fontWeight: FontWeight.w700,
+            fontWeight: FontWeight.w600,
             color: AppColors.textPrimary,
           ),
         ),
@@ -878,7 +878,7 @@ class _FieldBuilder extends StatelessWidget {
             '₹',
             style: TextStyle(
               fontSize: 15.sp,
-              fontWeight: FontWeight.w700,
+              fontWeight: FontWeight.w600,
               color: AppColors.textSecondary,
             ),
           ),
@@ -1234,7 +1234,7 @@ class _ToggleCard extends StatelessWidget {
                                 fontFamily: 'Montserrat',
                                 fontSize: 14.sp,
                                 fontWeight: on
-                                    ? FontWeight.w700
+                                    ? FontWeight.w600
                                     : FontWeight.w500,
                                 color: on
                                     ? AppColors.textPrimary
@@ -1359,7 +1359,7 @@ class _FileField extends StatelessWidget {
                       fontFamily: 'Montserrat',
                       fontSize: 10.sp,
                       color: AppColors.primary,
-                      fontWeight: FontWeight.w700,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
                 ),
@@ -1664,7 +1664,7 @@ class _SubmitButton extends StatelessWidget {
         width: double.infinity,
         height: 52.h,
         fontSize: 15.sp,
-        fontWeight: FontWeight.w700,
+        fontWeight: FontWeight.w600,
         isLoading: ctrl.isSubmittingForm.value,
         onPressed: () async {
           if (ctrl.isSubmittingForm.value) return; // guard double-tap

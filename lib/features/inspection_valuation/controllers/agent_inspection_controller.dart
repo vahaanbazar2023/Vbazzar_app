@@ -581,7 +581,7 @@ class AgentInspectionController extends GetxController {
               Text(
                 'Thank you for submitting!',
                 style: AppFonts.titleMedium.copyWith(
-                  fontWeight: FontWeight.w700,
+                  fontWeight: FontWeight.w600,
                   color: AppColors.textPrimary,
                   fontSize: 18,
                 ),

@@ -264,7 +264,7 @@ class _BalanceRow extends StatelessWidget {
           'Convert Coins',
           style: TextStyle(
             fontFamily: 'Montserrat',
-            fontWeight: FontWeight.w700,
+            fontWeight: FontWeight.w600,
             fontSize: 16.sp,
           ),
         ),
@@ -401,7 +401,7 @@ class _BalanceRow extends StatelessWidget {
                                 style: TextStyle(
                                   fontFamily: 'Montserrat',
                                   fontSize: 9.sp,
-                                  fontWeight: FontWeight.w700,
+                                  fontWeight: FontWeight.w600,
                                   color: canConvert
                                       ? Colors.white
                                       : AppColors.grey600,
@@ -526,7 +526,7 @@ class _ReferralBanner extends StatelessWidget {
                   'Earn more, grow your wallet!',
                   style: TextStyle(
                     fontFamily: 'Montserrat',
-                    fontWeight: FontWeight.w700,
+                    fontWeight: FontWeight.w600,
                     fontSize: 12.sp,
                     color: AppColors.black,
                   ),
@@ -615,7 +615,7 @@ class _SectionHeader extends StatelessWidget {
           title,
           style: TextStyle(
             fontFamily: 'Montserrat',
-            fontWeight: FontWeight.w700,
+            fontWeight: FontWeight.w600,
             fontSize: 15.sp,
             color: AppColors.black,
           ),
@@ -734,7 +734,7 @@ class _TransactionCard extends StatelessWidget {
                 '$prefix₹${tx.amount}',
                 style: TextStyle(
                   fontFamily: 'Montserrat',
-                  fontWeight: FontWeight.w700,
+                  fontWeight: FontWeight.w600,
                   fontSize: 13.sp,
                   color: color,
                 ),
@@ -854,7 +854,7 @@ class _HowItWorks extends StatelessWidget {
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontFamily: 'Montserrat',
-                        fontWeight: FontWeight.w700,
+                        fontWeight: FontWeight.w600,
                         fontSize: 10.sp,
                         color: AppColors.black,
                       ),
@@ -954,7 +954,7 @@ class _EmptyState extends StatelessWidget {
               'Unable to load wallet',
               style: TextStyle(
                 fontFamily: 'Montserrat',
-                fontWeight: FontWeight.w700,
+                fontWeight: FontWeight.w600,
                 fontSize: 16.sp,
                 color: AppColors.textPrimary,
               ),
@@ -981,7 +981,7 @@ class _EmptyState extends StatelessWidget {
                   context.l10n.retry,
                   style: TextStyle(
                     fontFamily: 'Montserrat',
-                    fontWeight: FontWeight.w700,
+                    fontWeight: FontWeight.w600,
                     fontSize: 13.sp,
                     color: Colors.white,
                   ),

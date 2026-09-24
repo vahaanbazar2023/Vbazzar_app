@@ -162,7 +162,7 @@ class _ApprVehicleDetail extends StatelessWidget {
                       style: TextStyle(
                         fontFamily: 'Montserrat',
                         fontSize: 16.sp,
-                        fontWeight: FontWeight.w700,
+                        fontWeight: FontWeight.w600,
                         color: AppColors.black,
                       ),
                       textAlign: TextAlign.center,
@@ -436,7 +436,7 @@ class _ApprStatusBadge extends StatelessWidget {
             style: TextStyle(
               fontFamily: 'Montserrat',
               fontSize: 9.sp,
-              fontWeight: FontWeight.w700,
+              fontWeight: FontWeight.w600,
               color: Colors.white,
               letterSpacing: 0.8,
             ),
@@ -489,7 +489,7 @@ class _ApprInfoBox extends StatelessWidget {
             style: TextStyle(
               fontFamily: 'Montserrat',
               fontSize: 12.sp,
-              fontWeight: FontWeight.w700,
+              fontWeight: FontWeight.w600,
               color: AppColors.black,
             ),
             textAlign: TextAlign.center,
@@ -559,7 +559,7 @@ class _ApprDetailsAccordionState extends State<_ApprDetailsAccordion> {
                       style: TextStyle(
                         fontFamily: 'Montserrat',
                         fontSize: 14.sp,
-                        fontWeight: FontWeight.w700,
+                        fontWeight: FontWeight.w600,
                         color: AppColors.black,
                       ),
                     ),

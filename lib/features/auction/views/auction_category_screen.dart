@@ -38,11 +38,11 @@ class AuctionCategoryScreen extends StatelessWidget {
           onRefresh: () => ctrl.fetchCategories(isRefresh: true),
           child: ListView.separated(
             padding: EdgeInsets.symmetric(
-              horizontal: AppSpacing.lg,
-              vertical: AppSpacing.lg,
+              horizontal: AppSpacing.md,
+              vertical: AppSpacing.md,
             ),
             itemCount: ctrl.categories.length,
-            separatorBuilder: (_, __) => SizedBox(height: 14.h),
+            separatorBuilder: (_, __) => SizedBox(height: 8.h),
             itemBuilder: (context, index) {
               final category = ctrl.categories[index];
               final imageOnLeft = index % 2 == 0;
@@ -86,7 +86,6 @@ class _CategoryCard extends StatelessWidget {
     return GestureDetector(
       onTap: category.isLive ? onTap : null,
       child: Container(
-        height: 110.h,
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(16.r),
@@ -99,10 +98,13 @@ class _CategoryCard extends StatelessWidget {
           ],
         ),
         clipBehavior: Clip.antiAlias,
-        child: Row(
-          children: imageOnLeft
-              ? [image, Expanded(child: info)]
-              : [Expanded(child: info), image],
+        child: Padding(
+          padding: const EdgeInsets.only(left: 12.0,right: 12),
+          child: Row(
+            children: imageOnLeft
+                ? [image, Expanded(child: info)]
+                : [Expanded(child: info), image],
+          ),
         ),
       ),
     );
@@ -207,8 +209,8 @@ class _CardInfo extends StatelessWidget {
             textAlign: textAlign,
             style: TextStyle(
               fontFamily: 'Montserrat',
-              fontSize: 16.sp,
-              fontWeight: FontWeight.w700,
+              fontSize: 14.sp,
+              fontWeight: FontWeight.w600,
               color: AppColors.textPrimary,
               height: 1.2,
             ),

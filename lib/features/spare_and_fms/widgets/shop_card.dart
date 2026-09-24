@@ -95,7 +95,7 @@ class ShopCard extends StatelessWidget {
                             child: Text(
                               shop.shopName,
                               style: AppFonts.titleSmall.copyWith(
-                                fontWeight: FontWeight.w700,
+                                fontWeight: FontWeight.w600,
                                 color: AppColors.textPrimary,
                               ),
                             ),
@@ -256,7 +256,7 @@ class ShopCard extends StatelessWidget {
               hasPhone ? shop.mobileNumber : 'Contact',
               style: AppFonts.titleSmall.copyWith(
                 color: AppColors.white,
-                fontWeight: FontWeight.w700,
+                fontWeight: FontWeight.w600,
                 letterSpacing: 0.3,
               ),
             ),

@@ -134,7 +134,7 @@ class _CategoryCard extends StatelessWidget {
                   style: TextStyle(
                     fontFamily: 'Montserrat',
                     fontSize: 18.sp,
-                    fontWeight: FontWeight.w700,
+                    fontWeight: FontWeight.w600,
                     color: AppColors.black,
                   ),
                   maxLines: 1,
@@ -158,7 +158,7 @@ class _CategoryCard extends StatelessWidget {
                         style: TextStyle(
                           fontFamily: 'Montserrat',
                           fontSize: 14.sp,
-                          fontWeight: FontWeight.w700,
+                          fontWeight: FontWeight.w600,
                           color: AppColors.textPrimary,
                         ),
                       ),
@@ -337,7 +337,7 @@ class _FilterBottomSheetState extends State<_FilterBottomSheet> {
                   style: TextStyle(
                     fontFamily: 'Montserrat',
                     fontSize: 18.sp,
-                    fontWeight: FontWeight.w700,
+                    fontWeight: FontWeight.w600,
                     color: AppColors.textPrimary,
                   ),
                 ),

@@ -43,7 +43,7 @@ class LanguageSelectionScreen extends GetView<LanguageController> {
                     style: AppTextStyles.headingMedium.copyWith(
                       color: AppColors.black,
                       fontSize: 18.sp,
-                      fontWeight: FontWeight.w700,
+                      fontWeight: FontWeight.w600,
                     ),
                     textAlign: TextAlign.center,
                   ),

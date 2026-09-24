@@ -82,7 +82,7 @@ class FmsDetailView extends GetView<SpareAndFmsController> {
                       style: TextStyle(
                         fontFamily: 'Montserrat',
                         fontSize: 15.sp,
-                        fontWeight: FontWeight.w700,
+                        fontWeight: FontWeight.w600,
                         color: AppColors.black,
                       ),
                     ),
@@ -239,7 +239,7 @@ class FmsDetailView extends GetView<SpareAndFmsController> {
                           style: TextStyle(
                             fontFamily: 'Montserrat',
                             fontSize: 18.sp,
-                            fontWeight: FontWeight.w700,
+                            fontWeight: FontWeight.w600,
                             color: AppColors.black,
                           ),
                         ),
@@ -327,7 +327,7 @@ class _RatingBadge extends StatelessWidget {
             style: TextStyle(
               fontFamily: 'Montserrat',
               fontSize: 11.sp,
-              fontWeight: FontWeight.w700,
+              fontWeight: FontWeight.w600,
               color: AppColors.white,
             ),
           ),
@@ -388,7 +388,7 @@ class _OrderStatusBanner extends StatelessWidget {
                   style: TextStyle(
                     fontFamily: 'Montserrat',
                     fontSize: 13.sp,
-                    fontWeight: FontWeight.w700,
+                    fontWeight: FontWeight.w600,
                     color: badgeColor,
                   ),
                 ),
@@ -452,7 +452,7 @@ class _InfoBox extends StatelessWidget {
             style: TextStyle(
               fontFamily: 'Montserrat',
               fontSize: 12.sp,
-              fontWeight: FontWeight.w700,
+              fontWeight: FontWeight.w600,
               color: AppColors.black,
             ),
             textAlign: TextAlign.center,
@@ -614,7 +614,7 @@ class _DescriptionAccordionState extends State<_DescriptionAccordion> {
                       style: TextStyle(
                         fontFamily: 'Montserrat',
                         fontSize: 14.sp,
-                        fontWeight: FontWeight.w700,
+                        fontWeight: FontWeight.w600,
                         color: AppColors.black,
                       ),
                     ),

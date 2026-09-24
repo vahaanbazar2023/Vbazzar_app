@@ -213,7 +213,7 @@ class _WalletBodyState extends State<_WalletBody> {
                                 widget.plan.name[0].toUpperCase(),
                                 style: const TextStyle(
                                   fontFamily: 'Montserrat',
-                                  fontWeight: FontWeight.w700,
+                                  fontWeight: FontWeight.w600,
                                   fontSize: 18,
                                   color: AppColors.primaryLight,
                                 ),
@@ -278,7 +278,7 @@ class _WalletBodyState extends State<_WalletBody> {
                             : '₹${widget.plan.price.toStringAsFixed(widget.plan.price % 1 == 0 ? 0 : 2)}',
                         style: TextStyle(
                           fontFamily: 'Plus Jakarta Sans',
-                          fontWeight: FontWeight.w700,
+                          fontWeight: FontWeight.w600,
                           fontSize:
                               _payFromWallet &&
                                   widget.controller.isPriceDiscounted.value

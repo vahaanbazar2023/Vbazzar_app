@@ -535,7 +535,7 @@ class _VehicleCard extends StatelessWidget {
                 //           style: TextStyle(
                 //             fontFamily: 'Montserrat',
                 //             fontSize: 11.sp,
-                //             fontWeight: FontWeight.w700,
+                //             fontWeight: FontWeight.w600,
                 //             color: AppColors.textPrimary,
                 //           ),
                 //         ),
@@ -611,7 +611,7 @@ class _VehicleCard extends StatelessWidget {
                     style: TextStyle(
                       fontFamily: 'Montserrat',
                       fontSize: 15.sp,
-                      fontWeight: FontWeight.w700,
+                      fontWeight: FontWeight.w600,
                       color: AppColors.textPrimary,
                     ),
                     maxLines: 1,
@@ -664,7 +664,7 @@ class _VehicleCard extends StatelessWidget {
                             style: TextStyle(
                               fontFamily: 'Montserrat',
                               fontSize: 12.sp,
-                              fontWeight: FontWeight.w700,
+                              fontWeight: FontWeight.w600,
                               color: Colors.white,
                             ),
                           ),

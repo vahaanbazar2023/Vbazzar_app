@@ -168,7 +168,7 @@ class _SellVehicleFormScreenState extends State<SellVehicleFormScreen> {
                       '₹',
                       style: TextStyle(
                         fontSize: 15.sp,
-                        fontWeight: FontWeight.w700,
+                        fontWeight: FontWeight.w600,
                         color: AppColors.textSecondary,
                       ),
                     ),
@@ -311,7 +311,7 @@ class _SellVehicleFormScreenState extends State<SellVehicleFormScreen> {
                 width: double.infinity,
                 height: 52.h,
                 fontSize: 15.sp,
-                fontWeight: FontWeight.w700,
+                fontWeight: FontWeight.w600,
                 isLoading: _ctrl.isSubmittingSellForm.value,
                 onPressed: _ctrl.isSubmittingSellForm.value ? null : _submit,
               ),
@@ -418,7 +418,7 @@ class _SectionHeader extends StatelessWidget {
           style: TextStyle(
             fontFamily: 'Montserrat',
             fontSize: 14.sp,
-            fontWeight: FontWeight.w700,
+            fontWeight: FontWeight.w600,
             color: AppColors.textPrimary,
           ),
         ),
@@ -885,7 +885,7 @@ class _ToggleCard extends StatelessWidget {
                               fontFamily: 'Montserrat',
                               fontSize: 14.sp,
                               fontWeight: on
-                                  ? FontWeight.w700
+                                  ? FontWeight.w600
                                   : FontWeight.w500,
                               color: on
                                   ? AppColors.textPrimary

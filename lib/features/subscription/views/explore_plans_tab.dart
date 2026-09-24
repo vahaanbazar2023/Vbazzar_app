@@ -151,7 +151,7 @@ class _ExploreCard extends StatelessWidget {
                     item.title,
                     style: TextStyle(
                       fontFamily: 'Montserrat',
-                      fontWeight: FontWeight.w700,
+                      fontWeight: FontWeight.w600,
                       fontSize: 14.sp,
                       color: AppColors.black,
                     ),

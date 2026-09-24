@@ -264,7 +264,7 @@ class _BuyVehicleDetailsViewState extends State<BuyVehicleDetailsView> {
                       style: TextStyle(
                         fontFamily: 'Montserrat',
                         fontSize: 16.sp,
-                        fontWeight: FontWeight.w700,
+                        fontWeight: FontWeight.w600,
                         color: AppColors.black,
                       ),
                       textAlign: TextAlign.center,
@@ -602,7 +602,7 @@ class _StatusBadge extends StatelessWidget {
             style: TextStyle(
               fontFamily: 'Montserrat',
               fontSize: 9.sp,
-              fontWeight: FontWeight.w700,
+              fontWeight: FontWeight.w600,
               color: Colors.white,
               letterSpacing: 0.8,
             ),
@@ -655,7 +655,7 @@ class _InfoBox extends StatelessWidget {
             style: TextStyle(
               fontFamily: 'Montserrat',
               fontSize: 12.sp,
-              fontWeight: FontWeight.w700,
+              fontWeight: FontWeight.w600,
               color: AppColors.black,
             ),
             textAlign: TextAlign.center,
@@ -763,7 +763,7 @@ class _KeySpecsCard extends StatelessWidget {
                   style: TextStyle(
                     fontFamily: 'Montserrat',
                     fontSize: 14.sp,
-                    fontWeight: FontWeight.w700,
+                    fontWeight: FontWeight.w600,
                     color: AppColors.black,
                   ),
                 ),
@@ -811,7 +811,7 @@ class _KeySpecsCard extends StatelessWidget {
                                 style: TextStyle(
                                   fontFamily: 'Montserrat',
                                   fontSize: 11.sp,
-                                  fontWeight: FontWeight.w700,
+                                  fontWeight: FontWeight.w600,
                                   color: AppColors.black,
                                 ),
                               ),
@@ -897,7 +897,7 @@ class _VehicleDetailsAccordionState extends State<_VehicleDetailsAccordion> {
                       style: TextStyle(
                         fontFamily: 'Montserrat',
                         fontSize: 14.sp,
-                        fontWeight: FontWeight.w700,
+                        fontWeight: FontWeight.w600,
                         color: AppColors.black,
                       ),
                     ),
@@ -1237,7 +1237,7 @@ class _ActionCard extends StatelessWidget {
                         style: TextStyle(
                           fontFamily: 'Montserrat',
                           fontSize: 13.sp,
-                          fontWeight: FontWeight.w700,
+                          fontWeight: FontWeight.w600,
                           color: Colors.white,
                         ),
                       ),
@@ -1372,7 +1372,7 @@ class _OfferCard extends StatelessWidget {
                               style: TextStyle(
                                 fontFamily: 'Montserrat',
                                 fontSize: 13.sp,
-                                fontWeight: FontWeight.w700,
+                                fontWeight: FontWeight.w600,
                                 color: Colors.white,
                               ),
                             ),
@@ -1630,7 +1630,7 @@ class _ConnectWithOwnerCardState extends State<_ConnectWithOwnerCard> {
                     style: TextStyle(
                       fontFamily: 'Montserrat',
                       fontSize: 14.sp,
-                      fontWeight: FontWeight.w700,
+                      fontWeight: FontWeight.w600,
                       color: Colors.white,
                     ),
                   ),
@@ -1644,7 +1644,7 @@ class _ConnectWithOwnerCardState extends State<_ConnectWithOwnerCard> {
                     style: TextStyle(
                       fontFamily: 'Plus Jakarta Sans',
                       fontSize: hasPhone ? 16.sp : 12.sp,
-                      fontWeight: hasPhone ? FontWeight.w700 : FontWeight.w400,
+                      fontWeight: hasPhone ? FontWeight.w600 : FontWeight.w400,
                       color: Colors.white.withValues(alpha: 0.9),
                       letterSpacing: hasPhone ? 1.2 : 0,
                     ),
@@ -1700,7 +1700,7 @@ class _ConnectWithOwnerCardState extends State<_ConnectWithOwnerCard> {
                         style: TextStyle(
                           fontFamily: 'Montserrat',
                           fontSize: 12.sp,
-                          fontWeight: FontWeight.w700,
+                          fontWeight: FontWeight.w600,
                           color: const Color(0xFF3A0CA3),
                         ),
                       ),
@@ -1731,7 +1731,7 @@ class _ConnectWithOwnerCardState extends State<_ConnectWithOwnerCard> {
                       style: TextStyle(
                         fontFamily: 'Montserrat',
                         fontSize: 12.sp,
-                        fontWeight: FontWeight.w700,
+                        fontWeight: FontWeight.w600,
                         color: const Color(0xFF7209B7),
                       ),
                     ),

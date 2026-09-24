@@ -76,7 +76,7 @@ class _CashOutScreenState extends State<CashOutScreen>
         indicatorWeight: 2.5,
         labelStyle: TextStyle(
           fontFamily: 'Montserrat',
-          fontWeight: FontWeight.w700,
+          fontWeight: FontWeight.w600,
           fontSize: 13.sp,
         ),
         unselectedLabelStyle: TextStyle(
@@ -201,7 +201,7 @@ class _StripItem extends StatelessWidget {
                     fontFamily: 'Montserrat',
                     fontSize: 15.sp,
                     color: Colors.white,
-                    fontWeight: FontWeight.w700,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
                 if (sub != null)
@@ -394,7 +394,7 @@ class _CashOutRequestTabState extends State<_CashOutRequestTab>
                   'Bank Account Details',
                   style: TextStyle(
                     fontFamily: 'Montserrat',
-                    fontWeight: FontWeight.w700,
+                    fontWeight: FontWeight.w600,
                     fontSize: 14.sp,
                     color: AppColors.black,
                   ),
@@ -634,7 +634,7 @@ class _EmptyHistory extends StatelessWidget {
               'No withdrawals yet',
               style: TextStyle(
                 fontFamily: 'Montserrat',
-                fontWeight: FontWeight.w700,
+                fontWeight: FontWeight.w600,
                 fontSize: 15.sp,
                 color: AppColors.grey600,
               ),
@@ -719,7 +719,7 @@ class _HistoryCard extends StatelessWidget {
                         '₹${_fmt(entry.amount)}',
                         style: TextStyle(
                           fontFamily: 'Montserrat',
-                          fontWeight: FontWeight.w700,
+                          fontWeight: FontWeight.w600,
                           fontSize: 20.sp,
                           color: AppColors.black,
                         ),

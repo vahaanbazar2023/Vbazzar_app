@@ -217,7 +217,7 @@ class _DayHeader extends StatelessWidget {
         style: TextStyle(
           fontFamily: 'Montserrat',
           fontSize: 13.sp,
-          fontWeight: FontWeight.w700,
+          fontWeight: FontWeight.w600,
           color: AppColors.black,
         ),
       ),

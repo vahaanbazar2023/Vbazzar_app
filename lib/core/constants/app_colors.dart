@@ -18,6 +18,12 @@ class AppColors {
   static const Color ctaGradientStart = Color(0xFFBB2625);
   static const Color ctaGradientEnd = Color(0xFF67100B);
 
+
+  // FAB Gradient
+
+    static const Color ctaGradientStartfab = Color.fromARGB(255, 96, 94, 94);
+  static const Color ctaGradientEndfab = Color.fromARGB(255, 239, 160, 160);
+
   // Auth layout header gradient
   static const Color authHeaderGradientStart = Color(0xFF6B1111);
   static const Color authHeaderGradientEnd = Color(0xFF4A0B0B);

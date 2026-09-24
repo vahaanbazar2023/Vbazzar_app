@@ -50,7 +50,7 @@ class MyWinDetailView extends StatelessWidget {
                       style: TextStyle(
                         fontFamily: 'Montserrat',
                         fontSize: 15.sp,
-                        fontWeight: FontWeight.w700,
+                        fontWeight: FontWeight.w600,
                         color: AppColors.black,
                       ),
                     ),
@@ -208,7 +208,7 @@ class MyWinDetailView extends StatelessWidget {
                         style: TextStyle(
                           fontFamily: 'Montserrat',
                           fontSize: 18.sp,
-                          fontWeight: FontWeight.w700,
+                          fontWeight: FontWeight.w600,
                           color: AppColors.black,
                         ),
                       ),
@@ -236,7 +236,7 @@ class MyWinDetailView extends StatelessWidget {
                       item.userAuctionStatus,
                       style: TextStyle(
                         fontFamily: 'Montserrat',
-                        fontWeight: FontWeight.w700,
+                        fontWeight: FontWeight.w600,
                         fontSize: 13.sp,
                         color: item.isPaid ? Colors.white : AppColors.grey700,
                       ),
@@ -303,7 +303,7 @@ class _InfoBox extends StatelessWidget {
             style: TextStyle(
               fontFamily: 'Montserrat',
               fontSize: 12.sp,
-              fontWeight: FontWeight.w700,
+              fontWeight: FontWeight.w600,
               color: AppColors.black,
             ),
             textAlign: TextAlign.center,
@@ -452,7 +452,7 @@ class _VehicleAccordionState extends State<_VehicleAccordion> {
                       style: TextStyle(
                         fontFamily: 'Montserrat',
                         fontSize: 14.sp,
-                        fontWeight: FontWeight.w700,
+                        fontWeight: FontWeight.w600,
                         color: AppColors.black,
                       ),
                     ),

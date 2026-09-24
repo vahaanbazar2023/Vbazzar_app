@@ -454,7 +454,7 @@ class _SuggestionsView extends StatelessWidget {
             'Quick Access',
             style: TextStyle(
               fontFamily: 'Montserrat',
-              fontWeight: FontWeight.w700,
+              fontWeight: FontWeight.w600,
               fontSize: 14.sp,
               color: AppColors.textPrimary,
             ),
@@ -478,7 +478,7 @@ class _SuggestionsView extends StatelessWidget {
             'Browse by Category',
             style: TextStyle(
               fontFamily: 'Montserrat',
-              fontWeight: FontWeight.w700,
+              fontWeight: FontWeight.w600,
               fontSize: 14.sp,
               color: AppColors.textPrimary,
             ),
@@ -679,7 +679,7 @@ class _ResultTile extends StatelessWidget {
                     entry.title,
                     style: TextStyle(
                       fontFamily: 'Montserrat',
-                      fontWeight: FontWeight.w700,
+                      fontWeight: FontWeight.w600,
                       fontSize: 14.sp,
                       color: AppColors.textPrimary,
                     ),
@@ -737,7 +737,7 @@ class _GlobalSearchResultsView extends StatelessWidget {
                     section.label,
                     style: TextStyle(
                       fontFamily: 'Montserrat',
-                      fontWeight: FontWeight.w700,
+                      fontWeight: FontWeight.w600,
                       fontSize: 13.sp,
                       color: AppColors.textPrimary,
                     ),
@@ -821,7 +821,7 @@ class _GlobalResultTile extends StatelessWidget {
                     item.title,
                     style: TextStyle(
                       fontFamily: 'Montserrat',
-                      fontWeight: FontWeight.w700,
+                      fontWeight: FontWeight.w600,
                       fontSize: 13.sp,
                       color: AppColors.textPrimary,
                     ),

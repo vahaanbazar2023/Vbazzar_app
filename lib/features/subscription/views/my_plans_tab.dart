@@ -147,7 +147,7 @@ class MyPlanCard extends StatelessWidget {
                       sub.planName,
                       style: TextStyle(
                         fontFamily: 'Montserrat',
-                        fontWeight: FontWeight.w700,
+                        fontWeight: FontWeight.w600,
                         fontSize: 15.sp,
                         color: AppColors.black,
                       ),
@@ -235,7 +235,7 @@ class MyPlanCard extends StatelessWidget {
                     _fmtDate(sub.endDate),
                     style: TextStyle(
                       fontFamily: 'Montserrat',
-                      fontWeight: FontWeight.w700,
+                      fontWeight: FontWeight.w600,
                       fontSize: 13.sp,
                       color: AppColors.black,
                     ),
@@ -300,7 +300,7 @@ class ExploreBanner extends StatelessWidget {
                     'Need more benefits?',
                     style: TextStyle(
                       fontFamily: 'Montserrat',
-                      fontWeight: FontWeight.w700,
+                      fontWeight: FontWeight.w600,
                       fontSize: 13.sp,
                       color: AppColors.black,
                     ),
@@ -355,7 +355,7 @@ class EmptyPlans extends StatelessWidget {
               'No Active Plans',
               style: TextStyle(
                 fontFamily: 'Montserrat',
-                fontWeight: FontWeight.w700,
+                fontWeight: FontWeight.w600,
                 fontSize: 16.sp,
                 color: AppColors.textPrimary,
               ),
@@ -390,7 +390,7 @@ class EmptyPlans extends StatelessWidget {
                   'Explore Plans',
                   style: TextStyle(
                     fontFamily: 'Montserrat',
-                    fontWeight: FontWeight.w700,
+                    fontWeight: FontWeight.w600,
                     fontSize: 13.sp,
                     color: Colors.white,
                   ),
@@ -446,7 +446,7 @@ class _ErrorWidget extends StatelessWidget {
                   'Retry',
                   style: TextStyle(
                     fontFamily: 'Montserrat',
-                    fontWeight: FontWeight.w700,
+                    fontWeight: FontWeight.w600,
                     fontSize: 13.sp,
                     color: Colors.white,
                   ),

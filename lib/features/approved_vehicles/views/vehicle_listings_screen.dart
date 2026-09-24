@@ -288,7 +288,7 @@ class _VehicleListingCard extends StatelessWidget {
                     style: TextStyle(
                       fontFamily: 'Montserrat',
                       fontSize: 15.sp,
-                      fontWeight: FontWeight.w700,
+                      fontWeight: FontWeight.w600,
                       color: AppColors.textPrimary,
                     ),
                     maxLines: 1,
@@ -330,7 +330,7 @@ class _VehicleListingCard extends StatelessWidget {
                           style: TextStyle(
                             fontFamily: 'Montserrat',
                             fontSize: 13.sp,
-                            fontWeight: FontWeight.w700,
+                            fontWeight: FontWeight.w600,
                             color: AppColors.primary,
                           ),
                         ),

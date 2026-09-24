@@ -33,7 +33,7 @@ class ServiceSupportView extends StatelessWidget {
               textAlign: TextAlign.center,
               style: AppFonts.headlineMedium.copyWith(
                 color: AppColors.textPrimary,
-                fontWeight: FontWeight.w700,
+                fontWeight: FontWeight.w600,
               ),
             ),
             SizedBox(height: AppSpacing.md),

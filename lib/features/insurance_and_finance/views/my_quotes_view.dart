@@ -222,7 +222,7 @@ class _MyQuotesViewState extends State<MyQuotesView> {
                         Text(
                           vehicle.vehicleNo,
                           style: AppFonts.titleSmall.copyWith(
-                            fontWeight: FontWeight.w700,
+                            fontWeight: FontWeight.w600,
                             color: AppColors.textPrimary,
                             fontSize: 15.sp,
                           ),
@@ -344,7 +344,7 @@ class _MyQuotesViewState extends State<MyQuotesView> {
                   '₹${_formatPrice(quote.price)}',
                   style: AppFonts.titleMedium.copyWith(
                     color: AppColors.white,
-                    fontWeight: FontWeight.w700,
+                    fontWeight: FontWeight.w600,
                     fontSize: 18.sp,
                   ),
                 ),

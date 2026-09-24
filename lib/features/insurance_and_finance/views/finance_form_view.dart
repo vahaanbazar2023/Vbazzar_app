@@ -202,7 +202,7 @@ class FinanceFormView extends StatelessWidget {
               child: Text(
                 'Applicant Details',
                 style: AppFonts.titleMedium.copyWith(
-                  fontWeight: FontWeight.w700,
+                  fontWeight: FontWeight.w600,
                   color: AppColors.textPrimary,
                   fontSize: 16.sp,
                 ),
@@ -329,7 +329,7 @@ class FinanceFormView extends StatelessWidget {
                     child: Text(
                       'Co-Applicant Details',
                       style: AppFonts.titleMedium.copyWith(
-                        fontWeight: FontWeight.w700,
+                        fontWeight: FontWeight.w600,
                         color: AppColors.textPrimary,
                         fontSize: 16.sp,
                       ),

@@ -33,7 +33,7 @@ class _WalletDashboardViewState extends State<WalletDashboardView> {
           context.l10n.myWallet,
           style: const TextStyle(
             fontFamily: 'Montserrat',
-            fontWeight: FontWeight.w700,
+            fontWeight: FontWeight.w600,
             fontSize: 18,
             color: AppColors.white,
           ),
@@ -225,7 +225,7 @@ class _WalletDashboardViewState extends State<WalletDashboardView> {
                         style: const TextStyle(
                           fontFamily: 'Montserrat',
                           fontSize: 16,
-                          fontWeight: FontWeight.w700,
+                          fontWeight: FontWeight.w600,
                           color: AppColors.textPrimary,
                         ),
                       ),
@@ -492,7 +492,7 @@ class _WalletDashboardViewState extends State<WalletDashboardView> {
               style: const TextStyle(
                 fontFamily: 'Montserrat',
                 fontSize: 18,
-                fontWeight: FontWeight.w700,
+                fontWeight: FontWeight.w600,
                 color: AppColors.textPrimary,
               ),
             ),
@@ -754,7 +754,7 @@ class _TransactionCard extends StatelessWidget {
               style: TextStyle(
                 fontFamily: 'Montserrat',
                 fontSize: 14,
-                fontWeight: FontWeight.w700,
+                fontWeight: FontWeight.w600,
                 color: amountColor,
               ),
             ),

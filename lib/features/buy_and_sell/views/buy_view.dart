@@ -226,7 +226,7 @@ class _VehicleCard extends StatelessWidget {
                     style: const TextStyle(
                       fontFamily: 'PlusJakartaSans',
                       fontSize: 15,
-                      fontWeight: FontWeight.w700,
+                      fontWeight: FontWeight.w600,
                       color: Color(0xFF1A1A1A),
                     ),
                     maxLines: 1,
@@ -269,7 +269,7 @@ class _VehicleCard extends StatelessWidget {
                       style: const TextStyle(
                         fontFamily: 'PlusJakartaSans',
                         fontSize: 17,
-                        fontWeight: FontWeight.w700,
+                        fontWeight: FontWeight.w600,
                         color: _redAccent,
                       ),
                     ),

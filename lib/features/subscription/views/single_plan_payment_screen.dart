@@ -276,7 +276,7 @@ class _SinglePlanPaymentScreenState extends State<SinglePlanPaymentScreen> {
                               ),
                               style: TextStyle(
                                 fontFamily: 'Montserrat',
-                                fontWeight: FontWeight.w700,
+                                fontWeight: FontWeight.w600,
                                 fontSize: 18.sp,
                                 color: AppColors.grey800,
                               ),
@@ -337,7 +337,7 @@ class _SinglePlanPaymentScreenState extends State<SinglePlanPaymentScreen> {
                               'Proceed Payment',
                               style: TextStyle(
                                 fontFamily: 'Montserrat',
-                                fontWeight: FontWeight.w700,
+                                fontWeight: FontWeight.w600,
                                 fontSize: 14.sp,
                                 color: AppColors.white,
                                 letterSpacing: 0.3,
@@ -363,7 +363,7 @@ class _SinglePlanPaymentScreenState extends State<SinglePlanPaymentScreen> {
                         TextSpan(
                           text: '"My wallet"',
                           style: TextStyle(
-                            fontWeight: FontWeight.w700,
+                            fontWeight: FontWeight.w600,
                             color: _isProcessing
                                 ? AppColors.grey650
                                 : AppColors.primaryLight,

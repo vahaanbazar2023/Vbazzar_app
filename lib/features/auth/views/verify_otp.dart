@@ -163,7 +163,7 @@ class VerifyOTP extends GetView<AuthController> {
                             style: TextStyle(
                               fontFamily: 'Plus Jakarta Sans',
                               fontSize: 17.sp,
-                              fontWeight: FontWeight.w700,
+                              fontWeight: FontWeight.w600,
                               color: AppColors.black,
                             ),
                             textAlign: TextAlign.center,
@@ -187,7 +187,7 @@ class VerifyOTP extends GetView<AuthController> {
                                         ? '+91 $phone'
                                         : context.l10n.phoneNumberPlaceholder,
                                     style: TextStyle(
-                                      fontWeight: FontWeight.w700,
+                                      fontWeight: FontWeight.w600,
                                       color: AppColors.primary,
                                     ),
                                   ),
@@ -439,7 +439,7 @@ class VerifyOTP extends GetView<AuthController> {
                                       style: TextStyle(
                                         fontFamily: 'Plus Jakarta Sans',
                                         fontSize: 13.sp,
-                                        fontWeight: FontWeight.w700,
+                                        fontWeight: FontWeight.w600,
                                       ),
                                     ),
                                   ],

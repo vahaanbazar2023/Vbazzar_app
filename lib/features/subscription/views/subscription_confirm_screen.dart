@@ -50,7 +50,7 @@ class SubscriptionConfirmScreen extends StatelessWidget {
           'Confirm Subscription',
           style: TextStyle(
             fontFamily: 'Montserrat',
-            fontWeight: FontWeight.w700,
+            fontWeight: FontWeight.w600,
             fontSize: 18,
             color: Colors.white,
           ),
@@ -267,7 +267,7 @@ class _WhatYouGet extends StatelessWidget {
           'What\'s Included',
           style: TextStyle(
             fontFamily: 'Montserrat',
-            fontWeight: FontWeight.w700,
+            fontWeight: FontWeight.w600,
             fontSize: 16,
             color: Colors.white,
           ),
@@ -344,7 +344,7 @@ class _OrderSummary extends StatelessWidget {
           'Order Summary',
           style: TextStyle(
             fontFamily: 'Montserrat',
-            fontWeight: FontWeight.w700,
+            fontWeight: FontWeight.w600,
             fontSize: 16,
             color: Colors.white,
           ),
@@ -472,7 +472,7 @@ class _PayButton extends StatelessWidget {
                       'Pay $priceStr',
                       style: const TextStyle(
                         fontFamily: 'Montserrat',
-                        fontWeight: FontWeight.w700,
+                        fontWeight: FontWeight.w600,
                         fontSize: 16,
                         color: Colors.white,
                         letterSpacing: 0.5,

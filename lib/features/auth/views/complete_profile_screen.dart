@@ -32,7 +32,7 @@ class CompleteProfileScreen extends GetView<AuthController> {
               'Tell us about yourself',
               style: AppTextStyles.headingMedium.copyWith(
                 fontSize: 18.sp,
-                fontWeight: FontWeight.w700,
+                fontWeight: FontWeight.w600,
               ),
             ),
           ),

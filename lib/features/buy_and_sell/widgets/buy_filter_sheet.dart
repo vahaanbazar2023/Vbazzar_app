@@ -114,7 +114,7 @@ class _BuyFilterSheetState extends State<BuyFilterSheet> {
                       style: TextStyle(
                         fontFamily: 'Montserrat',
                         fontSize: 17.sp,
-                        fontWeight: FontWeight.w700,
+                        fontWeight: FontWeight.w600,
                         color: AppColors.textPrimary,
                       ),
                     ),
@@ -211,7 +211,7 @@ class _BuyFilterSheetState extends State<BuyFilterSheet> {
                               style: TextStyle(
                                 fontFamily: 'Montserrat',
                                 fontSize: 15.sp,
-                                fontWeight: FontWeight.w700,
+                                fontWeight: FontWeight.w600,
                               ),
                             ),
                           ),

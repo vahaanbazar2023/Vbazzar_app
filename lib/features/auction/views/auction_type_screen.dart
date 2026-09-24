@@ -152,7 +152,7 @@ class _TypeCard extends StatelessWidget {
                             badgeLabel.toUpperCase(),
                             style: TextStyle(
                               fontFamily: 'Montserrat',
-                              fontWeight: FontWeight.w700,
+                              fontWeight: FontWeight.w600,
                               fontSize: 10.sp,
                               color: Colors.white,
                               letterSpacing: 0.6,
@@ -179,7 +179,7 @@ class _TypeCard extends StatelessWidget {
                           title,
                           style: TextStyle(
                             fontFamily: 'Montserrat',
-                            fontWeight: FontWeight.w700,
+                            fontWeight: FontWeight.w600,
                             fontSize: 16.sp,
                             color: AppColors.textPrimary,
                             height: 1.2,

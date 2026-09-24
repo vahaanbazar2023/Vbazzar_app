@@ -114,7 +114,7 @@ class _Header extends StatelessWidget {
                     title,
                     style: const TextStyle(
                       fontFamily: 'Montserrat',
-                      fontWeight: FontWeight.w700,
+                      fontWeight: FontWeight.w600,
                       fontSize: 18,
                       color: Colors.white,
                       height: 1.0,

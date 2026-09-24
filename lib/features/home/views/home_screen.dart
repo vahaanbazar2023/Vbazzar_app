@@ -300,7 +300,7 @@ class _HomeHeader extends StatelessWidget {
                                   style: TextStyle(
                                     fontFamily: 'Montserrat',
                                     fontSize: 8.sp,
-                                    fontWeight: FontWeight.w700,
+                                    fontWeight: FontWeight.w600,
                                     color: Colors.white,
                                   ),
                                   textAlign: TextAlign.center,
@@ -355,7 +355,7 @@ class _SectionHeader extends StatelessWidget {
             style: TextStyle(
               fontFamily: 'Montserrat',
               fontSize: 16.sp,
-              fontWeight: FontWeight.w700,
+              fontWeight: FontWeight.w600,
               color: AppColors.textPrimary,
             ),
           ),
@@ -606,7 +606,7 @@ class _AuctionBannerCard extends StatelessWidget {
                             style: TextStyle(
                               fontFamily: 'Montserrat',
                               fontSize: 8.sp,
-                              fontWeight: FontWeight.w700,
+                              fontWeight: FontWeight.w600,
                               color: Colors.white,
                               letterSpacing: 0.8,
                             ),
@@ -659,7 +659,7 @@ class _AuctionBannerCard extends StatelessWidget {
                             style: TextStyle(
                               fontFamily: 'Montserrat',
                               fontSize: 10.sp,
-                              fontWeight: FontWeight.w700,
+                              fontWeight: FontWeight.w600,
                               color: AppColors.primary,
                             ),
                           ),
@@ -894,7 +894,7 @@ class _CategoryCard extends StatelessWidget {
                     style: TextStyle(
                       fontFamily: 'Montserrat',
                       fontSize: 11.sp,
-                      fontWeight: FontWeight.w700,
+                      fontWeight: FontWeight.w600,
                       color: AppColors.textPrimary,
                     ),
                   ),
@@ -918,7 +918,7 @@ class _CategoryCard extends StatelessWidget {
                               style: TextStyle(
                                 fontFamily: 'Montserrat',
                                 fontSize: 11.sp,
-                                fontWeight: FontWeight.w700,
+                                fontWeight: FontWeight.w600,
                                 color: AppColors.textPrimary,
                               ),
                             ),
@@ -954,7 +954,7 @@ class _CategoryCard extends StatelessWidget {
                               style: TextStyle(
                                 fontFamily: 'Montserrat',
                                 fontSize: 9.sp,
-                                fontWeight: FontWeight.w700,
+                                fontWeight: FontWeight.w600,
                                 color: Colors.white,
                               ),
                             ),
@@ -1165,7 +1165,7 @@ class _InspectionBanner extends StatelessWidget {
                             style: TextStyle(
                               fontFamily: 'Montserrat',
                               fontSize: 14.sp,
-                              fontWeight: FontWeight.w700,
+                              fontWeight: FontWeight.w600,
                               color: Colors.white,
                               height: 1.3,
                             ),
@@ -1219,7 +1219,7 @@ class _InspectionBanner extends StatelessWidget {
                                           style: TextStyle(
                                             fontFamily: 'Montserrat',
                                             fontSize: 12.sp,
-                                            fontWeight: FontWeight.w700,
+                                            fontWeight: FontWeight.w600,
                                             color: AppColors.primary,
                                           ),
                                         ),
@@ -1353,7 +1353,7 @@ class _FmsItemCard extends StatelessWidget {
                     style: TextStyle(
                       fontFamily: 'Montserrat',
                       fontSize: 12.sp,
-                      fontWeight: FontWeight.w700,
+                      fontWeight: FontWeight.w600,
                       color: AppColors.primary,
                     ),
                   ),
@@ -1496,7 +1496,7 @@ class _InsuranceBanner extends StatelessWidget {
                             style: TextStyle(
                               fontFamily: 'Montserrat',
                               fontSize: 14.sp,
-                              fontWeight: FontWeight.w700,
+                              fontWeight: FontWeight.w600,
                               color: Colors.white,
                               height: 1.3,
                             ),
@@ -1550,7 +1550,7 @@ class _InsuranceBanner extends StatelessWidget {
                                           style: TextStyle(
                                             fontFamily: 'Montserrat',
                                             fontSize: 12.sp,
-                                            fontWeight: FontWeight.w700,
+                                            fontWeight: FontWeight.w600,
                                             color: AppColors.primary,
                                           ),
                                         ),
@@ -1685,7 +1685,7 @@ class _SpareSupportTile extends StatelessWidget {
                     style: TextStyle(
                       fontFamily: 'Montserrat',
                       fontSize: 12.sp,
-                      fontWeight: FontWeight.w700,
+                      fontWeight: FontWeight.w600,
                       color: AppColors.textPrimary,
                     ),
                   ),

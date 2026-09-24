@@ -205,7 +205,7 @@ class _FabItem extends StatelessWidget {
                   style: TextStyle(
                     fontFamily: 'Montserrat',
                     fontSize: 12.sp,
-                    fontWeight: FontWeight.w700,
+                    fontWeight: FontWeight.w600,
                     color: Colors.white,
                     shadows: const [
                       Shadow(color: Colors.black26, blurRadius: 4),

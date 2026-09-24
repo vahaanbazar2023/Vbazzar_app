@@ -845,7 +845,7 @@ class AgentValuationFormView extends GetView<AgentInspectionController> {
                     Text(
                       title,
                       style: AppFonts.titleSmall.copyWith(
-                        fontWeight: FontWeight.w700,
+                        fontWeight: FontWeight.w600,
                         color: AppColors.textPrimary,
                       ),
                     ),
@@ -1034,7 +1034,7 @@ class AgentValuationFormView extends GetView<AgentInspectionController> {
               Text(
                 'Tyres',
                 style: AppFonts.titleSmall.copyWith(
-                  fontWeight: FontWeight.w700,
+                  fontWeight: FontWeight.w600,
                   color: AppColors.textPrimary,
                 ),
               ),
@@ -1105,7 +1105,7 @@ class AgentValuationFormView extends GetView<AgentInspectionController> {
               Text(
                 'Odometer',
                 style: AppFonts.titleSmall.copyWith(
-                  fontWeight: FontWeight.w700,
+                  fontWeight: FontWeight.w600,
                   color: AppColors.textPrimary,
                 ),
               ),
@@ -1212,7 +1212,7 @@ class AgentValuationFormView extends GetView<AgentInspectionController> {
               child: Text(
                 '$value%',
                 style: AppFonts.labelMedium.copyWith(
-                  fontWeight: FontWeight.w700,
+                  fontWeight: FontWeight.w600,
                   color: progressColor,
                 ),
               ),

@@ -179,7 +179,7 @@ class _CategoryCard extends StatelessWidget {
                         child: Text(
                           fullTitle,
                           style: AppFonts.titleSmall.copyWith(
-                            fontWeight: FontWeight.w700,
+                            fontWeight: FontWeight.w600,
                           ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,

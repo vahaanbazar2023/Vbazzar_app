@@ -164,7 +164,7 @@ class _MyBidDetailViewState extends State<MyBidDetailView> {
                                         style: TextStyle(
                                           fontFamily: 'Montserrat',
                                           fontSize: 11.sp,
-                                          fontWeight: FontWeight.w700,
+                                          fontWeight: FontWeight.w600,
                                           color: Colors.white,
                                         ),
                                       ),
@@ -186,7 +186,7 @@ class _MyBidDetailViewState extends State<MyBidDetailView> {
                       style: TextStyle(
                         fontFamily: 'Montserrat',
                         fontSize: 15.sp,
-                        fontWeight: FontWeight.w700,
+                        fontWeight: FontWeight.w600,
                         color: AppColors.black,
                       ),
                     ),
@@ -407,7 +407,7 @@ class _MyBidDetailViewState extends State<MyBidDetailView> {
                                       style: TextStyle(
                                         fontFamily: 'Montserrat',
                                         fontSize: 15.sp,
-                                        fontWeight: FontWeight.w700,
+                                        fontWeight: FontWeight.w600,
                                         color: AppColors.black,
                                       ),
                                       decoration: InputDecoration(
@@ -415,7 +415,7 @@ class _MyBidDetailViewState extends State<MyBidDetailView> {
                                         prefixStyle: TextStyle(
                                           fontFamily: 'Montserrat',
                                           fontSize: 15.sp,
-                                          fontWeight: FontWeight.w700,
+                                          fontWeight: FontWeight.w600,
                                           color: AppColors.black,
                                         ),
                                         border: InputBorder.none,
@@ -590,7 +590,7 @@ class _BidAmountField extends StatelessWidget {
           prefixStyle: TextStyle(
             fontFamily: 'Montserrat',
             fontSize: 14.sp,
-            fontWeight: FontWeight.w700,
+            fontWeight: FontWeight.w600,
             color: AppColors.primary,
           ),
           hintText: context.l10n.enterBidHint,
@@ -671,7 +671,7 @@ class _InfoBox extends StatelessWidget {
             style: TextStyle(
               fontFamily: 'Montserrat',
               fontSize: 12.sp,
-              fontWeight: FontWeight.w700,
+              fontWeight: FontWeight.w600,
               color: AppColors.black,
             ),
             textAlign: TextAlign.center,
@@ -828,7 +828,7 @@ class _VehicleAccordionState extends State<_VehicleAccordion> {
                       style: TextStyle(
                         fontFamily: 'Montserrat',
                         fontSize: 14.sp,
-                        fontWeight: FontWeight.w700,
+                        fontWeight: FontWeight.w600,
                         color: AppColors.black,
                       ),
                     ),

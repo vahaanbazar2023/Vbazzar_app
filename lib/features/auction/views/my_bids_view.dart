@@ -287,7 +287,7 @@ class _BidCardState extends State<_BidCard> {
                           style: TextStyle(
                             fontFamily: 'Montserrat',
                             fontSize: 9.sp,
-                            fontWeight: FontWeight.w700,
+                            fontWeight: FontWeight.w600,
                             color: Colors.white,
                           ),
                           overflow: TextOverflow.ellipsis,
@@ -334,7 +334,7 @@ class _BidCardState extends State<_BidCard> {
                                     style: TextStyle(
                                       fontFamily: 'Montserrat',
                                       fontSize: 9.sp,
-                                      fontWeight: FontWeight.w700,
+                                      fontWeight: FontWeight.w600,
                                       color: Colors.white,
                                     ),
                                   ),
@@ -368,7 +368,7 @@ class _BidCardState extends State<_BidCard> {
                                 style: TextStyle(
                                   fontFamily: 'Montserrat',
                                   fontSize: 9.sp,
-                                  fontWeight: FontWeight.w700,
+                                  fontWeight: FontWeight.w600,
                                   color: Colors.white,
                                 ),
                               ),
@@ -395,7 +395,7 @@ class _BidCardState extends State<_BidCard> {
                         style: TextStyle(
                           fontFamily: 'Montserrat',
                           fontSize: 13.sp,
-                          fontWeight: FontWeight.w700,
+                          fontWeight: FontWeight.w600,
                           color: AppColors.black,
                         ),
                         maxLines: 2,
@@ -452,7 +452,7 @@ class _BidCardState extends State<_BidCard> {
                           style: TextStyle(
                             fontFamily: 'Montserrat',
                             fontSize: 10.sp,
-                            fontWeight: FontWeight.w700,
+                            fontWeight: FontWeight.w600,
                             color: _statusColor,
                           ),
                         ),
@@ -591,7 +591,7 @@ class _BidCardState extends State<_BidCard> {
                             style: TextStyle(
                               fontFamily: 'Montserrat',
                               fontSize: 12.sp,
-                              fontWeight: FontWeight.w700,
+                              fontWeight: FontWeight.w600,
                               color: AppColors.black,
                             ),
                           ),
@@ -720,7 +720,7 @@ class _BidCardState extends State<_BidCard> {
                                   style: TextStyle(
                                     fontFamily: 'Montserrat',
                                     fontSize: 14.sp,
-                                    fontWeight: FontWeight.w700,
+                                    fontWeight: FontWeight.w600,
                                     color: AppColors.black,
                                   ),
                                   decoration: InputDecoration(
@@ -728,7 +728,7 @@ class _BidCardState extends State<_BidCard> {
                                     prefixStyle: TextStyle(
                                       fontFamily: 'Montserrat',
                                       fontSize: 14.sp,
-                                      fontWeight: FontWeight.w700,
+                                      fontWeight: FontWeight.w600,
                                       color: AppColors.black,
                                     ),
                                     border: InputBorder.none,

@@ -61,7 +61,7 @@ class _LoginWithOtpState extends State<LoginWithOtp> {
                       style: TextStyle(
                         fontFamily: 'Plus Jakarta Sans',
                         fontSize: 16.sp,
-                        fontWeight: FontWeight.w700,
+                        fontWeight: FontWeight.w600,
                         color: AppColors.black,
                       ),
                     ),
@@ -117,7 +117,7 @@ class _LoginWithOtpState extends State<LoginWithOtp> {
                               fontFamily: 'Plus Jakarta Sans',
                               fontSize: 13.sp,
                               fontWeight: isSelected
-                                  ? FontWeight.w700
+                                  ? FontWeight.w600
                                   : FontWeight.w400,
                               color: AppColors.black,
                             ),
@@ -316,7 +316,7 @@ class _LoginWithOtpState extends State<LoginWithOtp> {
                                   style: TextStyle(
                                     fontFamily: 'Plus Jakarta Sans',
                                     fontSize: 16.sp,
-                                    fontWeight: FontWeight.w700,
+                                    fontWeight: FontWeight.w600,
                                     color: AppColors.black,
                                   ),
                                   textAlign: TextAlign.center,
@@ -600,7 +600,7 @@ class _LoginWithOtpState extends State<LoginWithOtp> {
                                       style: TextStyle(
                                         fontFamily: 'Plus Jakarta Sans',
                                         fontSize: 13.sp,
-                                        fontWeight: FontWeight.w700,
+                                        fontWeight: FontWeight.w600,
                                       ),
                                     ),
                                   ],

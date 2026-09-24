@@ -103,7 +103,10 @@ class _AuctionActivityFabState extends State<AuctionActivityFab>
             height: 52.r,
             decoration: BoxDecoration(
               gradient: const LinearGradient(
-                colors: [AppColors.ctaGradientStart, AppColors.ctaGradientEnd],
+                colors: [
+                  AppColors.ctaGradientStartfab,
+                  AppColors.ctaGradientEndfab,
+                ],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
@@ -151,85 +154,66 @@ class _FabItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          // ── Glassmorphic label pill ───────────────────────
-          ClipRRect(
-            borderRadius: BorderRadius.circular(24.r),
-            child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 16, sigmaY: 16),
-              child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 9.h),
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      AppColors.ctaGradientStart.withValues(alpha: 0.75),
-                      AppColors.ctaGradientEnd.withValues(alpha: 0.85),
-                    ],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                  borderRadius: BorderRadius.circular(24.r),
-                  border: Border.all(
-                    color: Colors.white.withValues(alpha: 0.25),
-                    width: 1,
-                  ),
-                ),
-                child: Text(
-                  label,
-                  style: TextStyle(
-                    fontFamily: 'Montserrat',
-                    fontSize: 12.sp,
-                    fontWeight: FontWeight.w700,
-                    color: Colors.white,
-                    shadows: const [
-                      Shadow(color: Colors.black26, blurRadius: 4),
-                    ],
-                  ),
-                ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(28.r),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 16, sigmaY: 16),
+          child: Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  AppColors.ctaGradientStartfab.withValues(alpha: 0.75),
+                  AppColors.ctaGradientEndfab.withValues(alpha: 0.85),
+                ],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              borderRadius: BorderRadius.circular(28.r),
+              border: Border.all(
+                color: Colors.white.withValues(alpha: 0.25),
+                width: 1,
               ),
             ),
-          ),
-          SizedBox(width: 8.w),
-          // ── Gradient icon circle ──────────────────────────
-          ClipOval(
-            child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-              child: Container(
-                width: 44.r,
-                height: 44.r,
-                decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    colors: [
-                      AppColors.ctaGradientStart,
-                      AppColors.ctaGradientEnd,
-                    ],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // ── Label ────────────────────────────────────
+                Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 14.w,
+                    vertical: 9.h,
                   ),
-                  shape: BoxShape.circle,
-                  boxShadow: [
-                    BoxShadow(
-                      color: AppColors.primary.withValues(alpha: 0.45),
-                      blurRadius: 10,
-                      offset: const Offset(0, 3),
+                  child: Text(
+                    label,
+                    style: TextStyle(
+                      fontFamily: 'Montserrat',
+                      fontSize: 12.sp,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white,
+                      shadows: const [
+                        Shadow(color: Colors.black26, blurRadius: 4),
+                      ],
                     ),
-                  ],
-                ),
-                child: Center(
-                  child: Image.asset(
-                    iconAsset,
-                    width: 22.r,
-                    height: 22.r,
-                    fit: BoxFit.contain,
-                    color: Colors.white,
                   ),
                 ),
-              ),
+                // ── Icon ─────────────────────────────────────
+                SizedBox(
+                  width: 44.r,
+                  height: 44.r,
+                  child: Center(
+                    child: Image.asset(
+                      iconAsset,
+                      width: 22.r,
+                      height: 22.r,
+                      fit: BoxFit.contain,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
-        ],
+        ),
       ),
     );
   }

@@ -313,7 +313,7 @@ class _InlineDropdownFieldState<T> extends State<InlineDropdownField<T>>
                                           ? AppColors.primary
                                           : AppColors.textPrimary,
                                       fontWeight: isSelected
-                                          ? FontWeight.w700
+                                          ? FontWeight.w600
                                           : FontWeight.w500,
                                     ),
                                   ),

@@ -227,7 +227,7 @@ Widget _section(BuildContext context, String title, List<_Item> items) {
           style: TextStyle(
             fontFamily: 'Montserrat',
             fontSize: 16.sp,
-            fontWeight: FontWeight.w700,
+            fontWeight: FontWeight.w600,
             color: AppColors.textPrimary,
           ),
         ),
@@ -323,7 +323,7 @@ class _ProfileInfoCard extends StatelessWidget {
                             style: TextStyle(
                               fontFamily: 'Montserrat',
                               fontSize: 17.sp,
-                              fontWeight: FontWeight.w700,
+                              fontWeight: FontWeight.w600,
                               color: AppColors.textPrimary,
                             ),
                           ),
@@ -445,7 +445,7 @@ class _ProfileInfoCard extends StatelessWidget {
 //                 style: TextStyle(
 //                   fontFamily: 'Montserrat',
 //                   fontSize: 21.sp,
-//                   fontWeight: FontWeight.w700,
+//                   fontWeight: FontWeight.w600,
 //                   color: Colors.white,
 //                 ),
 //               ),
@@ -476,7 +476,7 @@ class _ProfileInfoCard extends StatelessWidget {
 //                                 style: TextStyle(
 //                                   fontFamily: 'Montserrat',
 //                                   fontSize: 17.sp,
-//                                   fontWeight: FontWeight.w700,
+//                                   fontWeight: FontWeight.w600,
 //                                   color: Colors.white,
 //                                 ),
 //                               ),
@@ -749,7 +749,7 @@ class _StatCell extends StatelessWidget {
                     value,
                     style: TextStyle(
                       fontFamily: 'Montserrat',
-                      fontWeight: FontWeight.w700,
+                      fontWeight: FontWeight.w600,
                       fontSize: 14.sp,
                       color: AppColors.black,
                     ),
@@ -900,7 +900,7 @@ class _LogoutButton extends StatelessWidget {
             context.l10n.logout,
             style: const TextStyle(
               fontFamily: 'Montserrat',
-              fontWeight: FontWeight.w700,
+              fontWeight: FontWeight.w600,
             ),
           ),
           content: const Text(
@@ -929,7 +929,7 @@ class _LogoutButton extends StatelessWidget {
                 style: const TextStyle(
                   color: AppColors.primary,
                   fontFamily: 'Montserrat',
-                  fontWeight: FontWeight.w700,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
             ),
@@ -972,7 +972,7 @@ class _LogoutButton extends StatelessWidget {
                 context.l10n.logout,
                 style: TextStyle(
                   fontFamily: 'Montserrat',
-                  fontWeight: FontWeight.w700,
+                  fontWeight: FontWeight.w600,
                   fontSize: 14.sp,
                   color: AppColors.primary,
                 ),

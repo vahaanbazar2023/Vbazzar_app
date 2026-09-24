@@ -128,7 +128,7 @@ class _SpareCard extends StatelessWidget {
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: AppFonts.labelMedium.copyWith(
-                      fontWeight: FontWeight.w700,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
                   SizedBox(height: 2.h),
@@ -174,7 +174,7 @@ class _SpareCard extends StatelessWidget {
                           borderRadius: BorderRadius.circular(8),
                         ),
                         textStyle: AppFonts.labelSmall.copyWith(
-                          fontWeight: FontWeight.w700,
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
                       child: const Text('Show Interest'),

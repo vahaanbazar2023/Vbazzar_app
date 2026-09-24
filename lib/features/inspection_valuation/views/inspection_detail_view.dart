@@ -99,7 +99,7 @@ class InspectionDetailView extends StatelessWidget {
                   child: Text(
                     vehicle.vehicleNo,
                     style: AppFonts.titleLarge.copyWith(
-                      fontWeight: FontWeight.w700,
+                      fontWeight: FontWeight.w600,
                       color: AppColors.textPrimary,
                       letterSpacing: 0.5,
                     ),

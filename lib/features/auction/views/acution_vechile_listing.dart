@@ -337,7 +337,7 @@ class _VehicleCardState extends State<_VehicleCard> {
                     //       style: TextStyle(
                     //         fontFamily: 'Montserrat',
                     //         fontSize: 9.sp,
-                    //         fontWeight: FontWeight.w700,
+                    //         fontWeight: FontWeight.w600,
                     //         color: Colors.white,
                     //         letterSpacing: 0.3,
                     //       ),
@@ -385,7 +385,7 @@ class _VehicleCardState extends State<_VehicleCard> {
                                     style: TextStyle(
                                       fontFamily: 'Montserrat',
                                       fontSize: 9.sp,
-                                      fontWeight: FontWeight.w700,
+                                      fontWeight: FontWeight.w600,
                                       color: Colors.white,
                                     ),
                                   ),
@@ -412,7 +412,7 @@ class _VehicleCardState extends State<_VehicleCard> {
                         style: TextStyle(
                           fontFamily: 'Montserrat',
                           fontSize: 12.sp,
-                          fontWeight: FontWeight.w700,
+                          fontWeight: FontWeight.w600,
                           color: AppColors.black,
                         ),
                         maxLines: 2,
@@ -558,7 +558,7 @@ class _VehicleCardState extends State<_VehicleCard> {
                           style: TextStyle(
                             fontFamily: 'Montserrat',
                             fontSize: 12.sp,
-                            fontWeight: FontWeight.w700,
+                            fontWeight: FontWeight.w600,
                             color: AppColors.black,
                           ),
                         ),
@@ -703,7 +703,7 @@ class _VehicleCardState extends State<_VehicleCard> {
                             style: TextStyle(
                               fontFamily: 'Montserrat',
                               fontSize: 14.sp,
-                              fontWeight: FontWeight.w700,
+                              fontWeight: FontWeight.w600,
                               color: AppColors.black,
                             ),
                             decoration: InputDecoration(
@@ -711,7 +711,7 @@ class _VehicleCardState extends State<_VehicleCard> {
                               prefixStyle: TextStyle(
                                 fontFamily: 'Montserrat',
                                 fontSize: 14.sp,
-                                fontWeight: FontWeight.w700,
+                                fontWeight: FontWeight.w600,
                                 color: AppColors.black,
                               ),
                               border: InputBorder.none,
@@ -1058,7 +1058,7 @@ class AuctionFilterBottomSheetV2 extends StatelessWidget {
                   style: TextStyle(
                     fontFamily: 'Montserrat',
                     fontSize: 17.sp,
-                    fontWeight: FontWeight.w700,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
                 const Spacer(),

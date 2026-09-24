@@ -230,7 +230,7 @@ class _AuctionCard extends StatelessWidget {
                     style: TextStyle(
                       fontFamily: 'Montserrat',
                       fontSize: 15.sp,
-                      fontWeight: FontWeight.w700,
+                      fontWeight: FontWeight.w600,
                       color: AppColors.black,
                       height: 1.3,
                     ),
@@ -350,7 +350,7 @@ class _TopBanner extends StatelessWidget {
                   style: TextStyle(
                     fontFamily: 'Montserrat',
                     fontSize: 12.sp,
-                    fontWeight: FontWeight.w700,
+                    fontWeight: FontWeight.w600,
                     color: Colors.white,
                   ),
                 ),
@@ -417,7 +417,7 @@ class _InfoRow extends StatelessWidget {
             style: TextStyle(
               fontFamily: 'Montserrat',
               fontSize: 12.sp,
-              fontWeight: FontWeight.w700,
+              fontWeight: FontWeight.w600,
               color: AppColors.black,
             ),
             overflow: TextOverflow.ellipsis,

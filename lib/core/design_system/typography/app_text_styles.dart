@@ -29,7 +29,7 @@ class AppTextStyles {
   static TextStyle get headingLarge => TextStyle(
     fontFamily: _fontFamily,
     fontSize: 28.sp,
-    fontWeight: FontWeight.w700,
+    fontWeight: FontWeight.w600,
     color: AppColors.textPrimary,
     height: 1.3,
     letterSpacing: -0.3,
@@ -40,7 +40,7 @@ class AppTextStyles {
   static TextStyle get headingMedium => TextStyle(
     fontFamily: _fontFamily,
     fontSize: 24.sp,
-    fontWeight: FontWeight.w700,
+    fontWeight: FontWeight.w600,
     color: AppColors.textPrimary,
     height: 1.35,
     letterSpacing: 0,

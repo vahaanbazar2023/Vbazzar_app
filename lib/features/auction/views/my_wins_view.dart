@@ -172,7 +172,7 @@ class _WinCard extends StatelessWidget {
                     style: TextStyle(
                       fontFamily: 'Montserrat',
                       fontSize: 14.sp,
-                      fontWeight: FontWeight.w700,
+                      fontWeight: FontWeight.w600,
                       color: AppColors.black,
                     ),
                   ),
@@ -228,7 +228,7 @@ class _WinCard extends StatelessWidget {
                             style: TextStyle(
                               fontFamily: 'Montserrat',
                               fontSize: 16.sp,
-                              fontWeight: FontWeight.w700,
+                              fontWeight: FontWeight.w600,
                               color: AppColors.black,
                             ),
                           ),
@@ -310,7 +310,7 @@ class _InfoChip extends StatelessWidget {
           style: TextStyle(
             fontFamily: 'Montserrat',
             fontSize: 13.sp,
-            fontWeight: FontWeight.w700,
+            fontWeight: FontWeight.w600,
             color: color,
           ),
         ),

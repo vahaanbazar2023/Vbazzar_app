@@ -101,7 +101,7 @@ class ComboPlansTab extends StatelessWidget {
                   style: TextStyle(
                     fontFamily: 'Montserrat',
                     fontSize: 14.sp,
-                    fontWeight: FontWeight.w700,
+                    fontWeight: FontWeight.w600,
                     color: AppColors.textPrimary,
                   ),
                 ),
@@ -180,7 +180,7 @@ class _ComboCard extends StatelessWidget {
                       combo.name,
                       style: TextStyle(
                         fontFamily: 'Montserrat',
-                        fontWeight: FontWeight.w700,
+                        fontWeight: FontWeight.w600,
                         fontSize: 15.sp,
                         color: AppColors.black,
                       ),
@@ -420,7 +420,7 @@ class _OwnerPackCard extends StatelessWidget {
                   pack.name,
                   style: TextStyle(
                     fontFamily: 'Montserrat',
-                    fontWeight: FontWeight.w700,
+                    fontWeight: FontWeight.w600,
                     fontSize: 14.sp,
                     color: AppColors.black,
                   ),
@@ -554,7 +554,7 @@ class _PayNowButton extends StatelessWidget {
       width: 100.w,
       height: 28.h,
       fontSize: 12.sp,
-      fontWeight: FontWeight.w700,
+      fontWeight: FontWeight.w600,
     );
   }
 }
@@ -709,7 +709,7 @@ class _EmptyState extends StatelessWidget {
               'No Combo Plans',
               style: TextStyle(
                 fontFamily: 'Montserrat',
-                fontWeight: FontWeight.w700,
+                fontWeight: FontWeight.w600,
                 fontSize: 16.sp,
                 color: AppColors.textPrimary,
               ),
@@ -737,7 +737,7 @@ class _EmptyState extends StatelessWidget {
                   'Retry',
                   style: TextStyle(
                     fontFamily: 'Montserrat',
-                    fontWeight: FontWeight.w700,
+                    fontWeight: FontWeight.w600,
                     fontSize: 13.sp,
                     color: Colors.white,
                   ),
@@ -789,7 +789,7 @@ class _ErrorState extends StatelessWidget {
                   context.l10n.retry,
                   style: TextStyle(
                     fontFamily: 'Montserrat',
-                    fontWeight: FontWeight.w700,
+                    fontWeight: FontWeight.w600,
                     fontSize: 13.sp,
                     color: Colors.white,
                   ),

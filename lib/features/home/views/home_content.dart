@@ -250,7 +250,7 @@ class _ListingCard extends StatelessWidget {
                   '₹ 24,50,000',
                   style: TextStyle(
                     fontSize: 16,
-                    fontWeight: FontWeight.w700,
+                    fontWeight: FontWeight.w600,
                     color: AppColors.primary,
                   ),
                 ),
@@ -312,7 +312,7 @@ class _ListingListItem extends StatelessWidget {
                   '₹ 18,00,000',
                   style: TextStyle(
                     fontSize: 16,
-                    fontWeight: FontWeight.w700,
+                    fontWeight: FontWeight.w600,
                     color: AppColors.primary,
                   ),
                 ),

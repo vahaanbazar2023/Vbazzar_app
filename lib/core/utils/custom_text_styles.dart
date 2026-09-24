@@ -49,7 +49,7 @@ class PlusJakartaSansTextStyle {
 
   static TextStyle get bold => const TextStyle(
     fontFamily: 'PlusJakartaSans',
-    fontWeight: FontWeight.w700,
+    fontWeight: FontWeight.w600,
   );
 
   static TextStyle get extraBold => const TextStyle(

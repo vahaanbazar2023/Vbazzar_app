@@ -306,7 +306,7 @@ class _SubscriptionPlanBodyState extends State<SubscriptionPlanBody> {
               height: 36.h,
               width: 120,
               fontSize: 15.sp,
-              fontWeight: FontWeight.w700,
+              fontWeight: FontWeight.w600,
             ),
           );
         }),
@@ -480,7 +480,7 @@ class _PlanCard extends StatelessWidget {
                               plan.name,
                               style: TextStyle(
                                 fontFamily: 'Montserrat',
-                                fontWeight: FontWeight.w700,
+                                fontWeight: FontWeight.w600,
                                 fontSize: 18.sp,
                                 color: AppColors.black,
                               ),
@@ -541,7 +541,7 @@ class _PlanCard extends StatelessWidget {
                                 '₹${_fmt(plan.price)}',
                                 style: TextStyle(
                                   fontFamily: 'Montserrat',
-                                  fontWeight: FontWeight.w700,
+                                  fontWeight: FontWeight.w600,
                                   fontSize: 20.sp,
                                   color: AppColors.black,
                                 ),
@@ -735,7 +735,7 @@ class _FeatureChip extends StatelessWidget {
                   style: TextStyle(
                     fontFamily: 'Montserrat',
                     fontSize: 11.sp,
-                    fontWeight: FontWeight.w700,
+                    fontWeight: FontWeight.w600,
                     color: AppColors.textPrimary,
                   ),
                   maxLines: 1,
@@ -792,7 +792,7 @@ class _ErrorState extends StatelessWidget {
                   context.l10n.retry,
                   style: TextStyle(
                     fontFamily: 'Montserrat',
-                    fontWeight: FontWeight.w700,
+                    fontWeight: FontWeight.w600,
                     fontSize: 13.sp,
                     color: Colors.white,
                   ),

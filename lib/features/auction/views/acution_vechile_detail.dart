@@ -90,7 +90,7 @@ class AuctionVehicleDetailScreen extends StatelessWidget {
                       style: TextStyle(
                         fontFamily: 'Montserrat',
                         fontSize: 15.sp,
-                        fontWeight: FontWeight.w700,
+                        fontWeight: FontWeight.w600,
                         color: AppColors.black,
                       ),
                     ),
@@ -249,7 +249,7 @@ class AuctionVehicleDetailScreen extends StatelessWidget {
                           style: TextStyle(
                             fontFamily: 'Montserrat',
                             fontSize: 18.sp,
-                            fontWeight: FontWeight.w700,
+                            fontWeight: FontWeight.w600,
                             color: AppColors.black,
                           ),
                         ),
@@ -417,7 +417,7 @@ class _BidSheetState extends State<_BidSheet> {
                   style: TextStyle(
                     fontFamily: 'Montserrat',
                     fontSize: 18.sp,
-                    fontWeight: FontWeight.w700,
+                    fontWeight: FontWeight.w600,
                     color: AppColors.black,
                   ),
                 ),
@@ -488,7 +488,7 @@ class _BidSheetState extends State<_BidSheet> {
                   style: TextStyle(
                     fontFamily: 'Montserrat',
                     fontSize: 20.sp,
-                    fontWeight: FontWeight.w700,
+                    fontWeight: FontWeight.w600,
                     color: AppColors.black,
                   ),
                   decoration: InputDecoration(
@@ -497,7 +497,7 @@ class _BidSheetState extends State<_BidSheet> {
                     prefixStyle: TextStyle(
                       fontFamily: 'Montserrat',
                       fontSize: 20.sp,
-                      fontWeight: FontWeight.w700,
+                      fontWeight: FontWeight.w600,
                       color: AppColors.primary,
                     ),
                     errorText: _errorText,
@@ -568,7 +568,7 @@ class _BidInfoItem extends StatelessWidget {
           style: TextStyle(
             fontFamily: 'Montserrat',
             fontSize: 13.sp,
-            fontWeight: FontWeight.w700,
+            fontWeight: FontWeight.w600,
             color: valueColor ?? AppColors.black,
           ),
         ),
@@ -637,7 +637,7 @@ class _VehicleDetailsAccordionState extends State<_VehicleDetailsAccordion> {
                       style: TextStyle(
                         fontFamily: 'Montserrat',
                         fontSize: 14.sp,
-                        fontWeight: FontWeight.w700,
+                        fontWeight: FontWeight.w600,
                         color: AppColors.black,
                       ),
                     ),
@@ -773,7 +773,7 @@ class _VehicleDetailsAccordionState extends State<_VehicleDetailsAccordion> {
                         style: TextStyle(
                           fontFamily: 'Montserrat',
                           fontSize: 12.sp,
-                          fontWeight: FontWeight.w700,
+                          fontWeight: FontWeight.w600,
                           color: AppColors.primary,
                         ),
                       ),
@@ -875,7 +875,7 @@ class _InfoBox extends StatelessWidget {
             style: TextStyle(
               fontFamily: 'Montserrat',
               fontSize: 12.sp,
-              fontWeight: FontWeight.w700,
+              fontWeight: FontWeight.w600,
               color: AppColors.black,
             ),
             textAlign: TextAlign.center,

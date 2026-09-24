@@ -123,7 +123,7 @@ class _InspectionHomeViewState extends State<InspectionHomeView> {
             context.l10n.vehicleInspectionHero,
             style: AppFonts.headlineMedium.copyWith(
               color: AppColors.white,
-              fontWeight: FontWeight.w700,
+              fontWeight: FontWeight.w600,
               height: 1.2,
             ),
           ),

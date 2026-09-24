@@ -44,7 +44,7 @@ class AppFonts {
   static TextStyle get headlineLarge => const TextStyle(
     fontFamily: _fontFamily,
     fontSize: 32,
-    fontWeight: FontWeight.w700,
+    fontWeight: FontWeight.w600,
   );
   static TextStyle get headlineMedium => const TextStyle(
     fontFamily: _fontFamily,
