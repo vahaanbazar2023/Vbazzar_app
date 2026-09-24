@@ -89,8 +89,8 @@ class AppHeader extends StatelessWidget {
                       title,
                       style: TextStyle(
                         fontFamily: 'Montserrat',
-                        fontSize: 18.sp,
-                        fontWeight: FontWeight.w700,
+                        fontSize: 16.sp,
+                        fontWeight: FontWeight.w600,
                         color: AppColors.textPrimary,
                       ),
                     ),

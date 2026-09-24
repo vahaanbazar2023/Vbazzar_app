@@ -176,14 +176,14 @@ class _TabContent extends StatelessWidget {
         itemBuilder: (_, index) {
           if (index >= vehicles.length) {
             return Padding(
-              padding: EdgeInsets.symmetric(vertical: 16.h),
+              padding: EdgeInsets.symmetric(vertical: 8.h),
               child: const Center(
                 child: CircularProgressIndicator(color: AppColors.primary),
               ),
             );
           }
           return Padding(
-            padding: EdgeInsets.only(bottom: AppSpacing.md),
+            padding: EdgeInsets.only(bottom: AppSpacing.sm),
             child: _VehicleCard(
               vehicle: vehicles[index],
               bidIncrementAmount: ctrl.bidIncrementAmount,
@@ -411,7 +411,7 @@ class _VehicleCardState extends State<_VehicleCard> {
                         '${v.make} ${v.model}',
                         style: TextStyle(
                           fontFamily: 'Montserrat',
-                          fontSize: 14.sp,
+                          fontSize: 12.sp,
                           fontWeight: FontWeight.w700,
                           color: AppColors.black,
                         ),
@@ -443,31 +443,31 @@ class _VehicleCardState extends State<_VehicleCard> {
           // Yard Name | Yard Location (truncated, hidden when expanded)
           // Auction ID | Vehicle ID
           // ══════════════════════════════════════════════════
-          Padding(
-            padding: EdgeInsets.fromLTRB(12.w, 10.h, 12.w, 0),
-            child: Column(
-              children: [
-                // Show truncated yard rows only when collapsed
-                if (!_expanded) ...[
-                  _GridRow(
-                    'Yard Name',
-                    v.yardName,
-                    'Yard Location',
-                    v.yardLocation,
-                    singleLine: true,
-                  ),
-                  SizedBox(height: 2.h),
-                ],
-                _GridRow(
-                  'Auction ID',
-                  v.auctionId,
-                  'Vehicle ID',
-                  v.vehicleId,
-                  singleLine: true,
-                ),
-              ],
-            ),
-          ),
+          // Padding(
+          //   padding: EdgeInsets.fromLTRB(12.w, 10.h, 12.w, 0),
+          //   child: Column(
+          //     children: [
+          //       // Show truncated yard rows only when collapsed
+          //       if (!_expanded) ...[
+          //         _GridRow(
+          //           'Yard Name',
+          //           v.yardName,
+          //           'Yard Location',
+          //           v.yardLocation,
+          //           singleLine: true,
+          //         ),
+          //         SizedBox(height: 2.h),
+          //       ],
+          //       _GridRow(
+          //         'Auction ID',
+          //         v.auctionId,
+          //         'Vehicle ID',
+          //         v.vehicleId,
+          //         singleLine: true,
+          //       ),
+          //     ],
+          //   ),
+          // ),
 
           // ══════════════════════════════════════════════════
           // EXPANDED DETAILS
@@ -598,7 +598,7 @@ class _VehicleCardState extends State<_VehicleCard> {
                 ],
               ),
             ),
-          SizedBox(height: 8.h),
+
           // ════════════════════════════════════════════Fyard══════
           // See More / Less
           // ══════════════════════════════════════════════════
@@ -659,7 +659,7 @@ class _VehicleCardState extends State<_VehicleCard> {
           // ROW 4: bid input + PLACE BID
           // ══════════════════════════════════════════════════
           Padding(
-            padding: EdgeInsets.fromLTRB(12.w, 0, 12.w, 14.h),
+            padding: EdgeInsets.fromLTRB(12.w, 0, 12.w, 6.h),
             child: Row(
               children: [
                 Expanded(
@@ -729,11 +729,11 @@ class _VehicleCardState extends State<_VehicleCard> {
                             padding: const EdgeInsets.all(4.0),
                             child: Container(
                               width: 30.r,
-                                height: 30.h,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  border: Border.all(color: AppColors.grey400),
-                                ),
+                              height: 30.h,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                border: Border.all(color: AppColors.grey400),
+                              ),
                               child: Icon(
                                 Icons.add_rounded,
                                 size: 18.r,
