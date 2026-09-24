@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -154,65 +152,86 @@ class _FabItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(28.r),
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 16, sigmaY: 16),
-          child: Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  AppColors.ctaGradientStartfab.withValues(alpha: 0.75),
-                  AppColors.ctaGradientEndfab.withValues(alpha: 0.85),
-                ],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-              borderRadius: BorderRadius.circular(28.r),
-              border: Border.all(
-                color: Colors.white.withValues(alpha: 0.25),
-                width: 1,
-              ),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                // ── Label ────────────────────────────────────
-                Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 14.w,
-                    vertical: 9.h,
-                  ),
-                  child: Text(
-                    label,
-                    style: TextStyle(
-                      fontFamily: 'Montserrat',
-                      fontSize: 12.sp,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.white,
-                      shadows: const [
-                        Shadow(color: Colors.black26, blurRadius: 4),
-                      ],
-                    ),
-                  ),
-                ),
-                // ── Icon ─────────────────────────────────────
-                SizedBox(
-                  width: 44.r,
-                  height: 44.r,
-                  child: Center(
-                    child: Image.asset(
-                      iconAsset,
-                      width: 22.r,
-                      height: 22.r,
-                      fit: BoxFit.contain,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-              ],
-            ),
+      child: Container(
+        height: 38.r,
+        clipBehavior: Clip.none,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              AppColors.ctaGradientStartfab.withValues(alpha: 0.95),
+              AppColors.ctaGradientEndfab,
+            ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
           ),
+          borderRadius: BorderRadius.circular(19.r),
+          border: Border.all(
+            color: Colors.white.withValues(alpha: 0.15),
+            width: 1,
+          ),
+        ),
+        foregroundDecoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(19.r),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            // ── Label ──────────────────────────────────────────
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 14.w),
+              child: Text(
+                label,
+                style: TextStyle(
+                  fontFamily: 'Montserrat',
+                  fontSize: 12.sp,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.white,
+                  shadows: const [Shadow(color: Colors.black26, blurRadius: 6)],
+                ),
+              ),
+            ),
+            // ── Circle — Transform.scale paints bigger than layout ──
+            // Layout: 38×38  →  Paint: ~50×50 (bleeds ~6 outside pill)
+            Transform.scale(
+              scale: 1.32,
+              child: Container(
+                width: 38.r,
+                height: 38.r,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      AppColors.ctaGradientStartfab.withValues(alpha: 0.9),
+                      AppColors.ctaGradientEndfab,
+                    ],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: Colors.white.withValues(alpha: 0.5),
+                    width: 1.5,
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.2),
+                      blurRadius: 8,
+                      spreadRadius: 1,
+                    ),
+                  ],
+                ),
+                child: Center(
+                  child: Image.asset(
+                    iconAsset,
+                    width: 18.r,
+                    height: 18.r,
+                    fit: BoxFit.contain,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
