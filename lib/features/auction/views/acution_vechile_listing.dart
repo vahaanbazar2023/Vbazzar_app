@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -33,6 +31,7 @@ class AuctionVehicleListingScreen extends GetView<VehicleListingController> {
       showBack: true,
       headerExtra: _TabAndFilterBar(controller: controller),
       body: Stack(
+        fit: StackFit.expand,
         children: [
           TabBarView(
             controller: controller.tabController,
@@ -55,50 +54,70 @@ class _TabAndFilterBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
+    return Column(
+      mainAxisSize: MainAxisSize.min,
       children: [
-        Expanded(
-          child: TabBar(
-            controller: controller.tabController,
-            isScrollable: false,
-            labelColor: AppColors.primary,
-            unselectedLabelColor: AppColors.grey600,
-            indicatorColor: AppColors.primary,
-            indicatorWeight: 2,
-            dividerColor: AppColors.grey200,
-            labelPadding: EdgeInsets.symmetric(horizontal: 4.w),
-            tabAlignment: TabAlignment.fill,
-            labelStyle: TextStyle(
-              fontFamily: 'Montserrat',
-              fontSize: 11.sp,
-              fontWeight: FontWeight.w600,
-            ),
-            unselectedLabelStyle: TextStyle(
-              fontFamily: 'Montserrat',
-              fontSize: 11.sp,
-              fontWeight: FontWeight.w500,
-            ),
-            tabs: [
-              Tab(text: context.l10n.liveTab),
-              Tab(text: context.l10n.closingTodayTab),
-              Tab(text: context.l10n.upcomingTab),
-            ],
+        // ── Search bar ──────────────────────────────────────
+        Padding(
+          padding: EdgeInsets.fromLTRB(16.w, 4.h, 16.w, 0.h),
+          child: CustomSearchBar(
+            controller: controller.searchController,
+            hint: 'Search Vehicles',
+            showGradientBorder: false,
+            borderColor: AppColors.grey300,
+            height: 40,
           ),
         ),
-        GestureDetector(
-          onTap: () {
-            controller.backupCurrentFilters();
-            AuctionFilterBottomSheetV2.show(context, controller);
-          },
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 14.w),
-            child: Image.asset(
-              AppAssets.filterPng,
-              width: 22.r,
-              height: 22.r,
-              color: AppColors.primary,
+        // ── Tab bar + filter ────────────────────────────────
+        Row(
+          children: [
+            Expanded(
+              child: SizedBox(
+                height: 34.h,
+                child: TabBar(
+                  controller: controller.tabController,
+                  isScrollable: false,
+                  labelColor: AppColors.primary,
+                  unselectedLabelColor: AppColors.grey600,
+                  indicatorColor: AppColors.primary,
+                  indicatorWeight: 2,
+                  dividerColor: AppColors.grey200,
+                  labelPadding: EdgeInsets.symmetric(horizontal: 4.w),
+                  tabAlignment: TabAlignment.fill,
+                  labelStyle: TextStyle(
+                    fontFamily: 'Montserrat',
+                    fontSize: 11.sp,
+                    fontWeight: FontWeight.w600,
+                  ),
+                  unselectedLabelStyle: TextStyle(
+                    fontFamily: 'Montserrat',
+                    fontSize: 11.sp,
+                    fontWeight: FontWeight.w500,
+                  ),
+                  tabs: [
+                    Tab(text: context.l10n.liveTab),
+                    Tab(text: context.l10n.closingTodayTab),
+                    Tab(text: context.l10n.upcomingTab),
+                  ],
+                ), // TabBar
+              ), // SizedBox
             ),
-          ),
+            GestureDetector(
+              onTap: () {
+                controller.backupCurrentFilters();
+                AuctionFilterBottomSheetV2.show(context, controller);
+              },
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 12.w),
+                child: Image.asset(
+                  AppAssets.filterPng,
+                  width: 22.r,
+                  height: 22.r,
+                  color: AppColors.primary,
+                ),
+              ),
+            ),
+          ],
         ),
       ],
     );
@@ -126,7 +145,7 @@ class _TabContent extends StatelessWidget {
       if (error.isNotEmpty) {
         return Center(
           child: Padding(
-            padding: EdgeInsets.all(AppSpacing.xl),
+            padding: EdgeInsets.all(AppSpacing.md),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -157,7 +176,7 @@ class _TabContent extends StatelessWidget {
             context.l10n.noVehiclesFound,
             style: TextStyle(
               fontFamily: 'Montserrat',
-              fontSize: 14.sp,
+              fontSize: 12.sp,
               color: AppColors.grey500,
             ),
           ),
@@ -168,9 +187,9 @@ class _TabContent extends StatelessWidget {
         controller: ctrl.scrollControllers[tabIndex],
         padding: EdgeInsets.fromLTRB(
           AppSpacing.md,
+          AppSpacing.s,
           AppSpacing.md,
-          AppSpacing.md,
-          AppSpacing.md,
+          AppSpacing.sm,
         ),
         itemCount: vehicles.length + (loadingMore ? 1 : 0),
         itemBuilder: (_, index) {
@@ -183,7 +202,7 @@ class _TabContent extends StatelessWidget {
             );
           }
           return Padding(
-            padding: EdgeInsets.only(bottom: AppSpacing.sm),
+            padding: EdgeInsets.only(bottom: AppSpacing.s),
             child: _VehicleCard(
               vehicle: vehicles[index],
               bidIncrementAmount: ctrl.bidIncrementAmount,
@@ -290,9 +309,9 @@ class _VehicleCardState extends State<_VehicleCard> {
         border: Border.all(color: cardBorderColor, width: hasBid ? 1.5 : 1.0),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.2),
-            blurRadius: 10,
-            offset: const Offset(0, 3),
+            color: Colors.black.withValues(alpha: 0.08),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
           ),
         ],
       ),
@@ -300,126 +319,58 @@ class _VehicleCardState extends State<_VehicleCard> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // ══════════════════════════════════════════════════
-          // ROW 1: image (left) + title / timer / yard (right)
-          // ══════════════════════════════════════════════════
+          // ─────────────────────────────────────────────────
+          // ROW 1: Image | Make · Reg · See More
+          // ─────────────────────────────────────────────────
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // ── Image panel ──────────────────────────────
+              // Image panel
               SizedBox(
-                width: 171.w,
-                height: 99.h,
+                width: 135.w,
+                height: 108.h,
                 child: Stack(
                   fit: StackFit.expand,
+                  clipBehavior: Clip.none,
                   children: [
-                    Container(
-                      color: const Color(0xFFF0F0F0),
-                      child: NetworkImageCarousel(
-                        imageUrls: v.images,
-                        height: 99.h,
-                      ),
-                    ),
-                    // VEH ID pill — bottom-center
-                    // Positioned(
-                    //   bottom: 0,
-                    //   left: 0,
-                    //   right: 0,
-                    //   child: Container(
-                    //     color: AppColors.primary,
-                    //     padding: EdgeInsets.symmetric(
-                    //       horizontal: 6.w,
-                    //       vertical: 4.h,
-                    //     ),
-                    //     child: Text(
-                    //       v.vehicleId,
-                    //       textAlign: TextAlign.center,
-                    //       style: TextStyle(
-                    //         fontFamily: 'Montserrat',
-                    //         fontSize: 9.sp,
-                    //         fontWeight: FontWeight.w600,
-                    //         color: Colors.white,
-                    //         letterSpacing: 0.3,
-                    //       ),
-                    //       overflow: TextOverflow.ellipsis,
-                    //     ),
-                    //   ),
-                    // ),
-                    // Winning/Losing chip
-                    if (hasBid)
-                      Positioned(
-                        top: 8.h,
-                        left: 6.w,
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(12.r),
-                          child: BackdropFilter(
-                            filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                            child: Container(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 7.w,
-                                vertical: 3.h,
-                              ),
-                              decoration: BoxDecoration(
-                                color: isWinning
-                                    ? const Color(
-                                        0xFF2E7D32,
-                                      ).withValues(alpha: 0.45)
-                                    : const Color(
-                                        0xFFC62828,
-                                      ).withValues(alpha: 0.45),
-                                borderRadius: BorderRadius.circular(12.r),
-                              ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Icon(
-                                    isWinning
-                                        ? Icons.emoji_events_rounded
-                                        : Icons.trending_down_rounded,
-                                    size: 10.r,
-                                    color: Colors.white,
-                                  ),
-                                  SizedBox(width: 3.w),
-                                  Text(
-                                    isWinning ? 'Winning' : 'Losing',
-                                    style: TextStyle(
-                                      fontFamily: 'Montserrat',
-                                      fontSize: 9.sp,
-                                      fontWeight: FontWeight.w600,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
+                    NetworkImageCarousel(imageUrls: v.images, height: 108.h),
+                    // Timer badge — top-left, arrow notch points right
+                    Positioned(
+                      top: 4.h,
+                      left: 0,
+                      child: ExcludeSemantics(
+                        child: TimerBadge(
+                          endAt: v.auctionEndDate,
+                          mirrored: true,
                         ),
                       ),
+                    ),
                   ],
                 ),
               ),
 
-              // ── Right: title + timer + yard ──────────────
+              // Right panel
               Expanded(
                 child: Padding(
-                  padding: EdgeInsets.fromLTRB(12.w, 4.h, 12.w, 12.h),
+                  padding: EdgeInsets.fromLTRB(10.w, 8.h, 10.w, 8.h),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      // Make + Model (bold)
+                      // Make + Model
                       Text(
                         '${v.make} ${v.model}',
                         style: TextStyle(
                           fontFamily: 'Montserrat',
-                          fontSize: 12.sp,
+                          fontSize: 13.sp,
                           fontWeight: FontWeight.w600,
                           color: AppColors.black,
                         ),
-                        maxLines: 2,
+                        maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
                       SizedBox(height: 2.h),
-                      // Reg No · Year
+                      // Reg · Year
                       Text(
                         '${v.registrationNo}  ·  ${v.year}',
                         style: TextStyle(
@@ -427,10 +378,47 @@ class _VehicleCardState extends State<_VehicleCard> {
                           fontSize: 11.sp,
                           color: AppColors.grey600,
                         ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
-                      SizedBox(height: 8.h),
-                      // Timer badge
-                      TimerBadge(endAt: v.auctionEndDate),
+                      SizedBox(height: 6.h),
+                      // See More / Less pill
+                      GestureDetector(
+                        onTap: () => setState(() => _expanded = !_expanded),
+                        child: Container(
+                          height: 26.h,
+                          padding: EdgeInsets.symmetric(horizontal: 10.w),
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              width: 1.0,
+                              color: AppColors.grey400,
+                            ),
+                            borderRadius: BorderRadius.circular(13.r),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                _expanded ? 'See Less' : 'See More',
+                                style: TextStyle(
+                                  fontFamily: 'Montserrat',
+                                  fontSize: 11.sp,
+                                  fontWeight: FontWeight.w600,
+                                  color: AppColors.black,
+                                ),
+                              ),
+                              SizedBox(width: 3.w),
+                              Icon(
+                                _expanded
+                                    ? Icons.keyboard_arrow_up_rounded
+                                    : Icons.keyboard_arrow_down_rounded,
+                                size: 16.r,
+                                color: AppColors.black,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -438,40 +426,9 @@ class _VehicleCardState extends State<_VehicleCard> {
             ],
           ),
 
-          // ══════════════════════════════════════════════════
-          // ROW 2: always-visible 2-col info grid
-          // Yard Name | Yard Location (truncated, hidden when expanded)
-          // Auction ID | Vehicle ID
-          // ══════════════════════════════════════════════════
-          // Padding(
-          //   padding: EdgeInsets.fromLTRB(12.w, 10.h, 12.w, 0),
-          //   child: Column(
-          //     children: [
-          //       // Show truncated yard rows only when collapsed
-          //       if (!_expanded) ...[
-          //         _GridRow(
-          //           'Yard Name',
-          //           v.yardName,
-          //           'Yard Location',
-          //           v.yardLocation,
-          //           singleLine: true,
-          //         ),
-          //         SizedBox(height: 2.h),
-          //       ],
-          //       _GridRow(
-          //         'Auction ID',
-          //         v.auctionId,
-          //         'Vehicle ID',
-          //         v.vehicleId,
-          //         singleLine: true,
-          //       ),
-          //     ],
-          //   ),
-          // ),
-
-          // ══════════════════════════════════════════════════
+          // ─────────────────────────────────────────────────
           // EXPANDED DETAILS
-          // ══════════════════════════════════════════════════
+          // ─────────────────────────────────────────────────
           if (_expanded)
             Padding(
               padding: EdgeInsets.fromLTRB(12.w, 4.h, 12.w, 0),
@@ -518,7 +475,6 @@ class _VehicleCardState extends State<_VehicleCard> {
                     'Transaction Fees',
                     v.transactionFees,
                   ),
-                  // Full Yard Name + Yard Location above remarks
                   _OptGridRow(
                     'Yard Name',
                     v.yardName,
@@ -531,7 +487,6 @@ class _VehicleCardState extends State<_VehicleCard> {
                       child: _Cell(label: 'Remarks', value: v.remarks),
                     ),
                   SizedBox(height: 4.h),
-                  // Available buying limit
                   Container(
                     width: double.infinity,
                     padding: EdgeInsets.symmetric(
@@ -565,109 +520,49 @@ class _VehicleCardState extends State<_VehicleCard> {
                       ],
                     ),
                   ),
-
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(12.w, 0, 12.w, 10.h),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: _BidChip(
-                            label: 'Your Bid',
-                            value: v.yourBid > 0
-                                ? '₹ ${_fmt(v.yourBid)}'
-                                : '₹ 0',
-                          ),
+                  SizedBox(height: 8.h),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _BidChip(
+                          label: 'Your Bid',
+                          value: v.yourBid > 0 ? '₹ ${_fmt(v.yourBid)}' : '₹ 0',
                         ),
-                        SizedBox(width: 8.w),
-                        Expanded(
-                          child: _BidChip(
-                            label: 'Bids Left',
-                            value: v.bidsLeft.toString(),
-                          ),
+                      ),
+                      SizedBox(width: 8.w),
+                      Expanded(
+                        child: _BidChip(
+                          label: 'Bids Left',
+                          value: v.bidsLeft.toString(),
                         ),
-                        SizedBox(width: 8.w),
-                        Expanded(
-                          child: _BidChip(
-                            label: 'Bids',
-                            value: v.bidsReceived.toString(),
-                          ),
+                      ),
+                      SizedBox(width: 8.w),
+                      Expanded(
+                        child: _BidChip(
+                          label: 'Bids',
+                          value: v.bidsReceived.toString(),
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
+                  SizedBox(height: 6.h),
                 ],
               ),
             ),
 
-          // ════════════════════════════════════════════Fyard══════
-          // See More / Less
-          // ══════════════════════════════════════════════════
-          GestureDetector(
-            onTap: () => setState(() => _expanded = !_expanded),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Divider(color: AppColors.grey300, thickness: 1),
-                ),
-                SizedBox(width: 8.w),
-                Container(
-                  height: 20,
-                  decoration: BoxDecoration(
-                    border: Border.all(width: 1, color: AppColors.grey400),
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 8.0, right: 8),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          _expanded ? 'See Less' : 'See More',
-                          style: TextStyle(
-                            fontFamily: 'Montserrat',
-                            fontSize: 11.sp,
-                            fontWeight: FontWeight.w600,
-                            color: AppColors.grey700,
-                          ),
-                        ),
-                        SizedBox(width: 4.w),
-                        Icon(
-                          _expanded
-                              ? Icons.keyboard_arrow_up_rounded
-                              : Icons.keyboard_arrow_down_rounded,
-                          size: 16.r,
-                          color: AppColors.grey700,
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                SizedBox(width: 8.w),
-                Expanded(
-                  child: Divider(color: AppColors.grey300, thickness: 1),
-                ),
-              ],
-            ),
-          ),
-
-          // ══════════════════════════════════════════════════
-          // ROW 3: always-visible 3-chip bid summary
-          // Your Bid | Bids Left | Bids
-          // ══════════════════════════════════════════════════
-          SizedBox(height: 8.h),
-          // ══════════════════════════════════════════════════
-          // ROW 4: bid input + PLACE BID
-          // ══════════════════════════════════════════════════
+          // ─────────────────────────────────────────────────
+          // BID ROW: ⊖  ₹ amount  ⊕   |   PLACE BID
+          // ─────────────────────────────────────────────────
           Padding(
-            padding: EdgeInsets.fromLTRB(12.w, 0, 12.w, 6.h),
+            padding: EdgeInsets.fromLTRB(10.w, 4.h, 10.w, 4.h),
             child: Row(
               children: [
                 Expanded(
                   child: Container(
-                    height: 32.h,
+                    height: 38.h,
                     decoration: BoxDecoration(
-                      border: Border.all(color: AppColors.grey300),
-                      borderRadius: BorderRadius.circular(8.r),
+                      border: Border.all(color: AppColors.grey300, width: 1.0),
+                      borderRadius: BorderRadius.circular(19.r),
                     ),
                     child: Row(
                       children: [
@@ -675,19 +570,11 @@ class _VehicleCardState extends State<_VehicleCard> {
                           onTap: _decreaseBid,
                           behavior: HitTestBehavior.opaque,
                           child: Padding(
-                            padding: const EdgeInsets.all(4.0),
-                            child: Container(
-                              width: 30.r,
-                              height: 30.h,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                border: Border.all(color: AppColors.grey400),
-                              ),
-                              child: Icon(
-                                Icons.remove_rounded,
-                                size: 18.r,
-                                color: AppColors.grey700,
-                              ),
+                            padding: EdgeInsets.symmetric(horizontal: 8.w),
+                            child: Icon(
+                              Icons.remove_circle_outline_rounded,
+                              size: 20.r,
+                              color: AppColors.grey700,
                             ),
                           ),
                         ),
@@ -702,15 +589,15 @@ class _VehicleCardState extends State<_VehicleCard> {
                             onChanged: _onBidTextChanged,
                             style: TextStyle(
                               fontFamily: 'Montserrat',
-                              fontSize: 14.sp,
+                              fontSize: 13.sp,
                               fontWeight: FontWeight.w600,
                               color: AppColors.black,
                             ),
                             decoration: InputDecoration(
-                              prefixText: '₹  ',
+                              prefixText: '₹ ',
                               prefixStyle: TextStyle(
                                 fontFamily: 'Montserrat',
-                                fontSize: 14.sp,
+                                fontSize: 13.sp,
                                 fontWeight: FontWeight.w600,
                                 color: AppColors.black,
                               ),
@@ -726,19 +613,11 @@ class _VehicleCardState extends State<_VehicleCard> {
                           onTap: _increaseBid,
                           behavior: HitTestBehavior.opaque,
                           child: Padding(
-                            padding: const EdgeInsets.all(4.0),
-                            child: Container(
-                              width: 30.r,
-                              height: 30.h,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                border: Border.all(color: AppColors.grey400),
-                              ),
-                              child: Icon(
-                                Icons.add_rounded,
-                                size: 18.r,
-                                color: AppColors.grey700,
-                              ),
+                            padding: EdgeInsets.symmetric(horizontal: 8.w),
+                            child: Icon(
+                              Icons.add_circle_outline_rounded,
+                              size: 20.r,
+                              color: AppColors.grey700,
                             ),
                           ),
                         ),
@@ -746,12 +625,12 @@ class _VehicleCardState extends State<_VehicleCard> {
                     ),
                   ),
                 ),
-                SizedBox(width: 10.w),
+                SizedBox(width: 8.w),
                 GestureDetector(
                   onTap: _isPlacingBid ? null : () => _placeBid(context),
                   child: Container(
-                    height: 28.h,
-                    padding: EdgeInsets.symmetric(horizontal: 20.w),
+                    height: 38.h,
+                    padding: EdgeInsets.symmetric(horizontal: 14.w),
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
                         colors: _isPlacingBid
@@ -761,13 +640,13 @@ class _VehicleCardState extends State<_VehicleCard> {
                                 AppColors.ctaGradientEnd,
                               ],
                       ),
-                      borderRadius: BorderRadius.circular(20.r),
+                      borderRadius: BorderRadius.circular(19.r),
                     ),
                     alignment: Alignment.center,
                     child: _isPlacingBid
                         ? SizedBox(
-                            width: 16.r,
-                            height: 16.r,
+                            width: 18.r,
+                            height: 18.r,
                             child: const CircularProgressIndicator(
                               color: Colors.white,
                               strokeWidth: 2,
@@ -780,7 +659,7 @@ class _VehicleCardState extends State<_VehicleCard> {
                               fontSize: 12.sp,
                               fontWeight: FontWeight.w600,
                               color: Colors.white,
-                              letterSpacing: 0.5,
+                              letterSpacing: 0.8,
                             ),
                           ),
                   ),
@@ -788,6 +667,35 @@ class _VehicleCardState extends State<_VehicleCard> {
               ],
             ),
           ),
+
+          // ─────────────────────────────────────────────────
+          // Remarks: You Are Winning / Losing
+          // ─────────────────────────────────────────────────
+          if (hasBid)
+            Padding(
+              padding: EdgeInsets.fromLTRB(12.w, 0, 12.w, 6.h),
+              child: RichText(
+                text: TextSpan(
+                  style: TextStyle(
+                    fontFamily: 'Montserrat',
+                    fontSize: 11.sp,
+                    color: AppColors.grey700,
+                  ),
+                  children: [
+                    const TextSpan(text: 'Remarks : '),
+                    TextSpan(
+                      text: isWinning ? 'You Are Winning' : 'You Are Losing',
+                      style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        color: isWinning
+                            ? const Color(0xFF2E7D32)
+                            : const Color(0xFFC62828),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
         ],
       ),
     );

@@ -170,9 +170,6 @@ class _FabItem extends StatelessWidget {
             width: 1,
           ),
         ),
-        foregroundDecoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(19.r),
-        ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -191,43 +188,26 @@ class _FabItem extends StatelessWidget {
                 ),
               ),
             ),
-            // ── Circle — Transform.scale paints bigger than layout ──
-            // Layout: 38×38  →  Paint: ~50×50 (bleeds ~6 outside pill)
-            Transform.scale(
-              scale: 1.32,
-              child: Container(
-                width: 38.r,
-                height: 38.r,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      AppColors.ctaGradientStartfab.withValues(alpha: 0.9),
-                      AppColors.ctaGradientEndfab,
-                    ],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                    color: Colors.white.withValues(alpha: 0.5),
-                    width: 1.5,
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.2),
-                      blurRadius: 8,
-                      spreadRadius: 1,
-                    ),
-                  ],
+            // ── Icon circle ────────────────────────────────────
+            Container(
+              width: 36.r,
+              height: 36.r,
+              margin: EdgeInsets.only(right: 1.r),
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.20),
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: Colors.white.withValues(alpha: 0.4),
+                  width: 1,
                 ),
-                child: Center(
-                  child: Image.asset(
-                    iconAsset,
-                    width: 18.r,
-                    height: 18.r,
-                    fit: BoxFit.contain,
-                    color: Colors.white,
-                  ),
+              ),
+              child: Center(
+                child: Image.asset(
+                  iconAsset,
+                  width: 18.r,
+                  height: 18.r,
+                  fit: BoxFit.contain,
+                  color: Colors.white,
                 ),
               ),
             ),

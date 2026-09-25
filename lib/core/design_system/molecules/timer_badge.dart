@@ -71,11 +71,11 @@ class _TimerBadgeState extends State<TimerBadge> {
         padding: EdgeInsets.only(
           left: widget.mirrored ? 10.w : 20.w,
           right: widget.mirrored ? 10.w : 10.w,
-          top: 6.h,
-          bottom: 6.h,
+          top: 4.h,
+          bottom: 4.h,
         ),
         child: Row(
-          mainAxisSize: MainAxisSize.max,
+          mainAxisSize: MainAxisSize.min,
           children: [
             Image.asset(
               AppAssets.hourglassPng,
@@ -84,18 +84,16 @@ class _TimerBadgeState extends State<TimerBadge> {
               color: AppColors.white,
             ),
             SizedBox(width: 4.w),
-            Expanded(
-              child: Text(
-                _timeLeft(),
-                style: TextStyle(
-                  fontFamily: 'Montserrat',
-                  fontSize: 10.sp,
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.white,
-                ),
-                overflow: TextOverflow.ellipsis,
-                maxLines: 1,
+            Text(
+              _timeLeft(),
+              style: TextStyle(
+                fontFamily: 'Montserrat',
+                fontSize: 8.sp,
+                fontWeight: FontWeight.w600,
+                color: AppColors.white,
               ),
+              overflow: TextOverflow.ellipsis,
+              maxLines: 1,
             ),
           ],
         ),

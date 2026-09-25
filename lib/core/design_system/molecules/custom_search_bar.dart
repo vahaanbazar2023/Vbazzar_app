@@ -190,7 +190,7 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
             fontSize: 13.sp,
             color: AppColors.grey500,
           ),
-          contentPadding: EdgeInsets.symmetric(vertical: 12.h),
+          contentPadding: EdgeInsets.only(top: 14.h, bottom: 10.h),
           isDense: true,
           border: InputBorder.none,
           enabledBorder: InputBorder.none,

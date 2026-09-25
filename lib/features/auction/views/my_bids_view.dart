@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -299,72 +297,30 @@ class _BidCardState extends State<_BidCard> {
                       Positioned(
                         top: 6.h,
                         left: 6.w,
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(12.r),
-                          child: BackdropFilter(
-                            filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                            child: Container(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 7.w,
-                                vertical: 3.h,
-                              ),
-                              decoration: BoxDecoration(
-                                color: isWinning
-                                    ? const Color(
-                                        0xFF2E7D32,
-                                      ).withValues(alpha: 0.45)
-                                    : const Color(
-                                        0xFFC62828,
-                                      ).withValues(alpha: 0.45),
-                                borderRadius: BorderRadius.circular(12.r),
-                              ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Icon(
-                                    isWinning
-                                        ? Icons.emoji_events_rounded
-                                        : Icons.trending_down_rounded,
-                                    size: 10.r,
-                                    color: Colors.white,
-                                  ),
-                                  SizedBox(width: 3.w),
-                                  Text(
-                                    isWinning ? 'Winning' : 'Losing',
-                                    style: TextStyle(
-                                      fontFamily: 'Montserrat',
-                                      fontSize: 9.sp,
-                                      fontWeight: FontWeight.w600,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
+                        child: Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 7.w,
+                            vertical: 3.h,
                           ),
-                        ),
-                      ),
-                    // Closed overlay — top-right so it doesn't collide with
-                    // the winning/losing chip.
-                    if (isClosed)
-                      Positioned(
-                        top: 6.h,
-                        right: 6.w,
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(12.r),
-                          child: BackdropFilter(
-                            filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
-                            child: Container(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 7.w,
-                                vertical: 3.h,
+                          decoration: BoxDecoration(
+                            color: isWinning
+                                ? const Color(0xFF2E7D32)
+                                : const Color(0xFFC62828),
+                            borderRadius: BorderRadius.circular(12.r),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                isWinning
+                                    ? Icons.emoji_events_rounded
+                                    : Icons.trending_down_rounded,
+                                size: 10.r,
+                                color: Colors.white,
                               ),
-                              decoration: BoxDecoration(
-                                color: Colors.black.withValues(alpha: 0.5),
-                                borderRadius: BorderRadius.circular(12.r),
-                              ),
-                              child: Text(
-                                'CLOSED',
+                              SizedBox(width: 3.w),
+                              Text(
+                                isWinning ? 'Winning' : 'Losing',
                                 style: TextStyle(
                                   fontFamily: 'Montserrat',
                                   fontSize: 9.sp,
@@ -372,6 +328,31 @@ class _BidCardState extends State<_BidCard> {
                                   color: Colors.white,
                                 ),
                               ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    // Closed overlay — top-right
+                    if (isClosed)
+                      Positioned(
+                        top: 6.h,
+                        right: 6.w,
+                        child: Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 7.w,
+                            vertical: 3.h,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.black.withValues(alpha: 0.65),
+                            borderRadius: BorderRadius.circular(12.r),
+                          ),
+                          child: Text(
+                            'CLOSED',
+                            style: TextStyle(
+                              fontFamily: 'Montserrat',
+                              fontSize: 9.sp,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.white,
                             ),
                           ),
                         ),
@@ -683,19 +664,19 @@ class _BidCardState extends State<_BidCard> {
                           ),
                           child: Row(
                             children: [
-                                 SizedBox(width: 4.w),
+                              SizedBox(width: 4.w),
                               GestureDetector(
                                 onTap: _decrease,
                                 behavior: HitTestBehavior.opaque,
                                 child: Container(
-                                      width: 30.r,
-                                      height: 30.h,
-                                      decoration: BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        border: Border.all(
-                                          color: AppColors.grey400,
-                                        ),
-                                      ),
+                                  width: 30.r,
+                                  height: 30.h,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    border: Border.all(
+                                      color: AppColors.grey400,
+                                    ),
+                                  ),
                                   child: Icon(
                                     Icons.remove_rounded,
                                     size: 18.r,
@@ -743,14 +724,14 @@ class _BidCardState extends State<_BidCard> {
                                 onTap: _increase,
                                 behavior: HitTestBehavior.opaque,
                                 child: Container(
-                                      width: 30.r,
-                                      height: 30.h,
-                                      decoration: BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        border: Border.all(
-                                          color: AppColors.grey400,
-                                        ),
-                                      ),
+                                  width: 30.r,
+                                  height: 30.h,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    border: Border.all(
+                                      color: AppColors.grey400,
+                                    ),
+                                  ),
                                   child: Icon(
                                     Icons.add_rounded,
                                     size: 18.r,
@@ -758,7 +739,7 @@ class _BidCardState extends State<_BidCard> {
                                   ),
                                 ),
                               ),
-                                 SizedBox(width: 4.w),
+                              SizedBox(width: 4.w),
                             ],
                           ),
                         ),
