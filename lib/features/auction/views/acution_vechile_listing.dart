@@ -311,7 +311,14 @@ class _VehicleCardState extends State<_VehicleCard> {
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.08),
             blurRadius: 8,
+            spreadRadius: 0,
             offset: const Offset(0, 2),
+          ),
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.2),
+            blurRadius: 4,
+            spreadRadius: 0,
+            offset: const Offset(0, 1),
           ),
         ],
       ),
@@ -629,7 +636,7 @@ class _VehicleCardState extends State<_VehicleCard> {
                 GestureDetector(
                   onTap: _isPlacingBid ? null : () => _placeBid(context),
                   child: Container(
-                    height: 38.h,
+                    height: 32.h,
                     padding: EdgeInsets.symmetric(horizontal: 14.w),
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
@@ -668,21 +675,18 @@ class _VehicleCardState extends State<_VehicleCard> {
             ),
           ),
 
-          // ─────────────────────────────────────────────────
-          // Remarks: You Are Winning / Losing
-          // ─────────────────────────────────────────────────
-          if (hasBid)
-            Padding(
-              padding: EdgeInsets.fromLTRB(12.w, 0, 12.w, 6.h),
-              child: RichText(
-                text: TextSpan(
-                  style: TextStyle(
-                    fontFamily: 'Montserrat',
-                    fontSize: 11.sp,
-                    color: AppColors.grey700,
-                  ),
-                  children: [
-                    const TextSpan(text: 'Remarks : '),
+          // Remarks row — always visible
+          Padding(
+            padding: EdgeInsets.fromLTRB(12.w, 0, 12.w, 6.h),
+            child: RichText(
+              text: TextSpan(
+                style: TextStyle(
+                  fontFamily: 'Montserrat',
+                  fontSize: 8.sp,
+                  color: AppColors.grey700,
+                ),
+                children: [
+                  if (hasBid)
                     TextSpan(
                       text: isWinning ? 'You Are Winning' : 'You Are Losing',
                       style: TextStyle(
@@ -691,11 +695,20 @@ class _VehicleCardState extends State<_VehicleCard> {
                             ? const Color(0xFF2E7D32)
                             : const Color(0xFFC62828),
                       ),
+                    )
+                  else
+                    TextSpan(
+                      text:
+                          'Start Bidding — Start Price ₹ ${_fmt(v.minimumPrice)}',
+                      style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.secondary,
+                      ),
                     ),
-                  ],
-                ),
+                ],
               ),
             ),
+          ),
         ],
       ),
     );

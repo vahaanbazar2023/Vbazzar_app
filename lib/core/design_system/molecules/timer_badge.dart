@@ -69,8 +69,8 @@ class _TimerBadgeState extends State<TimerBadge> {
       child: Container(
         color: _isClosed ? AppColors.grey600 : AppColors.red,
         padding: EdgeInsets.only(
-          left: widget.mirrored ? 10.w : 20.w,
-          right: widget.mirrored ? 10.w : 10.w,
+          left: widget.mirrored ? 5.w : 20.w,
+          right: widget.mirrored ? 20.w : 20.w,
           top: 4.h,
           bottom: 4.h,
         ),
