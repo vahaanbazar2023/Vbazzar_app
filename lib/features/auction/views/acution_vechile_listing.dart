@@ -57,67 +57,67 @@ class _TabAndFilterBar extends StatelessWidget {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        // ── Search bar ──────────────────────────────────────
+        // ── Search bar + Filter icon ────────────────────────
         Padding(
-          padding: EdgeInsets.fromLTRB(16.w, 4.h, 16.w, 0.h),
-          child: CustomSearchBar(
-            controller: controller.searchController,
-            hint: 'Search Vehicles',
-            showGradientBorder: false,
-            borderColor: AppColors.grey300,
-            height: 40,
-          ),
-        ),
-        // ── Tab bar + filter ────────────────────────────────
-        Row(
-          children: [
-            Expanded(
-              child: SizedBox(
-                height: 34.h,
-                child: TabBar(
-                  controller: controller.tabController,
-                  isScrollable: false,
-                  labelColor: AppColors.primary,
-                  unselectedLabelColor: AppColors.grey600,
-                  indicatorColor: AppColors.primary,
-                  indicatorWeight: 2,
-                  dividerColor: AppColors.grey200,
-                  labelPadding: EdgeInsets.symmetric(horizontal: 4.w),
-                  tabAlignment: TabAlignment.fill,
-                  labelStyle: TextStyle(
-                    fontFamily: 'Montserrat',
-                    fontSize: 11.sp,
-                    fontWeight: FontWeight.w600,
-                  ),
-                  unselectedLabelStyle: TextStyle(
-                    fontFamily: 'Montserrat',
-                    fontSize: 11.sp,
-                    fontWeight: FontWeight.w500,
-                  ),
-                  tabs: [
-                    Tab(text: context.l10n.liveTab),
-                    Tab(text: context.l10n.closingTodayTab),
-                    Tab(text: context.l10n.upcomingTab),
-                  ],
-                ), // TabBar
-              ), // SizedBox
-            ),
-            GestureDetector(
-              onTap: () {
-                controller.backupCurrentFilters();
-                AuctionFilterBottomSheetV2.show(context, controller);
-              },
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 12.w),
-                child: Image.asset(
-                  AppAssets.filterPng,
-                  width: 22.r,
-                  height: 22.r,
-                  color: AppColors.primary,
+          padding: EdgeInsets.fromLTRB(16.w, 4.h, 8.w, 0.h),
+          child: Row(
+            children: [
+              Expanded(
+                child: CustomSearchBar(
+                  controller: controller.searchController,
+                  hint: 'Search Vehicles',
+                  showGradientBorder: false,
+                  borderColor: AppColors.grey300,
+                  height: 40,
                 ),
               ),
+              GestureDetector(
+                onTap: () {
+                  controller.backupCurrentFilters();
+                  AuctionFilterBottomSheetV2.show(context, controller);
+                },
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 10.w),
+                  child: Image.asset(
+                    AppAssets.filterPng,
+                    width: 22.r,
+                    height: 22.r,
+                    color: AppColors.primary,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        // ── Tab bar ─────────────────────────────────────────
+        SizedBox(
+          height: 34.h,
+          child: TabBar(
+            controller: controller.tabController,
+            isScrollable: false,
+            labelColor: AppColors.primary,
+            unselectedLabelColor: AppColors.grey600,
+            indicatorColor: AppColors.primary,
+            indicatorWeight: 2,
+            dividerColor: AppColors.grey200,
+            labelPadding: EdgeInsets.symmetric(horizontal: 4.w),
+            tabAlignment: TabAlignment.fill,
+            labelStyle: TextStyle(
+              fontFamily: 'Montserrat',
+              fontSize: 11.sp,
+              fontWeight: FontWeight.w600,
             ),
-          ],
+            unselectedLabelStyle: TextStyle(
+              fontFamily: 'Montserrat',
+              fontSize: 11.sp,
+              fontWeight: FontWeight.w500,
+            ),
+            tabs: [
+              Tab(text: context.l10n.liveTab),
+              Tab(text: context.l10n.closingTodayTab),
+              Tab(text: context.l10n.upcomingTab),
+            ],
+          ),
         ),
       ],
     );
@@ -395,7 +395,7 @@ class _VehicleCardState extends State<_VehicleCard> {
                         child: Container(
                           height: 26.h,
                           padding: EdgeInsets.symmetric(horizontal: 10.w),
-                          margin: EdgeInsets.only(left: 30.w,top: 10.h),
+                          margin: EdgeInsets.only(left: 30.w, top: 10.h),
                           decoration: BoxDecoration(
                             border: Border.all(
                               width: 1.0,
@@ -469,14 +469,14 @@ class _VehicleCardState extends State<_VehicleCard> {
                     'Mobile',
                     v.contactPersonNumber,
                   ),
-                  _OptGridRow(
-                    'Start Price',
-                    '₹ ${_fmt(v.minimumPrice)}',
-                    'Highest Bid',
-                    v.currentHighestBid != null
-                        ? '₹ ${_fmt(v.currentHighestBid!)}'
-                        : 'No bids',
-                  ),
+                  // _OptGridRow(
+                  //   'Start Price',
+                  //   '₹ ${_fmt(v.minimumPrice)}',
+                  //   'Highest Bid',
+                  //   v.currentHighestBid != null
+                  //       ? '₹ ${_fmt(v.currentHighestBid!)}'
+                  //       : 'No bids',
+                  // ),
                   _OptGridRow(
                     'Parking Charges',
                     v.parkingCharges,
@@ -558,11 +558,36 @@ class _VehicleCardState extends State<_VehicleCard> {
               ),
             ),
 
+          // Start Price + Highest Bid — shown only when expanded
+          if (_expanded)
+            Padding(
+              padding: EdgeInsets.fromLTRB(10.w, 4.h, 10.w, 0),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: _BidChip(
+                      label: 'Start Price',
+                      value: '₹ ${_fmt(v.minimumPrice)}',
+                    ),
+                  ),
+                  SizedBox(width: 8.w),
+                  Expanded(
+                    child: _BidChip(
+                      label: 'Highest Bid',
+                      value: (v.currentHighestBid ?? 0) > 0
+                          ? '₹ ${_fmt(v.currentHighestBid!)}'
+                          : 'No bids',
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
           // ─────────────────────────────────────────────────
           // BID ROW: ⊖  ₹ amount  ⊕   |   PLACE BID
           // ─────────────────────────────────────────────────
           Padding(
-            padding: EdgeInsets.fromLTRB(10.w, 4.h, 10.w, 4.h),
+            padding: EdgeInsets.fromLTRB(10.w, 6.h, 10.w, 4.h),
             child: Row(
               children: [
                 Expanded(
