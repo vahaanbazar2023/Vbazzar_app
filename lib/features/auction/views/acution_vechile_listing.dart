@@ -388,13 +388,14 @@ class _VehicleCardState extends State<_VehicleCard> {
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
-                      SizedBox(height: 6.h),
+                      SizedBox(height: 10.h),
                       // See More / Less pill
                       GestureDetector(
                         onTap: () => setState(() => _expanded = !_expanded),
                         child: Container(
                           height: 26.h,
                           padding: EdgeInsets.symmetric(horizontal: 10.w),
+                          margin: EdgeInsets.only(left: 30.w,top: 10.h),
                           decoration: BoxDecoration(
                             border: Border.all(
                               width: 1.0,
