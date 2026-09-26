@@ -207,6 +207,7 @@ class _TabContent extends StatelessWidget {
               vehicle: vehicles[index],
               bidIncrementAmount: ctrl.bidIncrementAmount,
               controller: ctrl,
+              isUpcoming: tabIndex == 2,
             ),
           );
         },
@@ -223,11 +224,13 @@ class _VehicleCard extends StatefulWidget {
   final VehicleListing vehicle;
   final int bidIncrementAmount;
   final VehicleListingController controller;
+  final bool isUpcoming;
 
   const _VehicleCard({
     required this.vehicle,
     required this.bidIncrementAmount,
     required this.controller,
+    this.isUpcoming = false,
   });
 
   @override
@@ -295,8 +298,11 @@ class _VehicleCardState extends State<_VehicleCard> {
         hasBid &&
         (v.currentHighestBid == null || v.yourBid >= v.currentHighestBid!);
     final bool isLosing = hasBid && !isWinning;
+    final bool isUpcoming = widget.isUpcoming;
 
-    final cardBorderColor = isWinning
+    final cardBorderColor = isUpcoming
+        ? AppColors.grey300
+        : isWinning
         ? const Color(0xFF2E7D32)
         : isLosing
         ? const Color(0xFFC62828)
@@ -584,157 +590,199 @@ class _VehicleCardState extends State<_VehicleCard> {
             ),
 
           // ─────────────────────────────────────────────────
-          // BID ROW: ⊖  ₹ amount  ⊕   |   PLACE BID
+          // BID ROW + REMARKS — hidden for upcoming auctions
           // ─────────────────────────────────────────────────
-          Padding(
-            padding: EdgeInsets.fromLTRB(10.w, 6.h, 10.w, 4.h),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Container(
-                    height: 38.h,
-                    decoration: BoxDecoration(
-                      border: Border.all(color: AppColors.grey300, width: 1.0),
-                      borderRadius: BorderRadius.circular(19.r),
+          if (isUpcoming)
+            Padding(
+              padding: EdgeInsets.fromLTRB(10.w, 6.h, 10.w, 10.h),
+              child: Container(
+                width: double.infinity,
+                padding: EdgeInsets.symmetric(vertical: 8.h),
+                decoration: BoxDecoration(
+                  color: AppColors.grey100,
+                  borderRadius: BorderRadius.circular(8.r),
+                  border: Border.all(color: AppColors.grey300),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.schedule_rounded,
+                      size: 14.r,
+                      color: AppColors.grey600,
                     ),
-                    child: Row(
-                      children: [
-                        GestureDetector(
-                          onTap: _decreaseBid,
-                          behavior: HitTestBehavior.opaque,
-                          child: Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 8.w),
-                            child: Icon(
-                              Icons.remove_circle_outline_rounded,
-                              size: 20.r,
-                              color: AppColors.grey700,
+                    SizedBox(width: 6.w),
+                    Text(
+                      'Upcoming Auction — Bidding Not Started',
+                      style: TextStyle(
+                        fontFamily: 'Montserrat',
+                        fontSize: 11.sp,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.grey600,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            )
+          else ...[
+            // BID ROW: ⊖  ₹ amount  ⊕   |   PLACE BID
+            Padding(
+              padding: EdgeInsets.fromLTRB(10.w, 6.h, 10.w, 4.h),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Container(
+                      height: 38.h,
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          color: AppColors.grey300,
+                          width: 1.0,
+                        ),
+                        borderRadius: BorderRadius.circular(19.r),
+                      ),
+                      child: Row(
+                        children: [
+                          GestureDetector(
+                            onTap: _decreaseBid,
+                            behavior: HitTestBehavior.opaque,
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 8.w),
+                              child: Icon(
+                                Icons.remove_circle_outline_rounded,
+                                size: 20.r,
+                                color: AppColors.grey700,
+                              ),
                             ),
                           ),
-                        ),
-                        Expanded(
-                          child: TextField(
-                            controller: _bidController,
-                            keyboardType: TextInputType.number,
-                            textAlign: TextAlign.center,
-                            inputFormatters: [
-                              FilteringTextInputFormatter.digitsOnly,
-                            ],
-                            onChanged: _onBidTextChanged,
-                            style: TextStyle(
-                              fontFamily: 'Montserrat',
-                              fontSize: 13.sp,
-                              fontWeight: FontWeight.w600,
-                              color: AppColors.black,
-                            ),
-                            decoration: InputDecoration(
-                              prefixText: '₹ ',
-                              prefixStyle: TextStyle(
+                          Expanded(
+                            child: TextField(
+                              controller: _bidController,
+                              keyboardType: TextInputType.number,
+                              textAlign: TextAlign.center,
+                              inputFormatters: [
+                                FilteringTextInputFormatter.digitsOnly,
+                              ],
+                              onChanged: _onBidTextChanged,
+                              style: TextStyle(
                                 fontFamily: 'Montserrat',
                                 fontSize: 13.sp,
                                 fontWeight: FontWeight.w600,
                                 color: AppColors.black,
                               ),
-                              border: InputBorder.none,
-                              enabledBorder: InputBorder.none,
-                              focusedBorder: InputBorder.none,
-                              isDense: true,
-                              contentPadding: EdgeInsets.zero,
+                              decoration: InputDecoration(
+                                prefixText: '₹ ',
+                                prefixStyle: TextStyle(
+                                  fontFamily: 'Montserrat',
+                                  fontSize: 13.sp,
+                                  fontWeight: FontWeight.w600,
+                                  color: AppColors.black,
+                                ),
+                                border: InputBorder.none,
+                                enabledBorder: InputBorder.none,
+                                focusedBorder: InputBorder.none,
+                                isDense: true,
+                                contentPadding: EdgeInsets.zero,
+                              ),
                             ),
                           ),
-                        ),
-                        GestureDetector(
-                          onTap: _increaseBid,
-                          behavior: HitTestBehavior.opaque,
-                          child: Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 8.w),
-                            child: Icon(
-                              Icons.add_circle_outline_rounded,
-                              size: 20.r,
-                              color: AppColors.grey700,
+                          GestureDetector(
+                            onTap: _increaseBid,
+                            behavior: HitTestBehavior.opaque,
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 8.w),
+                              child: Icon(
+                                Icons.add_circle_outline_rounded,
+                                size: 20.r,
+                                color: AppColors.grey700,
+                              ),
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
-                ),
-                SizedBox(width: 8.w),
-                GestureDetector(
-                  onTap: _isPlacingBid ? null : () => _placeBid(context),
-                  child: Container(
-                    height: 32.h,
-                    padding: EdgeInsets.symmetric(horizontal: 14.w),
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: _isPlacingBid
-                            ? [const Color(0xFFAA5555), const Color(0xFF884444)]
-                            : [
-                                AppColors.ctaGradientStart,
-                                AppColors.ctaGradientEnd,
-                              ],
+                  SizedBox(width: 8.w),
+                  GestureDetector(
+                    onTap: _isPlacingBid ? null : () => _placeBid(context),
+                    child: Container(
+                      height: 32.h,
+                      padding: EdgeInsets.symmetric(horizontal: 14.w),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: _isPlacingBid
+                              ? [
+                                  const Color(0xFFAA5555),
+                                  const Color(0xFF884444),
+                                ]
+                              : [
+                                  AppColors.ctaGradientStart,
+                                  AppColors.ctaGradientEnd,
+                                ],
+                        ),
+                        borderRadius: BorderRadius.circular(19.r),
                       ),
-                      borderRadius: BorderRadius.circular(19.r),
+                      alignment: Alignment.center,
+                      child: _isPlacingBid
+                          ? SizedBox(
+                              width: 18.r,
+                              height: 18.r,
+                              child: const CircularProgressIndicator(
+                                color: Colors.white,
+                                strokeWidth: 2,
+                              ),
+                            )
+                          : Text(
+                              'PLACE BID',
+                              style: TextStyle(
+                                fontFamily: 'Montserrat',
+                                fontSize: 12.sp,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.white,
+                                letterSpacing: 0.8,
+                              ),
+                            ),
                     ),
-                    alignment: Alignment.center,
-                    child: _isPlacingBid
-                        ? SizedBox(
-                            width: 18.r,
-                            height: 18.r,
-                            child: const CircularProgressIndicator(
-                              color: Colors.white,
-                              strokeWidth: 2,
-                            ),
-                          )
-                        : Text(
-                            'PLACE BID',
-                            style: TextStyle(
-                              fontFamily: 'Montserrat',
-                              fontSize: 12.sp,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.white,
-                              letterSpacing: 0.8,
-                            ),
-                          ),
                   ),
-                ),
-              ],
-            ),
-          ),
-
-          // Remarks row — always visible
-          Padding(
-            padding: EdgeInsets.fromLTRB(12.w, 0, 12.w, 6.h),
-            child: RichText(
-              text: TextSpan(
-                style: TextStyle(
-                  fontFamily: 'Montserrat',
-                  fontSize: 8.sp,
-                  color: AppColors.grey700,
-                ),
-                children: [
-                  if (hasBid)
-                    TextSpan(
-                      text: isWinning ? 'You Are Winning' : 'You Are Losing',
-                      style: TextStyle(
-                        fontWeight: FontWeight.w600,
-                        color: isWinning
-                            ? const Color(0xFF2E7D32)
-                            : const Color(0xFFC62828),
-                      ),
-                    )
-                  else
-                    TextSpan(
-                      text:
-                          'Start Bidding — Start Price ₹ ${_fmt(v.minimumPrice)}',
-                      style: TextStyle(
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.secondary,
-                      ),
-                    ),
                 ],
               ),
             ),
-          ),
+
+            // Remarks row — always visible
+            Padding(
+              padding: EdgeInsets.fromLTRB(12.w, 0, 12.w, 6.h),
+              child: RichText(
+                text: TextSpan(
+                  style: TextStyle(
+                    fontFamily: 'Montserrat',
+                    fontSize: 8.sp,
+                    color: AppColors.grey700,
+                  ),
+                  children: [
+                    if (hasBid)
+                      TextSpan(
+                        text: isWinning ? 'You Are Winning' : 'You Are Losing',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          color: isWinning
+                              ? const Color(0xFF2E7D32)
+                              : const Color(0xFFC62828),
+                        ),
+                      )
+                    else
+                      TextSpan(
+                        text:
+                            'Start Bidding — Start Price ₹ ${_fmt(v.minimumPrice)}',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.secondary,
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+            ),
+          ], // end else (upcoming guard)
         ],
       ),
     );
