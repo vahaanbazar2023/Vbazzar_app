@@ -136,6 +136,66 @@ class _TabContent extends StatelessWidget {
   Widget build(BuildContext context) {
     final ctrl = Get.find<VehicleListingController>();
     return Obx(() {
+      // Show search results if search is active
+      if (ctrl.isSearchActive) {
+        if (ctrl.isSearching.value) {
+          return const Center(
+            child: CircularProgressIndicator(color: AppColors.primary),
+          );
+        }
+        final searchError = ctrl.searchError.value;
+        if (searchError.isNotEmpty) {
+          return Center(
+            child: Padding(
+              padding: EdgeInsets.all(AppSpacing.md),
+              child: Text(
+                searchError,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontFamily: 'Montserrat',
+                  fontSize: 14.sp,
+                  color: AppColors.grey600,
+                ),
+              ),
+            ),
+          );
+        }
+        final searchVehicles = ctrl.searchResults;
+        if (searchVehicles.isEmpty) {
+          return Center(
+            child: Text(
+              'No vehicles found',
+              style: TextStyle(
+                fontFamily: 'Montserrat',
+                fontSize: 12.sp,
+                color: AppColors.grey500,
+              ),
+            ),
+          );
+        }
+        return ListView.builder(
+          padding: EdgeInsets.fromLTRB(
+            AppSpacing.md,
+            AppSpacing.s,
+            AppSpacing.md,
+            AppSpacing.sm,
+          ),
+          itemCount: searchVehicles.length,
+          itemBuilder: (_, index) {
+            return Padding(
+              padding: EdgeInsets.only(bottom: AppSpacing.s),
+              child: _VehicleCard(
+                vehicle: searchVehicles[index],
+                bidIncrementAmount: ctrl.bidIncrementAmount,
+                controller: ctrl,
+                isUpcoming: false,
+              ),
+            );
+          },
+        );
+      }
+
+      // Show normal tab content
       if (ctrl.tabLoading(tabIndex).value) {
         return const Center(
           child: CircularProgressIndicator(color: AppColors.primary),

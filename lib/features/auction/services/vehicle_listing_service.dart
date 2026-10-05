@@ -137,4 +137,66 @@ class VehicleListingService {
       pagination: AuctionPagination.fromJson(rawPagination),
     );
   }
+
+  /// Search vehicles across all active auctions by query
+  Future<({List<VehicleListing> vehicles, AuctionPagination pagination})>
+  searchVehicles({
+    required String userId,
+    required String searchQuery,
+    String vehicleType = '', // Empty means search all categories
+    int page = 1,
+    int limit = 20,
+  }) async {
+    final body = <String, dynamic>{
+      'user_id': userId,
+      'search_query': searchQuery.trim(),
+      'vehicle_type': vehicleType,
+      'page': page,
+      'limit': limit,
+    };
+
+    debugPrint('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+    debugPrint('📤 SEARCH REQUEST');
+    debugPrint('URL: ${ApiEndpoints.vehicleSearch}');
+    debugPrint('BODY: $body');
+    debugPrint('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+
+    final response = await _network.post<Map<String, dynamic>>(
+      ApiEndpoints.vehicleSearch,
+      data: body,
+    );
+
+    final responseBody = response.data ?? {};
+
+    debugPrint('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+    debugPrint('📥 SEARCH RESPONSE');
+    debugPrint('Status: ${response.statusCode}');
+    debugPrint(
+      'Vehicle Count: ${(responseBody['vehicles'] as List<dynamic>? ?? []).length}',
+    );
+    debugPrint('Pagination: ${responseBody['pagination']}');
+    debugPrint('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+
+    final rawVehicles = responseBody['vehicles'] as List<dynamic>? ?? [];
+    final rawPagination =
+        responseBody['pagination'] as Map<String, dynamic>? ?? {};
+
+    final vehicles = <VehicleListing>[];
+    for (int i = 0; i < rawVehicles.length; i++) {
+      try {
+        vehicles.add(
+          VehicleListing.fromJson(rawVehicles[i] as Map<String, dynamic>),
+        );
+      } catch (e, st) {
+        debugPrint(
+          '❌ [VehicleListingService] failed to parse search vehicle[$i]: $e\n$st',
+        );
+      }
+    }
+
+    return (
+      vehicles: vehicles,
+      pagination: AuctionPagination.fromJson(rawPagination),
+    );
+  }
 }

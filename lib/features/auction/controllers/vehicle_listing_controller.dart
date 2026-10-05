@@ -93,6 +93,12 @@ class VehicleListingController extends GetxController
   // ─── Search ───────────────────────────────────────────────────
   final searchQuery = ''.obs;
   final TextEditingController searchController = TextEditingController();
+  final isSearching = false.obs;
+  final searchResults = <VehicleListing>[].obs;
+  final searchPagination = Rx<AuctionPagination>(AuctionPagination.empty());
+  final searchError = ''.obs;
+  int _searchPage = 1;
+  Worker? _searchDebouncer;
 
   // ─── Bid placement ────────────────────────────────────────────
   final isPlacingBid = false.obs;
@@ -117,6 +123,14 @@ class VehicleListingController extends GetxController
     super.onInit();
     tabController = TabController(length: 3, vsync: this);
     scrollController = ScrollController(); // Legacy, kept for compatibility
+
+    // Debounced search - wait 500ms after user stops typing
+    _searchDebouncer = debounce(
+      searchQuery,
+      (query) => _performSearch(query as String),
+      time: const Duration(milliseconds: 500),
+    );
+
     searchController.addListener(
       () => searchQuery.value = searchController.text,
     );
@@ -138,6 +152,7 @@ class VehicleListingController extends GetxController
 
   @override
   void onClose() {
+    _searchDebouncer?.dispose();
     tabController.dispose();
     scrollController.dispose();
     searchController.dispose();
@@ -351,19 +366,57 @@ class VehicleListingController extends GetxController
 
   // ─── Search / filter ─────────────────────────────────────────
 
+  bool get isSearchActive => searchQuery.value.trim().length >= 2;
+
   List<VehicleListing> get filteredVehicles {
-    final q = searchQuery.value.trim().toLowerCase();
+    // If search is active and we have search results, show those
+    if (isSearchActive) {
+      return searchResults;
+    }
+    // Otherwise show current tab vehicles
     final tab = tabController.index.clamp(0, 2);
-    final list = _tabVehicles[tab];
-    if (q.isEmpty) return list;
-    return list
-        .where(
-          (v) =>
-              v.displayTitle.toLowerCase().contains(q) ||
-              v.registrationNo.toLowerCase().contains(q) ||
-              v.vehicleId.toLowerCase().contains(q),
-        )
-        .toList();
+    return _tabVehicles[tab];
+  }
+
+  Future<void> _performSearch(String query) async {
+    final trimmed = query.trim();
+
+    // Clear search results if query is too short
+    if (trimmed.length < 2) {
+      searchResults.clear();
+      searchError.value = '';
+      isSearching.value = false;
+      return;
+    }
+
+    isSearching.value = true;
+    searchError.value = '';
+    _searchPage = 1;
+
+    try {
+      final userId =
+          await SecureStorageService.to.read(StorageKeys.userId) ?? '';
+
+      final result = await _service.searchVehicles(
+        userId: userId,
+        searchQuery: trimmed,
+        vehicleType: vehicleType, // Search within current category
+        page: 1,
+        limit: 20,
+      );
+
+      searchResults.assignAll(result.vehicles);
+      searchPagination.value = result.pagination;
+
+      if (result.vehicles.isEmpty) {
+        searchError.value = 'No vehicles found matching "$trimmed"';
+      }
+    } catch (e, st) {
+      debugPrint('❌ [VehicleListing._performSearch] $e\n$st');
+      searchError.value = 'Search failed. Please try again.';
+    } finally {
+      isSearching.value = false;
+    }
   }
 
   VehicleListing? get currentVehicle {
