@@ -555,10 +555,24 @@ class BuySellRepositoryImpl implements BuySellRepository {
     required int page,
   }) async {
     try {
+      print('📤 [listSellVehicles] REQUEST');
+      print('  Endpoint: ${ApiEndpoints.listSellVehicles}');
+      print('  Method: POST');
+      print('  Body: {');
+      print('    user_id: $userId,');
+      print('    page: $page,');
+      print('    limit: $limit');
+      print('  }');
+
       final response = await _network.post(
         ApiEndpoints.listSellVehicles,
         data: {'user_id': userId, 'page': page, 'limit': limit},
       );
+
+      print('✅ [listSellVehicles] RESPONSE');
+      print('  Status: ${response.statusCode}');
+      print('  Data: ${response.data}');
+
       if (response.statusCode == 200) {
         final data = response.data;
         if (data['status'] == 'success' && data['data'] != null) {
@@ -581,16 +595,26 @@ class BuySellRepositoryImpl implements BuySellRepository {
             currentPageVal = _parseInt(
               resultData['current_page'] ?? resultData['currentPage'] ?? page,
             );
+
+            print('📦 [listSellVehicles] Parsed response:');
+            print('  Vehicles count: ${items.length}');
+            print('  Total pages: $totalPages');
+            print('  Total count: $totalCount');
+            print('  Current page: $currentPageVal');
           } else if (resultData is List) {
             items = resultData;
             totalPages = 1;
             totalCount = items.length;
             currentPageVal = 1;
+            print(
+              '📦 [listSellVehicles] Response is a direct list with ${items.length} items',
+            );
           } else {
             items = [];
             totalPages = 1;
             totalCount = 0;
             currentPageVal = page;
+            print('⚠️ [listSellVehicles] Unexpected response format');
           }
 
           final vehicles = items
@@ -608,6 +632,7 @@ class BuySellRepositoryImpl implements BuySellRepository {
           );
         }
       }
+      print('⚠️ [listSellVehicles] Returning empty response');
       return PaginatedSellVehiclesResponse(
         vehicles: [],
         totalPages: 1,
@@ -616,7 +641,13 @@ class BuySellRepositoryImpl implements BuySellRepository {
         hasMore: false,
       );
     } on DioException catch (e) {
-      print('❌ listSellVehicles error: ${e.message}');
+      print('❌ [listSellVehicles] error: ${e.message}');
+      if (e.response != null) {
+        print(
+          '❌ [listSellVehicles] response status: ${e.response?.statusCode}',
+        );
+        print('❌ [listSellVehicles] response data: ${e.response?.data}');
+      }
       throw Exception('Failed to load sell vehicles: ${e.message}');
     }
   }
