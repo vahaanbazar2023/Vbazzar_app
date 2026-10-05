@@ -1671,12 +1671,11 @@ class _SubmitButton extends StatelessWidget {
           debugPrint(
             '🖱️ [SubmitButton] tapped, isEditMode=${ctrl.isEditMode.value}',
           );
+          // Controller handles navigation after successful submission
           final success = ctrl.isEditMode.value
               ? await ctrl.updateVehicle()
               : await ctrl.submitSellForm();
-          if (success) {
-            Get.offAllNamed(AppRoutes.buySellHome);
-          }
+          // Navigation is now handled in the controller
         },
       ),
     );

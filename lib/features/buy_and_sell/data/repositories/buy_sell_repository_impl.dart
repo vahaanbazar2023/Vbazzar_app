@@ -755,24 +755,17 @@ class BuySellRepositoryImpl implements BuySellRepository {
       // Build FormData combining JSON data with file uploads
       final formDataMap = <String, dynamic>{...jsonData};
 
-      if (vehicleImages != null && vehicleImages.isNotEmpty) {
-        formDataMap['vehicle_images'] = vehicleImages
-            .map(
-              (f) => MultipartFile.fromFileSync(
-                f.path,
-                filename: f.path.split('/').last,
-              ),
-            )
-            .toList();
-      }
+      // Don't add images as a list to formDataMap
+      // We'll add them individually to FormData after creation
+
       if (rcDocument != null) {
-        formDataMap['rc_document'] = MultipartFile.fromFileSync(
+        formDataMap['rc'] = MultipartFile.fromFileSync(
           rcDocument.path,
           filename: rcDocument.path.split('/').last,
         );
       }
       if (insuranceDocument != null) {
-        formDataMap['insurance_document'] = MultipartFile.fromFileSync(
+        formDataMap['insurance_docs'] = MultipartFile.fromFileSync(
           insuranceDocument.path,
           filename: insuranceDocument.path.split('/').last,
         );
@@ -780,20 +773,60 @@ class BuySellRepositoryImpl implements BuySellRepository {
 
       final formData = FormData.fromMap(formDataMap);
 
+      // Add vehicle images individually with the field name 'images'
+      // This allows the backend to receive them as an array
+      if (vehicleImages != null && vehicleImages.isNotEmpty) {
+        for (var image in vehicleImages) {
+          formData.files.add(
+            MapEntry(
+              'images',
+              MultipartFile.fromFileSync(
+                image.path,
+                filename: image.path.split('/').last,
+              ),
+            ),
+          );
+        }
+      }
+
       print('📤 [createSellVehicle] Sending data: $jsonData');
       print(
         '📤 [createSellVehicle] Files - images:${vehicleImages?.length ?? 0}, rc:${rcDocument != null}, insurance:${insuranceDocument != null}',
       );
+      print('📤 [createSellVehicle] FormData fields:');
+      for (var field in formData.fields) {
+        print('  ${field.key}: ${field.value}');
+      }
+      print('📤 [createSellVehicle] FormData files:');
+      for (var file in formData.files) {
+        print(
+          '  ${file.key}: ${file.value.filename} (${file.value.length} bytes)',
+        );
+      }
 
       final response = await _network.post(
         ApiEndpoints.sellVehicle,
         data: formData,
       );
 
+      print('✅ [createSellVehicle] Response status: ${response.statusCode}');
+      print('✅ [createSellVehicle] Response data: ${response.data}');
+
       if (response.statusCode == 200) {
         final data = response.data;
         if (data['status'] != 'success') {
           throw Exception(data['message'] ?? 'Failed to create vehicle');
+        }
+        // Log the returned vehicle data to check if files were saved
+        if (data['data'] != null) {
+          print('✅ [createSellVehicle] Returned vehicle data: ${data['data']}');
+          if (data['data']['vehicle_files'] != null) {
+            print(
+              '✅ [createSellVehicle] Vehicle files count: ${data['data']['vehicle_files'].length}',
+            );
+          } else {
+            print('⚠️ [createSellVehicle] No vehicle_files in response!');
+          }
         }
       } else {
         throw Exception('Failed to create vehicle');

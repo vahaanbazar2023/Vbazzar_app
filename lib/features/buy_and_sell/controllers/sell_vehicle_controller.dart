@@ -7,6 +7,7 @@ import '../../../core/network/network_service.dart';
 import '../../../core/network/endpoints/api_endpoints.dart';
 import '../../../core/storage/secure_storage_service.dart';
 import '../../../core/storage/storage_keys.dart';
+import '../../../routes/app_routes.dart';
 import '../domain/entities/sell_vehicle_entity.dart';
 import '../domain/entities/vehicle_category_entity.dart';
 import '../domain/repositories/buy_sell_repository.dart';
@@ -369,8 +370,33 @@ class SellVehicleController extends GetxController {
       '🚗 [submitSellForm] categoryCode=${selectedCategoryCode.value}',
     );
     debugPrint('🚗 [submitSellForm] formValues=$formValues');
-    debugPrint('🚗 [submitSellForm] vehicleImages=${vehicleImages.length}');
+    debugPrint(
+      '🚗 [submitSellForm] vehicleImages.length=${vehicleImages.length}',
+    );
+    debugPrint('🚗 [submitSellForm] vehicleImages paths:');
+    for (var i = 0; i < vehicleImages.length; i++) {
+      final img = vehicleImages[i];
+      debugPrint(
+        '  [$i] ${img.path} - exists: ${img.existsSync()} - size: ${img.lengthSync()} bytes',
+      );
+    }
     debugPrint('🚗 [submitSellForm] rcDocuments=${rcDocuments.length}');
+    for (var i = 0; i < rcDocuments.length; i++) {
+      final doc = rcDocuments[i];
+      debugPrint(
+        '  RC[$i] ${doc.path} - exists: ${doc.existsSync()} - size: ${doc.lengthSync()} bytes',
+      );
+    }
+    debugPrint(
+      '🚗 [submitSellForm] insuranceDocuments=${insuranceDocuments.length}',
+    );
+    for (var i = 0; i < insuranceDocuments.length; i++) {
+      final doc = insuranceDocuments[i];
+      debugPrint(
+        '  INS[$i] ${doc.path} - exists: ${doc.existsSync()} - size: ${doc.lengthSync()} bytes',
+      );
+    }
+
     if (!validateForm()) {
       debugPrint(
         '🚗 [submitSellForm] validateForm FAILED, formErrors=$formErrors',
@@ -382,6 +408,20 @@ class SellVehicleController extends GetxController {
     isSubmittingForm.value = true;
     try {
       final uid = await _userId;
+      debugPrint('🚗 [submitSellForm] userId=$uid');
+      debugPrint(
+        '🚗 [submitSellForm] Calling repository.createSellVehicle with:',
+      );
+      debugPrint('  - categoryCode: ${selectedCategoryCode.value}');
+      debugPrint(
+        '  - brandCode: ${(formValues['brand_code'] ?? formValues['Brand'] ?? '').toString()}',
+      );
+      debugPrint('  - vehicleImages: ${vehicleImages.length} files');
+      debugPrint('  - rcDocument: ${rcDocuments.isNotEmpty ? 'YES' : 'NO'}');
+      debugPrint(
+        '  - insuranceDocument: ${insuranceDocuments.isNotEmpty ? 'YES' : 'NO'}',
+      );
+
       await repository.createSellVehicle(
         userId: uid,
         categoryCode: selectedCategoryCode.value,
@@ -428,7 +468,8 @@ class SellVehicleController extends GetxController {
         noOfTyres: (formValues['No Of Tyres'] ?? formValues['no_of_tyres'])
             ?.toString(),
         fitness: formValues['Fitness'] == true || formValues['fitness'] == true,
-        insurance: formValues['Vehicle Insurance'] != null ||
+        insurance:
+            formValues['Vehicle Insurance'] != null ||
             formValues['insurance'] == true,
         originalInvoice:
             formValues['Original Invoice'] == true ||
@@ -454,13 +495,24 @@ class SellVehicleController extends GetxController {
         otherTyre: formValues['other_tyre']?.toString(),
       );
 
+      debugPrint('✅ [submitSellForm] API call successful');
+
+      // Navigate back first, THEN reset form and refresh list
+      // This prevents blank screen issue
+      if (Get.currentRoute == AppRoutes.sellVehicle) {
+        Get.back();
+      }
+
+      // Now reset form and refresh
+      resetForm();
+      await refreshSellVehiclesList();
+
+      // Show success message after navigation
       CustomSnackbar.show(
         message: 'Vehicle submitted for approval.',
         type: SnackbarType.success,
       );
 
-      resetForm();
-      await refreshSellVehiclesList();
       return true;
     } catch (e) {
       debugPrint('❌ [submitSellForm] ERROR: $e');
@@ -533,7 +585,8 @@ class SellVehicleController extends GetxController {
         noOfTyres: (formValues['No Of Tyres'] ?? formValues['no_of_tyres'])
             ?.toString(),
         fitness: formValues['Fitness'] == true || formValues['fitness'] == true,
-        insurance: formValues['Vehicle Insurance'] != null ||
+        insurance:
+            formValues['Vehicle Insurance'] != null ||
             formValues['insurance'] == true,
         originalInvoice:
             formValues['Original Invoice'] == true ||
