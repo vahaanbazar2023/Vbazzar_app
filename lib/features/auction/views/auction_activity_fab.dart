@@ -5,6 +5,11 @@ import 'package:get/get.dart';
 import '../../../core/constants/app_assets.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../routes/app_routes.dart';
+import '../controllers/vehicle_listing_controller.dart';
+import '../services/vehicle_excel_download_service.dart';
+import '../../../core/storage/secure_storage_service.dart';
+import '../../../core/storage/storage_keys.dart';
+import '../../../core/design_system/molecules/custom_snackbar.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Expandable auction activity FAB
@@ -47,7 +52,62 @@ class _AuctionActivityFabState extends State<AuctionActivityFab>
 
   void _go(String route) {
     if (_open) _toggle();
-    Get.toNamed(route);
+    if (route.isEmpty) {
+      _handleDownload();
+    } else {
+      Get.toNamed(route);
+    }
+  }
+
+  Future<void> _handleDownload() async {
+    try {
+      // Get user ID
+      final userId = await SecureStorageService.to.read(StorageKeys.userId);
+      if (userId == null || userId.isEmpty) {
+        CustomSnackbar.show(
+          message: 'Please login to download',
+          type: SnackbarType.error,
+        );
+        return;
+      }
+
+      // Auto-detect auction ID from current tab's first vehicle
+      final vehicleCtrl = Get.find<VehicleListingController>();
+      final currentTab = vehicleCtrl.tabController.index;
+      final vehicles = vehicleCtrl.tabVehicles(currentTab);
+
+      if (vehicles.isEmpty) {
+        CustomSnackbar.show(
+          message: 'No auction data available',
+          type: SnackbarType.error,
+        );
+        return;
+      }
+
+      final auctionId = vehicles.first.auctionId;
+
+      // Show loading
+      Get.dialog(
+        const Center(child: CircularProgressIndicator()),
+        barrierDismissible: false,
+      );
+
+      final service = Get.find<VehicleExcelDownloadService>();
+      await service.downloadVehicleExcel(auctionId: auctionId, userId: userId);
+
+      Get.back(); // Close loading
+
+      CustomSnackbar.show(
+        message: 'Excel file downloaded successfully',
+        type: SnackbarType.success,
+      );
+    } catch (e) {
+      if (Get.isDialogOpen ?? false) Get.back();
+      CustomSnackbar.show(
+        message: 'Failed to download: $e',
+        type: SnackbarType.error,
+      );
+    }
   }
 
   static final _items = [
@@ -68,6 +128,12 @@ class _AuctionActivityFabState extends State<AuctionActivityFab>
       iconAsset: null,
       iconData: Icons.favorite_rounded,
       route: AppRoutes.myWishlist,
+    ),
+    (
+      label: 'Download Listing',
+      iconAsset: null,
+      iconData: Icons.download_rounded,
+      route: '', // Empty route triggers download
     ),
     (
       label: 'Initiate Refund',

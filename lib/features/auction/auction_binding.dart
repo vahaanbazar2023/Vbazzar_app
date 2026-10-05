@@ -2,11 +2,15 @@ import 'package:get/get.dart';
 import 'controllers/auction_controller.dart';
 import 'controllers/auction_list_controller.dart';
 import 'services/auction_service.dart';
+import 'services/vehicle_excel_download_service.dart';
 
 class AuctionBinding extends Bindings {
   @override
   void dependencies() {
     Get.lazyPut<AuctionService>(() => AuctionService());
+    Get.lazyPut<VehicleExcelDownloadService>(
+      () => VehicleExcelDownloadService(),
+    );
     Get.lazyPut<AuctionController>(() {
       final args = Get.arguments as Map<String, dynamic>? ?? {};
 
