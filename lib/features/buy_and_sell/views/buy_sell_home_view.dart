@@ -17,12 +17,12 @@ class BuySellHomeView extends GetView<BuySellHomeController> {
     return AppLayout(
       title: 'Buy & Sell',
       subtitle: 'Browse & post commercial vehicles',
-      body: _buildBuyTab(),
+      body: _buildCategoryGrid(),
     );
   }
 
-  // ── Buy Tab — shows all categories as cards ───────────────────────────────
-  Widget _buildBuyTab() {
+  // ── Category Grid — 2 columns ─────────────────────────────────────────────
+  Widget _buildCategoryGrid() {
     return Obx(() {
       if (controller.isLoadingCategories.value) {
         return const Center(
@@ -48,19 +48,18 @@ class BuySellHomeView extends GetView<BuySellHomeController> {
           ),
         );
       }
-      return ListView.builder(
-        padding: EdgeInsets.fromLTRB(
-          AppSpacing.md,
-          AppSpacing.sm,
-          AppSpacing.md,
-          AppSpacing.md,
+
+      return GridView.builder(
+        padding: EdgeInsets.all(AppSpacing.sm),
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          crossAxisSpacing: AppSpacing.sm,
+          mainAxisSpacing: AppSpacing.sm,
+          childAspectRatio: 1.25, // Shorter cards
         ),
         itemCount: controller.categories.length,
         itemBuilder: (context, index) {
-          return Padding(
-            padding: EdgeInsets.only(bottom: AppSpacing.md),
-            child: _CategoryCard(category: controller.categories[index]),
-          );
+          return _CategoryCard(category: controller.categories[index]);
         },
       );
     });
@@ -78,99 +77,118 @@ class _CategoryCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.fromLTRB(12.w, 16.h, 12.w, 16.h),
       decoration: BoxDecoration(
         color: AppColors.white,
-        borderRadius: BorderRadius.circular(16.r),
-        border: Border.all(color: AppColors.grey300,width: 1),
+        borderRadius: BorderRadius.circular(12.r),
+        border: Border.all(color: AppColors.grey200, width: 1),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.12),
-            blurRadius: 20,
-            spreadRadius: 1,
-            offset: const Offset(0, 6),
-          ),
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 6,
-            offset: const Offset(0, 1),
+            color: Colors.black.withValues(alpha: 0.2),
+            blurRadius: 8,
+            spreadRadius: 0,
+            offset: const Offset(0, 2),
           ),
         ],
       ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
         children: [
-          // ── Category image ──────────────────────────────────────────
-          category.iconUrl != null && category.iconUrl!.isNotEmpty
-              ? Image.network(
-                  category.iconUrl!,
-                  width: 140,
-                  fit: BoxFit.cover,
-                  errorBuilder: (_, __, ___) => SizedBox(
-                    child: Icon(
-                      _iconForCategory(category.categoryCode),
-                      color: AppColors.primary,
-                      size: 48.r,
-                    ),
-                  ),
-                )
-              : SizedBox(
-                  child: Icon(
-                    _iconForCategory(category.categoryCode),
-                    color: AppColors.primary,
-                    size: 48.r,
+          // ── Category image with count badge ──────────────────────────
+          Stack(
+            children: [
+              Container(
+                height: 70.h,
+                decoration: BoxDecoration(
+                  // color: AppColors.red,
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(12.r),
+                    topRight: Radius.circular(12.r),
                   ),
                 ),
-          SizedBox(width: 12.w),
+                child: Center(
+                  child:
+                      category.iconUrl != null && category.iconUrl!.isNotEmpty
+                      ? Image.network(
+                          category.iconUrl!,
+                          height: 65.h,
+                          fit: BoxFit.contain,
+                          errorBuilder: (_, __, ___) => Icon(
+                            _iconForCategory(category.categoryCode),
+                            color: AppColors.white,
+                            size: 38.r,
+                          ),
+                        )
+                      : Icon(
+                          _iconForCategory(category.categoryCode),
+                          color: AppColors.white,
+                          size: 38.r,
+                        ),
+                ),
+              ),
+              // Count badge - top right
+              Positioned(
+                top: 6.h,
+                right: 6.w,
+                child: Container(
+                  width: 32.w,
+                  height: 32.w,
+                  decoration: BoxDecoration(
+                    color: AppColors.ctaGradientStart,
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppColors.ctaGradientStart.withValues(
+                          alpha: 0.3,
+                        ),
+                        blurRadius: 4,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: Center(
+                    child: Text(
+                      '${category.vehicleCount}',
+                      style: TextStyle(
+                        fontFamily: 'Montserrat',
+                        fontSize: 11.sp,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
 
-          // ── Name + count + buttons ──────────────────────────────────
-          Expanded(
+          // ── Category name and buttons ─────────────────────────────────
+          Padding(
+            padding: EdgeInsets.fromLTRB(8.w, 6.h, 8.w, 8.h),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text(
-                  category.categoryName,
-                  style: TextStyle(
-                    fontFamily: 'Montserrat',
-                    fontSize: 18.sp,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.black,
-                  ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                SizedBox(height: 6.h),
-                RichText(
-                  text: TextSpan(
-                    children: [
-                      TextSpan(
-                        text: 'Available : ',
-                        style: TextStyle(
-                          fontFamily: 'Montserrat',
-                          fontSize: 14.sp,
-                          fontWeight: FontWeight.w500,
-                          color: AppColors.textSecondary,
-                        ),
-                      ),
-                      TextSpan(
-                        text: '${category.vehicleCount}',
-                        style: TextStyle(
-                          fontFamily: 'Montserrat',
-                          fontSize: 14.sp,
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.textPrimary,
-                        ),
-                      ),
-                    ],
+                Padding(
+                  padding: const EdgeInsets.only(left: 8.0),
+                  child: Text(
+                    category.categoryName,
+                    style: TextStyle(
+                      fontFamily: 'Montserrat',
+                      fontSize: 12.sp,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.textPrimary,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
-                SizedBox(height: 16.h),
-                // Buy + Sell side by side
+                SizedBox(height: 5.h),
+                // Buy + Sell buttons
                 Row(
                   children: [
                     Expanded(child: _buildBuyButton()),
-                    SizedBox(width: 8.w),
+                    SizedBox(width: 6.w),
                     Expanded(child: _buildSellButton()),
                   ],
                 ),
@@ -189,18 +207,18 @@ class _CategoryCard extends StatelessWidget {
         arguments: {'category': category},
       ),
       child: Container(
-        height: 20.h,
+        height: 26.h,
         decoration: BoxDecoration(
           gradient: const LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [AppColors.ctaGradientStart, AppColors.ctaGradientEnd],
           ),
-          borderRadius: BorderRadius.circular(20.r),
+          borderRadius: BorderRadius.circular(13.r),
           boxShadow: [
             BoxShadow(
               color: AppColors.ctaGradientStart.withValues(alpha: 0.3),
-              blurRadius: 6,
+              blurRadius: 4,
               offset: const Offset(0, 2),
             ),
           ],
@@ -210,7 +228,7 @@ class _CategoryCard extends StatelessWidget {
             'Buy',
             style: TextStyle(
               fontFamily: 'Montserrat',
-              fontSize: 14.sp,
+              fontSize: 11.sp,
               fontWeight: FontWeight.w600,
               color: Colors.white,
             ),
@@ -230,10 +248,10 @@ class _CategoryCard extends StatelessWidget {
         },
       ),
       child: Container(
-        height: 20.h,
+        height: 26.h,
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(20.r),
+          borderRadius: BorderRadius.circular(13.r),
           border: Border.all(color: AppColors.ctaGradientStart, width: 1.5),
         ),
         child: Center(
@@ -241,7 +259,7 @@ class _CategoryCard extends StatelessWidget {
             'Sell',
             style: TextStyle(
               fontFamily: 'Montserrat',
-              fontSize: 14.sp,
+              fontSize: 11.sp,
               fontWeight: FontWeight.w600,
               color: AppColors.ctaGradientStart,
             ),
@@ -273,9 +291,21 @@ class _CategoryCard extends StatelessWidget {
       case 'CRANE':
       case 'EXCAVATOR':
       case 'ROLLER':
+      case 'BACKHOE':
         return Icons.construction;
       case 'TIPPER':
         return Icons.local_shipping;
+      case 'CONCRETE':
+      case 'MIXER':
+        return Icons.local_shipping;
+      case 'FUEL':
+      case 'TANKER':
+        return Icons.local_gas_station;
+      case 'CARGO':
+        return Icons.local_shipping;
+      case 'REFUSE':
+      case 'GARBAGE':
+        return Icons.delete_outline;
       case 'GENERATOR':
         return Icons.electrical_services;
       default:
