@@ -6,6 +6,7 @@ import '../../../core/constants/app_colors.dart';
 import '../../../core/design_system/design_system.dart';
 import '../../../core/design_system/molecules/custom_snackbar.dart';
 import '../../../core/design_system/organisms/network_image_carousel.dart';
+import '../../../core/design_system/molecules/gradient_button.dart';
 import '../../../core/services/share_service.dart';
 import '../widgets/buy_filter_sheet.dart';
 import '../../../core/design_system/templates/app_layout.dart';
@@ -219,13 +220,13 @@ class BuyVehicleListingsView extends GetView<BuyVehicleController> {
                           final resolved = _resolveItem(i, controller);
                           if (resolved is ListingAd) {
                             return Padding(
-                              padding: EdgeInsets.only(bottom: AppSpacing.md),
+                              padding: EdgeInsets.only(bottom: AppSpacing.sm),
                               child: _ListingAdBanner(ad: resolved),
                             );
                           }
                           final vehicle = resolved as BuyVehicleEntity;
                           return Padding(
-                            padding: EdgeInsets.only(bottom: AppSpacing.md),
+                            padding: EdgeInsets.only(bottom: AppSpacing.sm),
                             child: _VehicleCard(vehicle: vehicle),
                           );
                         },
@@ -453,112 +454,52 @@ class _VehicleCard extends StatelessWidget {
             arguments: {'vehicle': vehicle},
           );
         }
-        // If not granted, requestVehicleDetails already showed the paywall
       },
       child: Container(
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(16.r),
-          border: Border.all(color: AppColors.grey300, width: 1),
+          border: Border.all(color: AppColors.grey200, width: 1),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.08),
-              blurRadius: 14,
-              spreadRadius: 1,
-              offset: const Offset(0, 4),
-            ),
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.04),
-              blurRadius: 4,
-              offset: const Offset(0, 1),
+              color: Colors.black.withValues(alpha: 0.2),
+              blurRadius: 12,
+              spreadRadius: 0,
+              offset: const Offset(0, 3),
             ),
           ],
         ),
-        child: Column(
+        child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // ── Image ──────────────────────────────────────────────────────
+            // ── Left: Image with badges ────────────────────────────────────
             Stack(
               children: [
                 ClipRRect(
                   borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(8.r),
-                    topRight: Radius.circular(8.r),
+                    topLeft: Radius.circular(16.r),
+                    bottomLeft: Radius.circular(16.r),
                   ),
                   child: Container(
-                    width: double.infinity,
-                    height: 180.h,
+                    width: 140.w,
+                    height: 100.h,
                     color: AppColors.grey100,
                     child: vehicle.allImageUrls.isNotEmpty
                         ? NetworkImageCarousel(
                             imageUrls: vehicle.allImageUrls,
-                            height: 180.h,
+                            height: 100.h,
                           )
                         : Icon(
                             Icons.local_shipping_outlined,
-                            size: 64.r,
+                            size: 48.r,
                             color: AppColors.grey400,
                           ),
                   ),
                 ),
-                // Star rating badge — top left
-                // Positioned(
-                //   top: 10.h,
-                //   left: 10.w,
-                //   child: Container(
-                //     padding: EdgeInsets.symmetric(
-                //       horizontal: 8.w,
-                //       vertical: 4.h,
-                //     ),
-                //     decoration: BoxDecoration(
-                //       color: Colors.white,
-                //       borderRadius: BorderRadius.circular(20.r),
-                //       boxShadow: [
-                //         BoxShadow(
-                //           color: Colors.black.withValues(alpha: 0.12),
-                //           blurRadius: 6,
-                //           offset: const Offset(0, 2),
-                //         ),
-                //       ],
-                //     ),
-                //     child: Row(
-                //       mainAxisSize: MainAxisSize.min,
-                //       children: [
-                //         Icon(
-                //           Icons.star_rounded,
-                //           color: const Color(0xFFFFC107),
-                //           size: 13.r,
-                //         ),
-                //         SizedBox(width: 3.w),
-                //         Text(
-                //           '4.1',
-                //           style: TextStyle(
-                //             fontFamily: 'Montserrat',
-                //             fontSize: 11.sp,
-                //             fontWeight: FontWeight.w600,
-                //             color: AppColors.textPrimary,
-                //           ),
-                //         ),
-                //       ],
-                //     ),
-                //   ),
-                // ),
-                // Wishlist — top right
+                // Share button - top left
                 Positioned(
-                  top: 10.h,
-                  right: 10.w,
-                  child: Obx(() {
-                    final ctrl = Get.find<BuyVehicleController>();
-                    return WishlistButton(
-                      isWishlisted: ctrl.isWishlisted(vehicle.sbVehicleId),
-                      onTap: () => ctrl.toggleWishlist(vehicle),
-                    );
-                  }),
-                ),
-                // Share — top left
-                Positioned(
-                  top: 10.h,
-                  left: 10.w,
+                  top: 8.h,
+                  left: 8.w,
                   child: GestureDetector(
                     onTap: () async {
                       if (Get.isRegistered<ShareService>()) {
@@ -575,104 +516,263 @@ class _VehicleCard extends StatelessWidget {
                       }
                     },
                     child: Container(
-                      width: 34.r,
-                      height: 34.r,
+                      width: 32.w,
+                      height: 32.w,
                       decoration: BoxDecoration(
                         color: Colors.white.withOpacity(0.92),
                         shape: BoxShape.circle,
                         boxShadow: [
                           BoxShadow(
                             color: Colors.black.withOpacity(0.12),
-                            blurRadius: 6,
+                            blurRadius: 4,
                             offset: const Offset(0, 2),
                           ),
                         ],
                       ),
                       child: Icon(
                         Icons.share_rounded,
-                        size: 17.r,
+                        size: 16.r,
                         color: AppColors.textPrimary,
                       ),
                     ),
                   ),
                 ),
-              ],
-            ),
-
-            // ── Details ────────────────────────────────────────────────────
-            Padding(
-              padding: EdgeInsets.fromLTRB(14.w, 12.h, 14.w, 14.h),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Title
-                  Text(
-                    _buildTitle(),
-                    style: TextStyle(
-                      fontFamily: 'Montserrat',
-                      fontSize: 15.sp,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.textPrimary,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  SizedBox(height: 8.h),
-                  // Year + Location row + View More button
-                  Row(
-                    children: [
-                      if (vehicle.year != null) ...[
-                        _chip(Icons.calendar_today_outlined, vehicle.year!),
-                        SizedBox(width: 10.w),
-                      ],
-                      if (vehicle.state != null)
-                        Expanded(
-                          child: _chip(
-                            Icons.location_on_outlined,
-                            vehicle.state!,
-                          ),
-                        )
-                      else
-                        const Spacer(),
-                      // View More pill
-                      Container(
-                        height: 20.h,
-                        padding: EdgeInsets.symmetric(horizontal: 14.w),
+                // Wishlist button - top right of image
+                Positioned(
+                  top: 8.h,
+                  right: 8.w,
+                  child: Obx(() {
+                    final ctrl = Get.find<BuyVehicleController>();
+                    return GestureDetector(
+                      onTap: () => ctrl.toggleWishlist(vehicle),
+                      child: Container(
+                        width: 32.w,
+                        height: 32.w,
                         decoration: BoxDecoration(
-                          gradient: const LinearGradient(
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
-                            colors: [
-                              AppColors.ctaGradientStart,
-                              AppColors.ctaGradientEnd,
-                            ],
-                          ),
-                          borderRadius: BorderRadius.circular(20.r),
+                          color: Colors.white.withOpacity(0.92),
+                          shape: BoxShape.circle,
                           boxShadow: [
                             BoxShadow(
-                              color: AppColors.ctaGradientStart.withValues(
-                                alpha: 0.3,
-                              ),
-                              blurRadius: 6,
+                              color: Colors.black.withOpacity(0.12),
+                              blurRadius: 4,
                               offset: const Offset(0, 2),
                             ),
                           ],
                         ),
-                        child: Center(
-                          child: Text(
-                            'View More',
+                        child: Icon(
+                          ctrl.isWishlisted(vehicle.sbVehicleId)
+                              ? Icons.favorite
+                              : Icons.favorite_border,
+                          size: 16.r,
+                          color: ctrl.isWishlisted(vehicle.sbVehicleId)
+                              ? AppColors.error
+                              : AppColors.grey600,
+                        ),
+                      ),
+                    );
+                  }),
+                ),
+                // Image count badge - bottom left
+                if (vehicle.allImageUrls.length > 1)
+                  Positioned(
+                    bottom: 8.h,
+                    left: 8.w,
+                    child: Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 8.w,
+                        vertical: 4.h,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.black.withOpacity(0.7),
+                        borderRadius: BorderRadius.circular(12.r),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            Icons.camera_alt,
+                            size: 12.r,
+                            color: Colors.white,
+                          ),
+                          SizedBox(width: 4.w),
+                          Text(
+                            '${vehicle.allImageUrls.length}',
                             style: TextStyle(
                               fontFamily: 'Montserrat',
-                              fontSize: 12.sp,
+                              fontSize: 11.sp,
                               fontWeight: FontWeight.w600,
                               color: Colors.white,
                             ),
                           ),
-                        ),
+                        ],
                       ),
-                    ],
+                    ),
                   ),
-                ],
+              ],
+            ),
+
+            // ── Right: Details ─────────────────────────────────────────────
+            Expanded(
+              child: Padding(
+                padding: EdgeInsets.fromLTRB(12.w, 4.h, 0, 0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Title with star rating
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: Text(
+                            _buildTitle(),
+                            style: TextStyle(
+                              fontFamily: 'Montserrat',
+                              fontSize: 14.sp,
+                              fontWeight: FontWeight.w700,
+                              color: AppColors.textPrimary,
+                            ),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        // // Star rating
+                        // Container(
+                        //   padding: EdgeInsets.symmetric(
+                        //     horizontal: 6.w,
+                        //     vertical: 2.h,
+                        //   ),
+                        //   decoration: BoxDecoration(
+                        //     color: const Color(0xFFFFF9E6),
+                        //     borderRadius: BorderRadius.circular(8.r),
+                        //   ),
+                        //   child: Row(
+                        //     mainAxisSize: MainAxisSize.min,
+                        //     children: [
+                        //       Icon(
+                        //         Icons.star,
+                        //         size: 12.r,
+                        //         color: const Color(0xFFFFC107),
+                        //       ),
+                        //       SizedBox(width: 2.w),
+                        //       Text(
+                        //         '4.${(vehicle.sbVehicleId.hashCode % 6 + 1)}',
+                        //         style: TextStyle(
+                        //           fontFamily: 'Montserrat',
+                        //           fontSize: 11.sp,
+                        //           fontWeight: FontWeight.w600,
+                        //           color: AppColors.textPrimary,
+                        //         ),
+                        //       ),
+                        //     ],
+                        //   ),
+                        // ),
+                      ],
+                    ),
+                    SizedBox(height: 6.h),
+                    // Year and Location
+                    Row(
+                      children: [
+                        if (vehicle.year != null) ...[
+                          Icon(
+                            Icons.calendar_today_outlined,
+                            size: 13.r,
+                            color: AppColors.grey500,
+                          ),
+                          SizedBox(width: 3.w),
+                          Text(
+                            vehicle.year!,
+                            style: TextStyle(
+                              fontFamily: 'Montserrat',
+                              fontSize: 11.sp,
+                              fontWeight: FontWeight.w500,
+                              color: AppColors.grey600,
+                            ),
+                          ),
+                        ],
+                        if (vehicle.year != null && vehicle.state != null)
+                          Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 6.w),
+                            child: Container(
+                              width: 3.w,
+                              height: 3.w,
+                              decoration: BoxDecoration(
+                                color: AppColors.grey400,
+                                shape: BoxShape.circle,
+                              ),
+                            ),
+                          ),
+                        if (vehicle.state != null) ...[
+                          Icon(
+                            Icons.location_on_outlined,
+                            size: 13.r,
+                            color: AppColors.grey500,
+                          ),
+                          SizedBox(width: 3.w),
+                          Flexible(
+                            child: Text(
+                              vehicle.state!,
+                              style: TextStyle(
+                                fontFamily: 'Montserrat',
+                                fontSize: 11.sp,
+                                fontWeight: FontWeight.w500,
+                                color: AppColors.grey600,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                      ],
+                    ),
+                    SizedBox(height: 6.h),
+                    // Specs row (fuel, transmission, km)
+                    Row(
+                      children: [
+                        _specChip(Icons.local_gas_station, 'Diesel'),
+                        SizedBox(width: 6.w),
+                        _specChip(Icons.settings, 'Manual'),
+                      ],
+                    ),
+                    SizedBox(height: 10.h),
+                    // Price and View More button
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          vehicle.formattedPrice,
+                          style: TextStyle(
+                            fontFamily: 'Montserrat',
+                            fontSize: 12.sp,
+                            fontWeight: FontWeight.w800,
+                            color: AppColors.error,
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(right: 4.0, bottom: 4),
+                          child: GradientButton.filled(
+                            text: 'View More',
+                            onPressed: () async {
+                              final ctrl = Get.find<BuyVehicleController>();
+                              final granted = await ctrl.requestVehicleDetails(
+                                vehicle,
+                              );
+                              if (granted) {
+                                Get.toNamed(
+                                  AppRoutes.buyVehicleDetail,
+                                  arguments: {'vehicle': vehicle},
+                                );
+                              }
+                            },
+                            width: 80.w,
+                            height: 24.h,
+                            fontSize: 10.sp,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
           ],
@@ -690,22 +790,18 @@ class _VehicleCard extends StatelessWidget {
     return vehicle.categoryName;
   }
 
-  Widget _chip(IconData icon, String text) => Row(
+  Widget _specChip(IconData icon, String text) => Row(
     mainAxisSize: MainAxisSize.min,
     children: [
-      Icon(icon, size: 13, color: AppColors.grey500),
-      SizedBox(width: 4.w),
-      Flexible(
-        child: Text(
-          text,
-          style: TextStyle(
-            fontFamily: 'Montserrat',
-            fontSize: 12.sp,
-            color: AppColors.grey600,
-            fontWeight: FontWeight.w500,
-          ),
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
+      Icon(icon, size: 12.r, color: AppColors.grey500),
+      SizedBox(width: 3.w),
+      Text(
+        text,
+        style: TextStyle(
+          fontFamily: 'Montserrat',
+          fontSize: 10.sp,
+          fontWeight: FontWeight.w500,
+          color: AppColors.grey600,
         ),
       ),
     ],
