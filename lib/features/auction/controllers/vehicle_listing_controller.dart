@@ -78,17 +78,31 @@ class VehicleListingController extends GetxController
   // ─── Filter state ─────────────────────────────────────────────
   final selectedRegion = Rxn<RegionEntity>();
   final selectedState = Rxn<StateByRegionEntity>();
+  final selectedCategory = RxnString();
+  final selectedVehicleTypeFilter = RxnString(); // For filter dropdown
+
   final regions = <RegionEntity>[].obs;
   final statesByRegion = <StateByRegionEntity>[].obs;
+  final vehicleTypes =
+      <Map<String, dynamic>>[].obs; // From live-auction-category-counts
+  final categories = <Map<String, String>>[].obs; // From admin categories API
+
   final isLoadingRegions = false.obs;
   final isLoadingStatesByRegion = false.obs;
+  final isLoadingVehicleTypes = false.obs;
+  final isLoadingCategories = false.obs;
 
   // backup for cancel
   RegionEntity? _backupRegion;
   StateByRegionEntity? _backupState;
+  String? _backupCategory;
+  String? _backupVehicleTypeFilter;
 
   bool get hasActiveFilters =>
-      selectedRegion.value != null || selectedState.value != null;
+      selectedRegion.value != null ||
+      selectedState.value != null ||
+      selectedCategory.value != null ||
+      selectedVehicleTypeFilter.value != null;
 
   // ─── Search ───────────────────────────────────────────────────
   final searchQuery = ''.obs;
@@ -148,6 +162,9 @@ class VehicleListingController extends GetxController
 
     _loadTab(0); // load live tab immediately
     _fetchRegions();
+    fetchVehicleTypes();
+    fetchCategories();
+    loadAllStates(); // Load all states upfront for filter
   }
 
   @override
@@ -184,8 +201,10 @@ class VehicleListingController extends GetxController
       final result = await _service.fetchVehicles(
         userId: userId,
         auctionType: _tabTypes[i],
-        vehicleType: vehicleType,
-        regionId: selectedRegion.value?.regionId ?? '',
+        vehicleType:
+            vehicleType, // Always use the category's vehicle type, not filter
+        category: selectedCategory.value ?? '',
+        regionId: '', // Region removed
         stateId: selectedState.value?.stateId ?? '',
         page: 1,
       );
@@ -216,8 +235,9 @@ class VehicleListingController extends GetxController
       final result = await _service.fetchVehicles(
         userId: userId,
         auctionType: _tabTypes[i],
-        vehicleType: vehicleType,
-        regionId: selectedRegion.value?.regionId ?? '',
+        vehicleType: vehicleType, // Always use the category's vehicle type
+        category: selectedCategory.value ?? '',
+        regionId: '', // Region removed
         stateId: selectedState.value?.stateId ?? '',
         page: nextPage,
       );
@@ -248,11 +268,15 @@ class VehicleListingController extends GetxController
   void backupCurrentFilters() {
     _backupRegion = selectedRegion.value;
     _backupState = selectedState.value;
+    _backupCategory = selectedCategory.value;
+    _backupVehicleTypeFilter = selectedVehicleTypeFilter.value;
   }
 
   void restoreFilters() {
     selectedRegion.value = _backupRegion;
     selectedState.value = _backupState;
+    selectedCategory.value = _backupCategory;
+    selectedVehicleTypeFilter.value = _backupVehicleTypeFilter;
   }
 
   void applyFilters() {
@@ -263,7 +287,8 @@ class VehicleListingController extends GetxController
   void resetFiltersWithoutReload() {
     selectedRegion.value = null;
     selectedState.value = null;
-    selectedState.value = null;
+    selectedCategory.value = null;
+    selectedVehicleTypeFilter.value = null;
   }
 
   void resetFilters() {
@@ -361,6 +386,86 @@ class VehicleListingController extends GetxController
     } catch (_) {
     } finally {
       isLoadingStatesByRegion.value = false;
+    }
+  }
+
+  Future<void> fetchVehicleTypes() async {
+    isLoadingVehicleTypes.value = true;
+    try {
+      final network = Get.find<NetworkService>();
+      final userId =
+          await SecureStorageService.to.read(StorageKeys.userId) ?? '';
+      final response = await network.post(
+        ApiEndpoints.liveAuctionCategoryCounts,
+        data: {'user_id': userId},
+      );
+      final data = response.data['data'];
+      if (data is Map && data['categories'] is List) {
+        vehicleTypes.value = (data['categories'] as List)
+            .cast<Map<String, dynamic>>();
+      }
+    } catch (e) {
+      debugPrint('❌ [VehicleListingController] fetchVehicleTypes error: $e');
+    } finally {
+      isLoadingVehicleTypes.value = false;
+    }
+  }
+
+  Future<void> fetchCategories() async {
+    isLoadingCategories.value = true;
+    try {
+      final network = Get.find<NetworkService>();
+      // This endpoint is public/open - no authentication required
+      debugPrint(
+        '📤 [VehicleListingController] Fetching categories from admin API...',
+      );
+      final response = await network.get(ApiEndpoints.auctionCategoriesList);
+      debugPrint(
+        '📦 [VehicleListingController] Categories response: ${response.data}',
+      );
+      debugPrint(
+        '📦 [VehicleListingController] Response type: ${response.data.runtimeType}',
+      );
+
+      if (response.data is List) {
+        debugPrint(
+          '✅ Response is a List with ${(response.data as List).length} items',
+        );
+        categories.value = (response.data as List)
+            .map(
+              (e) => {
+                'value': e['value']?.toString() ?? '',
+                'label': e['label']?.toString() ?? '',
+              },
+            )
+            .toList();
+        debugPrint(
+          '✅ [VehicleListingController] Parsed ${categories.length} categories',
+        );
+      } else if (response.data is Map) {
+        debugPrint('⚠️ Response is a Map, checking for nested data...');
+        final data = response.data['data'] ?? response.data['categories'];
+        if (data is List) {
+          debugPrint(
+            '✅ Found list in nested data with ${(data as List).length} items',
+          );
+          categories.value = (data as List)
+              .map(
+                (e) => {
+                  'value': e['value']?.toString() ?? '',
+                  'label': e['label']?.toString() ?? '',
+                },
+              )
+              .toList();
+          debugPrint(
+            '✅ [VehicleListingController] Parsed ${categories.length} categories',
+          );
+        }
+      }
+    } catch (e) {
+      debugPrint('❌ [VehicleListingController] fetchCategories error: $e');
+    } finally {
+      isLoadingCategories.value = false;
     }
   }
 

@@ -13,7 +13,7 @@ import '../../../routes/app_routes.dart';
 import '../controllers/auction_controller.dart';
 import '../models/auction_listing.dart';
 import 'auction_activity_fab.dart';
-import 'auction_filter_bottom_sheet.dart';
+// import 'auction_filter_bottom_sheet.dart'; // Removed - old filter
 
 class AuctionTab extends GetView<AuctionController> {
   const AuctionTab({super.key});
@@ -59,19 +59,19 @@ class AuctionTab extends GetView<AuctionController> {
                       ],
                     ),
                   ),
-                  // Filter icon — right of tabs, same row
-                  GestureDetector(
-                    onTap: () => AuctionFilterBottomSheet.show(context),
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 14.w),
-                      child: Image.asset(
-                        AppAssets.filterPng,
-                        width: 22.r,
-                        height: 22.r,
-                        color: AppColors.primary,
-                      ),
-                    ),
-                  ),
+                  // Filter icon — disabled for now (TODO: implement auction filter)
+                  // GestureDetector(
+                  //   onTap: () {},
+                  //   child: Padding(
+                  //     padding: EdgeInsets.symmetric(horizontal: 14.w),
+                  //     child: Image.asset(
+                  //       AppAssets.filterPng,
+                  //       width: 22.r,
+                  //       height: 22.r,
+                  //       color: AppColors.grey400,
+                  //     ),
+                  //   ),
+                  // ),
                 ],
               ),
               // ── Tab content ──────────────────────────────────────
@@ -466,4 +466,3 @@ DateTime _parseApiDate(String s) {
   }
   return DateTime(year, month, day, hour, minute);
 }
-

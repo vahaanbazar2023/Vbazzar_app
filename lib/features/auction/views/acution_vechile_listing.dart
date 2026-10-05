@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import '../../../core/constants/app_assets.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/design_system/design_system.dart';
+import '../../../core/design_system/molecules/inline_dropdown_field.dart';
 import '../../../core/design_system/molecules/timer_badge.dart';
 import '../../../core/design_system/organisms/network_image_carousel.dart';
 import '../../../core/design_system/templates/app_layout.dart';
@@ -1088,7 +1089,8 @@ class _CircleBidButton extends StatelessWidget {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Lightweight filter bottom sheet that uses VehicleListingController
+// Filter bottom sheet: Vehicle Type, Category, State (no Region)
+// Using custom InlineDropdownField for better UX
 // ─────────────────────────────────────────────────────────────────────────────
 
 class AuctionFilterBottomSheetV2 extends StatelessWidget {
@@ -1099,6 +1101,7 @@ class AuctionFilterBottomSheetV2 extends StatelessWidget {
     BuildContext context,
     VehicleListingController ctrl,
   ) {
+    ctrl.backupCurrentFilters();
     return showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -1110,7 +1113,7 @@ class AuctionFilterBottomSheetV2 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: MediaQuery.of(context).size.height * 0.5,
+      height: MediaQuery.of(context).size.height * 0.55,
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
@@ -1167,121 +1170,65 @@ class AuctionFilterBottomSheetV2 extends StatelessWidget {
           ),
           Divider(height: 1, color: AppColors.grey200),
           Expanded(
-            child: Obx(() {
-              final regions = ctrl.regions;
-              final states = ctrl.statesByRegion;
-              return ListView(
-                padding: EdgeInsets.all(16.w),
+            child: SingleChildScrollView(
+              padding: EdgeInsets.all(16.w),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Region
-                  Text(
-                    'Region',
-                    style: TextStyle(
-                      fontFamily: 'Montserrat',
-                      fontSize: 13.sp,
-                      fontWeight: FontWeight.w600,
-                    ),
+                  // Category
+                  _FilterLabel(
+                    label: context.l10n.category,
+                    icon: Icons.category_outlined,
                   ),
                   SizedBox(height: 8.h),
-                  DropdownButtonFormField<RegionEntity>(
-                    value: ctrl.selectedRegion.value,
-                    hint: Text(
-                      'All Regions',
-                      style: TextStyle(
-                        fontFamily: 'Montserrat',
-                        fontSize: 13.sp,
-                        color: AppColors.grey500,
-                      ),
-                    ),
-                    items: [
-                      DropdownMenuItem(
-                        value: null,
-                        child: Text(
-                          'All Regions',
-                          style: TextStyle(
-                            fontFamily: 'Montserrat',
-                            fontSize: 13.sp,
-                          ),
-                        ),
-                      ),
-                      ...regions.map(
-                        (r) => DropdownMenuItem(
-                          value: r,
-                          child: Text(
-                            r.name,
-                            style: TextStyle(
-                              fontFamily: 'Montserrat',
-                              fontSize: 13.sp,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                    onChanged: ctrl.onRegionSelected,
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8.r),
-                      ),
-                      isDense: true,
-                    ),
-                  ),
-                  SizedBox(height: 16.h),
+                  Obx(() {
+                    final categories = ctrl.categories;
+                    final isLoading = ctrl.isLoadingCategories.value;
+                    return InlineDropdownField<String>(
+                      value: ctrl.selectedCategory.value,
+                      items: categories
+                          .map((cat) => cat['value'] ?? '')
+                          .where((v) => v.isNotEmpty)
+                          .toList(),
+                      placeholder: 'All Categories',
+                      prefixIcon: Icons.category_outlined,
+                      isLoading: isLoading,
+                      itemLabel: (v) {
+                        final cat = categories.firstWhere(
+                          (c) => c['value'] == v,
+                          orElse: () => {'label': v},
+                        );
+                        return cat['label'] ?? v;
+                      },
+                      onChanged: (val) => ctrl.selectedCategory.value = val,
+                      maxDropdownHeight: 200,
+                    );
+                  }),
+                  SizedBox(height: 20.h),
+
                   // State
-                  Text(
-                    'State',
-                    style: TextStyle(
-                      fontFamily: 'Montserrat',
-                      fontSize: 13.sp,
-                      fontWeight: FontWeight.w600,
-                    ),
+                  _FilterLabel(
+                    label: context.l10n.state,
+                    icon: Icons.location_city_outlined,
                   ),
                   SizedBox(height: 8.h),
-                  DropdownButtonFormField<StateByRegionEntity>(
-                    value: ctrl.selectedState.value,
-                    hint: Text(
-                      'All States',
-                      style: TextStyle(
-                        fontFamily: 'Montserrat',
-                        fontSize: 13.sp,
-                        color: AppColors.grey500,
-                      ),
-                    ),
-                    items: [
-                      DropdownMenuItem(
-                        value: null,
-                        child: Text(
-                          'All States',
-                          style: TextStyle(
-                            fontFamily: 'Montserrat',
-                            fontSize: 13.sp,
-                          ),
-                        ),
-                      ),
-                      ...states.map(
-                        (s) => DropdownMenuItem(
-                          value: s,
-                          child: Text(
-                            s.stateName,
-                            style: TextStyle(
-                              fontFamily: 'Montserrat',
-                              fontSize: 13.sp,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                    onChanged: (v) =>
-                        ctrl.selectedState.value = v as StateByRegionEntity?,
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8.r),
-                      ),
-                      isDense: true,
-                    ),
-                  ),
+                  Obx(() {
+                    final states = ctrl.statesByRegion;
+                    final isLoading = ctrl.isLoadingStatesByRegion.value;
+                    return InlineDropdownField<StateByRegionEntity>(
+                      value: ctrl.selectedState.value,
+                      items: states,
+                      placeholder: 'All States',
+                      prefixIcon: Icons.location_city_outlined,
+                      isLoading: isLoading,
+                      itemLabel: (s) => s.stateName,
+                      onChanged: (val) => ctrl.selectedState.value = val,
+                      maxDropdownHeight: 220,
+                    );
+                  }),
                 ],
-              );
-            }),
+              ),
+            ),
           ),
           // Apply / Cancel buttons
           Padding(
@@ -1314,6 +1261,33 @@ class AuctionFilterBottomSheetV2 extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+// ─── Filter Label Helper ─────────────────────────────────────────────────────
+
+class _FilterLabel extends StatelessWidget {
+  final String label;
+  final IconData icon;
+  const _FilterLabel({required this.label, required this.icon});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Icon(icon, size: 16.r, color: AppColors.primary),
+        SizedBox(width: 6.w),
+        Text(
+          label,
+          style: TextStyle(
+            fontFamily: 'Montserrat',
+            fontSize: 14.sp,
+            fontWeight: FontWeight.w600,
+            color: AppColors.grey900,
+          ),
+        ),
+      ],
     );
   }
 }

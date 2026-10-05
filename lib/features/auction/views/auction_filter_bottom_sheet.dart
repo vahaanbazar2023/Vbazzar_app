@@ -7,35 +7,32 @@ import '../../../core/design_system/design_system.dart';
 import '../../../core/design_system/molecules/custom_autocomplete_field.dart';
 import '../../../core/design_system/molecules/inline_dropdown_field.dart';
 import '../../../core/extensions/context_extensions.dart';
-import '../controllers/auction_list_controller.dart';
+import '../controllers/vehicle_listing_controller.dart';
 import '../domain/entities/auction_entity.dart';
-import '../utils/auction_utils.dart';
 
 /// A modern, stylish filter bottom sheet for the Auction screen.
-/// Shows 4 filter dropdowns: Category, Vehicle Type, Region, State.
-class AuctionFilterBottomSheet extends StatelessWidget {
-  const AuctionFilterBottomSheet({super.key});
+/// Shows 3 filter dropdowns: Vehicle Type, Category, State.
+class AuctionFilterBottomSheetV2 extends StatelessWidget {
+  final VehicleListingController controller;
 
-  static Future<void> show(BuildContext context) {
-    final controller = Get.isRegistered<AuctionListController>()
-        ? Get.find<AuctionListController>()
-        : Get.put(AuctionListController());
+  const AuctionFilterBottomSheetV2({super.key, required this.controller});
+
+  static Future<void> show(
+    BuildContext context,
+    VehicleListingController controller,
+  ) {
     controller.backupCurrentFilters();
 
     return showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (_) => const AuctionFilterBottomSheet(),
+      builder: (_) => AuctionFilterBottomSheetV2(controller: controller),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.isRegistered<AuctionListController>()
-        ? Get.find<AuctionListController>()
-        : Get.put(AuctionListController());
-
     return Container(
       height: MediaQuery.of(context).size.height * 0.72,
       decoration: BoxDecoration(
@@ -150,6 +147,15 @@ class AuctionFilterBottomSheet extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  // ── Vehicle Type ────────────────────────────────
+                  _FilterSectionLabel(
+                    label: 'Vehicle Type',
+                    icon: Icons.directions_car_outlined,
+                  ),
+                  SizedBox(height: 8.h),
+                  _VehicleTypeField(controller: controller),
+                  SizedBox(height: 20.h),
+
                   // ── Category ────────────────────────────────────
                   _FilterSectionLabel(
                     label: context.l10n.category,
@@ -157,15 +163,6 @@ class AuctionFilterBottomSheet extends StatelessWidget {
                   ),
                   SizedBox(height: 8.h),
                   _CategoryField(controller: controller),
-                  SizedBox(height: 20.h),
-
-                  // ── Region ──────────────────────────────────────
-                  _FilterSectionLabel(
-                    label: context.l10n.selectRegion,
-                    icon: Icons.map_outlined,
-                  ),
-                  SizedBox(height: 8.h),
-                  _RegionField(controller: controller),
                   SizedBox(height: 20.h),
 
                   // ── State (CustomAutocompleteField) ─────────────
@@ -280,72 +277,66 @@ class _FilterSectionLabel extends StatelessWidget {
   }
 }
 
-// ─── Category — InlineDropdownField ────────────────────────────────────────
+// ─── Vehicle Type — InlineDropdownField ────────────────────────────────────
 
-class _CategoryField extends StatelessWidget {
-  final AuctionListController controller;
-  const _CategoryField({required this.controller});
-
-  /// Reverse-lookup: given the stored API value, find the display label.
-  String _labelForValue(String? apiValue) {
-    if (apiValue == null || apiValue.isEmpty) return 'All';
-    return AuctionUtils.auctionCategoryOptions.entries
-        .firstWhere(
-          (e) => e.value == apiValue,
-          orElse: () => const MapEntry('All', ''),
-        )
-        .key;
-  }
+class _VehicleTypeField extends StatelessWidget {
+  final VehicleListingController controller;
+  const _VehicleTypeField({required this.controller});
 
   @override
   Widget build(BuildContext context) {
     return Obx(() {
-      final currentLabel = _labelForValue(controller.selectedCategory.value);
+      final vehicleTypes = controller.vehicleTypes;
+      final isLoading = controller.isLoadingVehicleTypes.value;
+
       return InlineDropdownField<String>(
-        value: currentLabel == 'All' ? null : currentLabel,
-        items: AuctionUtils.auctionCategoryLabels,
-        placeholder: context.l10n.selectCategory,
-        prefixIcon: Icons.business_outlined,
-        itemLabel: (v) => v,
-        onChanged: (label) {
-          if (label == null) {
-            controller.onCategoryChanged(null);
-          } else {
-            final apiValue = AuctionUtils.auctionCategoryApiValue(label);
-            controller.onCategoryChanged(apiValue.isEmpty ? null : apiValue);
-          }
-        },
+        value: controller.selectedVehicleTypeFilter.value,
+        items: vehicleTypes.map((v) => v['category'] as String).toList(),
+        placeholder: 'Select Vehicle Type',
+        prefixIcon: Icons.directions_car_outlined,
+        isLoading: isLoading,
+        itemLabel: (v) => v.toUpperCase(),
+        onChanged: (val) => controller.selectedVehicleTypeFilter.value = val,
       );
     });
   }
 }
 
-// ─── Region — InlineDropdownField ──────────────────────────────────────────
+// ─── Category — InlineDropdownField ────────────────────────────────────────
 
-class _RegionField extends StatelessWidget {
-  final AuctionListController controller;
-  const _RegionField({required this.controller});
+class _CategoryField extends StatelessWidget {
+  final VehicleListingController controller;
+  const _CategoryField({required this.controller});
 
   @override
   Widget build(BuildContext context) {
-    return Obx(
-      () => InlineDropdownField<RegionEntity>(
-        value: controller.selectedRegion.value,
-        items: controller.regions,
-        placeholder: context.l10n.selectRegion,
-        prefixIcon: Icons.map_outlined,
-        isLoading: controller.isLoadingRegions.value,
-        itemLabel: (r) => r.name,
-        onChanged: (val) => controller.onRegionChanged(val),
-      ),
-    );
+    return Obx(() {
+      final categories = controller.categories;
+      final isLoading = controller.isLoadingCategories.value;
+
+      return InlineDropdownField<String>(
+        value: controller.selectedCategory.value,
+        items: categories.map((c) => c['value']!).toList(),
+        placeholder: context.l10n.selectCategory,
+        prefixIcon: Icons.business_outlined,
+        isLoading: isLoading,
+        itemLabel: (v) {
+          final cat = categories.firstWhere(
+            (c) => c['value'] == v,
+            orElse: () => {'label': v},
+          );
+          return cat['label'] ?? v;
+        },
+        onChanged: (val) => controller.selectedCategory.value = val,
+      );
+    });
   }
 }
 
-// ─── State — CustomAutocompleteField (region-dependent) ────────────────────
+// ─── State — CustomAutocompleteField ────────────────────────────────────────
 
 class _StateField extends StatefulWidget {
-  final AuctionListController controller;
+  final VehicleListingController controller;
   const _StateField({required this.controller});
 
   @override
@@ -372,29 +363,19 @@ class _StateFieldState extends State<_StateField> {
   @override
   Widget build(BuildContext context) {
     return Obx(() {
-      final isDisabled = widget.controller.selectedRegion.value == null;
       final states = widget.controller.statesByRegion;
       final isLoading = widget.controller.isLoadingStatesByRegion.value;
-
-      if (isDisabled && _textCtrl.text.isNotEmpty) {
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          if (mounted) _textCtrl.clear();
-        });
-      }
 
       return CustomAutocompleteField<StateByRegionEntity>(
         controller: _textCtrl,
         options: states,
-        placeholder: isDisabled
-            ? context.l10n.selectStateFirst
-            : context.l10n.searchState,
+        placeholder: context.l10n.searchState,
         prefixIcon: Icons.location_city_outlined,
         isLoading: isLoading,
-        enabled: !isDisabled,
         displayStringForOption: (s) => s.stateName,
         forceSelection: true,
         maxDropdownHeight: 220,
-        onSelected: (s) => widget.controller.onStateChanged(s),
+        onSelected: (s) => widget.controller.selectedState.value = s,
         onChanged: (_) {},
       );
     });

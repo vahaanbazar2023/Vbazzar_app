@@ -108,6 +108,8 @@ class ApiEndpoints {
       '/api/v1/dashboard/auction-refund-initiate';
   static const String vehicleExcelDownload =
       '$auctionPrefix/vehicle-excel-download';
+  static const String auctionCategoriesList =
+      '/api/v1/admin-panel/modules/auctions/categories/list';
 
   // ─── Spare & FMS ────────────────────────────────────────────
   static const String spareFmsPrefix = '/api/v1/spares-fms';
