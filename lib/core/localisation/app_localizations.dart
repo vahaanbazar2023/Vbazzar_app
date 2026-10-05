@@ -1135,7 +1135,7 @@ abstract class AppLocalizations {
   /// No description provided for @pleaseEnterValidPhoneNumber.
   ///
   /// In en, this message translates to:
-  /// **'Please enter a valid 10-digit phone number'**
+  /// **'Please enter valid number'**
   String get pleaseEnterValidPhoneNumber;
 
   /// No description provided for @failedToSendOTP.
@@ -1363,7 +1363,7 @@ abstract class AppLocalizations {
   /// No description provided for @invalidPhoneFormat.
   ///
   /// In en, this message translates to:
-  /// **'Please enter a valid 10-digit phone number'**
+  /// **'Please enter valid number'**
   String get invalidPhoneFormat;
 
   /// No description provided for @namesCannotContainNumbers.

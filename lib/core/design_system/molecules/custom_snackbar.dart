@@ -36,6 +36,7 @@ class CustomSnackbar {
       dismissDirection: DismissDirection.up,
       messageText: _CustomSnackbarContent(
         message: message,
+        type: type,
         leftBarColor: snackbarConfig.leftBarColor,
         backgroundColor: snackbarConfig.backgroundColor,
         borderColor: snackbarConfig.borderColor,
@@ -51,27 +52,27 @@ class CustomSnackbar {
     switch (type) {
       case SnackbarType.success:
         return _SnackbarConfig(
-          leftBarColor: AppColors.success,
-          backgroundColor: AppColors.successBackground,
-          borderColor: AppColors.success.withOpacity(0.3),
+          leftBarColor: const Color(0xFF059669), // Green
+          backgroundColor: const Color(0xFFD1FAE5), // Light green
+          borderColor: const Color(0xFF059669),
         );
       case SnackbarType.error:
         return _SnackbarConfig(
-          leftBarColor: AppColors.warning,
-          backgroundColor: AppColors.warningBackground,
-          borderColor: AppColors.warningBorder,
+          leftBarColor: const Color(0xFFDC2626), // Red
+          backgroundColor: const Color(0xFFFEE2E2), // Light red
+          borderColor: const Color(0xFFDC2626),
         );
       case SnackbarType.warning:
         return _SnackbarConfig(
-          leftBarColor: AppColors.warning,
-          backgroundColor: AppColors.warningBackground,
-          borderColor: AppColors.warningBorder,
+          leftBarColor: const Color(0xFFD97706), // Orange/Amber
+          backgroundColor: const Color(0xFFFEF3C7), // Light yellow
+          borderColor: const Color(0xFFD97706),
         );
       case SnackbarType.info:
         return _SnackbarConfig(
-          leftBarColor: AppColors.success,
-          backgroundColor: AppColors.successBackground,
-          borderColor: AppColors.success.withOpacity(0.3),
+          leftBarColor: const Color(0xFF2563EB), // Blue
+          backgroundColor: const Color(0xFFDCEFFF), // Light blue
+          borderColor: const Color(0xFF2563EB),
         );
     }
   }
@@ -91,6 +92,7 @@ class _SnackbarConfig {
 
 class _CustomSnackbarContent extends StatefulWidget {
   final String message;
+  final SnackbarType type;
   final Color leftBarColor;
   final Color backgroundColor;
   final Color borderColor;
@@ -100,6 +102,7 @@ class _CustomSnackbarContent extends StatefulWidget {
 
   const _CustomSnackbarContent({
     required this.message,
+    required this.type,
     required this.leftBarColor,
     required this.backgroundColor,
     required this.borderColor,
@@ -145,124 +148,82 @@ class _CustomSnackbarContentState extends State<_CustomSnackbarContent>
     return GestureDetector(
       onTap: widget.onTap,
       child: Container(
-        margin: EdgeInsets.only(top: 4.h, left: 17.w, right: 17.w),
-        child: Stack(
-          children: [
-            // Main snackbar container
-            Container(
-              width: 379.w,
-              height: 68.h,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(4.r),
-                border: Border.all(color: widget.borderColor, width: 1.w),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
-                    offset: const Offset(0, 2),
-                    blurRadius: 4,
-                  ),
-                ],
+        margin: EdgeInsets.only(top: 8.h, left: 16.w, right: 16.w),
+        child: Container(
+          height: 40.h,
+          decoration: BoxDecoration(
+            color: widget.backgroundColor,
+            borderRadius: BorderRadius.circular(40.r),
+            border: Border.all(color: widget.borderColor, width: 1.w),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.08),
+                offset: const Offset(0, 2),
+                blurRadius: 8,
               ),
-              child: Row(
-                children: [
-                  // Left color bar (5% width)
-                  Container(
-                    width: 379.w * 0.02,
-                    height: 68.h,
-                    decoration: BoxDecoration(
-                      color: widget.leftBarColor,
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(4.r),
-                        bottomLeft: Radius.circular(4.r),
-                      ),
-                    ),
+            ],
+          ),
+          padding: EdgeInsets.symmetric(horizontal: 16.w),
+          child: Row(
+            children: [
+              // Icon based on type
+              _buildIcon(),
+
+              SizedBox(width: 12.w),
+
+              // Message text
+              Expanded(
+                child: Text(
+                  widget.message,
+                  style: AppTextStyles.bodyMedium.copyWith(
+                    color: widget.leftBarColor,
+                    fontSize: 13.sp,
+                    fontWeight: FontWeight.w600,
+                    height: 1.2,
                   ),
-
-                  // Main content container (95% width)
-                  Expanded(
-                    child: Container(
-                      height: 68.h,
-                      decoration: BoxDecoration(
-                        color: widget.backgroundColor,
-                        borderRadius: BorderRadius.only(
-                          topRight: Radius.circular(4.r),
-                          bottomRight: Radius.circular(4.r),
-                        ),
-                      ),
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 12.w,
-                        vertical: 8.h,
-                      ),
-                      child: Row(
-                        children: [
-                          // Message text
-                          Expanded(
-                            child: Text(
-                              widget.message,
-                              style: AppTextStyles.bodyMedium.copyWith(
-                                color: AppColors.black,
-                                fontSize: 14.sp,
-                                fontWeight: FontWeight.w500,
-                              ),
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-
-                          SizedBox(width: 8.w),
-
-                          // Close icon (cancel.svg)
-                          GestureDetector(
-                            onTap: () {
-                              Get.back();
-                            },
-                            child: SvgPicture.asset(
-                              AppAssets.cancel,
-                              width: 16.w,
-                              height: 16.h,
-                              colorFilter: ColorFilter.mode(
-                                AppColors.grey650,
-                                BlendMode.srcIn,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
-            // Progress bar at the bottom
-            if (widget.showProgressBar)
-              Positioned(
-                bottom: 0,
-                left: 0,
-                right: 0,
-                child: AnimatedBuilder(
-                  animation: _progressAnimation,
-                  builder: (context, child) {
-                    return ClipRRect(
-                      borderRadius: BorderRadius.only(
-                        bottomLeft: Radius.circular(4.r),
-                        bottomRight: Radius.circular(4.r),
-                      ),
-                      child: LinearProgressIndicator(
-                        value: _progressAnimation.value,
-                        minHeight: 3.h,
-                        backgroundColor: widget.leftBarColor.withOpacity(0.2),
-                        valueColor: AlwaysStoppedAnimation<Color>(
-                          widget.leftBarColor.withOpacity(0.6),
-                        ),
-                      ),
-                    );
-                  },
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
-          ],
+
+              SizedBox(width: 12.w),
+
+              // Close icon
+              GestureDetector(
+                onTap: () {
+                  Get.back();
+                },
+                child: Icon(
+                  Icons.close,
+                  size: 18.r,
+                  color: widget.leftBarColor,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
+  }
+
+  Widget _buildIcon() {
+    IconData iconData;
+
+    switch (widget.type) {
+      case SnackbarType.success:
+        iconData = Icons.check_circle;
+        break;
+      case SnackbarType.error:
+        iconData = Icons.cancel;
+        break;
+      case SnackbarType.warning:
+        iconData = Icons.warning;
+        break;
+      case SnackbarType.info:
+        iconData = Icons.info;
+        break;
+    }
+
+    return Icon(iconData, size: 20.r, color: widget.leftBarColor);
   }
 }

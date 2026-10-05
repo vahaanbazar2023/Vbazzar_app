@@ -541,8 +541,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pleaseEnterYourPhoneNumber => 'Please enter your phone number';
 
   @override
-  String get pleaseEnterValidPhoneNumber =>
-      'Please enter a valid 10-digit phone number';
+  String get pleaseEnterValidPhoneNumber => 'Please enter valid number';
 
   @override
   String get failedToSendOTP => 'Failed to send OTP. Please try again.';
@@ -661,7 +660,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get phoneRequired => 'Phone number is required';
 
   @override
-  String get invalidPhoneFormat => 'Please enter a valid 10-digit phone number';
+  String get invalidPhoneFormat => 'Please enter valid number';
 
   @override
   String get namesCannotContainNumbers => 'Names cannot contain numbers';

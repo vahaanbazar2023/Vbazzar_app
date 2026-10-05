@@ -547,7 +547,7 @@ class AppLocalizationsTe extends AppLocalizations {
 
   @override
   String get pleaseEnterValidPhoneNumber =>
-      'దయచేసి చెల్లుబాటు అయ్యే 10-అంకెల ఫోన్ నంబర్ నమోదు చేయండి';
+      'దయచేసి చెల్లుబాటు అయ్యే నంబర్ నమోదు చేయండి';
 
   @override
   String get failedToSendOTP =>

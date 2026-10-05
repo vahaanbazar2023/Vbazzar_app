@@ -21,10 +21,16 @@ class LoginWithOtp extends StatefulWidget {
 class _LoginWithOtpState extends State<LoginWithOtp> {
   final AuthController controller = Get.find<AuthController>();
 
-  Country _selectedCountry = countries.firstWhere(
-    (c) => c.code == 'IN',
-    orElse: () => countries.first,
-  );
+  late Country _selectedCountry;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedCountry = countries.firstWhere(
+      (c) => c.code == 'IN',
+      orElse: () => countries.first,
+    );
+  }
 
   void _openCountryPicker() {
     final searchCtrl = TextEditingController();
@@ -160,10 +166,7 @@ class _LoginWithOtpState extends State<LoginWithOtp> {
       body: Column(
         children: [
           // ── App Header ────────────────────────────────────────
-          SafeArea(
-            bottom: false,
-            child: AppHeader(title: '', showBack: false),
-          ),
+          SafeArea(bottom: false, child: AppHeader(title: '', showBack: false)),
 
           // ── Scrollable body ───────────────────────────────────
           Expanded(
@@ -195,7 +198,12 @@ class _LoginWithOtpState extends State<LoginWithOtp> {
                         children: [
                           // Welcome row
                           Padding(
-                           padding: EdgeInsets.fromLTRB(20.w, 20.h, 20.w, 20.h),
+                            padding: EdgeInsets.fromLTRB(
+                              20.w,
+                              20.h,
+                              20.w,
+                              20.h,
+                            ),
                             child: Row(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -277,9 +285,7 @@ class _LoginWithOtpState extends State<LoginWithOtp> {
                               ],
                             ),
                           ),
-                      
-                        
-                      
+
                           // Input card
                           Container(
                             width: double.infinity,
@@ -332,17 +338,16 @@ class _LoginWithOtpState extends State<LoginWithOtp> {
                                   textAlign: TextAlign.center,
                                 ),
                                 SizedBox(height: 20.h),
-                      
+
                                 // Country picker + phone input
                                 Row(
-                                  crossAxisAlignment:
-                                      CrossAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     // Country picker
                                     GestureDetector(
                                       onTap: _openCountryPicker,
                                       child: Container(
-                                        height: 50.h,
+                                        height: 46.r,
                                         padding: EdgeInsets.symmetric(
                                           horizontal: 10.w,
                                         ),
@@ -380,8 +385,7 @@ class _LoginWithOtpState extends State<LoginWithOtp> {
                                             Text(
                                               '+${_selectedCountry.dialCode}',
                                               style: TextStyle(
-                                                fontFamily:
-                                                    'Plus Jakarta Sans',
+                                                fontFamily: 'Plus Jakarta Sans',
                                                 fontSize: 13.sp,
                                                 fontWeight: FontWeight.w600,
                                                 color: AppColors.black,
@@ -389,8 +393,7 @@ class _LoginWithOtpState extends State<LoginWithOtp> {
                                             ),
                                             SizedBox(width: 4.w),
                                             Icon(
-                                              Icons
-                                                  .keyboard_arrow_down_rounded,
+                                              Icons.keyboard_arrow_down_rounded,
                                               size: 16.r,
                                               color: AppColors.grey500,
                                             ),
@@ -409,8 +412,7 @@ class _LoginWithOtpState extends State<LoginWithOtp> {
                                               .l10n
                                               .phoneNumberPlaceholder,
                                           prefixIcon: Icons.phone_outlined,
-                                          errorText:
-                                              controller.errorText.value,
+                                          errorText: controller.errorText.value,
                                           validator: (value) =>
                                               controller.validatePhoneNumber(
                                                 context,
@@ -418,10 +420,8 @@ class _LoginWithOtpState extends State<LoginWithOtp> {
                                               ),
                                           showSuccessState: true,
                                           keyboardType: TextInputType.phone,
-                                          textInputAction:
-                                              TextInputAction.done,
-                                          onChanged:
-                                              controller.onPhoneChanged,
+                                          textInputAction: TextInputAction.done,
+                                          onChanged: controller.onPhoneChanged,
                                           onSubmitted: (_) =>
                                               controller.sendOtp(context),
                                           inputFormatters: [
@@ -433,7 +433,7 @@ class _LoginWithOtpState extends State<LoginWithOtp> {
                                   ],
                                 ),
                                 SizedBox(height: 20.h),
-                      
+
                                 // Send OTP button
                                 Obx(() {
                                   final isValid = controller.isPhoneValid;
@@ -441,7 +441,6 @@ class _LoginWithOtpState extends State<LoginWithOtp> {
                                     width: double.infinity,
                                     child: isValid
                                         ? GradientButton.filled(
-                                        
                                             text: context.l10n.sendOtp,
                                             onPressed:
                                                 controller.isLoading.value
@@ -456,16 +455,16 @@ class _LoginWithOtpState extends State<LoginWithOtp> {
                                         : GradientButton.outlined(
                                             text: context.l10n.sendOtp,
                                             onPressed: null,
-                                             width: 100.w,
+                                            width: 100.w,
                                           ),
                                   );
                                 }),
                               ],
                             ),
                           ),
-                      
+
                           SizedBox(height: 16.h),
-                      
+
                           // Privacy note
                           Container(
                             padding: EdgeInsets.symmetric(
@@ -473,9 +472,7 @@ class _LoginWithOtpState extends State<LoginWithOtp> {
                               vertical: 10.h,
                             ),
                             decoration: BoxDecoration(
-                              color: AppColors.primary.withValues(
-                                alpha: 0.05,
-                              ),
+                              color: AppColors.primary.withValues(alpha: 0.05),
                               borderRadius: BorderRadius.circular(10.r),
                             ),
                             child: Row(

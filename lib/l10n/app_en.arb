@@ -260,7 +260,7 @@
     "emailRequired": "Email is required",
     "invalidEmailFormat": "Please enter a valid email",
     "phoneRequired": "Phone number is required",
-    "invalidPhoneFormat": "Please enter a valid 10-digit phone number",
+    "invalidPhoneFormat": "Please enter valid number",
     "namesCannotContainNumbers": "Names cannot contain numbers",
     "invalidCharactersInName": "Invalid characters in name fields",
     "newPasswordCannotBeEmpty": "New password cannot be empty",

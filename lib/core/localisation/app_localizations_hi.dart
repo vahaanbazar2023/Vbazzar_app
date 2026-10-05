@@ -542,8 +542,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get pleaseEnterYourPhoneNumber => 'कृपया अपना फोन नंबर दर्ज करें';
 
   @override
-  String get pleaseEnterValidPhoneNumber =>
-      'कृपया एक वैध 10-अंकीय फोन नंबर दर्ज करें';
+  String get pleaseEnterValidPhoneNumber => 'कृपया वैध नंबर दर्ज करें';
 
   @override
   String get failedToSendOTP => 'OTP भेजने में विफल। कृपया पुनः प्रयास करें।';
