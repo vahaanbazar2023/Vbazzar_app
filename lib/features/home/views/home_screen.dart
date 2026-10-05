@@ -115,11 +115,12 @@ class HomeScreen extends GetView<HomeController> {
                     // ── Ad after most_bought_categories ──────────
                     if (data.adAfter('most_bought_categories') != null) ...[
                       _AdBanner(ad: data.adAfter('most_bought_categories')!),
-                      SizedBox(height: 24.h),
+                       SizedBox(height: 12.h),
+                     
                     ],
                     // ── Inspection Banner ────────────────────────
                     _InspectionBanner(),
-                    SizedBox(height: 24.h),
+                    SizedBox(height: 12.h),
                     // ── FMS Items ────────────────────────────────
                     if (data.sparesFms.isNotEmpty) ...[
                       _SectionHeader(
@@ -128,16 +129,16 @@ class HomeScreen extends GetView<HomeController> {
                       ),
                       SizedBox(height: 12.h),
                       _FmsItemsGrid(spares: data.sparesFms),
-                      SizedBox(height: 24.h),
+                      SizedBox(height: 12.h),
                     ],
                     // ── Ad after spares_fms ──────────────────────
                     if (data.adAfter('spares_fms') != null) ...[
                       _AdBanner(ad: data.adAfter('spares_fms')!),
-                      SizedBox(height: 24.h),
+                      SizedBox(height: 12.h),
                     ],
                     // ── Insurance Banner ─────────────────────────
                     _InsuranceBanner(),
-                    SizedBox(height: 24.h),
+                     SizedBox(height: 8.h),
                     // ── Spare Support Near You ───────────────────
                     _SectionHeader(title: context.l10n.spareSupportNearYou),
                     SizedBox(height: 12.h),
