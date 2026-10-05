@@ -1,4 +1,4 @@
-package com.vahaanbazar.app
+package com.bidbazaar.app
 
 import io.flutter.embedding.android.FlutterActivity
 

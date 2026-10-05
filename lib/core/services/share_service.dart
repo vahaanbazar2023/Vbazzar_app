@@ -20,7 +20,7 @@ class ShareService extends GetxService {
   //   iOS (no app) → App Store
   //   App installed → opened directly by App Links / Universal Links
   //   Desktop → web listing page
-  static const _shareBase = 'https://api.staging.vahaanbazar.in';
+  static const _shareBase = 'https://q7imfgydpj.ap-south-1.awsapprunner.com';
   static const _fallbackBase = 'https://vahaanbazar.in';
 
   // ── Share buy vehicle ──────────────────────────────────────────

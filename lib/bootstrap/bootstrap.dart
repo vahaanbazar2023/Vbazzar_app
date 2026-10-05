@@ -174,21 +174,21 @@ class Bootstrap {
   }
 }
 
-/// Default dev environment used during bootstrap
+/// Production environment used during bootstrap
 class _DefaultEnv extends Env {
   _DefaultEnv();
   @override
   String get appName => 'Vahaan Bazar';
   @override
-  String get baseUrl => 'https://api.staging.vahaanbazar.in';
+  String get baseUrl => 'https://q7imfgydpj.ap-south-1.awsapprunner.com/';
   @override
-  String get wsUrl => 'wss://ws.dev.vahaan.com';
+  String get wsUrl => 'wss://ws.vahaan.com';
   @override
-  String get apiKey => '7B9F2K4R1M6Q3P8D'; // Staging and test API Key
+  String get apiKey => '7B0F2K4R1MSS3P0D'; // Production API Key
   @override
-  bool get enableLogging => true;
+  bool get enableLogging => false;
   @override
-  bool get enableCrashlytics => false;
+  bool get enableCrashlytics => true;
   @override
   int get connectTimeoutMs => 30000;
   @override

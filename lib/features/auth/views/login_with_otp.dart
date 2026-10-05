@@ -162,7 +162,7 @@ class _LoginWithOtpState extends State<LoginWithOtp> {
           // ── App Header ────────────────────────────────────────
           SafeArea(
             bottom: false,
-            child: AppHeader(title: 'Log In', showBack: false),
+            child: AppHeader(title: '', showBack: false),
           ),
 
           // ── Scrollable body ───────────────────────────────────

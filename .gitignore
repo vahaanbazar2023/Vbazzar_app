@@ -66,3 +66,8 @@ figma-mcp-server/
 
 # macOS
 .DS_Store
+
+# Release signing — never commit these
+android/key.properties
+android/app/*.jks
+android/app/*.keystore

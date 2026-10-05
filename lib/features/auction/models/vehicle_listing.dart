@@ -106,7 +106,7 @@ class VehicleListing {
     }
     if (raw.isEmpty) return '';
     if (raw.startsWith('http://') || raw.startsWith('https://')) return raw;
-    const baseUrl = 'https://api.staging.vahaanbazar.in';
+    const baseUrl = 'https://q7imfgydpj.ap-south-1.awsapprunner.com';
     return '$baseUrl${raw.startsWith('/') ? '' : '/'}$raw';
   }
 
