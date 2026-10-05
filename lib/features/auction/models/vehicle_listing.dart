@@ -43,6 +43,7 @@ class VehicleListing {
   final int availableBalance;
   final int maxUserVehiclesBidLimit;
   final int userVehicleBidCount;
+  final bool isWishlisted;
   final String status;
   final String insertedAt;
   final String updatedAt;
@@ -92,6 +93,7 @@ class VehicleListing {
     required this.availableBalance,
     required this.maxUserVehiclesBidLimit,
     required this.userVehicleBidCount,
+    this.isWishlisted = false,
     required this.status,
     required this.insertedAt,
     required this.updatedAt,
@@ -162,6 +164,7 @@ class VehicleListing {
           (json['max_user_vehicles_bid_limit'] as num?)?.toInt() ?? 10,
       userVehicleBidCount:
           (json['user_vehicle_bid_count'] as num?)?.toInt() ?? 0,
+      isWishlisted: json['is_wishlisted'] == true,
       status: json['status']?.toString() ?? '',
       insertedAt: json['inserted_at']?.toString() ?? '',
       updatedAt: json['updated_at']?.toString() ?? '',

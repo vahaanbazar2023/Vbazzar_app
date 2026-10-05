@@ -96,6 +96,7 @@ class ApiEndpoints {
       '$auctionPrefix/auction-my-bids-pagination';
   static const String myWinsPaginated =
       '$auctionPrefix/auction-my-wins-pagination';
+  static const String wishlistToggle = '$auctionPrefix/wishlist/toggle';
   static const String winningLetter = '$auctionPrefix/winning-letter';
   static const String updateInsuranceInterest =
       '$auctionPrefix/update-insurance-interest';

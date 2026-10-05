@@ -98,6 +98,9 @@ class VehicleListingController extends GetxController
   final isPlacingBid = false.obs;
   final pendingBid = Rxn<PendingBid>();
 
+  // ─── Wishlist ─────────────────────────────────────────────────
+  final isTogglingWishlist = <String>{}.obs;
+
   // Legacy fields kept for compat with detail screen
   final vehicles = <VehicleListing>[].obs;
   final pagination = Rx<AuctionPagination>(AuctionPagination.empty());
@@ -113,7 +116,7 @@ class VehicleListingController extends GetxController
   void onInit() {
     super.onInit();
     tabController = TabController(length: 3, vsync: this);
-    scrollController = ScrollController()..addListener(_onScrollLegacy);
+    scrollController = ScrollController(); // Legacy, kept for compatibility
     searchController.addListener(
       () => searchQuery.value = searchController.text,
     );
@@ -520,6 +523,118 @@ class VehicleListingController extends GetxController
       c++;
     }
     return buf.toString().split('').reversed.join();
+  }
+
+  // ─── Wishlist Toggle ──────────────────────────────────────────
+
+  /// Toggles wishlist status for a vehicle.
+  /// Optimistically updates UI, then calls API.
+  Future<void> toggleWishlist(VehicleListing vehicle) async {
+    if (isTogglingWishlist.contains(vehicle.vehicleId)) {
+      return; // Prevent double-tap
+    }
+
+    isTogglingWishlist.add(vehicle.vehicleId);
+
+    try {
+      final userId =
+          await SecureStorageService.to.read(StorageKeys.userId) ?? '';
+      final token =
+          await SecureStorageService.to.read(StorageKeys.authToken) ?? '';
+
+      debugPrint('🔍 [toggleWishlist] userId: $userId');
+      debugPrint('🔍 [toggleWishlist] vehicleId: ${vehicle.vehicleId}');
+      debugPrint(
+        '🔍 [toggleWishlist] token: ${token.isNotEmpty ? '${token.substring(0, 20)}...' : 'EMPTY'}',
+      );
+
+      // Call the API
+      final network = Get.find<NetworkService>();
+      final response = await network.post(
+        ApiEndpoints.wishlistToggle,
+        data: {'user_id': userId, 'vehicle_id': vehicle.vehicleId},
+      );
+
+      // Get the new wishlist state from response
+      final data = response.data['data'] as Map<String, dynamic>?;
+      final newWishlistState = data?['is_wishlisted'] == true;
+
+      // Update the vehicle in all tabs
+      for (int i = 0; i < 3; i++) {
+        final index = _tabVehicles[i].indexWhere(
+          (v) => v.vehicleId == vehicle.vehicleId,
+        );
+        if (index != -1) {
+          final updatedVehicle = VehicleListing(
+            id: vehicle.id,
+            vehicleId: vehicle.vehicleId,
+            auctionId: vehicle.auctionId,
+            sellerReference: vehicle.sellerReference,
+            repoDate: vehicle.repoDate,
+            make: vehicle.make,
+            model: vehicle.model,
+            year: vehicle.year,
+            registrationNo: vehicle.registrationNo,
+            chassisNo: vehicle.chassisNo,
+            engineNo: vehicle.engineNo,
+            registeredRto: vehicle.registeredRto,
+            variant: vehicle.variant,
+            transmission: vehicle.transmission,
+            vehicleType: vehicle.vehicleType,
+            fuelType: vehicle.fuelType,
+            kilometers: vehicle.kilometers,
+            colour: vehicle.colour,
+            marketValue: vehicle.marketValue,
+            maxBids: vehicle.maxBids,
+            images: vehicle.images,
+            minimumPrice: vehicle.minimumPrice,
+            reservePrice: vehicle.reservePrice,
+            owner: vehicle.owner,
+            remarks: vehicle.remarks,
+            category: vehicle.category,
+            yardName: vehicle.yardName,
+            yardLocation: vehicle.yardLocation,
+            contactPersonName: vehicle.contactPersonName,
+            contactPersonNumber: vehicle.contactPersonNumber,
+            rcAvailability: vehicle.rcAvailability,
+            transactionFees: vehicle.transactionFees,
+            parkingCharges: vehicle.parkingCharges,
+            yourBid: vehicle.yourBid,
+            bidsLeft: vehicle.bidsLeft,
+            bidsReceived: vehicle.bidsReceived,
+            currentHighestBid: vehicle.currentHighestBid,
+            currentBid: vehicle.currentBid,
+            minimumNextBid: vehicle.minimumNextBid,
+            bidIncrementAmount: vehicle.bidIncrementAmount,
+            auctionEndDate: vehicle.auctionEndDate,
+            availableBalance: vehicle.availableBalance,
+            maxUserVehiclesBidLimit: vehicle.maxUserVehiclesBidLimit,
+            userVehicleBidCount: vehicle.userVehicleBidCount,
+            isWishlisted: newWishlistState,
+            status: vehicle.status,
+            insertedAt: vehicle.insertedAt,
+            updatedAt: vehicle.updatedAt,
+          );
+          _tabVehicles[i][index] = updatedVehicle;
+        }
+      }
+
+      // Show success message
+      CustomSnackbar.show(
+        message: newWishlistState
+            ? 'Added to wishlist'
+            : 'Removed from wishlist',
+        type: SnackbarType.success,
+      );
+    } catch (e) {
+      debugPrint('❌ [toggleWishlist] Error: $e');
+      CustomSnackbar.show(
+        message: 'Failed to update wishlist. Please try again.',
+        type: SnackbarType.error,
+      );
+    } finally {
+      isTogglingWishlist.remove(vehicle.vehicleId);
+    }
   }
 
   // ─── Post-subscription bid revalidation ──────────────────────────────────

@@ -8,7 +8,7 @@ import '../../../routes/app_routes.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Expandable auction activity FAB
-// Tap the red circle to expand → My Wins / My Bids / Initiate Refund
+// Tap the red circle to expand → My Wins / My Bids / Wishlist / Initiate Refund
 // ─────────────────────────────────────────────────────────────────────────────
 
 class AuctionActivityFab extends StatefulWidget {
@@ -50,16 +50,29 @@ class _AuctionActivityFabState extends State<AuctionActivityFab>
     Get.toNamed(route);
   }
 
-  static const _items = [
-    (label: 'My Wins', icon: AppAssets.subIconStar, route: AppRoutes.myWins),
+  static final _items = [
+    (
+      label: 'My Wins',
+      iconAsset: AppAssets.subIconStar,
+      iconData: null,
+      route: AppRoutes.myWins,
+    ),
     (
       label: 'My Bids',
-      icon: AppAssets.subIconBidLimit,
+      iconAsset: AppAssets.subIconBidLimit,
+      iconData: null,
       route: AppRoutes.myBids,
     ),
     (
+      label: 'Wishlist',
+      iconAsset: null,
+      iconData: Icons.favorite_rounded,
+      route: AppRoutes.myWishlist,
+    ),
+    (
       label: 'Initiate Refund',
-      icon: AppAssets.subIconPending,
+      iconAsset: AppAssets.subIconPending,
+      iconData: null,
       route: AppRoutes.initiateRefund,
     ),
   ];
@@ -83,7 +96,8 @@ class _AuctionActivityFabState extends State<AuctionActivityFab>
                 for (final item in _items) ...[
                   _FabItem(
                     label: item.label,
-                    iconAsset: item.icon,
+                    iconAsset: item.iconAsset,
+                    iconData: item.iconData,
                     onTap: () => _go(item.route),
                   ),
                   SizedBox(height: 10.h),
@@ -139,12 +153,14 @@ class _AuctionActivityFabState extends State<AuctionActivityFab>
 
 class _FabItem extends StatelessWidget {
   final String label;
-  final String iconAsset;
+  final String? iconAsset;
+  final IconData? iconData;
   final VoidCallback onTap;
 
   const _FabItem({
     required this.label,
-    required this.iconAsset,
+    this.iconAsset,
+    this.iconData,
     required this.onTap,
   });
 
@@ -202,13 +218,15 @@ class _FabItem extends StatelessWidget {
                 ),
               ),
               child: Center(
-                child: Image.asset(
-                  iconAsset,
-                  width: 18.r,
-                  height: 18.r,
-                  fit: BoxFit.contain,
-                  color: Colors.white,
-                ),
+                child: iconData != null
+                    ? Icon(iconData, size: 18.r, color: Colors.white)
+                    : Image.asset(
+                        iconAsset!,
+                        width: 18.r,
+                        height: 18.r,
+                        fit: BoxFit.contain,
+                        color: Colors.white,
+                      ),
               ),
             ),
           ],

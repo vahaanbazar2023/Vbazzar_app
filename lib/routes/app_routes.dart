@@ -22,6 +22,7 @@ class AppRoutes {
   static const vehicleDetail = '/auction/vehicle-detail';
   static const myBids = '/auction/my-bids';
   static const myWins = '/auction/my-wins';
+  static const myWishlist = '/auction/my-wishlist';
   static const walletPayment = '/subscription/wallet-payment';
 
   // Buy & Sell

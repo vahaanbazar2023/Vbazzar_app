@@ -358,6 +358,16 @@ class _VehicleCardState extends State<_VehicleCard> {
                         ),
                       ),
                     ),
+                    // Wishlist heart button — top-right
+                    Positioned(
+                      top: 4.h,
+                      right: 4.w,
+                      child: WishlistButton(
+                        isWishlisted: v.isWishlisted,
+                        onTap: () => widget.controller.toggleWishlist(v),
+                        size: 32.r,
+                      ),
+                    ),
                   ],
                 ),
               ),
