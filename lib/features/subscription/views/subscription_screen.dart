@@ -383,6 +383,10 @@ class _PlanCard extends StatelessWidget {
   }
 
   String get _supportLabel {
+    // Use label from API if available, otherwise fallback to tier-based
+    if (plan.supportLabel != null && plan.supportLabel!.isNotEmpty) {
+      return plan.supportLabel!;
+    }
     switch (plan.name.toLowerCase()) {
       case 'gold':
       case 'elite':
@@ -393,6 +397,11 @@ class _PlanCard extends StatelessWidget {
       default:
         return 'Basic Support';
     }
+  }
+
+  String? get _supportIconUrl {
+    // Use icon URL from API if available
+    return plan.iconUrlSupport;
   }
 
   String get _supportIcon {
@@ -567,12 +576,25 @@ class _PlanCard extends StatelessWidget {
                   // ── Support row ───────────────────────────────────
                   Row(
                     children: [
-                      Image.asset(
-                        _supportIcon,
-                        width: 18.r,
-                        height: 18.r,
-                        fit: BoxFit.contain,
-                      ),
+                      _supportIconUrl != null && _supportIconUrl!.isNotEmpty
+                          ? Image.network(
+                              _supportIconUrl!,
+                              width: 18.r,
+                              height: 18.r,
+                              fit: BoxFit.contain,
+                              errorBuilder: (_, __, ___) => Image.asset(
+                                _supportIcon,
+                                width: 18.r,
+                                height: 18.r,
+                                fit: BoxFit.contain,
+                              ),
+                            )
+                          : Image.asset(
+                              _supportIcon,
+                              width: 18.r,
+                              height: 18.r,
+                              fit: BoxFit.contain,
+                            ),
                       SizedBox(width: 6.w),
                       Text(
                         _supportLabel,
@@ -596,7 +618,8 @@ class _PlanCard extends StatelessWidget {
                               Expanded(
                                 child: _FeatureChip(
                                   icon: AppAssets.bidPng,
-                                  label: 'Bid Limit',
+                                  iconUrl: plan.iconUrlBenefit,
+                                  label: plan.benefitLabel ?? 'Bid Limit',
                                   value: plan.metricLabel,
                                 ),
                               ),
@@ -608,6 +631,7 @@ class _PlanCard extends StatelessWidget {
                               Expanded(
                                 child: _FeatureChip(
                                   icon: AppAssets.subIconShield2,
+                                  iconUrl: plan.iconUrlShield,
                                   label: 'Secure & Trusted',
                                   value: '100% Safe',
                                 ),
@@ -619,6 +643,7 @@ class _PlanCard extends StatelessWidget {
                               Expanded(
                                 child: _FeatureChip(
                                   icon: AppAssets.calendarPng,
+                                  iconUrl: plan.iconUrlCalendar,
                                   label: 'Validity',
                                   value: plan.metricLabel,
                                 ),
@@ -631,6 +656,7 @@ class _PlanCard extends StatelessWidget {
                               Expanded(
                                 child: _FeatureChip(
                                   icon: AppAssets.subIconShield2,
+                                  iconUrl: plan.iconUrlShield,
                                   label: 'Secure & Trusted',
                                   value: '100% Safe',
                                 ),
@@ -643,7 +669,10 @@ class _PlanCard extends StatelessWidget {
                               Expanded(
                                 child: _FeatureChip(
                                   icon: AppAssets.subIconStar,
-                                  label: isMostPopular ? 'Elite Benefits' : '',
+                                  iconUrl: plan.iconUrlBenefit,
+                                  label: isMostPopular
+                                      ? (plan.benefitLabel ?? 'Elite Benefits')
+                                      : '',
                                   value: _badgeLabel,
                                 ),
                               ),
@@ -697,10 +726,12 @@ class _PlanCard extends StatelessWidget {
 
 class _FeatureChip extends StatelessWidget {
   final String icon;
+  final String? iconUrl;
   final String label;
   final String value;
   const _FeatureChip({
     required this.icon,
+    this.iconUrl,
     required this.label,
     required this.value,
   });
@@ -712,7 +743,25 @@ class _FeatureChip extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Image.asset(icon, width: 18.r, height: 18.r, fit: BoxFit.contain),
+          iconUrl != null && iconUrl!.isNotEmpty
+              ? Image.network(
+                  iconUrl!,
+                  width: 18.r,
+                  height: 18.r,
+                  fit: BoxFit.contain,
+                  errorBuilder: (_, __, ___) => Image.asset(
+                    icon,
+                    width: 18.r,
+                    height: 18.r,
+                    fit: BoxFit.contain,
+                  ),
+                )
+              : Image.asset(
+                  icon,
+                  width: 18.r,
+                  height: 18.r,
+                  fit: BoxFit.contain,
+                ),
           SizedBox(width: 5.w),
           Expanded(
             child: Column(

@@ -8,6 +8,14 @@ class SubscriptionPlan {
   final String featDescription;
   final String planMetric;
   final String planMetricValue;
+  final String? offerBonusDays;
+  final String? iconUrlMain;
+  final String? iconUrlSupport;
+  final String? supportLabel;
+  final String? iconUrlCalendar;
+  final String? iconUrlShield;
+  final String? iconUrlBenefit;
+  final String? benefitLabel;
 
   const SubscriptionPlan({
     required this.typeCode,
@@ -19,6 +27,14 @@ class SubscriptionPlan {
     required this.featDescription,
     required this.planMetric,
     required this.planMetricValue,
+    this.offerBonusDays,
+    this.iconUrlMain,
+    this.iconUrlSupport,
+    this.supportLabel,
+    this.iconUrlCalendar,
+    this.iconUrlShield,
+    this.iconUrlBenefit,
+    this.benefitLabel,
   });
 
   factory SubscriptionPlan.fromJson(Map<String, dynamic> json) {
@@ -32,6 +48,14 @@ class SubscriptionPlan {
       featDescription: json['feat_description'] as String? ?? '',
       planMetric: json['plan_metric'] as String? ?? 'days',
       planMetricValue: json['plan_metric_value'] as String? ?? '',
+      offerBonusDays: json['offer_bonus_days'] as String?,
+      iconUrlMain: json['icon_url_main'] as String?,
+      iconUrlSupport: json['icon_url_support'] as String?,
+      supportLabel: json['support_label'] as String?,
+      iconUrlCalendar: json['icon_url_calendar'] as String?,
+      iconUrlShield: json['icon_url_shield'] as String?,
+      iconUrlBenefit: json['icon_url_benefit'] as String?,
+      benefitLabel: json['benefit_label'] as String?,
     );
   }
 
