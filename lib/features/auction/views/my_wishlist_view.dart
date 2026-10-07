@@ -15,6 +15,7 @@ import '../controllers/wishlist_controller.dart';
 import '../controllers/vehicle_listing_controller.dart';
 import '../models/vehicle_listing.dart';
 import '../../../core/design_system/molecules/timer_badge.dart';
+import 'my_wishlist_detail_view.dart';
 
 class MyWishlistView extends GetView<WishlistController> {
   const MyWishlistView({super.key});
@@ -255,6 +256,18 @@ class _WishlistCardState extends State<_WishlistCard> {
                         height: 99.h,
                       ),
                     ),
+                    // Timer badge — top-left on image
+                    if (!isClosed)
+                      Positioned(
+                        top: 4.h,
+                        left: 0,
+                        child: ExcludeSemantics(
+                          child: TimerBadge(
+                            endAt: v.auctionEndDate,
+                            mirrored: true,
+                          ),
+                        ),
+                      ),
                     // VEH ID bar at bottom
                     Positioned(
                       bottom: 0,
@@ -381,48 +394,25 @@ class _WishlistCardState extends State<_WishlistCard> {
                           ),
                         ),
                       SizedBox(height: 6.h),
-                      // Timer or Closed
-                      if (!isClosed)
-                        TimerBadge(endAt: v.auctionEndDate)
-                      else
-                        Container(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 8.w,
-                            vertical: 3.h,
-                          ),
-                          decoration: BoxDecoration(
-                            color: AppColors.grey200,
-                            borderRadius: BorderRadius.circular(4.r),
-                          ),
-                          child: Text(
-                            'Auction Closed',
-                            style: TextStyle(
-                              fontFamily: 'Montserrat',
-                              fontSize: 9.sp,
-                              fontWeight: FontWeight.w600,
-                              color: AppColors.grey600,
-                            ),
-                          ),
-                        ),
-                      SizedBox(height: 6.h),
-                      // Status badge
+                      // Wishlist heart icon badge
                       Container(
                         padding: EdgeInsets.symmetric(
                           horizontal: 8.w,
-                          vertical: 3.h,
+                          vertical: 4.h,
                         ),
                         decoration: BoxDecoration(
-                          color: _statusColor.withValues(alpha: 0.12),
+                          color: AppColors.error.withValues(alpha: 0.12),
                           borderRadius: BorderRadius.circular(4.r),
                         ),
-                        child: Text(
-                          _statusLabel,
-                          style: TextStyle(
-                            fontFamily: 'Montserrat',
-                            fontSize: 10.sp,
-                            fontWeight: FontWeight.w600,
-                            color: _statusColor,
-                          ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.favorite,
+                              size: 12.r,
+                              color: AppColors.error,
+                            ),
+                          ],
                         ),
                       ),
                     ],
@@ -778,26 +768,32 @@ class _WishlistCardState extends State<_WishlistCard> {
                   ),
           ),
 
-          // View Details link
+          // View Details button
           Padding(
             padding: EdgeInsets.only(left: 12.w, right: 12.w, bottom: 12.h),
             child: GestureDetector(
-              onTap: () {
-                // Navigate to vehicle detail view
-                Get.toNamed(
-                  '/auction/vehicle-detail',
-                  arguments: {'vehicleId': widget.vehicle.vehicleId},
-                );
-              },
-              child: Text(
-                'View Full Details →',
-                style: TextStyle(
-                  fontFamily: 'Montserrat',
-                  fontSize: 11.sp,
-                  color: AppColors.primary,
-                  fontWeight: FontWeight.w600,
-                  decoration: TextDecoration.underline,
-                  decorationColor: AppColors.primary,
+              onTap: () =>
+                  Get.to(() => MyWishlistDetailView(vehicle: widget.vehicle)),
+              child: Container(
+                width: double.infinity,
+                padding: EdgeInsets.symmetric(vertical: 10.h),
+                decoration: BoxDecoration(
+                  color: AppColors.primary.withValues(alpha: 0.08),
+                  border: Border.all(
+                    color: AppColors.primary.withValues(alpha: 0.3),
+                    width: 1,
+                  ),
+                  borderRadius: BorderRadius.circular(16.r),
+                ),
+                child: Text(
+                  'View Full Details →',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontFamily: 'Montserrat',
+                    fontSize: 12.sp,
+                    color: AppColors.primary,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ),
             ),

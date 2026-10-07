@@ -749,7 +749,7 @@ class _BidCardState extends State<_BidCard> {
                       GestureDetector(
                         onTap: _isPlacing ? null : _placeBid,
                         child: Container(
-                          height: 42.h,
+                          height: 32.h,
                           padding: EdgeInsets.symmetric(horizontal: 18.w),
                           decoration: BoxDecoration(
                             gradient: LinearGradient(
@@ -763,7 +763,7 @@ class _BidCardState extends State<_BidCard> {
                                       AppColors.ctaGradientEnd,
                                     ],
                             ),
-                            borderRadius: BorderRadius.circular(8.r),
+                            borderRadius: BorderRadius.circular(16.r),
                           ),
                           alignment: Alignment.center,
                           child: _isPlacing
@@ -791,20 +791,31 @@ class _BidCardState extends State<_BidCard> {
                   ),
           ),
 
-          // View Details link
+          // View Details button
           Padding(
             padding: EdgeInsets.only(left: 12.w, right: 12.w, bottom: 12.h),
             child: GestureDetector(
               onTap: () => Get.to(() => MyBidDetailView(item: item)),
-              child: Text(
-                'View Full Details →',
-                style: TextStyle(
-                  fontFamily: 'Montserrat',
-                  fontSize: 11.sp,
-                  color: AppColors.primary,
-                  fontWeight: FontWeight.w600,
-                  decoration: TextDecoration.underline,
-                  decorationColor: AppColors.primary,
+              child: Container(
+                width: double.infinity,
+                padding: EdgeInsets.symmetric(vertical: 10.h),
+                decoration: BoxDecoration(
+                  color: AppColors.primary.withValues(alpha: 0.08),
+                  border: Border.all(
+                    color: AppColors.primary.withValues(alpha: 0.3),
+                    width: 1,
+                  ),
+                  borderRadius: BorderRadius.circular(16.r),
+                ),
+                child: Text(
+                  'View Full Details →',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontFamily: 'Montserrat',
+                    fontSize: 12.sp,
+                    color: AppColors.primary,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ),
             ),

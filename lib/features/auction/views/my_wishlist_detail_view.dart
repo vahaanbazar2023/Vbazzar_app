@@ -11,25 +11,25 @@ import '../../../core/design_system/templates/app_layout.dart';
 import '../../../core/design_system/tokens/app_radius.dart';
 import '../../../core/design_system/tokens/app_spacing.dart';
 import '../../../core/extensions/context_extensions.dart';
-import '../controllers/my_bids_wins_controller.dart';
-import '../models/my_bids_wins_models.dart';
+import '../controllers/vehicle_listing_controller.dart';
+import '../models/vehicle_listing.dart';
 
-class MyBidDetailView extends StatefulWidget {
-  final MyBidItem item;
-  const MyBidDetailView({super.key, required this.item});
+class MyWishlistDetailView extends StatefulWidget {
+  final VehicleListing vehicle;
+  const MyWishlistDetailView({super.key, required this.vehicle});
 
   @override
-  State<MyBidDetailView> createState() => _MyBidDetailViewState();
+  State<MyWishlistDetailView> createState() => _MyWishlistDetailViewState();
 }
 
-class _MyBidDetailViewState extends State<MyBidDetailView> {
+class _MyWishlistDetailViewState extends State<MyWishlistDetailView> {
   int? _bidAmountOverride;
   TextEditingController? _bidCtrlOverride;
   String? _errorText;
 
   int get _bidAmount {
     if (_bidAmountOverride != null) return _bidAmountOverride!;
-    final v = widget.item.vehicleDetails;
+    final v = widget.vehicle;
     return v.minimumNextBid ?? v.minimumPrice;
   }
 
@@ -45,13 +45,13 @@ class _MyBidDetailViewState extends State<MyBidDetailView> {
   }
 
   int get _increment {
-    final v = widget.item.vehicleDetails;
+    final v = widget.vehicle;
     if ((v.bidIncrementAmount ?? 0) > 0) return v.bidIncrementAmount!;
     return 5000;
   }
 
   void _decrease() {
-    final v = widget.item.vehicleDetails;
+    final v = widget.vehicle;
     final min = v.minimumNextBid ?? v.minimumPrice;
     final next = _bidAmount - _increment;
     if (next >= min) {
@@ -72,31 +72,33 @@ class _MyBidDetailViewState extends State<MyBidDetailView> {
     });
   }
 
+  bool _isAuctionEnded(String auctionEndDate) {
+    if (auctionEndDate.isEmpty) return false;
+    try {
+      final endDate = DateTime.parse(auctionEndDate);
+      return endDate.isBefore(DateTime.now());
+    } catch (e) {
+      return false;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    final item = widget.item;
-    final v = item.vehicleDetails;
-    final isClosed = item.isEnded;
+    final v = widget.vehicle;
+    final isClosed = _isAuctionEnded(v.auctionEndDate);
 
-    // Winning / Losing status.
-    // Live auctions compare the user's bid to the current highest; ended
-    // auctions trust the server's bid status. The chip is hidden when there's
-    // no decisive result on an ended auction.
-    final bool hasBid = item.yourBid > 0;
-    final String status = item.bidStatus.toLowerCase();
-    final bool isWinning = isClosed
-        ? (status == 'approved' || status == 'won')
-        : hasBid &&
-              (item.currentHighestBid <= 0 ||
-                  item.yourBid >= item.currentHighestBid);
-    final bool isLosing = isClosed
-        ? (status == 'rejected' || status == 'lost')
-        : hasBid && !isWinning;
+    // Winning / Losing status for wishlist
+    final bool hasBid = v.yourBid > 0;
+    final bool isWinning =
+        hasBid &&
+        ((v.currentHighestBid ?? 0) <= 0 ||
+            v.yourBid >= (v.currentHighestBid ?? 0));
+    final bool isLosing = hasBid && !isWinning;
     final bool showBidChip = hasBid && (isWinning || isLosing);
 
     return AppLayout(
-      title: context.l10n.bidDetails,
-      subtitle: '${context.l10n.auction_id}: ${item.auctionId}',
+      title: 'Wishlist Details',
+      subtitle: '${context.l10n.auction_id}: ${v.auctionId}',
       showBack: true,
       body: Column(
         children: [
@@ -121,7 +123,7 @@ class _MyBidDetailViewState extends State<MyBidDetailView> {
                           imageUrls: v.images,
                           height: 200.h,
                         ),
-                        // Winning/Losing chip — same as auction listing card
+                        // Winning/Losing chip
                         if (showBidChip)
                           Positioned(
                             top: 10.h,
@@ -174,6 +176,34 @@ class _MyBidDetailViewState extends State<MyBidDetailView> {
                               ),
                             ),
                           ),
+                        // Wishlist heart icon
+                        Positioned(
+                          top: 10.h,
+                          right: 10.w,
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(12.r),
+                            child: BackdropFilter(
+                              filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                              child: Container(
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 9.w,
+                                  vertical: 4.h,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: AppColors.error.withValues(
+                                    alpha: 0.45,
+                                  ),
+                                  borderRadius: BorderRadius.circular(12.r),
+                                ),
+                                child: Icon(
+                                  Icons.favorite,
+                                  size: 16.r,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -212,7 +242,7 @@ class _MyBidDetailViewState extends State<MyBidDetailView> {
                           child: _InfoBox(
                             icon: Icons.gavel_rounded,
                             label: context.l10n.auction_id,
-                            value: item.auctionId,
+                            value: v.auctionId,
                           ),
                         ),
                         SizedBox(width: 8.w),
@@ -247,8 +277,8 @@ class _MyBidDetailViewState extends State<MyBidDetailView> {
                           child: _InfoBox(
                             icon: Icons.calendar_today_outlined,
                             label: context.l10n.endTime,
-                            value: item.auctionEndTime.isNotEmpty
-                                ? item.auctionEndTime
+                            value: v.auctionEndDate.isNotEmpty
+                                ? v.auctionEndDate
                                 : 'N/A',
                           ),
                         ),
@@ -262,11 +292,11 @@ class _MyBidDetailViewState extends State<MyBidDetailView> {
                     children: [
                       _BidRow(
                         label: context.l10n.your_bid,
-                        value: '₹ ${_fmt(item.userBidAmount)}',
+                        value: '₹ ${_fmt(v.yourBid)}',
                       ),
                       _BidRow(
                         label: context.l10n.currentHighest,
-                        value: '₹ ${_fmt(item.currentHighestBid)}',
+                        value: '₹ ${_fmt(v.currentHighestBid ?? 0)}',
                       ),
                       _BidRow(
                         label: context.l10n.bids_left,
@@ -277,15 +307,9 @@ class _MyBidDetailViewState extends State<MyBidDetailView> {
                         value: v.bidsReceived.toString().padLeft(2, '0'),
                       ),
                       _BidRow(
-                        label: context.l10n.status,
-                        value: _capitalize(item.bidStatus),
-                        valueColor: _statusColor(item.bidStatus),
-                      ),
-                      _BidRow(
-                        label: context.l10n.placedAt,
-                        value: item.bidPlacedAt.isNotEmpty
-                            ? item.bidPlacedAt
-                            : 'N/A',
+                        label: 'Status',
+                        value: 'Wishlisted',
+                        valueColor: AppColors.error,
                         isLast: true,
                       ),
                     ],
@@ -453,7 +477,7 @@ class _MyBidDetailViewState extends State<MyBidDetailView> {
                           SizedBox(width: AppSpacing.sm),
                           // PLACE BID
                           Obx(() {
-                            final ctrl = Get.find<MyBidsController>();
+                            final ctrl = Get.find<VehicleListingController>();
                             final loading = ctrl.isPlacingBid.value;
                             return GestureDetector(
                               onTap: loading ? null : () => _onBidNow(ctrl),
@@ -507,14 +531,14 @@ class _MyBidDetailViewState extends State<MyBidDetailView> {
     );
   }
 
-  Future<void> _onBidNow(MyBidsController ctrl) async {
+  Future<void> _onBidNow(VehicleListingController ctrl) async {
     if (_bidAmount <= 0) {
       setState(() => _errorText = context.l10n.enterValidBidAmount);
       return;
     }
     setState(() => _errorText = null);
     final error = await ctrl.placeBid(
-      bidItem: widget.item,
+      vehicle: widget.vehicle,
       bidAmount: _bidAmount,
     );
     if (!mounted) return;
@@ -536,96 +560,6 @@ class _MyBidDetailViewState extends State<MyBidDetailView> {
       c++;
     }
     return buf.toString().split('').reversed.join();
-  }
-
-  Color _statusColor(String status) {
-    switch (status.toLowerCase()) {
-      case 'approved':
-        return AppColors.success;
-      case 'rejected':
-        return AppColors.primary;
-      case 'pending':
-        return AppColors.warning;
-      default:
-        return AppColors.grey700;
-    }
-  }
-
-  String _capitalize(String s) =>
-      s.isEmpty ? s : '${s[0].toUpperCase()}${s.substring(1)}';
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Bid amount input field
-// ─────────────────────────────────────────────────────────────────────────────
-
-class _BidAmountField extends StatelessWidget {
-  final TextEditingController controller;
-  final String? errorText;
-  final ValueChanged<String>? onChanged;
-  const _BidAmountField({
-    required this.controller,
-    this.errorText,
-    this.onChanged,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final radius = BorderRadius.circular(AppRadius.full);
-    return SizedBox(
-      height: 48.h,
-      child: TextField(
-        controller: controller,
-        keyboardType: TextInputType.number,
-        textAlignVertical: TextAlignVertical.center,
-        onChanged: onChanged,
-        style: TextStyle(
-          fontFamily: 'Montserrat',
-          fontSize: 14.sp,
-          fontWeight: FontWeight.w600,
-          color: AppColors.black,
-        ),
-        decoration: InputDecoration(
-          prefixText: '₹ ',
-          prefixStyle: TextStyle(
-            fontFamily: 'Montserrat',
-            fontSize: 14.sp,
-            fontWeight: FontWeight.w600,
-            color: AppColors.primary,
-          ),
-          hintText: context.l10n.enterBidHint,
-          hintStyle: TextStyle(
-            fontFamily: 'Plus Jakarta Sans',
-            fontSize: 13.sp,
-            color: AppColors.grey400,
-          ),
-          errorText: errorText,
-          contentPadding: EdgeInsets.symmetric(
-            horizontal: 16.w,
-            vertical: 12.h,
-          ),
-          isDense: true,
-          filled: true,
-          fillColor: AppColors.grey50,
-          border: OutlineInputBorder(
-            borderRadius: radius,
-            borderSide: BorderSide(color: AppColors.grey300),
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: radius,
-            borderSide: BorderSide(color: AppColors.grey300),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: radius,
-            borderSide: BorderSide(color: AppColors.primary, width: 1.5),
-          ),
-          errorBorder: OutlineInputBorder(
-            borderRadius: radius,
-            borderSide: const BorderSide(color: AppColors.error),
-          ),
-        ),
-      ),
-    );
   }
 }
 
@@ -771,11 +705,11 @@ class _BidRow extends StatelessWidget {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Vehicle accordion — same as auction detail screen
+// Vehicle accordion — same as bid detail view
 // ─────────────────────────────────────────────────────────────────────────────
 
 class _VehicleAccordion extends StatefulWidget {
-  final dynamic v; // VehicleListing
+  final VehicleListing v;
   const _VehicleAccordion({required this.v});
 
   @override
@@ -801,192 +735,115 @@ class _VehicleAccordionState extends State<_VehicleAccordion> {
           ),
         ],
       ),
-      clipBehavior: Clip.antiAlias,
       child: Column(
         children: [
+          // Header
           InkWell(
             onTap: () => setState(() => _expanded = !_expanded),
-            child: Container(
-              padding: EdgeInsets.symmetric(
-                horizontal: AppSpacing.md,
-                vertical: 14.h,
-              ),
-              color: _expanded
-                  ? AppColors.lightOrange.withValues(alpha: 0.18)
-                  : AppColors.white,
+            borderRadius: AppRadius.borderRadiusMd,
+            child: Padding(
+              padding: EdgeInsets.all(AppSpacing.md),
               child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
+                  Text(
+                    'Vehicle Details',
+                    style: TextStyle(
+                      fontFamily: 'Montserrat',
+                      fontSize: 14.sp,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.black,
+                    ),
+                  ),
                   Icon(
-                    Icons.directions_car_outlined,
-                    size: 18.r,
-                    color: AppColors.primary,
-                  ),
-                  SizedBox(width: 8.w),
-                  Expanded(
-                    child: Text(
-                      context.l10n.vehicleDetailsTitle,
-                      style: TextStyle(
-                        fontFamily: 'Montserrat',
-                        fontSize: 14.sp,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.black,
-                      ),
-                    ),
-                  ),
-                  AnimatedRotation(
-                    turns: _expanded ? 0.5 : 0,
-                    duration: const Duration(milliseconds: 250),
-                    child: Icon(
-                      Icons.keyboard_arrow_down_rounded,
-                      size: 22.r,
-                      color: AppColors.grey600,
-                    ),
+                    _expanded
+                        ? Icons.keyboard_arrow_up_rounded
+                        : Icons.keyboard_arrow_down_rounded,
+                    color: AppColors.grey600,
                   ),
                 ],
               ),
             ),
           ),
-          AnimatedCrossFade(
-            firstChild: const SizedBox.shrink(),
-            secondChild: Column(
-              children: [
-                Divider(height: 1, thickness: 1, color: AppColors.grey100),
-                _DR(
-                  Icons.directions_car_outlined,
-                  context.l10n.makeAndModel,
-                  '${v.make} ${v.model}',
-                ),
-                _DR(
-                  Icons.build_circle_outlined,
-                  context.l10n.variant,
-                  v.variant.isNotEmpty ? v.variant : 'N/A',
-                ),
-                _DR(
-                  Icons.date_range_outlined,
-                  context.l10n.mfgYear,
-                  v.year > 0 ? v.year.toString() : 'N/A',
-                ),
-                _DR(
-                  Icons.color_lens_outlined,
-                  context.l10n.colour,
-                  v.colour.isNotEmpty ? v.colour : 'N/A',
-                ),
-                _DR(
-                  Icons.speed_outlined,
-                  context.l10n.kilometers,
-                  v.kilometers > 0 ? '${v.kilometers} km' : 'N/A',
-                ),
-                _DR(
-                  Icons.local_gas_station_outlined,
-                  context.l10n.fuelType,
-                  v.fuelType.isNotEmpty ? v.fuelType : 'N/A',
-                ),
-                _DR(
-                  Icons.settings_outlined,
-                  context.l10n.transmission,
-                  v.transmission.isNotEmpty ? v.transmission : 'N/A',
-                ),
-                _DR(
-                  Icons.person_outline_rounded,
-                  context.l10n.owner,
-                  v.owner.isNotEmpty ? v.owner : 'N/A',
-                ),
-                _DR(
-                  Icons.confirmation_number_outlined,
-                  context.l10n.chassisNumber,
-                  v.chassisNo.isNotEmpty ? v.chassisNo : 'N/A',
-                ),
-                _DR(
-                  Icons.memory_outlined,
-                  context.l10n.engineNumber,
-                  v.engineNo.isNotEmpty ? v.engineNo : 'N/A',
-                ),
-                _DR(
-                  Icons.warehouse_outlined,
-                  context.l10n.yard_name,
-                  v.yardName.isNotEmpty ? v.yardName : 'N/A',
-                ),
-                _DR(
-                  Icons.location_city_outlined,
-                  context.l10n.yard_location,
-                  v.yardLocation.isNotEmpty ? v.yardLocation : 'N/A',
-                ),
-                _DR(
-                  Icons.notes_outlined,
-                  context.l10n.remarks,
-                  v.remarks.isNotEmpty ? v.remarks : 'N/A',
-                  isLast: true,
-                ),
-              ],
+          // Expandable content
+          if (_expanded)
+            Padding(
+              padding: EdgeInsets.fromLTRB(
+                AppSpacing.md,
+                0,
+                AppSpacing.md,
+                AppSpacing.md,
+              ),
+              child: Column(
+                children: [
+                  Divider(color: AppColors.grey200, height: 1),
+                  SizedBox(height: AppSpacing.sm),
+                  _DetailRow('Make', v.make),
+                  _DetailRow('Model', v.model),
+                  _DetailRow('Year', v.year.toString()),
+                  _DetailRow('Variant', v.variant),
+                  _DetailRow('Fuel Type', v.fuelType),
+                  _DetailRow('Transmission', v.transmission),
+                  _DetailRow('Colour', v.colour),
+                  _DetailRow('Owner', v.owner),
+                  _DetailRow('Chassis No', v.chassisNo),
+                  _DetailRow('Engine No', v.engineNo),
+                  _DetailRow('RC Availability', v.rcAvailability),
+                  _DetailRow('Repo Date', v.repoDate),
+                  _DetailRow('Registered RTO', v.registeredRto),
+                  _DetailRow('Parking Charges', v.parkingCharges),
+                  _DetailRow('Transaction Fees', v.transactionFees),
+                  _DetailRow('Yard Name', v.yardName),
+                  _DetailRow('Yard Location', v.yardLocation),
+                  _DetailRow('Contact Person', v.contactPersonName),
+                  _DetailRow('Mobile', v.contactPersonNumber),
+                  if (v.remarks.isNotEmpty) _DetailRow('Remarks', v.remarks),
+                ],
+              ),
             ),
-            crossFadeState: _expanded
-                ? CrossFadeState.showSecond
-                : CrossFadeState.showFirst,
-            duration: const Duration(milliseconds: 280),
-          ),
         ],
       ),
     );
   }
 }
 
-class _DR extends StatelessWidget {
-  final IconData icon;
+class _DetailRow extends StatelessWidget {
   final String label;
   final String value;
-  final bool isLast;
-  const _DR(this.icon, this.label, this.value, {this.isLast = false});
+  const _DetailRow(this.label, this.value);
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Padding(
-          padding: EdgeInsets.symmetric(
-            horizontal: AppSpacing.md,
-            vertical: 11.h,
-          ),
-          child: Row(
-            children: [
-              Icon(icon, size: 16.r, color: AppColors.grey500),
-              SizedBox(width: 8.w),
-              Expanded(
-                flex: 2,
-                child: Text(
-                  label,
-                  style: TextStyle(
-                    fontFamily: 'Plus Jakarta Sans',
-                    fontSize: 12.sp,
-                    color: AppColors.grey600,
-                  ),
-                ),
+    if (value.isEmpty) return const SizedBox.shrink();
+    return Padding(
+      padding: EdgeInsets.only(bottom: 8.h),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: 120.w,
+            child: Text(
+              '$label :',
+              style: TextStyle(
+                fontFamily: 'Plus Jakarta Sans',
+                fontSize: 12.sp,
+                color: AppColors.grey600,
               ),
-              Expanded(
-                flex: 3,
-                child: Text(
-                  value,
-                  textAlign: TextAlign.end,
-                  style: TextStyle(
-                    fontFamily: 'Montserrat',
-                    fontSize: 12.sp,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.black,
-                  ),
-                  softWrap: true,
-                ),
+            ),
+          ),
+          Expanded(
+            child: Text(
+              value,
+              style: TextStyle(
+                fontFamily: 'Montserrat',
+                fontSize: 12.sp,
+                fontWeight: FontWeight.w600,
+                color: AppColors.black,
               ),
-            ],
+            ),
           ),
-        ),
-        if (!isLast)
-          Divider(
-            height: 1,
-            thickness: 1,
-            color: AppColors.grey100,
-            indent: AppSpacing.md,
-            endIndent: AppSpacing.md,
-          ),
-      ],
+        ],
+      ),
     );
   }
 }
