@@ -3,10 +3,12 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../core/constants/app_colors.dart';
+import '../../../core/constants/app_assets.dart';
 import '../../../core/design_system/design_system.dart';
 import '../../../core/design_system/molecules/custom_snackbar.dart';
 import '../../../core/design_system/organisms/network_image_carousel.dart';
 import '../../../core/design_system/molecules/gradient_button.dart';
+import '../../../core/design_system/molecules/custom_search_bar.dart';
 import '../../../core/services/share_service.dart';
 import '../widgets/buy_filter_sheet.dart';
 import '../../../core/design_system/templates/app_layout.dart';
@@ -57,67 +59,15 @@ class BuyVehicleListingsView extends GetView<BuyVehicleController> {
                   children: [
                     // Search field
                     Expanded(
-                      child: SizedBox(
-                        height: 44.h,
-                        child: TextField(
-                          controller: controller.searchController,
-                          style: TextStyle(
-                            fontFamily: 'Montserrat',
-                            fontSize: 13.sp,
-                            color: AppColors.textPrimary,
-                          ),
-                          decoration: InputDecoration(
-                            hintText: 'Search vehicles...',
-                            hintStyle: TextStyle(
-                              fontFamily: 'Montserrat',
-                              fontSize: 13.sp,
-                              color: AppColors.grey400,
-                            ),
-                            prefixIcon: const Icon(
-                              Icons.search_rounded,
-                              color: AppColors.grey400,
-                              size: 18,
-                            ),
-                            suffixIcon: Obx(
-                              () => controller.searchQuery.value.isNotEmpty
-                                  ? GestureDetector(
-                                      onTap: () =>
-                                          controller.searchController.clear(),
-                                      child: const Icon(
-                                        Icons.close_rounded,
-                                        color: AppColors.grey400,
-                                        size: 16,
-                                      ),
-                                    )
-                                  : const SizedBox.shrink(),
-                            ),
-                            contentPadding: EdgeInsets.symmetric(
-                              vertical: 10.h,
-                            ),
-                            isDense: true,
-                            filled: true,
-                            fillColor: AppColors.grey50,
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12),
-                              borderSide: const BorderSide(
-                                color: AppColors.grey200,
-                              ),
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12),
-                              borderSide: const BorderSide(
-                                color: AppColors.grey200,
-                              ),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12),
-                              borderSide: const BorderSide(
-                                color: AppColors.primary,
-                                width: 1.5,
-                              ),
-                            ),
-                          ),
-                        ),
+                      child: CustomSearchBar(
+                        controller: controller.searchController,
+                        hint: 'Search vehicles...',
+                        onChanged: (value) {
+                          // Search functionality preserved
+                        },
+                        onClear: () {
+                          controller.searchController.clear();
+                        },
                       ),
                     ),
                     SizedBox(width: AppSpacing.sm),
@@ -127,12 +77,12 @@ class BuyVehicleListingsView extends GetView<BuyVehicleController> {
                       return GestureDetector(
                         onTap: () => _showFilterSheet(context, controller),
                         child: Container(
-                          width: 44.h,
-                          height: 44.h,
+                          width: 46.h,
+                          height: 46.h,
                           decoration: BoxDecoration(
                             color: hasFilters
                                 ? AppColors.primary
-                                : AppColors.grey50,
+                                : AppColors.white,
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(
                               color: hasFilters
@@ -140,12 +90,15 @@ class BuyVehicleListingsView extends GetView<BuyVehicleController> {
                                   : AppColors.grey200,
                             ),
                           ),
-                          child: Icon(
-                            Icons.tune_rounded,
-                            size: 20,
-                            color: hasFilters
-                                ? Colors.white
-                                : AppColors.grey600,
+                          child: Center(
+                            child: Image.asset(
+                              AppAssets.filterPng,
+                              width: 22.r,
+                              height: 22.r,
+                              color: hasFilters
+                                  ? Colors.white
+                                  : AppColors.primary,
+                            ),
                           ),
                         ),
                       );
@@ -870,53 +823,82 @@ class _ShimmerCard extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(AppRadius.lg),
-        border: Border.all(color: AppColors.grey100),
+        borderRadius: BorderRadius.circular(16.r),
+        border: Border.all(color: AppColors.grey200, width: 1),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.03),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
+            color: Colors.black.withValues(alpha: 0.06),
+            blurRadius: 12,
+            spreadRadius: 0,
+            offset: const Offset(0, 3),
           ),
         ],
       ),
-      child: Column(
+      child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // ── Image area ───────────────────────────────────────────────────
+          // ── Left: Image shimmer ──────────────────────────────────────────
           ClipRRect(
             borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(AppRadius.lg),
-              topRight: Radius.circular(AppRadius.lg),
+              topLeft: Radius.circular(16.r),
+              bottomLeft: Radius.circular(16.r),
             ),
-            child: _shimmerBox(double.infinity, 180.h),
+            child: _shimmerBox(140.w, 100.h),
           ),
-          // ── Details ──────────────────────────────────────────────────────
-          Padding(
-            padding: EdgeInsets.all(AppSpacing.md),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Title line
-                _shimmerBox(180.w, 16.h, radius: 6),
-                SizedBox(height: 10.h),
-                // Chips row
-                Row(
-                  children: [
-                    _shimmerBox(60.w, 12.h, radius: 4),
-                    SizedBox(width: 8.w),
-                    _shimmerBox(70.w, 12.h, radius: 4),
-                    SizedBox(width: 8.w),
-                    _shimmerBox(50.w, 12.h, radius: 4),
-                  ],
-                ),
-                SizedBox(height: 14.h),
-                // View Details button (right-aligned)
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: _shimmerBox(90.w, 32.h, radius: 20),
-                ),
-              ],
+          // ── Right: Details shimmer ───────────────────────────────────────
+          Expanded(
+            child: Padding(
+              padding: EdgeInsets.all(12.w),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Title lines (2 lines)
+                  _shimmerBox(double.infinity, 14.h, radius: 4),
+                  SizedBox(height: 6.h),
+                  _shimmerBox(120.w, 14.h, radius: 4),
+                  SizedBox(height: 8.h),
+                  // Year + Location row
+                  Row(
+                    children: [
+                      _shimmerBox(45.w, 10.h, radius: 4),
+                      SizedBox(width: 6.w),
+                      _shimmerBox(60.w, 10.h, radius: 4),
+                    ],
+                  ),
+                  SizedBox(height: 8.h),
+                  // Specs row (3 chips)
+                  Row(
+                    children: [
+                      _shimmerBox(40.w, 10.h, radius: 4),
+                      SizedBox(width: 4.w),
+                      _shimmerBox(40.w, 10.h, radius: 4),
+                      SizedBox(width: 4.w),
+                      _shimmerBox(45.w, 10.h, radius: 4),
+                    ],
+                  ),
+                  SizedBox(height: 10.h),
+                  // Price + Button row - using Flexible to prevent overflow
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Flexible(
+                        child: Container(
+                          height: 16.h,
+                          constraints: BoxConstraints(maxWidth: 65.w),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(4),
+                            color: Colors.white,
+                          ),
+                          child: _shimmerBox(65.w, 16.h, radius: 4),
+                        ),
+                      ),
+                      SizedBox(width: 8.w),
+                      _shimmerBox(80.w, 28.h, radius: 14),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
         ],

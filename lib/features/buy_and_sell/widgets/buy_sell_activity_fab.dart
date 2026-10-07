@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -14,7 +12,7 @@ import '../views/my_vehicles_view.dart';
 import '../views/subscribed_vehicles_view.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Expandable Buy & Sell activity FAB
+// Expandable Buy & Sell activity FAB — matches Auction FAB design
 // Actions: My Vehicles · Wishlist · Purchase History
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -52,38 +50,52 @@ class _BuySellActivityFabState extends State<BuySellActivityFab>
     _open ? _anim.forward() : _anim.reverse();
   }
 
-  void _close() {
+  void _go(String action) {
     if (_open) _toggle();
+    switch (action) {
+      case 'my_vehicles':
+        Get.to(
+          () => const MyVehiclesView(),
+          binding: BindingsBuilder(() {
+            if (!Get.isRegistered<SellVehicleController>()) {
+              Get.put(
+                SellVehicleController(repository: BuySellRepositoryImpl()),
+              );
+            }
+          }),
+        );
+        break;
+      case 'wishlist':
+        Get.to(
+          () => const SubscribedVehiclesView(),
+          binding: BindingsBuilder(() {
+            if (!Get.isRegistered<BuyVehicleController>()) {
+              Get.put(
+                BuyVehicleController(repository: BuySellRepositoryImpl()),
+              );
+            }
+          }),
+        );
+        break;
+      case 'purchase_history':
+        Get.toNamed(AppRoutes.spareOrders);
+        break;
+    }
   }
 
-  void _goMyVehicles() {
-    _close();
-    Get.to(
-      () => const MyVehiclesView(),
-      binding: BindingsBuilder(() {
-        if (!Get.isRegistered<SellVehicleController>()) {
-          Get.put(SellVehicleController(repository: BuySellRepositoryImpl()));
-        }
-      }),
-    );
-  }
-
-  void _goWishlist() {
-    _close();
-    Get.to(
-      () => const SubscribedVehiclesView(),
-      binding: BindingsBuilder(() {
-        if (!Get.isRegistered<BuyVehicleController>()) {
-          Get.put(BuyVehicleController(repository: BuySellRepositoryImpl()));
-        }
-      }),
-    );
-  }
-
-  void _goPurchaseHistory() {
-    _close();
-    Get.toNamed(AppRoutes.spareOrders);
-  }
+  static final _items = [
+    (
+      label: 'My Vehicles',
+      iconAsset: AppAssets.subIconVehicle,
+      action: 'my_vehicles',
+    ),
+    (label: 'Wishlist', iconAsset: AppAssets.subIconWallet, action: 'wishlist'),
+    (
+      label: 'Purchase History',
+      iconAsset: AppAssets.subIconGroup2,
+      action: 'purchase_history',
+    ),
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -91,7 +103,7 @@ class _BuySellActivityFabState extends State<BuySellActivityFab>
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
-        // ── Action items ────────────────────────────────────
+        // ── Expanded action items ───────────────────────────
         ScaleTransition(
           scale: _expand,
           alignment: Alignment.bottomRight,
@@ -101,29 +113,20 @@ class _BuySellActivityFabState extends State<BuySellActivityFab>
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                _FabItem(
-                  label: 'My Vehicles',
-                  iconAsset: AppAssets.subIconVehicle,
-                  onTap: _goMyVehicles,
-                ),
-                SizedBox(height: 10.h),
-                _FabItem(
-                  label: 'Wishlist',
-                  iconAsset: AppAssets.subIconWallet,
-                  onTap: _goWishlist,
-                ),
-                SizedBox(height: 10.h),
-                _FabItem(
-                  label: 'Purchase History',
-                  iconAsset: AppAssets.subIconGroup2,
-                  onTap: _goPurchaseHistory,
-                ),
+                for (final item in _items) ...[
+                  _FabItem(
+                    label: item.label,
+                    iconAsset: item.iconAsset,
+                    onTap: () => _go(item.action),
+                  ),
+                  SizedBox(height: 10.h),
+                ],
                 SizedBox(height: 4.h),
               ],
             ),
           ),
         ),
-        // ── Trigger button ──────────────────────────────────
+        // ── Main trigger button ─────────────────────────────
         GestureDetector(
           onTap: _toggle,
           child: Container(
@@ -131,7 +134,10 @@ class _BuySellActivityFabState extends State<BuySellActivityFab>
             height: 52.r,
             decoration: BoxDecoration(
               gradient: const LinearGradient(
-                colors: [AppColors.ctaGradientStart, AppColors.ctaGradientEnd],
+                colors: [
+                  AppColors.ctaGradientStartfab,
+                  AppColors.ctaGradientEndfab,
+                ],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
@@ -160,6 +166,10 @@ class _BuySellActivityFabState extends State<BuySellActivityFab>
   }
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Single action row: label pill + icon circle — matches Auction FAB design
+// ─────────────────────────────────────────────────────────────────────────────
+
 class _FabItem extends StatelessWidget {
   final String label;
   final String iconAsset;
@@ -175,85 +185,67 @@ class _FabItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          // ── Glassmorphic label pill ───────────────────────
-          ClipRRect(
-            borderRadius: BorderRadius.circular(24.r),
-            child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 16, sigmaY: 16),
-              child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 9.h),
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      AppColors.ctaGradientStart.withValues(alpha: 0.75),
-                      AppColors.ctaGradientEnd.withValues(alpha: 0.85),
-                    ],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                  borderRadius: BorderRadius.circular(24.r),
-                  border: Border.all(
-                    color: Colors.white.withValues(alpha: 0.25),
-                    width: 1,
-                  ),
-                ),
-                child: Text(
-                  label,
-                  style: TextStyle(
-                    fontFamily: 'Montserrat',
-                    fontSize: 12.sp,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.white,
-                    shadows: const [
-                      Shadow(color: Colors.black26, blurRadius: 4),
-                    ],
-                  ),
+      child: Container(
+        height: 38.r,
+        clipBehavior: Clip.none,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              AppColors.ctaGradientStartfab.withValues(alpha: 0.95),
+              AppColors.ctaGradientEndfab,
+            ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          borderRadius: BorderRadius.circular(19.r),
+          border: Border.all(
+            color: Colors.white.withValues(alpha: 0.15),
+            width: 1,
+          ),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            // ── Label ──────────────────────────────────────────
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 14.w),
+              child: Text(
+                label,
+                style: TextStyle(
+                  fontFamily: 'Montserrat',
+                  fontSize: 12.sp,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.white,
+                  shadows: const [Shadow(color: Colors.black26, blurRadius: 6)],
                 ),
               ),
             ),
-          ),
-          SizedBox(width: 8.w),
-          // ── Gradient icon circle ──────────────────────────
-          ClipOval(
-            child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-              child: Container(
-                width: 44.r,
-                height: 44.r,
-                decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    colors: [
-                      AppColors.ctaGradientStart,
-                      AppColors.ctaGradientEnd,
-                    ],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                  shape: BoxShape.circle,
-                  boxShadow: [
-                    BoxShadow(
-                      color: AppColors.primary.withValues(alpha: 0.45),
-                      blurRadius: 10,
-                      offset: const Offset(0, 3),
-                    ),
-                  ],
+            // ── Icon circle ────────────────────────────────────
+            Container(
+              width: 36.r,
+              height: 36.r,
+              margin: EdgeInsets.only(right: 1.r),
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.20),
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: Colors.white.withValues(alpha: 0.4),
+                  width: 1,
                 ),
-                child: Center(
-                  child: Image.asset(
-                    iconAsset,
-                    width: 22.r,
-                    height: 22.r,
-                    fit: BoxFit.contain,
-                    color: Colors.white,
-                  ),
+              ),
+              child: Center(
+                child: Image.asset(
+                  iconAsset,
+                  width: 18.r,
+                  height: 18.r,
+                  fit: BoxFit.contain,
+                  color: Colors.white,
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
