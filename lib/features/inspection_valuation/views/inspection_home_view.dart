@@ -16,7 +16,7 @@ import '../../../theme/app_fonts.dart';
 /// Landing page for the Inspection & Valuation module.
 /// Displays the form directly based on user_type:
 ///   - CUSTOMER → Customer Valuation Form
-///   - AGENT    → Agent Valuation Form
+///   - AGENT, VENDOR, MECHANIC → Agent Valuation Form
 /// Falls back to showing both options if user_type cannot be determined.
 class InspectionHomeView extends StatefulWidget {
   const InspectionHomeView({super.key});
@@ -39,16 +39,25 @@ class _InspectionHomeViewState extends State<InspectionHomeView> {
         await SecureStorageService.to.read(StorageKeys.userType) ?? '';
     final normalized = userType.toUpperCase().trim();
 
+    // Debug logging
+    debugPrint('🔍 InspectionHomeView: userType from storage = "$userType"');
+    debugPrint('🔍 InspectionHomeView: normalized = "$normalized"');
+
     if (!mounted) return;
 
-    if (normalized == 'AGENT') {
+    if (normalized == 'AGENT' ||
+        normalized == 'VENDOR' ||
+        normalized == 'MECHANIC') {
       // Navigate directly to Agent form, replace this route
+      debugPrint('✅ Routing to Agent Valuation Form');
       Get.offNamed(AppRoutes.agentValuationForm);
     } else if (normalized == 'CUSTOMER') {
       // Navigate directly to Customer form, replace this route
+      debugPrint('✅ Routing to Customer Valuation Form');
       Get.offNamed(AppRoutes.customerValuationForm);
     } else {
       // Cannot determine user type – show fallback with both options
+      debugPrint('⚠️ Unknown user type, showing both options');
       setState(() => _isLoading = false);
     }
   }

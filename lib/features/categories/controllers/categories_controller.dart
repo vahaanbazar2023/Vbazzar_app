@@ -99,7 +99,9 @@ class CategoriesController extends GetxController {
         await SecureStorageService.to.read(StorageKeys.userType) ?? '';
     final normalized = userType.toUpperCase().trim();
 
-    if (normalized == 'VENDOR' || normalized == 'AGENT') {
+    if (normalized == 'VENDOR' ||
+        normalized == 'AGENT' ||
+        normalized == 'MECHANIC') {
       Get.toNamed(AppRoutes.agentValuationForm);
     } else {
       // Default to customer form for 'CUSTOMER' or unknown types

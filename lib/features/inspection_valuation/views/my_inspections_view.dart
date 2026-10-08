@@ -163,7 +163,11 @@ class MyInspectionsView extends GetView<InspectionValuationController> {
   Future<void> _navigateToInspectionForm() async {
     final storage = SecureStorageService.to;
     final userType = await storage.read(StorageKeys.userType);
-    if (userType == 'AGENT') {
+    final normalized = userType?.toUpperCase().trim() ?? '';
+
+    if (normalized == 'AGENT' ||
+        normalized == 'VENDOR' ||
+        normalized == 'MECHANIC') {
       Get.toNamed(AppRoutes.agentValuationForm);
     } else {
       Get.toNamed(AppRoutes.customerValuationForm);

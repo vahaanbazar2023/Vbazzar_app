@@ -8,14 +8,11 @@ import '../../../core/constants/app_colors.dart';
 import '../../../core/design_system/atoms/custom_loader.dart';
 import '../../../core/design_system/molecules/custom_file_upload_field.dart';
 import '../../../core/design_system/molecules/gradient_button.dart';
-import '../../../core/design_system/molecules/inline_dropdown_field.dart';
 import '../../../core/design_system/templates/app_layout.dart';
-import '../../../core/design_system/molecules/custom_year_picker.dart';
 import '../../../theme/app_fonts.dart';
 import '../controllers/agent_inspection_controller.dart';
-import '../controllers/inspection_valuation_controller.dart';
-import '../data/models/valuation_dropdown_options.dart';
-/// Agent inspection form — single scrollable form with section headers.
+
+/// Agent inspection form — simplified to match API requirements
 class AgentValuationFormView extends GetView<AgentInspectionController> {
   const AgentValuationFormView({super.key});
 
@@ -33,133 +30,93 @@ class AgentValuationFormView extends GetView<AgentInspectionController> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // ── Section 1: Vehicle Information ────────────────
-                  _buildSectionHeader('Vehicle Information'),
-                  _buildVehicleInfoSection(),
-                  SizedBox(height: 24.h),
-
-                  // ── Section 2: Documentation & Condition ─────────
-                  _buildSectionHeader('Documentation & Condition'),
-                  _buildDocumentationSection(),
-                  SizedBox(height: 24.h),
-
-                  // ── Section 3: Engine ────────────────────────────
-                  _buildSectionHeader('Engine'),
-                  _buildInspectionCard(
-                    title: 'Engine',
-                    icon: Icons.engineering_outlined,
-                    iconColor: const Color(0xFFE65100),
-                    condition: controller.engineCondition,
-                    remarksController: controller.engineRemarksController,
-                    images: controller.engineImages,
-                    imageLabel: 'Engine Photos',
+                  // ── Vehicle Registration Number ──────────────────
+                  _buildSectionHeader('Vehicle Registration Number'),
+                  _buildTextField(
+                    controller: controller.vehicleRegNoController,
+                    label: 'Vehicle Registration Number',
+                    hint: 'e.g. MH-01-AB-1234',
+                    icon: Icons.directions_car,
+                    required: true,
                   ),
                   SizedBox(height: 24.h),
 
-                  // ── Section 4: Transmission ──────────────────────
-                  _buildSectionHeader('Transmission'),
-                  _buildInspectionCard(
-                    title: 'Transmission',
-                    icon: Icons.settings_suggest_outlined,
-                    iconColor: const Color(0xFF1565C0),
-                    condition: controller.transmissionCondition,
-                    remarksController: controller.transmissionRemarksController,
-                    images: controller.transmissionImages,
-                    imageLabel: 'Transmission Photos',
+                  // ── Body Photos ──────────────────────────────────
+                  _buildSectionHeader('Body Photos'),
+                  _buildImageUpload(
+                    'Body - Front *',
+                    controller.bodyFrontImages,
+                  ),
+                  SizedBox(height: 12.h),
+                  _buildImageUpload(
+                    'Body - Left Side *',
+                    controller.bodyLeftImages,
+                  ),
+                  SizedBox(height: 12.h),
+                  _buildImageUpload('Body - Back *', controller.bodyBackImages),
+                  SizedBox(height: 12.h),
+                  _buildImageUpload(
+                    'Body - Right Side *',
+                    controller.bodyRightImages,
                   ),
                   SizedBox(height: 24.h),
 
-                  // ── Section 5: Suspension ────────────────────────
-                  _buildSectionHeader('Suspension'),
-                  _buildInspectionCard(
-                    title: 'Suspension',
-                    icon: Icons.directions_car_outlined,
-                    iconColor: const Color(0xFF2E7D32),
-                    condition: controller.suspensionCondition,
-                    remarksController: controller.suspensionRemarksController,
-                    images: controller.suspensionImages,
-                    imageLabel: 'Suspension Photos',
-                  ),
-                  SizedBox(height: 24.h),
-
-                  // ── Section 6: Tyres ─────────────────────────────
+                  // ── Tyres ────────────────────────────────────────
                   _buildSectionHeader('Tyres'),
                   _buildTyresCard(),
+                  SizedBox(height: 24.h),
+
+                  // ── Engine ───────────────────────────────────────
+                  _buildSectionHeader('Engine'),
+                  _buildEngineCard(),
                   SizedBox(height: 12.h),
-                  _buildImageUpload('Tyre Photos', controller.tyreImages),
+                  _buildImageUpload('Engine Photos *', controller.engineImages),
                   SizedBox(height: 24.h),
 
-                  // ── Section 7: Body ──────────────────────────────
-                  _buildSectionHeader('Body'),
-                  _buildInspectionCard(
-                    title: 'Body',
-                    icon: Icons.car_crash_outlined,
-                    iconColor: const Color(0xFF6A1B9A),
-                    condition: controller.bodyCondition,
-                    remarksController: controller.bodyRemarksController,
-                  ),
-                  SizedBox(height: 12.h),
-                  _buildImageUpload('Body - Front', controller.bodyFrontImages),
-                  SizedBox(height: 10.h),
-                  _buildImageUpload('Body - Back', controller.bodyBackImages),
-                  SizedBox(height: 10.h),
-                  _buildImageUpload('Body - Left Side', controller.bodyLeftImages),
-                  SizedBox(height: 10.h),
-                  _buildImageUpload('Body - Right Side', controller.bodyRightImages),
-                  SizedBox(height: 24.h),
-
-                  // ── Section 8: Cabin / Interior ──────────────────
-                  _buildSectionHeader('Cabin / Interior'),
-                  _buildInspectionCard(
-                    title: 'Cabin / Interior',
-                    icon: Icons.airline_seat_recline_normal_outlined,
-                    iconColor: const Color(0xFF00838F),
-                    condition: controller.cabinInteriorCondition,
-                    remarksController: controller.cabinInteriorRemarksController,
-                    images: controller.cabinInteriorImages,
-                    imageLabel: 'Cabin / Interior Photos',
-                  ),
-                  SizedBox(height: 24.h),
-
-                  // ── Section 9: Electrical ────────────────────────
-                  _buildSectionHeader('Electrical'),
-                  _buildInspectionCard(
-                    title: 'Electrical',
-                    icon: Icons.electrical_services_outlined,
-                    iconColor: const Color(0xFFF9A825),
-                    condition: controller.electricalCondition,
-                    remarksController: controller.electricalRemarksController,
-                    images: controller.electricalImages,
-                    imageLabel: 'Electrical Photos',
-                  ),
-                  SizedBox(height: 24.h),
-
-                  // ── Section 10: Chassis ──────────────────────────
+                  // ── Chassis ──────────────────────────────────────
                   _buildSectionHeader('Chassis'),
-                  _buildInspectionCard(
-                    title: 'Chassis',
-                    icon: Icons.view_carousel_outlined,
-                    iconColor: const Color(0xFF37474F),
-                    condition: controller.chasisCondition,
-                    remarksController: controller.chasisRemarksController,
-                    images: controller.chasisImages,
-                    imageLabel: 'Chassis Photos',
+                  _buildImageUpload(
+                    'Chassis Photos *',
+                    controller.chasisImages,
                   ),
                   SizedBox(height: 24.h),
 
-                  // ── Section 11: Odometer ─────────────────────────
+                  // ── Interior ─────────────────────────────────────
+                  _buildSectionHeader('Interior'),
+                  _buildImageUpload(
+                    'Interior Photos *',
+                    controller.cabinInteriorImages,
+                  ),
+                  SizedBox(height: 24.h),
+
+                  // ── Cabin Interior ───────────────────────────────
+                  _buildSectionHeader('Cabin Interior'),
+                  _buildImageUpload(
+                    'Cabin Interior Photos *',
+                    controller.cabinInteriorImages,
+                  ),
+                  SizedBox(height: 24.h),
+
+                  // ── Odometer ─────────────────────────────────────
                   _buildSectionHeader('Odometer'),
                   _buildOdometerCard(),
                   SizedBox(height: 12.h),
-                  _buildImageUpload('Odometer Photos', controller.odometerImages),
+                  _buildImageUpload(
+                    'Odometer Photos *',
+                    controller.odometerImages,
+                  ),
                   SizedBox(height: 24.h),
 
-                  // ── Section 12: Valuation ────────────────────────
-                  _buildSectionHeader('Valuation'),
-                  _buildValuationSection(),
-                  SizedBox(height: 20.h),
-                  // _buildSectionHeader('Inspection Summary'),
-                  // ValuationSummaryCard(controller: controller),
+                  // ── Full Round Video (Optional) ──────────────────
+                  _buildSectionHeader('Full Round Video (Optional)'),
+                  Text(
+                    'Upload a complete 360° video of the vehicle',
+                    style: AppFonts.bodySmall.copyWith(
+                      color: AppColors.textSecondary,
+                    ),
+                  ),
+                  SizedBox(height: 8.h),
+                  // TODO: Add video upload field here if needed
                   SizedBox(height: 24.h),
 
                   // ── Submit Button ────────────────────────────────
@@ -180,515 +137,6 @@ class AgentValuationFormView extends GetView<AgentInspectionController> {
   }
 
   // ══════════════════════════════════════════════════════════════════
-  //  SECTION 1: Vehicle Information
-  // ══════════════════════════════════════════════════════════════════
-
-  Widget _buildVehicleInfoSection() {
-    final parent = Get.find<InspectionValuationController>();
-    return Column(
-      children: [
-        _buildTextField(
-          controller: controller.ownerNameController,
-          label: 'Owner Name',
-          hint: 'Enter owner name',
-          icon: Icons.person_outline,
-          required: false,
-        ),
-        SizedBox(height: 12.h),
-        _buildTextField(
-          controller: controller.vehicleRegNoController,
-          label: 'Vehicle Registration Number',
-          hint: 'e.g. MH-01-AB-1234',
-          icon: Icons.directions_car,
-          required: true,
-        ),
-        SizedBox(height: 12.h),
-        Obx(
-          () => InlineDropdownField<String>(
-            value: controller.selectedVehicleType.value.isEmpty
-                ? null
-                : controller.selectedVehicleType.value,
-            items: parent.vehicleTypes,
-            placeholder: 'Select Vehicle Type',
-            label: 'Vehicle Type',
-            prefixIcon: Icons.local_shipping_outlined,
-            itemLabel: (v) => v,
-            isLoading: parent.isLoadingVehicleCategories.value,
-            onChanged: (v) {
-              controller.selectedVehicleType.value = v ?? '';
-              if (v != null && v.isNotEmpty) {
-                final cat = parent.vehicleCategories.firstWhereOrNull(
-                  (c) =>
-                      (c['name'] ?? c['title'] ?? c['category_name'] ?? '') ==
-                      v,
-                );
-                if (cat != null) {
-                  final code =
-                      (cat['category_code'] ?? cat['code'] ?? cat['id'] ?? '')
-                          .toString();
-                  parent.loadVehicleBrands(code);
-                }
-              }
-            },
-          ),
-        ),
-        SizedBox(height: 12.h),
-        Obx(
-          () => InlineDropdownField<String>(
-            value: controller.selectedVehicleBrand.value.isEmpty
-                ? null
-                : controller.selectedVehicleBrand.value,
-            items: parent.vehicleBrandNames,
-            placeholder: 'Select Vehicle Brand',
-            label: 'Vehicle Brand',
-            prefixIcon: Icons.branding_watermark_outlined,
-            itemLabel: (v) => v,
-            isLoading: parent.isLoadingVehicleBrands.value,
-            onChanged: (v) => controller.selectedVehicleBrand.value = v ?? '',
-          ),
-        ),
-        SizedBox(height: 12.h),
-        Obx(
-          () => InlineDropdownField<LocationOption>(
-            value: controller.selectedState.value,
-            items: parent.states,
-            placeholder: 'Select State',
-            label: 'State',
-            prefixIcon: Icons.map_outlined,
-            itemLabel: (s) => s.name,
-            isLoading: parent.isLoadingStates.value,
-            onChanged: (v) => controller.onStateChanged(v),
-          ),
-        ),
-        SizedBox(height: 12.h),
-        Obx(
-          () => InlineDropdownField<LocationOption>(
-            value: controller.selectedCity.value,
-            items: controller.filteredCities.toList(),
-            placeholder: controller.selectedState.value == null
-                ? 'Select state first'
-                : 'Select City',
-            label: 'City',
-            prefixIcon: Icons.location_city_outlined,
-            itemLabel: (c) => c.name,
-            isLoading: parent.isLoadingCities.value,
-            enabled: controller.selectedState.value != null,
-            emptyMessage: 'No cities available for selected state',
-            onChanged: (v) => controller.selectedCity.value = v,
-          ),
-        ),
-        SizedBox(height: 12.h),
-        _buildTextField(
-          controller: controller.chasisNumberController,
-          label: 'Chassis Number',
-          hint: 'Enter chassis number',
-          icon: Icons.confirmation_number_outlined,
-          required: false,
-        ),
-        SizedBox(height: 12.h),
-        Obx(
-          () => CustomYearPicker(
-            labelText: 'Manufacturing Year',
-            hintText: 'Select year',
-            selectedYear: controller.selectedManufacturingYear.value,
-            startYear: 1970,
-            onYearSelected: (year) {
-              controller.selectedManufacturingYear.value = year.isEmpty
-                  ? null
-                  : year;
-              controller.manufacturingYearController.text = year;
-            },
-          ),
-        ),
-        SizedBox(height: 12.h),
-        _buildTextField(
-          controller: controller.engineNumberController,
-          label: 'Engine Number',
-          hint: 'Enter engine number',
-          icon: Icons.engineering_outlined,
-          required: false,
-        ),
-        SizedBox(height: 12.h),
-        _buildTextField(
-          controller: controller.rtoLocationController,
-          label: 'RTO Location',
-          hint: 'Enter RTO location',
-          icon: Icons.location_on_outlined,
-          required: false,
-        ),
-        SizedBox(height: 12.h),
-        _buildTextField(
-          controller: controller.ownerNumberController,
-          label: 'Owner Mobile Number',
-          hint: 'Enter 10-digit mobile number',
-          icon: Icons.phone_outlined,
-          required: false,
-          keyboardType: TextInputType.phone,
-          inputFormatters: [
-            FilteringTextInputFormatter.digitsOnly,
-            LengthLimitingTextInputFormatter(10),
-          ],
-        ),
-      ],
-    );
-  }
-
-  // ══════════════════════════════════════════════════════════════════
-  //  SECTION 2: Documentation & Condition
-  // ══════════════════════════════════════════════════════════════════
-
-  Widget _buildDocumentationSection() {
-    final parent = Get.find<InspectionValuationController>();
-    return Column(
-      children: [
-        _buildTextField(
-          controller: controller.vehicleConditionTextController,
-          label: 'Vehicle Condition (Description)',
-          hint: 'Describe the overall vehicle condition',
-          icon: Icons.description_outlined,
-          required: false,
-        ),
-        SizedBox(height: 12.h),
-        Obx(
-          () => InlineDropdownField<DropdownItem>(
-            value: controller.selectedCondition.value.isEmpty
-                ? null
-                : parent.conditionOptions.firstWhereOrNull(
-                    (d) => d.value == controller.selectedCondition.value,
-                  ),
-            items: parent.conditionOptions,
-            placeholder: 'Select Condition',
-            label: 'Vehicle Condition (Rating)',
-            prefixIcon: Icons.rate_review_outlined,
-            itemLabel: (v) => v.label,
-            isLoading: parent.isDropdownLoading.value,
-            onChanged: (v) =>
-                controller.selectedCondition.value = v?.value ?? '',
-          ),
-        ),
-        SizedBox(height: 12.h),
-        Obx(
-          () => _buildDatePickerField(
-            label: 'Insurance Valid Till',
-            value: controller.insuranceValidTill.value,
-            icon: Icons.health_and_safety_outlined,
-            onClear: controller.insuranceValidTill.value.isNotEmpty
-                ? () => controller.insuranceValidTill.value = ''
-                : null,
-            onTap: () => _selectDate(controller.insuranceValidTill),
-          ),
-        ),
-        SizedBox(height: 12.h),
-        Obx(
-          () => _buildDatePickerField(
-            label: 'Fitness Valid Till',
-            value: controller.fitnessValidTill.value,
-            icon: Icons.fitness_center_outlined,
-            onClear: controller.fitnessValidTill.value.isNotEmpty
-                ? () => controller.fitnessValidTill.value = ''
-                : null,
-            onTap: () => _selectDate(controller.fitnessValidTill),
-          ),
-        ),
-        SizedBox(height: 12.h),
-        _buildTextField(
-          controller: controller.taxPendingController,
-          label: 'Tax Pending',
-          hint: 'Enter pending tax amount/details',
-          icon: Icons.receipt_long_outlined,
-          required: false,
-        ),
-        SizedBox(height: 12.h),
-        Obx(
-          () => InlineDropdownField<DropdownItem>(
-            value: controller.selectedHypothecation.value.isEmpty
-                ? null
-                : parent.hypothecationOptions.firstWhereOrNull(
-                    (d) => d.value == controller.selectedHypothecation.value,
-                  ),
-            items: parent.hypothecationOptions,
-            placeholder: 'Select Hypothecation',
-            label: 'Hypothecation',
-            prefixIcon: Icons.account_balance_outlined,
-            itemLabel: (v) => v.label,
-            isLoading: parent.isDropdownLoading.value,
-            onChanged: (v) {
-              controller.selectedHypothecation.value = v?.value ?? '';
-              if (v?.value != 'yes') {
-                controller.hypothecatedToController.clear();
-              }
-            },
-          ),
-        ),
-        Obx(
-          () => controller.selectedHypothecation.value == 'yes'
-              ? Padding(
-                  padding: EdgeInsets.only(top: 12.h),
-                  child: _buildTextField(
-                    controller: controller.hypothecatedToController,
-                    label: 'Hypothecated To',
-                    hint: 'Enter financier name',
-                    icon: Icons.business_outlined,
-                    required: false,
-                  ),
-                )
-              : const SizedBox.shrink(),
-        ),
-        SizedBox(height: 12.h),
-        Obx(
-          () => InlineDropdownField<DropdownItem>(
-            value: controller.selectedCaseType.value.isEmpty
-                ? null
-                : parent.caseTypes.firstWhereOrNull(
-                    (d) => d.value == controller.selectedCaseType.value,
-                  ),
-            items: parent.caseTypes,
-            placeholder: 'Select Case Type',
-            label: 'Case Type',
-            prefixIcon: Icons.cases_outlined,
-            itemLabel: (v) => v.label,
-            isLoading: parent.isDropdownLoading.value,
-            onChanged: (v) => controller.selectedCaseType.value = v?.value ?? '',
-          ),
-        ),
-        SizedBox(height: 12.h),
-        _buildTextField(
-          controller: controller.hoursController,
-          label: 'Hours (for machinery)',
-          hint: 'Enter operating hours',
-          icon: Icons.timer_outlined,
-          required: false,
-          keyboardType: TextInputType.number,
-          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-        ),
-        SizedBox(height: 12.h),
-        _buildTextField(
-          controller: controller.odometerController,
-          label: 'Odometer (KM)',
-          hint: 'Enter odometer reading',
-          icon: Icons.speed_outlined,
-          required: false,
-          keyboardType: TextInputType.number,
-          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-        ),
-        SizedBox(height: 12.h),
-        Obx(
-          () => InlineDropdownField<DropdownItem>(
-            value: controller.selectedFuel.value.isEmpty
-                ? null
-                : parent.fuelTypes.firstWhereOrNull(
-                    (d) => d.value == controller.selectedFuel.value,
-                  ),
-            items: parent.fuelTypes,
-            placeholder: 'Select Fuel Type',
-            label: 'Fuel Type',
-            prefixIcon: Icons.local_gas_station_outlined,
-            itemLabel: (v) => v.label,
-            isLoading: parent.isDropdownLoading.value,
-            onChanged: (v) => controller.selectedFuel.value = v?.value ?? '',
-          ),
-        ),
-        SizedBox(height: 12.h),
-        Obx(
-          () => InlineDropdownField<DropdownItem>(
-            value: controller.selectedTransmission.value.isEmpty
-                ? null
-                : parent.transmissionTypes.firstWhereOrNull(
-                    (d) => d.value == controller.selectedTransmission.value,
-                  ),
-            items: parent.transmissionTypes,
-            placeholder: 'Select Transmission',
-            label: 'Transmission Type',
-            prefixIcon: Icons.settings_outlined,
-            itemLabel: (v) => v.label,
-            isLoading: parent.isDropdownLoading.value,
-            onChanged: (v) =>
-                controller.selectedTransmission.value = v?.value ?? '',
-          ),
-        ),
-        SizedBox(height: 12.h),
-        Obx(
-          () => InlineDropdownField<DropdownItem>(
-            value: controller.selectedAccidentalStatus.value.isEmpty
-                ? null
-                : parent.accidentalStatusOptions.firstWhereOrNull(
-                    (d) =>
-                        d.value == controller.selectedAccidentalStatus.value,
-                  ),
-            items: parent.accidentalStatusOptions,
-            placeholder: 'Select Accidental Status',
-            label: 'Accidental Status',
-            prefixIcon: Icons.warning_amber_outlined,
-            itemLabel: (v) => v.label,
-            isLoading: parent.isDropdownLoading.value,
-            onChanged: (v) =>
-                controller.selectedAccidentalStatus.value = v?.value ?? '',
-          ),
-        ),
-      ],
-    );
-  }
-
-  // ══════════════════════════════════════════════════════════════════
-  //  SECTION 3: Mechanical Inspection
-  // ══════════════════════════════════════════════════════════════════
-
-  Widget _buildMechanicalSection() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _buildInspectionCard(
-          title: 'Engine',
-          icon: Icons.engineering_outlined,
-          iconColor: const Color(0xFFE65100),
-          condition: controller.engineCondition,
-          remarksController: controller.engineRemarksController,
-        ),
-        SizedBox(height: 14.h),
-        _buildInspectionCard(
-          title: 'Transmission',
-          icon: Icons.settings_suggest_outlined,
-          iconColor: const Color(0xFF1565C0),
-          condition: controller.transmissionCondition,
-          remarksController: controller.transmissionRemarksController,
-        ),
-        SizedBox(height: 14.h),
-        _buildInspectionCard(
-          title: 'Suspension',
-          icon: Icons.directions_car_outlined,
-          iconColor: const Color(0xFF2E7D32),
-          condition: controller.suspensionCondition,
-          remarksController: controller.suspensionRemarksController,
-        ),
-        SizedBox(height: 14.h),
-        _buildTyresCard(),
-      ],
-    );
-  }
-
-  // ══════════════════════════════════════════════════════════════════
-  //  SECTION 4: Body & Interior
-  // ══════════════════════════════════════════════════════════════════
-
-  Widget _buildBodyInteriorSection() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _buildInspectionCard(
-          title: 'Body',
-          icon: Icons.car_crash_outlined,
-          iconColor: const Color(0xFF6A1B9A),
-          condition: controller.bodyCondition,
-          remarksController: controller.bodyRemarksController,
-        ),
-        SizedBox(height: 14.h),
-        _buildInspectionCard(
-          title: 'Cabin / Interior',
-          icon: Icons.airline_seat_recline_normal_outlined,
-          iconColor: const Color(0xFF00838F),
-          condition: controller.cabinInteriorCondition,
-          remarksController: controller.cabinInteriorRemarksController,
-        ),
-        SizedBox(height: 14.h),
-        _buildInspectionCard(
-          title: 'Electrical',
-          icon: Icons.electrical_services_outlined,
-          iconColor: const Color(0xFFF9A825),
-          condition: controller.electricalCondition,
-          remarksController: controller.electricalRemarksController,
-        ),
-        SizedBox(height: 14.h),
-        _buildInspectionCard(
-          title: 'Chassis',
-          icon: Icons.view_carousel_outlined,
-          iconColor: const Color(0xFF37474F),
-          condition: controller.chasisCondition,
-          remarksController: controller.chasisRemarksController,
-        ),
-        SizedBox(height: 14.h),
-        _buildOdometerCard(),
-      ],
-    );
-  }
-
-  // ══════════════════════════════════════════════════════════════════
-  //  SECTION 5: Photo Documentation
-  // ══════════════════════════════════════════════════════════════════
-
-  Widget _buildPhotosSection() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _buildImageUpload('Engine', controller.engineImages),
-        SizedBox(height: 16.h),
-        _buildImageUpload('Transmission', controller.transmissionImages),
-        SizedBox(height: 16.h),
-        _buildImageUpload('Suspension', controller.suspensionImages),
-        SizedBox(height: 16.h),
-        _buildImageUpload('Tyres', controller.tyreImages),
-        SizedBox(height: 16.h),
-        _buildSectionSubHeader('Body'),
-        SizedBox(height: 8.h),
-        _buildImageUpload('Body - Front', controller.bodyFrontImages),
-        SizedBox(height: 12.h),
-        _buildImageUpload('Body - Back', controller.bodyBackImages),
-        SizedBox(height: 12.h),
-        _buildImageUpload('Body - Left Side', controller.bodyLeftImages),
-        SizedBox(height: 12.h),
-        _buildImageUpload('Body - Right Side', controller.bodyRightImages),
-        SizedBox(height: 16.h),
-        _buildImageUpload('Cabin / Interior', controller.cabinInteriorImages),
-        SizedBox(height: 16.h),
-        _buildImageUpload('Electrical', controller.electricalImages),
-        SizedBox(height: 16.h),
-        _buildImageUpload('Chassis', controller.chasisImages),
-        SizedBox(height: 16.h),
-        _buildImageUpload('Odometer', controller.odometerImages),
-      ],
-    );
-  }
-
-  // ══════════════════════════════════════════════════════════════════
-  //  SECTION 6: Valuation
-  // ══════════════════════════════════════════════════════════════════
-
-  Widget _buildValuationSection() {
-    return Column(
-      children: [
-        _buildTextField(
-          controller: controller.assetMarketValueController,
-          label: 'Asset Market Value (₹)',
-          hint: 'Enter estimated market value',
-          icon: Icons.currency_rupee,
-          required: false,
-          keyboardType: const TextInputType.numberWithOptions(decimal: true),
-          inputFormatters: [
-            FilteringTextInputFormatter.allow(RegExp(r'[\d.]')),
-          ],
-        ),
-        SizedBox(height: 12.h),
-        _buildTextField(
-          controller: controller.otherRemarksController,
-          label: 'Other Remarks',
-          hint: 'Any additional observations or remarks',
-          icon: Icons.notes_outlined,
-          required: false,
-          maxLines: 3,
-        ),
-        SizedBox(height: 12.h),
-        _buildTextField(
-          controller: controller.webUrlController,
-          label: 'Report URL',
-          hint: 'External inspection report URL (if any)',
-          icon: Icons.link_outlined,
-          required: false,
-          keyboardType: TextInputType.url,
-        ),
-      ],
-    );
-  }
-
-  // ══════════════════════════════════════════════════════════════════
   //  SHARED WIDGETS
   // ══════════════════════════════════════════════════════════════════
 
@@ -700,19 +148,6 @@ class AgentValuationFormView extends GetView<AgentInspectionController> {
         style: AppFonts.titleMedium.copyWith(
           fontWeight: FontWeight.w600,
           color: AppColors.textPrimary,
-        ),
-      ),
-    );
-  }
-
-  Widget _buildSectionSubHeader(String title) {
-    return Padding(
-      padding: EdgeInsets.only(bottom: 4.h),
-      child: Text(
-        title,
-        style: AppFonts.titleSmall.copyWith(
-          fontWeight: FontWeight.w600,
-          color: AppColors.textSecondary,
         ),
       ),
     );
@@ -754,7 +189,6 @@ class AgentValuationFormView extends GetView<AgentInspectionController> {
           keyboardType: keyboardType,
           inputFormatters: inputFormatters,
           validator: validator,
-
           maxLines: maxLines,
           style: AppFonts.bodyMedium.copyWith(color: AppColors.textPrimary),
           decoration: InputDecoration(
@@ -796,17 +230,9 @@ class AgentValuationFormView extends GetView<AgentInspectionController> {
     );
   }
 
-  // ── Modern inspection card for each category ───────────────────
+  // ── Engine card with condition dropdown ───────────────────────────
 
-  Widget _buildInspectionCard({
-    required String title,
-    required IconData icon,
-    required Color iconColor,
-    required RxString condition,
-    required TextEditingController remarksController,
-    RxList<PlatformFile>? images,
-    String? imageLabel,
-  }) {
+  Widget _buildEngineCard() {
     return Container(
       width: double.infinity,
       padding: EdgeInsets.all(16.w),
@@ -832,10 +258,14 @@ class AgentValuationFormView extends GetView<AgentInspectionController> {
                 width: 40.w,
                 height: 40.w,
                 decoration: BoxDecoration(
-                  color: iconColor.withOpacity(0.1),
+                  color: const Color(0xFFE65100).withOpacity(0.1),
                   borderRadius: BorderRadius.circular(10.r),
                 ),
-                child: Icon(icon, color: iconColor, size: 22.r),
+                child: Icon(
+                  Icons.engineering_outlined,
+                  color: const Color(0xFFE65100),
+                  size: 22.r,
+                ),
               ),
               SizedBox(width: 12.w),
               Expanded(
@@ -843,7 +273,7 @@ class AgentValuationFormView extends GetView<AgentInspectionController> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      title,
+                      'Engine Condition',
                       style: AppFonts.titleSmall.copyWith(
                         fontWeight: FontWeight.w600,
                         color: AppColors.textPrimary,
@@ -851,7 +281,7 @@ class AgentValuationFormView extends GetView<AgentInspectionController> {
                     ),
                     SizedBox(height: 2.h),
                     Obx(() {
-                      final condVal = condition.value;
+                      final condVal = controller.engineCondition.value;
                       return Text(
                         condVal.isEmpty ? 'Not rated yet' : condVal,
                         style: AppFonts.bodySmall.copyWith(
@@ -871,13 +301,12 @@ class AgentValuationFormView extends GetView<AgentInspectionController> {
           ),
 
           SizedBox(height: 16.h),
-          // ── Divider ──────────────────────────────────────────
           Container(height: 1, color: AppColors.grey200),
           SizedBox(height: 16.h),
 
           // ── Condition rating chips ───────────────────────────
           Text(
-            'Rate Condition',
+            'Rate Condition *',
             style: AppFonts.labelMedium.copyWith(
               color: AppColors.textSecondary,
               fontWeight: FontWeight.w500,
@@ -885,15 +314,18 @@ class AgentValuationFormView extends GetView<AgentInspectionController> {
           ),
           SizedBox(height: 10.h),
           Obx(() {
-            final options = const ['Excellent', 'Good', 'Average', 'Poor'];
+            final options = const ['excellent', 'good', 'average', 'poor'];
             return Wrap(
               spacing: 10.w,
               runSpacing: 8.h,
               children: options.map((option) {
-                final isSelected = condition.value == option;
+                final isSelected =
+                    controller.engineCondition.value.toLowerCase() == option;
                 final color = _getColorForCondition(option);
+                final displayLabel =
+                    option[0].toUpperCase() + option.substring(1);
                 return GestureDetector(
-                  onTap: () => condition.value = option,
+                  onTap: () => controller.engineCondition.value = option,
                   child: AnimatedContainer(
                     duration: const Duration(milliseconds: 200),
                     padding: EdgeInsets.symmetric(
@@ -923,7 +355,7 @@ class AgentValuationFormView extends GetView<AgentInspectionController> {
                             ),
                           ),
                         Text(
-                          option,
+                          displayLabel,
                           style: AppFonts.bodySmall.copyWith(
                             fontWeight: isSelected
                                 ? FontWeight.w600
@@ -938,62 +370,12 @@ class AgentValuationFormView extends GetView<AgentInspectionController> {
               }).toList(),
             );
           }),
-
-          SizedBox(height: 16.h),
-
-          // ── Remarks field ─────────────────────────────────────
-          Text(
-            'Remarks',
-            style: AppFonts.labelMedium.copyWith(
-              color: AppColors.textSecondary,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-          SizedBox(height: 8.h),
-          TextFormField(
-            controller: remarksController,
-            maxLines: 2,
-            style: AppFonts.bodyMedium.copyWith(color: AppColors.textPrimary),
-            decoration: InputDecoration(
-              hintText: 'Enter observations...',
-              hintStyle: AppFonts.bodyMedium.copyWith(
-                color: AppColors.textDisabled,
-              ),
-              filled: true,
-              fillColor: AppColors.grey50,
-              contentPadding: EdgeInsets.symmetric(
-                horizontal: 14.w,
-                vertical: 12.h,
-              ),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10.r),
-                borderSide: const BorderSide(color: AppColors.grey300),
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10.r),
-                borderSide: const BorderSide(color: AppColors.grey300),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10.r),
-                borderSide: const BorderSide(
-                  color: AppColors.primary,
-                  width: 1.5,
-                ),
-              ),
-            ),
-          ),
-
-          // ── Image upload (if provided) ───────────────────────
-          if (images != null && imageLabel != null) ...[
-            SizedBox(height: 16.h),
-            _buildImageUpload(imageLabel, images),
-          ],
         ],
       ),
     );
   }
 
-  // ── Tyres card ────────────────────────────────────────────────
+  // ── Tyres card with sliders ────────────────────────────────────────
 
   Widget _buildTyresCard() {
     return Container(
@@ -1045,7 +427,7 @@ class AgentValuationFormView extends GetView<AgentInspectionController> {
           SizedBox(height: 16.h),
           Obx(
             () => _buildTyreSlider(
-              label: 'Front Axle Tyres',
+              label: 'Front Axle Tyres *',
               value: controller.frontAxleTyresPercent.value,
               onChanged: (v) =>
                   controller.frontAxleTyresPercent.value = v.round(),
@@ -1054,7 +436,7 @@ class AgentValuationFormView extends GetView<AgentInspectionController> {
           SizedBox(height: 12.h),
           Obx(
             () => _buildTyreSlider(
-              label: 'Rear Axle Tyres',
+              label: 'Rear Axle Tyres *',
               value: controller.rearAxleTyresPercent.value,
               onChanged: (v) =>
                   controller.rearAxleTyresPercent.value = v.round(),
@@ -1103,7 +485,7 @@ class AgentValuationFormView extends GetView<AgentInspectionController> {
               ),
               SizedBox(width: 12.w),
               Text(
-                'Odometer',
+                'Odometer Reading',
                 style: AppFonts.titleSmall.copyWith(
                   fontWeight: FontWeight.w600,
                   color: AppColors.textPrimary,
@@ -1114,45 +496,14 @@ class AgentValuationFormView extends GetView<AgentInspectionController> {
           SizedBox(height: 16.h),
           Container(height: 1, color: AppColors.grey200),
           SizedBox(height: 16.h),
-          Text(
-            'Remarks',
-            style: AppFonts.labelMedium.copyWith(
-              color: AppColors.textSecondary,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-          SizedBox(height: 8.h),
-          TextFormField(
-            controller: controller.odometerRemarksController,
-            maxLines: 2,
-            style: AppFonts.bodyMedium.copyWith(color: AppColors.textPrimary),
-            decoration: InputDecoration(
-              hintText: 'Enter odometer-related observations...',
-              hintStyle: AppFonts.bodyMedium.copyWith(
-                color: AppColors.textDisabled,
-              ),
-              filled: true,
-              fillColor: AppColors.grey50,
-              contentPadding: EdgeInsets.symmetric(
-                horizontal: 14.w,
-                vertical: 12.h,
-              ),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10.r),
-                borderSide: const BorderSide(color: AppColors.grey300),
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10.r),
-                borderSide: const BorderSide(color: AppColors.grey300),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10.r),
-                borderSide: const BorderSide(
-                  color: AppColors.primary,
-                  width: 1.5,
-                ),
-              ),
-            ),
+          _buildTextField(
+            controller: controller.odometerController,
+            label: 'Odometer Reading (KM)',
+            hint: 'Enter odometer reading',
+            icon: Icons.speed_outlined,
+            required: true,
+            keyboardType: TextInputType.number,
+            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
           ),
         ],
       ),
@@ -1256,146 +607,6 @@ class AgentValuationFormView extends GetView<AgentInspectionController> {
         allowMultiple: true,
       );
     });
-  }
-
-  Widget _buildDateField({
-    required TextEditingController controller,
-    required String label,
-    required String hint,
-    required IconData icon,
-    required VoidCallback onTap,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: AppFonts.labelMedium.copyWith(
-            color: AppColors.textSecondary,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-        SizedBox(height: 6.h),
-        GestureDetector(
-          onTap: onTap,
-          child: AbsorbPointer(
-            child: TextFormField(
-              controller: controller,
-              style: AppFonts.bodyMedium.copyWith(color: AppColors.textPrimary),
-              decoration: InputDecoration(
-                hintText: hint,
-                hintStyle: AppFonts.bodyMedium.copyWith(color: AppColors.white),
-                prefixIcon: Icon(icon, size: 20.r, color: AppColors.grey500),
-                suffixIcon: Icon(
-                  Icons.arrow_drop_down,
-                  size: 24.r,
-                  color: AppColors.grey500,
-                ),
-                filled: true,
-                fillColor: AppColors.white,
-                contentPadding: EdgeInsets.symmetric(
-                  horizontal: 14.w,
-                  vertical: 14.h,
-                ),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10.r),
-                  borderSide: const BorderSide(color: AppColors.grey300),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10.r),
-                  borderSide: const BorderSide(color: AppColors.grey300),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10.r),
-                  borderSide: const BorderSide(
-                    color: AppColors.primary,
-                    width: 1.5,
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildDatePickerField({
-    required String label,
-    required String value,
-    required IconData icon,
-    VoidCallback? onClear,
-    required VoidCallback onTap,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: AppFonts.labelMedium.copyWith(
-            color: AppColors.textSecondary,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-        SizedBox(height: 6.h),
-        GestureDetector(
-          onTap: onTap,
-          child: Container(
-            width: double.infinity,
-            padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 14.h),
-            decoration: BoxDecoration(
-              color: AppColors.white,
-              borderRadius: BorderRadius.circular(10.r),
-              border: Border.all(color: AppColors.grey300),
-            ),
-            child: Row(
-              children: [
-                Icon(icon, size: 20.r, color: AppColors.grey500),
-                SizedBox(width: 10.w),
-                Expanded(
-                  child: Text(
-                    value.isEmpty ? 'Select date' : value,
-                    style: AppFonts.bodyMedium.copyWith(
-                      color: value.isEmpty
-                          ? AppColors.textDisabled
-                          : AppColors.textPrimary,
-                    ),
-                  ),
-                ),
-                if (value.isNotEmpty && onClear != null)
-                  GestureDetector(
-                    onTap: onClear,
-                    child: Icon(
-                      Icons.close,
-                      size: 18.r,
-                      color: AppColors.grey500,
-                    ),
-                  )
-                else
-                  Icon(
-                    Icons.calendar_month,
-                    size: 18.r,
-                    color: AppColors.grey400,
-                  ),
-              ],
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Future<void> _selectDate(RxString target) async {
-    final date = await showDatePicker(
-      context: Get.context!,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(2000),
-      lastDate: DateTime(2040),
-    );
-    if (date != null) {
-      target.value =
-          '${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}/${date.year}';
-    }
   }
 
   // ══════════════════════════════════════════════════════════════════

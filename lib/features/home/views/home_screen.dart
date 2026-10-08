@@ -115,8 +115,7 @@ class HomeScreen extends GetView<HomeController> {
                     // ── Ad after most_bought_categories ──────────
                     if (data.adAfter('most_bought_categories') != null) ...[
                       _AdBanner(ad: data.adAfter('most_bought_categories')!),
-                       SizedBox(height: 12.h),
-                     
+                      SizedBox(height: 12.h),
                     ],
                     // ── Inspection Banner ────────────────────────
                     _InspectionBanner(),
@@ -138,7 +137,7 @@ class HomeScreen extends GetView<HomeController> {
                     ],
                     // ── Insurance Banner ─────────────────────────
                     _InsuranceBanner(),
-                     SizedBox(height: 8.h),
+                    SizedBox(height: 8.h),
                     // ── Spare Support Near You ───────────────────
                     _SectionHeader(title: context.l10n.spareSupportNearYou),
                     SizedBox(height: 12.h),
@@ -1114,7 +1113,9 @@ class _InspectionBanner extends StatelessWidget {
     final userType =
         await SecureStorageService.to.read(StorageKeys.userType) ?? '';
     final normalized = userType.toUpperCase().trim();
-    if (normalized == 'VENDOR' || normalized == 'AGENT') {
+    if (normalized == 'VENDOR' ||
+        normalized == 'AGENT' ||
+        normalized == 'MECHANIC') {
       Get.toNamed(AppRoutes.agentValuationForm);
     } else {
       Get.toNamed(AppRoutes.customerValuationForm);
