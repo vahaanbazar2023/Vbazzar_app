@@ -95,12 +95,16 @@ class LanguageSelectionScreen extends GetView<LanguageController> {
                                 ? context.l10n.save
                                 : context.l10n.continueButton,
                             onPressed: buttonAction,
+                                width: 140.w,
+                                               height: 36.h,
                           )
                         : GradientButton.outlined(
                             text: fromProfile
                                 ? context.l10n.save
                                 : context.l10n.continueButton,
                             onPressed: buttonAction,
+                                width: 140.w,
+                                               height: 36.h,
                           );
                   }),
                 ),

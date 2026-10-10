@@ -120,7 +120,7 @@ class _ProfilePage extends StatelessWidget {
 
                 SizedBox(height: 22.h),
 
-                _section(context, 'Auction Activity', [
+                _section(context, 'Auction', [
                   _Item(
                     iconAsset: AppAssets.subIconStar,
                     iconBg: const Color(0xFFFFF8E0),
@@ -138,6 +138,14 @@ class _ProfilePage extends StatelessWidget {
                   ),
 
                   _Item(
+                    iconData: Icons.favorite_rounded,
+                    iconBg: const Color(0xFFFFF0F0),
+                    label: 'Wishlist',
+                    subtitle: 'Auction vehicles you have saved',
+                    onTap: () => Get.toNamed(AppRoutes.myWishlist),
+                  ),
+
+                  _Item(
                     iconAsset: AppAssets.subIconPending,
                     iconBg: const Color(0xFFFFF0F0),
                     label: context.l10n.initiateRefund,
@@ -148,7 +156,7 @@ class _ProfilePage extends StatelessWidget {
 
                 SizedBox(height: 22.h),
 
-                _section(context, 'Marketplace', [
+                _section(context, 'Buy & Sell', [
                   _Item(
                     iconAsset: AppAssets.subIconVehicle,
                     iconBg: const Color(0xFFEEF4FF),
@@ -785,14 +793,16 @@ class _StatCell extends StatelessWidget {
 // ============================================================================
 
 class _Item {
-  final String iconAsset;
+  final String? iconAsset;
+  final IconData? iconData;
   final Color iconBg;
   final String label;
   final String subtitle;
   final VoidCallback? onTap;
 
   const _Item({
-    required this.iconAsset,
+    this.iconAsset,
+    this.iconData,
     required this.iconBg,
     required this.label,
     required this.subtitle,
@@ -827,7 +837,9 @@ class _ItemTile extends StatelessWidget {
                   borderRadius: BorderRadius.circular(13.r),
                 ),
                 padding: EdgeInsets.all(10.r),
-                child: Image.asset(item.iconAsset, fit: BoxFit.contain),
+                child: item.iconData != null
+                    ? Icon(item.iconData, color: AppColors.primary)
+                    : Image.asset(item.iconAsset!, fit: BoxFit.contain),
               ),
 
               SizedBox(width: 13.w),
