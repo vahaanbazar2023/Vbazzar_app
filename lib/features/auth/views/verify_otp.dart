@@ -321,23 +321,27 @@ class VerifyOTP extends GetView<AuthController> {
                           Obx(() {
                             final isComplete =
                                 controller.otpText.value.length == 6;
-                            return isComplete
-                                ? GradientButton.filled(
-                                    text: context.l10n.verify,
-                                    onPressed: controller.isLoading.value
-                                        ? null
-                                        : () => controller.verifyOtp(
-                                            context,
-                                            controller.otpText.value,
-                                          ),
-                                    isLoading: controller.isLoading.value,
-                                    width: double.infinity,
-                                  )
-                                : GradientButton.outlined(
-                                    text: context.l10n.verify,
-                                    onPressed: null,
-                                    width: double.infinity,
-                                  );
+                            return Center(
+                              child: isComplete
+                                  ? GradientButton.filled(
+                                      text: context.l10n.verify,
+                                      onPressed: controller.isLoading.value
+                                          ? null
+                                          : () => controller.verifyOtp(
+                                              context,
+                                              controller.otpText.value,
+                                            ),
+                                      isLoading: controller.isLoading.value,
+                                      width: 140.w,
+                                      height: 36.h,
+                                    )
+                                  : GradientButton.outlined(
+                                      text: context.l10n.verify,
+                                      onPressed: null,
+                                      width: 140.w,
+                                      height: 36.h,
+                                    ),
+                            );
                           }),
                         ],
                       ),

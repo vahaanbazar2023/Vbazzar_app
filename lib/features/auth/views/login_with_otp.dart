@@ -437,8 +437,7 @@ class _LoginWithOtpState extends State<LoginWithOtp> {
                                 // Send OTP button
                                 Obx(() {
                                   final isValid = controller.isPhoneValid;
-                                  return SizedBox(
-                                    width: double.infinity,
+                                  return Center(
                                     child: isValid
                                         ? GradientButton.filled(
                                             text: context.l10n.sendOtp,
@@ -450,12 +449,14 @@ class _LoginWithOtpState extends State<LoginWithOtp> {
                                                   ),
                                             isLoading:
                                                 controller.isLoading.value,
-                                            width: 100.w,
+                                            width: 140.w,
+                                            height: 36.h,
                                           )
                                         : GradientButton.outlined(
                                             text: context.l10n.sendOtp,
                                             onPressed: null,
-                                            width: 100.w,
+                                            width: 140.w,
+                                            height: 36.h,
                                           ),
                                   );
                                 }),
