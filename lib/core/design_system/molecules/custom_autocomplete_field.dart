@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../constants/app_colors.dart';
 import '../typography/app_text_styles.dart';
+import '../../extensions/context_extensions.dart';
 
 /// Custom autocomplete field with search and filtering
 ///
@@ -272,7 +273,7 @@ class _CustomAutocompleteFieldState<T extends Object>
             ),
             SizedBox(width: 12.w),
             Text(
-              'Loading...',
+              context.l10n.loading,
               style: AppTextStyles.bodyMedium.copyWith(
                 color: AppColors.textSecondary,
                 fontSize: 14.sp,
@@ -293,8 +294,8 @@ class _CustomAutocompleteFieldState<T extends Object>
         ),
         child: Text(
           widget.controller.text.isEmpty
-              ? (widget.emptyMessage ?? 'No options available')
-              : 'No results found for "${widget.controller.text}"',
+              ? (widget.emptyMessage ?? context.l10n.coreNoOptionsAvailable)
+              : context.l10n.coreNoResultsFoundFor(widget.controller.text),
           style: AppTextStyles.bodyMedium.copyWith(
             color: AppColors.textSecondary,
             fontSize: 14.sp,

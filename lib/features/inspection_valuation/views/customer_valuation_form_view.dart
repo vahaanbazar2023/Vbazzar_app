@@ -12,6 +12,7 @@ import '../../../core/design_system/templates/app_layout.dart';
 import '../../../theme/app_fonts.dart';
 import '../controllers/inspection_valuation_controller.dart';
 import '../data/models/valuation_dropdown_options.dart';
+import '../../../core/extensions/context_extensions.dart';
 
 /// Customer inspection request form.
 /// Collects vehicle details, optional company info, and document uploads.
@@ -21,9 +22,8 @@ class CustomerValuationFormView extends GetView<InspectionValuationController> {
   @override
   Widget build(BuildContext context) {
     return AppLayout(
-      title: 'Request Vehicle Inspection',
-      subtitle:
-          '',
+      title: context.l10n.requestVehicleInspection,
+      subtitle: '',
       showBack: true,
       body: Stack(
         children: [
@@ -34,13 +34,13 @@ class CustomerValuationFormView extends GetView<InspectionValuationController> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _buildSectionHeader('Vehicle Details'),
+                  _buildSectionHeader(context.l10n.inspVehicleDetailsSection),
                   _buildVehicleFields(),
                   SizedBox(height: 20.h),
-                  _buildSectionHeader('Company Details (Optional)'),
+                  _buildSectionHeader(context.l10n.inspCompanyDetailsOptional),
                   _buildCompanyFields(),
                   SizedBox(height: 20.h),
-                  _buildSectionHeader('Upload Documents'),
+                  _buildSectionHeader(context.l10n.inspUploadDocuments),
                   _buildDocumentUploads(),
                   SizedBox(height: 24.h),
                   _buildSubmitButton(),
@@ -77,26 +77,26 @@ class CustomerValuationFormView extends GetView<InspectionValuationController> {
       children: [
         _buildTextField(
           controller: controller.vehicleNoController,
-          label: 'Vehicle Registration Number',
-          hint: 'e.g. MH-01-AB-1234',
+          label: appL10n.inspVehicleRegistrationNumber,
+          hint: appL10n.inspRegNumberHint,
           icon: Icons.directions_car,
           required: true,
           validator: (v) {
-            if (v == null || v.trim().isEmpty) return 'Required';
-            if (v.trim().length < 5) return 'Min 5 characters';
+            if (v == null || v.trim().isEmpty) return appL10n.inspRequired;
+            if (v.trim().length < 5) return appL10n.inspMin5Characters;
             return null;
           },
         ),
         SizedBox(height: 12.h),
         _buildTextField(
           controller: controller.chasisNoController,
-          label: 'Chassis Number',
-          hint: 'Enter chassis number',
+          label: appL10n.inspChassisNumber,
+          hint: appL10n.inspEnterChassisNumber,
           icon: Icons.confirmation_number_outlined,
           required: true,
           validator: (v) {
-            if (v == null || v.trim().isEmpty) return 'Required';
-            if (v.trim().length < 5) return 'Min 5 characters';
+            if (v == null || v.trim().isEmpty) return appL10n.inspRequired;
+            if (v.trim().length < 5) return appL10n.inspMin5Characters;
             return null;
           },
         ),
@@ -107,8 +107,8 @@ class CustomerValuationFormView extends GetView<InspectionValuationController> {
                 ? null
                 : controller.selectedVehicleType.value,
             items: controller.vehicleTypes,
-            placeholder: 'Select Vehicle Type',
-            label: 'Vehicle Type',
+            placeholder: appL10n.selectVehicleTypeFilter,
+            label: appL10n.vehicleType,
             prefixIcon: Icons.local_shipping_outlined,
             errorText: controller.vehicleTypeError.value,
             itemLabel: (v) => v,
@@ -140,8 +140,8 @@ class CustomerValuationFormView extends GetView<InspectionValuationController> {
                 ? null
                 : controller.selectedVehicleBrand.value,
             items: controller.vehicleBrandNames,
-            placeholder: 'Select Vehicle Brand',
-            label: 'Vehicle Brand',
+            placeholder: appL10n.inspSelectVehicleBrand,
+            label: appL10n.inspVehicleBrand,
             prefixIcon: Icons.branding_watermark_outlined,
             errorText: controller.vehicleBrandError.value,
             itemLabel: (v) => v,
@@ -157,8 +157,8 @@ class CustomerValuationFormView extends GetView<InspectionValuationController> {
           () => InlineDropdownField<LocationOption>(
             value: controller.selectedState.value,
             items: controller.states,
-            placeholder: 'Select State',
-            label: 'State',
+            placeholder: appL10n.selectState,
+            label: appL10n.state,
             prefixIcon: Icons.map_outlined,
             errorText: controller.stateError.value,
             itemLabel: (s) => s.name,
@@ -179,14 +179,14 @@ class CustomerValuationFormView extends GetView<InspectionValuationController> {
             value: controller.selectedCity.value,
             items: controller.filteredCities,
             placeholder: controller.selectedState.value == null
-                ? 'Select state first'
-                : 'Select City',
-            label: 'City',
+                ? appL10n.inspSelectStateFirst
+                : appL10n.selectCity,
+            label: appL10n.city,
             prefixIcon: Icons.location_city_outlined,
             errorText: controller.cityError.value,
             itemLabel: (c) => c.name,
             enabled: controller.selectedState.value != null,
-            emptyMessage: 'No cities available for selected state',
+            emptyMessage: appL10n.inspNoCitiesForState,
             onChanged: (v) {
               controller.selectedCity.value = v;
               controller.cityError.value = '';
@@ -196,8 +196,8 @@ class CustomerValuationFormView extends GetView<InspectionValuationController> {
         SizedBox(height: 12.h),
         _buildTextField(
           controller: controller.ownerNumberController,
-          label: 'Owner Mobile Number',
-          hint: 'Enter 10-digit mobile number',
+          label: appL10n.ownerMobileNumber,
+          hint: appL10n.inspEnter10DigitMobile,
           icon: Icons.phone_outlined,
           required: true,
           keyboardType: TextInputType.phone,
@@ -206,9 +206,9 @@ class CustomerValuationFormView extends GetView<InspectionValuationController> {
             LengthLimitingTextInputFormatter(10),
           ],
           validator: (v) {
-            if (v == null || v.trim().isEmpty) return 'Required';
+            if (v == null || v.trim().isEmpty) return appL10n.inspRequired;
             if (!RegExp(r'^[6-9]\d{9}$').hasMatch(v.trim())) {
-              return 'Enter valid 10-digit number';
+              return appL10n.inspEnterValid10DigitNumber;
             }
             return null;
           },
@@ -220,8 +220,8 @@ class CustomerValuationFormView extends GetView<InspectionValuationController> {
   Widget _buildCompanyFields() {
     return _buildTextField(
       controller: controller.companyNameController,
-      label: 'Company Name',
-      hint: 'Enter company name (optional)',
+      label: appL10n.companyName,
+      hint: appL10n.inspEnterCompanyNameOptional,
       icon: Icons.business_outlined,
       required: false,
     );
@@ -235,10 +235,10 @@ class CustomerValuationFormView extends GetView<InspectionValuationController> {
           final rcCount = controller.rcFiles.length;
           final rcErr = controller.rcFileError.value;
           return CustomFileUploadField(
-            title: 'RC Document *',
+            title: '${appL10n.rcDocument} *',
             label: rcCount > 0
-                ? '$rcCount file(s) selected'
-                : 'Choose a file/browse multiple files',
+                ? appL10n.inspFilesSelected(rcCount)
+                : appL10n.inspChooseFiles,
             onTap: () => controller.pickFiles(
               controller.rcFiles,
               allowedExtensions: const ['pdf', 'jpg', 'jpeg', 'png'],
@@ -257,10 +257,10 @@ class CustomerValuationFormView extends GetView<InspectionValuationController> {
           final insCount = controller.insuranceFiles.length;
           final insErr = controller.insuranceFileError.value;
           return CustomFileUploadField(
-            title: 'Insurance Document',
+            title: appL10n.inspInsuranceDocument,
             label: insCount > 0
-                ? '$insCount file(s) selected'
-                : 'Choose a file/browse multiple files',
+                ? appL10n.inspFilesSelected(insCount)
+                : appL10n.inspChooseFiles,
             onTap: () => controller.pickFiles(
               controller.insuranceFiles,
               allowedExtensions: const ['pdf', 'jpg', 'jpeg', 'png'],
@@ -279,10 +279,10 @@ class CustomerValuationFormView extends GetView<InspectionValuationController> {
           final gstCount = controller.companyGstFiles.length;
           final gstErr = controller.companyGstFileError.value;
           return CustomFileUploadField(
-            title: 'Company GST',
+            title: appL10n.companyGst,
             label: gstCount > 0
-                ? '$gstCount file(s) selected'
-                : 'Choose a file/browse multiple files',
+                ? appL10n.inspFilesSelected(gstCount)
+                : appL10n.inspChooseFiles,
             onTap: () => controller.pickFiles(
               controller.companyGstFiles,
               allowedExtensions: const ['pdf', 'jpg', 'jpeg', 'png'],
@@ -315,11 +315,13 @@ class CustomerValuationFormView extends GetView<InspectionValuationController> {
       children: [
         Row(
           children: [
-            Text(
-              label,
-              style: AppFonts.labelMedium.copyWith(
-                color: AppColors.textSecondary,
-                fontWeight: FontWeight.w500,
+            Flexible(
+              child: Text(
+                label,
+                style: AppFonts.labelMedium.copyWith(
+                  color: AppColors.textSecondary,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
             ),
             if (required)
@@ -376,7 +378,7 @@ class CustomerValuationFormView extends GetView<InspectionValuationController> {
   Widget _buildSubmitButton() {
     return Obx(
       () => GradientButton.filled(
-        text: 'Submit Inspection Request',
+        text: appL10n.inspSubmitInspectionRequest,
         onPressed: controller.isSubmitting.value
             ? null
             : () => controller.submitCustomerForm(),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../routes/app_routes.dart';
 import '../routes/app_pages.dart';
+import '../core/extensions/context_extensions.dart';
 
 class AppRouter {
   AppRouter._();
@@ -12,6 +13,6 @@ class AppRouter {
 
   static GetPage get unknownRoute => GetPage(
     name: '/not-found',
-    page: () => const Scaffold(body: Center(child: Text('Page not found'))),
+    page: () => Scaffold(body: Center(child: Text(appL10n.corePageNotFound))),
   );
 }

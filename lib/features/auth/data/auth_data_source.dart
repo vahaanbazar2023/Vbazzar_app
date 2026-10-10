@@ -6,6 +6,7 @@ import '../models/login_request.dart';
 import '../models/otp_response.dart';
 import '../models/otp_verify_models.dart';
 import '../models/complete_profile_models.dart';
+import '../../../core/extensions/context_extensions.dart';
 
 /// Auth data source — V2 API calls
 class AuthDataSource {
@@ -30,7 +31,7 @@ class AuthDataSource {
       );
 
       if (response.data == null) {
-        throw ApiException('Empty response from server', 500);
+        throw ApiException(appL10n.inspEmptyServerResponse, 500);
       }
 
       return OtpResponse.fromJson(response.data as Map<String, dynamic>);
@@ -43,7 +44,7 @@ class AuthDataSource {
   Future<OtpVerifyResponse> verifyOtp(OtpVerifyRequest request) async {
     try {
       if (!request.isValid()) {
-        throw ValidationException('Invalid OTP verification request');
+        throw ValidationException(appL10n.inspInvalidOtpVerificationRequest);
       }
 
       LoggerService.to.info(
@@ -56,7 +57,7 @@ class AuthDataSource {
       );
 
       if (response.data == null) {
-        throw ApiException('Empty response from server', 500);
+        throw ApiException(appL10n.inspEmptyServerResponse, 500);
       }
 
       return OtpVerifyResponse.fromJson(response.data as Map<String, dynamic>);
@@ -79,7 +80,7 @@ class AuthDataSource {
       );
 
       if (response.data == null) {
-        throw ApiException('Empty response from server', 500);
+        throw ApiException(appL10n.inspEmptyServerResponse, 500);
       }
 
       return CompleteProfileResponse.fromJson(
@@ -96,7 +97,7 @@ class AuthDataSource {
       case DioExceptionType.connectionTimeout:
       case DioExceptionType.receiveTimeout:
       case DioExceptionType.sendTimeout:
-        return NetworkException('Connection timeout. Please try again.');
+        return NetworkException(appL10n.inspConnectionTimeout);
 
       case DioExceptionType.badResponse:
         final statusCode = error.response?.statusCode;
@@ -106,7 +107,7 @@ class AuthDataSource {
           final message =
               data['message'] as String? ??
               data['error'] as String? ??
-              'An error occurred';
+              appL10n.inspAnErrorOccurred;
 
           if (statusCode == 401) {
             return AuthException(message);
@@ -120,25 +121,23 @@ class AuthDataSource {
         }
 
         return ApiException(
-          'Request failed with status code: $statusCode',
+          appL10n.inspRequestFailedWithStatus('$statusCode'),
           statusCode,
         );
 
       case DioExceptionType.cancel:
-        return NetworkException('Request was cancelled');
+        return NetworkException(appL10n.inspRequestCancelled);
 
       case DioExceptionType.connectionError:
-        return NetworkException(
-          'No internet connection. Please check your network.',
-        );
+        return NetworkException(appL10n.inspNoInternetCheckNetwork);
 
       case DioExceptionType.unknown:
         return NetworkException(
-          error.message ?? 'An unexpected error occurred',
+          error.message ?? appL10n.inspAnUnexpectedErrorOccurred,
         );
 
       default:
-        return NetworkException('An unexpected error occurred');
+        return NetworkException(appL10n.inspAnUnexpectedErrorOccurred);
     }
   }
 }

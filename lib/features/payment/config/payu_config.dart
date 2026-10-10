@@ -1,5 +1,6 @@
 import 'package:payu_checkoutpro_flutter/PayUConstantKeys.dart';
 import '../models/payment_models.dart';
+import '../../../core/extensions/context_extensions.dart';
 
 /// PayU Configuration for Vahaan Bazar PayU SDK Payment Module
 /// Contains all PayU SDK configuration and test data
@@ -85,8 +86,7 @@ class PayUConfig {
       PayUPaymentParamKey.ios_furl: data.payuFormData.furl,
       PayUPaymentParamKey.android_surl: data.payuFormData.surl,
       PayUPaymentParamKey.android_furl: data.payuFormData.furl,
-      PayUPaymentParamKey.environment:
-          "0", // Production environment
+      PayUPaymentParamKey.environment: "0", // Production environment
       PayUPaymentParamKey.userCredential: null, // null like working example
       "transactionId":
           data.payuFormData.txnId, // Use string key for transaction ID
@@ -115,14 +115,14 @@ class PayUConfig {
 
     var customNotes = [
       {
-        "custom_note": "Secure payment powered by PayU",
+        "custom_note": appL10n.coreSecurePaymentPoweredByPayU,
         "custom_note_category": [
           PayUPaymentTypeKeys.emi,
           PayUPaymentTypeKeys.card,
         ],
       },
       {
-        "custom_note": "Choose your preferred payment method",
+        "custom_note": appL10n.coreChoosePreferredPaymentMethod,
         "custom_note_category": null,
       },
     ];

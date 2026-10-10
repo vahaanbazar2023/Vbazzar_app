@@ -41,9 +41,9 @@ class AuctionTypeScreen extends StatelessWidget {
             _TypeCard(
               tabIndex: 1,
               imagePath: 'assets/images/png/goverment_inventory.png',
-              title: AuctionType.label('Approved Vehicles'),
+              title: context.l10n.approvedVehicles,
               subtitle: context.l10n.liveAuctionSubtitle,
-              badgeLabel: 'Verified',
+              badgeLabel: context.l10n.aucVerified,
               icon: Icons.verified_rounded,
             ),
           ],
@@ -148,14 +148,18 @@ class _TypeCard extends StatelessWidget {
                         children: [
                           Icon(icon, color: Colors.white, size: 12.r),
                           SizedBox(width: 4.w),
-                          Text(
-                            badgeLabel.toUpperCase(),
-                            style: TextStyle(
-                              fontFamily: 'Montserrat',
-                              fontWeight: FontWeight.w600,
-                              fontSize: 10.sp,
-                              color: Colors.white,
-                              letterSpacing: 0.6,
+                          Flexible(
+                            child: Text(
+                              badgeLabel.toUpperCase(),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                fontFamily: 'Montserrat',
+                                fontWeight: FontWeight.w600,
+                                fontSize: 10.sp,
+                                color: Colors.white,
+                                letterSpacing: 0.6,
+                              ),
                             ),
                           ),
                         ],

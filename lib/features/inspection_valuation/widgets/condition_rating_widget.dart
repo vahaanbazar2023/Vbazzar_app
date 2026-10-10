@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../core/constants/app_colors.dart';
+import '../../../core/extensions/context_extensions.dart';
 
 /// Reusable condition rating selector with selectable chips.
 /// Options: Excellent, Good, Average, Poor
@@ -42,10 +43,7 @@ class ConditionRatingWidget extends StatelessWidget {
               onTap: () => onChanged(option),
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 200),
-                padding: EdgeInsets.symmetric(
-                  horizontal: 14.w,
-                  vertical: 8.h,
-                ),
+                padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 8.h),
                 decoration: BoxDecoration(
                   color: isSelected
                       ? _getColorForOption(option).withOpacity(0.15)
@@ -70,15 +68,18 @@ class ConditionRatingWidget extends StatelessWidget {
                           color: _getColorForOption(option),
                         ),
                       ),
-                    Text(
-                      option,
-                      style: TextStyle(
-                        fontSize: 12.sp,
-                        fontWeight:
-                            isSelected ? FontWeight.w600 : FontWeight.w400,
-                        color: isSelected
-                            ? _getColorForOption(option)
-                            : AppColors.textSecondary,
+                    Flexible(
+                      child: Text(
+                        _displayLabel(context, option),
+                        style: TextStyle(
+                          fontSize: 12.sp,
+                          fontWeight: isSelected
+                              ? FontWeight.w600
+                              : FontWeight.w400,
+                          color: isSelected
+                              ? _getColorForOption(option)
+                              : AppColors.textSecondary,
+                        ),
                       ),
                     ),
                   ],
@@ -89,6 +90,21 @@ class ConditionRatingWidget extends StatelessWidget {
         ),
       ],
     );
+  }
+
+  String _displayLabel(BuildContext context, String option) {
+    switch (option.toLowerCase()) {
+      case 'excellent':
+        return context.l10n.excellent;
+      case 'good':
+        return context.l10n.good;
+      case 'average':
+        return context.l10n.average;
+      case 'poor':
+        return context.l10n.poor;
+      default:
+        return option;
+    }
   }
 
   Color _getColorForOption(String option) {

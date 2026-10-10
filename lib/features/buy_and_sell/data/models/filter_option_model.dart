@@ -1,10 +1,7 @@
 import '../../domain/entities/filter_option_entity.dart';
 
 class FilterOptionModel extends FilterOptionEntity {
-  const FilterOptionModel({
-    required super.label,
-    required super.value,
-  });
+  const FilterOptionModel({required super.label, required super.value});
 
   factory FilterOptionModel.fromJson(Map<String, dynamic> json) {
     return FilterOptionModel(

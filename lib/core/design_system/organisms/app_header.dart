@@ -87,6 +87,8 @@ class AppHeader extends StatelessWidget {
                   Expanded(
                     child: Text(
                       title,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                         fontFamily: 'Montserrat',
                         fontSize: 16.sp,

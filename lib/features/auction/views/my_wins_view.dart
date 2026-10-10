@@ -134,14 +134,18 @@ class _WinCard extends StatelessWidget {
                         size: 11.r,
                       ),
                       SizedBox(width: 4.w),
-                      Text(
-                        context.l10n.wonBadge,
-                        style: TextStyle(
-                          fontFamily: 'Montserrat',
-                          fontSize: 9.sp,
-                          fontWeight: FontWeight.w800,
-                          color: Colors.white,
-                          letterSpacing: 1,
+                      Flexible(
+                        child: Text(
+                          context.l10n.wonBadge,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontFamily: 'Montserrat',
+                            fontSize: 9.sp,
+                            fontWeight: FontWeight.w800,
+                            color: Colors.white,
+                            letterSpacing: 1,
+                          ),
                         ),
                       ),
                     ],
@@ -189,7 +193,9 @@ class _WinCard extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Row(
+                      Wrap(
+                        spacing: AppSpacing.lg,
+                        runSpacing: AppSpacing.xs,
                         children: [
                           _InfoChip(
                             label: context.l10n.paymentChip,
@@ -198,7 +204,6 @@ class _WinCard extends StatelessWidget {
                                 ? AppColors.success
                                 : AppColors.warning,
                           ),
-                          SizedBox(width: AppSpacing.lg),
                           _InfoChip(
                             label: context.l10n.letterChip,
                             value: item.winningLetterStatus == 'sent'
@@ -213,13 +218,15 @@ class _WinCard extends StatelessWidget {
                       SizedBox(height: AppSpacing.xs),
                       Row(
                         children: [
-                          Text(
-                            context.l10n.winningBidLabel,
-                            style: TextStyle(
-                              fontFamily: 'Montserrat',
-                              fontSize: 14.sp,
-                              color: AppColors.lightOrangeDark,
-                              fontWeight: FontWeight.w500,
+                          Flexible(
+                            child: Text(
+                              context.l10n.winningBidLabel,
+                              style: TextStyle(
+                                fontFamily: 'Montserrat',
+                                fontSize: 14.sp,
+                                color: AppColors.lightOrangeDark,
+                                fontWeight: FontWeight.w500,
+                              ),
                             ),
                           ),
                           SizedBox(width: AppSpacing.sm),
@@ -296,22 +303,26 @@ class _InfoChip extends StatelessWidget {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Text(
-          '$label : ',
-          style: TextStyle(
-            fontFamily: 'Montserrat',
-            fontSize: 13.sp,
-            color: AppColors.lightOrangeDark,
-            fontWeight: FontWeight.w500,
+        Flexible(
+          child: Text(
+            '$label : ',
+            style: TextStyle(
+              fontFamily: 'Montserrat',
+              fontSize: 13.sp,
+              color: AppColors.lightOrangeDark,
+              fontWeight: FontWeight.w500,
+            ),
           ),
         ),
-        Text(
-          value,
-          style: TextStyle(
-            fontFamily: 'Montserrat',
-            fontSize: 13.sp,
-            fontWeight: FontWeight.w600,
-            color: color,
+        Flexible(
+          child: Text(
+            value,
+            style: TextStyle(
+              fontFamily: 'Montserrat',
+              fontSize: 13.sp,
+              fontWeight: FontWeight.w600,
+              color: color,
+            ),
           ),
         ),
       ],

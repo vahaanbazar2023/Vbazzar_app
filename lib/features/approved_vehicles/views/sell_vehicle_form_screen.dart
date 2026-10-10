@@ -7,6 +7,7 @@ import '../../../core/design_system/molecules/custom_autocomplete_field.dart';
 import '../../../core/design_system/molecules/gradient_button.dart';
 import '../../../core/design_system/templates/app_layout.dart';
 import '../controllers/approved_vehicle_controller.dart';
+import '../../../core/extensions/context_extensions.dart';
 
 // ─── All inputs share this height to stay visually consistent with Buy & Sell ─
 const double _kFieldH = 46.0;
@@ -69,8 +70,8 @@ class _SellVehicleFormScreenState extends State<SellVehicleFormScreen> {
       target.add('sample_file_${target.length + 1}.jpg');
     });
     Get.snackbar(
-      'Info',
-      'File picker integration pending. Add file_picker package to enable uploads.',
+      context.l10n.apprInfo,
+      context.l10n.apprFilePickerPending,
       snackPosition: SnackPosition.TOP,
       backgroundColor: AppColors.grey100,
       colorText: AppColors.black,
@@ -99,10 +100,10 @@ class _SellVehicleFormScreenState extends State<SellVehicleFormScreen> {
   @override
   Widget build(BuildContext context) {
     return AppLayout(
-      title: 'Sell Your Vehicle',
+      title: context.l10n.apprSellYourVehicle,
       subtitle: _categoryName.isNotEmpty
           ? _categoryName
-          : 'Submit your vehicle for approval',
+          : context.l10n.apprSubmitVehicleForApproval,
       body: SingleChildScrollView(
         padding: EdgeInsets.fromLTRB(16.w, 16.h, 16.w, 32.h),
         child: Column(
@@ -114,17 +115,17 @@ class _SellVehicleFormScreenState extends State<SellVehicleFormScreen> {
 
             // ── Vehicle Details ──────────────────────────────────────────
             _SectionHeader(
-              label: 'Vehicle Details',
+              label: context.l10n.vehicleDetailsTitle,
               icon: Icons.directions_car_outlined,
             ),
             SizedBox(height: 10.h),
             _FormCard(
               children: [
                 _SellField(
-                  label: 'Registration Number *',
+                  label: '${context.l10n.registrationNumber} *',
                   child: _UniformInput(
                     controller: _regNoController,
-                    hint: 'e.g. MH12AB1234',
+                    hint: context.l10n.apprRegNoHint,
                     icon: Icons.badge_outlined,
                     inputFormatters: [
                       FilteringTextInputFormatter.allow(RegExp(r'[A-Za-z0-9]')),
@@ -135,22 +136,22 @@ class _SellVehicleFormScreenState extends State<SellVehicleFormScreen> {
                   ),
                 ),
                 _SellField(
-                  label: 'Chassis Number',
+                  label: context.l10n.apprChassisNumber,
                   child: _UniformInput(
                     controller: _chassisController,
-                    hint: 'Enter chassis number',
+                    hint: context.l10n.apprEnterChassisNumber,
                     icon: Icons.pin_outlined,
                   ),
                 ),
                 _SellField(
-                  label: 'Brand *',
+                  label: '${context.l10n.brand} *',
                   child: _BrandField(ctrl: _ctrl),
                 ),
                 _SellField(
-                  label: 'Year of Manufacturing *',
+                  label: '${context.l10n.apprYearOfManufacturing} *',
                   child: _UniformInput(
                     controller: _yearController,
-                    hint: 'e.g. 2021',
+                    hint: context.l10n.apprYearHint,
                     icon: Icons.calendar_today_outlined,
                     keyboardType: TextInputType.number,
                     inputFormatters: [
@@ -160,10 +161,10 @@ class _SellVehicleFormScreenState extends State<SellVehicleFormScreen> {
                   ),
                 ),
                 _SellField(
-                  label: 'Expected Price (₹) *',
+                  label: '${context.l10n.apprExpectedPrice} *',
                   child: _UniformInput(
                     controller: _priceController,
-                    hint: 'e.g. 2500000',
+                    hint: context.l10n.apprPriceHint,
                     prefixWidget: Text(
                       '₹',
                       style: TextStyle(
@@ -177,10 +178,10 @@ class _SellVehicleFormScreenState extends State<SellVehicleFormScreen> {
                   ),
                 ),
                 _SellField(
-                  label: 'Owner Mobile Number *',
+                  label: '${context.l10n.apprOwnerMobileNumber} *',
                   child: _UniformInput(
                     controller: _ownerMobileController,
-                    hint: '10-digit mobile number',
+                    hint: context.l10n.apprMobileHint,
                     icon: Icons.phone_outlined,
                     keyboardType: TextInputType.phone,
                     inputFormatters: [
@@ -190,10 +191,10 @@ class _SellVehicleFormScreenState extends State<SellVehicleFormScreen> {
                   ),
                 ),
                 _SellField(
-                  label: 'Asset Description',
+                  label: context.l10n.apprAssetDescription,
                   child: _UniformInput(
                     controller: _descriptionController,
-                    hint: 'e.g. Tata Signa 2823.T 6x4',
+                    hint: context.l10n.apprAssetDescriptionHint,
                     maxLines: 2,
                   ),
                 ),
@@ -202,16 +203,19 @@ class _SellVehicleFormScreenState extends State<SellVehicleFormScreen> {
 
             // ── Location ──────────────────────────────────────────────────
             SizedBox(height: 20.h),
-            _SectionHeader(label: 'Location', icon: Icons.location_on_outlined),
+            _SectionHeader(
+              label: context.l10n.location,
+              icon: Icons.location_on_outlined,
+            ),
             SizedBox(height: 10.h),
             _FormCard(
               children: [
                 _SellField(
-                  label: 'State *',
+                  label: '${context.l10n.state} *',
                   child: _StateField(ctrl: _ctrl),
                 ),
                 _SellField(
-                  label: 'City *',
+                  label: '${context.l10n.city} *',
                   child: _CityField(ctrl: _ctrl),
                 ),
               ],
@@ -220,26 +224,26 @@ class _SellVehicleFormScreenState extends State<SellVehicleFormScreen> {
             // ── Vehicle Condition ────────────────────────────────────────
             SizedBox(height: 20.h),
             _SectionHeader(
-              label: 'Vehicle Condition',
+              label: context.l10n.vehicleCondition,
               icon: Icons.verified_outlined,
             ),
             SizedBox(height: 10.h),
             _ToggleCard(
               items: [
                 _ToggleItem(
-                  label: 'Fitness Certificate Available',
+                  label: context.l10n.apprFitnessCertificateAvailable,
                   icon: Icons.verified_outlined,
                   value: _fitnessAvailable,
                   onChanged: (v) => setState(() => _fitnessAvailable = v),
                 ),
                 _ToggleItem(
-                  label: 'Original Invoice Available',
+                  label: context.l10n.apprOriginalInvoiceAvailable,
                   icon: Icons.receipt_long_outlined,
                   value: _invoiceAvailable,
                   onChanged: (v) => setState(() => _invoiceAvailable = v),
                 ),
                 _ToggleItem(
-                  label: 'GST Applicable',
+                  label: context.l10n.apprGstApplicable,
                   icon: Icons.percent_outlined,
                   value: _gstApplicable,
                   onChanged: (v) => setState(() => _gstApplicable = v),
@@ -248,7 +252,7 @@ class _SellVehicleFormScreenState extends State<SellVehicleFormScreen> {
             ),
             SizedBox(height: 16.h),
             _SellField(
-              label: 'Insurance Valid Until',
+              label: context.l10n.apprInsuranceValidUntil,
               child: _DatePickerField(
                 controller: _insuranceDateController,
                 onPick: () async {
@@ -279,26 +283,26 @@ class _SellVehicleFormScreenState extends State<SellVehicleFormScreen> {
             // ── Photos & Documents ───────────────────────────────────────
             SizedBox(height: 20.h),
             _SectionHeader(
-              label: 'Photos & Documents',
+              label: context.l10n.apprPhotosAndDocuments,
               icon: Icons.photo_library_outlined,
             ),
             SizedBox(height: 10.h),
             _FileField(
-              label: 'Vehicle Photos *',
+              label: '${context.l10n.apprVehiclePhotos} *',
               files: _images,
               onPick: () => _pickFiles(_images),
               onRemove: (i) => setState(() => _images.removeAt(i)),
             ),
             SizedBox(height: 10.h),
             _FileField(
-              label: 'RC Documents',
+              label: context.l10n.apprRcDocuments,
               files: _rcDocuments,
               onPick: () => _pickFiles(_rcDocuments),
               onRemove: (i) => setState(() => _rcDocuments.removeAt(i)),
             ),
             SizedBox(height: 10.h),
             _FileField(
-              label: 'Insurance Documents',
+              label: context.l10n.apprInsuranceDocuments,
               files: _insuranceDocs,
               onPick: () => _pickFiles(_insuranceDocs),
               onRemove: (i) => setState(() => _insuranceDocs.removeAt(i)),
@@ -307,7 +311,7 @@ class _SellVehicleFormScreenState extends State<SellVehicleFormScreen> {
             SizedBox(height: 28.h),
             Obx(
               () => GradientButton.filled(
-                text: 'Submit Vehicle',
+                text: context.l10n.apprSubmitVehicle,
                 width: double.infinity,
                 height: 52.h,
                 fontSize: 15.sp,
@@ -334,9 +338,9 @@ class _CategoryLockedField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return _SellField(
-      label: 'Vehicle Category *',
+      label: '${context.l10n.apprVehicleCategory} *',
       child: Container(
-        height: _kFieldH.h,
+        constraints: BoxConstraints(minHeight: _kFieldH.h),
         decoration: BoxDecoration(
           color: AppColors.primary.withValues(alpha: 0.06),
           borderRadius: BorderRadius.circular(8.r),
@@ -353,7 +357,7 @@ class _CategoryLockedField extends StatelessWidget {
             SizedBox(width: 8.w),
             Expanded(
               child: Text(
-                categoryName.isNotEmpty ? categoryName : 'Category',
+                categoryName.isNotEmpty ? categoryName : context.l10n.category,
                 style: TextStyle(
                   fontFamily: 'Montserrat',
                   fontSize: 14.sp,
@@ -372,7 +376,8 @@ class _CategoryLockedField extends StatelessWidget {
                 borderRadius: BorderRadius.circular(20.r),
               ),
               child: Text(
-                'Auto-filled',
+                context.l10n.apprAutoFilled,
+                maxLines: 1,
                 style: TextStyle(
                   fontFamily: 'Montserrat',
                   fontSize: 10.sp,
@@ -413,13 +418,17 @@ class _SectionHeader extends StatelessWidget {
           child: Icon(icon, color: Colors.white, size: 15.sp),
         ),
         SizedBox(width: 10.w),
-        Text(
-          label,
-          style: TextStyle(
-            fontFamily: 'Montserrat',
-            fontSize: 14.sp,
-            fontWeight: FontWeight.w600,
-            color: AppColors.textPrimary,
+        Flexible(
+          child: Text(
+            label,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+              fontFamily: 'Montserrat',
+              fontSize: 14.sp,
+              fontWeight: FontWeight.w600,
+              color: AppColors.textPrimary,
+            ),
           ),
         ),
         SizedBox(width: 10.w),
@@ -620,8 +629,8 @@ class _BrandFieldState extends State<_BrandField> {
         controller: _textCtrl,
         options: widget.ctrl.sellBrands,
         placeholder: widget.ctrl.isLoadingSellBrands.value
-            ? 'Loading brands...'
-            : 'Select brand',
+            ? context.l10n.loadingBrands
+            : context.l10n.selectBrand,
         prefixIcon: Icons.branding_watermark_outlined,
         isLoading: widget.ctrl.isLoadingSellBrands.value,
         displayStringForOption: (b) => b['brand_name'] ?? '',
@@ -664,7 +673,7 @@ class _StateFieldState extends State<_StateField> {
       () => CustomAutocompleteField<Map<String, String>>(
         controller: _textCtrl,
         options: widget.ctrl.sellStates,
-        placeholder: 'Select state',
+        placeholder: context.l10n.selectState,
         prefixIcon: Icons.location_on_outlined,
         isLoading: widget.ctrl.isLoadingSellStates.value,
         displayStringForOption: (s) => s['state_name'] ?? '',
@@ -717,7 +726,9 @@ class _CityFieldState extends State<_CityField> {
       return CustomAutocompleteField<Map<String, String>>(
         controller: _textCtrl,
         options: widget.ctrl.sellCities,
-        placeholder: stateSelected ? 'Select city' : 'Select state first',
+        placeholder: stateSelected
+            ? context.l10n.selectCity
+            : context.l10n.apprSelectStateFirst,
         prefixIcon: Icons.location_city_outlined,
         isLoading: widget.ctrl.isLoadingSellCities.value,
         enabled: stateSelected,
@@ -772,7 +783,11 @@ class _DatePickerField extends StatelessWidget {
             SizedBox(width: 8.w),
             Expanded(
               child: Text(
-                controller.text.isEmpty ? 'Select date' : controller.text,
+                controller.text.isEmpty
+                    ? context.l10n.selectDate
+                    : controller.text,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
                 style: TextStyle(
                   fontFamily: 'Montserrat',
                   fontSize: 14.sp,
@@ -894,7 +909,7 @@ class _ToggleCard extends StatelessWidget {
                           ),
                           if (on)
                             Text(
-                              'Confirmed ✓',
+                              context.l10n.apprConfirmedCheck,
                               style: TextStyle(
                                 fontFamily: 'Montserrat',
                                 fontSize: 11.sp,
@@ -968,7 +983,7 @@ class _FileField extends StatelessWidget {
           onTap: onPick,
           child: Container(
             width: double.infinity,
-            height: 100.h,
+            constraints: BoxConstraints(minHeight: 100.h),
             decoration: BoxDecoration(
               color: hasFiles
                   ? AppColors.primary.withValues(alpha: 0.02)
@@ -990,13 +1005,19 @@ class _FileField extends StatelessWidget {
                   color: AppColors.primary,
                 ),
                 SizedBox(height: 6.h),
-                Text(
-                  hasFiles ? 'Tap to add more' : 'Tap to upload',
-                  style: TextStyle(
-                    fontFamily: 'Montserrat',
-                    fontSize: 13.sp,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.primary,
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 8.w),
+                  child: Text(
+                    hasFiles
+                        ? context.l10n.apprTapToAddMore
+                        : context.l10n.apprTapToUpload,
+                    style: TextStyle(
+                      fontFamily: 'Montserrat',
+                      fontSize: 13.sp,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.primary,
+                    ),
+                    textAlign: TextAlign.center,
                   ),
                 ),
               ],

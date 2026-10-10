@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'logger_service.dart';
+import '../extensions/context_extensions.dart';
 
 /// Background message handler - must be a top-level function
 @pragma('vm:entry-point')
@@ -109,7 +110,7 @@ class NotificationService {
       // Show local notification when app is in foreground
       await show(
         id: message.hashCode,
-        title: notification.title ?? 'Notification',
+        title: notification.title ?? appL10n.coreNotification,
         body: notification.body ?? '',
         payload: message.data.toString(),
       );

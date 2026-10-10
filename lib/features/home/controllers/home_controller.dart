@@ -8,6 +8,7 @@ import '../../../core/storage/storage_keys.dart';
 import '../../../features/profile/repositories/profile_repository.dart';
 import '../data/models/dashboard_model.dart';
 import '../data/repositories/dashboard_repository.dart';
+import '../../../core/extensions/context_extensions.dart';
 
 class HomeController extends GetxController {
   final DashboardRepository _repository = DashboardRepository();
@@ -46,7 +47,7 @@ class HomeController extends GetxController {
 
       if (permission == LocationPermission.denied ||
           permission == LocationPermission.deniedForever) {
-        locationLabel.value = 'Set Location';
+        locationLabel.value = appL10n.coreSetLocation;
         return;
       }
 
@@ -119,7 +120,7 @@ class HomeController extends GetxController {
         dashboardData.value = data;
       } else {
         hasError.value = true;
-        errorMessage.value = 'Failed to load dashboard.';
+        errorMessage.value = appL10n.coreFailedToLoadDashboard;
       }
     } catch (e) {
       hasError.value = true;

@@ -4,9 +4,11 @@ import 'package:get/get.dart';
 
 import '../../../core/constants/app_colors.dart';
 import '../../../core/design_system/templates/app_layout.dart';
+import '../../../core/extensions/context_extensions.dart';
 import '../../../theme/app_fonts.dart';
 import '../controllers/insurance_finance_controller.dart';
-import '../domain/entities/quote_entity.dart' show QuoteEntity, VehicleQuoteItemEntity;
+import '../domain/entities/quote_entity.dart'
+    show QuoteEntity, VehicleQuoteItemEntity;
 
 /// My Quotes view — displays all insurance/finance quotes for the user's vehicles.
 ///
@@ -34,8 +36,8 @@ class _MyQuotesViewState extends State<MyQuotesView> {
   @override
   Widget build(BuildContext context) {
     return AppLayout(
-      title: 'My Quotes',
-      subtitle: 'View your insurance and finance quotes',
+      title: context.l10n.insMyQuotes,
+      subtitle: context.l10n.insMyQuotesSubtitle,
       showBack: true,
       body: _buildBody(),
     );
@@ -51,12 +53,11 @@ class _MyQuotesViewState extends State<MyQuotesView> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               CircularProgressIndicator(
-                valueColor:
-                    AlwaysStoppedAnimation<Color>(AppColors.primary),
+                valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary),
               ),
               SizedBox(height: 16.h),
               Text(
-                'Loading quotes...',
+                context.l10n.insLoadingQuotes,
                 style: AppFonts.bodyMedium.copyWith(
                   color: AppColors.textSecondary,
                   fontSize: 14.sp,
@@ -76,11 +77,7 @@ class _MyQuotesViewState extends State<MyQuotesView> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(
-                  Icons.error_outline,
-                  size: 48.sp,
-                  color: AppColors.error,
-                ),
+                Icon(Icons.error_outline, size: 48.sp, color: AppColors.error),
                 SizedBox(height: 16.h),
                 Text(
                   controller.quotesErrorMessage.value,
@@ -103,7 +100,7 @@ class _MyQuotesViewState extends State<MyQuotesView> {
                       borderRadius: BorderRadius.circular(8.r),
                     ),
                     child: Text(
-                      'Retry',
+                      context.l10n.retry,
                       style: AppFonts.labelLarge.copyWith(
                         color: AppColors.white,
                         fontWeight: FontWeight.w600,
@@ -130,7 +127,7 @@ class _MyQuotesViewState extends State<MyQuotesView> {
               ),
               SizedBox(height: 16.h),
               Text(
-                'No quotes available',
+                context.l10n.insNoQuotesAvailable,
                 style: AppFonts.bodyMedium.copyWith(
                   color: AppColors.textSecondary,
                   fontSize: 16.sp,
@@ -139,7 +136,7 @@ class _MyQuotesViewState extends State<MyQuotesView> {
               ),
               SizedBox(height: 8.h),
               Text(
-                'Submit an insurance or finance request to get quotes',
+                context.l10n.insSubmitRequestToGetQuotes,
                 style: AppFonts.bodySmall.copyWith(
                   color: AppColors.textSecondary,
                   fontSize: 13.sp,
@@ -168,8 +165,9 @@ class _MyQuotesViewState extends State<MyQuotesView> {
   }
 
   Widget _buildVehicleCard(VehicleQuoteItemEntity vehicle) {
-    final isExpanded =
-        controller.expandedVehicleIds.contains(vehicle.vehicleId);
+    final isExpanded = controller.expandedVehicleIds.contains(
+      vehicle.vehicleId,
+    );
 
     return Container(
       margin: EdgeInsets.only(bottom: 12.h),
@@ -228,17 +226,26 @@ class _MyQuotesViewState extends State<MyQuotesView> {
                           ),
                         ),
                         SizedBox(height: 4.h),
-                        Row(
+                        Wrap(
+                          crossAxisAlignment: WrapCrossAlignment.center,
                           children: [
                             _buildBadge(
-                              vehicle.serviceType.toUpperCase(),
+                              vehicle.serviceType == 'insurance'
+                                  ? context.l10n.insurance.toUpperCase()
+                                  : context.l10n.finance.toUpperCase(),
                               vehicle.serviceType == 'insurance'
                                   ? AppColors.primary
                                   : AppColors.secondary,
                             ),
                             SizedBox(width: 8.w),
                             Text(
-                              '${vehicle.totalQuotes} ${vehicle.totalQuotes == 1 ? 'Quote' : 'Quotes'}',
+                              vehicle.totalQuotes == 1
+                                  ? context.l10n.insQuoteCountOne(
+                                      vehicle.totalQuotes,
+                                    )
+                                  : context.l10n.insQuoteCountMany(
+                                      vehicle.totalQuotes,
+                                    ),
                               style: AppFonts.bodySmall.copyWith(
                                 color: AppColors.textSecondary,
                                 fontSize: 12.sp,
@@ -265,11 +272,7 @@ class _MyQuotesViewState extends State<MyQuotesView> {
 
           // ── Expanded Quotes ───────────────────────────────────
           if (isExpanded) ...[
-            Divider(
-              height: 1,
-              thickness: 1,
-              color: AppColors.grey200,
-            ),
+            Divider(height: 1, thickness: 1, color: AppColors.grey200),
             Padding(
               padding: EdgeInsets.all(12.w),
               child: Column(
@@ -280,7 +283,7 @@ class _MyQuotesViewState extends State<MyQuotesView> {
                       padding: EdgeInsets.symmetric(vertical: 16.h),
                       child: Center(
                         child: Text(
-                          'No quotes received yet',
+                          context.l10n.insNoQuotesReceivedYet,
                           style: AppFonts.bodyMedium.copyWith(
                             color: AppColors.textSecondary,
                             fontSize: 13.sp,
@@ -301,13 +304,29 @@ class _MyQuotesViewState extends State<MyQuotesView> {
     );
   }
 
-  Widget _buildQuoteCard(QuoteEntity quote, int index, VehicleQuoteItemEntity vehicle) {
+  Widget _buildQuoteCard(
+    QuoteEntity quote,
+    int index,
+    VehicleQuoteItemEntity vehicle,
+  ) {
     // Gradient color schemes alternating per provider
     final gradients = [
-      [const Color(0xFFFF00CC), const Color(0xFFC80EBE), const Color(0xFF333399)],
+      [
+        const Color(0xFFFF00CC),
+        const Color(0xFFC80EBE),
+        const Color(0xFF333399),
+      ],
       [const Color(0xFF2E3393), const Color(0xFF1CFAFC)],
-      [const Color(0xFF833AB4), const Color(0xFFFD1D1D), const Color(0xFFFCB045)],
-      [const Color(0xFFEFD30D), const Color(0xFF81B65A), const Color(0xFF1097AD)],
+      [
+        const Color(0xFF833AB4),
+        const Color(0xFFFD1D1D),
+        const Color(0xFFFCB045),
+      ],
+      [
+        const Color(0xFFEFD30D),
+        const Color(0xFF81B65A),
+        const Color(0xFF1097AD),
+      ],
     ];
     final gradientColors = gradients[index % gradients.length];
 
@@ -360,10 +379,7 @@ class _MyQuotesViewState extends State<MyQuotesView> {
               );
             },
             child: Container(
-              padding: EdgeInsets.symmetric(
-                horizontal: 16.w,
-                vertical: 8.h,
-              ),
+              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
               decoration: BoxDecoration(
                 color: AppColors.white,
                 borderRadius: BorderRadius.circular(90.r),
@@ -377,12 +393,16 @@ class _MyQuotesViewState extends State<MyQuotesView> {
                     color: AppColors.textPrimary,
                   ),
                   SizedBox(width: 4.w),
-                  Text(
-                    'Download',
-                    style: AppFonts.labelMedium.copyWith(
-                      color: AppColors.textPrimary,
-                      fontWeight: FontWeight.w600,
-                      fontSize: 12.sp,
+                  Flexible(
+                    child: Text(
+                      context.l10n.insDownload,
+                      style: AppFonts.labelMedium.copyWith(
+                        color: AppColors.textPrimary,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 12.sp,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
                 ],

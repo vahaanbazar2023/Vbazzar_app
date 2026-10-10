@@ -99,7 +99,7 @@ class _CategoryCard extends StatelessWidget {
         ),
         clipBehavior: Clip.antiAlias,
         child: Padding(
-          padding: const EdgeInsets.only(left: 12.0,right: 12),
+          padding: const EdgeInsets.only(left: 12.0, right: 12),
           child: Row(
             children: imageOnLeft
                 ? [image, Expanded(child: info)]
@@ -255,13 +255,19 @@ class _StatusBadge extends StatelessWidget {
             ),
           ),
           SizedBox(width: 5.w),
-          Text(
-            isLive ? 'Live' : 'Coming Soon',
-            style: TextStyle(
-              fontFamily: 'Montserrat',
-              fontSize: 12.sp,
-              fontWeight: FontWeight.w600,
-              color: isLive ? const Color(0xFF2E7D32) : const Color(0xFF7A6030),
+          Flexible(
+            child: Text(
+              isLive ? context.l10n.liveTab : context.l10n.aucComingSoon,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                fontFamily: 'Montserrat',
+                fontSize: 12.sp,
+                fontWeight: FontWeight.w600,
+                color: isLive
+                    ? const Color(0xFF2E7D32)
+                    : const Color(0xFF7A6030),
+              ),
             ),
           ),
         ],

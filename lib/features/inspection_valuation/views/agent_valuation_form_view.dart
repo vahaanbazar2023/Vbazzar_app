@@ -11,6 +11,7 @@ import '../../../core/design_system/molecules/gradient_button.dart';
 import '../../../core/design_system/templates/app_layout.dart';
 import '../../../theme/app_fonts.dart';
 import '../controllers/agent_inspection_controller.dart';
+import '../../../core/extensions/context_extensions.dart';
 
 /// Agent inspection form — simplified to match API requirements
 class AgentValuationFormView extends GetView<AgentInspectionController> {
@@ -19,8 +20,8 @@ class AgentValuationFormView extends GetView<AgentInspectionController> {
   @override
   Widget build(BuildContext context) {
     return AppLayout(
-      title: 'Agent Inspection',
-      subtitle: 'Fill out the inspection details for the customer',
+      title: context.l10n.agentInspection,
+      subtitle: context.l10n.inspAgentFormSubtitle,
       showBack: true,
       body: Stack(
         children: [
@@ -31,86 +32,94 @@ class AgentValuationFormView extends GetView<AgentInspectionController> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // ── Vehicle Registration Number ──────────────────
-                  _buildSectionHeader('Vehicle Registration Number'),
+                  _buildSectionHeader(
+                    context.l10n.inspVehicleRegistrationNumber,
+                  ),
                   _buildTextField(
                     controller: controller.vehicleRegNoController,
-                    label: 'Vehicle Registration Number',
-                    hint: 'e.g. MH-01-AB-1234',
+                    label: context.l10n.inspVehicleRegistrationNumber,
+                    hint: context.l10n.inspRegNumberHint,
                     icon: Icons.directions_car,
                     required: true,
                   ),
                   SizedBox(height: 24.h),
 
                   // ── Body Photos ──────────────────────────────────
-                  _buildSectionHeader('Body Photos'),
+                  _buildSectionHeader(context.l10n.inspBodyPhotos),
                   _buildImageUpload(
-                    'Body - Front *',
+                    '${context.l10n.inspBodyFrontLabel} *',
                     controller.bodyFrontImages,
                   ),
                   SizedBox(height: 12.h),
                   _buildImageUpload(
-                    'Body - Left Side *',
+                    '${context.l10n.inspBodyLeftSideLabel} *',
                     controller.bodyLeftImages,
                   ),
                   SizedBox(height: 12.h),
-                  _buildImageUpload('Body - Back *', controller.bodyBackImages),
+                  _buildImageUpload(
+                    '${context.l10n.inspBodyBackLabel} *',
+                    controller.bodyBackImages,
+                  ),
                   SizedBox(height: 12.h),
                   _buildImageUpload(
-                    'Body - Right Side *',
+                    '${context.l10n.inspBodyRightSideLabel} *',
                     controller.bodyRightImages,
                   ),
                   SizedBox(height: 24.h),
 
                   // ── Tyres ────────────────────────────────────────
-                  _buildSectionHeader('Tyres'),
+                  _buildSectionHeader(context.l10n.tyres),
                   _buildTyresCard(),
                   SizedBox(height: 24.h),
 
                   // ── Engine ───────────────────────────────────────
-                  _buildSectionHeader('Engine'),
+                  _buildSectionHeader(context.l10n.engine),
                   _buildEngineCard(),
                   SizedBox(height: 12.h),
-                  _buildImageUpload('Engine Photos *', controller.engineImages),
+                  _buildImageUpload(
+                    '${context.l10n.inspEnginePhotos} *',
+                    controller.engineImages,
+                  ),
                   SizedBox(height: 24.h),
 
                   // ── Chassis ──────────────────────────────────────
-                  _buildSectionHeader('Chassis'),
+                  _buildSectionHeader(context.l10n.chassis),
                   _buildImageUpload(
-                    'Chassis Photos *',
+                    '${context.l10n.inspChassisPhotos} *',
                     controller.chasisImages,
                   ),
                   SizedBox(height: 24.h),
 
                   // ── Interior ─────────────────────────────────────
-                  _buildSectionHeader('Interior'),
+                  _buildSectionHeader(context.l10n.inspInterior),
                   _buildImageUpload(
-                    'Interior Photos *',
+                    '${context.l10n.inspInteriorPhotos} *',
                     controller.cabinInteriorImages,
                   ),
                   SizedBox(height: 24.h),
 
                   // ── Cabin Interior ───────────────────────────────
-                  _buildSectionHeader('Cabin Interior'),
+                  _buildSectionHeader(context.l10n.inspCabinInteriorSection),
                   _buildImageUpload(
-                    'Cabin Interior Photos *',
+                    '${context.l10n.inspCabinInteriorPhotos} *',
                     controller.cabinInteriorImages,
                   ),
                   SizedBox(height: 24.h),
 
                   // ── Odometer ─────────────────────────────────────
-                  _buildSectionHeader('Odometer'),
+                  _buildSectionHeader(context.l10n.odometer),
                   _buildOdometerCard(),
                   SizedBox(height: 12.h),
                   _buildImageUpload(
-                    'Odometer Photos *',
+                    '${context.l10n.inspOdometerPhotos} *',
                     controller.odometerImages,
                   ),
                   SizedBox(height: 24.h),
 
                   // ── Full Round Video (Optional) ──────────────────
-                  _buildSectionHeader('Full Round Video (Optional)'),
+                  _buildSectionHeader(context.l10n.inspFullRoundVideoOptional),
                   Text(
-                    'Upload a complete 360° video of the vehicle',
+                    context.l10n.inspUploadVideoHint,
                     style: AppFonts.bodySmall.copyWith(
                       color: AppColors.textSecondary,
                     ),
@@ -169,11 +178,13 @@ class AgentValuationFormView extends GetView<AgentInspectionController> {
       children: [
         Row(
           children: [
-            Text(
-              label,
-              style: AppFonts.labelMedium.copyWith(
-                color: AppColors.textSecondary,
-                fontWeight: FontWeight.w500,
+            Flexible(
+              child: Text(
+                label,
+                style: AppFonts.labelMedium.copyWith(
+                  color: AppColors.textSecondary,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
             ),
             if (required)
@@ -273,7 +284,7 @@ class AgentValuationFormView extends GetView<AgentInspectionController> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Engine Condition',
+                      appL10n.engineCondition,
                       style: AppFonts.titleSmall.copyWith(
                         fontWeight: FontWeight.w600,
                         color: AppColors.textPrimary,
@@ -283,7 +294,9 @@ class AgentValuationFormView extends GetView<AgentInspectionController> {
                     Obx(() {
                       final condVal = controller.engineCondition.value;
                       return Text(
-                        condVal.isEmpty ? 'Not rated yet' : condVal,
+                        condVal.isEmpty
+                            ? appL10n.inspNotRatedYet
+                            : _conditionLabel(condVal),
                         style: AppFonts.bodySmall.copyWith(
                           color: condVal.isEmpty
                               ? AppColors.grey400
@@ -306,7 +319,7 @@ class AgentValuationFormView extends GetView<AgentInspectionController> {
 
           // ── Condition rating chips ───────────────────────────
           Text(
-            'Rate Condition *',
+            '${appL10n.inspRateCondition} *',
             style: AppFonts.labelMedium.copyWith(
               color: AppColors.textSecondary,
               fontWeight: FontWeight.w500,
@@ -322,8 +335,7 @@ class AgentValuationFormView extends GetView<AgentInspectionController> {
                 final isSelected =
                     controller.engineCondition.value.toLowerCase() == option;
                 final color = _getColorForCondition(option);
-                final displayLabel =
-                    option[0].toUpperCase() + option.substring(1);
+                final displayLabel = _conditionLabel(option);
                 return GestureDetector(
                   onTap: () => controller.engineCondition.value = option,
                   child: AnimatedContainer(
@@ -354,13 +366,17 @@ class AgentValuationFormView extends GetView<AgentInspectionController> {
                               color: color,
                             ),
                           ),
-                        Text(
-                          displayLabel,
-                          style: AppFonts.bodySmall.copyWith(
-                            fontWeight: isSelected
-                                ? FontWeight.w600
-                                : FontWeight.w400,
-                            color: isSelected ? color : AppColors.textSecondary,
+                        Flexible(
+                          child: Text(
+                            displayLabel,
+                            style: AppFonts.bodySmall.copyWith(
+                              fontWeight: isSelected
+                                  ? FontWeight.w600
+                                  : FontWeight.w400,
+                              color: isSelected
+                                  ? color
+                                  : AppColors.textSecondary,
+                            ),
                           ),
                         ),
                       ],
@@ -413,11 +429,13 @@ class AgentValuationFormView extends GetView<AgentInspectionController> {
                 ),
               ),
               SizedBox(width: 12.w),
-              Text(
-                'Tyres',
-                style: AppFonts.titleSmall.copyWith(
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.textPrimary,
+              Expanded(
+                child: Text(
+                  appL10n.tyres,
+                  style: AppFonts.titleSmall.copyWith(
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.textPrimary,
+                  ),
                 ),
               ),
             ],
@@ -427,7 +445,7 @@ class AgentValuationFormView extends GetView<AgentInspectionController> {
           SizedBox(height: 16.h),
           Obx(
             () => _buildTyreSlider(
-              label: 'Front Axle Tyres *',
+              label: '${appL10n.inspFrontAxleTyres} *',
               value: controller.frontAxleTyresPercent.value,
               onChanged: (v) =>
                   controller.frontAxleTyresPercent.value = v.round(),
@@ -436,7 +454,7 @@ class AgentValuationFormView extends GetView<AgentInspectionController> {
           SizedBox(height: 12.h),
           Obx(
             () => _buildTyreSlider(
-              label: 'Rear Axle Tyres *',
+              label: '${appL10n.inspRearAxleTyres} *',
               value: controller.rearAxleTyresPercent.value,
               onChanged: (v) =>
                   controller.rearAxleTyresPercent.value = v.round(),
@@ -484,11 +502,13 @@ class AgentValuationFormView extends GetView<AgentInspectionController> {
                 ),
               ),
               SizedBox(width: 12.w),
-              Text(
-                'Odometer Reading',
-                style: AppFonts.titleSmall.copyWith(
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.textPrimary,
+              Expanded(
+                child: Text(
+                  appL10n.inspOdometerReading,
+                  style: AppFonts.titleSmall.copyWith(
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.textPrimary,
+                  ),
                 ),
               ),
             ],
@@ -498,8 +518,8 @@ class AgentValuationFormView extends GetView<AgentInspectionController> {
           SizedBox(height: 16.h),
           _buildTextField(
             controller: controller.odometerController,
-            label: 'Odometer Reading (KM)',
-            hint: 'Enter odometer reading',
+            label: appL10n.inspOdometerReadingKm,
+            hint: appL10n.inspEnterOdometerReading,
             icon: Icons.speed_outlined,
             required: true,
             keyboardType: TextInputType.number,
@@ -508,6 +528,21 @@ class AgentValuationFormView extends GetView<AgentInspectionController> {
         ],
       ),
     );
+  }
+
+  String _conditionLabel(String condition) {
+    switch (condition.toLowerCase()) {
+      case 'excellent':
+        return appL10n.excellent;
+      case 'good':
+        return appL10n.good;
+      case 'average':
+        return appL10n.average;
+      case 'poor':
+        return appL10n.poor;
+      default:
+        return condition;
+    }
   }
 
   Color _getColorForCondition(String condition) {
@@ -547,13 +582,16 @@ class AgentValuationFormView extends GetView<AgentInspectionController> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
-              label,
-              style: AppFonts.bodyMedium.copyWith(
-                fontWeight: FontWeight.w500,
-                color: AppColors.textPrimary,
+            Expanded(
+              child: Text(
+                label,
+                style: AppFonts.bodyMedium.copyWith(
+                  fontWeight: FontWeight.w500,
+                  color: AppColors.textPrimary,
+                ),
               ),
             ),
+            SizedBox(width: 8.w),
             Container(
               padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
               decoration: BoxDecoration(
@@ -599,8 +637,9 @@ class AgentValuationFormView extends GetView<AgentInspectionController> {
       files.length;
       return CustomFileUploadField(
         title: title,
-        label:
-            'Choose files (max ${AgentInspectionController.maxFilesPerCategory})',
+        label: appL10n.inspChooseFilesMax(
+          AgentInspectionController.maxFilesPerCategory,
+        ),
         files: files,
         onTap: () => controller.pickFiles(files),
         onRemove: (index) => controller.removeFile(files, index),
@@ -616,7 +655,7 @@ class AgentValuationFormView extends GetView<AgentInspectionController> {
   Widget _buildSubmitButton() {
     return Obx(
       () => GradientButton.filled(
-        text: 'Submit Inspection',
+        text: appL10n.inspSubmitInspection,
         onPressed: controller.isSubmitting.value
             ? null
             : () => controller.submitAgentForm(),

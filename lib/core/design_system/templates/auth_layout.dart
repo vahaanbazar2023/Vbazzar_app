@@ -5,6 +5,7 @@ import '../../constants/app_colors.dart';
 import '../atoms/app_svg_icon.dart';
 import '../tokens/app_radius.dart';
 import '../tokens/app_spacing.dart';
+import '../../extensions/context_extensions.dart';
 
 /// Authentication layout template with red gradient header and white content section
 /// Provides consistent layout for auth screens (login, register, OTP verification, etc.)
@@ -106,7 +107,7 @@ class AuthLayout extends StatelessWidget {
                         assetPath: AppAssets.arrowBack,
                         color: Colors.white,
                         size: 10.w,
-                        semanticLabel: 'Back',
+                        semanticLabel: context.l10n.back,
                       ),
                     ),
                   ),
@@ -206,7 +207,9 @@ class AuthLayout extends StatelessWidget {
           SizedBox(height: AppSpacing.xs),
           // If underlined text is provided, use Row with clickable underlined text
           if (subtitleUnderlinedText != null)
-            Row(
+            Wrap(
+              crossAxisAlignment: WrapCrossAlignment.center,
+              spacing: 4.w,
               children: [
                 Text(
                   subtitle!,
@@ -217,7 +220,6 @@ class AuthLayout extends StatelessWidget {
                     color: AppColors.white,
                   ),
                 ),
-                SizedBox(width: 4.w),
                 GestureDetector(
                   onTap: onSubtitleUnderlinedTap,
                   child: Text(

@@ -97,7 +97,7 @@ class _MyWishlistDetailViewState extends State<MyWishlistDetailView> {
     final bool showBidChip = hasBid && (isWinning || isLosing);
 
     return AppLayout(
-      title: 'Wishlist Details',
+      title: context.l10n.aucWishlistDetails,
       subtitle: '${context.l10n.auction_id}: ${v.auctionId}',
       showBack: true,
       body: Column(
@@ -161,13 +161,19 @@ class _MyWishlistDetailViewState extends State<MyWishlistDetailView> {
                                         color: Colors.white,
                                       ),
                                       SizedBox(width: 4.w),
-                                      Text(
-                                        isWinning ? 'Winning' : 'Losing',
-                                        style: TextStyle(
-                                          fontFamily: 'Montserrat',
-                                          fontSize: 11.sp,
-                                          fontWeight: FontWeight.w600,
-                                          color: Colors.white,
+                                      Flexible(
+                                        child: Text(
+                                          isWinning
+                                              ? context.l10n.aucWinning
+                                              : context.l10n.aucLosing,
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: TextStyle(
+                                            fontFamily: 'Montserrat',
+                                            fontSize: 11.sp,
+                                            fontWeight: FontWeight.w600,
+                                            color: Colors.white,
+                                          ),
                                         ),
                                       ),
                                     ],
@@ -269,7 +275,7 @@ class _MyWishlistDetailViewState extends State<MyWishlistDetailView> {
                             label: context.l10n.regNumber,
                             value: v.registrationNo.isNotEmpty
                                 ? v.registrationNo
-                                : 'N/A',
+                                : context.l10n.na,
                           ),
                         ),
                         SizedBox(width: 8.w),
@@ -279,7 +285,7 @@ class _MyWishlistDetailViewState extends State<MyWishlistDetailView> {
                             label: context.l10n.endTime,
                             value: v.auctionEndDate.isNotEmpty
                                 ? v.auctionEndDate
-                                : 'N/A',
+                                : context.l10n.na,
                           ),
                         ),
                       ],
@@ -307,8 +313,8 @@ class _MyWishlistDetailViewState extends State<MyWishlistDetailView> {
                         value: v.bidsReceived.toString().padLeft(2, '0'),
                       ),
                       _BidRow(
-                        label: 'Status',
-                        value: 'Wishlisted',
+                        label: context.l10n.status,
+                        value: context.l10n.aucWishlisted,
                         valueColor: AppColors.error,
                         isLast: true,
                       ),
@@ -361,7 +367,7 @@ class _MyWishlistDetailViewState extends State<MyWishlistDetailView> {
                 isClosed
                     ? Container(
                         width: double.infinity,
-                        height: 48.h,
+                        constraints: BoxConstraints(minHeight: 48.h),
                         alignment: Alignment.center,
                         decoration: BoxDecoration(
                           color: AppColors.grey200,
@@ -479,45 +485,54 @@ class _MyWishlistDetailViewState extends State<MyWishlistDetailView> {
                           Obx(() {
                             final ctrl = Get.find<VehicleListingController>();
                             final loading = ctrl.isPlacingBid.value;
-                            return GestureDetector(
-                              onTap: loading ? null : () => _onBidNow(ctrl),
-                              child: Container(
-                                height: 32.h,
-                                padding: EdgeInsets.symmetric(horizontal: 18.w),
-                                decoration: BoxDecoration(
-                                  gradient: LinearGradient(
-                                    colors: loading
-                                        ? [
-                                            const Color(0xFFAA5555),
-                                            const Color(0xFF884444),
-                                          ]
-                                        : [
-                                            AppColors.ctaGradientStart,
-                                            AppColors.ctaGradientEnd,
-                                          ],
+                            return Flexible(
+                              child: GestureDetector(
+                                onTap: loading ? null : () => _onBidNow(ctrl),
+                                child: Container(
+                                  constraints: BoxConstraints(minHeight: 32.h),
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: 18.w,
                                   ),
-                                  borderRadius: BorderRadius.circular(16.r),
+                                  decoration: BoxDecoration(
+                                    gradient: LinearGradient(
+                                      colors: loading
+                                          ? [
+                                              const Color(0xFFAA5555),
+                                              const Color(0xFF884444),
+                                            ]
+                                          : [
+                                              AppColors.ctaGradientStart,
+                                              AppColors.ctaGradientEnd,
+                                            ],
+                                    ),
+                                    borderRadius: BorderRadius.circular(16.r),
+                                  ),
+                                  alignment: Alignment.center,
+                                  child: loading
+                                      ? SizedBox(
+                                          width: 18.r,
+                                          height: 18.r,
+                                          child:
+                                              const CircularProgressIndicator(
+                                                color: Colors.white,
+                                                strokeWidth: 2,
+                                              ),
+                                        )
+                                      : FittedBox(
+                                          fit: BoxFit.scaleDown,
+                                          child: Text(
+                                            context.l10n.placeBid.toUpperCase(),
+                                            maxLines: 1,
+                                            style: TextStyle(
+                                              fontFamily: 'Montserrat',
+                                              fontSize: 13.sp,
+                                              fontWeight: FontWeight.w800,
+                                              color: Colors.white,
+                                              letterSpacing: 0.5,
+                                            ),
+                                          ),
+                                        ),
                                 ),
-                                alignment: Alignment.center,
-                                child: loading
-                                    ? SizedBox(
-                                        width: 18.r,
-                                        height: 18.r,
-                                        child: const CircularProgressIndicator(
-                                          color: Colors.white,
-                                          strokeWidth: 2,
-                                        ),
-                                      )
-                                    : Text(
-                                        'PLACE BID',
-                                        style: TextStyle(
-                                          fontFamily: 'Montserrat',
-                                          fontSize: 13.sp,
-                                          fontWeight: FontWeight.w800,
-                                          color: Colors.white,
-                                          letterSpacing: 0.5,
-                                        ),
-                                      ),
                               ),
                             );
                           }),
@@ -671,21 +686,27 @@ class _BidRow extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                '$label :',
-                style: TextStyle(
-                  fontFamily: 'Plus Jakarta Sans',
-                  fontSize: 13.sp,
-                  color: AppColors.grey700,
+              Flexible(
+                child: Text(
+                  '$label :',
+                  style: TextStyle(
+                    fontFamily: 'Plus Jakarta Sans',
+                    fontSize: 13.sp,
+                    color: AppColors.grey700,
+                  ),
                 ),
               ),
-              Text(
-                value,
-                style: TextStyle(
-                  fontFamily: 'Montserrat',
-                  fontSize: 13.sp,
-                  fontWeight: FontWeight.w600,
-                  color: valueColor ?? AppColors.black,
+              SizedBox(width: 8.w),
+              Flexible(
+                child: Text(
+                  value,
+                  textAlign: TextAlign.end,
+                  style: TextStyle(
+                    fontFamily: 'Montserrat',
+                    fontSize: 13.sp,
+                    fontWeight: FontWeight.w600,
+                    color: valueColor ?? AppColors.black,
+                  ),
                 ),
               ),
             ],
@@ -746,13 +767,15 @@ class _VehicleAccordionState extends State<_VehicleAccordion> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    'Vehicle Details',
-                    style: TextStyle(
-                      fontFamily: 'Montserrat',
-                      fontSize: 14.sp,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.black,
+                  Expanded(
+                    child: Text(
+                      context.l10n.vehicleDetailsTitle,
+                      style: TextStyle(
+                        fontFamily: 'Montserrat',
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.black,
+                      ),
                     ),
                   ),
                   Icon(
@@ -778,26 +801,30 @@ class _VehicleAccordionState extends State<_VehicleAccordion> {
                 children: [
                   Divider(color: AppColors.grey200, height: 1),
                   SizedBox(height: AppSpacing.sm),
-                  _DetailRow('Make', v.make),
-                  _DetailRow('Model', v.model),
-                  _DetailRow('Year', v.year.toString()),
-                  _DetailRow('Variant', v.variant),
-                  _DetailRow('Fuel Type', v.fuelType),
-                  _DetailRow('Transmission', v.transmission),
-                  _DetailRow('Colour', v.colour),
-                  _DetailRow('Owner', v.owner),
-                  _DetailRow('Chassis No', v.chassisNo),
-                  _DetailRow('Engine No', v.engineNo),
-                  _DetailRow('RC Availability', v.rcAvailability),
-                  _DetailRow('Repo Date', v.repoDate),
-                  _DetailRow('Registered RTO', v.registeredRto),
-                  _DetailRow('Parking Charges', v.parkingCharges),
-                  _DetailRow('Transaction Fees', v.transactionFees),
-                  _DetailRow('Yard Name', v.yardName),
-                  _DetailRow('Yard Location', v.yardLocation),
-                  _DetailRow('Contact Person', v.contactPersonName),
-                  _DetailRow('Mobile', v.contactPersonNumber),
-                  if (v.remarks.isNotEmpty) _DetailRow('Remarks', v.remarks),
+                  _DetailRow(context.l10n.make, v.make),
+                  _DetailRow(context.l10n.model, v.model),
+                  _DetailRow(context.l10n.year, v.year.toString()),
+                  _DetailRow(context.l10n.variant, v.variant),
+                  _DetailRow(context.l10n.fuel_type, v.fuelType),
+                  _DetailRow(context.l10n.transmission, v.transmission),
+                  _DetailRow(context.l10n.colour, v.colour),
+                  _DetailRow(context.l10n.owner, v.owner),
+                  _DetailRow(context.l10n.chassis_no, v.chassisNo),
+                  _DetailRow(context.l10n.engine_no, v.engineNo),
+                  _DetailRow(context.l10n.rc_availability, v.rcAvailability),
+                  _DetailRow(context.l10n.repo_date, v.repoDate),
+                  _DetailRow(context.l10n.registered_rto, v.registeredRto),
+                  _DetailRow(context.l10n.parking_charges, v.parkingCharges),
+                  _DetailRow(context.l10n.transaction_fees, v.transactionFees),
+                  _DetailRow(context.l10n.yard_name, v.yardName),
+                  _DetailRow(context.l10n.yard_location, v.yardLocation),
+                  _DetailRow(
+                    context.l10n.aucContactPerson,
+                    v.contactPersonName,
+                  ),
+                  _DetailRow(context.l10n.aucMobile, v.contactPersonNumber),
+                  if (v.remarks.isNotEmpty)
+                    _DetailRow(context.l10n.remarks, v.remarks),
                 ],
               ),
             ),

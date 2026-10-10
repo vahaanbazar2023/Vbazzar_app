@@ -6,6 +6,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../theme/app_fonts.dart';
 import '../data/models/inspection_vehicle_model.dart';
+import '../../../core/extensions/context_extensions.dart';
 
 /// Displays detailed information about a single inspection submission.
 class InspectionDetailView extends StatelessWidget {
@@ -17,8 +18,8 @@ class InspectionDetailView extends StatelessWidget {
 
     if (vehicle == null) {
       return Scaffold(
-        appBar: AppBar(title: const Text('Inspection Details')),
-        body: const Center(child: Text('No inspection data found')),
+        appBar: AppBar(title: Text(context.l10n.inspInspectionDetails)),
+        body: Center(child: Text(context.l10n.inspNoInspectionDataFound)),
       );
     }
 
@@ -32,7 +33,9 @@ class InspectionDetailView extends StatelessWidget {
           onPressed: () => Get.back(),
         ),
         title: Text(
-          'Inspection Details',
+          context.l10n.inspInspectionDetails,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
           style: AppFonts.titleMedium.copyWith(
             fontWeight: FontWeight.w600,
             color: AppColors.textPrimary,
@@ -105,7 +108,8 @@ class InspectionDetailView extends StatelessWidget {
                     ),
                   ),
                 ),
-                _buildStatusBadge(vehicle.status),
+                SizedBox(width: 8.w),
+                Flexible(child: _buildStatusBadge(vehicle.status)),
               ],
             ),
             SizedBox(height: 12.h),
@@ -113,8 +117,11 @@ class InspectionDetailView extends StatelessWidget {
             // Brand + Type
             Row(
               children: [
-                Icon(Icons.local_shipping_outlined,
-                    size: 18.r, color: AppColors.primary),
+                Icon(
+                  Icons.local_shipping_outlined,
+                  size: 18.r,
+                  color: AppColors.primary,
+                ),
                 SizedBox(width: 8.w),
                 Expanded(
                   child: Text(
@@ -132,7 +139,7 @@ class InspectionDetailView extends StatelessWidget {
             // Chassis number
             _buildInfoRow(
               icon: Icons.confirmation_number_outlined,
-              label: 'Chassis No',
+              label: appL10n.chassis_no,
               value: vehicle.chasisNo,
             ),
           ],
@@ -165,7 +172,7 @@ class InspectionDetailView extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Location',
+              appL10n.location,
               style: AppFonts.titleSmall.copyWith(
                 fontWeight: FontWeight.w600,
                 color: AppColors.textSecondary,
@@ -174,13 +181,13 @@ class InspectionDetailView extends StatelessWidget {
             SizedBox(height: 12.h),
             _buildInfoRow(
               icon: Icons.map_outlined,
-              label: 'State',
+              label: appL10n.state,
               value: vehicle.vehicleState,
             ),
             SizedBox(height: 8.h),
             _buildInfoRow(
               icon: Icons.location_city_outlined,
-              label: 'City',
+              label: appL10n.city,
               value: vehicle.vehicleCity,
             ),
           ],
@@ -213,7 +220,7 @@ class InspectionDetailView extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Owner Information',
+              appL10n.inspOwnerInformation,
               style: AppFonts.titleSmall.copyWith(
                 fontWeight: FontWeight.w600,
                 color: AppColors.textSecondary,
@@ -222,8 +229,11 @@ class InspectionDetailView extends StatelessWidget {
             SizedBox(height: 12.h),
             Row(
               children: [
-                Icon(Icons.phone_outlined,
-                    size: 18.r, color: AppColors.primary),
+                Icon(
+                  Icons.phone_outlined,
+                  size: 18.r,
+                  color: AppColors.primary,
+                ),
                 SizedBox(width: 8.w),
                 Expanded(
                   child: Text(
@@ -238,8 +248,10 @@ class InspectionDetailView extends StatelessWidget {
                 GestureDetector(
                   onTap: () => _makePhoneCall(vehicle.vehicleOwnerNumber),
                   child: Container(
-                    padding:
-                        EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 12.w,
+                      vertical: 6.h,
+                    ),
                     decoration: BoxDecoration(
                       color: AppColors.success.withOpacity(0.1),
                       borderRadius: BorderRadius.circular(20.r),
@@ -247,14 +259,17 @@ class InspectionDetailView extends StatelessWidget {
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(Icons.phone,
-                            size: 14.r, color: AppColors.success),
+                        Icon(Icons.phone, size: 14.r, color: AppColors.success),
                         SizedBox(width: 4.w),
-                        Text(
-                          'Call',
-                          style: AppFonts.labelSmall.copyWith(
-                            fontWeight: FontWeight.w600,
-                            color: AppColors.success,
+                        Flexible(
+                          child: Text(
+                            appL10n.callButton,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: AppFonts.labelSmall.copyWith(
+                              fontWeight: FontWeight.w600,
+                              color: AppColors.success,
+                            ),
                           ),
                         ),
                       ],
@@ -292,8 +307,11 @@ class InspectionDetailView extends StatelessWidget {
                 color: AppColors.primary.withOpacity(0.12),
                 borderRadius: BorderRadius.circular(10.r),
               ),
-              child: Icon(Icons.description_outlined,
-                  size: 22.r, color: AppColors.primary),
+              child: Icon(
+                Icons.description_outlined,
+                size: 22.r,
+                color: AppColors.primary,
+              ),
             ),
             SizedBox(width: 12.w),
             Expanded(
@@ -301,7 +319,7 @@ class InspectionDetailView extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'View Full Report',
+                    appL10n.inspViewFullReport,
                     style: AppFonts.bodyMedium.copyWith(
                       fontWeight: FontWeight.w600,
                       color: AppColors.primary,
@@ -309,7 +327,7 @@ class InspectionDetailView extends StatelessWidget {
                   ),
                   SizedBox(height: 2.h),
                   Text(
-                    'Open inspection report in browser',
+                    appL10n.inspOpenReportInBrowser,
                     style: AppFonts.bodySmall.copyWith(
                       color: AppColors.textSecondary,
                     ),
@@ -337,9 +355,11 @@ class InspectionDetailView extends StatelessWidget {
       children: [
         Icon(icon, size: 18.r, color: AppColors.grey500),
         SizedBox(width: 8.w),
-        Text(
-          '$label: ',
-          style: AppFonts.bodyMedium.copyWith(color: AppColors.textSecondary),
+        Flexible(
+          child: Text(
+            '$label: ',
+            style: AppFonts.bodyMedium.copyWith(color: AppColors.textSecondary),
+          ),
         ),
         Expanded(
           child: Text(
@@ -363,23 +383,23 @@ class InspectionDetailView extends StatelessWidget {
       case 'completed':
         bgColor = const Color(0xFFE8F5E9);
         textColor = const Color(0xFF2E7D32);
-        label = 'Completed';
+        label = appL10n.inspStatusCompleted;
         break;
       case 'in_progress':
         bgColor = const Color(0xFFE3F2FD);
         textColor = const Color(0xFF1565C0);
-        label = 'In Progress';
+        label = appL10n.inspStatusInProgress;
         break;
       case 'rejected':
         bgColor = const Color(0xFFFFEBEE);
         textColor = const Color(0xFFC62828);
-        label = 'Rejected';
+        label = appL10n.inspStatusRejected;
         break;
       case 'pending':
       default:
         bgColor = const Color(0xFFFFF3E0);
         textColor = const Color(0xFFEF6C00);
-        label = 'Pending';
+        label = appL10n.pendingStatus;
         break;
     }
 
@@ -391,6 +411,8 @@ class InspectionDetailView extends StatelessWidget {
       ),
       child: Text(
         label,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
         style: AppFonts.labelSmall.copyWith(
           fontWeight: FontWeight.w600,
           color: textColor,

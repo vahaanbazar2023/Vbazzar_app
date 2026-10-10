@@ -6,7 +6,7 @@ class ServiceSupportService {
   final NetworkService _network;
 
   ServiceSupportService({NetworkService? network})
-      : _network = network ?? NetworkService.to;
+    : _network = network ?? NetworkService.to;
 
   /// Fetches paginated mechanics near the given coordinates.
   Future<MechanicsData> listMechanics({

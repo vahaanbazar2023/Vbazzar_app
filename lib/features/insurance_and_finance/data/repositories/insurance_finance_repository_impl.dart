@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart' as dio;
 import 'package:flutter/foundation.dart';
 
+import '../../../../core/extensions/context_extensions.dart';
 import '../../../../core/network/endpoints/api_endpoints.dart';
 import '../../../../core/network/network_service.dart';
 import '../../domain/entities/finance_request_entity.dart';
@@ -45,7 +46,9 @@ class InsuranceFinanceRepositoryImpl implements InsuranceFinanceRepository {
       debugPrint('Files:');
       for (final entry in files.entries) {
         final multipart = entry.value;
-        debugPrint('  ${entry.key}: ${multipart.filename} (${multipart.length} bytes)');
+        debugPrint(
+          '  ${entry.key}: ${multipart.filename} (${multipart.length} bytes)',
+        );
       }
       debugPrint('══════════════════════════════════════════');
 
@@ -94,7 +97,7 @@ class InsuranceFinanceRepositoryImpl implements InsuranceFinanceRepository {
       debugPrint('❌ INSURANCE UNEXPECTED ERROR: $e');
       return SubmissionResult(
         success: false,
-        message: 'An unexpected error occurred',
+        message: appL10n.insUnexpectedErrorShort,
         errorMessage: e.toString(),
       );
     }
@@ -149,7 +152,9 @@ class InsuranceFinanceRepositoryImpl implements InsuranceFinanceRepository {
       debugPrint('Files:');
       for (final entry in files.entries) {
         final multipart = entry.value;
-        debugPrint('  ${entry.key}: ${multipart.filename} (${multipart.length} bytes)');
+        debugPrint(
+          '  ${entry.key}: ${multipart.filename} (${multipart.length} bytes)',
+        );
       }
       debugPrint('══════════════════════════════════════════');
 
@@ -198,7 +203,7 @@ class InsuranceFinanceRepositoryImpl implements InsuranceFinanceRepository {
       debugPrint('❌ FINANCE UNEXPECTED ERROR: $e');
       return SubmissionResult(
         success: false,
-        message: 'An unexpected error occurred',
+        message: appL10n.insUnexpectedErrorShort,
         errorMessage: e.toString(),
       );
     }
@@ -223,28 +228,26 @@ class InsuranceFinanceRepositoryImpl implements InsuranceFinanceRepository {
         throw Exception(
           quotesResponse.message.isNotEmpty
               ? quotesResponse.message
-              : 'Failed to load quotes',
+              : appL10n.insFailedLoadQuotes,
         );
       }
     } on dio.DioException catch (e) {
       final statusCode = e.response?.statusCode;
       switch (statusCode) {
         case 401:
-          throw Exception('Session expired. Please login again.');
+          throw Exception(appL10n.insSessionExpired);
         case 403:
-          throw Exception('You don\'t have permission to view quotes.');
+          throw Exception(appL10n.insNoPermissionViewQuotes);
         case 404:
-          throw Exception('Quotes service not found.');
+          throw Exception(appL10n.insQuotesServiceNotFound);
         case 500:
-          throw Exception('Server error. Please try again later.');
+          throw Exception(appL10n.insServerErrorTryLater);
         default:
-          throw Exception(
-            e.message ?? 'Network error. Please check your connection.',
-          );
+          throw Exception(e.message ?? appL10n.insNetworkErrorCheckConnection);
       }
     } catch (e) {
       if (e is Exception) rethrow;
-      throw Exception('Failed to load quotes: $e');
+      throw Exception(appL10n.insFailedLoadQuotesWithError(e.toString()));
     }
   }
 
@@ -256,25 +259,28 @@ class InsuranceFinanceRepositoryImpl implements InsuranceFinanceRepository {
     String message;
     switch (statusCode) {
       case 400:
-        message = _extractServerMessage(responseData) ?? 'Invalid request data';
+        message =
+            _extractServerMessage(responseData) ??
+            appL10n.insInvalidRequestData;
         break;
       case 401:
-        message = 'Session expired. Please login again.';
+        message = appL10n.insSessionExpired;
         break;
       case 403:
-        message = 'You don\'t have permission to perform this action.';
+        message = appL10n.insNoPermissionAction;
         break;
       case 404:
-        message = 'Service not found. Please try again later.';
+        message = appL10n.insServiceNotFound;
         break;
       case 422:
-        message = _extractServerMessage(responseData) ?? 'Validation error';
+        message =
+            _extractServerMessage(responseData) ?? appL10n.insValidationError;
         break;
       case 500:
-        message = 'Server error. Please try again later.';
+        message = appL10n.insServerErrorTryLater;
         break;
       default:
-        message = e.message ?? 'Network error. Please check your connection.';
+        message = e.message ?? appL10n.insNetworkErrorCheckConnection;
     }
 
     return SubmissionResult(

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
+import '../../../core/extensions/context_extensions.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_sizes.dart';
 import '../../../core/design_system/tokens/app_spacing.dart';
@@ -21,7 +22,7 @@ class SparePartsTab extends GetView<SpareAndFmsController> {
       }
 
       if (controller.fmsList.isEmpty) {
-        return _buildEmptyState();
+        return _buildEmptyState(context);
       }
 
       return RefreshIndicator(
@@ -51,7 +52,7 @@ class SparePartsTab extends GetView<SpareAndFmsController> {
     });
   }
 
-  Widget _buildEmptyState() {
+  Widget _buildEmptyState(BuildContext context) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -59,12 +60,12 @@ class SparePartsTab extends GetView<SpareAndFmsController> {
           Icon(Icons.build_outlined, size: 64.r, color: AppColors.grey400),
           SizedBox(height: AppSpacing.md),
           Text(
-            'No spare parts available',
+            context.l10n.spareNoSparePartsAvailable,
             style: AppFonts.titleMedium.copyWith(color: AppColors.grey600),
           ),
           SizedBox(height: AppSpacing.xs),
           Text(
-            'Check back later for new listings',
+            context.l10n.spareCheckBackLater,
             style: AppFonts.bodySmall.copyWith(color: AppColors.grey500),
           ),
         ],
@@ -134,7 +135,7 @@ class _SpareCard extends StatelessWidget {
                   SizedBox(height: 2.h),
                   if (spare.suitsFor.isNotEmpty)
                     Text(
-                      'Suits: ${spare.suitsFor}',
+                      context.l10n.spareSuitsLabel(spare.suitsFor),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: AppFonts.labelSmall.copyWith(
@@ -177,7 +178,10 @@ class _SpareCard extends StatelessWidget {
                           fontWeight: FontWeight.w600,
                         ),
                       ),
-                      child: const Text('Show Interest'),
+                      child: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: Text(context.l10n.showInterest),
+                      ),
                     ),
                   ),
                 ],

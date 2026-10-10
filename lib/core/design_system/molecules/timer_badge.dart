@@ -6,6 +6,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../features/auction/models/my_bids_wins_models.dart';
 import '../../constants/app_assets.dart';
 import '../../constants/app_colors.dart';
+import '../../extensions/context_extensions.dart';
 
 /// Red arrow-shaped badge showing live countdown until [endAt].
 /// Ticks every second. When [endAt] is empty/unparseable or the end time has
@@ -37,8 +38,6 @@ class _TimerBadgeState extends State<TimerBadge> {
     super.dispose();
   }
 
-  static const _closedLabel = 'Auction Closed';
-
   bool get _isClosed {
     final end = parseAuctionDate(widget.endAt);
     if (end == null) return true;
@@ -47,19 +46,19 @@ class _TimerBadgeState extends State<TimerBadge> {
 
   String _timeLeft() {
     final end = parseAuctionDate(widget.endAt);
-    if (end == null) return _closedLabel;
+    if (end == null) return context.l10n.auctionClosed;
     final diff = end.difference(DateTime.now());
     if (!diff.isNegative && diff.inSeconds > 0) {
       final d = diff.inDays;
       final h = diff.inHours % 24;
       final m = diff.inMinutes % 60;
       final s = diff.inSeconds % 60;
-      if (d > 0) return '${d}d ${h}h ${m}m ${s}s left';
-      if (h > 0) return '${h}h ${m}m ${s}s left';
-      if (m > 0) return '${m}m ${s}s left';
-      return '${s}s left';
+      if (d > 0) return context.l10n.coreTimeLeftDhms(d, h, m, s);
+      if (h > 0) return context.l10n.coreTimeLeftHms(h, m, s);
+      if (m > 0) return context.l10n.coreTimeLeftMs(m, s);
+      return context.l10n.coreTimeLeftS(s);
     }
-    return _closedLabel;
+    return context.l10n.auctionClosed;
   }
 
   @override
@@ -84,16 +83,18 @@ class _TimerBadgeState extends State<TimerBadge> {
               color: AppColors.white,
             ),
             SizedBox(width: 4.w),
-            Text(
-              _timeLeft(),
-              style: TextStyle(
-                fontFamily: 'Montserrat',
-                fontSize: 8.sp,
-                fontWeight: FontWeight.w600,
-                color: AppColors.white,
+            Flexible(
+              child: Text(
+                _timeLeft(),
+                style: TextStyle(
+                  fontFamily: 'Montserrat',
+                  fontSize: 8.sp,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.white,
+                ),
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
               ),
-              overflow: TextOverflow.ellipsis,
-              maxLines: 1,
             ),
           ],
         ),

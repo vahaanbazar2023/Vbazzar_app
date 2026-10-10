@@ -2,6 +2,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../controllers/main_shell_controller.dart';
+import '../../../core/extensions/context_extensions.dart';
 
 // ── Figma-exact constants ────────────────────────────────────────────────────
 // Bar (Rectangle 372): height 90, radius 6 top / 24 bottom
@@ -30,22 +31,21 @@ class BottomNavBar extends GetView<MainShellController> {
     'assets/images/png/settings.png',
   ];
 
-  static const _labels = [
-    'Homexsd',
-    'Subscriptions',
-    'Categories',
-    'Rewards',
-    'Settings',
-  ];
-
   @override
   Widget build(BuildContext context) {
     final bottomPadding = MediaQuery.of(context).viewPadding.bottom;
+    final labels = [
+      context.l10n.home,
+      context.l10n.coreSubscriptions,
+      context.l10n.categories,
+      context.l10n.coreRewards,
+      context.l10n.settings,
+    ];
     return Obx(
       () => _BottomNavContent(
         selected: controller.currentIndex.value,
         iconPaths: _iconPaths,
-        labels: _labels,
+        labels: labels,
         bottomPadding: bottomPadding,
         onTap: controller.changePage,
       ),
@@ -163,19 +163,22 @@ class _BottomNavContentState extends State<_BottomNavContent>
                                         padding: const EdgeInsets.only(
                                           bottom: 10,
                                         ),
-                                        child: Text(
-                                          widget.labels[i],
-                                          style: const TextStyle(
-                                            fontFamily: 'Montserrat',
-                                            fontWeight: FontWeight.w600,
-                                            fontSize: 15,
-                                            height: 1.0,
-                                            letterSpacing: 0,
-                                            color: Color(0xFFF40C0C),
+                                        child: FittedBox(
+                                          fit: BoxFit.scaleDown,
+                                          child: Text(
+                                            widget.labels[i],
+                                            style: const TextStyle(
+                                              fontFamily: 'Montserrat',
+                                              fontWeight: FontWeight.w600,
+                                              fontSize: 15,
+                                              height: 1.0,
+                                              letterSpacing: 0,
+                                              color: Color(0xFFF40C0C),
+                                            ),
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                            textAlign: TextAlign.center,
                                           ),
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
-                                          textAlign: TextAlign.center,
                                         ),
                                       ),
                                     )

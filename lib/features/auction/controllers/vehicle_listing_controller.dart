@@ -16,6 +16,7 @@ import '../models/auction_pagination.dart';
 import '../models/pending_bid.dart';
 import '../models/vehicle_listing.dart';
 import '../services/vehicle_listing_service.dart';
+import '../../../core/extensions/context_extensions.dart';
 
 class VehicleListingController extends GetxController
     with GetTickerProviderStateMixin {
@@ -218,7 +219,7 @@ class VehicleListingController extends GetxController
       }
     } catch (e, st) {
       debugPrint('❌ [VehicleListing._loadTab($i)] $e\n$st');
-      _tabError[i].value = 'Failed to load vehicles. Please try again.';
+      _tabError[i].value = appL10n.aucFailedLoadVehicles;
     } finally {
       _tabLoading[i].value = false;
       isLoading.value = false;
@@ -514,11 +515,11 @@ class VehicleListingController extends GetxController
       searchPagination.value = result.pagination;
 
       if (result.vehicles.isEmpty) {
-        searchError.value = 'No vehicles found matching "$trimmed"';
+        searchError.value = appL10n.aucNoVehiclesFoundMatching(trimmed);
       }
     } catch (e, st) {
       debugPrint('❌ [VehicleListing._performSearch] $e\n$st');
-      searchError.value = 'Search failed. Please try again.';
+      searchError.value = appL10n.aucSearchFailed;
     } finally {
       isSearching.value = false;
     }
@@ -555,12 +556,12 @@ class VehicleListingController extends GetxController
     );
     // 1. Validate >= minimum price
     if (bidAmount < vehicle.minimumPrice) {
-      return 'Minimum bid is ₹${_fmt(vehicle.minimumPrice)}';
+      return appL10n.aucMinimumBid(_fmt(vehicle.minimumPrice));
     }
     // 2. Validate > current highest bid
     final highest = vehicle.currentHighestBid ?? vehicle.yourBid;
     if (highest > 0 && bidAmount <= highest) {
-      return 'Must be higher than current bid ';
+      return appL10n.aucMustBeHigherThanCurrentBid;
     }
 
     // 3. Check SUBT002 (bid limit subscription)
@@ -581,18 +582,15 @@ class VehicleListingController extends GetxController
       Get.back(); // close the bid sheet first
       await Future.delayed(const Duration(milliseconds: 300));
       CustomSnackbar.show(
-        message:
-            'You need a Bid Limit subscription to place bids. '
-            'Please subscribe to continue.',
+        message: appL10n.aucBidLimitSubscriptionRequired,
         type: SnackbarType.error,
       );
       Get.toNamed(
         AppRoutes.subscription,
         arguments: {
           'subscription_source': SubscriptionTypeCode.auctionBidLimit,
-          'title': 'Bid Limit Plan Required',
-          'subtitle':
-              'Subscribe to a bid limit plan to place bids in auctions.',
+          'title': appL10n.aucBidLimitPlanRequired,
+          'subtitle': appL10n.aucBidLimitPlanRequiredSubtitle,
         },
       );
       return '__navigated__';
@@ -615,22 +613,23 @@ class VehicleListingController extends GetxController
       await Future.delayed(const Duration(milliseconds: 300));
       CustomSnackbar.show(
         message: vehicle.availableBalance <= 0
-            ? 'Your available buying limit is ₹0. '
-                  'Please upgrade your bid limit plan to continue.'
-            : 'Your bid of ₹${_fmt(bidAmount)} exceeds your available buying '
-                  'limit of ₹${_fmt(vehicle.availableBalance)}. '
-                  'Please upgrade your plan to place higher bids.',
+            ? appL10n.aucBuyingLimitZeroUpgrade
+            : appL10n.aucBidExceedsLimitUpgradeHigher(
+                _fmt(bidAmount),
+                _fmt(vehicle.availableBalance),
+              ),
         type: SnackbarType.error,
       );
       Get.toNamed(
         AppRoutes.subscription,
         arguments: {
           'subscription_source': SubscriptionTypeCode.auctionBidLimit,
-          'title': 'Bid Limit Exceeded',
+          'title': appL10n.aucBidLimitExceeded,
           'subtitle': vehicle.availableBalance <= 0
-              ? 'You have no available buying limit. Upgrade your bid limit plan to continue.'
-              : 'Your available buying limit is ₹${_fmt(vehicle.availableBalance)}. '
-                    'Upgrade your plan to place higher bids.',
+              ? appL10n.aucNoBuyingLimitUpgrade
+              : appL10n.aucBuyingLimitUpgradeHigher(
+                  _fmt(vehicle.availableBalance),
+                ),
         },
       );
       return '__navigated__';
@@ -659,12 +658,12 @@ class VehicleListingController extends GetxController
       debugPrint('❌ [placeBid] BidException: ${e.message} (${e.code})');
       if (e.message.toLowerCase().contains('higher') ||
           e.code == 'BID_TOO_LOW') {
-        return 'Bid must be higher than the current highest bid';
+        return appL10n.aucBidMustBeHigherThanHighest;
       }
       return e.message;
     } catch (e) {
       debugPrint('❌ [placeBid] Error: $e');
-      return 'Something went wrong. Please try again.';
+      return appL10n.somethingWentWrong;
     } finally {
       isPlacingBid.value = false;
     }
@@ -780,14 +779,14 @@ class VehicleListingController extends GetxController
       // Show success message
       CustomSnackbar.show(
         message: newWishlistState
-            ? 'Added to wishlist'
-            : 'Removed from wishlist',
+            ? appL10n.aucAddedToWishlist
+            : appL10n.aucRemovedFromWishlist,
         type: SnackbarType.success,
       );
     } catch (e) {
       debugPrint('❌ [toggleWishlist] Error: $e');
       CustomSnackbar.show(
-        message: 'Failed to update wishlist. Please try again.',
+        message: appL10n.aucFailedUpdateWishlist,
         type: SnackbarType.error,
       );
     } finally {
@@ -847,7 +846,7 @@ class VehicleListingController extends GetxController
         if (vehicle == null) {
           debugPrint('❌ [revalidatePendingBid] Vehicle not found in list');
           CustomSnackbar.show(
-            message: 'Vehicle not found. Please refresh and try again.',
+            message: appL10n.aucVehicleNotFoundRefresh,
             type: SnackbarType.error,
           );
           return;
@@ -876,7 +875,7 @@ class VehicleListingController extends GetxController
         );
 
         CustomSnackbar.show(
-          message: 'Bid placed successfully!',
+          message: appL10n.bidPlacedSuccessfully,
           type: SnackbarType.success,
         );
 
@@ -893,13 +892,13 @@ class VehicleListingController extends GetxController
         CustomSnackbar.show(
           message: e.message.isNotEmpty
               ? e.message
-              : 'Bid could not be placed.',
+              : appL10n.aucBidCouldNotBePlaced,
           type: SnackbarType.error,
         );
       } catch (e) {
         debugPrint('❌ [revalidatePendingBid] Error: $e');
         CustomSnackbar.show(
-          message: 'Something went wrong. Please try again.',
+          message: appL10n.somethingWentWrong,
           type: SnackbarType.error,
         );
       } finally {
@@ -912,10 +911,10 @@ class VehicleListingController extends GetxController
         '(bid=${bid.bidAmount}, limit=$newLimit)',
       );
       CustomSnackbar.show(
-        message:
-            'Your bid of ₹${_fmt(bid.bidAmount)} exceeds your available '
-            'buying limit of ₹${_fmt(newLimit)}. '
-            'Please upgrade your plan to continue.',
+        message: appL10n.aucBidExceedsLimitUpgradeContinue(
+          _fmt(bid.bidAmount),
+          _fmt(newLimit),
+        ),
         type: SnackbarType.error,
       );
       // Keep pendingBid alive — the user will pick a higher-tier plan and

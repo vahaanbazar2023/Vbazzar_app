@@ -66,7 +66,8 @@ class ApprovedVehicleListingEntity {
   bool get isBookedVehicle => isBooked.toLowerCase() == 'yes';
   bool get isInspectionRequested => inspectionRequested.toLowerCase() == 'yes';
   bool get hasFitnessCertificate => fitnessAvailable.toLowerCase() == 'yes';
-  bool get hasOriginalInvoice => originalInvoiceAvailable.toLowerCase() == 'yes';
+  bool get hasOriginalInvoice =>
+      originalInvoiceAvailable.toLowerCase() == 'yes';
   bool get isGstApplicable => gstApplicable.toLowerCase() == 'yes';
 
   /// Returns the first image URL or null if no images exist
@@ -74,12 +75,10 @@ class ApprovedVehicleListingEntity {
       (files?.images.isNotEmpty == true) ? files!.images.first.fileUrl : null;
 
   /// Whether the vehicle has an RC document
-  bool get hasRcDocument =>
-      files?.rcDocuments.isNotEmpty == true;
+  bool get hasRcDocument => files?.rcDocuments.isNotEmpty == true;
 
   /// Whether the vehicle has an insurance document
-  bool get hasInsuranceDocument =>
-      files?.insuranceDocuments.isNotEmpty == true;
+  bool get hasInsuranceDocument => files?.insuranceDocuments.isNotEmpty == true;
 
   /// Display title combining brand and year
   String get displayTitle {

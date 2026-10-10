@@ -4,6 +4,7 @@ import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:intl_phone_field/phone_number.dart';
 import '../../constants/app_colors.dart';
 import '../typography/app_text_styles.dart';
+import '../../extensions/context_extensions.dart';
 
 /// Custom phone input field with country code picker and flags
 ///
@@ -111,7 +112,7 @@ class _CustomPhoneInputFieldState extends State<CustomPhoneInputField> {
             readOnly: widget.readOnly,
             initialCountryCode: widget.initialCountryCode,
             decoration: InputDecoration(
-              hintText: widget.placeholder ?? 'Enter phone number',
+              hintText: widget.placeholder ?? context.l10n.coreEnterPhoneNumber,
               hintStyle:
                   widget.placeholderStyle ??
                   AppTextStyles.getMontserratStyle(

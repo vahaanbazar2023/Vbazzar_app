@@ -7,6 +7,7 @@ import '../../../core/constants/app_colors.dart';
 import '../../../core/design_system/organisms/app_header.dart';
 import '../controllers/notification_controller.dart';
 import '../models/notification_model.dart';
+import '../../../core/extensions/context_extensions.dart';
 
 class NotificationScreen extends GetView<NotificationController> {
   const NotificationScreen({super.key});
@@ -24,7 +25,10 @@ class NotificationScreen extends GetView<NotificationController> {
         children: [
           SafeArea(
             bottom: false,
-            child: AppHeader(title: 'Notifications', showBack: true),
+            child: AppHeader(
+              title: context.l10n.coreNotifications,
+              showBack: true,
+            ),
           ),
           // ── Mark all read — right-aligned, below header ──────
           Obx(() {
@@ -49,13 +53,17 @@ class NotificationScreen extends GetView<NotificationController> {
                         color: AppColors.primary,
                       ),
                       SizedBox(width: 4.w),
-                      Text(
-                        'Mark all read',
-                        style: TextStyle(
-                          fontFamily: 'Montserrat',
-                          fontSize: 11.sp,
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.primary,
+                      Flexible(
+                        child: Text(
+                          context.l10n.coreMarkAllRead,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontFamily: 'Montserrat',
+                            fontSize: 11.sp,
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.primary,
+                          ),
                         ),
                       ),
                     ],
@@ -88,7 +96,7 @@ class NotificationScreen extends GetView<NotificationController> {
                 return _EmptyState();
               }
 
-              final grouped = _groupByDay(controller.notifications);
+              final grouped = _groupByDay(context, controller.notifications);
 
               return NotificationListener<ScrollNotification>(
                 onNotification: (n) {
@@ -131,7 +139,7 @@ class NotificationScreen extends GetView<NotificationController> {
 
   // ── Grouping helpers ────────────────────────────────────────────
 
-  List<_Group> _groupByDay(List<AppNotification> items) {
+  List<_Group> _groupByDay(BuildContext context, List<AppNotification> items) {
     final map = <String, List<AppNotification>>{};
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
@@ -145,9 +153,9 @@ class NotificationScreen extends GetView<NotificationController> {
       );
       String label;
       if (d == today) {
-        label = 'Today';
+        label = context.l10n.today;
       } else if (d == yesterday) {
-        label = 'Yesterday';
+        label = context.l10n.yesterday;
       } else {
         label = DateFormat('dd MMM yyyy').format(d);
       }
@@ -238,9 +246,9 @@ class _NotificationTile extends StatelessWidget {
     final timeStr = DateFormat('h:mm a').format(n.createdAt.toLocal());
     final diff = DateTime.now().difference(n.createdAt);
     final timeLabel = diff.inMinutes < 60
-        ? '${diff.inMinutes} min ago'
+        ? context.l10n.coreMinAgo(diff.inMinutes)
         : diff.inHours < 24
-        ? '${diff.inHours} hr ago'
+        ? context.l10n.coreHrAgo(diff.inHours)
         : timeStr;
 
     return GestureDetector(
@@ -298,7 +306,9 @@ class _NotificationTile extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              _typeLabel(n),
+                              _typeLabel(context, n),
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
                               style: TextStyle(
                                 fontFamily: 'Montserrat',
                                 fontSize: 10.sp,
@@ -323,6 +333,8 @@ class _NotificationTile extends StatelessWidget {
                       SizedBox(width: 8.w),
                       Text(
                         timeLabel,
+                        maxLines: 2,
+                        textAlign: TextAlign.end,
                         style: TextStyle(
                           fontFamily: 'Montserrat',
                           fontSize: 10.sp,
@@ -356,21 +368,21 @@ class _NotificationTile extends StatelessWidget {
     );
   }
 
-  String _typeLabel(AppNotification n) {
+  String _typeLabel(BuildContext context, AppNotification n) {
     final onclick = n.onClickRoute ?? '';
     if (onclick.contains('auction') || onclick.contains('bid')) {
-      return 'LIVE AUCTION';
+      return context.l10n.coreNotifLiveAuction;
     }
     if (onclick.contains('buySell') || onclick.contains('buy')) {
-      return 'PRICE UPDATE';
+      return context.l10n.coreNotifPriceUpdate;
     }
     if (onclick.contains('wallet') || onclick.contains('referral')) {
-      return 'REFERRAL BONUS';
+      return context.l10n.coreNotifReferralBonus;
     }
     if (onclick.contains('subscription') || onclick.contains('payment')) {
-      return 'PAYMENT';
+      return context.l10n.coreNotifPayment;
     }
-    return 'GENERAL';
+    return context.l10n.coreNotifGeneral;
   }
 
   IconData _iconData(AppNotification n) {
@@ -426,7 +438,7 @@ class _EmptyState extends StatelessWidget {
           ),
           SizedBox(height: 16.h),
           Text(
-            'No notifications yet',
+            context.l10n.coreNoNotificationsYet,
             style: TextStyle(
               fontFamily: 'Montserrat',
               fontSize: 15.sp,
@@ -436,7 +448,7 @@ class _EmptyState extends StatelessWidget {
           ),
           SizedBox(height: 6.h),
           Text(
-            "We'll notify you about auctions, bids and more.",
+            context.l10n.coreNotifyAboutAuctions,
             style: TextStyle(
               fontFamily: 'Montserrat',
               fontSize: 12.sp,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../../../core/extensions/context_extensions.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_sizes.dart';
 import '../../../theme/app_fonts.dart';
@@ -94,6 +95,8 @@ class ShopCard extends StatelessWidget {
                           Expanded(
                             child: Text(
                               shop.shopName,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
                               style: AppFonts.titleSmall.copyWith(
                                 fontWeight: FontWeight.w600,
                                 color: AppColors.textPrimary,
@@ -129,7 +132,8 @@ class ShopCard extends StatelessWidget {
                 _buildStatChip(
                   icon: Icons.location_on_rounded,
                   iconColor: AppColors.info,
-                  label: '${shop.distanceKm.toStringAsFixed(1)} km',
+                  label:
+                      '${shop.distanceKm.toStringAsFixed(1)} ${context.l10n.km}',
                 ),
                 SizedBox(width: 12.w),
                 // Rating stars
@@ -161,7 +165,7 @@ class ShopCard extends StatelessWidget {
             SizedBox(height: 14.h),
 
             // ── Bottom: Gradient Contact button ──────────────
-            _buildContactButton(),
+            _buildContactButton(context),
           ],
         ),
       ),
@@ -225,13 +229,14 @@ class ShopCard extends StatelessWidget {
   /// Gradient-filled button:
   /// • mobile_number empty → shows "Contact" → tapping triggers payment flow
   /// • mobile_number present → shows the number → tapping opens dialer
-  Widget _buildContactButton() {
+  Widget _buildContactButton(BuildContext context) {
     final hasPhone = shop.hasValidMobileNumber;
     return GestureDetector(
       onTap: onContact,
       child: Container(
         width: double.infinity,
-        height: 42.h,
+        constraints: BoxConstraints(minHeight: 42.h),
+        padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 4.h),
         decoration: BoxDecoration(
           gradient: _ctaGradient,
           borderRadius: BorderRadius.circular(AppSizes.radiusFull),
@@ -252,12 +257,16 @@ class ShopCard extends StatelessWidget {
               color: AppColors.white,
             ),
             SizedBox(width: 8.w),
-            Text(
-              hasPhone ? shop.mobileNumber : 'Contact',
-              style: AppFonts.titleSmall.copyWith(
-                color: AppColors.white,
-                fontWeight: FontWeight.w600,
-                letterSpacing: 0.3,
+            Flexible(
+              child: Text(
+                hasPhone ? shop.mobileNumber : context.l10n.contact,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: AppFonts.titleSmall.copyWith(
+                  color: AppColors.white,
+                  fontWeight: FontWeight.w600,
+                  letterSpacing: 0.3,
+                ),
               ),
             ),
           ],

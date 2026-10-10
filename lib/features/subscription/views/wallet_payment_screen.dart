@@ -4,6 +4,7 @@ import '../../../core/constants/app_assets.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_sizes.dart';
 import '../../../core/design_system/templates/app_layout.dart';
+import '../../../core/extensions/context_extensions.dart';
 import '../../../features/subscription/controllers/subscription_confirm_controller.dart';
 import '../models/subscription_plan.dart';
 
@@ -36,7 +37,7 @@ class WalletPaymentScreen extends StatelessWidget {
     );
 
     return AppLayout(
-      title: 'My Wallet',
+      title: context.l10n.myWallet,
       subtitle: '',
       showBack: true,
       onBack: () => Get.back(),
@@ -151,15 +152,18 @@ class _WalletBodyState extends State<_WalletBody> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text(
-                    'Available Wallet Balance',
-                    style: TextStyle(
-                      fontFamily: 'Plus Jakarta Sans',
-                      fontWeight: FontWeight.w500,
-                      fontSize: 16,
-                      color: Color(0xB8000000),
+                  Expanded(
+                    child: Text(
+                      context.l10n.profSubAvailableWalletBalance,
+                      style: const TextStyle(
+                        fontFamily: 'Plus Jakarta Sans',
+                        fontWeight: FontWeight.w500,
+                        fontSize: 16,
+                        color: Color(0xB8000000),
+                      ),
                     ),
                   ),
+                  const SizedBox(width: 8),
                   Text(
                     '₹${walletBalance.toStringAsFixed(walletBalance % 1 == 0 ? 0 : 2)}',
                     style: const TextStyle(
@@ -239,7 +243,7 @@ class _WalletBodyState extends State<_WalletBody> {
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          'Validity : ${widget.plan.metricLabel}',
+                          context.l10n.validity(widget.plan.metricLabel),
                           style: const TextStyle(
                             fontFamily: 'Montserrat',
                             fontWeight: FontWeight.w500,
@@ -338,16 +342,18 @@ class _WalletBodyState extends State<_WalletBody> {
                         : null,
                   ),
                   const SizedBox(width: 10),
-                  Text(
-                    'Pay from wallet balance',
-                    style: TextStyle(
-                      fontFamily: 'Montserrat',
-                      fontWeight: FontWeight.w500,
-                      fontSize: 16,
-                      color: hasWalletBalance && hasRedeemable
-                          ? Colors.black
-                          : AppColors.grey400,
-                      letterSpacing: 0.32,
+                  Expanded(
+                    child: Text(
+                      context.l10n.profSubPayFromWalletBalance,
+                      style: TextStyle(
+                        fontFamily: 'Montserrat',
+                        fontWeight: FontWeight.w500,
+                        fontSize: 16,
+                        color: hasWalletBalance && hasRedeemable
+                            ? Colors.black
+                            : AppColors.grey400,
+                        letterSpacing: 0.32,
+                      ),
                     ),
                   ),
                 ],
@@ -383,14 +389,20 @@ class _WalletBodyState extends State<_WalletBody> {
                           shaderCallback: (bounds) => const LinearGradient(
                             colors: [_ctaStart, _ctaEnd],
                           ).createShader(bounds),
-                          child: Text(
-                            'Proceed Payment ${widget.controller.priceDisplay.value}',
-                            style: const TextStyle(
-                              fontFamily: 'Montserrat',
-                              fontWeight: FontWeight.w600,
-                              fontSize: 18,
-                              color: Colors.white,
-                              letterSpacing: 0.36,
+                          child: FittedBox(
+                            fit: BoxFit.scaleDown,
+                            child: Text(
+                              context.l10n.profSubProceedPaymentAmount(
+                                widget.controller.priceDisplay.value,
+                              ),
+                              maxLines: 1,
+                              style: const TextStyle(
+                                fontFamily: 'Montserrat',
+                                fontWeight: FontWeight.w600,
+                                fontSize: 18,
+                                color: Colors.white,
+                                letterSpacing: 0.36,
+                              ),
                             ),
                           ),
                         ),
@@ -430,14 +442,16 @@ class _WalletBodyState extends State<_WalletBody> {
                             ),
                           ),
                           const SizedBox(width: 8),
-                          const Text(
-                            'Terms & Conditions',
-                            style: TextStyle(
-                              fontFamily: 'Montserrat',
-                              fontWeight: FontWeight.w600,
-                              fontSize: 14,
-                              color: _termsColor,
-                              letterSpacing: 0.2,
+                          Expanded(
+                            child: Text(
+                              context.l10n.profSubTermsConditions,
+                              style: const TextStyle(
+                                fontFamily: 'Montserrat',
+                                fontWeight: FontWeight.w600,
+                                fontSize: 14,
+                                color: _termsColor,
+                                letterSpacing: 0.2,
+                              ),
                             ),
                           ),
                         ],
@@ -445,21 +459,18 @@ class _WalletBodyState extends State<_WalletBody> {
                       const SizedBox(height: 14),
 
                       // Bullet points
-                      const _TermsBullet(
-                        text:
-                            'Wallet balance is non-transferable and can only be used for subscription payments within the app.',
+                      _TermsBullet(
+                        text: context.l10n.profSubWalletTerm1,
                         color: AppColors.grey650,
                       ),
                       const SizedBox(height: 10),
-                      const _TermsBullet(
-                        text:
-                            'Once a payment is made using wallet balance, it cannot be reversed or refunded.',
+                      _TermsBullet(
+                        text: context.l10n.profSubWalletTerm2,
                         color: AppColors.grey650,
                       ),
                       const SizedBox(height: 10),
-                      const _TermsBullet(
-                        text:
-                            'Wallet balance does not carry any interest and is subject to the company\'s terms of service.',
+                      _TermsBullet(
+                        text: context.l10n.profSubWalletTerm3,
                         color: AppColors.grey650,
                       ),
                     ],

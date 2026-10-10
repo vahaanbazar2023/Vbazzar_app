@@ -7,6 +7,7 @@ import '../../../core/constants/app_colors.dart';
 import '../../../core/design_system/atoms/custom_loader.dart';
 import '../../../core/design_system/molecules/gradient_button.dart';
 import '../../../core/design_system/organisms/app_header.dart';
+import '../../../core/extensions/context_extensions.dart';
 import '../controllers/profile_controller.dart';
 import '../models/wallet_models.dart';
 
@@ -46,7 +47,7 @@ class _CashOutScreenState extends State<CashOutScreen>
       body: Column(
         children: [
           SizedBox(height: MediaQuery.of(context).padding.top),
-          AppHeader(title: 'Withdraw to Bank'),
+          AppHeader(title: context.l10n.profWithdrawToBank),
           // ── Balance strip ────────────────────────────────────
           _BalanceSummaryStrip(ctrl: _ctrl),
           // ── Tabs ─────────────────────────────────────────────
@@ -84,9 +85,19 @@ class _CashOutScreenState extends State<CashOutScreen>
           fontWeight: FontWeight.w500,
           fontSize: 13.sp,
         ),
-        tabs: const [
-          Tab(text: 'Withdraw'),
-          Tab(text: 'History'),
+        tabs: [
+          Tab(
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(context.l10n.profWithdraw, maxLines: 1),
+            ),
+          ),
+          Tab(
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(context.l10n.profHistory, maxLines: 1),
+            ),
+          ),
         ],
       ),
     );
@@ -127,7 +138,7 @@ class _BalanceSummaryStrip extends StatelessWidget {
             Expanded(
               child: _StripItem(
                 icon: Icons.account_balance_wallet_rounded,
-                label: 'Wallet Balance',
+                label: context.l10n.profWalletBalance,
                 value: '₹${_fmt(balance)}',
               ),
             ),
@@ -139,9 +150,9 @@ class _BalanceSummaryStrip extends StatelessWidget {
             Expanded(
               child: _StripItem(
                 icon: Icons.south_rounded,
-                label: 'Max Withdrawal',
+                label: context.l10n.profMaxWithdrawal,
                 value: '₹${_fmt(max)}',
-                sub: '50% of balance',
+                sub: context.l10n.profFiftyPercentOfBalance,
               ),
             ),
           ],
@@ -187,6 +198,8 @@ class _StripItem extends StatelessWidget {
               children: [
                 Text(
                   label,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
                   style: TextStyle(
                     fontFamily: 'Montserrat',
                     fontSize: 9.sp,
@@ -207,6 +220,8 @@ class _StripItem extends StatelessWidget {
                 if (sub != null)
                   Text(
                     sub!,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                     style: TextStyle(
                       fontFamily: 'Montserrat',
                       fontSize: 8.sp,
@@ -268,11 +283,15 @@ class _CashOutRequestTabState extends State<_CashOutRequestTab>
     final amount = double.tryParse(_amountCtrl.text.trim()) ?? 0.0;
     if (eligibility != null) {
       if (amount > eligibility.maximumCashOut) {
-        _snack('Maximum withdrawal is ₹${_fmt(eligibility.maximumCashOut)}');
+        _snack(
+          context.l10n.profMaxWithdrawalIs(_fmt(eligibility.maximumCashOut)),
+        );
         return;
       }
       if (amount < eligibility.minimumCashOut) {
-        _snack('Minimum withdrawal is ₹${_fmt(eligibility.minimumCashOut)}');
+        _snack(
+          context.l10n.profMinWithdrawalIs(_fmt(eligibility.minimumCashOut)),
+        );
         return;
       }
     }
@@ -340,9 +359,10 @@ class _CashOutRequestTabState extends State<_CashOutRequestTab>
             if (eligibility != null) ...[
               _Banner(
                 icon: Icons.info_outline_rounded,
-                text:
-                    'Withdraw ₹${_fmt(eligibility.minimumCashOut)} – '
-                    '₹${_fmt(eligibility.maximumCashOut)} (max 50% of balance)',
+                text: context.l10n.profWithdrawRange(
+                  _fmt(eligibility.minimumCashOut),
+                  _fmt(eligibility.maximumCashOut),
+                ),
                 bgColor: AppColors.successBackground,
                 borderColor: AppColors.success.withValues(alpha: 0.25),
                 iconColor: AppColors.success,
@@ -390,13 +410,15 @@ class _CashOutRequestTabState extends State<_CashOutRequestTab>
                   ),
                 ),
                 SizedBox(width: 8.w),
-                Text(
-                  'Bank Account Details',
-                  style: TextStyle(
-                    fontFamily: 'Montserrat',
-                    fontWeight: FontWeight.w600,
-                    fontSize: 14.sp,
-                    color: AppColors.black,
+                Expanded(
+                  child: Text(
+                    context.l10n.profBankAccountDetails,
+                    style: TextStyle(
+                      fontFamily: 'Montserrat',
+                      fontWeight: FontWeight.w600,
+                      fontSize: 14.sp,
+                      color: AppColors.black,
+                    ),
                   ),
                 ),
               ],
@@ -405,8 +427,8 @@ class _CashOutRequestTabState extends State<_CashOutRequestTab>
             // ── Amount ────────────────────────────────────────
             _Field(
               controller: _amountCtrl,
-              label: 'Amount (₹)',
-              hint: 'Enter withdrawal amount',
+              label: context.l10n.profAmountRupees,
+              hint: context.l10n.profEnterWithdrawalAmount,
               icon: Icons.currency_rupee_rounded,
               keyboardType: const TextInputType.numberWithOptions(
                 decimal: true,
@@ -415,9 +437,10 @@ class _CashOutRequestTabState extends State<_CashOutRequestTab>
                 FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}')),
               ],
               validator: (v) {
-                if (v == null || v.trim().isEmpty) return 'Required';
+                if (v == null || v.trim().isEmpty) return context.l10n.required;
                 final a = double.tryParse(v.trim());
-                if (a == null || a <= 0) return 'Enter a valid amount';
+                if (a == null || a <= 0)
+                  return context.l10n.profEnterValidAmount;
                 return null;
               },
             ),
@@ -425,13 +448,13 @@ class _CashOutRequestTabState extends State<_CashOutRequestTab>
             // ── Name ──────────────────────────────────────────
             _Field(
               controller: _nameCtrl,
-              label: 'Account Holder Name',
-              hint: 'As per bank records',
+              label: context.l10n.profAccountHolderName,
+              hint: context.l10n.profAsPerBankRecords,
               icon: Icons.person_outline_rounded,
               cap: TextCapitalization.words,
               validator: (v) {
-                if (v == null || v.trim().isEmpty) return 'Required';
-                if (v.trim().length < 3) return 'Enter full name';
+                if (v == null || v.trim().isEmpty) return context.l10n.required;
+                if (v.trim().length < 3) return context.l10n.profEnterFullName;
                 return null;
               },
             ),
@@ -442,12 +465,13 @@ class _CashOutRequestTabState extends State<_CashOutRequestTab>
                 Expanded(
                   child: _Field(
                     controller: _bankCtrl,
-                    label: 'Bank Name',
-                    hint: 'e.g. SBI',
+                    label: context.l10n.profBankName,
+                    hint: context.l10n.profBankNameHint,
                     icon: Icons.account_balance_outlined,
                     cap: TextCapitalization.words,
                     validator: (v) {
-                      if (v == null || v.trim().isEmpty) return 'Required';
+                      if (v == null || v.trim().isEmpty)
+                        return context.l10n.required;
                       return null;
                     },
                   ),
@@ -456,8 +480,8 @@ class _CashOutRequestTabState extends State<_CashOutRequestTab>
                 Expanded(
                   child: _Field(
                     controller: _branchCtrl,
-                    label: 'Branch (opt.)',
-                    hint: 'Branch name',
+                    label: context.l10n.profBranchOptional,
+                    hint: context.l10n.profBranchNameHint,
                     icon: Icons.store_outlined,
                     cap: TextCapitalization.words,
                   ),
@@ -468,14 +492,15 @@ class _CashOutRequestTabState extends State<_CashOutRequestTab>
             // ── Account number ────────────────────────────────
             _Field(
               controller: _accountCtrl,
-              label: 'Account Number',
-              hint: 'Enter account number',
+              label: context.l10n.profAccountNumber,
+              hint: context.l10n.profEnterAccountNumber,
               icon: Icons.credit_card_outlined,
               keyboardType: TextInputType.number,
               formatters: [FilteringTextInputFormatter.digitsOnly],
               validator: (v) {
-                if (v == null || v.trim().isEmpty) return 'Required';
-                if (v.trim().length < 9) return 'Invalid account number';
+                if (v == null || v.trim().isEmpty) return context.l10n.required;
+                if (v.trim().length < 9)
+                  return context.l10n.profInvalidAccountNumber;
                 return null;
               },
             ),
@@ -483,8 +508,8 @@ class _CashOutRequestTabState extends State<_CashOutRequestTab>
             // ── IFSC ─────────────────────────────────────────
             _Field(
               controller: _ifscCtrl,
-              label: 'IFSC Code',
-              hint: 'e.g. SBIN0001234',
+              label: context.l10n.profIfscCode,
+              hint: context.l10n.profIfscHint,
               icon: Icons.tag_rounded,
               cap: TextCapitalization.characters,
               formatters: [
@@ -492,11 +517,11 @@ class _CashOutRequestTabState extends State<_CashOutRequestTab>
                 LengthLimitingTextInputFormatter(11),
               ],
               validator: (v) {
-                if (v == null || v.trim().isEmpty) return 'Required';
+                if (v == null || v.trim().isEmpty) return context.l10n.required;
                 if (!RegExp(
                   r'^[A-Z]{4}0[A-Z0-9]{6}$',
                 ).hasMatch(v.trim().toUpperCase())) {
-                  return 'Invalid IFSC';
+                  return context.l10n.profInvalidIfsc;
                 }
                 return null;
               },
@@ -506,7 +531,9 @@ class _CashOutRequestTabState extends State<_CashOutRequestTab>
             Obx(() {
               final loading = widget.ctrl.isSubmittingCashOut.value;
               return GradientButton(
-                text: loading ? 'Submitting…' : 'Request Withdrawal',
+                text: loading
+                    ? context.l10n.profSubmitting
+                    : context.l10n.profRequestWithdrawal,
                 onPressed: canCashOut && !loading ? _submit : null,
                 isLoading: loading,
               );
@@ -514,7 +541,7 @@ class _CashOutRequestTabState extends State<_CashOutRequestTab>
             SizedBox(height: 8.h),
             Center(
               child: Text(
-                'Processed within 2–3 business days',
+                context.l10n.profProcessedWithin,
                 style: TextStyle(
                   fontFamily: 'Montserrat',
                   fontSize: 10.sp,
@@ -631,7 +658,7 @@ class _EmptyHistory extends StatelessWidget {
             ),
             SizedBox(height: 12.h),
             Text(
-              'No withdrawals yet',
+              context.l10n.profNoWithdrawalsYet,
               style: TextStyle(
                 fontFamily: 'Montserrat',
                 fontWeight: FontWeight.w600,
@@ -641,7 +668,7 @@ class _EmptyHistory extends StatelessWidget {
             ),
             SizedBox(height: 6.h),
             Text(
-              'Your withdrawal requests will appear here.',
+              context.l10n.profWithdrawalRequestsAppearHere,
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontFamily: 'Montserrat',
@@ -676,10 +703,10 @@ class _HistoryCard extends StatelessWidget {
     return AppColors.warningBackground;
   }
 
-  String get _statusLabel {
-    if (entry.isPaid) return 'Paid';
-    if (entry.isRejected) return 'Rejected';
-    return 'Requested';
+  String _statusLabel(BuildContext context) {
+    if (entry.isPaid) return context.l10n.profPaid;
+    if (entry.isRejected) return context.l10n.profRejected;
+    return context.l10n.profRequested;
   }
 
   IconData get _statusIcon {
@@ -739,30 +766,36 @@ class _HistoryCard extends StatelessWidget {
                   ),
                 ),
                 // Right: status chip
-                Container(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 10.w,
-                    vertical: 5.h,
-                  ),
-                  decoration: BoxDecoration(
-                    color: _statusBg,
-                    borderRadius: BorderRadius.circular(20.r),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(_statusIcon, size: 12.r, color: _statusColor),
-                      SizedBox(width: 4.w),
-                      Text(
-                        _statusLabel,
-                        style: TextStyle(
-                          fontFamily: 'Montserrat',
-                          fontSize: 11.sp,
-                          fontWeight: FontWeight.w600,
-                          color: _statusColor,
+                Flexible(
+                  child: Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 10.w,
+                      vertical: 5.h,
+                    ),
+                    decoration: BoxDecoration(
+                      color: _statusBg,
+                      borderRadius: BorderRadius.circular(20.r),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(_statusIcon, size: 12.r, color: _statusColor),
+                        SizedBox(width: 4.w),
+                        Flexible(
+                          child: Text(
+                            _statusLabel(context),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              fontFamily: 'Montserrat',
+                              fontSize: 11.sp,
+                              fontWeight: FontWeight.w600,
+                              color: _statusColor,
+                            ),
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ],
@@ -779,13 +812,13 @@ class _HistoryCard extends StatelessWidget {
                   children: [
                     Expanded(
                       child: _Detail(
-                        label: 'Account Holder',
+                        label: context.l10n.profAccountHolder,
                         value: entry.accountHolderName,
                       ),
                     ),
                     Expanded(
                       child: _Detail(
-                        label: 'Account No.',
+                        label: context.l10n.profAccountNoShort,
                         value: _mask(entry.accountNumber),
                       ),
                     ),
@@ -795,16 +828,26 @@ class _HistoryCard extends StatelessWidget {
                 Row(
                   children: [
                     Expanded(
-                      child: _Detail(label: 'Bank', value: entry.bankName),
+                      child: _Detail(
+                        label: context.l10n.profBank,
+                        value: entry.bankName,
+                      ),
                     ),
                     Expanded(
-                      child: _Detail(label: 'IFSC', value: entry.ifscCode),
+                      child: _Detail(
+                        label: context.l10n.profIfsc,
+                        value: entry.ifscCode,
+                      ),
                     ),
                   ],
                 ),
                 if (entry.id.isNotEmpty) ...[
                   SizedBox(height: 8.h),
-                  _Detail(label: 'Payout ID', value: entry.id, fullWidth: true),
+                  _Detail(
+                    label: context.l10n.profPayoutId,
+                    value: entry.id,
+                    fullWidth: true,
+                  ),
                 ],
               ],
             ),

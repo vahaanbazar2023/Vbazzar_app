@@ -11,7 +11,7 @@ class InspectionService {
   final NetworkService _network;
 
   InspectionService({NetworkService? network})
-      : _network = network ?? NetworkService.to;
+    : _network = network ?? NetworkService.to;
 
   /// Fetch valuation dropdown options for forms (agent form only).
   Future<dio.Response> getValuationDropdownOptions({
@@ -78,10 +78,7 @@ class InspectionService {
         formData.files.add(
           MapEntry(
             key,
-            await dio.MultipartFile.fromFile(
-              file.path!,
-              filename: file.name,
-            ),
+            await dio.MultipartFile.fromFile(file.path!, filename: file.name),
           ),
         );
       }
@@ -96,10 +93,7 @@ class InspectionService {
         formData.files.add(
           MapEntry(
             key,
-            await dio.MultipartFile.fromFile(
-              file.path!,
-              filename: file.name,
-            ),
+            await dio.MultipartFile.fromFile(file.path!, filename: file.name),
           ),
         );
       }
@@ -114,10 +108,7 @@ class InspectionService {
         formData.files.add(
           MapEntry(
             key,
-            await dio.MultipartFile.fromFile(
-              file.path!,
-              filename: file.name,
-            ),
+            await dio.MultipartFile.fromFile(file.path!, filename: file.name),
           ),
         );
       }
@@ -156,18 +147,14 @@ class InspectionService {
     // Convert all file lists to MultipartFile
     for (final entry in request.fileFields.entries) {
       for (int i = 0; i < entry.value.length; i++) {
-        multipartFiles['${entry.key}[$i]'] =
-            await dio.MultipartFile.fromFile(
+        multipartFiles['${entry.key}[$i]'] = await dio.MultipartFile.fromFile(
           entry.value[i].path,
           filename: entry.value[i].path.split('/').last,
         );
       }
     }
 
-    final formData = dio.FormData.fromMap({
-      ...fields,
-      ...multipartFiles,
-    });
+    final formData = dio.FormData.fromMap({...fields, ...multipartFiles});
 
     debugPrint('══════════════════════════════════════════');
     debugPrint('📤 AGENT VALUATION FORM');
@@ -196,11 +183,7 @@ class InspectionService {
     int page = 1,
     int limit = 10,
   }) async {
-    final requestData = {
-      'user_id': userId,
-      'page': page,
-      'limit': limit,
-    };
+    final requestData = {'user_id': userId, 'page': page, 'limit': limit};
 
     debugPrint('══════════════════════════════════════════');
     debugPrint('📤 MY INSPECTIONS REQUEST');

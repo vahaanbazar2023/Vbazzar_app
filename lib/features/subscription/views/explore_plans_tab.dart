@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 
 import '../../../core/constants/app_assets.dart';
 import '../../../core/constants/app_colors.dart';
+import '../../../core/extensions/context_extensions.dart';
 import '../../../routes/app_routes.dart';
 import '../models/user_subscription.dart';
 
@@ -15,58 +16,59 @@ import '../models/user_subscription.dart';
 class ExplorePlansTab extends StatelessWidget {
   const ExplorePlansTab({super.key});
 
-  static const _plans = [
+  List<_ExplorePlanItem> _plans(BuildContext context) => [
     _ExplorePlanItem(
       typeCode: SubscriptionTypeCode.auction,
-      title: 'Auction Access Plan',
-      description: 'Unlock unlimited access to live auctions',
+      title: context.l10n.profSubAuctionAccessPlan,
+      description: context.l10n.profSubAuctionAccessDesc,
       iconAsset: AppAssets.subIconKing,
-      routeTitle: 'Auction Access Plan',
+      routeTitle: context.l10n.profSubAuctionAccessPlan,
     ),
     _ExplorePlanItem(
       typeCode: SubscriptionTypeCode.auctionBidLimit,
-      title: 'Auction Bid Limit',
-      description: 'Increase your bidding limit to place higher bids',
+      title: context.l10n.profSubAuctionBidLimit,
+      description: context.l10n.profSubBidLimitDesc,
       iconAsset: AppAssets.subIconShield,
-      routeTitle: 'Bid Limit Plan',
+      routeTitle: context.l10n.profSubBidLimitPlan,
     ),
     _ExplorePlanItem(
       typeCode: SubscriptionTypeCode.ownerContact,
-      title: 'Owner Contact Plan',
-      description: 'Connect directly with vehicle owners',
+      title: context.l10n.profSubOwnerContactPlan,
+      description: context.l10n.profSubOwnerContactDesc,
       iconAsset: AppAssets.subIconOwnerPack,
-      routeTitle: 'Owner Contact Plan',
+      routeTitle: context.l10n.profSubOwnerContactPlan,
     ),
     _ExplorePlanItem(
       typeCode: SubscriptionTypeCode.vehicleDetailsAccess,
-      title: 'Vehicle Details Plan',
-      description: 'Unlock complete vehicle history & details',
+      title: context.l10n.profSubVehicleDetailsPlan,
+      description: context.l10n.profSubVehicleDetailsDesc,
       iconAsset: AppAssets.subIconVehicle,
-      routeTitle: 'Vehicle Details Plan',
+      routeTitle: context.l10n.profSubVehicleDetailsPlan,
     ),
     _ExplorePlanItem(
       typeCode: SubscriptionTypeCode.vehicleInspection,
-      title: 'Inspection Plan',
-      description: 'Request professional vehicle inspection',
+      title: context.l10n.profSubInspectionPlan,
+      description: context.l10n.profSubInspectionDesc,
       iconAsset: AppAssets.subIconInspection,
-      routeTitle: 'Inspection Plan',
+      routeTitle: context.l10n.profSubInspectionPlan,
     ),
     _ExplorePlanItem(
       typeCode: SubscriptionTypeCode.mechanicContact,
-      title: 'Mechanic Contact Plan',
-      description: 'Connect with certified mechanics near you',
+      title: context.l10n.profSubMechanicContactPlan,
+      description: context.l10n.profSubMechanicContactDesc,
       iconAsset: AppAssets.subIconMechanic,
-      routeTitle: 'Mechanic Contact Plan',
+      routeTitle: context.l10n.profSubMechanicContactPlan,
     ),
   ];
 
   @override
   Widget build(BuildContext context) {
+    final plans = _plans(context);
     return ListView.separated(
       padding: EdgeInsets.fromLTRB(16.w, 16.h, 16.w, 32.h),
-      itemCount: _plans.length,
+      itemCount: plans.length,
       separatorBuilder: (_, __) => SizedBox(height: 12.h),
-      itemBuilder: (_, i) => _ExploreCard(item: _plans[i]),
+      itemBuilder: (_, i) => _ExploreCard(item: plans[i]),
     );
   }
 }
@@ -165,7 +167,6 @@ class _ExploreCard extends StatelessWidget {
                       color: AppColors.grey500,
                       height: 1.4,
                     ),
-                    maxLines: 2,
                   ),
                 ],
               ),

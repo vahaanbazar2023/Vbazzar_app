@@ -6,6 +6,7 @@ import '../../../routes/app_routes.dart';
 import '../../subscription/models/user_subscription.dart';
 import '../../subscription/services/subscription_guard_service.dart';
 import '../models/category_item.dart';
+import '../../../core/extensions/context_extensions.dart';
 
 class CategoriesController extends GetxController {
   static const List<CategoryItem> categories = [
@@ -130,8 +131,8 @@ class CategoriesController extends GetxController {
       AppRoutes.subscription,
       arguments: {
         'subscription_source': SubscriptionTypeCode.auction,
-        'title': 'Choose Subscription Plan',
-        'subtitle': 'Choose a subscription plan to unlock features of auction',
+        'title': appL10n.coreChooseSubscriptionPlan,
+        'subtitle': appL10n.coreChooseSubscriptionPlanAuctionSubtitle,
       },
     );
   }

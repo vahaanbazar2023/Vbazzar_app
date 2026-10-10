@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
+import '../../../core/extensions/context_extensions.dart';
 import '../../../core/storage/secure_storage_service.dart';
 import '../../../core/storage/storage_keys.dart';
 import '../../../routes/app_routes.dart';
@@ -71,8 +72,7 @@ class SubscriptionController extends GetxController {
       images.assignAll(result.images);
       selectedPlanIndex.value = 0;
     } catch (e) {
-      errorMessage.value =
-          'Failed to load subscription plans. Please try again.';
+      errorMessage.value = appL10n.profSubFailedLoadPlans;
     } finally {
       isLoading.value = false;
     }
@@ -132,7 +132,7 @@ class MySubscriptionController extends GetxController {
       SubscriptionGuardService.to.invalidateAndReload();
     } catch (e, st) {
       debugPrint('❌ MySubscriptionController error: $e\n$st');
-      errorMessage.value = 'Failed to load subscriptions. Please try again.';
+      errorMessage.value = appL10n.profSubFailedLoadSubscriptions;
     } finally {
       isLoading.value = false;
     }

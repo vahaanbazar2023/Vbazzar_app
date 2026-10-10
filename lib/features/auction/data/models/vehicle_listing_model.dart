@@ -33,12 +33,15 @@ class VehicleListingModel extends VehicleListingEntity {
 
   factory VehicleListingModel.fromJson(Map<String, dynamic> json) {
     final rawImages = json['images'] as List<dynamic>? ?? [];
-    final imageUrls = rawImages.map((e) {
-      if (e is Map) {
-        return (e['url'] ?? e['image_url'] ?? e['path'] ?? '').toString();
-      }
-      return e.toString();
-    }).where((url) => url.isNotEmpty).toList();
+    final imageUrls = rawImages
+        .map((e) {
+          if (e is Map) {
+            return (e['url'] ?? e['image_url'] ?? e['path'] ?? '').toString();
+          }
+          return e.toString();
+        })
+        .where((url) => url.isNotEmpty)
+        .toList();
 
     final primaryImage = imageUrls.isNotEmpty ? imageUrls.first : null;
 
@@ -48,7 +51,8 @@ class VehicleListingModel extends VehicleListingEntity {
       make: json['make'] as String? ?? '',
       model: json['model'] as String? ?? '',
       variant: json['variant'] as String?,
-      manufacturingYear: (json['manufacturing_year'] ?? json['year'])?.toString(),
+      manufacturingYear: (json['manufacturing_year'] ?? json['year'])
+          ?.toString(),
       minimumPrice: (json['minimum_price'] as num?)?.toInt() ?? 0,
       currentBid: (json['current_bid'] as num?)?.toInt(),
       totalBids: (json['total_bids'] as num?)?.toInt() ?? 0,
@@ -102,4 +106,3 @@ class VehicleListingModel extends VehicleListingEntity {
     };
   }
 }
-

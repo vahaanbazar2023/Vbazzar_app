@@ -31,6 +31,24 @@ class LanguageController extends GetxController {
       localName: 'తెలుగు',
       flagAsset: 'assets/flags/te.png',
     ),
+    LanguageModel(
+      code: 'kn',
+      name: 'Kannada',
+      localName: 'ಕನ್ನಡ',
+      flagAsset: 'assets/flags/kn.png',
+    ),
+    LanguageModel(
+      code: 'ml',
+      name: 'Malayalam',
+      localName: 'മലയാളം',
+      flagAsset: 'assets/flags/ml.png',
+    ),
+    LanguageModel(
+      code: 'ta',
+      name: 'Tamil',
+      localName: 'தமிழ்',
+      flagAsset: 'assets/flags/ta.png',
+    ),
   ];
 
   @override
@@ -67,8 +85,8 @@ class LanguageController extends GetxController {
   void continueToHome() {
     if (selectedLanguage.value == null) {
       Get.snackbar(
-        'Language Required',
-        'Please select a language to continue',
+        appL10n.languageRequired,
+        appL10n.pleaseSelectALanguageToContinue,
         snackPosition: SnackPosition.TOP,
       );
       return;
@@ -88,8 +106,8 @@ class LanguageController extends GetxController {
   void switchLanguageAndGoBack() {
     if (selectedLanguage.value == null) {
       Get.snackbar(
-        'Language Required',
-        'Please select a language to continue',
+        appL10n.languageRequired,
+        appL10n.pleaseSelectALanguageToContinue,
         snackPosition: SnackPosition.TOP,
       );
       return;

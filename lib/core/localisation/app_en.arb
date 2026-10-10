@@ -2,11 +2,9 @@
   "@@locale": "en",
   "appName": "VahaanBazar",
   "appVersion": "1.0.0",
-  
   "welcomeToVahaanBazar": "Welcome to VahaanBazar",
   "selectPreferredLanguage": "Select your Preferred Language.",
   "saveSettings": "Save Settings",
-  
   "languagePreference": "Language Preference",
   "chooseYourPreferredLanguage": "Choose Your Preferred Language",
   "weWillUseThisAcrossTheApp": "We'll use this across the app !",
@@ -16,7 +14,6 @@
   "english": "English",
   "hindi": "Hindi",
   "telugu": "Telugu",
-  
   "loading": "Loading...",
   "retry": "Retry",
   "cancel": "Cancel",
@@ -35,7 +32,6 @@
   "showLess": "Show Less",
   "show_more": "Show More",
   "show_less": "Show Less",
-  
   "home": "Home",
   "categories": "Categories",
   "favorites": "Favorites",
@@ -43,7 +39,6 @@
   "settings": "Settings",
   "back": "Back",
   "next": "Next",
-  
   "login": "Login",
   "register": "Register",
   "logout": "Logout",
@@ -68,14 +63,13 @@
   "verify": "Verify",
   "help": "Help",
   "contact": "Contact",
-  "or": "Or",
-  "weWillSendYouOtp": "We will send you an One Time Password on this mobile number",
-  "phoneNumberPlaceholder": "+91 XXXXX XXXXX",
+  "or": "or",
+  "weWillSendYouOtp": "( We will send you OTP to the mentioned Number )",
+  "phoneNumberPlaceholder": "Phone number",
   "contactSupportForAssistance": "Contact support for assistance",
   "haveTroubleLoggingIn": "Have trouble logging in?",
-  "logInWithOtp": "Log In With OTP",
+  "logInWithOtp": "Log In with OTP",
   "otpSentTo": "OTP sent to",
-  
   "welcomeBack": "Welcome Back!",
   "findYourDreamVehicle": "Find Your Dream Vehicle",
   "searchVehicles": "Search vehicles...",
@@ -83,14 +77,12 @@
   "recentlyAdded": "Recently Added",
   "popularCategories": "Popular Categories",
   "nearbyDeals": "Nearby Deals",
-  
   "cars": "Cars",
   "bikes": "Bikes",
   "trucks": "Trucks",
   "autos": "Autos",
   "buses": "Buses",
   "others": "Others",
-  
   "price": "Price",
   "year": "Year",
   "brand": "Brand",
@@ -108,18 +100,15 @@
   "callNow": "Call Now",
   "sendMessage": "Send Message",
   "reportListing": "Report Listing",
-  
   "petrol": "Petrol",
   "diesel": "Diesel",
   "electric": "Electric",
   "hybrid": "Hybrid",
   "cng": "CNG",
   "lpg": "LPG",
-  
   "manual": "Manual",
   "automatic": "Automatic",
   "semiAutomatic": "Semi-Automatic",
-  
   "networkError": "Network error occurred. Please try again.",
   "serverError": "Server error occurred. Please try again later.",
   "noInternetConnection": "No internet connection available.",
@@ -127,292 +116,252 @@
   "noDataFound": "No data found.",
   "noVehiclesFound": "No vehicles found.",
   "emptyFavorites": "No favorites yet.",
-  "sessionExpired": "Session expired. Please login again.",
-  
+  "sessionExpired": "Session expired. Please restart the process.",
   "loginSuccessful": "Login successful!",
   "registrationSuccessful": "Registration successful!",
   "passwordResetSent": "Password reset link sent to your email.",
   "profileUpdated": "Profile updated successfully!",
   "addedToFavorites": "Added to favorites!",
   "removedFromFavorites": "Removed from favorites!",
-  
   "emailRequired": "Email is required",
-  "passwordRequired": "Password is required",
+  "passwordRequired": "Please enter password",
   "invalidEmail": "Please enter a valid email address",
   "passwordTooShort": "Password must be at least 6 characters",
   "passwordsDoNotMatch": "Passwords do not match",
   "phoneNumberRequired": "Phone number is required",
   "fullNameRequired": "Full name is required",
-  
-  "usernameRequired": "Please enter username or mobile number",
+  "usernameRequired": "Username is required",
   "usernameTooShort": "Username must be at least 3 characters",
-  "passwordRequired": "Please enter password",
-  "passwordTooShort": "Password must be at least 6 characters",
   "loginFailed": "Login failed. Please check your credentials.",
-  "enterMobileNumber": "Please enter your mobile number",
+  "enterMobileNumber": "Enter Mobile Number",
   "otpSendFailed": "Failed to send OTP. Please try again.",
-  
   "rupee": "₹",
   "dollar": "$",
   "euro": "€",
-  
   "km": "km",
   "cc": "cc",
   "hp": "hp",
   "kmpl": "kmpl",
   "seater": "seater",
-  
   "today": "Today",
   "yesterday": "Yesterday",
   "daysAgo": "days ago",
   "weeksAgo": "weeks ago",
   "monthsAgo": "months ago",
   "yearsAgo": "years ago",
-  
   "intro1Text": "Trusted platform for verified listings, fair pricing, and easy transactions.\nStart your resale journey now!",
   "intro2Text": "Your Resale Hub for Commercial Vehicles & Construction Equipment\nResale Made Simple",
-
-  
-    "usernameCannotBeEmpty": "Username cannot be empty.",
-    "passwordCannotBeEmpty": "Password cannot be empty.",
-    "usernameMinLength": "Username must be at least {length} characters",
-    "@usernameMinLength": {
-      "placeholders": {
-        "length": {
-          "type": "int"
-        }
+  "usernameCannotBeEmpty": "Username cannot be empty.",
+  "passwordCannotBeEmpty": "Password cannot be empty.",
+  "usernameMinLength": "Username must be at least {length} characters",
+  "@usernameMinLength": {
+    "placeholders": {
+      "length": {
+        "type": "int"
       }
-    },
-    "usernameInvalidPattern": "Username can only contain letters, numbers, underscores, and hyphens",
-    "usernameAlreadyExists": "Username already exists. Please choose a different username.",
-    "emailAlreadyExists": "Email already exists. Please use a different email address.",
-    "incorrectOtp": "Incorrect OTP. Please try again.",
-    "otpVerificationFailed": "OTP verification failed. Please try again.",
-    "sessionExpired": "Session expired. Please restart the process.",
-    "invalidPhoneNumber": "Invalid phone number. Please enter a valid phone number.",
-    "passwordMinLength": "Password must be at least {length} characters",
-    "@passwordMinLength": {
-      "placeholders": {
-        "length": {
-          "type": "int"
-        }
+    }
+  },
+  "usernameInvalidPattern": "Username can only contain letters, numbers, underscores, and hyphens",
+  "usernameAlreadyExists": "Username already exists. Please choose a different username.",
+  "emailAlreadyExists": "Email already exists. Please use a different email address.",
+  "incorrectOtp": "Incorrect OTP. Please try again.",
+  "otpVerificationFailed": "OTP verification failed. Please try again.",
+  "invalidPhoneNumber": "Invalid phone number. Please enter a valid phone number.",
+  "passwordMinLength": "Password must be at least {length} characters",
+  "@passwordMinLength": {
+    "placeholders": {
+      "length": {
+        "type": "int"
       }
-    },
-    "passwordMaxLength": "Password must be at most {length} characters",
-    "@passwordMaxLength": {
-      "placeholders": {
-        "length": {
-          "type": "int"
-        }
+    }
+  },
+  "passwordMaxLength": "Password must be at most {length} characters",
+  "@passwordMaxLength": {
+    "placeholders": {
+      "length": {
+        "type": "int"
       }
-    },
-    "invalidCredentials": "Invalid username or password.",
-    "loginFailedCheckCredentials": "Login failed. Please check your credentials.",
-    "loginwithOTFailed": " Please check your Mobile Number .",
-    
-    "logInWithOtp": "Log In with OTP",
-    "dontHaveAnAccount": "Don't have an account?",
-    "createAccount": "Create Account",
-    "enterYourMobileNumber": "Enter Your Mobile Number",
-    "weWillSendYouOtp": "( We will send you OTP to the mentioned Number )",
-    "enterMobileNumber": "Enter Mobile Number",
-    "phoneNumberPlaceholder": "Phone number",
-    "sendOtp": "Send OTP",
-    "or": "or",
-    "loginWith": "Login with",
-    "username": "Username",
-    "haveTroubleLoggingIn": "Have trouble logging in?",
-    "contact": "Contact",
-    "help": "Help",
-    "contactSupportForAssistance": "Contact support for assistance",
-    "pleaseEnterYourPhoneNumber": "Please enter your phone number",
-    "pleaseEnterValidPhoneNumber": "Please enter valid number",
-    "failedToSendOTP": "Failed to send OTP. Please try again.",
-    
-    "createAccount": "Create Account",
-    "enterFullName": "Enter your full name",
-    "enterEmail": "Enter your email",
-    "enterPhoneNumber": "Enter your phone number",
-    "enterPassword": "Enter your password",
-    "confirmYourPassword": "Confirm your password",
-    "creatingAccount": "Creating Account...",
-    "createAccountButton": "Create Account",
-    "registerWithOTP": "Register with OTP",
-    "alreadyHaveAccount": "Already have an account? ",
-    "termsAndConditionsText": "By creating an account, you agree to our",
-    "termsOfService": "Terms of Service",
-    "and": " and ",
-    "privacyPolicy": "Privacy Policy",
-    "city": "City",
-    "state": "State",
-    "enterCity": "Enter your city",
-    "enterState": "Enter your state",
-    "selectCity": "Select your city",
-    "selectState": "Select your state",
-    "firstName": "First Name",
-    "lastName": "Last Name",
-    "username": "Username",
-    "enterFirstName": "Enter your first name",
-    "enterLastName": "Enter your last name",
-    "enterUsername": "Enter your username",
-    "enterPassword": "Enter your password",
-    "reEnterPassword": "Re-enter Password",
-    "enterReEnterPassword": "Re-enter your password",
-    "phoneNumber": "Phone Number",
-    "enterPhoneNumber": "Enter your phone number",
-    "email": "Email",
-    "enterEmail": "Enter your email",
-    "signIn": "Sign In",
-    "firstNameRequired": "First name is required",
-    "lastNameRequired": "Last name is required",
-    "usernameRequired": "Username is required",
-    "firstNameMinLength": "First name must be at least {length} characters",
-    "@firstNameMinLength": {
-        "placeholders": {
-            "length": {
-                "type": "int"
-            }
-        }
-    },
-    "lastNameMinLength": "Last name must be at least {length} characters",
-    "@lastNameMinLength": {
-        "placeholders": {
-            "length": {
-                "type": "int"
-            }
-        }
-    },
-    "cityRequired": "City is required",
-    "stateRequired": "State is required",
-    "confirmPasswordRequired": "Please confirm your password",
-    "emailRequired": "Email is required",
-    "invalidEmailFormat": "Please enter a valid email",
-    "phoneRequired": "Phone number is required",
-    "invalidPhoneFormat": "Please enter valid number",
-    "namesCannotContainNumbers": "Names cannot contain numbers",
-    "invalidCharactersInName": "Invalid characters in name fields",
-    "newPasswordCannotBeEmpty": "New password cannot be empty",
-    "passwordMinLength8": "Password should be at least 8 characters",
-    "passwordComplexity": "Password must contain at least one uppercase letter, one lowercase letter, one number and one special character.",
-    "confirmPasswordCannotBeEmpty": "Confirm password cannot be empty",
-    "pleaseSelectCity": "Please select your City",
-    "pleaseSelectState": "Please select your State",
-    "pleaseEnterCompleteOTP": "Please enter complete OTP",
-    "invalidOTPEntered": "Invalid OTP entered",
-    "otpCannotBeEmpty": "OTP cannot be empty",
-    "emailCannotBeEmpty": "Email ID cannot be empty",
-    "enterValidEmailAddress": "Enter a valid email address",
-    "phoneCannotBeEmpty": "Phone number cannot be empty",
-    "enterValidPhoneNumber": "Enter a valid phone number",
-    "firstNameCannotBeEmpty": "First Name cannot be empty",
-    "lastNameCannotBeEmpty": "Last Name cannot be empty",
-    "otpVerifiedSuccessfully": "OTP Verified Successfully!",
-    "otpResent": "New OTP sent to your mobile number!",
-    "failedToResendOtp": "Failed to resend OTP.",
-    "otpSentSuccessfully": "OTP sent successfully to your phone number",
-    "transactionIdNotFound": "Transaction ID not found. Please request OTP again.",
-    "authError": "Authentication error occurred. Please try again.",
-    "validationError": "Validation error. Please check your input.",
-    "networkErrorOccurred": "Network error occurred. Please check your connection.",
-    "unexpectedError": "An unexpected error occurred. Please try again.",
-    "otpVerificationFailed": "OTP verification failed. Please try again.",
-    "continueButton": "Continue",
-    "facingIssuesGeneral": "Having trouble?",
-    "accessYourPortalWithLogin": "Access Your Portal with Login",
-    "pleaseLogIn": "Please Log In ",
-    "sendOtp": "Send OTP",
-    "loginWithUsername": "Login with Username",
-    "facingIssueWithOtpLogin": "Facing issue with OTP login?",
-    "updatePassword": "Update Password",
-    "enterOtp": "Enter OTP",
-    "loggingInViaOtp": "Logging in via OTP",
-    "enterSixDigitOtpSentTo": "Enter the 6 Digit OTP sent to",
-    "newPassword": "New Password",
-    "confirmNewPassword": "Confirm New Password",
-    "didNotReceiveOtp": "Didn't receive OTP?",
-    "resendOtp": "Resend OTP",
-    "enterVerificationCode": "Enter Verification Code",
-    "weAreAutomaticallyDetectingOtp": "We are automatically detecting OTP",
-    "facingIssuesReceivingOtp": "Facing issues receiving OTP?",
-    
-    "stateCannotBeEmpty": "State cannot be empty",
-    "stateMinLength": "State must be at least 2 characters",
-    "pleaseSelectStateFromDropdown": "Please select state from dropdown options",
-    "cityCannotBeEmpty": "City cannot be empty",
-    "cityMinLength": "City must be at least 2 characters",
-    "pleaseSelectCityFromDropdown": "Please select city from dropdown options",
-    "vehicleImagesCannotBeEmpty": "Please upload at least one vehicle image",
-    "mobileNumber": "Mobile Number",
-    "enterYourMobileNumber": "Enter Your Mobile Number",
-    "emailId": "Email ID",
-
-   
-
-    "about_title": "About Vahaan Bazar",
-    "intro_heading": "Introduction",
-    "intro_text_1": "Vahaan Bazar is India’s first-of-its-kind, next-generation digital marketplace for commercial vehicles, construction equipment, and end-to-end vehicle-related services.",
-    "intro_text_2": "Our user-friendly interface and transparent ecosystem empower buyers and sellers to connect, negotiate, and finalize deals in a timely and cost-efficient manner.",
-    "who_we_are_heading": "Who We Are",
-    "who_we_are_text_1": "We are a Hyderabad-based automotive startup, led by seasoned professionals with deep experience across OEMs, aftermarket services, sales, and startup innovation.",
-    "who_we_are_text_2": "With strong IT and operational capabilities, our team is focused on redefining how vehicles are bought, sold, and managed in India.",
-    "mission_vision_heading": "Mission & Vision",
-    "mission_text": "To Build a Generic Customer Satisfaction and provide a Fab Experience in terms of Digital Used Vehicles Market Place.",
-    "vision_text": "Our vision is to create an automotive digital ecosystem which connects automobile customers, OEM’s, Dealers, Banks, Insurance companies and other stakeholders.",
-    "what_we_do_heading": "What We Do",
-    "what_we_do_text_1": "We bridge the gap between buyers and sellers through our all-in-one platform.",
-    "what_we_do_text_2": "Whether you're a fleet operator, individual buyer, or dealer, Vahaan Bazar simplifies transactions with transparency and support at every step.",
-    "offerings_heading": "Our offerings include:",
-    "offering_vehicle_listings": "Vehicle Listings (new & used)",
-    "offering_valuation_tools": "Real-time Valuation Tools",
-    "offering_financing_rta": "Financing & RTA Documentation Assistance",
-    "offering_post_sale_services": "Post-Sale Services (Insurance, Towing, and more)",
-    "our_services_heading": "Our Services",
-    "service_vehicle_asset_solutions_heading": "Vehicle & Asset Solutions",
-    "service_buy_sell_title": "Buy & Sell:",
-    "service_buy_sell_desc": "Quick listings and easy access to quality vehicles and machines",
-    "service_inspection_title": "Inspection:",
-    "service_inspection_desc": "Ground checks and verified condition reports",
-    "service_valuation_title": "Valuation:",
-    "service_valuation_desc": "Market-linked pricing tools to support informed decision-making",
-    "service_support_compliance_heading": "Support & Compliance",
-    "service_finance_support_title": "Finance Support:",
-    "service_finance_support_desc": "Access to multiple NBFCs and banks for financing",
-    "service_rta_assistance_title": "RTA Assistance:",
-    "service_rta_assistance_desc": "Full documentation and ownership transfer solutions",
-    "service_insurance_title": "Insurance:",
-    "service_insurance_desc": "Best-in-class rates with high claim success support",
-    "service_operational_technical_heading": "Operational & Technical Services",
-    "service_leasing_rentals": "Leasing & Rentals",
-    "service_fleet_management": "Fleet Management Solutions",
-    "service_spare_parts": "Spare Parts (New & Used)",
-    "service_auctions": "Auctions (B2B & B2C)",
-    "service_scrap_towing": "Scrap Handling & Towing Services",
-    "service_web_app_dev": "Web & App Development for automotive businesses",
-    "why_choose_heading": "Why Choose Vahaan Bazar?",
-    "why_choose_extensive_reach_title": "Extensive Reach:",
-    "why_choose_extensive_reach_desc": "Pan-India network of sellers and buyers",
-    "why_choose_trust_transparency_title": "Trust & Transparency:",
-    "why_choose_trust_transparency_desc": "Verified data and honest pricing",
-    "why_choose_full_service_convenience_title": "Full-Service Convenience:",
-    "why_choose_full_service_convenience_desc": "One-stop platform from listing to delivery",
-    "why_choose_industry_expertise_title": "Industry Expertise:",
-    "why_choose_industry_expertise_desc": "Professionals guiding you with real-time support",
-    "our_commitment_heading": "Our Commitment",
-    "our_commitment_text_1": "At Vahaan Bazar, we don’t just enable transactions—we enhance the overall experience.",
-    "our_commitment_text_2": "Our commitment is to continuously evolve, innovate, and create value for every stakeholder by placing customer satisfaction at the heart of everything we do.",
-    "contact_us_heading": "Contact Us",
-    "contact_email": "contactus@vahaanbazar.com",
-    "contact_website": "www.vahaanbazar.com",
-    "contact_phone": "+91 88866 30456",
-    "contact_address": "Vahaan Bazar Private Limited",
-    "follow_us": "Follow us on:",
-    "social_instagram": "Instagram",
-    "social_facebook": "Facebook",
-    "social_linkedin": "LinkedIn",
-    "social_handle": "@vahaanbazar",
-    "update_term": "Update",
-    "edit_profile_term": "Edit Profile",
-     "settingsTitle": "Settings",
+    }
+  },
+  "invalidCredentials": "Invalid username or password.",
+  "loginFailedCheckCredentials": "Login failed. Please check your credentials.",
+  "loginwithOTFailed": " Please check your Mobile Number .",
+  "dontHaveAnAccount": "Don't have an account?",
+  "createAccount": "Create Account",
+  "enterYourMobileNumber": "Enter Your Mobile Number",
+  "sendOtp": "Send OTP",
+  "loginWith": "Login with",
+  "username": "Username",
+  "pleaseEnterYourPhoneNumber": "Please enter your phone number",
+  "pleaseEnterValidPhoneNumber": "Please enter valid number",
+  "failedToSendOTP": "Failed to send OTP. Please try again.",
+  "enterFullName": "Enter your full name",
+  "enterEmail": "Enter your email",
+  "enterPhoneNumber": "Enter your phone number",
+  "enterPassword": "Enter your password",
+  "confirmYourPassword": "Confirm your password",
+  "creatingAccount": "Creating Account...",
+  "createAccountButton": "Create Account",
+  "registerWithOTP": "Register with OTP",
+  "alreadyHaveAccount": "Already have an account? ",
+  "termsAndConditionsText": "By creating an account, you agree to our",
+  "termsOfService": "Terms of Service",
+  "and": " and ",
+  "privacyPolicy": "Privacy Policy",
+  "city": "City",
+  "state": "State",
+  "enterCity": "Enter your city",
+  "enterState": "Enter your state",
+  "selectCity": "Select City",
+  "selectState": "Select State",
+  "firstName": "First Name",
+  "lastName": "Last Name",
+  "enterFirstName": "Enter your first name",
+  "enterLastName": "Enter your last name",
+  "enterUsername": "Enter your username",
+  "reEnterPassword": "Re-enter Password",
+  "enterReEnterPassword": "Re-enter your password",
+  "signIn": "Sign In",
+  "firstNameRequired": "First name is required",
+  "lastNameRequired": "Last name is required",
+  "firstNameMinLength": "First name must be at least {length} characters",
+  "@firstNameMinLength": {
+    "placeholders": {
+      "length": {
+        "type": "int"
+      }
+    }
+  },
+  "lastNameMinLength": "Last name must be at least {length} characters",
+  "@lastNameMinLength": {
+    "placeholders": {
+      "length": {
+        "type": "int"
+      }
+    }
+  },
+  "cityRequired": "City is required",
+  "stateRequired": "State is required",
+  "confirmPasswordRequired": "Please confirm your password",
+  "invalidEmailFormat": "Please enter a valid email",
+  "phoneRequired": "Phone number is required",
+  "invalidPhoneFormat": "Please enter valid number",
+  "namesCannotContainNumbers": "Names cannot contain numbers",
+  "invalidCharactersInName": "Invalid characters in name fields",
+  "newPasswordCannotBeEmpty": "New password cannot be empty",
+  "passwordMinLength8": "Password should be at least 8 characters",
+  "passwordComplexity": "Password must contain at least one uppercase letter, one lowercase letter, one number and one special character.",
+  "confirmPasswordCannotBeEmpty": "Confirm password cannot be empty",
+  "pleaseSelectCity": "Please select your City",
+  "pleaseSelectState": "Please select your State",
+  "pleaseEnterCompleteOTP": "Please enter complete OTP",
+  "invalidOTPEntered": "Invalid OTP entered",
+  "otpCannotBeEmpty": "OTP cannot be empty",
+  "emailCannotBeEmpty": "Email ID cannot be empty",
+  "enterValidEmailAddress": "Enter a valid email address",
+  "phoneCannotBeEmpty": "Phone number cannot be empty",
+  "enterValidPhoneNumber": "Please enter a valid phone number",
+  "firstNameCannotBeEmpty": "First Name cannot be empty",
+  "lastNameCannotBeEmpty": "Last Name cannot be empty",
+  "otpVerifiedSuccessfully": "OTP Verified Successfully!",
+  "otpResent": "New OTP sent to your mobile number!",
+  "failedToResendOtp": "Failed to resend OTP.",
+  "otpSentSuccessfully": "OTP sent successfully to your phone number",
+  "transactionIdNotFound": "Transaction ID not found. Please request OTP again.",
+  "authError": "Authentication error occurred. Please try again.",
+  "validationError": "Validation error. Please check your input.",
+  "networkErrorOccurred": "Network error occurred. Please check your connection.",
+  "unexpectedError": "An unexpected error occurred. Please try again.",
+  "facingIssuesGeneral": "Having trouble?",
+  "accessYourPortalWithLogin": "Access Your Portal with Login",
+  "pleaseLogIn": "Please Log In ",
+  "loginWithUsername": "Login with Username",
+  "facingIssueWithOtpLogin": "Facing issue with OTP login?",
+  "updatePassword": "Update Password",
+  "enterOtp": "Enter OTP",
+  "loggingInViaOtp": "Logging in via OTP",
+  "enterSixDigitOtpSentTo": "Enter the 6 Digit OTP sent to",
+  "newPassword": "New Password",
+  "confirmNewPassword": "Confirm New Password",
+  "didNotReceiveOtp": "Didn't receive OTP?",
+  "resendOtp": "Resend OTP",
+  "enterVerificationCode": "Enter Verification Code",
+  "weAreAutomaticallyDetectingOtp": "We are automatically detecting OTP",
+  "facingIssuesReceivingOtp": "Facing issues receiving OTP?",
+  "stateCannotBeEmpty": "State cannot be empty",
+  "stateMinLength": "State must be at least 2 characters",
+  "pleaseSelectStateFromDropdown": "Please select state from dropdown options",
+  "cityCannotBeEmpty": "City cannot be empty",
+  "cityMinLength": "City must be at least 2 characters",
+  "pleaseSelectCityFromDropdown": "Please select city from dropdown options",
+  "vehicleImagesCannotBeEmpty": "Please upload at least one vehicle image",
+  "mobileNumber": "Mobile Number",
+  "emailId": "Email ID",
+  "about_title": "About Vahaan Bazar",
+  "intro_heading": "Introduction",
+  "intro_text_1": "Vahaan Bazar is India’s first-of-its-kind, next-generation digital marketplace for commercial vehicles, construction equipment, and end-to-end vehicle-related services.",
+  "intro_text_2": "Our user-friendly interface and transparent ecosystem empower buyers and sellers to connect, negotiate, and finalize deals in a timely and cost-efficient manner.",
+  "who_we_are_heading": "Who We Are",
+  "who_we_are_text_1": "We are a Hyderabad-based automotive startup, led by seasoned professionals with deep experience across OEMs, aftermarket services, sales, and startup innovation.",
+  "who_we_are_text_2": "With strong IT and operational capabilities, our team is focused on redefining how vehicles are bought, sold, and managed in India.",
+  "mission_vision_heading": "Mission & Vision",
+  "mission_text": "To Build a Generic Customer Satisfaction and provide a Fab Experience in terms of Digital Used Vehicles Market Place.",
+  "vision_text": "Our vision is to create an automotive digital ecosystem which connects automobile customers, OEM’s, Dealers, Banks, Insurance companies and other stakeholders.",
+  "what_we_do_heading": "What We Do",
+  "what_we_do_text_1": "We bridge the gap between buyers and sellers through our all-in-one platform.",
+  "what_we_do_text_2": "Whether you're a fleet operator, individual buyer, or dealer, Vahaan Bazar simplifies transactions with transparency and support at every step.",
+  "offerings_heading": "Our offerings include:",
+  "offering_vehicle_listings": "Vehicle Listings (new & used)",
+  "offering_valuation_tools": "Real-time Valuation Tools",
+  "offering_financing_rta": "Financing & RTA Documentation Assistance",
+  "offering_post_sale_services": "Post-Sale Services (Insurance, Towing, and more)",
+  "our_services_heading": "Our Services",
+  "service_vehicle_asset_solutions_heading": "Vehicle & Asset Solutions",
+  "service_buy_sell_title": "Buy & Sell:",
+  "service_buy_sell_desc": "Quick listings and easy access to quality vehicles and machines",
+  "service_inspection_title": "Inspection:",
+  "service_inspection_desc": "Ground checks and verified condition reports",
+  "service_valuation_title": "Valuation:",
+  "service_valuation_desc": "Market-linked pricing tools to support informed decision-making",
+  "service_support_compliance_heading": "Support & Compliance",
+  "service_finance_support_title": "Finance Support:",
+  "service_finance_support_desc": "Access to multiple NBFCs and banks for financing",
+  "service_rta_assistance_title": "RTA Assistance:",
+  "service_rta_assistance_desc": "Full documentation and ownership transfer solutions",
+  "service_insurance_title": "Insurance:",
+  "service_insurance_desc": "Best-in-class rates with high claim success support",
+  "service_operational_technical_heading": "Operational & Technical Services",
+  "service_leasing_rentals": "Leasing & Rentals",
+  "service_fleet_management": "Fleet Management Solutions",
+  "service_spare_parts": "Spare Parts (New & Used)",
+  "service_auctions": "Auctions (B2B & B2C)",
+  "service_scrap_towing": "Scrap Handling & Towing Services",
+  "service_web_app_dev": "Web & App Development for automotive businesses",
+  "why_choose_heading": "Why Choose Vahaan Bazar?",
+  "why_choose_extensive_reach_title": "Extensive Reach:",
+  "why_choose_extensive_reach_desc": "Pan-India network of sellers and buyers",
+  "why_choose_trust_transparency_title": "Trust & Transparency:",
+  "why_choose_trust_transparency_desc": "Verified data and honest pricing",
+  "why_choose_full_service_convenience_title": "Full-Service Convenience:",
+  "why_choose_full_service_convenience_desc": "One-stop platform from listing to delivery",
+  "why_choose_industry_expertise_title": "Industry Expertise:",
+  "why_choose_industry_expertise_desc": "Professionals guiding you with real-time support",
+  "our_commitment_heading": "Our Commitment",
+  "our_commitment_text_1": "At Vahaan Bazar, we don’t just enable transactions—we enhance the overall experience.",
+  "our_commitment_text_2": "Our commitment is to continuously evolve, innovate, and create value for every stakeholder by placing customer satisfaction at the heart of everything we do.",
+  "contact_us_heading": "Contact Us",
+  "contact_email": "contactus@vahaanbazar.com",
+  "contact_website": "www.vahaanbazar.com",
+  "contact_phone": "+91 88866 30456",
+  "contact_address": "Vahaan Bazar Private Limited",
+  "follow_us": "Follow us on:",
+  "social_instagram": "Instagram",
+  "social_facebook": "Facebook",
+  "social_linkedin": "LinkedIn",
+  "social_handle": "@vahaanbazar",
+  "update_term": "Update",
+  "edit_profile_term": "Edit Profile",
+  "settingsTitle": "Settings",
   "deleteAccount": "Delete Account",
   "mySubscriptions": "My Subscriptions",
   "remainders": "Remainders",
@@ -489,7 +438,6 @@
   "terms_and_conditions_title": "Terms and Conditions",
   "delete_account_warning": "Deleting your account is permanent, and all data will be lost. Contact customer support for assistance before proceeding.",
   "my_subscriptions_title": "My Subscriptions",
-
   "plan": "Plan",
   "id": "ID",
   "vehicle_id": "Vehicle ID",
@@ -500,14 +448,11 @@
   "parking_charges": "Parking Charges",
   "rc_availability": "RC Availability",
   "make": "Make",
-  "model": "Model",
-  "year": "Year",
   "registration_no": "Registration No",
   "chassis_no": "Chassis No",
   "engine_no": "Engine No",
   "registered_rto": "Registered RTO",
   "variant": "Variant",
-  "transmission": "Transmission",
   "vehicle_type": "Vehicle Type",
   "fuel_type": "Fuel Type",
   "kilometers": "Kilometers",
@@ -527,7 +472,6 @@
   "status": "Status",
   "inserted_at": "Inserted At",
   "updated_at": "Updated At",
-
   "choose_your_subscription_plan": "Choose Your Subscription Plan",
   "download_listing": "Download Listing",
   "bid_now": "Bid Now",
@@ -536,8 +480,6 @@
   "start_price": "Start Price",
   "bids_received": "Bids Received",
   "choose_your_refundable_deposite_plan": "Choose Your Refundable Deposit Plan",
-  "show_more": "Show More",
-  "show_less": "Show Less",
   "fieldIsRequired": "This field is required",
   "ownerName": "Owner Name",
   "enterOwnerName": "Enter Owner Name",
@@ -638,8 +580,6 @@
   "selectCategoryFirst": "Select a category first",
   "enterVehicleBrand": "Enter vehicle brand",
   "loadingTireOptions": "Loading tire options...",
-  "selectState": "Select State",
-  "selectCity": "Select City",
   "vehicleCategory": "Vehicle Category",
   "vehicleState": "Vehicle State",
   "vehicleCity": "Vehicle City",
@@ -658,7 +598,6 @@
   "assetMarketValueOptional": "Asset Market Value (Optional)",
   "otherRemarksOptional": "Other Remarks (Optional)",
   "required": "Required",
-
   "internalTeamInspectionReport": "Internal Team Inspection Report",
   "ownerNameValidation": "Owner name is required",
   "vehicleRegNumberValidation": "Vehicle registration number is required",
@@ -725,12 +664,11 @@
   "selectChassisCondition": "Select Chassis Condition",
   "selectTyreCondition": "Select Tyre Condition",
   "selectCaseType": "Select Case Type",
-"brandValidation": "Brand is required",
-"engine": "Engine",
-"selectVehicleCondition": "Select Vehicle Condition",
+  "brandValidation": "Brand is required",
+  "engine": "Engine",
+  "selectVehicleCondition": "Select Vehicle Condition",
   "registrationNumber": "Registration Number",
   "enterPrice": "Enter Price",
-  "enterRegistrationNumber": "Enter Registration Number",
   "registrationNumberCannotBeEmpty": "Registration number cannot be empty",
   "registrationNumberMinLength": "Registration number must be at least 4 characters",
   "selectCategory": "Select Category",
@@ -795,7 +733,6 @@
   "categoryCannotBeEmpty": "Category cannot be empty",
   "priceCannotBeEmpty": "Price cannot be empty",
   "invalidPrice": "Please enter a valid price",
-  "stateCannotBeEmpty": "State cannot be empty",
   "brandCannotBeEmpty": "Brand cannot be empty",
   "brandMinLength": "Brand must be at least 2 characters",
   "numberOfTyresCannotBeEmpty": "Number of tyres cannot be empty",
@@ -821,26 +758,20 @@
   },
   "odometerCannotBeEmpty": "Odometer reading cannot be empty",
   "invalidOdometerReading": "Please enter a valid odometer reading",
-  
   "vehicleNumberRequired": "Vehicle number is required",
   "vehicleNumberMinLength": "Vehicle number must be at least 6 characters",
   "invalidVehicleNumber": "Please enter a valid vehicle number",
   "rcDocumentRequired": "RC document is required",
-  "insuranceTypeRequired": "Insurance type is required", 
+  "insuranceTypeRequired": "Insurance type is required",
   "claimStatusRequired": "Claim status is required",
   "termsAcceptanceRequired": "Please accept terms and conditions",
   "aadharDocumentRequired": "Aadhar document is required",
   "panDocumentRequired": "PAN document is required",
   "previousPolicyRequired": "Previous policy document is required",
-  "stateCannotBeEmpty": "State cannot be empty",
-  "cityCannotBeEmpty": "City cannot be empty",
   "vehicleLocationRequired": "Vehicle location is required",
-  "phoneCannotBeEmpty": "Phone number cannot be empty",
   "mobileNumberMinLength": "Mobile number must be at least 10 digits",
-  "enterValidPhoneNumber": "Please enter a valid phone number",
   "validation_error": "Validation Error",
   "please_fix_all_validation_errors": "Please fix all validation errors before submitting",
-
   "vehicleDetailsTitle": "Vehicle Details",
   "modelYear": "Model Year",
   "keySpecifications": "Key Specifications",
@@ -880,7 +811,6 @@
   "inspectionRequested": "Inspection Requested",
   "requestVehicleInspection": "Request Vehicle Inspection",
   "na": "N/A",
-
   "inspectionValuation": "Inspection & Valuation",
   "professionalVehicleInspection": "Professional vehicle inspection services",
   "vehicleInspectionHero": "Vehicle Inspection\n& Valuation",
@@ -891,7 +821,6 @@
   "agentInspection": "Agent Inspection",
   "agentInspectionDesc": "Perform detailed on-site vehicle inspection and submit report",
   "startInspection": "Start Inspection",
-
   "myInspections": "My Inspections",
   "trackInspectionRequests": "Track your vehicle inspection requests and valuations",
   "unableToLoadInspections": "Unable to load inspections. Please try again.",
@@ -899,16 +828,13 @@
   "inspectionRequestsAppearHere": "Your inspection requests will appear here",
   "requestInspection": "Request Inspection",
   "noMoreInspections": "No more inspections",
-
   "insuranceFinance": "Insurance & Finance",
   "insuranceFinanceSubtitle": "Get quotes for vehicle insurance and financing",
   "insurance": "Insurance",
   "finance": "Finance",
-
   "enterLastNameOptional": "Enter last name (optional)",
-  "selectStateFirst": "Select state first",
+  "selectStateFirst": "Select a Region first",
   "saveChanges": "Save Changes",
-
   "myWallet": "My Wallet",
   "transactions": "Transactions",
   "yourReferralCode": "Your Referral Code",
@@ -919,7 +845,6 @@
   "pleaseTryAgainLater": "Please try again later",
   "noTransactionsYet": "No Transactions Yet",
   "walletTransactionsAppearHere": "Your wallet transactions will appear here",
-
   "selectSubscriptionSubtitle": "Select the subscription plan that suits you best",
   "haveReferralCode": "Have Any Referral Code ?",
   "enterHere": "Enter here",
@@ -945,7 +870,6 @@
   "subscriptionActivated": "Subscription Activated!",
   "couldNotRefreshSubscription": "Could not refresh subscription. Please try again.",
   "pleaseLoginToContinue": "Please login to continue",
-
   "yourActivePlans": "Your active plans",
   "activePlanCount": "{count} Active Plan",
   "@activePlanCount": {
@@ -959,7 +883,6 @@
   "noExpiryDate": "No expiry date",
   "noActiveSubscriptions": "No Active Subscriptions",
   "notSubscribedYet": "You have not subscribed to any plan yet.",
-
   "serviceProviders": "Service Providers",
   "findNearbyMechanics": "Find nearby mechanics and garages",
   "providersFound": "{count} providers found",
@@ -979,7 +902,6 @@
   "tryDifferentSearch": "Try a different search term",
   "couldNotLaunchDialer": "Could not launch phone dialer",
   "loadMore": "Load More",
-
   "sparesTitle": "Spares",
   "findSparePartsShops": "Find spare parts and nearby shops",
   "myBookings": "My Bookings",
@@ -1031,7 +953,7 @@
   "regNumber": "Reg. Number",
   "auctionClosed": "Auction Closed",
   "winDetails": "Win Details",
-  "winningBidLabel": "Winning Bid",
+  "winningBidLabel": "Winning Bid:",
   "bidApprovedAt": "Bid Approved At",
   "paymentStatus": "Payment Status",
   "winningLetter": "Winning Letter",
@@ -1045,7 +967,6 @@
   "noVehiclesAvailable": "No vehicles available",
   "noImage": "No Image",
   "knowMore": "Know More",
-
   "auctionZone": "Auction Zone",
   "chooseAnyOne": "Choose any one",
   "liveAuctionSubtitle": "Auctions currently live — bid now before time runs out",
@@ -1063,8 +984,6 @@
   "searchVehiclesHint": "Search vehicles",
   "bidStartPriceLabel": "Bid Start Price:",
   "viewMoreDetails": "View more details",
-  "vehicleRef": "Vehicle Ref",
-  "regNumber": "Reg. Number",
   "registrationRto": "Registration RTO",
   "yourBidAmount": "Your Bid Amount",
   "minBid": "Min. Bid",
@@ -1077,8 +996,6 @@
   "bidPlacedSuccessfully": "Bid placed successfully!",
   "repoDate": "Repo Date",
   "transactionFees": "Transaction Fees",
-  "makeAndModel": "Make & Model",
-  "mfgYear": "Mfg Year",
   "rcStatus": "RC Status",
   "parkingCharges": "Parking Charges",
   "yardDetails": "Yard Details",
@@ -1091,14 +1008,14 @@
   "applyFilters": "Apply Filters",
   "selectVehicleTypeFilter": "Select Vehicle Type",
   "selectRegion": "Select Region",
-  "selectStateFirst": "Select a Region first",
   "searchState": "Search state...",
   "noCategoriesAvailable": "No categories available",
-  "pullDownToRefresh": "Pull down to refresh",
   "vehiclesAvailableCount": "{count} vehicles available",
   "@vehiclesAvailableCount": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
   "noVehiclesYet": "No vehicles yet",
@@ -1108,33 +1025,15 @@
   "closedBadge": "CLOSED",
   "highestBid": "Highest Bid:",
   "auctionClosedButton": "Auction Closed",
-  "viewDetails": "View Details",
-  "bidDetails": "Bid Details",
-  "currentHighest": "Current Highest",
-  "endTime": "End Time",
-  "placedAt": "Placed At",
-  "auctionClosed": "Auction Closed",
-  "enterBidHint": "Enter bid",
-  "invalidBidAmount": "Please enter a valid bid amount.",
   "myWins": "My Wins",
   "yourWonAuctions": "Your won auctions",
   "noWinsYet": "No wins yet.\nStart bidding to win auctions!",
   "wonBadge": "WON",
   "paymentChip": "Payment",
   "letterChip": "Letter",
-  "winningBidLabel": "Winning Bid:",
-  "winDetails": "Win Details",
-  "bidApprovedAt": "Bid Approved At",
-  "paymentStatus": "Payment Status",
-  "winningLetter": "Winning Letter",
-  "sentStatus": "Sent",
-  "pendingStatus": "Pending",
-  "auctionEnded": "Auction Ended",
-
   "account": "Account",
   "manageProfile": "Manage Profile",
   "passwordAndSecurity": "Password & Security",
-  "myWallet": "My Wallet",
   "language": "Language",
   "auctions": "Auctions",
   "initiateRefund": "Initiate Refund",
@@ -1157,7 +1056,6 @@
   "refundType": "Refund Type *",
   "enterRefundType": "Enter refund type",
   "initiateRefundTitle": "Initiate Refund",
-
   "searchByServiceVehicle": "Search by service, vehicle...",
   "mostBoughtVehicles": "Most Bought Vehicles",
   "fmsItems": "FMS Items",
@@ -1178,5 +1076,1596 @@
   "availableVehicles": "Available Vehicles",
   "buyNow": "Buy Now",
   "liveAuction": "Live Auction",
-  "mechanicsNearYou": "Mechanics Near You"
+  "mechanicsNearYou": "Mechanics Near You",
+  "apprBuySellSubtitle": "Buy & sell verified commercial vehicles",
+  "apprNoCategoriesFound": "No categories found",
+  "apprAvailableCount": "Available : {count}",
+  "@apprAvailableCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "apprBuy": "Buy",
+  "apprSell": "Sell",
+  "apprVehiclesCount": "{count} vehicles",
+  "@apprVehiclesCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "apprUnavailable": "Unavailable",
+  "apprSelectCategoryToBrowse": "Select a category to browse",
+  "apprInspectionsSubtitle": "Vehicles you requested inspection for",
+  "apprBookingsSubtitle": "Vehicles you have booked",
+  "apprNoInspectionsYet": "No inspections requested yet",
+  "apprNoBookingsYet": "No vehicles booked yet",
+  "apprInspectionsEmptyHint": "Vehicles you request inspection for will appear here.",
+  "apprBookingsEmptyHint": "Vehicles you book will appear here.",
+  "apprRefresh": "Refresh",
+  "apprBookNow": "Book Now",
+  "apprInspection": "Inspection",
+  "apprBookedCheck": "Booked ✓",
+  "apprRequestedCheck": "Requested ✓",
+  "apprVehicleDetailsUnavailable": "Vehicle details not available",
+  "apprGoBack": "Go Back",
+  "apprBookVehicle": "Book Vehicle",
+  "apprBookVehicleDesc": "Pay to book this vehicle and access full details.",
+  "apprRequestInspectionDesc": "Pay to request professional inspection.",
+  "apprSuccess": "Success",
+  "apprError": "Error",
+  "apprVehicleBookedSuccess": "Vehicle booked successfully!",
+  "apprInspectionRequestedSuccess": "Inspection requested successfully!",
+  "apprRegistrationNo": "Registration No.",
+  "apprChassisNo": "Chassis No.",
+  "apprFitnessCertificate": "Fitness Certificate",
+  "apprOriginalInvoice": "Original Invoice",
+  "apprGstApplicable": "GST Applicable",
+  "apprInsuranceValidUntil": "Insurance Valid Until",
+  "apprOfferEnds": "Offer Ends",
+  "apprInsuranceDoc": "Insurance Doc",
+  "apprAvailableLabel": "Available",
+  "apprNotAvailable": "Not available",
+  "apprInfo": "Info",
+  "apprFilePickerPending": "File picker integration pending. Add file_picker package to enable uploads.",
+  "apprSellYourVehicle": "Sell Your Vehicle",
+  "apprSubmitVehicleForApproval": "Submit your vehicle for approval",
+  "apprRegNoHint": "e.g. MH12AB1234",
+  "apprChassisNumber": "Chassis Number",
+  "apprEnterChassisNumber": "Enter chassis number",
+  "apprYearOfManufacturing": "Year of Manufacturing",
+  "apprYearHint": "e.g. 2021",
+  "apprExpectedPrice": "Expected Price (₹)",
+  "apprPriceHint": "e.g. 2500000",
+  "apprOwnerMobileNumber": "Owner Mobile Number",
+  "apprMobileHint": "10-digit mobile number",
+  "apprAssetDescription": "Asset Description",
+  "apprAssetDescriptionHint": "e.g. Tata Signa 2823.T 6x4",
+  "apprFitnessCertificateAvailable": "Fitness Certificate Available",
+  "apprOriginalInvoiceAvailable": "Original Invoice Available",
+  "apprPhotosAndDocuments": "Photos & Documents",
+  "apprVehiclePhotos": "Vehicle Photos",
+  "apprRcDocuments": "RC Documents",
+  "apprInsuranceDocuments": "Insurance Documents",
+  "apprSubmitVehicle": "Submit Vehicle",
+  "apprVehicleCategory": "Vehicle Category",
+  "apprAutoFilled": "Auto-filled",
+  "apprSelectStateFirst": "Select state first",
+  "apprConfirmedCheck": "Confirmed ✓",
+  "apprTapToAddMore": "Tap to add more",
+  "apprTapToUpload": "Tap to upload",
+  "apprFailedLoadCategories": "Failed to load categories. Pull to refresh.",
+  "apprFailedLoadVehicles": "Failed to load vehicles. Please try again.",
+  "apprFailedBookVehicle": "Failed to book vehicle. Please try again.",
+  "apprFailedRequestInspection": "Failed to request inspection. Please try again.",
+  "apprRegNoRequired": "Registration number is required",
+  "apprFitnessRequired": "Fitness is required",
+  "apprOriginalInvoiceRequired": "Original invoice is required",
+  "apprAssetDescRequired": "Asset description is required",
+  "apprOwnerMobileRequired": "Owner mobile number is required",
+  "apprEnterValidMobile": "Enter valid 10-digit mobile number",
+  "apprPriceRequired": "Price is required",
+  "apprEnterValidPrice": "Enter valid price",
+  "apprMfgYearRequired": "Manufacturing year is required",
+  "apprInsuranceRequired": "Insurance is required",
+  "apprGstApplicabilityRequired": "GST applicability is required",
+  "apprVehicleImagesRequired": "Vehicle images are required",
+  "apprOfferEndDateRequired": "Offer end date is required",
+  "apprOfferEndTimeRequired": "Offer end time is required",
+  "apprFixErrorsBeforeSubmitting": "Please fix the errors before submitting",
+  "apprVehicleSubmittedSuccess": "Vehicle submitted successfully!",
+  "apprFailedSubmitVehicle": "Failed to submit vehicle. Please try again.",
+  "apprReferralAndRewards": "Referral & Rewards",
+  "apprRecentTransactions": "Recent Transactions",
+  "apprHowItWorks": "How it works",
+  "apprTotalWalletBalance": "Total Wallet Balance",
+  "apprThisMonth": "{amount} this month",
+  "@apprThisMonth": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "apprWithdraw": "Withdraw",
+  "apprConvertCoins": "Convert Coins",
+  "apprConvertCoinsMessage": "Convert {coins} coins into {rupees} wallet balance?\n\nRate: {rate} coins = ₹1  ·  Once per 24 h",
+  "@apprConvertCoinsMessage": {
+    "placeholders": {
+      "coins": {
+        "type": "String"
+      },
+      "rupees": {
+        "type": "String"
+      },
+      "rate": {
+        "type": "int"
+      }
+    }
+  },
+  "apprConfirm": "Confirm",
+  "apprWalletBalance": "Wallet Balance",
+  "apprRewardCoins": "Reward Coins",
+  "apprConvertNow": "Convert Now",
+  "apprConvert": "Convert",
+  "apprEarnMoreGrowWallet": "Earn more, grow your wallet!",
+  "apprInviteMoreFriends": "Invite more friends and earn exciting rewards.",
+  "apprReferNow": "Refer Now",
+  "apprFromName": "From {name}",
+  "@apprFromName": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "apprStepReferFriendsTitle": "Refer Friends",
+  "apprStepReferFriendsDesc": "Share your referral link with your friends",
+  "apprStepTheyJoinTitle": "They Join",
+  "apprStepTheyJoinDesc": "Your friends sign up using your link",
+  "apprStepTheyUseTitle": "They Actively Use",
+  "apprStepTheyUseDesc": "They explore, participate and place bids",
+  "apprStepYouEarnTitle": "You Earn",
+  "apprStepYouEarnDesc": "You earn rewards which reflect in your wallet",
+  "apprPleaseTryAgainLater": "Please try again later.",
+  "aucSearchAuctionSubtitle": "Bid on live vehicle auctions",
+  "aucChooseSubscriptionPlan": "Choose Subscription Plan",
+  "aucChoosePlanUnlockAuction": "Choose a plan to unlock auction features",
+  "aucSearchBuySellTitle": "Buy & Sell",
+  "aucSearchBuySellSubtitle": "Browse and list vehicles for sale",
+  "aucSearchFmsTitle": "FMS / Spare Parts",
+  "aucSearchFmsSubtitle": "Find spare parts and FMS items",
+  "aucSearchInsuranceSubtitle": "Get insurance quotes and financing",
+  "aucSearchInspectionTitle": "Inspection",
+  "aucSearchInspectionSubtitle": "Request vehicle inspection & valuation",
+  "aucSearchServiceSupportTitle": "Service Support",
+  "aucSearchServiceSupportSubtitle": "Find mechanics and service centers",
+  "aucSearchMyBidsSubtitle": "Track your active and past bids",
+  "aucSearchMyWinsSubtitle": "View vehicles you have won",
+  "aucSearchMySubscriptionsSubtitle": "Manage your subscription plans",
+  "aucCatBackhoeLoader": "Backhoe Loader (BHL)",
+  "aucCatExcavators": "Excavators",
+  "aucCatTippers": "Tippers",
+  "aucCatICV": "ICV",
+  "aucCatLCV": "LCV",
+  "aucCatTrailers": "Trailers",
+  "aucCatFarmEquipment": "Farm Equipment",
+  "aucCatWheelLoader": "Wheel Loader",
+  "aucCatRollers": "Rollers",
+  "aucCatMotorGrader": "Motor Grader",
+  "aucCatSelfLoadingMixer": "Self Loading Mixer",
+  "aucCatTransitmixer": "Transitmixer",
+  "aucCatCrushingBatchingPlant": "Crushing & Batching Plant",
+  "aucCatCranes": "Cranes (Lifter)",
+  "aucCatGenSet": "Gen-Set",
+  "aucCatOtherMachines": "Other Machines",
+  "aucCatScrap": "Scrap",
+  "aucCatJeepsy": "jeepsy",
+  "aucLocating": "Locating...",
+  "aucSearchHint": "Search by service, vehicle...",
+  "aucQuickAccess": "Quick Access",
+  "aucBrowseByCategory": "Browse by Category",
+  "aucNoResultsFor": "No results for \"{query}\"",
+  "@aucNoResultsFor": {
+    "placeholders": {
+      "query": {
+        "type": "String"
+      }
+    }
+  },
+  "aucSearchSuggestionHint": "Try auction, buy & sell, inspection...",
+  "aucSearchFailed": "Search failed. Please try again.",
+  "aucPleaseLoginToDownload": "Please login to download",
+  "aucNoAuctionData": "No auction data available",
+  "aucExcelDownloaded": "Excel file downloaded successfully",
+  "aucFailedToDownload": "Failed to download: {error}",
+  "@aucFailedToDownload": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "aucWishlist": "Wishlist",
+  "aucTwoWheeler": "Two Wheeler",
+  "aucThreeWheeler": "Three Wheeler",
+  "aucFourWheeler": "Four Wheeler",
+  "aucCommercialVehicle": "Commercial Vehicle",
+  "aucConstructionEquipment": "Construction Equipment",
+  "aucFarmEquipment": "Farm Equipment",
+  "aucFailedLoadCategories": "Failed to load categories. Pull to refresh.",
+  "aucLiveBidding": "Live Bidding",
+  "aucFailedLoadAuctions": "Failed to load auctions. Please try again.",
+  "aucFailedLoadWishlist": "Failed to load wishlist. Please try again.",
+  "aucStatusCompleted": "Completed",
+  "aucStatusCancelled": "Cancelled",
+  "aucVerified": "Verified",
+  "aucMinimumBid": "Minimum bid is ₹{amount}",
+  "@aucMinimumBid": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "aucMustBeHigherThanCurrentBid": "Must be higher than current bid",
+  "aucBidLimitSubscriptionRequired": "You need a Bid Limit subscription to place bids. Please subscribe to continue.",
+  "aucBidLimitPlanRequired": "Bid Limit Plan Required",
+  "aucBidLimitPlanRequiredSubtitle": "Subscribe to a bid limit plan to place bids in auctions.",
+  "aucBuyingLimitZeroUpgrade": "Your available buying limit is ₹0. Please upgrade your bid limit plan to continue.",
+  "aucBidExceedsLimitUpgradeHigher": "Your bid of ₹{bid} exceeds your available buying limit of ₹{limit}. Please upgrade your plan to place higher bids.",
+  "@aucBidExceedsLimitUpgradeHigher": {
+    "placeholders": {
+      "bid": {
+        "type": "String"
+      },
+      "limit": {
+        "type": "String"
+      }
+    }
+  },
+  "aucBidExceedsLimitUpgradeContinue": "Your bid of ₹{bid} exceeds your available buying limit of ₹{limit}. Please upgrade your plan to continue.",
+  "@aucBidExceedsLimitUpgradeContinue": {
+    "placeholders": {
+      "bid": {
+        "type": "String"
+      },
+      "limit": {
+        "type": "String"
+      }
+    }
+  },
+  "aucBidLimitExceeded": "Bid Limit Exceeded",
+  "aucNoBuyingLimitUpgrade": "You have no available buying limit. Upgrade your bid limit plan to continue.",
+  "aucBuyingLimitUpgradeHigher": "Your available buying limit is ₹{limit}. Upgrade your plan to place higher bids.",
+  "@aucBuyingLimitUpgradeHigher": {
+    "placeholders": {
+      "limit": {
+        "type": "String"
+      }
+    }
+  },
+  "aucBidMustBeHigherThanHighest": "Bid must be higher than the current highest bid",
+  "aucVehicleNotFoundRefresh": "Vehicle not found. Please refresh and try again.",
+  "aucBidCouldNotBePlaced": "Bid could not be placed.",
+  "aucFailedLoadBids": "Failed to load bids. Please try again.",
+  "aucFailedLoadWins": "Failed to load wins. Please try again.",
+  "aucFailedLoadVehicles": "Failed to load vehicles. Please try again.",
+  "aucNoVehiclesFoundMatching": "No vehicles found matching \"{query}\"",
+  "@aucNoVehiclesFoundMatching": {
+    "placeholders": {
+      "query": {
+        "type": "String"
+      }
+    }
+  },
+  "aucAddedToWishlist": "Added to wishlist",
+  "aucRemovedFromWishlist": "Removed from wishlist",
+  "aucFailedUpdateWishlist": "Failed to update wishlist. Please try again.",
+  "aucLotLabel": "# LOT",
+  "aucComingSoon": "Coming Soon",
+  "aucBidsPlaced": "Bids Placed",
+  "aucContactPerson": "Contact Person",
+  "aucDetails": "Details",
+  "aucHighestBid": "Highest Bid",
+  "aucLosing": "Losing",
+  "aucStatusLost": "Lost",
+  "aucMobile": "Mobile",
+  "aucNoBids": "No bids",
+  "aucOutbid": "Outbid",
+  "aucSeeLess": "See Less",
+  "aucViewFullDetails": "View Full Details →",
+  "aucWinning": "Winning",
+  "aucStatusWon": "Won",
+  "aucAllCategories": "All Categories",
+  "aucAllStates": "All States",
+  "aucApply": "Apply",
+  "aucBids": "Bids",
+  "aucMyWishlist": "My Wishlist",
+  "aucNoVehiclesFoundShort": "No vehicles found",
+  "aucNoWishlistItems": "No wishlist items yet",
+  "aucUpcomingBiddingNotStarted": "Upcoming Auction — Bidding Not Started",
+  "aucVehicleNotFound": "Vehicle not found",
+  "aucWishlistDetails": "Wishlist Details",
+  "aucWishlisted": "Wishlisted",
+  "aucYouAreLosing": "You Are Losing",
+  "aucYouAreWinning": "You Are Winning",
+  "aucYourFavoriteVehicles": "Your favorite vehicles",
+  "aucSearchVehicles": "Search Vehicles",
+  "aucStartBiddingStartPrice": "Start Bidding — Start Price ₹ {price}",
+  "@aucStartBiddingStartPrice": {
+    "placeholders": {
+      "price": {
+        "type": "String"
+      }
+    }
+  },
+  "coreSearchEllipsis": "Search...",
+  "coreNoOptionsAvailable": "No options available",
+  "coreNoResultsFoundFor": "No results found for \"{query}\"",
+  "@coreNoResultsFoundFor": {
+    "placeholders": {
+      "query": {
+        "type": "String"
+      }
+    }
+  },
+  "coreNoItemsAvailable": "No items available",
+  "coreNoItemsAvailableTitle": "No Items Available",
+  "coreNoItemsToDisplay": "No items to display.",
+  "coreNoResultsFound": "No results found",
+  "coreSelectYear": "Select Year",
+  "coreEnterPassword": "Enter password",
+  "coreFileUploadHint": "JPEG, PNG & PDF (up to 12 MB)",
+  "coreEnterYourPassword": "Enter your password",
+  "coreEnterPhoneNumber": "Enter phone number",
+  "coreTimeLeftDhms": "{d}d {h}h {m}m {s}s left",
+  "@coreTimeLeftDhms": {
+    "placeholders": {
+      "d": {
+        "type": "int"
+      },
+      "h": {
+        "type": "int"
+      },
+      "m": {
+        "type": "int"
+      },
+      "s": {
+        "type": "int"
+      }
+    }
+  },
+  "coreTimeLeftHms": "{h}h {m}m {s}s left",
+  "@coreTimeLeftHms": {
+    "placeholders": {
+      "h": {
+        "type": "int"
+      },
+      "m": {
+        "type": "int"
+      },
+      "s": {
+        "type": "int"
+      }
+    }
+  },
+  "coreTimeLeftMs": "{m}m {s}s left",
+  "@coreTimeLeftMs": {
+    "placeholders": {
+      "m": {
+        "type": "int"
+      },
+      "s": {
+        "type": "int"
+      }
+    }
+  },
+  "coreTimeLeftS": "{s}s left",
+  "@coreTimeLeftS": {
+    "placeholders": {
+      "s": {
+        "type": "int"
+      }
+    }
+  },
+  "coreSubscriptions": "Subscriptions",
+  "coreRewards": "Rewards",
+  "coreEnterValidEmail": "Please enter a valid email",
+  "corePasswordRequired": "Password is required",
+  "corePasswordMinLength": "Password must be at least 6 characters",
+  "coreShareVehicleSubject": "{name} — Vahaan Bazar",
+  "@coreShareVehicleSubject": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "coreShareVehicleSubjectFallback": "Check out this vehicle on Vahaan Bazar",
+  "coreShareReferralText": "🚛 Join Vahaan Bazar — India's trusted vehicle marketplace!\n\nSign up using my referral link and start buying & selling vehicles:\n\n{url}\n\n📱 Available on Android & iOS.",
+  "@coreShareReferralText": {
+    "placeholders": {
+      "url": {
+        "type": "String"
+      }
+    }
+  },
+  "coreShareReferralSubject": "Join Vahaan Bazar",
+  "coreShareVehicleLabel": "Vehicle",
+  "coreShareYearLine": "Year: {year}",
+  "@coreShareYearLine": {
+    "placeholders": {
+      "year": {
+        "type": "String"
+      }
+    }
+  },
+  "coreShareVehicleBody": "Found on *Vahaan Bazar* — India's trusted vehicle marketplace.\n\n👉 View details & contact seller:\n{url}",
+  "@coreShareVehicleBody": {
+    "placeholders": {
+      "url": {
+        "type": "String"
+      }
+    }
+  },
+  "coreNotification": "Notification",
+  "coreSessionExpiredTitle": "Session Expired",
+  "coreSessionExpiredMessage": "Please login again to continue",
+  "coreJustNow": "Just now",
+  "coreYearsAgoShort": "{n}y ago",
+  "@coreYearsAgoShort": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "coreMonthsAgoShort": "{n}mo ago",
+  "@coreMonthsAgoShort": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "coreDaysAgoShort": "{n}d ago",
+  "@coreDaysAgoShort": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "coreHoursAgoShort": "{n}h ago",
+  "@coreHoursAgoShort": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "coreMinutesAgoShort": "{n}m ago",
+  "@coreMinutesAgoShort": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "coreFieldRequired": "{field} is required",
+  "@coreFieldRequired": {
+    "placeholders": {
+      "field": {
+        "type": "String"
+      }
+    }
+  },
+  "coreThisField": "This field",
+  "coreEnterValidEmailShort": "Enter a valid email",
+  "coreMinCharactersRequired": "Minimum {min} characters required",
+  "@coreMinCharactersRequired": {
+    "placeholders": {
+      "min": {
+        "type": "int"
+      }
+    }
+  },
+  "coreConfirmPasswordPrompt": "Please confirm your password",
+  "corePasswordsDoNotMatch": "Passwords do not match",
+  "corePhoneRequired": "Phone number is required",
+  "coreEnterValidMobile": "Enter a valid 10-digit mobile number",
+  "coreRegNumberRequired": "Registration number is required",
+  "coreEnterValidRegNumber": "Enter a valid registration (e.g. MH12AB1234)",
+  "coreMinCharacters": "Minimum {min} characters",
+  "@coreMinCharacters": {
+    "placeholders": {
+      "min": {
+        "type": "int"
+      }
+    }
+  },
+  "coreMaxCharacters": "Maximum {max} characters",
+  "@coreMaxCharacters": {
+    "placeholders": {
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "coreBuyAndSell": "Buy & Sell",
+  "coreFms": "FMS",
+  "coreInspection": "Inspection",
+  "coreServiceSupport": "Service Support",
+  "corePageNotFound": "Page not found",
+  "coreChooseAPlan": "Choose a Plan",
+  "coreChooseSubscriptionPlan": "Choose Subscription Plan",
+  "coreChooseSubscriptionPlanAuctionSubtitle": "Choose a subscription plan to unlock features of auction",
+  "coreWishlist": "Wishlist",
+  "coreYourWishlist": "Your Wishlist",
+  "coreSaveVehiclesYouLike": "Save vehicles you like",
+  "coreComingSoon": "Coming soon",
+  "coreSellYourVehicle": "Sell Your Vehicle",
+  "coreListYourVehicleForSale": "List your vehicle for sale",
+  "coreTitleComingSoon": "{title} Coming Soon",
+  "@coreTitleComingSoon": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "coreEquipment": "Equipment",
+  "coreTractors": "Tractors",
+  "coreSearchVehiclesEquipment": "Search vehicles, equipment...",
+  "coreFeaturedListings": "Featured Listings",
+  "coreSetLocation": "Set Location",
+  "coreFailedToLoadDashboard": "Failed to load dashboard.",
+  "coreFailedToLoadNotifications": "Failed to load notifications.",
+  "coreNotifications": "Notifications",
+  "coreMarkAllRead": "Mark all read",
+  "coreMinAgo": "{n} min ago",
+  "@coreMinAgo": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "coreHrAgo": "{n} hr ago",
+  "@coreHrAgo": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "coreNotifLiveAuction": "LIVE AUCTION",
+  "coreNotifPriceUpdate": "PRICE UPDATE",
+  "coreNotifReferralBonus": "REFERRAL BONUS",
+  "coreNotifPayment": "PAYMENT",
+  "coreNotifGeneral": "GENERAL",
+  "coreNoNotificationsYet": "No notifications yet",
+  "coreNotifyAboutAuctions": "We'll notify you about auctions, bids and more.",
+  "coreIntroWelcomeTitle": "Welcome to\nVAHAAN BAZAR",
+  "coreIntroSlide1Desc": "Buy and sell vehicles in one place Across trucks, equipment, and more",
+  "coreIntroSlide2Desc": "Create listings in minutes and connect with thousands of buyers instantly.",
+  "coreIntroSlide3Desc": "Join live auctions and secure vehicles at competitive prices.",
+  "coreIntroBuy": "BUY",
+  "coreIntroSell": "SELL",
+  "coreIntroBid": "BID",
+  "corePaymentCancelledByUser": "Payment cancelled by user",
+  "coreUnknownPaymentError": "Unknown payment error",
+  "coreSecurePaymentPoweredByPayU": "Secure payment powered by PayU",
+  "coreChoosePreferredPaymentMethod": "Choose your preferred payment method",
+  "corePaymentInitiationFailed": "Payment initiation failed",
+  "corePaymentSuccessReportFailed": "Payment success report failed",
+  "corePaymentFailureReportFailed": "Payment failure report failed",
+  "coreUnexpectedError": "Unexpected error: {error}",
+  "@coreUnexpectedError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "coreNoDataAvailable": "No data available.",
+  "coreLocating": "Locating...",
+  "coreEnded": "Ended",
+  "coreAvailable": "Available",
+  "coreTimeLeftDh": "{d}d {h}h left",
+  "@coreTimeLeftDh": {
+    "placeholders": {
+      "d": {
+        "type": "int"
+      },
+      "h": {
+        "type": "int"
+      }
+    }
+  },
+  "coreTimeLeftHm": "{h}h {m}m left",
+  "@coreTimeLeftHm": {
+    "placeholders": {
+      "h": {
+        "type": "int"
+      },
+      "m": {
+        "type": "int"
+      }
+    }
+  },
+  "coreCategoryAuction": "{category} Auction",
+  "@coreCategoryAuction": {
+    "placeholders": {
+      "category": {
+        "type": "String"
+      }
+    }
+  },
+  "corePinchToZoomHint": "Pinch to zoom  •  Swipe to navigate",
+  "inspInspectionDetails": "Inspection Details",
+  "inspNoInspectionDataFound": "No inspection data found",
+  "inspOwnerInformation": "Owner Information",
+  "inspViewFullReport": "View Full Report",
+  "inspOpenReportInBrowser": "Open inspection report in browser",
+  "inspStatusCompleted": "Completed",
+  "inspStatusInProgress": "In Progress",
+  "inspStatusRejected": "Rejected",
+  "inspViewReport": "View Report",
+  "inspAdd": "Add",
+  "inspStepNumber": "Step {number}",
+  "@inspStepNumber": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "inspVehicleInfo": "Vehicle Info",
+  "inspDocumentation": "Documentation",
+  "inspMechanicalInspection": "Mechanical Inspection",
+  "inspBodyAndInterior": "Body & Interior",
+  "inspPhotos": "Photos",
+  "inspValuation": "Valuation",
+  "inspInspectionSummary": "Inspection Summary",
+  "inspVehicleBrand": "Vehicle Brand",
+  "inspRto": "RTO",
+  "inspCondition": "Condition",
+  "inspInsuranceValid": "Insurance Valid",
+  "inspFitnessValid": "Fitness Valid",
+  "inspAccidental": "Accidental",
+  "inspSuspension": "Suspension",
+  "inspCabinInterior": "Cabin/Interior",
+  "inspBodyFront": "Body Front",
+  "inspBodyBack": "Body Back",
+  "inspBodyLeft": "Body Left",
+  "inspBodyRight": "Body Right",
+  "inspPhotoCount": "{count} photo",
+  "@inspPhotoCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "inspPhotosCount": "{count} photos",
+  "@inspPhotosCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "inspFrontRearTyres": "Front: {front}%, Rear: {rear}%",
+  "@inspFrontRearTyres": {
+    "placeholders": {
+      "front": {
+        "type": "int"
+      },
+      "rear": {
+        "type": "int"
+      }
+    }
+  },
+  "inspMarketValueRupee": "₹ {value}",
+  "@inspMarketValueRupee": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "inspVehicleDetailsSection": "Vehicle Details",
+  "inspCompanyDetailsOptional": "Company Details (Optional)",
+  "inspUploadDocuments": "Upload Documents",
+  "inspVehicleRegistrationNumber": "Vehicle Registration Number",
+  "inspRegNumberHint": "e.g. MH-01-AB-1234",
+  "inspRequired": "Required",
+  "inspMin5Characters": "Min 5 characters",
+  "inspChassisNumber": "Chassis Number",
+  "inspEnterChassisNumber": "Enter chassis number",
+  "inspSelectVehicleBrand": "Select Vehicle Brand",
+  "inspSelectStateFirst": "Select state first",
+  "inspNoCitiesForState": "No cities available for selected state",
+  "inspEnter10DigitMobile": "Enter 10-digit mobile number",
+  "inspEnterValid10DigitNumber": "Enter valid 10-digit number",
+  "inspEnterCompanyNameOptional": "Enter company name (optional)",
+  "inspInsuranceDocument": "Insurance Document",
+  "inspChooseFiles": "Choose a file/browse multiple files",
+  "inspSubmitInspectionRequest": "Submit Inspection Request",
+  "inspFilesSelected": "{count} file(s) selected",
+  "@inspFilesSelected": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "inspAgentFormSubtitle": "Fill out the inspection details for the customer",
+  "inspBodyPhotos": "Body Photos",
+  "inspBodyFrontLabel": "Body - Front",
+  "inspBodyLeftSideLabel": "Body - Left Side",
+  "inspBodyBackLabel": "Body - Back",
+  "inspBodyRightSideLabel": "Body - Right Side",
+  "inspEnginePhotos": "Engine Photos",
+  "inspChassisPhotos": "Chassis Photos",
+  "inspInterior": "Interior",
+  "inspInteriorPhotos": "Interior Photos",
+  "inspCabinInteriorSection": "Cabin Interior",
+  "inspCabinInteriorPhotos": "Cabin Interior Photos",
+  "inspOdometerPhotos": "Odometer Photos",
+  "inspFullRoundVideoOptional": "Full Round Video (Optional)",
+  "inspUploadVideoHint": "Upload a complete 360° video of the vehicle",
+  "inspNotRatedYet": "Not rated yet",
+  "inspRateCondition": "Rate Condition",
+  "inspFrontAxleTyres": "Front Axle Tyres",
+  "inspRearAxleTyres": "Rear Axle Tyres",
+  "inspOdometerReading": "Odometer Reading",
+  "inspOdometerReadingKm": "Odometer Reading (KM)",
+  "inspEnterOdometerReading": "Enter odometer reading",
+  "inspSubmitInspection": "Submit Inspection",
+  "inspChooseFilesMax": "Choose files (max {max})",
+  "@inspChooseFilesMax": {
+    "placeholders": {
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "inspSuccess": "Success",
+  "inspError": "Error",
+  "inspOkay": "Okay",
+  "inspSomethingWentWrong": "Something went wrong",
+  "inspFailedToPickFile": "Failed to pick file. Please try again.",
+  "inspPleaseSelectVehicleType": "Please select vehicle type",
+  "inspPleaseSelectVehicleBrand": "Please select vehicle brand",
+  "inspPleaseSelectState": "Please select state",
+  "inspPleaseSelectCity": "Please select city",
+  "inspPleaseUploadRcDocument": "Please upload RC document",
+  "inspRequestSubmittedSuccessfully": "Your inspection request has been submitted successfully.",
+  "inspFailedToSubmitRequest": "Failed to submit inspection request.",
+  "inspPleaseLoginToViewInspections": "Please log in to view inspections.",
+  "inspFailedToLoadInspections": "Failed to load inspections.",
+  "inspEnterValidVehicleRegNumber": "Please enter valid vehicle registration number",
+  "inspFrontAxlePercentRange": "Front axle tyre percentage must be 0-100",
+  "inspRearAxlePercentRange": "Rear axle tyre percentage must be 0-100",
+  "inspEnterValidMarketValue": "Please enter a valid market value",
+  "inspFixErrorsBeforeSubmitting": "Please fix errors before submitting",
+  "inspInspectionSubmitted": "Inspection Submitted",
+  "inspReportSubmittedSuccessfully": "Your inspection report has been submitted successfully.",
+  "inspFailedToSubmitReport": "Failed to submit inspection report.",
+  "inspThankYouForSubmitting": "Thank you for submitting!",
+  "inspTeamWillContactSoon": "Our team will contact you soon..!",
+  "inspServerErrorWithCode": "Server error: {code}",
+  "@inspServerErrorWithCode": {
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "inspMaxImagesPerCategory": "Maximum {max} images per category allowed",
+  "@inspMaxImagesPerCategory": {
+    "placeholders": {
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "inspMaxFilesPerCategory": "Maximum {max} files per category",
+  "@inspMaxFilesPerCategory": {
+    "placeholders": {
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "inspOnlyMoreFilesAllowed": "Only {remaining} more file(s) allowed. {skipped} file(s) skipped.",
+  "@inspOnlyMoreFilesAllowed": {
+    "placeholders": {
+      "remaining": {
+        "type": "int"
+      },
+      "skipped": {
+        "type": "int"
+      }
+    }
+  },
+  "inspServiceAndSupport": "Service & Support",
+  "inspRoadsideSubtitle": "24/7 roadside assistance at your fingertips",
+  "inspBreakdownAssistanceHeadline": "24/7 Breakdown\nAssistance",
+  "inspRoadsideDescription": "Instant Help. Anytime, Anywhere.\nQuick response and reliable roadside assistance at your fingertips.",
+  "inspContactMechanic": "Contact Mechanic",
+  "inspNoServiceProvidersTryAgain": "No service providers found near your location.\nTry again or expand your search area.",
+  "inspLocationError": "Location Error",
+  "inspUnableToGetLocation": "Unable to get your location. Please try again.",
+  "inspUnableToEnableLocationServices": "Unable to enable location services. Please check settings.",
+  "inspUnableToLoadSubscriptionPlan": "Unable to load subscription plan. Please try again.",
+  "inspConnectWithMechanic": "Connect with Mechanic",
+  "inspContactUnlocked": "Contact unlocked! You can now call the mechanic.",
+  "inspSomethingWentWrongTryAgain": "Something went wrong. Please try again.",
+  "inspPhone": "Phone",
+  "inspLocationRequired": "Location Required",
+  "inspLocationAccessNeeded": "This app needs location access to find service providers near you.",
+  "inspFindNearestProviders": "Find nearest service providers",
+  "inspAccurateDistanceEstimates": "Get accurate distance estimates",
+  "inspPersonalizedRecommendations": "Personalized recommendations",
+  "inspEnable": "Enable",
+  "inspEnableGps": "Enable GPS",
+  "inspTurnOnGps": "Please turn on GPS in your device settings, then come back.",
+  "inspPermissionRequired": "Permission Required",
+  "inspLocationPermissionRequired": "Location permission is required. Please enable it in app settings.",
+  "inspSettingsUpdated": "Settings Updated?",
+  "inspDidYouEnablePermission": "Did you enable location permission? Tap \"Retry\" to find service providers.",
+  "inspPayToGetContact": "Pay to get the direct contact number for {mechanicName} at {garageName}.",
+  "@inspPayToGetContact": {
+    "placeholders": {
+      "mechanicName": {
+        "type": "String"
+      },
+      "garageName": {
+        "type": "String"
+      }
+    }
+  },
+  "inspContactWithPhone": "Contact: {phone}",
+  "@inspContactWithPhone": {
+    "placeholders": {
+      "phone": {
+        "type": "String"
+      }
+    }
+  },
+  "inspDistanceKm": "{distance} km",
+  "@inspDistanceKm": {
+    "placeholders": {
+      "distance": {
+        "type": "String"
+      }
+    }
+  },
+  "inspSelectCountry": "Select Country",
+  "inspSearchCountry": "Search country...",
+  "inspLogIn": "Log In",
+  "inspWithOtp": "with OTP",
+  "inspSecureQuickAccess": "Secure and quick access\nto your account",
+  "inspNumberSafeWithUs": "Your number is safe with us.\nWe never share it with anyone.",
+  "inspNeedHelp": "Need help?",
+  "inspSentTo": "Sent to ",
+  "inspCompleteProfile": "Complete Profile",
+  "inspTellUsAboutYourself": "Tell us about yourself",
+  "inspCompleteProfileSubtitle": "Complete your profile to get started",
+  "inspEnterFirstName": "Enter first name",
+  "inspEnterEmailAddress": "Enter email address",
+  "inspSaveAndContinue": "Save & Continue",
+  "inspMin3Characters": "Min 3 characters",
+  "inspEnterValidEmail": "Enter a valid email",
+  "inspEmailRequired": "Email is required",
+  "inspPhoneNumberNotFound": "Phone number not found. Please go back and try again.",
+  "inspOtpResentSuccessfully": "OTP resent successfully",
+  "inspFailedToResendOtpTryAgain": "Failed to resend OTP. Please try again.",
+  "inspSessionExpiredRetry": "Session expired. Please go back and retry.",
+  "inspFillRequiredFields": "Please fill in all required fields correctly",
+  "inspProfileCompleted": "Profile completed!",
+  "inspFailedToSaveProfile": "Failed to save profile.",
+  "inspFailedToSaveProfileTryAgain": "Failed to save profile. Please try again.",
+  "inspFailedToLoadStates": "Failed to load states",
+  "inspFailedToLoadStatesTryAgain": "Failed to load states. Please try again.",
+  "inspFailedToLoadCities": "Failed to load cities",
+  "inspFailedToLoadCitiesTryAgain": "Failed to load cities. Please try again.",
+  "inspPleaseSelectAState": "Please select a state",
+  "inspPleaseSelectACity": "Please select a city",
+  "inspEmptyServerResponse": "Empty response from server",
+  "inspInvalidOtpVerificationRequest": "Invalid OTP verification request",
+  "inspConnectionTimeout": "Connection timeout. Please try again.",
+  "inspAnErrorOccurred": "An error occurred",
+  "inspRequestCancelled": "Request was cancelled",
+  "inspNoInternetCheckNetwork": "No internet connection. Please check your network.",
+  "inspAnUnexpectedErrorOccurred": "An unexpected error occurred",
+  "inspRequestFailedWithStatus": "Request failed with status code: {statusCode}",
+  "@inspRequestFailedWithStatus": {
+    "placeholders": {
+      "statusCode": {
+        "type": "String"
+      }
+    }
+  },
+  "insVehicleNumberLabel": "Vehicle Number *",
+  "insEnterVehicleNo": "Enter Vehicle No",
+  "insRcDocumentLabel": "RC Document *",
+  "insFileUploadLabel": "Choose a file/browse multiple files",
+  "insFileUploadSubtitle": "JPEG, PNG & PDF (up to 12 MB)",
+  "insPreviousYearPolicy": "Previous Year Policy",
+  "insInsuranceTypeLabel": "Insurance Type *",
+  "insClaimStatusLabel": "Claim Status *",
+  "insSelectClaimStatus": "Select Claim Status",
+  "insAcceptThe": "I Accept the ",
+  "insAndConnector": " and ",
+  "insErrVehicleNoRequired": "Please enter vehicle registration number",
+  "insErrRcRequired": "Please upload RC document",
+  "insErrInsuranceTypeRequired": "Please select insurance type",
+  "insErrClaimRequired": "Please select claim status",
+  "insStateLabel": "State *",
+  "insNoStatesAvailable": "No states available",
+  "insCityLabel": "City *",
+  "insSelectStateFirst": "Please select a state first",
+  "insNoCitiesAvailable": "No cities available",
+  "insRcCopyLabel": "RC Copy *",
+  "insInsuranceCopyLabel": "Insurance Copy *",
+  "insFleetSize": "Fleet Size",
+  "insEnterFleetSize": "Enter Fleet Size",
+  "insCompanyGstIfAvailable": "Company GST (if Available)",
+  "insVehicleLocationLabel": "Vehicle Location *",
+  "insApplicantDetails": "Applicant Details",
+  "insAadharDocumentLabel": "Aadhar Document *",
+  "insPanDocumentLabel": "PAN Document *",
+  "insMobileNumberLabel": "Mobile Number *",
+  "insEnterMobileNumber": "Enter Mobile Number",
+  "insAddCoApplicantDetails": "Add Co-Applicant Details",
+  "insCoApplicantDetails": "Co-Applicant Details",
+  "insErrSelectState": "Please select state",
+  "insErrSelectCity": "Please select city",
+  "insErrUploadRcCopy": "Please upload RC copy",
+  "insErrUploadInsuranceCopy": "Please upload insurance copy",
+  "insErrEnterVehicleLocation": "Please enter vehicle location",
+  "insErrUploadAadhar": "Please upload Aadhar document",
+  "insErrUploadPan": "Please upload PAN document",
+  "insErrEnterMobile": "Please enter mobile number",
+  "insErrUploadCoAadhar": "Please upload co-applicant Aadhar document",
+  "insErrUploadCoPan": "Please upload co-applicant PAN document",
+  "insErrEnterCoMobile": "Please enter co-applicant mobile number",
+  "insMyQuotes": "My Quotes",
+  "insMyQuotesSubtitle": "View your insurance and finance quotes",
+  "insLoadingQuotes": "Loading quotes...",
+  "insNoQuotesAvailable": "No quotes available",
+  "insSubmitRequestToGetQuotes": "Submit an insurance or finance request to get quotes",
+  "insQuoteCountOne": "{count} Quote",
+  "@insQuoteCountOne": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "insQuoteCountMany": "{count} Quotes",
+  "@insQuoteCountMany": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "insNoQuotesReceivedYet": "No quotes received yet",
+  "insDownload": "Download",
+  "insLoginToSubmitInsurance": "Please login to submit insurance request",
+  "insInsuranceSubmittedSuccess": "Insurance request submitted successfully! Our team will review and get back to you soon.",
+  "insFailedLoadStates": "Failed to load states",
+  "insFailedLoadCities": "Failed to load cities",
+  "insLoginToSubmitFinance": "Please login to submit finance request",
+  "insFinanceSubmittedSuccess": "Finance request submitted successfully! Our team will review and get back to you soon.",
+  "insLoginToViewQuotes": "Please login to view quotes",
+  "insFailedPickFile": "Failed to pick file. Please try again.",
+  "insDownloadLinkUnavailable": "Download link not available",
+  "insStoragePermissionRequired": "Storage permission is required to download quotes",
+  "insCouldNotOpenPdf": "Could not open the downloaded PDF",
+  "insDownloaded": "Downloaded",
+  "insQuotePdfSaved": "Quote PDF saved successfully",
+  "insRequestTimeout": "Request timeout. Please try again.",
+  "insNetworkErrorCheckConnection": "Network error. Please check your connection.",
+  "insQuoteFileNotFound": "Quote file not found.",
+  "insAccessDeniedQuoteExpired": "Access denied. Quote may have expired.",
+  "insFailedDownloadQuote": "Failed to download quote PDF.",
+  "insFailedSaveQuote": "Failed to save quote PDF: {error}",
+  "@insFailedSaveQuote": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "insThankYouForSubmitting": "Thank you for submitting!",
+  "insTeamWillContactSoon": "Our team will contact you soon..!",
+  "insOkay": "Okay",
+  "insUnexpectedErrorShort": "An unexpected error occurred",
+  "insFailedLoadQuotes": "Failed to load quotes",
+  "insSessionExpired": "Session expired. Please login again.",
+  "insNoPermissionViewQuotes": "You don't have permission to view quotes.",
+  "insQuotesServiceNotFound": "Quotes service not found.",
+  "insServerErrorTryLater": "Server error. Please try again later.",
+  "insFailedLoadQuotesWithError": "Failed to load quotes: {error}",
+  "@insFailedLoadQuotesWithError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "insInvalidRequestData": "Invalid request data",
+  "insNoPermissionAction": "You don't have permission to perform this action.",
+  "insServiceNotFound": "Service not found. Please try again later.",
+  "insValidationError": "Validation error",
+  "profMyAccount": "My Account",
+  "profUpdatePersonalInfo": "Update your personal information",
+  "profViewManagePlans": "View and manage your plans",
+  "profChoosePreferredLanguage": "Choose your preferred language",
+  "profViewItemsWon": "View items you have won",
+  "profTrackBids": "Track your active and past bids",
+  "profWishlist": "Wishlist",
+  "profAuctionVehiclesSaved": "Auction vehicles you have saved",
+  "profRequestRefund": "Request a refund for your orders",
+  "profBuyAndSell": "Buy & Sell",
+  "profManageListedVehicles": "Manage your listed vehicles",
+  "profItemsSaved": "Items you have saved",
+  "profPurchaseHistory": "Purchase History",
+  "profViewPastPurchases": "View your past purchases",
+  "profUser": "User",
+  "profAgent": "Agent",
+  "profPremiumMember": "Premium Member",
+  "profTotalWins": "Total Wins",
+  "profVehicles": "Vehicles",
+  "profActiveBids": "Active Bids",
+  "profWalletBalance": "Wallet Balance",
+  "profRewardCoins": "Reward Coins",
+  "profWithdrawToBank": "Withdraw to Bank",
+  "profWithdraw": "Withdraw",
+  "profHistory": "History",
+  "profMaxWithdrawal": "Max Withdrawal",
+  "profFiftyPercentOfBalance": "50% of balance",
+  "profMaxWithdrawalIs": "Maximum withdrawal is ₹{amount}",
+  "@profMaxWithdrawalIs": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "profMinWithdrawalIs": "Minimum withdrawal is ₹{amount}",
+  "@profMinWithdrawalIs": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "profWithdrawRange": "Withdraw ₹{min} – ₹{max} (max 50% of balance)",
+  "@profWithdrawRange": {
+    "placeholders": {
+      "min": {
+        "type": "String"
+      },
+      "max": {
+        "type": "String"
+      }
+    }
+  },
+  "profBankAccountDetails": "Bank Account Details",
+  "profAmountRupees": "Amount (₹)",
+  "profEnterWithdrawalAmount": "Enter withdrawal amount",
+  "profEnterValidAmount": "Enter a valid amount",
+  "profAccountHolderName": "Account Holder Name",
+  "profAsPerBankRecords": "As per bank records",
+  "profEnterFullName": "Enter full name",
+  "profBankName": "Bank Name",
+  "profBankNameHint": "e.g. SBI",
+  "profBranchOptional": "Branch (opt.)",
+  "profBranchNameHint": "Branch name",
+  "profAccountNumber": "Account Number",
+  "profEnterAccountNumber": "Enter account number",
+  "profInvalidAccountNumber": "Invalid account number",
+  "profIfscCode": "IFSC Code",
+  "profIfscHint": "e.g. SBIN0001234",
+  "profInvalidIfsc": "Invalid IFSC",
+  "profSubmitting": "Submitting…",
+  "profRequestWithdrawal": "Request Withdrawal",
+  "profProcessedWithin": "Processed within 2–3 business days",
+  "profNoWithdrawalsYet": "No withdrawals yet",
+  "profWithdrawalRequestsAppearHere": "Your withdrawal requests will appear here.",
+  "profPaid": "Paid",
+  "profRejected": "Rejected",
+  "profRequested": "Requested",
+  "profAccountHolder": "Account Holder",
+  "profAccountNoShort": "Account No.",
+  "profBank": "Bank",
+  "profIfsc": "IFSC",
+  "profPayoutId": "Payout ID",
+  "profMin3Characters": "Min 3 characters",
+  "profPleaseSelectState": "Please select a state",
+  "profPleaseSelectCity": "Please select a city",
+  "profFailedLoadStates": "Failed to load states",
+  "profFailedLoadStatesTryAgain": "Failed to load states. Please try again.",
+  "profFailedLoadCities": "Failed to load cities",
+  "profFailedLoadCitiesTryAgain": "Failed to load cities. Please try again.",
+  "profFillRequiredFieldsCorrectly": "Please fill in all required fields correctly",
+  "profFailedUpdateProfile": "Failed to update profile.",
+  "profFailedUpdateProfileTryAgain": "Failed to update profile. Please try again.",
+  "profCashOutPlaced": "Cash-out request placed!",
+  "profCashOutFailed": "Cash-out request failed.",
+  "profCoinsConverted": "Coins converted!",
+  "profConversionFailed": "Conversion failed.",
+  "profFillRequiredFields": "Please fill in all required fields",
+  "profRefundSubmitted": "Refund request submitted",
+  "profFailedInitiateRefund": "Failed to initiate refund. Please try again.",
+  "profSubAuctionAccessPlan": "Auction Access Plan",
+  "profSubAuctionBidLimit": "Auction Bid Limit",
+  "profSubBidLimitPlan": "Bid Limit Plan",
+  "profSubOwnerContactPlan": "Owner Contact Plan",
+  "profSubVehicleDetailsPlan": "Vehicle Details Plan",
+  "profSubInspectionPlan": "Inspection Plan",
+  "profSubMechanicContactPlan": "Mechanic Contact Plan",
+  "profSubAuctionAccessDesc": "Unlock unlimited access to live auctions",
+  "profSubBidLimitDesc": "Increase your bidding limit to place higher bids",
+  "profSubOwnerContactDesc": "Connect directly with vehicle owners",
+  "profSubVehicleDetailsDesc": "Unlock complete vehicle history & details",
+  "profSubInspectionDesc": "Request professional vehicle inspection",
+  "profSubMechanicContactDesc": "Connect with certified mechanics near you",
+  "profSubMyPlans": "My Plans",
+  "profSubExplorePlans": "Explore Plans",
+  "profSubComboPlans": "Combo Plans",
+  "profSubSubscription": "Subscription",
+  "profSubPaymentFailedMsg": "Payment failed: {message}",
+  "@profSubPaymentFailedMsg": {
+    "placeholders": {
+      "message": {
+        "type": "String"
+      }
+    }
+  },
+  "profSubMonthJan": "Jan",
+  "profSubMonthFeb": "Feb",
+  "profSubMonthMar": "Mar",
+  "profSubMonthApr": "Apr",
+  "profSubMonthMay": "May",
+  "profSubMonthJun": "Jun",
+  "profSubMonthJul": "Jul",
+  "profSubMonthAug": "Aug",
+  "profSubMonthSep": "Sep",
+  "profSubMonthOct": "Oct",
+  "profSubMonthNov": "Nov",
+  "profSubMonthDec": "Dec",
+  "profSubActive": "Active",
+  "profSubInactive": "Inactive",
+  "profSubValidUntil": "Valid Until",
+  "profSubNeedMoreBenefits": "Need more benefits?",
+  "profSubExploreOtherPlans": "Explore our other plans and choose the one that fits your needs.",
+  "profSubNoActivePlans": "No Active Plans",
+  "profSubNoActiveSubscriptionsYet": "You don't have any active subscriptions yet.",
+  "profSubNoPlanSelected": "No plan selected",
+  "profSubAuctionActivatedBrowse": "Auction Access Activated! You can now browse and bid.",
+  "profSubContactPackActivated": "Contact pack activated! Fetching owner contact...",
+  "profSubShopContactUnlocked": "Shop contact unlocked!",
+  "profSubMechanicContactUnlocked": "Mechanic contact unlocked!",
+  "profSubVehicleDetailsUnlockedCredits": "Vehicle Details unlocked! You now have full details access + 5 owner contact credits.",
+  "profSubActivatedPlanActive": "Subscription Activated! Your plan is now active.",
+  "profSubFailedLoadPlans": "Failed to load subscription plans. Please try again.",
+  "profSubFailedLoadSubscriptions": "Failed to load subscriptions. Please try again.",
+  "profSubFailedLoadCombos": "Failed to load combos. Pull to refresh.",
+  "profSubNoPlanSelectedDot": "No plan selected.",
+  "profSubConfirmSubscription": "Confirm Subscription",
+  "profSubPlanName": "{name} Plan",
+  "@profSubPlanName": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "profSubFeatAuction1": "View all auction vehicle listings",
+  "profSubFeatAuction2": "Participate in live auctions",
+  "profSubFeatAuction3": "Access complete auction history",
+  "profSubFeatUninterrupted": "{metric} of uninterrupted access",
+  "@profSubFeatUninterrupted": {
+    "placeholders": {
+      "metric": {
+        "type": "String"
+      }
+    }
+  },
+  "profSubFeatBidUpTo": "Place bids up to {metric}",
+  "@profSubFeatBidUpTo": {
+    "placeholders": {
+      "metric": {
+        "type": "String"
+      }
+    }
+  },
+  "profSubFeatBid2": "Unlimited bid placements",
+  "profSubFeatBid3": "Real-time bid tracking",
+  "profSubFeatBid4": "Priority bid notifications",
+  "profSubFeatOwner1": "Seller name and contact details",
+  "profSubFeatOwner2": "Phone number and email access",
+  "profSubFeatOwner3": "Direct WhatsApp communication",
+  "profSubFeatOwner4": "View seller's other listings",
+  "profSubFeatVeh1": "Complete vehicle history report",
+  "profSubFeatVeh2": "Detailed technical specifications",
+  "profSubFeatVeh3": "High-resolution vehicle images",
+  "profSubFeatVeh4": "Professional inspection reports",
+  "profSubFeatVeh5": "Ownership history and documents",
+  "profSubFeatVeh6": "Market valuation insights",
+  "profSubFeatInsp1": "On-site professional inspection",
+  "profSubFeatInsp2": "Comprehensive mechanical assessment",
+  "profSubFeatInsp3": "Body condition evaluation",
+  "profSubFeatInsp4": "Engine and transmission diagnostics",
+  "profSubFeatInsp5": "Detailed inspection report with photos",
+  "profSubFeatInsp6": "Expert recommendations and ratings",
+  "profSubFeatDefault1": "Access to premium features",
+  "profSubFeatValidity": "{metric} validity",
+  "@profSubFeatValidity": {
+    "placeholders": {
+      "metric": {
+        "type": "String"
+      }
+    }
+  },
+  "profSubFeatDefault3": "Priority customer support",
+  "profSubWhatsIncluded": "What's Included",
+  "profSubOrderSummary": "Order Summary",
+  "profSubPlanLabel": "Plan",
+  "profSubValidityLabel": "Validity",
+  "profSubPlanCode": "Plan Code",
+  "profSubTotalAmount": "Total Amount",
+  "profSubPay": "Pay {price}",
+  "@profSubPay": {
+    "placeholders": {
+      "price": {
+        "type": "String"
+      }
+    }
+  },
+  "profSubDaysMetric": "{value} Days",
+  "@profSubDaysMetric": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "profSubLimitMetric": "₹{amount} Limit",
+  "@profSubLimitMetric": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "profSubError": "Error",
+  "profSubOwnerContactPacks": "Owner Contact Packs",
+  "profSubGetBestValue": "Get the best value for your money",
+  "profSubPrioritySupport": "Priority\nSupport",
+  "profSubStandardSupport": "Standard\nSupport",
+  "profSubEmailSupport": "Email\nSupport",
+  "profSubSave": "Save ₹{amount}",
+  "@profSubSave": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "profSubPayNow": "Pay Now",
+  "profSubBuy": "Buy",
+  "profSubActivatedSuccessfully": "{name} activated successfully!",
+  "@profSubActivatedSuccessfully": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "profSubPurchasedSuccessfully": "{name} purchased successfully!",
+  "@profSubPurchasedSuccessfully": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "profSubOwnerContactsCount": "{count} owner contacts",
+  "@profSubOwnerContactsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "profSubNoComboPlans": "No Combo Plans",
+  "profSubNoComboPlansAvailable": "No combo plans are available right now.",
+  "profSubChooseYourSubscription": "Choose Your Subscription",
+  "profSubUnlimitedAccess": "Unlimited Access",
+  "profSubBidLimit": "Bid Limit",
+  "profSubSecureTrusted": "Secure & Trusted",
+  "profSubHundredSafe": "100% Safe",
+  "profSubEliteBenefits": "Elite Benefits",
+  "profSubMostPopular": "MOST POPULAR",
+  "profSubEliteSupport": "Elite Support",
+  "profSubPremiumSupport": "Premium Support",
+  "profSubBasicSupport": "Basic Support",
+  "profSubElitePlan": "Elite Plan",
+  "profSubPremiumPlan": "Premium Plan",
+  "profSubBasicPlan": "Basic Plan",
+  "profSubAvailableWalletBalance": "Available Wallet Balance",
+  "profSubPayFromWalletBalance": "Pay from wallet balance",
+  "profSubProceedPaymentAmount": "Proceed Payment {price}",
+  "@profSubProceedPaymentAmount": {
+    "placeholders": {
+      "price": {
+        "type": "String"
+      }
+    }
+  },
+  "profSubTermsConditions": "Terms & Conditions",
+  "profSubWalletTerm1": "Wallet balance is non-transferable and can only be used for subscription payments within the app.",
+  "profSubWalletTerm2": "Once a payment is made using wallet balance, it cannot be reversed or refunded.",
+  "profSubWalletTerm3": "Wallet balance does not carry any interest and is subject to the company's terms of service.",
+  "spareNoCategoryShopsFound": "No {category} shops found near your location.\nTry enabling location or check back later.",
+  "@spareNoCategoryShopsFound": {
+    "placeholders": {
+      "category": {
+        "type": "String"
+      }
+    }
+  },
+  "spareNoSparePartsAvailable": "No spare parts available",
+  "spareCheckBackLater": "Check back later for new listings",
+  "spareSuitsLabel": "Suits: {suitsFor}",
+  "@spareSuitsLabel": {
+    "placeholders": {
+      "suitsFor": {
+        "type": "String"
+      }
+    }
+  },
+  "spareHeaderTitle": "Spare",
+  "spareFindTrustedShops": "Find trusted spare part shops near your location",
+  "spareConstructionEquipment": "Construction Equipment",
+  "spareCommercialVehicle": "Commercial Vehicle",
+  "spareCeShopsDesc": "Browse shops selling parts for JCBs, excavators, loaders & more",
+  "spareCvShopsDesc": "Browse shops selling parts for trucks, buses, tempos & trailers",
+  "spareError": "Error",
+  "spareLoginRequired": "Login Required",
+  "sparePleaseLoginToShowInterest": "Please login to show interest",
+  "spareInterestRecorded": "Interest Recorded",
+  "spareInterestRecordedMessage": "Your interest in \"{spareName}\" has been recorded successfully.",
+  "@spareInterestRecordedMessage": {
+    "placeholders": {
+      "spareName": {
+        "type": "String"
+      }
+    }
+  },
+  "spareFailedToRecordInterest": "Failed to record interest. Please try again.",
+  "spareFailedToLoadSpareParts": "Failed to load spare parts",
+  "spareFailedToLoadShops": "Failed to load shops",
+  "spareFailedToLoadOrders": "Failed to load orders",
+  "spareUnableToLoadSubscriptionPlan": "Unable to load subscription plan. Please try again.",
+  "spareConnectWithShop": "Connect with Shop",
+  "sparePayToGetShopContact": "Pay to get the direct contact number for {shopName}.",
+  "@sparePayToGetShopContact": {
+    "placeholders": {
+      "shopName": {
+        "type": "String"
+      }
+    }
+  },
+  "spareContactUnlocked": "Contact unlocked! You can now call the shop.",
+  "spareCouldNotUnlockContact": "Could not unlock contact. Please try again.",
+  "sparePhone": "Phone",
+  "spareContactPhone": "Contact: {phone}",
+  "@spareContactPhone": {
+    "placeholders": {
+      "phone": {
+        "type": "String"
+      }
+    }
+  },
+  "spareLocationError": "Location Error",
+  "spareUnableToAccessLocation": "Unable to access location. Please restart the app and try again.",
+  "spareLocationPermission": "Location Permission",
+  "spareLocationPermissionRationale": "We need your location to find nearby shops. Please grant location permission.",
+  "spareAllow": "Allow",
+  "spareEnableGps": "Enable GPS",
+  "spareGpsDisabledMessage": "GPS is disabled. Please enable location services to find nearby shops.",
+  "spareOpenSettings": "Open Settings",
+  "spareLocationPermissionRequired": "Location Permission Required",
+  "spareLocationPermissionDeniedForever": "Location permission has been permanently denied. Please enable it from app settings.",
+  "spareLocationUpdated": "Location Updated?",
+  "spareRetryLoadingShopsPrompt": "Would you like to retry loading shops now?",
+  "spareNotNow": "Not Now",
+  "spareFailedToLoadYourVehicles": "Failed to load your vehicles",
+  "spareFieldNameIsRequired": "{fieldName} is required",
+  "@spareFieldNameIsRequired": {
+    "placeholders": {
+      "fieldName": {
+        "type": "String"
+      }
+    }
+  },
+  "spareCategoryIsRequired": "Category is required",
+  "sparePleaseAddAtLeastOneVehicleImage": "Please add at least 1 vehicle image",
+  "sparePleaseUploadAtLeastOneRcDocument": "Please upload at least one RC document",
+  "spareLimitReached": "Limit Reached",
+  "spareMaxTenImagesAllowed": "Maximum 10 images allowed",
+  "spareEachDocumentUnder12Mb": "Each document must be under 12 MB",
+  "spareVehicleSubmittedForApproval": "Vehicle submitted for approval.",
+  "spareFailedToSubmitVehicle": "Failed to submit vehicle: {error}",
+  "@spareFailedToSubmitVehicle": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "spareVehicleUpdatedPendingApproval": "Vehicle updated. Changes pending admin approval.",
+  "spareFailedToUpdateVehicle": "Failed to update vehicle: {error}",
+  "@spareFailedToUpdateVehicle": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "spareSuccess": "Success",
+  "spareVehicleMarkedAsSold": "Vehicle marked as sold",
+  "spareFailedToMarkAsSold": "Failed to mark as sold",
+  "spareVehicleMarkedAsAvailable": "Vehicle marked as available",
+  "spareFailedToUpdateStatus": "Failed to update status",
+  "spareNoCategoriesFound": "No categories found",
+  "spareFailedToLoadCategories": "Failed to load categories",
+  "spareFailedToLoadVehicles": "Failed to load vehicles",
+  "spareFailedToLoadSubscribedVehicles": "Failed to load subscribed vehicles",
+  "spareSellerNotifiedOfInterest": "The seller has been notified of your interest.",
+  "spareFailedToRecordInterestShort": "Failed to record interest.",
+  "spareOfferTooLowMinimumRequired": "Offer too low. Minimum required: ₹{amount}",
+  "@spareOfferTooLowMinimumRequired": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "spareFailedToSubmitOffer": "Failed to submit offer.",
+  "spareInspectionPlanName": "Inspection",
+  "spareProfessionalOnSiteInspectionFor": "Professional on-site inspection for {categoryName}",
+  "@spareProfessionalOnSiteInspectionFor": {
+    "placeholders": {
+      "categoryName": {
+        "type": "String"
+      }
+    }
+  },
+  "sparePayToRequestInspection": "Pay to request a professional inspection for this vehicle.",
+  "spareTeamWillContactForInspection": "Our team will contact you to schedule an inspection.",
+  "spareFailedToRequestInspection": "Failed to request inspection.",
+  "spareVehicleNotFound": "Vehicle not found.",
+  "spareFailedToLoadVehicleDetails": "Failed to load vehicle details. Please try again.",
+  "spareCouldNotAccessVehicleDetails": "Could not access vehicle details.",
+  "spareVehicleDetailsAccess": "Vehicle Details Access",
+  "spareVehicleDetailsAccessSubtitle": "Get full vehicle details + 5 owner contact credits. Pay once, use for the plan period.",
+  "spareOwnerContactPack": "Owner Contact Pack",
+  "spareOwnerContactPackSubtitle": "Your contact credits are exhausted. Buy a pack to reveal owner phone numbers.",
+  "spareWishlist": "Wishlist",
+  "sparePurchaseHistory": "Purchase History",
+  "spareFilters": "Filters",
+  "spareReset": "Reset",
+  "spareNoFiltersAvailable": "No filters available",
+  "spareSearchBrand": "Search brand",
+  "spareSearchState": "Search state",
+  "spareSelectFilter": "Select {filterKey}",
+  "@spareSelectFilter": {
+    "placeholders": {
+      "filterKey": {
+        "type": "String"
+      }
+    }
+  },
+  "spareEnterFilter": "Enter {filterKey}",
+  "@spareEnterFilter": {
+    "placeholders": {
+      "filterKey": {
+        "type": "String"
+      }
+    }
+  },
+  "spareTryAdjustingFilters": "Try adjusting your filters",
+  "spareVehicle": "Vehicle",
+  "spareBuyAndSellTitle": "Buy & Sell",
+  "spareBrowseAndPostCommercialVehicles": "Browse & post commercial vehicles",
+  "spareBuy": "Buy",
+  "spareSell": "Sell",
+  "spareYourPostedVehicleListings": "Your posted vehicle listings",
+  "spareMarkAsSold": "Mark as Sold",
+  "spareMarkVehicleAsSoldPrompt": "Mark \"{name}\" as sold?",
+  "@spareMarkVehicleAsSoldPrompt": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "spareMarkAsAvailable": "Mark as Available",
+  "spareMarkVehicleAsAvailablePrompt": "Mark \"{name}\" as available?",
+  "@spareMarkVehicleAsAvailablePrompt": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "spareConfirm": "Confirm",
+  "spareMarkSold": "Mark Sold",
+  "spareMarkAvailable": "Mark Available",
+  "spareNoPostedVehiclesYet": "You haven't posted any vehicles yet",
+  "spareTapSellToPostVehicle": "Tap Sell on any category to post your vehicle",
+  "spareSubscribedVehicles": "Subscribed Vehicles",
+  "spareVehiclesWithPremiumAccess": "Vehicles you have premium access to",
+  "sparePremiumAccess": "Premium Access",
+  "spareNoSubscribedVehicles": "No subscribed vehicles",
+  "spareSubscribedVehiclesAppearHere": "Vehicles you get premium access to will appear here",
+  "spareVehicles": "Vehicles",
+  "spareBrowseAvailableListings": "Browse available listings",
+  "spareViewMore": "View More",
+  "spareSellVehicle": "Sell Vehicle",
+  "sparePostYourVehicleForSale": "Post your vehicle for sale",
+  "spareSearchCategory": "Search category...",
+  "spareSubmittingYourVehicle": "Submitting your vehicle...",
+  "sparePleaseWaitProcessingListing": "Please wait while we process your listing",
+  "spareNoFormFieldsAvailable": "No form fields available.",
+  "sparePhotosAndDocuments": "Photos & Documents",
+  "spareAutoFilled": "Auto-filled",
+  "spareExampleHint": "e.g. {example}",
+  "@spareExampleHint": {
+    "placeholders": {
+      "example": {
+        "type": "String"
+      }
+    }
+  },
+  "spareTenDigitMobileNumber": "10-digit mobile number",
+  "spareSearchCity": "Search city",
+  "spareSelectStateFirst": "Select state first",
+  "spareConfirmedCheck": "Confirmed ✓",
+  "spareCouldNotOpenPicker": "Could not open picker: {error}",
+  "@spareCouldNotOpenPicker": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "spareTapToAddVehiclePhotos": "Tap to add vehicle photos",
+  "spareTapToAddMore": "Tap to add more",
+  "spareUpTo10PhotosFormats": "Up to 10 photos  •  JPG, PNG",
+  "spareTapToUpload": "Tap to upload",
+  "spareMultipleFilesAllowedFormats": "Multiple files allowed  •  Max 12 MB each  •  JPG, PNG",
+  "spareUpdateVehicle": "Update Vehicle",
+  "spareShareVehicle": "Share Vehicle",
+  "sparePriceOnRequest": "Price on request",
+  "spareSold": "Sold",
+  "spareApproved": "Approved",
+  "spareRejected": "Rejected",
+  "spareUnknown": "Unknown",
+  "spareCouldNotRevealContact": "Could not reveal contact."
 }

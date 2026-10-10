@@ -64,11 +64,13 @@ class ApprovedVehicleListingModel extends ApprovedVehicleListingEntity {
       inspectionRequested: json['inspection_requested']?.toString() ?? 'no',
       inspectionSubscription: json['inspection_subscription'] != null
           ? _InspectionSubscriptionModel.fromJson(
-              json['inspection_subscription'] as Map<String, dynamic>)
+              json['inspection_subscription'] as Map<String, dynamic>,
+            )
           : null,
       categorySubscription: json['category_subscription'] != null
           ? _CategorySubscriptionModel.fromJson(
-              json['category_subscription'] as Map<String, dynamic>)
+              json['category_subscription'] as Map<String, dynamic>,
+            )
           : null,
       files: json['files'] != null
           ? _VehicleFilesModel.fromJson(json['files'] as Map<String, dynamic>)
@@ -101,7 +103,7 @@ class _InspectionSubscriptionModel extends InspectionSubscriptionEntity {
       inspectionAmount: json['inspection_amount'] is double
           ? json['inspection_amount'] as double
           : double.tryParse(json['inspection_amount']?.toString() ?? '0') ??
-              0.0,
+                0.0,
       categoryPlan: json['category_plan']?.toString() ?? '',
     );
   }
@@ -118,7 +120,7 @@ class _CategorySubscriptionModel extends CategorySubscriptionEntity {
       subscriptionAmount: json['subscription_amount'] is double
           ? json['subscription_amount'] as double
           : double.tryParse(json['subscription_amount']?.toString() ?? '0') ??
-              0.0,
+                0.0,
       apprVehCommonSubPlan: json['appr_veh_common_sub_plan']?.toString() ?? '',
     );
   }
@@ -133,16 +135,25 @@ class _VehicleFilesModel extends VehicleFilesEntity {
 
   factory _VehicleFilesModel.fromJson(Map<String, dynamic> json) {
     return _VehicleFilesModel(
-      images: (json['images'] as List<dynamic>?)
-              ?.map((e) => _VehicleFileModel.fromJson(e as Map<String, dynamic>))
+      images:
+          (json['images'] as List<dynamic>?)
+              ?.map(
+                (e) => _VehicleFileModel.fromJson(e as Map<String, dynamic>),
+              )
               .toList() ??
           [],
-      rcDocuments: (json['rc_documents'] as List<dynamic>?)
-              ?.map((e) => _VehicleFileModel.fromJson(e as Map<String, dynamic>))
+      rcDocuments:
+          (json['rc_documents'] as List<dynamic>?)
+              ?.map(
+                (e) => _VehicleFileModel.fromJson(e as Map<String, dynamic>),
+              )
               .toList() ??
           [],
-      insuranceDocuments: (json['insurance_documents'] as List<dynamic>?)
-              ?.map((e) => _VehicleFileModel.fromJson(e as Map<String, dynamic>))
+      insuranceDocuments:
+          (json['insurance_documents'] as List<dynamic>?)
+              ?.map(
+                (e) => _VehicleFileModel.fromJson(e as Map<String, dynamic>),
+              )
               .toList() ??
           [],
     );

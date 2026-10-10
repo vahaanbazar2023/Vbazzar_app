@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../../core/extensions/context_extensions.dart';
 import '../../../core/design_system/molecules/custom_snackbar.dart';
 import '../../../core/network/network_service.dart';
 import '../../../core/network/endpoints/api_endpoints.dart';
@@ -134,7 +135,7 @@ class SellVehicleController extends GetxController {
       sellPage.value += 1;
     } catch (e) {
       hasErrorSellVehicles.value = true;
-      errorMessageSellVehicles.value = 'Failed to load your vehicles';
+      errorMessageSellVehicles.value = appL10n.spareFailedToLoadYourVehicles;
       debugPrint('🔴 [SELL VEHICLES ERROR] $e');
     } finally {
       isLoadingSellVehicles.value = false;
@@ -220,30 +221,32 @@ class SellVehicleController extends GetxController {
 
       final value = formValues[field.fieldName];
       if (value == null || (value is String && value.trim().isEmpty)) {
-        formErrors[field.fieldName] = '${field.fieldName} is required';
+        formErrors[field.fieldName] = appL10n.spareFieldNameIsRequired(
+          field.fieldName,
+        );
         isValid = false;
       }
     }
 
     // Validate State & City via dedicated keys
     if ((formValues['state_code'] ?? '').toString().isEmpty) {
-      formErrors['State'] = 'State is required';
+      formErrors['State'] = appL10n.stateRequired;
       isValid = false;
     }
     if ((formValues['city_code'] ?? '').toString().isEmpty) {
-      formErrors['City'] = 'City is required';
+      formErrors['City'] = appL10n.cityRequired;
       isValid = false;
     }
 
     // Validate Brand via dedicated key
     if ((formValues['brand_code'] ?? '').toString().isEmpty) {
-      formErrors['Brand'] = 'Brand is required';
+      formErrors['Brand'] = appL10n.brandValidation;
       isValid = false;
     }
 
     // Validate Category via controller field
     if (selectedCategoryCode.value.isEmpty) {
-      formErrors['Category'] = 'Category is required';
+      formErrors['Category'] = appL10n.spareCategoryIsRequired;
       isValid = false;
     }
 
@@ -251,8 +254,8 @@ class SellVehicleController extends GetxController {
     if (vehicleImages.isEmpty) {
       isValid = false;
       Get.snackbar(
-        'Validation Error',
-        'Please add at least 1 vehicle image',
+        appL10n.validation_error,
+        appL10n.sparePleaseAddAtLeastOneVehicleImage,
         snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.red,
         colorText: Colors.white,
@@ -263,8 +266,8 @@ class SellVehicleController extends GetxController {
     if (rcDocuments.isEmpty && !isEditMode.value) {
       isValid = false;
       Get.snackbar(
-        'Validation Error',
-        'Please upload at least one RC document',
+        appL10n.validation_error,
+        appL10n.sparePleaseUploadAtLeastOneRcDocument,
         snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.red,
         colorText: Colors.white,
@@ -282,8 +285,8 @@ class SellVehicleController extends GetxController {
   void addImage(File file) {
     if (vehicleImages.length >= 10) {
       Get.snackbar(
-        'Limit Reached',
-        'Maximum 10 images allowed',
+        appL10n.spareLimitReached,
+        appL10n.spareMaxTenImagesAllowed,
         snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.orange,
         colorText: Colors.white,
@@ -298,8 +301,8 @@ class SellVehicleController extends GetxController {
     final remaining = 10 - vehicleImages.length;
     if (remaining <= 0) {
       Get.snackbar(
-        'Limit Reached',
-        'Maximum 10 images allowed',
+        appL10n.spareLimitReached,
+        appL10n.spareMaxTenImagesAllowed,
         snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.orange,
         colorText: Colors.white,
@@ -322,8 +325,8 @@ class SellVehicleController extends GetxController {
   bool _checkSize(File file) {
     if (file.lengthSync() > _maxDocSizeBytes) {
       Get.snackbar(
-        'File Too Large',
-        'Each document must be under 12 MB',
+        appL10n.fileTooLarge,
+        appL10n.spareEachDocumentUnder12Mb,
         snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.orange,
         colorText: Colors.white,
@@ -509,7 +512,7 @@ class SellVehicleController extends GetxController {
 
       // Show success message after navigation
       CustomSnackbar.show(
-        message: 'Vehicle submitted for approval.',
+        message: appL10n.spareVehicleSubmittedForApproval,
         type: SnackbarType.success,
       );
 
@@ -517,8 +520,8 @@ class SellVehicleController extends GetxController {
     } catch (e) {
       debugPrint('❌ [submitSellForm] ERROR: $e');
       Get.snackbar(
-        'Error',
-        'Failed to submit vehicle: ${e.toString()}',
+        appL10n.spareError,
+        appL10n.spareFailedToSubmitVehicle(e.toString()),
         snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.red,
         colorText: Colors.white,
@@ -613,7 +616,7 @@ class SellVehicleController extends GetxController {
       );
 
       CustomSnackbar.show(
-        message: 'Vehicle updated. Changes pending admin approval.',
+        message: appL10n.spareVehicleUpdatedPendingApproval,
         type: SnackbarType.success,
       );
 
@@ -622,8 +625,8 @@ class SellVehicleController extends GetxController {
       return true;
     } catch (e) {
       Get.snackbar(
-        'Error',
-        'Failed to update vehicle: ${e.toString()}',
+        appL10n.spareError,
+        appL10n.spareFailedToUpdateVehicle(e.toString()),
         snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.red,
         colorText: Colors.white,
@@ -782,8 +785,8 @@ class SellVehicleController extends GetxController {
         userId: uid,
       );
       Get.snackbar(
-        'Success',
-        'Vehicle marked as sold',
+        appL10n.spareSuccess,
+        appL10n.spareVehicleMarkedAsSold,
         snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.green,
         colorText: Colors.white,
@@ -791,8 +794,8 @@ class SellVehicleController extends GetxController {
       await refreshSellVehiclesList();
     } catch (e) {
       Get.snackbar(
-        'Error',
-        'Failed to mark as sold',
+        appL10n.spareError,
+        appL10n.spareFailedToMarkAsSold,
         snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.red,
         colorText: Colors.white,
@@ -812,8 +815,8 @@ class SellVehicleController extends GetxController {
         userId: uid,
       );
       Get.snackbar(
-        'Success',
-        'Vehicle marked as available',
+        appL10n.spareSuccess,
+        appL10n.spareVehicleMarkedAsAvailable,
         snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.green,
         colorText: Colors.white,
@@ -821,8 +824,8 @@ class SellVehicleController extends GetxController {
       await refreshSellVehiclesList();
     } catch (e) {
       Get.snackbar(
-        'Error',
-        'Failed to update status',
+        appL10n.spareError,
+        appL10n.spareFailedToUpdateStatus,
         snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.red,
         colorText: Colors.white,

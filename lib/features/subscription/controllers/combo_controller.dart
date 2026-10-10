@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
+import '../../../core/extensions/context_extensions.dart';
 import '../../../core/network/endpoints/api_endpoints.dart';
 import '../../../core/storage/secure_storage_service.dart';
 import '../../../core/storage/storage_keys.dart';
@@ -47,7 +48,7 @@ class ComboController extends GetxController {
       ownerPacks.assignAll(data.ownerPacks);
     } catch (e, st) {
       debugPrint('🎁 [ComboController] ❌ ERROR: $e\n$st');
-      errorMessage.value = 'Failed to load combos. Pull to refresh.';
+      errorMessage.value = appL10n.profSubFailedLoadCombos;
     } finally {
       _isFetching = false;
       isLoading.value = false;

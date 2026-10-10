@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
+import '../../../core/extensions/context_extensions.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_sizes.dart';
 import '../../../routes/app_routes.dart';
@@ -23,7 +24,7 @@ class SpareSupportTab extends GetView<SpareAndFmsController> {
         children: [
           // ── Header ────────────────────────────────────────────
           Text(
-            'Spare',
+            context.l10n.spareHeaderTitle,
             style: AppFonts.titleLarge.copyWith(
               fontWeight: FontWeight.w800,
               letterSpacing: -0.3,
@@ -31,7 +32,7 @@ class SpareSupportTab extends GetView<SpareAndFmsController> {
           ),
           SizedBox(height: 4.h),
           Text(
-            'Find trusted spare part shops near your location',
+            context.l10n.spareFindTrustedShops,
             style: AppFonts.bodySmall.copyWith(color: AppColors.grey500),
           ),
           SizedBox(height: 24.h),
@@ -39,9 +40,8 @@ class SpareSupportTab extends GetView<SpareAndFmsController> {
           // ── Category Cards ────────────────────────────────────
           _CategoryCard(
             title: 'CE',
-            fullTitle: 'Construction Equipment',
-            description:
-                'Browse shops selling parts for JCBs, excavators, loaders & more',
+            fullTitle: context.l10n.spareConstructionEquipment,
+            description: context.l10n.spareCeShopsDesc,
             icon: Icons.construction_rounded,
             gradientColors: const [AppColors.primary, AppColors.primaryDark],
             badgeColor: AppColors.lightOrange,
@@ -51,9 +51,8 @@ class SpareSupportTab extends GetView<SpareAndFmsController> {
           SizedBox(height: 14.h),
           _CategoryCard(
             title: 'CV',
-            fullTitle: 'Commercial Vehicle',
-            description:
-                'Browse shops selling parts for trucks, buses, tempos & trailers',
+            fullTitle: context.l10n.spareCommercialVehicle,
+            description: context.l10n.spareCvShopsDesc,
             icon: Icons.local_shipping_rounded,
             gradientColors: const [
               AppColors.secondary,

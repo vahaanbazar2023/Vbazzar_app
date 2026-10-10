@@ -145,16 +145,21 @@ class _CategoryCard extends StatelessWidget {
                     ],
                   ),
                   alignment: Alignment.center,
-                  child: GradientText(
-                    item.title,
-                    textAlign: TextAlign.center,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      fontFamily: 'Montserrat',
-                      fontSize: 13,
-                      fontWeight: FontWeight.w600,
-                      height: 1.0,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: GradientText(
+                        item.localizedTitle(context),
+                        textAlign: TextAlign.center,
+                        maxLines: 1,
+                        style: const TextStyle(
+                          fontFamily: 'Montserrat',
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                          height: 1.0,
+                        ),
+                      ),
                     ),
                   ),
                 ),

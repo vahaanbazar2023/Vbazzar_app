@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../core/constants/app_colors.dart';
+import '../../../core/extensions/context_extensions.dart';
 
 /// Reusable image upload section for the agent inspection form.
 /// Shows a grid of image thumbnails with add/remove capability.
@@ -32,14 +33,17 @@ class ImageUploadSection extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
-              title,
-              style: TextStyle(
-                fontSize: 13.sp,
-                fontWeight: FontWeight.w500,
-                color: AppColors.textPrimary,
+            Expanded(
+              child: Text(
+                title,
+                style: TextStyle(
+                  fontSize: 13.sp,
+                  fontWeight: FontWeight.w500,
+                  color: AppColors.textPrimary,
+                ),
               ),
             ),
+            SizedBox(width: 8.w),
             Text(
               '${images.length}/$maxImages',
               style: TextStyle(
@@ -79,10 +83,7 @@ class ImageUploadSection extends StatelessWidget {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(8.r),
             border: Border.all(color: AppColors.grey200),
-            image: DecorationImage(
-              image: FileImage(file),
-              fit: BoxFit.cover,
-            ),
+            image: DecorationImage(image: FileImage(file), fit: BoxFit.cover),
           ),
         ),
         // Remove button
@@ -132,11 +133,10 @@ class ImageUploadSection extends StatelessWidget {
             Icon(Icons.add_a_photo, size: 24.r, color: AppColors.primary),
             SizedBox(height: 4.h),
             Text(
-              'Add',
-              style: TextStyle(
-                fontSize: 10.sp,
-                color: AppColors.textSecondary,
-              ),
+              appL10n.inspAdd,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(fontSize: 10.sp, color: AppColors.textSecondary),
             ),
           ],
         ),

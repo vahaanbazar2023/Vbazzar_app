@@ -14,6 +14,7 @@ import '../../home/controllers/home_controller.dart';
 import '../../subscription/models/user_subscription.dart';
 import '../../subscription/services/subscription_guard_service.dart';
 import '../controllers/search_controller.dart' as sc;
+import '../../../core/extensions/context_extensions.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Search entry model — supports both network image URL and Material icon
@@ -45,14 +46,16 @@ class _SearchEntry {
 // Static app feature entries
 // ─────────────────────────────────────────────────────────────────────────────
 
-List<_SearchEntry> _buildFeatureEntries() => [
+List<_SearchEntry> _buildFeatureEntries(BuildContext context) => [
   _SearchEntry(
-    title: 'Auction Zone',
-    subtitle: 'Bid on live vehicle auctions',
+    title: context.l10n.auctionZone,
+    subtitle: context.l10n.aucSearchAuctionSubtitle,
     assetImage: AppAssets.auction,
     iconColor: const Color(0xFFBB2625),
     iconBg: const Color(0xFFFFEEEE),
     onTap: () async {
+      final planTitle = context.l10n.aucChooseSubscriptionPlan;
+      final planSubtitle = context.l10n.aucChoosePlanUnlockAuction;
       final guard = SubscriptionGuardService.to;
       await guard.ensureLoaded(forceRefresh: false);
       if (guard.hasActiveSubscription(SubscriptionTypeCode.auction)) {
@@ -62,72 +65,72 @@ List<_SearchEntry> _buildFeatureEntries() => [
           AppRoutes.subscription,
           arguments: {
             'subscription_source': SubscriptionTypeCode.auction,
-            'title': 'Choose Subscription Plan',
-            'subtitle': 'Choose a plan to unlock auction features',
+            'title': planTitle,
+            'subtitle': planSubtitle,
           },
         );
       }
     },
   ),
   _SearchEntry(
-    title: 'Buy & Sell',
-    subtitle: 'Browse and list vehicles for sale',
+    title: context.l10n.aucSearchBuySellTitle,
+    subtitle: context.l10n.aucSearchBuySellSubtitle,
     assetImage: AppAssets.buySell,
     iconColor: const Color(0xFF1976D2),
     iconBg: const Color(0xFFE3F2FD),
     onTap: () async => Get.toNamed(AppRoutes.buySellHome),
   ),
   _SearchEntry(
-    title: 'FMS / Spare Parts',
-    subtitle: 'Find spare parts and FMS items',
+    title: context.l10n.aucSearchFmsTitle,
+    subtitle: context.l10n.aucSearchFmsSubtitle,
     assetImage: AppAssets.fms,
     iconColor: const Color(0xFF388E3C),
     iconBg: const Color(0xFFE8F5E9),
     onTap: () async => Get.toNamed(AppRoutes.spareFms),
   ),
   _SearchEntry(
-    title: 'Insurance & Finance',
-    subtitle: 'Get insurance quotes and financing',
+    title: context.l10n.insuranceFinance,
+    subtitle: context.l10n.aucSearchInsuranceSubtitle,
     assetImage: AppAssets.insuranceFinance,
     iconColor: const Color(0xFF7B1FA2),
     iconBg: const Color(0xFFF3E5F5),
     onTap: () async => Get.toNamed(AppRoutes.insuranceFinance),
   ),
   _SearchEntry(
-    title: 'Inspection',
-    subtitle: 'Request vehicle inspection & valuation',
+    title: context.l10n.aucSearchInspectionTitle,
+    subtitle: context.l10n.aucSearchInspectionSubtitle,
     assetImage: AppAssets.inspection,
     iconColor: const Color(0xFFE65100),
     iconBg: const Color(0xFFFFF3E0),
     onTap: () async => Get.toNamed(AppRoutes.inspectionHome),
   ),
   _SearchEntry(
-    title: 'Service Support',
-    subtitle: 'Find mechanics and service centers',
+    title: context.l10n.aucSearchServiceSupportTitle,
+    subtitle: context.l10n.aucSearchServiceSupportSubtitle,
     assetImage: AppAssets.spareParts,
     iconColor: const Color(0xFF0288D1),
     iconBg: const Color(0xFFE1F5FE),
     onTap: () async => Get.toNamed(AppRoutes.serviceSupport),
   ),
   _SearchEntry(
-    title: 'My Bids',
-    subtitle: 'Track your active and past bids',
+    title: context.l10n.myBids,
+    subtitle: context.l10n.aucSearchMyBidsSubtitle,
     assetImage: AppAssets.auction,
     iconColor: const Color(0xFFBB2625),
     iconBg: const Color(0xFFFFEEEE),
     onTap: () async => Get.toNamed(AppRoutes.myBids),
   ),
   _SearchEntry(
-    title: 'My Wins',
-    subtitle: 'View vehicles you have won',
+    title: context.l10n.myWins,
+    subtitle: context.l10n.aucSearchMyWinsSubtitle,
     icon: Icons.emoji_events_rounded,
     iconColor: const Color(0xFFD4A017),
     iconBg: const Color(0xFFFFF8E0),
     onTap: () async => Get.toNamed(AppRoutes.myWins),
   ),
   _SearchEntry(
-    title: 'My Subscriptions',
-    subtitle: 'Manage your subscription plans',
+    title: context.l10n.mySubscriptions,
+    subtitle: context.l10n.aucSearchMySubscriptionsSubtitle,
     assetImage: AppAssets.subIconSubscriptions,
     iconColor: const Color(0xFF1976D2),
     iconBg: const Color(0xFFE3F2FD),
@@ -142,51 +145,145 @@ List<_SearchEntry> _buildFeatureEntries() => [
 const _baseIconUrl =
     'https://vahaan-buy-and-sell-category-images.s3.ap-south-1.amazonaws.com/';
 
-List<_SearchEntry> _buildCategoryEntries() => [
-  _cat('Backhoe Loader (BHL)', 'BHLD', 'bhl.png', 14),
-  _cat('Excavators', 'EXCV', 'excavator.png', 7),
-  _cat('Tippers', 'TIPR', 'tipper.png', 24),
-  _cat('Trucks', 'TRUC', 'truck.png', 9),
-  _cat('ICV', 'ICVH', 'icv.png', 12),
-  _cat('LCV', 'LCVH', 'lcv.png', 5),
-  _cat('Trailers', 'TRLR', 'trailer.png', 4),
-  _cat('Buses', 'BUSS', 'bus.png', 3),
-  _cat('Farm Equipment', 'FARM', 'farmequipment.png', 7),
-  _cat('Wheel Loader', 'WHLD', 'wheelloader.png', 0),
-  _cat('Rollers', 'ROLL', 'roller.png', 2),
-  _cat('Motor Grader', 'MGRD', 'motorgrader.png', 0),
-  _cat('Self Loading Mixer', 'SLMX', 'selfloadingmixer.png', 0),
-  _cat('Transitmixer', 'TRMX', 'transitmixer.png', 0),
-  _cat('Crushing & Batching Plant', 'CBPL', 'crushingbatchingplant.png', 0),
-  _cat('Cranes (Lifter)', 'CRNS', 'cranes.png', 2),
-  _cat('Gen-Set', 'GENS', 'genset.png', 0),
-  _cat('Other Machines', 'OTHR', 'other.png', 0),
-  _cat('Scrap', 'SCRP', 'scrap.png', 0),
-  _cat('jeepsy', 'ADVENTURE', 'jeepsy.png', 0),
-  _cat('Cars', 'CARS', 'car.png', 34),
+List<_SearchEntry> _buildCategoryEntries(BuildContext context) => [
+  _cat(
+    context,
+    'Backhoe Loader (BHL)',
+    context.l10n.aucCatBackhoeLoader,
+    'BHLD',
+    'bhl.png',
+    14,
+  ),
+  _cat(
+    context,
+    'Excavators',
+    context.l10n.aucCatExcavators,
+    'EXCV',
+    'excavator.png',
+    7,
+  ),
+  _cat(
+    context,
+    'Tippers',
+    context.l10n.aucCatTippers,
+    'TIPR',
+    'tipper.png',
+    24,
+  ),
+  _cat(context, 'Trucks', context.l10n.trucks, 'TRUC', 'truck.png', 9),
+  _cat(context, 'ICV', context.l10n.aucCatICV, 'ICVH', 'icv.png', 12),
+  _cat(context, 'LCV', context.l10n.aucCatLCV, 'LCVH', 'lcv.png', 5),
+  _cat(
+    context,
+    'Trailers',
+    context.l10n.aucCatTrailers,
+    'TRLR',
+    'trailer.png',
+    4,
+  ),
+  _cat(context, 'Buses', context.l10n.buses, 'BUSS', 'bus.png', 3),
+  _cat(
+    context,
+    'Farm Equipment',
+    context.l10n.aucCatFarmEquipment,
+    'FARM',
+    'farmequipment.png',
+    7,
+  ),
+  _cat(
+    context,
+    'Wheel Loader',
+    context.l10n.aucCatWheelLoader,
+    'WHLD',
+    'wheelloader.png',
+    0,
+  ),
+  _cat(context, 'Rollers', context.l10n.aucCatRollers, 'ROLL', 'roller.png', 2),
+  _cat(
+    context,
+    'Motor Grader',
+    context.l10n.aucCatMotorGrader,
+    'MGRD',
+    'motorgrader.png',
+    0,
+  ),
+  _cat(
+    context,
+    'Self Loading Mixer',
+    context.l10n.aucCatSelfLoadingMixer,
+    'SLMX',
+    'selfloadingmixer.png',
+    0,
+  ),
+  _cat(
+    context,
+    'Transitmixer',
+    context.l10n.aucCatTransitmixer,
+    'TRMX',
+    'transitmixer.png',
+    0,
+  ),
+  _cat(
+    context,
+    'Crushing & Batching Plant',
+    context.l10n.aucCatCrushingBatchingPlant,
+    'CBPL',
+    'crushingbatchingplant.png',
+    0,
+  ),
+  _cat(
+    context,
+    'Cranes (Lifter)',
+    context.l10n.aucCatCranes,
+    'CRNS',
+    'cranes.png',
+    2,
+  ),
+  _cat(context, 'Gen-Set', context.l10n.aucCatGenSet, 'GENS', 'genset.png', 0),
+  _cat(
+    context,
+    'Other Machines',
+    context.l10n.aucCatOtherMachines,
+    'OTHR',
+    'other.png',
+    0,
+  ),
+  _cat(context, 'Scrap', context.l10n.aucCatScrap, 'SCRP', 'scrap.png', 0),
+  _cat(
+    context,
+    'jeepsy',
+    context.l10n.aucCatJeepsy,
+    'ADVENTURE',
+    'jeepsy.png',
+    0,
+  ),
+  _cat(context, 'Cars', context.l10n.cars, 'CARS', 'car.png', 34),
 ];
 
-_SearchEntry _cat(String name, String code, String iconFile, int count) =>
-    _SearchEntry(
-      title: name,
-      subtitle: '$count vehicles available',
-      imageUrl: '$_baseIconUrl$iconFile',
-      iconColor: const Color(0xFFBB2625),
-      iconBg: const Color(0xFFFFEEEE),
-      onTap: () async {
-        final entity = VehicleCategoryEntity(
-          categoryCode: code,
-          categoryName: name,
-          vehicleCount: count,
-          categoryPlan: '',
-          subscriptionAmount: 0,
-        );
-        Get.toNamed(
-          AppRoutes.buyVehicleListings,
-          arguments: {'category': entity},
-        );
-      },
+_SearchEntry _cat(
+  BuildContext context,
+  String name,
+  String displayName,
+  String code,
+  String iconFile,
+  int count,
+) => _SearchEntry(
+  title: displayName,
+  subtitle: context.l10n.vehiclesAvailableCount(count),
+  imageUrl: '$_baseIconUrl$iconFile',
+  iconColor: const Color(0xFFBB2625),
+  iconBg: const Color(0xFFFFEEEE),
+  onTap: () async {
+    final entity = VehicleCategoryEntity(
+      categoryCode: code,
+      categoryName: name,
+      vehicleCount: count,
+      categoryPlan: '',
+      subscriptionAmount: 0,
     );
+    Get.toNamed(AppRoutes.buyVehicleListings, arguments: {'category': entity});
+  },
+);
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Search Screen
@@ -202,9 +299,6 @@ class SearchScreen extends StatefulWidget {
 class _SearchScreenState extends State<SearchScreen> {
   final sc.SearchController _ctrl = Get.find<sc.SearchController>();
 
-  final List<_SearchEntry> _features = _buildFeatureEntries();
-  final List<_SearchEntry> _categories = _buildCategoryEntries();
-
   @override
   void dispose() {
     super.dispose();
@@ -212,6 +306,8 @@ class _SearchScreenState extends State<SearchScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final features = _buildFeatureEntries(context);
+    final categories = _buildCategoryEntries(context);
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle.dark,
       child: Scaffold(
@@ -229,8 +325,8 @@ class _SearchScreenState extends State<SearchScreen> {
                   // Empty query — show static suggestions
                   if (query.trim().length < 2) {
                     return _SuggestionsView(
-                      features: _features,
-                      categories: _categories,
+                      features: features,
+                      categories: categories,
                     );
                   }
                   // Loading
@@ -267,7 +363,8 @@ class _SearchScreenState extends State<SearchScreen> {
                           ),
                           SizedBox(height: 16.h),
                           Text(
-                            'No results for "$query"',
+                            context.l10n.aucNoResultsFor(query),
+                            textAlign: TextAlign.center,
                             style: TextStyle(
                               fontFamily: 'Montserrat',
                               fontSize: 14.sp,
@@ -340,7 +437,9 @@ class _SearchHeader extends StatelessWidget {
                           SizedBox(width: 4.w),
                           Flexible(
                             child: Text(
-                              label.isNotEmpty ? label : 'Locating...',
+                              label.isNotEmpty
+                                  ? label
+                                  : context.l10n.aucLocating,
                               style: TextStyle(
                                 fontFamily: 'Montserrat',
                                 fontSize: 13.sp,
@@ -418,7 +517,7 @@ class _SearchHeader extends StatelessWidget {
                 child: CustomSearchBar(
                   controller: controller,
                   autofocus: true,
-                  hint: 'Search by service, vehicle...',
+                  hint: context.l10n.aucSearchHint,
                   showGradientBorder: true,
                   alwaysShowGradientBorder: false,
                   borderRadius: 12,
@@ -451,7 +550,7 @@ class _SuggestionsView extends StatelessWidget {
         children: [
           // ── Quick Access ───────────────────────────────────────
           Text(
-            'Quick Access',
+            context.l10n.aucQuickAccess,
             style: TextStyle(
               fontFamily: 'Montserrat',
               fontWeight: FontWeight.w600,
@@ -475,7 +574,7 @@ class _SuggestionsView extends StatelessWidget {
           SizedBox(height: 24.h),
           // ── Browse by Category ─────────────────────────────────
           Text(
-            'Browse by Category',
+            context.l10n.aucBrowseByCategory,
             style: TextStyle(
               fontFamily: 'Montserrat',
               fontWeight: FontWeight.w600,
@@ -551,17 +650,19 @@ class _SuggestionTile extends StatelessWidget {
                     ),
             ),
             SizedBox(height: 6.h),
-            Text(
-              entry.title,
-              textAlign: TextAlign.center,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(
-                fontFamily: 'Montserrat',
-                fontWeight: FontWeight.w600,
-                fontSize: 9.sp,
-                color: AppColors.textPrimary,
-                height: 1.3,
+            Flexible(
+              child: Text(
+                entry.title,
+                textAlign: TextAlign.center,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  fontFamily: 'Montserrat',
+                  fontWeight: FontWeight.w600,
+                  fontSize: 9.sp,
+                  color: AppColors.textPrimary,
+                  height: 1.3,
+                ),
               ),
             ),
           ],
@@ -590,7 +691,8 @@ class _SearchResultsList extends StatelessWidget {
             Icon(Icons.search_off, size: 56.r, color: AppColors.grey300),
             SizedBox(height: 16.h),
             Text(
-              'No results for "$query"',
+              context.l10n.aucNoResultsFor(query),
+              textAlign: TextAlign.center,
               style: TextStyle(
                 fontFamily: 'Montserrat',
                 fontSize: 14.sp,
@@ -600,7 +702,8 @@ class _SearchResultsList extends StatelessWidget {
             ),
             SizedBox(height: 8.h),
             Text(
-              'Try auction, buy & sell, inspection...',
+              context.l10n.aucSearchSuggestionHint,
+              textAlign: TextAlign.center,
               style: TextStyle(
                 fontFamily: 'Montserrat',
                 fontSize: 12.sp,
@@ -733,13 +836,17 @@ class _GlobalSearchResultsView extends StatelessWidget {
               padding: EdgeInsets.only(bottom: 8.h, top: si == 0 ? 0 : 16.h),
               child: Row(
                 children: [
-                  Text(
-                    section.label,
-                    style: TextStyle(
-                      fontFamily: 'Montserrat',
-                      fontWeight: FontWeight.w600,
-                      fontSize: 13.sp,
-                      color: AppColors.textPrimary,
+                  Flexible(
+                    child: Text(
+                      section.label,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontFamily: 'Montserrat',
+                        fontWeight: FontWeight.w600,
+                        fontSize: 13.sp,
+                        color: AppColors.textPrimary,
+                      ),
                     ),
                   ),
                   SizedBox(width: 6.w),

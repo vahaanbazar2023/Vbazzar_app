@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../extensions/context_extensions.dart';
 
 enum BottomNavTab { home, subscriptions, categories, rewards, settings }
 
@@ -324,29 +325,32 @@ class _ActiveLabel extends StatelessWidget {
   final BottomNavTab tab;
   const _ActiveLabel(this.tab);
 
-  static const _labels = [
-    'Home',
-    'Subscriptions',
-    'Categories',
-    'Rewards',
-    'Settings',
-  ];
-
   @override
   Widget build(BuildContext context) {
+    final labels = [
+      context.l10n.home,
+      context.l10n.coreSubscriptions,
+      context.l10n.categories,
+      context.l10n.coreRewards,
+      context.l10n.settings,
+    ];
     return Align(
       alignment: Alignment.bottomCenter,
       child: Padding(
         padding: const EdgeInsets.only(bottom: 20),
-        child: Text(
-          _labels[tab.index],
-          style: const TextStyle(
-            fontFamily: 'Montserrat',
-            color: Color(0xFFF40C0C),
-            fontWeight: FontWeight.w600,
-            fontSize: 10,
-            height: 1.0,
-            letterSpacing: 0,
+        child: FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Text(
+            labels[tab.index],
+            maxLines: 1,
+            style: const TextStyle(
+              fontFamily: 'Montserrat',
+              color: Color(0xFFF40C0C),
+              fontWeight: FontWeight.w600,
+              fontSize: 10,
+              height: 1.0,
+              letterSpacing: 0,
+            ),
           ),
         ),
       ),

@@ -43,8 +43,8 @@ Future<void> _openAuction({Map<String, dynamic>? arguments}) async {
     AppRoutes.subscription,
     arguments: {
       'subscription_source': SubscriptionTypeCode.auction,
-      'title': 'Choose Subscription Plan',
-      'subtitle': 'Choose a subscription plan to unlock features of auction',
+      'title': appL10n.coreChooseSubscriptionPlan,
+      'subtitle': appL10n.coreChooseSubscriptionPlanAuctionSubtitle,
     },
   );
 }
@@ -72,7 +72,7 @@ class HomeScreen extends GetView<HomeController> {
             final data = controller.dashboardData.value;
             if (data == null) {
               return _ErrorState(
-                message: 'No data available.',
+                message: context.l10n.coreNoDataAvailable,
                 onRetry: controller.fetchDashboard,
               );
             }
@@ -206,7 +206,7 @@ class _HomeHeader extends StatelessWidget {
                       SizedBox(width: 4.w),
                       Flexible(
                         child: Text(
-                          label.isNotEmpty ? label : 'Locating...',
+                          label.isNotEmpty ? label : context.l10n.coreLocating,
                           style: TextStyle(
                             fontFamily: 'Montserrat',
                             fontSize: 13.sp,
@@ -254,7 +254,7 @@ class _HomeHeader extends StatelessWidget {
                       child: AbsorbPointer(
                         child: CustomSearchBar(
                           enabled: false,
-                          hint: 'Search by service, vehicle...',
+                          hint: context.l10n.searchByServiceVehicle,
                           showGradientBorder: true,
                           alwaysShowGradientBorder: true,
                           borderRadius: 12,
@@ -350,13 +350,17 @@ class _SectionHeader extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(
-            title,
-            style: TextStyle(
-              fontFamily: 'Montserrat',
-              fontSize: 16.sp,
-              fontWeight: FontWeight.w600,
-              color: AppColors.textPrimary,
+          Expanded(
+            child: Text(
+              title,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                fontFamily: 'Montserrat',
+                fontSize: 16.sp,
+                fontWeight: FontWeight.w600,
+                color: AppColors.textPrimary,
+              ),
             ),
           ),
           if (onViewAll != null)
@@ -601,14 +605,18 @@ class _AuctionBannerCard extends StatelessWidget {
                             ),
                           ),
                           SizedBox(width: 5.w),
-                          Text(
-                            context.l10n.liveAuction.toUpperCase(),
-                            style: TextStyle(
-                              fontFamily: 'Montserrat',
-                              fontSize: 8.sp,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.white,
-                              letterSpacing: 0.8,
+                          Flexible(
+                            child: Text(
+                              context.l10n.liveAuction.toUpperCase(),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                fontFamily: 'Montserrat',
+                                fontSize: 8.sp,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.white,
+                                letterSpacing: 0.8,
+                              ),
                             ),
                           ),
                         ],
@@ -616,18 +624,22 @@ class _AuctionBannerCard extends StatelessWidget {
                     ),
                     SizedBox(height: 12.h),
                     // Title
-                    Text(
-                      auction.auctionTitle.isNotEmpty
-                          ? auction.auctionTitle
-                          : '${auction.category} Auction',
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        fontFamily: 'Montserrat',
-                        fontSize: 14.sp,
-                        fontWeight: FontWeight.w800,
-                        color: Colors.white,
-                        height: 1.2,
+                    Flexible(
+                      child: Text(
+                        auction.auctionTitle.isNotEmpty
+                            ? auction.auctionTitle
+                            : context.l10n.coreCategoryAuction(
+                                auction.category,
+                              ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontFamily: 'Montserrat',
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.w800,
+                          color: Colors.white,
+                          height: 1.2,
+                        ),
                       ),
                     ),
                     SizedBox(height: 8.h),
@@ -654,13 +666,17 @@ class _AuctionBannerCard extends StatelessWidget {
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Text(
-                            context.l10n.bid_now,
-                            style: TextStyle(
-                              fontFamily: 'Montserrat',
-                              fontSize: 10.sp,
-                              fontWeight: FontWeight.w600,
-                              color: AppColors.primary,
+                          Flexible(
+                            child: Text(
+                              context.l10n.bid_now,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                fontFamily: 'Montserrat',
+                                fontSize: 10.sp,
+                                fontWeight: FontWeight.w600,
+                                color: AppColors.primary,
+                              ),
                             ),
                           ),
                           SizedBox(width: 5.w),
@@ -760,14 +776,14 @@ class _AuctionTimerState extends State<_AuctionTimer> {
         end = DateTime(year, month, day, h, min);
       }
       final diff = end.difference(DateTime.now());
-      if (diff.isNegative) return 'Ended';
+      if (diff.isNegative) return appL10n.coreEnded;
       final totalH = diff.inHours;
       final mins = diff.inMinutes % 60;
       if (totalH >= 24) {
         final days = totalH ~/ 24;
-        return '${days}d ${totalH % 24}h left';
+        return appL10n.coreTimeLeftDh(days, totalH % 24);
       }
-      return '${totalH}h ${mins}m left';
+      return appL10n.coreTimeLeftHm(totalH, mins);
     } catch (_) {
       return endAt;
     }
@@ -780,13 +796,17 @@ class _AuctionTimerState extends State<_AuctionTimer> {
       children: [
         const Text('⏳', style: TextStyle(fontSize: 14)),
         SizedBox(width: 5.w),
-        Text(
-          _label,
-          style: TextStyle(
-            fontFamily: 'Montserrat',
-            fontSize: 13.sp,
-            fontWeight: FontWeight.w600,
-            color: Colors.white,
+        Flexible(
+          child: Text(
+            _label,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+              fontFamily: 'Montserrat',
+              fontSize: 13.sp,
+              fontWeight: FontWeight.w600,
+              color: Colors.white,
+            ),
           ),
         ),
       ],
@@ -906,7 +926,9 @@ class _CategoryCard extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Available',
+                              context.l10n.coreAvailable,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                               style: TextStyle(
                                 fontFamily: 'Plus Jakarta Sans',
                                 fontSize: 9.sp,
@@ -950,7 +972,8 @@ class _CategoryCard extends StatelessWidget {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Text(
-                              'Buy Now',
+                              context.l10n.buyNow,
+                              maxLines: 1,
                               style: TextStyle(
                                 fontFamily: 'Montserrat',
                                 fontSize: 9.sp,
@@ -1056,7 +1079,7 @@ class _HomeCategoryCard extends StatelessWidget {
                 Padding(
                   padding: EdgeInsets.fromLTRB(8.w, 0, 8.w, 8.h),
                   child: GradientButton.filled(
-                    text: item.shortTitle ?? item.title,
+                    text: item.localizedShortTitle(context),
                     onPressed: () =>
                         Get.find<CategoriesController>().onCategoryTapped(item),
                     width: pillWidth,
@@ -1164,6 +1187,8 @@ class _InspectionBanner extends StatelessWidget {
                           // Title spans full width
                           Text(
                             context.l10n.isYourVehicleReadyForInspection,
+                            maxLines: 3,
+                            overflow: TextOverflow.ellipsis,
                             style: TextStyle(
                               fontFamily: 'Montserrat',
                               fontSize: 14.sp,
@@ -1181,17 +1206,19 @@ class _InspectionBanner extends StatelessWidget {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Text(
-                                    context.l10n.inspectionBannerSubtitle,
-                                    maxLines: 3,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: TextStyle(
-                                      fontFamily: 'Plus Jakarta Sans',
-                                      fontSize: 11.sp,
-                                      color: Colors.white.withValues(
-                                        alpha: 0.85,
+                                  Flexible(
+                                    child: Text(
+                                      context.l10n.inspectionBannerSubtitle,
+                                      maxLines: 3,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                        fontFamily: 'Plus Jakarta Sans',
+                                        fontSize: 11.sp,
+                                        color: Colors.white.withValues(
+                                          alpha: 0.85,
+                                        ),
+                                        height: 1.45,
                                       ),
-                                      height: 1.45,
                                     ),
                                   ),
                                   SizedBox(height: 14.h),
@@ -1216,13 +1243,17 @@ class _InspectionBanner extends StatelessWidget {
                                     child: Row(
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
-                                        Text(
-                                          context.l10n.inspectNow,
-                                          style: TextStyle(
-                                            fontFamily: 'Montserrat',
-                                            fontSize: 12.sp,
-                                            fontWeight: FontWeight.w600,
-                                            color: AppColors.primary,
+                                        Flexible(
+                                          child: Text(
+                                            context.l10n.inspectNow,
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: TextStyle(
+                                              fontFamily: 'Montserrat',
+                                              fontSize: 12.sp,
+                                              fontWeight: FontWeight.w600,
+                                              color: AppColors.primary,
+                                            ),
                                           ),
                                         ),
                                         SizedBox(width: 6.w),
@@ -1495,6 +1526,8 @@ class _InsuranceBanner extends StatelessWidget {
                           // Title spans full width
                           Text(
                             context.l10n.isYourVehicleLookingForInsurance,
+                            maxLines: 3,
+                            overflow: TextOverflow.ellipsis,
                             style: TextStyle(
                               fontFamily: 'Montserrat',
                               fontSize: 14.sp,
@@ -1512,17 +1545,19 @@ class _InsuranceBanner extends StatelessWidget {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Text(
-                                    context.l10n.insuranceBannerSubtitle,
-                                    maxLines: 3,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: TextStyle(
-                                      fontFamily: 'Plus Jakarta Sans',
-                                      fontSize: 11.sp,
-                                      color: Colors.white.withValues(
-                                        alpha: 0.85,
+                                  Flexible(
+                                    child: Text(
+                                      context.l10n.insuranceBannerSubtitle,
+                                      maxLines: 3,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                        fontFamily: 'Plus Jakarta Sans',
+                                        fontSize: 11.sp,
+                                        color: Colors.white.withValues(
+                                          alpha: 0.85,
+                                        ),
+                                        height: 1.45,
                                       ),
-                                      height: 1.45,
                                     ),
                                   ),
                                   SizedBox(height: 14.h),
@@ -1547,13 +1582,17 @@ class _InsuranceBanner extends StatelessWidget {
                                     child: Row(
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
-                                        Text(
-                                          context.l10n.applyNow,
-                                          style: TextStyle(
-                                            fontFamily: 'Montserrat',
-                                            fontSize: 12.sp,
-                                            fontWeight: FontWeight.w600,
-                                            color: AppColors.primary,
+                                        Flexible(
+                                          child: Text(
+                                            context.l10n.applyNow,
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: TextStyle(
+                                              fontFamily: 'Montserrat',
+                                              fontSize: 12.sp,
+                                              fontWeight: FontWeight.w600,
+                                              color: AppColors.primary,
+                                            ),
                                           ),
                                         ),
                                         SizedBox(width: 6.w),
@@ -1684,6 +1723,8 @@ class _SpareSupportTile extends StatelessWidget {
                   SizedBox(height: 10.h),
                   Text(
                     title,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                     style: TextStyle(
                       fontFamily: 'Montserrat',
                       fontSize: 12.sp,

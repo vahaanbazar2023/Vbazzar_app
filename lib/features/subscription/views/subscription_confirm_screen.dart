@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../../core/extensions/context_extensions.dart';
 import '../controllers/subscription_confirm_controller.dart';
 import '../models/subscription_plan.dart';
 
@@ -26,10 +27,10 @@ class SubscriptionConfirmScreen extends StatelessWidget {
             ),
           ),
         ),
-        body: const Center(
+        body: Center(
           child: Text(
-            'No plan selected.',
-            style: TextStyle(color: Colors.white),
+            context.l10n.profSubNoPlanSelectedDot,
+            style: const TextStyle(color: Colors.white),
           ),
         ),
       );
@@ -46,9 +47,11 @@ class SubscriptionConfirmScreen extends StatelessWidget {
             size: 20,
           ),
         ),
-        title: const Text(
-          'Confirm Subscription',
-          style: TextStyle(
+        title: Text(
+          context.l10n.profSubConfirmSubscription,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: const TextStyle(
             fontFamily: 'Montserrat',
             fontWeight: FontWeight.w600,
             fontSize: 18,
@@ -156,7 +159,7 @@ class _PlanSummaryCard extends StatelessWidget {
           ),
           const SizedBox(height: 14),
           Text(
-            '${plan.name} Plan',
+            context.l10n.profSubPlanName(plan.name),
             style: const TextStyle(
               fontFamily: 'Montserrat',
               fontWeight: FontWeight.w800,
@@ -208,52 +211,53 @@ class _WhatYouGet extends StatelessWidget {
 
   const _WhatYouGet({required this.plan, required this.source});
 
-  List<String> get _features {
+  List<String> _features(BuildContext context) {
+    final l = context.l10n;
     switch (source) {
       case 'SUBT001':
         return [
-          'View all auction vehicle listings',
-          'Participate in live auctions',
-          'Access complete auction history',
-          '${plan.metricLabel} of uninterrupted access',
+          l.profSubFeatAuction1,
+          l.profSubFeatAuction2,
+          l.profSubFeatAuction3,
+          l.profSubFeatUninterrupted(plan.metricLabel),
         ];
       case 'SUBT002':
         return [
-          'Place bids up to ${plan.metricLabel}',
-          'Unlimited bid placements',
-          'Real-time bid tracking',
-          'Priority bid notifications',
+          l.profSubFeatBidUpTo(plan.metricLabel),
+          l.profSubFeatBid2,
+          l.profSubFeatBid3,
+          l.profSubFeatBid4,
         ];
       case 'SUBT003':
         return [
-          'Seller name and contact details',
-          'Phone number and email access',
-          'Direct WhatsApp communication',
-          'View seller\'s other listings',
+          l.profSubFeatOwner1,
+          l.profSubFeatOwner2,
+          l.profSubFeatOwner3,
+          l.profSubFeatOwner4,
         ];
       case 'SUBT004':
         return [
-          'Complete vehicle history report',
-          'Detailed technical specifications',
-          'High-resolution vehicle images',
-          'Professional inspection reports',
-          'Ownership history and documents',
-          'Market valuation insights',
+          l.profSubFeatVeh1,
+          l.profSubFeatVeh2,
+          l.profSubFeatVeh3,
+          l.profSubFeatVeh4,
+          l.profSubFeatVeh5,
+          l.profSubFeatVeh6,
         ];
       case 'SUBT005':
         return [
-          'On-site professional inspection',
-          'Comprehensive mechanical assessment',
-          'Body condition evaluation',
-          'Engine and transmission diagnostics',
-          'Detailed inspection report with photos',
-          'Expert recommendations and ratings',
+          l.profSubFeatInsp1,
+          l.profSubFeatInsp2,
+          l.profSubFeatInsp3,
+          l.profSubFeatInsp4,
+          l.profSubFeatInsp5,
+          l.profSubFeatInsp6,
         ];
       default:
         return [
-          'Access to premium features',
-          '${plan.metricLabel} validity',
-          'Priority customer support',
+          l.profSubFeatDefault1,
+          l.profSubFeatValidity(plan.metricLabel),
+          l.profSubFeatDefault3,
         ];
     }
   }
@@ -263,9 +267,9 @@ class _WhatYouGet extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'What\'s Included',
-          style: TextStyle(
+        Text(
+          context.l10n.profSubWhatsIncluded,
+          style: const TextStyle(
             fontFamily: 'Montserrat',
             fontWeight: FontWeight.w600,
             fontSize: 16,
@@ -280,7 +284,7 @@ class _WhatYouGet extends StatelessWidget {
           ),
           padding: const EdgeInsets.all(18),
           child: Column(
-            children: _features
+            children: _features(context)
                 .map(
                   (f) => Padding(
                     padding: const EdgeInsets.only(bottom: 12),
@@ -340,9 +344,9 @@ class _OrderSummary extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'Order Summary',
-          style: TextStyle(
+        Text(
+          context.l10n.profSubOrderSummary,
+          style: const TextStyle(
             fontFamily: 'Montserrat',
             fontWeight: FontWeight.w600,
             fontSize: 16,
@@ -358,17 +362,26 @@ class _OrderSummary extends StatelessWidget {
           padding: const EdgeInsets.all(18),
           child: Column(
             children: [
-              _SummaryRow(label: 'Plan', value: '${plan.name} Plan'),
+              _SummaryRow(
+                label: context.l10n.profSubPlanLabel,
+                value: context.l10n.profSubPlanName(plan.name),
+              ),
               const SizedBox(height: 12),
-              _SummaryRow(label: 'Validity', value: plan.metricLabel),
+              _SummaryRow(
+                label: context.l10n.profSubValidityLabel,
+                value: plan.metricLabel,
+              ),
               const SizedBox(height: 12),
-              _SummaryRow(label: 'Plan Code', value: plan.planCode),
+              _SummaryRow(
+                label: context.l10n.profSubPlanCode,
+                value: plan.planCode,
+              ),
               const Padding(
                 padding: EdgeInsets.symmetric(vertical: 14),
                 child: Divider(color: Color(0xFF2E2E2E), height: 1),
               ),
               _SummaryRow(
-                label: 'Total Amount',
+                label: context.l10n.profSubTotalAmount,
                 value: priceStr,
                 highlight: true,
               ),
@@ -396,22 +409,28 @@ class _SummaryRow extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(
-          label,
-          style: const TextStyle(
-            fontFamily: 'Plus Jakarta Sans',
-            fontWeight: FontWeight.w400,
-            fontSize: 13,
-            color: Color(0xFF9E9E9E),
+        Expanded(
+          child: Text(
+            label,
+            style: const TextStyle(
+              fontFamily: 'Plus Jakarta Sans',
+              fontWeight: FontWeight.w400,
+              fontSize: 13,
+              color: Color(0xFF9E9E9E),
+            ),
           ),
         ),
-        Text(
-          value,
-          style: TextStyle(
-            fontFamily: 'Montserrat',
-            fontWeight: highlight ? FontWeight.w800 : FontWeight.w600,
-            fontSize: highlight ? 18 : 13,
-            color: highlight ? const Color(0xFFD41F1F) : Colors.white,
+        const SizedBox(width: 8),
+        Flexible(
+          child: Text(
+            value,
+            textAlign: TextAlign.end,
+            style: TextStyle(
+              fontFamily: 'Montserrat',
+              fontWeight: highlight ? FontWeight.w800 : FontWeight.w600,
+              fontSize: highlight ? 18 : 13,
+              color: highlight ? const Color(0xFFD41F1F) : Colors.white,
+            ),
           ),
         ),
       ],
@@ -468,14 +487,18 @@ class _PayButton extends StatelessWidget {
                         color: Colors.white,
                       ),
                     )
-                  : Text(
-                      'Pay $priceStr',
-                      style: const TextStyle(
-                        fontFamily: 'Montserrat',
-                        fontWeight: FontWeight.w600,
-                        fontSize: 16,
-                        color: Colors.white,
-                        letterSpacing: 0.5,
+                  : FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Text(
+                        context.l10n.profSubPay(priceStr.value),
+                        maxLines: 1,
+                        style: const TextStyle(
+                          fontFamily: 'Montserrat',
+                          fontWeight: FontWeight.w600,
+                          fontSize: 16,
+                          color: Colors.white,
+                          letterSpacing: 0.5,
+                        ),
                       ),
                     ),
             ),

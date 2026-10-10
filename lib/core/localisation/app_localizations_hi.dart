@@ -2934,7 +2934,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get inspectionAndValuation => 'निरीक्षण और मूल्यांकन';
 
   @override
-  String get spareFms => 'स्पेयर पार्ट्स और FMS';
+  String get spareFms => 'स्पेयर पार्ट्स और फ्लीट प्रबंधन';
 
   @override
   String get areYouSureLogout => 'क्या आप वाकई लॉगआउट करना चाहते हैं?';
@@ -2988,7 +2988,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get mostBoughtVehicles => 'सबसे ज्यादा खरीदे गए वाहन';
 
   @override
-  String get fmsItems => 'FMS आइटम';
+  String get fmsItems => 'फ्लीट प्रबंधन आइटम';
 
   @override
   String get spareSupportNearYou => 'आपके पास स्पेयर सपोर्ट';
@@ -3049,4 +3049,3098 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get mechanicsNearYou => 'आपके पास मैकेनिक';
+
+  @override
+  String get apprBuySellSubtitle => 'सत्यापित कमर्शियल वाहन खरीदें और बेचें';
+
+  @override
+  String get apprNoCategoriesFound => 'कोई श्रेणी नहीं मिली';
+
+  @override
+  String apprAvailableCount(int count) {
+    return 'उपलब्ध : $count';
+  }
+
+  @override
+  String get apprBuy => 'खरीदें';
+
+  @override
+  String get apprSell => 'बेचें';
+
+  @override
+  String apprVehiclesCount(int count) {
+    return '$count वाहन';
+  }
+
+  @override
+  String get apprUnavailable => 'अनुपलब्ध';
+
+  @override
+  String get apprSelectCategoryToBrowse => 'देखने के लिए श्रेणी चुनें';
+
+  @override
+  String get apprInspectionsSubtitle =>
+      'जिन वाहनों के लिए आपने निरीक्षण का अनुरोध किया';
+
+  @override
+  String get apprBookingsSubtitle => 'आपके द्वारा बुक किए गए वाहन';
+
+  @override
+  String get apprNoInspectionsYet => 'अभी तक कोई निरीक्षण अनुरोध नहीं';
+
+  @override
+  String get apprNoBookingsYet => 'अभी तक कोई वाहन बुक नहीं किया गया';
+
+  @override
+  String get apprInspectionsEmptyHint =>
+      'जिन वाहनों के लिए आप निरीक्षण का अनुरोध करेंगे, वे यहां दिखाई देंगे।';
+
+  @override
+  String get apprBookingsEmptyHint =>
+      'जो वाहन आप बुक करेंगे, वे यहां दिखाई देंगे।';
+
+  @override
+  String get apprRefresh => 'रिफ्रेश करें';
+
+  @override
+  String get apprBookNow => 'अभी बुक करें';
+
+  @override
+  String get apprInspection => 'निरीक्षण';
+
+  @override
+  String get apprBookedCheck => 'बुक किया ✓';
+
+  @override
+  String get apprRequestedCheck => 'अनुरोध किया ✓';
+
+  @override
+  String get apprVehicleDetailsUnavailable => 'वाहन का विवरण उपलब्ध नहीं है';
+
+  @override
+  String get apprGoBack => 'वापस जाएं';
+
+  @override
+  String get apprBookVehicle => 'वाहन बुक करें';
+
+  @override
+  String get apprBookVehicleDesc =>
+      'इस वाहन को बुक करने और पूरा विवरण देखने के लिए भुगतान करें।';
+
+  @override
+  String get apprRequestInspectionDesc =>
+      'पेशेवर निरीक्षण का अनुरोध करने के लिए भुगतान करें।';
+
+  @override
+  String get apprSuccess => 'सफल';
+
+  @override
+  String get apprError => 'त्रुटि';
+
+  @override
+  String get apprVehicleBookedSuccess => 'वाहन सफलतापूर्वक बुक हो गया!';
+
+  @override
+  String get apprInspectionRequestedSuccess =>
+      'निरीक्षण का अनुरोध सफलतापूर्वक हो गया!';
+
+  @override
+  String get apprRegistrationNo => 'पंजीकरण संख्या';
+
+  @override
+  String get apprChassisNo => 'चेसिस संख्या';
+
+  @override
+  String get apprFitnessCertificate => 'फिटनेस प्रमाणपत्र';
+
+  @override
+  String get apprOriginalInvoice => 'मूल इनवॉइस';
+
+  @override
+  String get apprGstApplicable => 'GST लागू';
+
+  @override
+  String get apprInsuranceValidUntil => 'बीमा की वैधता';
+
+  @override
+  String get apprOfferEnds => 'ऑफर समाप्त';
+
+  @override
+  String get apprInsuranceDoc => 'बीमा दस्तावेज़';
+
+  @override
+  String get apprAvailableLabel => 'उपलब्ध';
+
+  @override
+  String get apprNotAvailable => 'उपलब्ध नहीं';
+
+  @override
+  String get apprInfo => 'जानकारी';
+
+  @override
+  String get apprFilePickerPending =>
+      'फाइल पिकर इंटीग्रेशन बाकी है। अपलोड सक्षम करने के लिए file_picker पैकेज जोड़ें।';
+
+  @override
+  String get apprSellYourVehicle => 'अपना वाहन बेचें';
+
+  @override
+  String get apprSubmitVehicleForApproval =>
+      'अनुमोदन के लिए अपना वाहन जमा करें';
+
+  @override
+  String get apprRegNoHint => 'उदा. MH12AB1234';
+
+  @override
+  String get apprChassisNumber => 'चेसिस नंबर';
+
+  @override
+  String get apprEnterChassisNumber => 'चेसिस नंबर दर्ज करें';
+
+  @override
+  String get apprYearOfManufacturing => 'निर्माण वर्ष';
+
+  @override
+  String get apprYearHint => 'उदा. 2021';
+
+  @override
+  String get apprExpectedPrice => 'अपेक्षित मूल्य (₹)';
+
+  @override
+  String get apprPriceHint => 'उदा. 2500000';
+
+  @override
+  String get apprOwnerMobileNumber => 'मालिक का मोबाइल नंबर';
+
+  @override
+  String get apprMobileHint => '10 अंकों का मोबाइल नंबर';
+
+  @override
+  String get apprAssetDescription => 'संपत्ति का विवरण';
+
+  @override
+  String get apprAssetDescriptionHint => 'उदा. Tata Signa 2823.T 6x4';
+
+  @override
+  String get apprFitnessCertificateAvailable => 'फिटनेस प्रमाणपत्र उपलब्ध है';
+
+  @override
+  String get apprOriginalInvoiceAvailable => 'मूल इनवॉइस उपलब्ध है';
+
+  @override
+  String get apprPhotosAndDocuments => 'फोटो और दस्तावेज़';
+
+  @override
+  String get apprVehiclePhotos => 'वाहन की फोटो';
+
+  @override
+  String get apprRcDocuments => 'RC दस्तावेज़';
+
+  @override
+  String get apprInsuranceDocuments => 'बीमा दस्तावेज़';
+
+  @override
+  String get apprSubmitVehicle => 'वाहन जमा करें';
+
+  @override
+  String get apprVehicleCategory => 'वाहन श्रेणी';
+
+  @override
+  String get apprAutoFilled => 'अपने आप भरा गया';
+
+  @override
+  String get apprSelectStateFirst => 'पहले राज्य चुनें';
+
+  @override
+  String get apprConfirmedCheck => 'पुष्टि हुई ✓';
+
+  @override
+  String get apprTapToAddMore => 'और जोड़ने के लिए टैप करें';
+
+  @override
+  String get apprTapToUpload => 'अपलोड करने के लिए टैप करें';
+
+  @override
+  String get apprFailedLoadCategories =>
+      'श्रेणियां लोड नहीं हो सकीं। रिफ्रेश करने के लिए नीचे खींचें।';
+
+  @override
+  String get apprFailedLoadVehicles =>
+      'वाहन लोड नहीं हो सके। कृपया पुनः प्रयास करें।';
+
+  @override
+  String get apprFailedBookVehicle =>
+      'वाहन बुक नहीं हो सका। कृपया पुनः प्रयास करें।';
+
+  @override
+  String get apprFailedRequestInspection =>
+      'निरीक्षण का अनुरोध नहीं हो सका। कृपया पुनः प्रयास करें।';
+
+  @override
+  String get apprRegNoRequired => 'पंजीकरण संख्या आवश्यक है';
+
+  @override
+  String get apprFitnessRequired => 'फिटनेस आवश्यक है';
+
+  @override
+  String get apprOriginalInvoiceRequired => 'मूल इनवॉइस आवश्यक है';
+
+  @override
+  String get apprAssetDescRequired => 'संपत्ति का विवरण आवश्यक है';
+
+  @override
+  String get apprOwnerMobileRequired => 'मालिक का मोबाइल नंबर आवश्यक है';
+
+  @override
+  String get apprEnterValidMobile => '10 अंकों का मान्य मोबाइल नंबर दर्ज करें';
+
+  @override
+  String get apprPriceRequired => 'मूल्य आवश्यक है';
+
+  @override
+  String get apprEnterValidPrice => 'मान्य मूल्य दर्ज करें';
+
+  @override
+  String get apprMfgYearRequired => 'निर्माण वर्ष आवश्यक है';
+
+  @override
+  String get apprInsuranceRequired => 'बीमा आवश्यक है';
+
+  @override
+  String get apprGstApplicabilityRequired => 'GST की प्रयोज्यता आवश्यक है';
+
+  @override
+  String get apprVehicleImagesRequired => 'वाहन की तस्वीरें आवश्यक हैं';
+
+  @override
+  String get apprOfferEndDateRequired => 'ऑफर समाप्ति की तारीख आवश्यक है';
+
+  @override
+  String get apprOfferEndTimeRequired => 'ऑफर समाप्ति का समय आवश्यक है';
+
+  @override
+  String get apprFixErrorsBeforeSubmitting =>
+      'जमा करने से पहले कृपया त्रुटियां ठीक करें';
+
+  @override
+  String get apprVehicleSubmittedSuccess => 'वाहन सफलतापूर्वक जमा हो गया!';
+
+  @override
+  String get apprFailedSubmitVehicle =>
+      'वाहन जमा नहीं हो सका। कृपया पुनः प्रयास करें।';
+
+  @override
+  String get apprReferralAndRewards => 'रेफरल और रिवॉर्ड्स';
+
+  @override
+  String get apprRecentTransactions => 'हाल के लेनदेन';
+
+  @override
+  String get apprHowItWorks => 'यह कैसे काम करता है';
+
+  @override
+  String get apprTotalWalletBalance => 'कुल वॉलेट बैलेंस';
+
+  @override
+  String apprThisMonth(String amount) {
+    return 'इस महीने $amount';
+  }
+
+  @override
+  String get apprWithdraw => 'निकालें';
+
+  @override
+  String get apprConvertCoins => 'कॉइन बदलें';
+
+  @override
+  String apprConvertCoinsMessage(String coins, String rupees, int rate) {
+    return 'क्या $coins कॉइन को $rupees वॉलेट बैलेंस में बदलें?\n\nदर: $rate कॉइन = ₹1  ·  24 घंटे में एक बार';
+  }
+
+  @override
+  String get apprConfirm => 'पुष्टि करें';
+
+  @override
+  String get apprWalletBalance => 'वॉलेट बैलेंस';
+
+  @override
+  String get apprRewardCoins => 'रिवॉर्ड कॉइन';
+
+  @override
+  String get apprConvertNow => 'अभी बदलें';
+
+  @override
+  String get apprConvert => 'बदलें';
+
+  @override
+  String get apprEarnMoreGrowWallet => 'और कमाएं, अपना वॉलेट बढ़ाएं!';
+
+  @override
+  String get apprInviteMoreFriends =>
+      'और दोस्तों को आमंत्रित करें और शानदार रिवॉर्ड कमाएं।';
+
+  @override
+  String get apprReferNow => 'अभी रेफर करें';
+
+  @override
+  String apprFromName(String name) {
+    return '$name से';
+  }
+
+  @override
+  String get apprStepReferFriendsTitle => 'दोस्तों को रेफर करें';
+
+  @override
+  String get apprStepReferFriendsDesc =>
+      'अपना रेफरल लिंक अपने दोस्तों के साथ शेयर करें';
+
+  @override
+  String get apprStepTheyJoinTitle => 'वे जुड़ते हैं';
+
+  @override
+  String get apprStepTheyJoinDesc => 'आपके दोस्त आपके लिंक से साइन अप करते हैं';
+
+  @override
+  String get apprStepTheyUseTitle => 'वे सक्रिय रूप से उपयोग करते हैं';
+
+  @override
+  String get apprStepTheyUseDesc =>
+      'वे ब्राउज़ करते हैं, भाग लेते हैं और बोली लगाते हैं';
+
+  @override
+  String get apprStepYouEarnTitle => 'आप कमाते हैं';
+
+  @override
+  String get apprStepYouEarnDesc =>
+      'आपको रिवॉर्ड मिलते हैं जो आपके वॉलेट में दिखते हैं';
+
+  @override
+  String get apprPleaseTryAgainLater => 'कृपया बाद में पुनः प्रयास करें।';
+
+  @override
+  String get aucSearchAuctionSubtitle => 'लाइव वाहन नीलामी में बोली लगाएं';
+
+  @override
+  String get aucChooseSubscriptionPlan => 'सब्सक्रिप्शन प्लान चुनें';
+
+  @override
+  String get aucChoosePlanUnlockAuction =>
+      'नीलामी की सुविधाएं अनलॉक करने के लिए प्लान चुनें';
+
+  @override
+  String get aucSearchBuySellTitle => 'खरीदें और बेचें';
+
+  @override
+  String get aucSearchBuySellSubtitle =>
+      'बिक्री के लिए वाहन देखें और सूचीबद्ध करें';
+
+  @override
+  String get aucSearchFmsTitle => 'फ्लीट प्रबंधन / स्पेयर पार्ट्स';
+
+  @override
+  String get aucSearchFmsSubtitle =>
+      'स्पेयर पार्ट्स और फ्लीट प्रबंधन आइटम खोजें';
+
+  @override
+  String get aucSearchInsuranceSubtitle => 'बीमा कोटेशन और फाइनेंसिंग पाएं';
+
+  @override
+  String get aucSearchInspectionTitle => 'निरीक्षण';
+
+  @override
+  String get aucSearchInspectionSubtitle =>
+      'वाहन निरीक्षण और मूल्यांकन का अनुरोध करें';
+
+  @override
+  String get aucSearchServiceSupportTitle => 'सर्विस सपोर्ट';
+
+  @override
+  String get aucSearchServiceSupportSubtitle => 'मैकेनिक और सर्विस सेंटर खोजें';
+
+  @override
+  String get aucSearchMyBidsSubtitle =>
+      'अपनी सक्रिय और पिछली बोलियां ट्रैक करें';
+
+  @override
+  String get aucSearchMyWinsSubtitle => 'जीते हुए वाहन देखें';
+
+  @override
+  String get aucSearchMySubscriptionsSubtitle =>
+      'अपने सब्सक्रिप्शन प्लान प्रबंधित करें';
+
+  @override
+  String get aucCatBackhoeLoader => 'बैकहो लोडर (BHL)';
+
+  @override
+  String get aucCatExcavators => 'एक्सकेवेटर';
+
+  @override
+  String get aucCatTippers => 'टिपर';
+
+  @override
+  String get aucCatICV => 'ICV';
+
+  @override
+  String get aucCatLCV => 'LCV';
+
+  @override
+  String get aucCatTrailers => 'ट्रेलर';
+
+  @override
+  String get aucCatFarmEquipment => 'कृषि उपकरण';
+
+  @override
+  String get aucCatWheelLoader => 'व्हील लोडर';
+
+  @override
+  String get aucCatRollers => 'रोलर';
+
+  @override
+  String get aucCatMotorGrader => 'मोटर ग्रेडर';
+
+  @override
+  String get aucCatSelfLoadingMixer => 'सेल्फ लोडिंग मिक्सर';
+
+  @override
+  String get aucCatTransitmixer => 'ट्रांजिट मिक्सर';
+
+  @override
+  String get aucCatCrushingBatchingPlant => 'क्रशिंग और बैचिंग प्लांट';
+
+  @override
+  String get aucCatCranes => 'क्रेन (लिफ्टर)';
+
+  @override
+  String get aucCatGenSet => 'जेन-सेट';
+
+  @override
+  String get aucCatOtherMachines => 'अन्य मशीनें';
+
+  @override
+  String get aucCatScrap => 'स्क्रैप';
+
+  @override
+  String get aucCatJeepsy => 'जिप्सी';
+
+  @override
+  String get aucLocating => 'स्थान खोजा जा रहा है...';
+
+  @override
+  String get aucSearchHint => 'सेवा, वाहन से खोजें...';
+
+  @override
+  String get aucQuickAccess => 'त्वरित एक्सेस';
+
+  @override
+  String get aucBrowseByCategory => 'श्रेणी के अनुसार देखें';
+
+  @override
+  String aucNoResultsFor(String query) {
+    return '\"$query\" के लिए कोई परिणाम नहीं';
+  }
+
+  @override
+  String get aucSearchSuggestionHint =>
+      'नीलामी, खरीदें और बेचें, निरीक्षण आज़माएं...';
+
+  @override
+  String get aucSearchFailed => 'खोज विफल रही। कृपया पुनः प्रयास करें।';
+
+  @override
+  String get aucPleaseLoginToDownload => 'डाउनलोड करने के लिए कृपया लॉगिन करें';
+
+  @override
+  String get aucNoAuctionData => 'कोई नीलामी डेटा उपलब्ध नहीं';
+
+  @override
+  String get aucExcelDownloaded => 'Excel फाइल सफलतापूर्वक डाउनलोड हुई';
+
+  @override
+  String aucFailedToDownload(String error) {
+    return 'डाउनलोड विफल: $error';
+  }
+
+  @override
+  String get aucWishlist => 'विशलिस्ट';
+
+  @override
+  String get aucTwoWheeler => 'दोपहिया';
+
+  @override
+  String get aucThreeWheeler => 'तिपहिया';
+
+  @override
+  String get aucFourWheeler => 'चारपहिया';
+
+  @override
+  String get aucCommercialVehicle => 'कमर्शियल वाहन';
+
+  @override
+  String get aucConstructionEquipment => 'निर्माण उपकरण';
+
+  @override
+  String get aucFarmEquipment => 'कृषि उपकरण';
+
+  @override
+  String get aucFailedLoadCategories =>
+      'श्रेणियां लोड नहीं हो सकीं। रिफ्रेश करने के लिए नीचे खींचें।';
+
+  @override
+  String get aucLiveBidding => 'लाइव बोली';
+
+  @override
+  String get aucFailedLoadAuctions =>
+      'नीलामियां लोड नहीं हो सकीं। कृपया पुनः प्रयास करें।';
+
+  @override
+  String get aucFailedLoadWishlist =>
+      'विशलिस्ट लोड नहीं हो सकी। कृपया पुनः प्रयास करें।';
+
+  @override
+  String get aucStatusCompleted => 'पूर्ण';
+
+  @override
+  String get aucStatusCancelled => 'रद्द';
+
+  @override
+  String get aucVerified => 'सत्यापित';
+
+  @override
+  String aucMinimumBid(String amount) {
+    return 'न्यूनतम बोली ₹$amount है';
+  }
+
+  @override
+  String get aucMustBeHigherThanCurrentBid => 'वर्तमान बोली से अधिक होनी चाहिए';
+
+  @override
+  String get aucBidLimitSubscriptionRequired =>
+      'बोली लगाने के लिए आपको बिड लिमिट सब्सक्रिप्शन चाहिए। जारी रखने के लिए कृपया सब्सक्राइब करें।';
+
+  @override
+  String get aucBidLimitPlanRequired => 'बिड लिमिट प्लान आवश्यक';
+
+  @override
+  String get aucBidLimitPlanRequiredSubtitle =>
+      'नीलामी में बोली लगाने के लिए बिड लिमिट प्लान सब्सक्राइब करें।';
+
+  @override
+  String get aucBuyingLimitZeroUpgrade =>
+      'आपकी उपलब्ध खरीद सीमा ₹0 है। जारी रखने के लिए कृपया अपना बिड लिमिट प्लान अपग्रेड करें।';
+
+  @override
+  String aucBidExceedsLimitUpgradeHigher(String bid, String limit) {
+    return 'आपकी ₹$bid की बोली आपकी उपलब्ध खरीद सीमा ₹$limit से अधिक है। ऊंची बोली लगाने के लिए कृपया अपना प्लान अपग्रेड करें।';
+  }
+
+  @override
+  String aucBidExceedsLimitUpgradeContinue(String bid, String limit) {
+    return 'आपकी ₹$bid की बोली आपकी उपलब्ध खरीद सीमा ₹$limit से अधिक है। जारी रखने के लिए कृपया अपना प्लान अपग्रेड करें।';
+  }
+
+  @override
+  String get aucBidLimitExceeded => 'बिड लिमिट पार हो गई';
+
+  @override
+  String get aucNoBuyingLimitUpgrade =>
+      'आपकी कोई खरीद सीमा उपलब्ध नहीं है। जारी रखने के लिए अपना बिड लिमिट प्लान अपग्रेड करें।';
+
+  @override
+  String aucBuyingLimitUpgradeHigher(String limit) {
+    return 'आपकी उपलब्ध खरीद सीमा ₹$limit है। ऊंची बोली लगाने के लिए अपना प्लान अपग्रेड करें।';
+  }
+
+  @override
+  String get aucBidMustBeHigherThanHighest =>
+      'बोली वर्तमान उच्चतम बोली से अधिक होनी चाहिए';
+
+  @override
+  String get aucVehicleNotFoundRefresh =>
+      'वाहन नहीं मिला। कृपया रिफ्रेश करके पुनः प्रयास करें।';
+
+  @override
+  String get aucBidCouldNotBePlaced => 'बोली नहीं लगाई जा सकी।';
+
+  @override
+  String get aucFailedLoadBids =>
+      'बोलियां लोड नहीं हो सकीं। कृपया पुनः प्रयास करें।';
+
+  @override
+  String get aucFailedLoadWins =>
+      'जीत लोड नहीं हो सकी। कृपया पुनः प्रयास करें।';
+
+  @override
+  String get aucFailedLoadVehicles =>
+      'वाहन लोड नहीं हो सके। कृपया पुनः प्रयास करें।';
+
+  @override
+  String aucNoVehiclesFoundMatching(String query) {
+    return '\"$query\" से मेल खाता कोई वाहन नहीं मिला';
+  }
+
+  @override
+  String get aucAddedToWishlist => 'विशलिस्ट में जोड़ा गया';
+
+  @override
+  String get aucRemovedFromWishlist => 'विशलिस्ट से हटाया गया';
+
+  @override
+  String get aucFailedUpdateWishlist =>
+      'विशलिस्ट अपडेट नहीं हो सकी। कृपया पुनः प्रयास करें।';
+
+  @override
+  String get aucLotLabel => '# लॉट';
+
+  @override
+  String get aucComingSoon => 'जल्द आ रहा है';
+
+  @override
+  String get aucBidsPlaced => 'लगाई गई बोलियां';
+
+  @override
+  String get aucContactPerson => 'संपर्क व्यक्ति';
+
+  @override
+  String get aucDetails => 'विवरण';
+
+  @override
+  String get aucHighestBid => 'उच्चतम बोली';
+
+  @override
+  String get aucLosing => 'पिछड़ रहे हैं';
+
+  @override
+  String get aucStatusLost => 'हारे';
+
+  @override
+  String get aucMobile => 'मोबाइल';
+
+  @override
+  String get aucNoBids => 'कोई बोली नहीं';
+
+  @override
+  String get aucOutbid => 'आगे निकल गई बोली';
+
+  @override
+  String get aucSeeLess => 'कम दिखाएं';
+
+  @override
+  String get aucViewFullDetails => 'पूरा विवरण देखें →';
+
+  @override
+  String get aucWinning => 'आगे चल रहे हैं';
+
+  @override
+  String get aucStatusWon => 'जीते';
+
+  @override
+  String get aucAllCategories => 'सभी श्रेणियां';
+
+  @override
+  String get aucAllStates => 'सभी राज्य';
+
+  @override
+  String get aucApply => 'लागू करें';
+
+  @override
+  String get aucBids => 'बोलियां';
+
+  @override
+  String get aucMyWishlist => 'मेरी विशलिस्ट';
+
+  @override
+  String get aucNoVehiclesFoundShort => 'कोई वाहन नहीं मिला';
+
+  @override
+  String get aucNoWishlistItems => 'अभी विशलिस्ट में कुछ नहीं है';
+
+  @override
+  String get aucUpcomingBiddingNotStarted =>
+      'आगामी नीलामी — बोली शुरू नहीं हुई';
+
+  @override
+  String get aucVehicleNotFound => 'वाहन नहीं मिला';
+
+  @override
+  String get aucWishlistDetails => 'विशलिस्ट विवरण';
+
+  @override
+  String get aucWishlisted => 'विशलिस्ट में';
+
+  @override
+  String get aucYouAreLosing => 'आप पिछड़ रहे हैं';
+
+  @override
+  String get aucYouAreWinning => 'आप आगे चल रहे हैं';
+
+  @override
+  String get aucYourFavoriteVehicles => 'आपके पसंदीदा वाहन';
+
+  @override
+  String get aucSearchVehicles => 'वाहन खोजें';
+
+  @override
+  String aucStartBiddingStartPrice(String price) {
+    return 'बोली शुरू करें — शुरुआती मूल्य ₹ $price';
+  }
+
+  @override
+  String get coreSearchEllipsis => 'खोजें...';
+
+  @override
+  String get coreNoOptionsAvailable => 'कोई विकल्प उपलब्ध नहीं';
+
+  @override
+  String coreNoResultsFoundFor(String query) {
+    return '\"$query\" के लिए कोई परिणाम नहीं मिला';
+  }
+
+  @override
+  String get coreNoItemsAvailable => 'कोई आइटम उपलब्ध नहीं';
+
+  @override
+  String get coreNoItemsAvailableTitle => 'कोई आइटम उपलब्ध नहीं';
+
+  @override
+  String get coreNoItemsToDisplay => 'दिखाने के लिए कोई आइटम नहीं।';
+
+  @override
+  String get coreNoResultsFound => 'कोई परिणाम नहीं मिला';
+
+  @override
+  String get coreSelectYear => 'वर्ष चुनें';
+
+  @override
+  String get coreEnterPassword => 'पासवर्ड दर्ज करें';
+
+  @override
+  String get coreFileUploadHint => 'JPEG, PNG और PDF (12 MB तक)';
+
+  @override
+  String get coreEnterYourPassword => 'अपना पासवर्ड दर्ज करें';
+
+  @override
+  String get coreEnterPhoneNumber => 'फोन नंबर दर्ज करें';
+
+  @override
+  String coreTimeLeftDhms(int d, int h, int m, int s) {
+    return '${d}d ${h}h ${m}m ${s}s शेष';
+  }
+
+  @override
+  String coreTimeLeftHms(int h, int m, int s) {
+    return '${h}h ${m}m ${s}s शेष';
+  }
+
+  @override
+  String coreTimeLeftMs(int m, int s) {
+    return '${m}m ${s}s शेष';
+  }
+
+  @override
+  String coreTimeLeftS(int s) {
+    return '${s}s शेष';
+  }
+
+  @override
+  String get coreSubscriptions => 'सब्सक्रिप्शन';
+
+  @override
+  String get coreRewards => 'रिवॉर्ड्स';
+
+  @override
+  String get coreEnterValidEmail => 'कृपया मान्य ईमेल दर्ज करें';
+
+  @override
+  String get corePasswordRequired => 'पासवर्ड आवश्यक है';
+
+  @override
+  String get corePasswordMinLength =>
+      'पासवर्ड कम से कम 6 अक्षरों का होना चाहिए';
+
+  @override
+  String coreShareVehicleSubject(String name) {
+    return '$name — वाहन बाज़ार';
+  }
+
+  @override
+  String get coreShareVehicleSubjectFallback => 'वाहन बाज़ार पर यह वाहन देखें';
+
+  @override
+  String coreShareReferralText(String url) {
+    return '🚛 वाहन बाज़ार से जुड़ें — भारत का भरोसेमंद वाहन मार्केटप्लेस!\n\nमेरे रेफरल लिंक से साइन अप करें और वाहन खरीदना-बेचना शुरू करें:\n\n$url\n\n📱 Android और iOS पर उपलब्ध।';
+  }
+
+  @override
+  String get coreShareReferralSubject => 'वाहन बाज़ार से जुड़ें';
+
+  @override
+  String get coreShareVehicleLabel => 'वाहन';
+
+  @override
+  String coreShareYearLine(String year) {
+    return 'वर्ष: $year';
+  }
+
+  @override
+  String coreShareVehicleBody(String url) {
+    return '*वाहन बाज़ार* पर मिला — भारत का भरोसेमंद वाहन मार्केटप्लेस।\n\n👉 विवरण देखें और विक्रेता से संपर्क करें:\n$url';
+  }
+
+  @override
+  String get coreNotification => 'सूचना';
+
+  @override
+  String get coreSessionExpiredTitle => 'सेशन समाप्त';
+
+  @override
+  String get coreSessionExpiredMessage =>
+      'जारी रखने के लिए कृपया फिर से लॉगिन करें';
+
+  @override
+  String get coreJustNow => 'अभी अभी';
+
+  @override
+  String coreYearsAgoShort(int n) {
+    return '$n वर्ष पहले';
+  }
+
+  @override
+  String coreMonthsAgoShort(int n) {
+    return '$n माह पहले';
+  }
+
+  @override
+  String coreDaysAgoShort(int n) {
+    return '$n दिन पहले';
+  }
+
+  @override
+  String coreHoursAgoShort(int n) {
+    return '$n घंटे पहले';
+  }
+
+  @override
+  String coreMinutesAgoShort(int n) {
+    return '$n मिनट पहले';
+  }
+
+  @override
+  String coreFieldRequired(String field) {
+    return '$field आवश्यक है';
+  }
+
+  @override
+  String get coreThisField => 'यह फील्ड';
+
+  @override
+  String get coreEnterValidEmailShort => 'मान्य ईमेल दर्ज करें';
+
+  @override
+  String coreMinCharactersRequired(int min) {
+    return 'कम से कम $min अक्षर आवश्यक हैं';
+  }
+
+  @override
+  String get coreConfirmPasswordPrompt => 'कृपया अपने पासवर्ड की पुष्टि करें';
+
+  @override
+  String get corePasswordsDoNotMatch => 'पासवर्ड मेल नहीं खाते';
+
+  @override
+  String get corePhoneRequired => 'फोन नंबर आवश्यक है';
+
+  @override
+  String get coreEnterValidMobile => '10 अंकों का मान्य मोबाइल नंबर दर्ज करें';
+
+  @override
+  String get coreRegNumberRequired => 'पंजीकरण संख्या आवश्यक है';
+
+  @override
+  String get coreEnterValidRegNumber =>
+      'मान्य पंजीकरण संख्या दर्ज करें (उदा. MH12AB1234)';
+
+  @override
+  String coreMinCharacters(int min) {
+    return 'कम से कम $min अक्षर';
+  }
+
+  @override
+  String coreMaxCharacters(int max) {
+    return 'अधिकतम $max अक्षर';
+  }
+
+  @override
+  String get coreBuyAndSell => 'खरीदें और बेचें';
+
+  @override
+  String get coreFms => 'फ्लीट प्रबंधन';
+
+  @override
+  String get coreInspection => 'निरीक्षण';
+
+  @override
+  String get coreServiceSupport => 'सर्विस सपोर्ट';
+
+  @override
+  String get corePageNotFound => 'पेज नहीं मिला';
+
+  @override
+  String get coreChooseAPlan => 'प्लान चुनें';
+
+  @override
+  String get coreChooseSubscriptionPlan => 'सब्सक्रिप्शन प्लान चुनें';
+
+  @override
+  String get coreChooseSubscriptionPlanAuctionSubtitle =>
+      'नीलामी की सुविधाएं अनलॉक करने के लिए सब्सक्रिप्शन प्लान चुनें';
+
+  @override
+  String get coreWishlist => 'विशलिस्ट';
+
+  @override
+  String get coreYourWishlist => 'आपकी विशलिस्ट';
+
+  @override
+  String get coreSaveVehiclesYouLike => 'अपनी पसंद के वाहन सेव करें';
+
+  @override
+  String get coreComingSoon => 'जल्द आ रहा है';
+
+  @override
+  String get coreSellYourVehicle => 'अपना वाहन बेचें';
+
+  @override
+  String get coreListYourVehicleForSale =>
+      'अपना वाहन बिक्री के लिए सूचीबद्ध करें';
+
+  @override
+  String coreTitleComingSoon(String title) {
+    return '$title जल्द आ रहा है';
+  }
+
+  @override
+  String get coreEquipment => 'उपकरण';
+
+  @override
+  String get coreTractors => 'ट्रैक्टर';
+
+  @override
+  String get coreSearchVehiclesEquipment => 'वाहन, उपकरण खोजें...';
+
+  @override
+  String get coreFeaturedListings => 'फीचर्ड लिस्टिंग';
+
+  @override
+  String get coreSetLocation => 'स्थान सेट करें';
+
+  @override
+  String get coreFailedToLoadDashboard => 'डैशबोर्ड लोड नहीं हो सका।';
+
+  @override
+  String get coreFailedToLoadNotifications => 'सूचनाएं लोड नहीं हो सकीं।';
+
+  @override
+  String get coreNotifications => 'सूचनाएं';
+
+  @override
+  String get coreMarkAllRead => 'सभी पढ़ी हुई करें';
+
+  @override
+  String coreMinAgo(int n) {
+    return '$n मिनट पहले';
+  }
+
+  @override
+  String coreHrAgo(int n) {
+    return '$n घंटे पहले';
+  }
+
+  @override
+  String get coreNotifLiveAuction => 'लाइव नीलामी';
+
+  @override
+  String get coreNotifPriceUpdate => 'मूल्य अपडेट';
+
+  @override
+  String get coreNotifReferralBonus => 'रेफरल बोनस';
+
+  @override
+  String get coreNotifPayment => 'भुगतान';
+
+  @override
+  String get coreNotifGeneral => 'सामान्य';
+
+  @override
+  String get coreNoNotificationsYet => 'अभी कोई सूचना नहीं';
+
+  @override
+  String get coreNotifyAboutAuctions =>
+      'हम आपको नीलामी, बोलियों और अन्य की सूचना देंगे।';
+
+  @override
+  String get coreIntroWelcomeTitle => 'स्वागत है\nवाहन बाज़ार में';
+
+  @override
+  String get coreIntroSlide1Desc =>
+      'एक ही जगह वाहन खरीदें और बेचें — ट्रक, उपकरण और बहुत कुछ';
+
+  @override
+  String get coreIntroSlide2Desc =>
+      'मिनटों में लिस्टिंग बनाएं और हज़ारों खरीदारों से तुरंत जुड़ें।';
+
+  @override
+  String get coreIntroSlide3Desc =>
+      'लाइव नीलामी में शामिल हों और प्रतिस्पर्धी कीमतों पर वाहन पाएं।';
+
+  @override
+  String get coreIntroBuy => 'खरीदें';
+
+  @override
+  String get coreIntroSell => 'बेचें';
+
+  @override
+  String get coreIntroBid => 'बोली लगाएं';
+
+  @override
+  String get corePaymentCancelledByUser => 'उपयोगकर्ता ने भुगतान रद्द किया';
+
+  @override
+  String get coreUnknownPaymentError => 'अज्ञात भुगतान त्रुटि';
+
+  @override
+  String get coreSecurePaymentPoweredByPayU => 'PayU द्वारा सुरक्षित भुगतान';
+
+  @override
+  String get coreChoosePreferredPaymentMethod =>
+      'अपना पसंदीदा भुगतान तरीका चुनें';
+
+  @override
+  String get corePaymentInitiationFailed => 'भुगतान शुरू करने में विफल';
+
+  @override
+  String get corePaymentSuccessReportFailed => 'भुगतान सफलता की रिपोर्ट विफल';
+
+  @override
+  String get corePaymentFailureReportFailed => 'भुगतान विफलता की रिपोर्ट विफल';
+
+  @override
+  String coreUnexpectedError(String error) {
+    return 'अप्रत्याशित त्रुटि: $error';
+  }
+
+  @override
+  String get coreNoDataAvailable => 'कोई डेटा उपलब्ध नहीं।';
+
+  @override
+  String get coreLocating => 'स्थान खोजा जा रहा है...';
+
+  @override
+  String get coreEnded => 'समाप्त';
+
+  @override
+  String get coreAvailable => 'उपलब्ध';
+
+  @override
+  String coreTimeLeftDh(int d, int h) {
+    return '${d}d ${h}h शेष';
+  }
+
+  @override
+  String coreTimeLeftHm(int h, int m) {
+    return '${h}h ${m}m शेष';
+  }
+
+  @override
+  String coreCategoryAuction(String category) {
+    return '$category नीलामी';
+  }
+
+  @override
+  String get corePinchToZoomHint =>
+      'ज़ूम के लिए पिंच करें  •  नेविगेट करने के लिए स्वाइप करें';
+
+  @override
+  String get inspInspectionDetails => 'निरीक्षण विवरण';
+
+  @override
+  String get inspNoInspectionDataFound => 'कोई निरीक्षण डेटा नहीं मिला';
+
+  @override
+  String get inspOwnerInformation => 'मालिक की जानकारी';
+
+  @override
+  String get inspViewFullReport => 'पूरी रिपोर्ट देखें';
+
+  @override
+  String get inspOpenReportInBrowser => 'निरीक्षण रिपोर्ट ब्राउज़र में खोलें';
+
+  @override
+  String get inspStatusCompleted => 'पूर्ण';
+
+  @override
+  String get inspStatusInProgress => 'प्रगति में';
+
+  @override
+  String get inspStatusRejected => 'अस्वीकृत';
+
+  @override
+  String get inspViewReport => 'रिपोर्ट देखें';
+
+  @override
+  String get inspAdd => 'जोड़ें';
+
+  @override
+  String inspStepNumber(int number) {
+    return 'चरण $number';
+  }
+
+  @override
+  String get inspVehicleInfo => 'वाहन की जानकारी';
+
+  @override
+  String get inspDocumentation => 'दस्तावेज़ीकरण';
+
+  @override
+  String get inspMechanicalInspection => 'मैकेनिकल निरीक्षण';
+
+  @override
+  String get inspBodyAndInterior => 'बॉडी और इंटीरियर';
+
+  @override
+  String get inspPhotos => 'फोटो';
+
+  @override
+  String get inspValuation => 'मूल्यांकन';
+
+  @override
+  String get inspInspectionSummary => 'निरीक्षण सारांश';
+
+  @override
+  String get inspVehicleBrand => 'वाहन ब्रांड';
+
+  @override
+  String get inspRto => 'RTO';
+
+  @override
+  String get inspCondition => 'स्थिति';
+
+  @override
+  String get inspInsuranceValid => 'बीमा वैध';
+
+  @override
+  String get inspFitnessValid => 'फिटनेस वैध';
+
+  @override
+  String get inspAccidental => 'दुर्घटनाग्रस्त';
+
+  @override
+  String get inspSuspension => 'सस्पेंशन';
+
+  @override
+  String get inspCabinInterior => 'केबिन/इंटीरियर';
+
+  @override
+  String get inspBodyFront => 'बॉडी आगे';
+
+  @override
+  String get inspBodyBack => 'बॉडी पीछे';
+
+  @override
+  String get inspBodyLeft => 'बॉडी बायां';
+
+  @override
+  String get inspBodyRight => 'बॉडी दायां';
+
+  @override
+  String inspPhotoCount(int count) {
+    return '$count फोटो';
+  }
+
+  @override
+  String inspPhotosCount(int count) {
+    return '$count फोटो';
+  }
+
+  @override
+  String inspFrontRearTyres(int front, int rear) {
+    return 'आगे: $front%, पीछे: $rear%';
+  }
+
+  @override
+  String inspMarketValueRupee(String value) {
+    return '₹ $value';
+  }
+
+  @override
+  String get inspVehicleDetailsSection => 'वाहन विवरण';
+
+  @override
+  String get inspCompanyDetailsOptional => 'कंपनी विवरण (वैकल्पिक)';
+
+  @override
+  String get inspUploadDocuments => 'दस्तावेज़ अपलोड करें';
+
+  @override
+  String get inspVehicleRegistrationNumber => 'वाहन पंजीकरण संख्या';
+
+  @override
+  String get inspRegNumberHint => 'उदा. MH-01-AB-1234';
+
+  @override
+  String get inspRequired => 'आवश्यक';
+
+  @override
+  String get inspMin5Characters => 'कम से कम 5 अक्षर';
+
+  @override
+  String get inspChassisNumber => 'चेसिस नंबर';
+
+  @override
+  String get inspEnterChassisNumber => 'चेसिस नंबर दर्ज करें';
+
+  @override
+  String get inspSelectVehicleBrand => 'वाहन ब्रांड चुनें';
+
+  @override
+  String get inspSelectStateFirst => 'पहले राज्य चुनें';
+
+  @override
+  String get inspNoCitiesForState => 'चयनित राज्य के लिए कोई शहर उपलब्ध नहीं';
+
+  @override
+  String get inspEnter10DigitMobile => '10 अंकों का मोबाइल नंबर दर्ज करें';
+
+  @override
+  String get inspEnterValid10DigitNumber => '10 अंकों का मान्य नंबर दर्ज करें';
+
+  @override
+  String get inspEnterCompanyNameOptional =>
+      'कंपनी का नाम दर्ज करें (वैकल्पिक)';
+
+  @override
+  String get inspInsuranceDocument => 'बीमा दस्तावेज़';
+
+  @override
+  String get inspChooseFiles => 'फाइल चुनें/कई फाइलें ब्राउज़ करें';
+
+  @override
+  String get inspSubmitInspectionRequest => 'निरीक्षण अनुरोध जमा करें';
+
+  @override
+  String inspFilesSelected(int count) {
+    return '$count फाइल चुनी गई';
+  }
+
+  @override
+  String get inspAgentFormSubtitle => 'ग्राहक के लिए निरीक्षण का विवरण भरें';
+
+  @override
+  String get inspBodyPhotos => 'बॉडी की फोटो';
+
+  @override
+  String get inspBodyFrontLabel => 'बॉडी - आगे';
+
+  @override
+  String get inspBodyLeftSideLabel => 'बॉडी - बायां भाग';
+
+  @override
+  String get inspBodyBackLabel => 'बॉडी - पीछे';
+
+  @override
+  String get inspBodyRightSideLabel => 'बॉडी - दायां भाग';
+
+  @override
+  String get inspEnginePhotos => 'इंजन की फोटो';
+
+  @override
+  String get inspChassisPhotos => 'चेसिस की फोटो';
+
+  @override
+  String get inspInterior => 'इंटीरियर';
+
+  @override
+  String get inspInteriorPhotos => 'इंटीरियर की फोटो';
+
+  @override
+  String get inspCabinInteriorSection => 'केबिन इंटीरियर';
+
+  @override
+  String get inspCabinInteriorPhotos => 'केबिन इंटीरियर की फोटो';
+
+  @override
+  String get inspOdometerPhotos => 'ओडोमीटर की फोटो';
+
+  @override
+  String get inspFullRoundVideoOptional => 'पूरा राउंड वीडियो (वैकल्पिक)';
+
+  @override
+  String get inspUploadVideoHint => 'वाहन का पूरा 360° वीडियो अपलोड करें';
+
+  @override
+  String get inspNotRatedYet => 'अभी रेटिंग नहीं दी गई';
+
+  @override
+  String get inspRateCondition => 'स्थिति की रेटिंग दें';
+
+  @override
+  String get inspFrontAxleTyres => 'आगे के एक्सल के टायर';
+
+  @override
+  String get inspRearAxleTyres => 'पीछे के एक्सल के टायर';
+
+  @override
+  String get inspOdometerReading => 'ओडोमीटर रीडिंग';
+
+  @override
+  String get inspOdometerReadingKm => 'ओडोमीटर रीडिंग (KM)';
+
+  @override
+  String get inspEnterOdometerReading => 'ओडोमीटर रीडिंग दर्ज करें';
+
+  @override
+  String get inspSubmitInspection => 'निरीक्षण जमा करें';
+
+  @override
+  String inspChooseFilesMax(int max) {
+    return 'फाइलें चुनें (अधिकतम $max)';
+  }
+
+  @override
+  String get inspSuccess => 'सफल';
+
+  @override
+  String get inspError => 'त्रुटि';
+
+  @override
+  String get inspOkay => 'ठीक है';
+
+  @override
+  String get inspSomethingWentWrong => 'कुछ गलत हो गया';
+
+  @override
+  String get inspFailedToPickFile =>
+      'फाइल नहीं चुनी जा सकी। कृपया पुनः प्रयास करें।';
+
+  @override
+  String get inspPleaseSelectVehicleType => 'कृपया वाहन का प्रकार चुनें';
+
+  @override
+  String get inspPleaseSelectVehicleBrand => 'कृपया वाहन ब्रांड चुनें';
+
+  @override
+  String get inspPleaseSelectState => 'कृपया राज्य चुनें';
+
+  @override
+  String get inspPleaseSelectCity => 'कृपया शहर चुनें';
+
+  @override
+  String get inspPleaseUploadRcDocument => 'कृपया RC दस्तावेज़ अपलोड करें';
+
+  @override
+  String get inspRequestSubmittedSuccessfully =>
+      'आपका निरीक्षण अनुरोध सफलतापूर्वक जमा हो गया है।';
+
+  @override
+  String get inspFailedToSubmitRequest => 'निरीक्षण अनुरोध जमा नहीं हो सका।';
+
+  @override
+  String get inspPleaseLoginToViewInspections =>
+      'निरीक्षण देखने के लिए कृपया लॉगिन करें।';
+
+  @override
+  String get inspFailedToLoadInspections => 'निरीक्षण लोड नहीं हो सके।';
+
+  @override
+  String get inspEnterValidVehicleRegNumber =>
+      'कृपया मान्य वाहन पंजीकरण संख्या दर्ज करें';
+
+  @override
+  String get inspFrontAxlePercentRange =>
+      'आगे के एक्सल के टायर का प्रतिशत 0-100 होना चाहिए';
+
+  @override
+  String get inspRearAxlePercentRange =>
+      'पीछे के एक्सल के टायर का प्रतिशत 0-100 होना चाहिए';
+
+  @override
+  String get inspEnterValidMarketValue => 'कृपया मान्य बाज़ार मूल्य दर्ज करें';
+
+  @override
+  String get inspFixErrorsBeforeSubmitting =>
+      'जमा करने से पहले कृपया त्रुटियां ठीक करें';
+
+  @override
+  String get inspInspectionSubmitted => 'निरीक्षण जमा हुआ';
+
+  @override
+  String get inspReportSubmittedSuccessfully =>
+      'आपकी निरीक्षण रिपोर्ट सफलतापूर्वक जमा हो गई है।';
+
+  @override
+  String get inspFailedToSubmitReport => 'निरीक्षण रिपोर्ट जमा नहीं हो सकी।';
+
+  @override
+  String get inspThankYouForSubmitting => 'जमा करने के लिए धन्यवाद!';
+
+  @override
+  String get inspTeamWillContactSoon =>
+      'हमारी टीम जल्द ही आपसे संपर्क करेगी..!';
+
+  @override
+  String inspServerErrorWithCode(String code) {
+    return 'सर्वर त्रुटि: $code';
+  }
+
+  @override
+  String inspMaxImagesPerCategory(int max) {
+    return 'प्रति श्रेणी अधिकतम $max तस्वीरों की अनुमति है';
+  }
+
+  @override
+  String inspMaxFilesPerCategory(int max) {
+    return 'प्रति श्रेणी अधिकतम $max फाइलें';
+  }
+
+  @override
+  String inspOnlyMoreFilesAllowed(int remaining, int skipped) {
+    return 'केवल $remaining और फाइलों की अनुमति है। $skipped फाइल छोड़ दी गईं।';
+  }
+
+  @override
+  String get inspServiceAndSupport => 'सर्विस और सपोर्ट';
+
+  @override
+  String get inspRoadsideSubtitle => '24/7 रोडसाइड सहायता, आपकी उंगलियों पर';
+
+  @override
+  String get inspBreakdownAssistanceHeadline => '24/7 ब्रेकडाउन\nसहायता';
+
+  @override
+  String get inspRoadsideDescription =>
+      'तुरंत मदद। कभी भी, कहीं भी।\nत्वरित प्रतिक्रिया और भरोसेमंद रोडसाइड सहायता, आपकी उंगलियों पर।';
+
+  @override
+  String get inspContactMechanic => 'मैकेनिक से संपर्क करें';
+
+  @override
+  String get inspNoServiceProvidersTryAgain =>
+      'आपके स्थान के पास कोई सेवा प्रदाता नहीं मिला।\nपुनः प्रयास करें या खोज क्षेत्र बढ़ाएं।';
+
+  @override
+  String get inspLocationError => 'स्थान त्रुटि';
+
+  @override
+  String get inspUnableToGetLocation =>
+      'आपका स्थान नहीं मिल सका। कृपया पुनः प्रयास करें।';
+
+  @override
+  String get inspUnableToEnableLocationServices =>
+      'लोकेशन सेवाएं चालू नहीं हो सकीं। कृपया सेटिंग्स जांचें।';
+
+  @override
+  String get inspUnableToLoadSubscriptionPlan =>
+      'सब्सक्रिप्शन प्लान लोड नहीं हो सका। कृपया पुनः प्रयास करें।';
+
+  @override
+  String get inspConnectWithMechanic => 'मैकेनिक से जुड़ें';
+
+  @override
+  String get inspContactUnlocked =>
+      'संपर्क अनलॉक हो गया! अब आप मैकेनिक को कॉल कर सकते हैं।';
+
+  @override
+  String get inspSomethingWentWrongTryAgain =>
+      'कुछ गलत हो गया। कृपया पुनः प्रयास करें।';
+
+  @override
+  String get inspPhone => 'फोन';
+
+  @override
+  String get inspLocationRequired => 'स्थान आवश्यक';
+
+  @override
+  String get inspLocationAccessNeeded =>
+      'आपके पास के सेवा प्रदाता खोजने के लिए इस ऐप को लोकेशन एक्सेस चाहिए।';
+
+  @override
+  String get inspFindNearestProviders => 'निकटतम सेवा प्रदाता खोजें';
+
+  @override
+  String get inspAccurateDistanceEstimates => 'दूरी का सटीक अनुमान पाएं';
+
+  @override
+  String get inspPersonalizedRecommendations => 'व्यक्तिगत सुझाव';
+
+  @override
+  String get inspEnable => 'चालू करें';
+
+  @override
+  String get inspEnableGps => 'GPS चालू करें';
+
+  @override
+  String get inspTurnOnGps =>
+      'कृपया अपने डिवाइस की सेटिंग्स में GPS चालू करें, फिर वापस आएं।';
+
+  @override
+  String get inspPermissionRequired => 'अनुमति आवश्यक';
+
+  @override
+  String get inspLocationPermissionRequired =>
+      'लोकेशन की अनुमति आवश्यक है। कृपया ऐप सेटिंग्स में इसे चालू करें।';
+
+  @override
+  String get inspSettingsUpdated => 'सेटिंग्स अपडेट हुईं?';
+
+  @override
+  String get inspDidYouEnablePermission =>
+      'क्या आपने लोकेशन की अनुमति दी? सेवा प्रदाता खोजने के लिए \"पुनः प्रयास\" पर टैप करें।';
+
+  @override
+  String inspPayToGetContact(String mechanicName, String garageName) {
+    return '$garageName के $mechanicName का सीधा संपर्क नंबर पाने के लिए भुगतान करें।';
+  }
+
+  @override
+  String inspContactWithPhone(String phone) {
+    return 'संपर्क: $phone';
+  }
+
+  @override
+  String inspDistanceKm(String distance) {
+    return '$distance km';
+  }
+
+  @override
+  String get inspSelectCountry => 'देश चुनें';
+
+  @override
+  String get inspSearchCountry => 'देश खोजें...';
+
+  @override
+  String get inspLogIn => 'लॉगिन';
+
+  @override
+  String get inspWithOtp => 'OTP से';
+
+  @override
+  String get inspSecureQuickAccess =>
+      'अपने अकाउंट तक\nसुरक्षित और त्वरित एक्सेस';
+
+  @override
+  String get inspNumberSafeWithUs =>
+      'आपका नंबर हमारे पास सुरक्षित है।\nहम इसे किसी के साथ साझा नहीं करते।';
+
+  @override
+  String get inspNeedHelp => 'मदद चाहिए?';
+
+  @override
+  String get inspSentTo => 'भेजा गया: ';
+
+  @override
+  String get inspCompleteProfile => 'प्रोफाइल पूरी करें';
+
+  @override
+  String get inspTellUsAboutYourself => 'हमें अपने बारे में बताएं';
+
+  @override
+  String get inspCompleteProfileSubtitle =>
+      'शुरू करने के लिए अपनी प्रोफाइल पूरी करें';
+
+  @override
+  String get inspEnterFirstName => 'पहला नाम दर्ज करें';
+
+  @override
+  String get inspEnterEmailAddress => 'ईमेल पता दर्ज करें';
+
+  @override
+  String get inspSaveAndContinue => 'सेव करें और जारी रखें';
+
+  @override
+  String get inspMin3Characters => 'कम से कम 3 अक्षर';
+
+  @override
+  String get inspEnterValidEmail => 'मान्य ईमेल दर्ज करें';
+
+  @override
+  String get inspEmailRequired => 'ईमेल आवश्यक है';
+
+  @override
+  String get inspPhoneNumberNotFound =>
+      'फोन नंबर नहीं मिला। कृपया वापस जाकर पुनः प्रयास करें।';
+
+  @override
+  String get inspOtpResentSuccessfully => 'OTP फिर से भेजा गया';
+
+  @override
+  String get inspFailedToResendOtpTryAgain =>
+      'OTP फिर से नहीं भेजा जा सका। कृपया पुनः प्रयास करें।';
+
+  @override
+  String get inspSessionExpiredRetry =>
+      'सेशन समाप्त हो गया। कृपया वापस जाकर पुनः प्रयास करें।';
+
+  @override
+  String get inspFillRequiredFields => 'कृपया सभी आवश्यक फील्ड सही से भरें';
+
+  @override
+  String get inspProfileCompleted => 'प्रोफाइल पूरी हो गई!';
+
+  @override
+  String get inspFailedToSaveProfile => 'प्रोफाइल सेव नहीं हो सकी।';
+
+  @override
+  String get inspFailedToSaveProfileTryAgain =>
+      'प्रोफाइल सेव नहीं हो सकी। कृपया पुनः प्रयास करें।';
+
+  @override
+  String get inspFailedToLoadStates => 'राज्य लोड नहीं हो सके';
+
+  @override
+  String get inspFailedToLoadStatesTryAgain =>
+      'राज्य लोड नहीं हो सके। कृपया पुनः प्रयास करें।';
+
+  @override
+  String get inspFailedToLoadCities => 'शहर लोड नहीं हो सके';
+
+  @override
+  String get inspFailedToLoadCitiesTryAgain =>
+      'शहर लोड नहीं हो सके। कृपया पुनः प्रयास करें।';
+
+  @override
+  String get inspPleaseSelectAState => 'कृपया एक राज्य चुनें';
+
+  @override
+  String get inspPleaseSelectACity => 'कृपया एक शहर चुनें';
+
+  @override
+  String get inspEmptyServerResponse => 'सर्वर से खाली प्रतिक्रिया मिली';
+
+  @override
+  String get inspInvalidOtpVerificationRequest => 'अमान्य OTP सत्यापन अनुरोध';
+
+  @override
+  String get inspConnectionTimeout =>
+      'कनेक्शन टाइमआउट। कृपया पुनः प्रयास करें।';
+
+  @override
+  String get inspAnErrorOccurred => 'एक त्रुटि हुई';
+
+  @override
+  String get inspRequestCancelled => 'अनुरोध रद्द कर दिया गया';
+
+  @override
+  String get inspNoInternetCheckNetwork =>
+      'इंटरनेट कनेक्शन नहीं है। कृपया अपना नेटवर्क जांचें।';
+
+  @override
+  String get inspAnUnexpectedErrorOccurred => 'एक अप्रत्याशित त्रुटि हुई';
+
+  @override
+  String inspRequestFailedWithStatus(String statusCode) {
+    return 'अनुरोध विफल, स्टेटस कोड: $statusCode';
+  }
+
+  @override
+  String get insVehicleNumberLabel => 'वाहन नंबर *';
+
+  @override
+  String get insEnterVehicleNo => 'वाहन नंबर दर्ज करें';
+
+  @override
+  String get insRcDocumentLabel => 'RC दस्तावेज़ *';
+
+  @override
+  String get insFileUploadLabel => 'फाइल चुनें/कई फाइलें ब्राउज़ करें';
+
+  @override
+  String get insFileUploadSubtitle => 'JPEG, PNG और PDF (12 MB तक)';
+
+  @override
+  String get insPreviousYearPolicy => 'पिछले वर्ष की पॉलिसी';
+
+  @override
+  String get insInsuranceTypeLabel => 'बीमा का प्रकार *';
+
+  @override
+  String get insClaimStatusLabel => 'क्लेम की स्थिति *';
+
+  @override
+  String get insSelectClaimStatus => 'क्लेम की स्थिति चुनें';
+
+  @override
+  String get insAcceptThe => 'मैं स्वीकार करता/करती हूं ';
+
+  @override
+  String get insAndConnector => ' और ';
+
+  @override
+  String get insErrVehicleNoRequired => 'कृपया वाहन पंजीकरण संख्या दर्ज करें';
+
+  @override
+  String get insErrRcRequired => 'कृपया RC दस्तावेज़ अपलोड करें';
+
+  @override
+  String get insErrInsuranceTypeRequired => 'कृपया बीमा का प्रकार चुनें';
+
+  @override
+  String get insErrClaimRequired => 'कृपया क्लेम की स्थिति चुनें';
+
+  @override
+  String get insStateLabel => 'राज्य *';
+
+  @override
+  String get insNoStatesAvailable => 'कोई राज्य उपलब्ध नहीं';
+
+  @override
+  String get insCityLabel => 'शहर *';
+
+  @override
+  String get insSelectStateFirst => 'कृपया पहले राज्य चुनें';
+
+  @override
+  String get insNoCitiesAvailable => 'कोई शहर उपलब्ध नहीं';
+
+  @override
+  String get insRcCopyLabel => 'RC कॉपी *';
+
+  @override
+  String get insInsuranceCopyLabel => 'बीमा कॉपी *';
+
+  @override
+  String get insFleetSize => 'फ्लीट आकार';
+
+  @override
+  String get insEnterFleetSize => 'फ्लीट आकार दर्ज करें';
+
+  @override
+  String get insCompanyGstIfAvailable => 'कंपनी GST (यदि उपलब्ध हो)';
+
+  @override
+  String get insVehicleLocationLabel => 'वाहन का स्थान *';
+
+  @override
+  String get insApplicantDetails => 'आवेदक का विवरण';
+
+  @override
+  String get insAadharDocumentLabel => 'आधार दस्तावेज़ *';
+
+  @override
+  String get insPanDocumentLabel => 'PAN दस्तावेज़ *';
+
+  @override
+  String get insMobileNumberLabel => 'मोबाइल नंबर *';
+
+  @override
+  String get insEnterMobileNumber => 'मोबाइल नंबर दर्ज करें';
+
+  @override
+  String get insAddCoApplicantDetails => 'सह-आवेदक का विवरण जोड़ें';
+
+  @override
+  String get insCoApplicantDetails => 'सह-आवेदक का विवरण';
+
+  @override
+  String get insErrSelectState => 'कृपया राज्य चुनें';
+
+  @override
+  String get insErrSelectCity => 'कृपया शहर चुनें';
+
+  @override
+  String get insErrUploadRcCopy => 'कृपया RC कॉपी अपलोड करें';
+
+  @override
+  String get insErrUploadInsuranceCopy => 'कृपया बीमा कॉपी अपलोड करें';
+
+  @override
+  String get insErrEnterVehicleLocation => 'कृपया वाहन का स्थान दर्ज करें';
+
+  @override
+  String get insErrUploadAadhar => 'कृपया आधार दस्तावेज़ अपलोड करें';
+
+  @override
+  String get insErrUploadPan => 'कृपया PAN दस्तावेज़ अपलोड करें';
+
+  @override
+  String get insErrEnterMobile => 'कृपया मोबाइल नंबर दर्ज करें';
+
+  @override
+  String get insErrUploadCoAadhar =>
+      'कृपया सह-आवेदक का आधार दस्तावेज़ अपलोड करें';
+
+  @override
+  String get insErrUploadCoPan => 'कृपया सह-आवेदक का PAN दस्तावेज़ अपलोड करें';
+
+  @override
+  String get insErrEnterCoMobile => 'कृपया सह-आवेदक का मोबाइल नंबर दर्ज करें';
+
+  @override
+  String get insMyQuotes => 'मेरे कोटेशन';
+
+  @override
+  String get insMyQuotesSubtitle => 'अपने बीमा और फाइनेंस कोटेशन देखें';
+
+  @override
+  String get insLoadingQuotes => 'कोटेशन लोड हो रहे हैं...';
+
+  @override
+  String get insNoQuotesAvailable => 'कोई कोटेशन उपलब्ध नहीं';
+
+  @override
+  String get insSubmitRequestToGetQuotes =>
+      'कोटेशन पाने के लिए बीमा या फाइनेंस अनुरोध जमा करें';
+
+  @override
+  String insQuoteCountOne(int count) {
+    return '$count कोटेशन';
+  }
+
+  @override
+  String insQuoteCountMany(int count) {
+    return '$count कोटेशन';
+  }
+
+  @override
+  String get insNoQuotesReceivedYet => 'अभी तक कोई कोटेशन प्राप्त नहीं हुआ';
+
+  @override
+  String get insDownload => 'डाउनलोड';
+
+  @override
+  String get insLoginToSubmitInsurance =>
+      'बीमा अनुरोध जमा करने के लिए कृपया लॉगिन करें';
+
+  @override
+  String get insInsuranceSubmittedSuccess =>
+      'बीमा अनुरोध सफलतापूर्वक जमा हो गया! हमारी टीम समीक्षा करके जल्द ही आपसे संपर्क करेगी।';
+
+  @override
+  String get insFailedLoadStates => 'राज्य लोड नहीं हो सके';
+
+  @override
+  String get insFailedLoadCities => 'शहर लोड नहीं हो सके';
+
+  @override
+  String get insLoginToSubmitFinance =>
+      'फाइनेंस अनुरोध जमा करने के लिए कृपया लॉगिन करें';
+
+  @override
+  String get insFinanceSubmittedSuccess =>
+      'फाइनेंस अनुरोध सफलतापूर्वक जमा हो गया! हमारी टीम समीक्षा करके जल्द ही आपसे संपर्क करेगी।';
+
+  @override
+  String get insLoginToViewQuotes => 'कोटेशन देखने के लिए कृपया लॉगिन करें';
+
+  @override
+  String get insFailedPickFile =>
+      'फाइल नहीं चुनी जा सकी। कृपया पुनः प्रयास करें।';
+
+  @override
+  String get insDownloadLinkUnavailable => 'डाउनलोड लिंक उपलब्ध नहीं है';
+
+  @override
+  String get insStoragePermissionRequired =>
+      'कोटेशन डाउनलोड करने के लिए स्टोरेज की अनुमति आवश्यक है';
+
+  @override
+  String get insCouldNotOpenPdf => 'डाउनलोड की गई PDF नहीं खुल सकी';
+
+  @override
+  String get insDownloaded => 'डाउनलोड हो गया';
+
+  @override
+  String get insQuotePdfSaved => 'कोटेशन PDF सफलतापूर्वक सेव हुई';
+
+  @override
+  String get insRequestTimeout => 'अनुरोध टाइमआउट। कृपया पुनः प्रयास करें।';
+
+  @override
+  String get insNetworkErrorCheckConnection =>
+      'नेटवर्क त्रुटि। कृपया अपना कनेक्शन जांचें।';
+
+  @override
+  String get insQuoteFileNotFound => 'कोटेशन फाइल नहीं मिली।';
+
+  @override
+  String get insAccessDeniedQuoteExpired =>
+      'एक्सेस अस्वीकृत। कोटेशन की अवधि समाप्त हो सकती है।';
+
+  @override
+  String get insFailedDownloadQuote => 'कोटेशन PDF डाउनलोड नहीं हो सकी।';
+
+  @override
+  String insFailedSaveQuote(String error) {
+    return 'कोटेशन PDF सेव नहीं हो सकी: $error';
+  }
+
+  @override
+  String get insThankYouForSubmitting => 'जमा करने के लिए धन्यवाद!';
+
+  @override
+  String get insTeamWillContactSoon => 'हमारी टीम जल्द ही आपसे संपर्क करेगी..!';
+
+  @override
+  String get insOkay => 'ठीक है';
+
+  @override
+  String get insUnexpectedErrorShort => 'एक अप्रत्याशित त्रुटि हुई';
+
+  @override
+  String get insFailedLoadQuotes => 'कोटेशन लोड नहीं हो सके';
+
+  @override
+  String get insSessionExpired =>
+      'सेशन समाप्त हो गया। कृपया फिर से लॉगिन करें।';
+
+  @override
+  String get insNoPermissionViewQuotes =>
+      'आपको कोटेशन देखने की अनुमति नहीं है।';
+
+  @override
+  String get insQuotesServiceNotFound => 'कोटेशन सेवा नहीं मिली।';
+
+  @override
+  String get insServerErrorTryLater =>
+      'सर्वर त्रुटि। कृपया बाद में पुनः प्रयास करें।';
+
+  @override
+  String insFailedLoadQuotesWithError(String error) {
+    return 'कोटेशन लोड नहीं हो सके: $error';
+  }
+
+  @override
+  String get insInvalidRequestData => 'अमान्य अनुरोध डेटा';
+
+  @override
+  String get insNoPermissionAction => 'आपको यह कार्य करने की अनुमति नहीं है।';
+
+  @override
+  String get insServiceNotFound =>
+      'सेवा नहीं मिली। कृपया बाद में पुनः प्रयास करें।';
+
+  @override
+  String get insValidationError => 'सत्यापन त्रुटि';
+
+  @override
+  String get profMyAccount => 'मेरा अकाउंट';
+
+  @override
+  String get profUpdatePersonalInfo => 'अपनी व्यक्तिगत जानकारी अपडेट करें';
+
+  @override
+  String get profViewManagePlans => 'अपने प्लान देखें और प्रबंधित करें';
+
+  @override
+  String get profChoosePreferredLanguage => 'अपनी पसंदीदा भाषा चुनें';
+
+  @override
+  String get profViewItemsWon => 'जीते हुए आइटम देखें';
+
+  @override
+  String get profTrackBids => 'अपनी सक्रिय और पिछली बोलियां ट्रैक करें';
+
+  @override
+  String get profWishlist => 'विशलिस्ट';
+
+  @override
+  String get profAuctionVehiclesSaved => 'आपके द्वारा सेव किए गए नीलामी वाहन';
+
+  @override
+  String get profRequestRefund => 'अपने ऑर्डर के लिए रिफंड का अनुरोध करें';
+
+  @override
+  String get profBuyAndSell => 'खरीदें और बेचें';
+
+  @override
+  String get profManageListedVehicles => 'अपने सूचीबद्ध वाहन प्रबंधित करें';
+
+  @override
+  String get profItemsSaved => 'आपके द्वारा सेव किए गए आइटम';
+
+  @override
+  String get profPurchaseHistory => 'खरीद इतिहास';
+
+  @override
+  String get profViewPastPurchases => 'अपनी पिछली खरीदारी देखें';
+
+  @override
+  String get profUser => 'उपयोगकर्ता';
+
+  @override
+  String get profAgent => 'एजेंट';
+
+  @override
+  String get profPremiumMember => 'प्रीमियम सदस्य';
+
+  @override
+  String get profTotalWins => 'कुल जीत';
+
+  @override
+  String get profVehicles => 'वाहन';
+
+  @override
+  String get profActiveBids => 'सक्रिय बोलियां';
+
+  @override
+  String get profWalletBalance => 'वॉलेट बैलेंस';
+
+  @override
+  String get profRewardCoins => 'रिवॉर्ड कॉइन';
+
+  @override
+  String get profWithdrawToBank => 'बैंक में निकालें';
+
+  @override
+  String get profWithdraw => 'निकालें';
+
+  @override
+  String get profHistory => 'इतिहास';
+
+  @override
+  String get profMaxWithdrawal => 'अधिकतम निकासी';
+
+  @override
+  String get profFiftyPercentOfBalance => 'बैलेंस का 50%';
+
+  @override
+  String profMaxWithdrawalIs(String amount) {
+    return 'अधिकतम निकासी ₹$amount है';
+  }
+
+  @override
+  String profMinWithdrawalIs(String amount) {
+    return 'न्यूनतम निकासी ₹$amount है';
+  }
+
+  @override
+  String profWithdrawRange(String min, String max) {
+    return '₹$min – ₹$max निकालें (बैलेंस का अधिकतम 50%)';
+  }
+
+  @override
+  String get profBankAccountDetails => 'बैंक खाते का विवरण';
+
+  @override
+  String get profAmountRupees => 'राशि (₹)';
+
+  @override
+  String get profEnterWithdrawalAmount => 'निकासी की राशि दर्ज करें';
+
+  @override
+  String get profEnterValidAmount => 'मान्य राशि दर्ज करें';
+
+  @override
+  String get profAccountHolderName => 'खाताधारक का नाम';
+
+  @override
+  String get profAsPerBankRecords => 'बैंक रिकॉर्ड के अनुसार';
+
+  @override
+  String get profEnterFullName => 'पूरा नाम दर्ज करें';
+
+  @override
+  String get profBankName => 'बैंक का नाम';
+
+  @override
+  String get profBankNameHint => 'उदा. SBI';
+
+  @override
+  String get profBranchOptional => 'शाखा (वैकल्पिक)';
+
+  @override
+  String get profBranchNameHint => 'शाखा का नाम';
+
+  @override
+  String get profAccountNumber => 'खाता संख्या';
+
+  @override
+  String get profEnterAccountNumber => 'खाता संख्या दर्ज करें';
+
+  @override
+  String get profInvalidAccountNumber => 'अमान्य खाता संख्या';
+
+  @override
+  String get profIfscCode => 'IFSC कोड';
+
+  @override
+  String get profIfscHint => 'उदा. SBIN0001234';
+
+  @override
+  String get profInvalidIfsc => 'अमान्य IFSC';
+
+  @override
+  String get profSubmitting => 'जमा हो रहा है…';
+
+  @override
+  String get profRequestWithdrawal => 'निकासी का अनुरोध करें';
+
+  @override
+  String get profProcessedWithin => '2–3 कार्य दिवसों में प्रोसेस होगा';
+
+  @override
+  String get profNoWithdrawalsYet => 'अभी तक कोई निकासी नहीं';
+
+  @override
+  String get profWithdrawalRequestsAppearHere =>
+      'आपके निकासी अनुरोध यहां दिखाई देंगे।';
+
+  @override
+  String get profPaid => 'भुगतान हुआ';
+
+  @override
+  String get profRejected => 'अस्वीकृत';
+
+  @override
+  String get profRequested => 'अनुरोध किया';
+
+  @override
+  String get profAccountHolder => 'खाताधारक';
+
+  @override
+  String get profAccountNoShort => 'खाता सं.';
+
+  @override
+  String get profBank => 'बैंक';
+
+  @override
+  String get profIfsc => 'IFSC';
+
+  @override
+  String get profPayoutId => 'पेआउट आईडी';
+
+  @override
+  String get profMin3Characters => 'कम से कम 3 अक्षर';
+
+  @override
+  String get profPleaseSelectState => 'कृपया एक राज्य चुनें';
+
+  @override
+  String get profPleaseSelectCity => 'कृपया एक शहर चुनें';
+
+  @override
+  String get profFailedLoadStates => 'राज्य लोड नहीं हो सके';
+
+  @override
+  String get profFailedLoadStatesTryAgain =>
+      'राज्य लोड नहीं हो सके। कृपया पुनः प्रयास करें।';
+
+  @override
+  String get profFailedLoadCities => 'शहर लोड नहीं हो सके';
+
+  @override
+  String get profFailedLoadCitiesTryAgain =>
+      'शहर लोड नहीं हो सके। कृपया पुनः प्रयास करें।';
+
+  @override
+  String get profFillRequiredFieldsCorrectly =>
+      'कृपया सभी आवश्यक फील्ड सही से भरें';
+
+  @override
+  String get profFailedUpdateProfile => 'प्रोफाइल अपडेट नहीं हो सकी।';
+
+  @override
+  String get profFailedUpdateProfileTryAgain =>
+      'प्रोफाइल अपडेट नहीं हो सकी। कृपया पुनः प्रयास करें।';
+
+  @override
+  String get profCashOutPlaced => 'कैश-आउट अनुरोध दर्ज हो गया!';
+
+  @override
+  String get profCashOutFailed => 'कैश-आउट अनुरोध विफल रहा।';
+
+  @override
+  String get profCoinsConverted => 'कॉइन बदल दिए गए!';
+
+  @override
+  String get profConversionFailed => 'रूपांतरण विफल रहा।';
+
+  @override
+  String get profFillRequiredFields => 'कृपया सभी आवश्यक फील्ड भरें';
+
+  @override
+  String get profRefundSubmitted => 'रिफंड अनुरोध जमा हो गया';
+
+  @override
+  String get profFailedInitiateRefund =>
+      'रिफंड शुरू नहीं हो सका। कृपया पुनः प्रयास करें।';
+
+  @override
+  String get profSubAuctionAccessPlan => 'नीलामी एक्सेस प्लान';
+
+  @override
+  String get profSubAuctionBidLimit => 'नीलामी बिड लिमिट';
+
+  @override
+  String get profSubBidLimitPlan => 'बिड लिमिट प्लान';
+
+  @override
+  String get profSubOwnerContactPlan => 'मालिक संपर्क प्लान';
+
+  @override
+  String get profSubVehicleDetailsPlan => 'वाहन विवरण प्लान';
+
+  @override
+  String get profSubInspectionPlan => 'निरीक्षण प्लान';
+
+  @override
+  String get profSubMechanicContactPlan => 'मैकेनिक संपर्क प्लान';
+
+  @override
+  String get profSubAuctionAccessDesc =>
+      'लाइव नीलामी का असीमित एक्सेस अनलॉक करें';
+
+  @override
+  String get profSubBidLimitDesc =>
+      'ऊंची बोली लगाने के लिए अपनी बिड लिमिट बढ़ाएं';
+
+  @override
+  String get profSubOwnerContactDesc => 'वाहन मालिकों से सीधे जुड़ें';
+
+  @override
+  String get profSubVehicleDetailsDesc =>
+      'वाहन का पूरा इतिहास और विवरण अनलॉक करें';
+
+  @override
+  String get profSubInspectionDesc => 'पेशेवर वाहन निरीक्षण का अनुरोध करें';
+
+  @override
+  String get profSubMechanicContactDesc =>
+      'अपने पास के प्रमाणित मैकेनिकों से जुड़ें';
+
+  @override
+  String get profSubMyPlans => 'मेरे प्लान';
+
+  @override
+  String get profSubExplorePlans => 'प्लान देखें';
+
+  @override
+  String get profSubComboPlans => 'कॉम्बो प्लान';
+
+  @override
+  String get profSubSubscription => 'सब्सक्रिप्शन';
+
+  @override
+  String profSubPaymentFailedMsg(String message) {
+    return 'भुगतान विफल: $message';
+  }
+
+  @override
+  String get profSubMonthJan => 'जन॰';
+
+  @override
+  String get profSubMonthFeb => 'फ़र॰';
+
+  @override
+  String get profSubMonthMar => 'मार्च';
+
+  @override
+  String get profSubMonthApr => 'अप्रैल';
+
+  @override
+  String get profSubMonthMay => 'मई';
+
+  @override
+  String get profSubMonthJun => 'जून';
+
+  @override
+  String get profSubMonthJul => 'जुल॰';
+
+  @override
+  String get profSubMonthAug => 'अग॰';
+
+  @override
+  String get profSubMonthSep => 'सित॰';
+
+  @override
+  String get profSubMonthOct => 'अक्टू॰';
+
+  @override
+  String get profSubMonthNov => 'नव॰';
+
+  @override
+  String get profSubMonthDec => 'दिस॰';
+
+  @override
+  String get profSubActive => 'सक्रिय';
+
+  @override
+  String get profSubInactive => 'निष्क्रिय';
+
+  @override
+  String get profSubValidUntil => 'वैधता तक';
+
+  @override
+  String get profSubNeedMoreBenefits => 'और लाभ चाहिए?';
+
+  @override
+  String get profSubExploreOtherPlans =>
+      'हमारे अन्य प्लान देखें और अपनी जरूरत के अनुसार चुनें।';
+
+  @override
+  String get profSubNoActivePlans => 'कोई सक्रिय प्लान नहीं';
+
+  @override
+  String get profSubNoActiveSubscriptionsYet =>
+      'आपके पास अभी कोई सक्रिय सब्सक्रिप्शन नहीं है।';
+
+  @override
+  String get profSubNoPlanSelected => 'कोई प्लान नहीं चुना गया';
+
+  @override
+  String get profSubAuctionActivatedBrowse =>
+      'नीलामी एक्सेस सक्रिय! अब आप ब्राउज़ और बोली लगा सकते हैं।';
+
+  @override
+  String get profSubContactPackActivated =>
+      'संपर्क पैक सक्रिय! मालिक का संपर्क लाया जा रहा है...';
+
+  @override
+  String get profSubShopContactUnlocked => 'दुकान का संपर्क अनलॉक हो गया!';
+
+  @override
+  String get profSubMechanicContactUnlocked =>
+      'मैकेनिक का संपर्क अनलॉक हो गया!';
+
+  @override
+  String get profSubVehicleDetailsUnlockedCredits =>
+      'वाहन विवरण अनलॉक हो गया! अब आपके पास पूरे विवरण का एक्सेस + 5 मालिक संपर्क क्रेडिट हैं।';
+
+  @override
+  String get profSubActivatedPlanActive =>
+      'सब्सक्रिप्शन सक्रिय हो गया! आपका प्लान अब सक्रिय है।';
+
+  @override
+  String get profSubFailedLoadPlans =>
+      'सब्सक्रिप्शन प्लान लोड नहीं हो सके। कृपया पुनः प्रयास करें।';
+
+  @override
+  String get profSubFailedLoadSubscriptions =>
+      'सब्सक्रिप्शन लोड नहीं हो सके। कृपया पुनः प्रयास करें।';
+
+  @override
+  String get profSubFailedLoadCombos =>
+      'कॉम्बो लोड नहीं हो सके। रिफ्रेश करने के लिए नीचे खींचें।';
+
+  @override
+  String get profSubNoPlanSelectedDot => 'कोई प्लान नहीं चुना गया।';
+
+  @override
+  String get profSubConfirmSubscription => 'सब्सक्रिप्शन की पुष्टि करें';
+
+  @override
+  String profSubPlanName(String name) {
+    return '$name प्लान';
+  }
+
+  @override
+  String get profSubFeatAuction1 => 'सभी नीलामी वाहन लिस्टिंग देखें';
+
+  @override
+  String get profSubFeatAuction2 => 'लाइव नीलामी में भाग लें';
+
+  @override
+  String get profSubFeatAuction3 => 'पूरा नीलामी इतिहास एक्सेस करें';
+
+  @override
+  String profSubFeatUninterrupted(String metric) {
+    return '$metric का निर्बाध एक्सेस';
+  }
+
+  @override
+  String profSubFeatBidUpTo(String metric) {
+    return '$metric तक की बोली लगाएं';
+  }
+
+  @override
+  String get profSubFeatBid2 => 'असीमित बोलियां लगाएं';
+
+  @override
+  String get profSubFeatBid3 => 'रीयल-टाइम बोली ट्रैकिंग';
+
+  @override
+  String get profSubFeatBid4 => 'प्राथमिकता वाली बोली सूचनाएं';
+
+  @override
+  String get profSubFeatOwner1 => 'विक्रेता का नाम और संपर्क विवरण';
+
+  @override
+  String get profSubFeatOwner2 => 'फोन नंबर और ईमेल का एक्सेस';
+
+  @override
+  String get profSubFeatOwner3 => 'सीधे WhatsApp पर बातचीत';
+
+  @override
+  String get profSubFeatOwner4 => 'विक्रेता की अन्य लिस्टिंग देखें';
+
+  @override
+  String get profSubFeatVeh1 => 'वाहन का पूरा इतिहास रिपोर्ट';
+
+  @override
+  String get profSubFeatVeh2 => 'विस्तृत तकनीकी विनिर्देश';
+
+  @override
+  String get profSubFeatVeh3 => 'हाई-रेजोल्यूशन वाहन तस्वीरें';
+
+  @override
+  String get profSubFeatVeh4 => 'पेशेवर निरीक्षण रिपोर्ट';
+
+  @override
+  String get profSubFeatVeh5 => 'स्वामित्व इतिहास और दस्तावेज़';
+
+  @override
+  String get profSubFeatVeh6 => 'बाज़ार मूल्यांकन की जानकारी';
+
+  @override
+  String get profSubFeatInsp1 => 'मौके पर पेशेवर निरीक्षण';
+
+  @override
+  String get profSubFeatInsp2 => 'व्यापक मैकेनिकल जांच';
+
+  @override
+  String get profSubFeatInsp3 => 'बॉडी की स्थिति का मूल्यांकन';
+
+  @override
+  String get profSubFeatInsp4 => 'इंजन और ट्रांसमिशन डायग्नोस्टिक्स';
+
+  @override
+  String get profSubFeatInsp5 => 'फोटो सहित विस्तृत निरीक्षण रिपोर्ट';
+
+  @override
+  String get profSubFeatInsp6 => 'विशेषज्ञ सुझाव और रेटिंग';
+
+  @override
+  String get profSubFeatDefault1 => 'प्रीमियम सुविधाओं का एक्सेस';
+
+  @override
+  String profSubFeatValidity(String metric) {
+    return '$metric वैधता';
+  }
+
+  @override
+  String get profSubFeatDefault3 => 'प्राथमिकता वाला ग्राहक सहायता';
+
+  @override
+  String get profSubWhatsIncluded => 'इसमें क्या शामिल है';
+
+  @override
+  String get profSubOrderSummary => 'ऑर्डर सारांश';
+
+  @override
+  String get profSubPlanLabel => 'प्लान';
+
+  @override
+  String get profSubValidityLabel => 'वैधता';
+
+  @override
+  String get profSubPlanCode => 'प्लान कोड';
+
+  @override
+  String get profSubTotalAmount => 'कुल राशि';
+
+  @override
+  String profSubPay(String price) {
+    return '$price का भुगतान करें';
+  }
+
+  @override
+  String profSubDaysMetric(String value) {
+    return '$value दिन';
+  }
+
+  @override
+  String profSubLimitMetric(String amount) {
+    return '₹$amount सीमा';
+  }
+
+  @override
+  String get profSubError => 'त्रुटि';
+
+  @override
+  String get profSubOwnerContactPacks => 'मालिक संपर्क पैक';
+
+  @override
+  String get profSubGetBestValue => 'अपने पैसे का सर्वोत्तम मूल्य पाएं';
+
+  @override
+  String get profSubPrioritySupport => 'प्राथमिकता\nसहायता';
+
+  @override
+  String get profSubStandardSupport => 'स्टैंडर्ड\nसहायता';
+
+  @override
+  String get profSubEmailSupport => 'ईमेल\nसहायता';
+
+  @override
+  String profSubSave(String amount) {
+    return '₹$amount बचाएं';
+  }
+
+  @override
+  String get profSubPayNow => 'अभी भुगतान करें';
+
+  @override
+  String get profSubBuy => 'खरीदें';
+
+  @override
+  String profSubActivatedSuccessfully(String name) {
+    return '$name सफलतापूर्वक सक्रिय हुआ!';
+  }
+
+  @override
+  String profSubPurchasedSuccessfully(String name) {
+    return '$name सफलतापूर्वक खरीदा गया!';
+  }
+
+  @override
+  String profSubOwnerContactsCount(int count) {
+    return '$count मालिक संपर्क';
+  }
+
+  @override
+  String get profSubNoComboPlans => 'कोई कॉम्बो प्लान नहीं';
+
+  @override
+  String get profSubNoComboPlansAvailable =>
+      'अभी कोई कॉम्बो प्लान उपलब्ध नहीं है।';
+
+  @override
+  String get profSubChooseYourSubscription => 'अपना सब्सक्रिप्शन चुनें';
+
+  @override
+  String get profSubUnlimitedAccess => 'असीमित एक्सेस';
+
+  @override
+  String get profSubBidLimit => 'बिड लिमिट';
+
+  @override
+  String get profSubSecureTrusted => 'सुरक्षित और भरोसेमंद';
+
+  @override
+  String get profSubHundredSafe => '100% सुरक्षित';
+
+  @override
+  String get profSubEliteBenefits => 'एलीट लाभ';
+
+  @override
+  String get profSubMostPopular => 'सबसे लोकप्रिय';
+
+  @override
+  String get profSubEliteSupport => 'एलीट सहायता';
+
+  @override
+  String get profSubPremiumSupport => 'प्रीमियम सहायता';
+
+  @override
+  String get profSubBasicSupport => 'बेसिक सहायता';
+
+  @override
+  String get profSubElitePlan => 'एलीट प्लान';
+
+  @override
+  String get profSubPremiumPlan => 'प्रीमियम प्लान';
+
+  @override
+  String get profSubBasicPlan => 'बेसिक प्लान';
+
+  @override
+  String get profSubAvailableWalletBalance => 'उपलब्ध वॉलेट बैलेंस';
+
+  @override
+  String get profSubPayFromWalletBalance => 'वॉलेट बैलेंस से भुगतान करें';
+
+  @override
+  String profSubProceedPaymentAmount(String price) {
+    return '$price का भुगतान करें';
+  }
+
+  @override
+  String get profSubTermsConditions => 'नियम और शर्तें';
+
+  @override
+  String get profSubWalletTerm1 =>
+      'वॉलेट बैलेंस हस्तांतरणीय नहीं है और केवल ऐप के भीतर सब्सक्रिप्शन भुगतान के लिए उपयोग किया जा सकता है।';
+
+  @override
+  String get profSubWalletTerm2 =>
+      'वॉलेट बैलेंस से भुगतान करने के बाद उसे वापस नहीं किया जा सकता और न ही रिफंड किया जा सकता है।';
+
+  @override
+  String get profSubWalletTerm3 =>
+      'वॉलेट बैलेंस पर कोई ब्याज नहीं मिलता और यह कंपनी की सेवा शर्तों के अधीन है।';
+
+  @override
+  String spareNoCategoryShopsFound(String category) {
+    return 'आपके स्थान के पास कोई $category दुकान नहीं मिली।\nलोकेशन चालू करें या बाद में फिर देखें।';
+  }
+
+  @override
+  String get spareNoSparePartsAvailable => 'कोई स्पेयर पार्ट उपलब्ध नहीं';
+
+  @override
+  String get spareCheckBackLater => 'नई लिस्टिंग के लिए बाद में फिर देखें';
+
+  @override
+  String spareSuitsLabel(String suitsFor) {
+    return 'उपयुक्त: $suitsFor';
+  }
+
+  @override
+  String get spareHeaderTitle => 'स्पेयर';
+
+  @override
+  String get spareFindTrustedShops =>
+      'अपने स्थान के पास भरोसेमंद स्पेयर पार्ट दुकानें खोजें';
+
+  @override
+  String get spareConstructionEquipment => 'निर्माण उपकरण';
+
+  @override
+  String get spareCommercialVehicle => 'कमर्शियल वाहन';
+
+  @override
+  String get spareCeShopsDesc =>
+      'JCB, एक्सकेवेटर, लोडर आदि के पार्ट्स बेचने वाली दुकानें देखें';
+
+  @override
+  String get spareCvShopsDesc =>
+      'ट्रक, बस, टेम्पो और ट्रेलर के पार्ट्स बेचने वाली दुकानें देखें';
+
+  @override
+  String get spareError => 'त्रुटि';
+
+  @override
+  String get spareLoginRequired => 'लॉगिन आवश्यक';
+
+  @override
+  String get sparePleaseLoginToShowInterest =>
+      'रुचि दिखाने के लिए कृपया लॉगिन करें';
+
+  @override
+  String get spareInterestRecorded => 'रुचि दर्ज हुई';
+
+  @override
+  String spareInterestRecordedMessage(String spareName) {
+    return '\"$spareName\" में आपकी रुचि सफलतापूर्वक दर्ज हो गई है।';
+  }
+
+  @override
+  String get spareFailedToRecordInterest =>
+      'रुचि दर्ज नहीं हो सकी। कृपया पुनः प्रयास करें।';
+
+  @override
+  String get spareFailedToLoadSpareParts => 'स्पेयर पार्ट्स लोड नहीं हो सके';
+
+  @override
+  String get spareFailedToLoadShops => 'दुकानें लोड नहीं हो सकीं';
+
+  @override
+  String get spareFailedToLoadOrders => 'ऑर्डर लोड नहीं हो सके';
+
+  @override
+  String get spareUnableToLoadSubscriptionPlan =>
+      'सब्सक्रिप्शन प्लान लोड नहीं हो सका। कृपया पुनः प्रयास करें।';
+
+  @override
+  String get spareConnectWithShop => 'दुकान से जुड़ें';
+
+  @override
+  String sparePayToGetShopContact(String shopName) {
+    return '$shopName का सीधा संपर्क नंबर पाने के लिए भुगतान करें।';
+  }
+
+  @override
+  String get spareContactUnlocked =>
+      'संपर्क अनलॉक हो गया! अब आप दुकान को कॉल कर सकते हैं।';
+
+  @override
+  String get spareCouldNotUnlockContact =>
+      'संपर्क अनलॉक नहीं हो सका। कृपया पुनः प्रयास करें।';
+
+  @override
+  String get sparePhone => 'फोन';
+
+  @override
+  String spareContactPhone(String phone) {
+    return 'संपर्क: $phone';
+  }
+
+  @override
+  String get spareLocationError => 'स्थान त्रुटि';
+
+  @override
+  String get spareUnableToAccessLocation =>
+      'स्थान एक्सेस नहीं हो सका। कृपया ऐप रीस्टार्ट करके पुनः प्रयास करें।';
+
+  @override
+  String get spareLocationPermission => 'लोकेशन की अनुमति';
+
+  @override
+  String get spareLocationPermissionRationale =>
+      'पास की दुकानें खोजने के लिए हमें आपका स्थान चाहिए। कृपया लोकेशन की अनुमति दें।';
+
+  @override
+  String get spareAllow => 'अनुमति दें';
+
+  @override
+  String get spareEnableGps => 'GPS चालू करें';
+
+  @override
+  String get spareGpsDisabledMessage =>
+      'GPS बंद है। पास की दुकानें खोजने के लिए कृपया लोकेशन सेवाएं चालू करें।';
+
+  @override
+  String get spareOpenSettings => 'सेटिंग्स खोलें';
+
+  @override
+  String get spareLocationPermissionRequired => 'लोकेशन की अनुमति आवश्यक';
+
+  @override
+  String get spareLocationPermissionDeniedForever =>
+      'लोकेशन की अनुमति स्थायी रूप से अस्वीकृत है। कृपया ऐप सेटिंग्स से इसे चालू करें।';
+
+  @override
+  String get spareLocationUpdated => 'स्थान अपडेट हुआ?';
+
+  @override
+  String get spareRetryLoadingShopsPrompt =>
+      'क्या आप अभी दुकानें फिर से लोड करना चाहेंगे?';
+
+  @override
+  String get spareNotNow => 'अभी नहीं';
+
+  @override
+  String get spareFailedToLoadYourVehicles => 'आपके वाहन लोड नहीं हो सके';
+
+  @override
+  String spareFieldNameIsRequired(String fieldName) {
+    return '$fieldName आवश्यक है';
+  }
+
+  @override
+  String get spareCategoryIsRequired => 'श्रेणी आवश्यक है';
+
+  @override
+  String get sparePleaseAddAtLeastOneVehicleImage =>
+      'कृपया कम से कम 1 वाहन की तस्वीर जोड़ें';
+
+  @override
+  String get sparePleaseUploadAtLeastOneRcDocument =>
+      'कृपया कम से कम एक RC दस्तावेज़ अपलोड करें';
+
+  @override
+  String get spareLimitReached => 'सीमा पूरी हो गई';
+
+  @override
+  String get spareMaxTenImagesAllowed => 'अधिकतम 10 तस्वीरों की अनुमति है';
+
+  @override
+  String get spareEachDocumentUnder12Mb =>
+      'प्रत्येक दस्तावेज़ 12 MB से कम होना चाहिए';
+
+  @override
+  String get spareVehicleSubmittedForApproval =>
+      'वाहन अनुमोदन के लिए जमा हो गया।';
+
+  @override
+  String spareFailedToSubmitVehicle(String error) {
+    return 'वाहन जमा नहीं हो सका: $error';
+  }
+
+  @override
+  String get spareVehicleUpdatedPendingApproval =>
+      'वाहन अपडेट हुआ। बदलाव एडमिन के अनुमोदन के लिए लंबित हैं।';
+
+  @override
+  String spareFailedToUpdateVehicle(String error) {
+    return 'वाहन अपडेट नहीं हो सका: $error';
+  }
+
+  @override
+  String get spareSuccess => 'सफल';
+
+  @override
+  String get spareVehicleMarkedAsSold => 'वाहन बिका हुआ चिह्नित किया गया';
+
+  @override
+  String get spareFailedToMarkAsSold => 'बिका हुआ चिह्नित नहीं हो सका';
+
+  @override
+  String get spareVehicleMarkedAsAvailable => 'वाहन उपलब्ध चिह्नित किया गया';
+
+  @override
+  String get spareFailedToUpdateStatus => 'स्थिति अपडेट नहीं हो सकी';
+
+  @override
+  String get spareNoCategoriesFound => 'कोई श्रेणी नहीं मिली';
+
+  @override
+  String get spareFailedToLoadCategories => 'श्रेणियां लोड नहीं हो सकीं';
+
+  @override
+  String get spareFailedToLoadVehicles => 'वाहन लोड नहीं हो सके';
+
+  @override
+  String get spareFailedToLoadSubscribedVehicles =>
+      'सब्सक्राइब किए गए वाहन लोड नहीं हो सके';
+
+  @override
+  String get spareSellerNotifiedOfInterest =>
+      'विक्रेता को आपकी रुचि की सूचना दे दी गई है।';
+
+  @override
+  String get spareFailedToRecordInterestShort => 'रुचि दर्ज नहीं हो सकी।';
+
+  @override
+  String spareOfferTooLowMinimumRequired(String amount) {
+    return 'ऑफर बहुत कम है। न्यूनतम आवश्यक: ₹$amount';
+  }
+
+  @override
+  String get spareFailedToSubmitOffer => 'ऑफर जमा नहीं हो सका।';
+
+  @override
+  String get spareInspectionPlanName => 'निरीक्षण';
+
+  @override
+  String spareProfessionalOnSiteInspectionFor(String categoryName) {
+    return '$categoryName के लिए मौके पर पेशेवर निरीक्षण';
+  }
+
+  @override
+  String get sparePayToRequestInspection =>
+      'इस वाहन के पेशेवर निरीक्षण का अनुरोध करने के लिए भुगतान करें।';
+
+  @override
+  String get spareTeamWillContactForInspection =>
+      'हमारी टीम निरीक्षण का समय तय करने के लिए आपसे संपर्क करेगी।';
+
+  @override
+  String get spareFailedToRequestInspection =>
+      'निरीक्षण का अनुरोध नहीं हो सका।';
+
+  @override
+  String get spareVehicleNotFound => 'वाहन नहीं मिला।';
+
+  @override
+  String get spareFailedToLoadVehicleDetails =>
+      'वाहन का विवरण लोड नहीं हो सका। कृपया पुनः प्रयास करें।';
+
+  @override
+  String get spareCouldNotAccessVehicleDetails =>
+      'वाहन का विवरण एक्सेस नहीं हो सका।';
+
+  @override
+  String get spareVehicleDetailsAccess => 'वाहन विवरण एक्सेस';
+
+  @override
+  String get spareVehicleDetailsAccessSubtitle =>
+      'पूरा वाहन विवरण + 5 मालिक संपर्क क्रेडिट पाएं। एक बार भुगतान करें, प्लान अवधि तक उपयोग करें।';
+
+  @override
+  String get spareOwnerContactPack => 'मालिक संपर्क पैक';
+
+  @override
+  String get spareOwnerContactPackSubtitle =>
+      'आपके संपर्क क्रेडिट समाप्त हो गए हैं। मालिक के फोन नंबर देखने के लिए पैक खरीदें।';
+
+  @override
+  String get spareWishlist => 'विशलिस्ट';
+
+  @override
+  String get sparePurchaseHistory => 'खरीद इतिहास';
+
+  @override
+  String get spareFilters => 'फिल्टर';
+
+  @override
+  String get spareReset => 'रीसेट करें';
+
+  @override
+  String get spareNoFiltersAvailable => 'कोई फिल्टर उपलब्ध नहीं';
+
+  @override
+  String get spareSearchBrand => 'ब्रांड खोजें';
+
+  @override
+  String get spareSearchState => 'राज्य खोजें';
+
+  @override
+  String spareSelectFilter(String filterKey) {
+    return '$filterKey चुनें';
+  }
+
+  @override
+  String spareEnterFilter(String filterKey) {
+    return '$filterKey दर्ज करें';
+  }
+
+  @override
+  String get spareTryAdjustingFilters => 'अपने फिल्टर बदलकर देखें';
+
+  @override
+  String get spareVehicle => 'वाहन';
+
+  @override
+  String get spareBuyAndSellTitle => 'खरीदें और बेचें';
+
+  @override
+  String get spareBrowseAndPostCommercialVehicles =>
+      'कमर्शियल वाहन देखें और पोस्ट करें';
+
+  @override
+  String get spareBuy => 'खरीदें';
+
+  @override
+  String get spareSell => 'बेचें';
+
+  @override
+  String get spareYourPostedVehicleListings => 'आपकी पोस्ट की गई वाहन लिस्टिंग';
+
+  @override
+  String get spareMarkAsSold => 'बिका हुआ चिह्नित करें';
+
+  @override
+  String spareMarkVehicleAsSoldPrompt(String name) {
+    return 'क्या \"$name\" को बिका हुआ चिह्नित करें?';
+  }
+
+  @override
+  String get spareMarkAsAvailable => 'उपलब्ध चिह्नित करें';
+
+  @override
+  String spareMarkVehicleAsAvailablePrompt(String name) {
+    return 'क्या \"$name\" को उपलब्ध चिह्नित करें?';
+  }
+
+  @override
+  String get spareConfirm => 'पुष्टि करें';
+
+  @override
+  String get spareMarkSold => 'बिका चिह्नित करें';
+
+  @override
+  String get spareMarkAvailable => 'उपलब्ध चिह्नित करें';
+
+  @override
+  String get spareNoPostedVehiclesYet =>
+      'आपने अभी तक कोई वाहन पोस्ट नहीं किया है';
+
+  @override
+  String get spareTapSellToPostVehicle =>
+      'अपना वाहन पोस्ट करने के लिए किसी श्रेणी पर बेचें टैप करें';
+
+  @override
+  String get spareSubscribedVehicles => 'सब्सक्राइब किए गए वाहन';
+
+  @override
+  String get spareVehiclesWithPremiumAccess =>
+      'जिन वाहनों का प्रीमियम एक्सेस आपके पास है';
+
+  @override
+  String get sparePremiumAccess => 'प्रीमियम एक्सेस';
+
+  @override
+  String get spareNoSubscribedVehicles => 'कोई सब्सक्राइब किया वाहन नहीं';
+
+  @override
+  String get spareSubscribedVehiclesAppearHere =>
+      'जिन वाहनों का प्रीमियम एक्सेस आपको मिलेगा, वे यहां दिखाई देंगे';
+
+  @override
+  String get spareVehicles => 'वाहन';
+
+  @override
+  String get spareBrowseAvailableListings => 'उपलब्ध लिस्टिंग देखें';
+
+  @override
+  String get spareViewMore => 'और देखें';
+
+  @override
+  String get spareSellVehicle => 'वाहन बेचें';
+
+  @override
+  String get sparePostYourVehicleForSale =>
+      'अपना वाहन बिक्री के लिए पोस्ट करें';
+
+  @override
+  String get spareSearchCategory => 'श्रेणी खोजें...';
+
+  @override
+  String get spareSubmittingYourVehicle => 'आपका वाहन जमा हो रहा है...';
+
+  @override
+  String get sparePleaseWaitProcessingListing =>
+      'कृपया प्रतीक्षा करें, हम आपकी लिस्टिंग प्रोसेस कर रहे हैं';
+
+  @override
+  String get spareNoFormFieldsAvailable => 'कोई फॉर्म फील्ड उपलब्ध नहीं।';
+
+  @override
+  String get sparePhotosAndDocuments => 'फोटो और दस्तावेज़';
+
+  @override
+  String get spareAutoFilled => 'अपने आप भरा गया';
+
+  @override
+  String spareExampleHint(String example) {
+    return 'उदा. $example';
+  }
+
+  @override
+  String get spareTenDigitMobileNumber => '10 अंकों का मोबाइल नंबर';
+
+  @override
+  String get spareSearchCity => 'शहर खोजें';
+
+  @override
+  String get spareSelectStateFirst => 'पहले राज्य चुनें';
+
+  @override
+  String get spareConfirmedCheck => 'पुष्टि हुई ✓';
+
+  @override
+  String spareCouldNotOpenPicker(String error) {
+    return 'पिकर नहीं खुल सका: $error';
+  }
+
+  @override
+  String get spareTapToAddVehiclePhotos =>
+      'वाहन की फोटो जोड़ने के लिए टैप करें';
+
+  @override
+  String get spareTapToAddMore => 'और जोड़ने के लिए टैप करें';
+
+  @override
+  String get spareUpTo10PhotosFormats => '10 फोटो तक  •  JPG, PNG';
+
+  @override
+  String get spareTapToUpload => 'अपलोड करने के लिए टैप करें';
+
+  @override
+  String get spareMultipleFilesAllowedFormats =>
+      'कई फाइलें स्वीकार्य  •  प्रत्येक अधिकतम 12 MB  •  JPG, PNG';
+
+  @override
+  String get spareUpdateVehicle => 'वाहन अपडेट करें';
+
+  @override
+  String get spareShareVehicle => 'वाहन शेयर करें';
+
+  @override
+  String get sparePriceOnRequest => 'मूल्य अनुरोध पर';
+
+  @override
+  String get spareSold => 'बिका';
+
+  @override
+  String get spareApproved => 'अनुमोदित';
+
+  @override
+  String get spareRejected => 'अस्वीकृत';
+
+  @override
+  String get spareUnknown => 'अज्ञात';
+
+  @override
+  String get spareCouldNotRevealContact => 'संपर्क नहीं दिखाया जा सका।';
 }

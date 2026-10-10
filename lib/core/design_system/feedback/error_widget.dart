@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../constants/app_colors.dart';
 import '../../constants/app_sizes.dart';
-import '../../constants/app_strings.dart';
+import '../../extensions/context_extensions.dart';
 
 class AppErrorWidget extends StatelessWidget {
   final String? message;
@@ -29,7 +29,7 @@ class AppErrorWidget extends StatelessWidget {
             Icon(icon, size: 64, color: AppColors.error.withOpacity(0.7)),
             const SizedBox(height: AppSizes.spaceMd),
             Text(
-              message ?? AppStrings.errorGeneric,
+              message ?? context.l10n.somethingWentWrong,
               textAlign: TextAlign.center,
               style: Theme.of(
                 context,
@@ -40,7 +40,7 @@ class AppErrorWidget extends StatelessWidget {
               FilledButton.icon(
                 onPressed: onRetry,
                 icon: const Icon(Icons.refresh),
-                label: const Text(AppStrings.retry),
+                label: Text(context.l10n.retry),
                 style: FilledButton.styleFrom(
                   backgroundColor: AppColors.primary,
                 ),
@@ -58,7 +58,7 @@ class AppErrorWidget extends StatelessWidget {
       const SizedBox(width: 6),
       Expanded(
         child: Text(
-          message ?? AppStrings.errorGeneric,
+          message ?? ctx.l10n.somethingWentWrong,
           style: Theme.of(
             ctx,
           ).textTheme.bodySmall?.copyWith(color: AppColors.error),
@@ -118,7 +118,7 @@ class EmptyStateWidget extends StatelessWidget {
               const SizedBox(height: AppSizes.spaceLg),
               FilledButton(
                 onPressed: onAction,
-                child: Text(actionLabel ?? 'Try again'),
+                child: Text(actionLabel ?? context.l10n.tryAgain),
               ),
             ],
           ],

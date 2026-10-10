@@ -134,7 +134,14 @@ class PrimaryButton extends StatelessWidget {
                     Icon(icon, size: AppSizes.iconSm),
                     SizedBox(width: AppSpacing.sm),
                   ],
-                  Text(text, style: AppTextStyles.buttonMedium),
+                  Flexible(
+                    child: Text(
+                      text,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: AppTextStyles.buttonMedium,
+                    ),
+                  ),
                   if (icon != null && isIconRight) ...[
                     SizedBox(width: AppSpacing.sm),
                     Icon(icon, size: AppSizes.iconSm),
@@ -208,10 +215,14 @@ class SecondaryButton extends StatelessWidget {
                     Icon(icon, size: AppSizes.iconSm),
                     SizedBox(width: AppSpacing.sm),
                   ],
-                  Text(
-                    text,
-                    style: AppTextStyles.buttonMedium.copyWith(
-                      color: disabled ? AppColors.grey400 : AppColors.primary,
+                  Flexible(
+                    child: Text(
+                      text,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: AppTextStyles.buttonMedium.copyWith(
+                        color: disabled ? AppColors.grey400 : AppColors.primary,
+                      ),
                     ),
                   ),
                   if (icon != null && isIconRight) ...[
@@ -267,10 +278,14 @@ class AppTextButton extends StatelessWidget {
                 ),
                 SizedBox(width: AppSpacing.xs),
               ],
-              Text(
-                text,
-                style: AppTextStyles.buttonSmall.copyWith(
-                  color: disabled ? AppColors.grey400 : AppColors.primary,
+              Flexible(
+                child: Text(
+                  text,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: AppTextStyles.buttonSmall.copyWith(
+                    color: disabled ? AppColors.grey400 : AppColors.primary,
+                  ),
                 ),
               ),
               if (icon != null && isIconRight) ...[

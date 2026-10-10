@@ -181,7 +181,7 @@ class VerifyOTP extends GetView<AuthController> {
                                   color: AppColors.grey600,
                                 ),
                                 children: [
-                                  const TextSpan(text: 'Sent to '),
+                                  TextSpan(text: context.l10n.inspSentTo),
                                   TextSpan(
                                     text: phone.isNotEmpty
                                         ? '+91 $phone'
@@ -290,26 +290,31 @@ class VerifyOTP extends GetView<AuthController> {
                                   ),
                                 ),
                                 SizedBox(width: 4.w),
-                                Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    SvgPicture.asset(
-                                      AppAssets.clock,
-                                      width: 14.w,
-                                      height: 14.h,
-                                    ),
-                                    SizedBox(width: 4.w),
-                                    Text(
-                                      '${context.l10n.resendOtp} in ${controller.formattedTimer}',
-                                      style: TextStyle(
-                                        fontFamily: 'Plus Jakarta Sans',
-                                        fontSize: 12.sp,
-                                        fontWeight: FontWeight.w600,
-                                        color: AppColors.primary,
-                                        decoration: TextDecoration.underline,
+                                Flexible(
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      SvgPicture.asset(
+                                        AppAssets.clock,
+                                        width: 14.w,
+                                        height: 14.h,
                                       ),
-                                    ),
-                                  ],
+                                      SizedBox(width: 4.w),
+                                      Flexible(
+                                        child: Text(
+                                          '${context.l10n.resendOtp} in ${controller.formattedTimer}',
+                                          style: TextStyle(
+                                            fontFamily: 'Plus Jakarta Sans',
+                                            fontSize: 12.sp,
+                                            fontWeight: FontWeight.w600,
+                                            color: AppColors.primary,
+                                            decoration:
+                                                TextDecoration.underline,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ],
                             );
@@ -358,14 +363,18 @@ class VerifyOTP extends GetView<AuthController> {
                             thickness: 1,
                           ),
                         ),
-                        Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 12.w),
-                          child: Text(
-                            'Need help?',
-                            style: TextStyle(
-                              fontFamily: 'Plus Jakarta Sans',
-                              fontSize: 12.sp,
-                              color: AppColors.grey500,
+                        Flexible(
+                          flex: 3,
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 12.w),
+                            child: Text(
+                              context.l10n.inspNeedHelp,
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontFamily: 'Plus Jakarta Sans',
+                                fontSize: 12.sp,
+                                color: AppColors.grey500,
+                              ),
                             ),
                           ),
                         ),
@@ -428,7 +437,8 @@ class VerifyOTP extends GetView<AuthController> {
                                   ),
                                 ),
                                 SizedBox(height: 2.h),
-                                Row(
+                                Wrap(
+                                  crossAxisAlignment: WrapCrossAlignment.center,
                                   children: [
                                     Text(
                                       '${context.l10n.contact}: ',

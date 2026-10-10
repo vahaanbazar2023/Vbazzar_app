@@ -5,6 +5,7 @@ import '../../../core/network/endpoints/api_endpoints.dart';
 import '../../../core/storage/secure_storage_service.dart';
 import '../../../core/storage/storage_keys.dart';
 import '../models/payment_models.dart';
+import '../../../core/extensions/context_extensions.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Payment service — handles /payments/initiate & /payments/success|failure
@@ -128,8 +129,8 @@ class PaymentService {
       debugPrint('❌ Response data: ${e.response?.data}');
       final msg = e.response?.data is Map
           ? (e.response?.data['message'] as String? ??
-                'Payment initiation failed')
-          : 'Payment initiation failed';
+                appL10n.corePaymentInitiationFailed)
+          : appL10n.corePaymentInitiationFailed;
       return InitiatePaymentRes(
         status: 'error',
         code: e.response?.statusCode ?? 500,
@@ -140,7 +141,7 @@ class PaymentService {
       return InitiatePaymentRes(
         status: 'error',
         code: 500,
-        message: 'Unexpected error: $e',
+        message: appL10n.coreUnexpectedError(e.toString()),
       );
     }
   }
@@ -166,8 +167,8 @@ class PaymentService {
       debugPrint('❌ /payments/success DioException: ${e.message}');
       final msg = e.response?.data is Map
           ? (e.response?.data['message'] as String? ??
-                'Payment success report failed')
-          : 'Payment success report failed';
+                appL10n.corePaymentSuccessReportFailed)
+          : appL10n.corePaymentSuccessReportFailed;
       return InitiatePaymentRes(
         status: 'error',
         code: e.response?.statusCode ?? 500,
@@ -177,7 +178,7 @@ class PaymentService {
       return InitiatePaymentRes(
         status: 'error',
         code: 500,
-        message: 'Unexpected error: $e',
+        message: appL10n.coreUnexpectedError(e.toString()),
       );
     }
   }
@@ -203,8 +204,8 @@ class PaymentService {
       debugPrint('❌ /payments/failure DioException: ${e.message}');
       final msg = e.response?.data is Map
           ? (e.response?.data['message'] as String? ??
-                'Payment failure report failed')
-          : 'Payment failure report failed';
+                appL10n.corePaymentFailureReportFailed)
+          : appL10n.corePaymentFailureReportFailed;
       return InitiatePaymentRes(
         status: 'error',
         code: e.response?.statusCode ?? 500,
@@ -214,7 +215,7 @@ class PaymentService {
       return InitiatePaymentRes(
         status: 'error',
         code: 500,
-        message: 'Unexpected error: $e',
+        message: appL10n.coreUnexpectedError(e.toString()),
       );
     }
   }

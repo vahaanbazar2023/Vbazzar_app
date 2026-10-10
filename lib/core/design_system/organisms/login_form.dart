@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../molecules/app_textfield.dart';
 import '../molecules/primary_button.dart';
 import '../tokens/app_spacing.dart';
+import '../../extensions/context_extensions.dart';
 
 /// Login form organism
 /// Complex reusable component combining multiple molecules
@@ -47,20 +48,20 @@ class _LoginFormState extends State<LoginForm> {
     // Email validation
     final email = _emailController.text.trim();
     if (email.isEmpty) {
-      setState(() => _emailError = 'Email is required');
+      setState(() => _emailError = context.l10n.emailRequired);
       isValid = false;
     } else if (!email.contains('@')) {
-      setState(() => _emailError = 'Please enter a valid email');
+      setState(() => _emailError = context.l10n.coreEnterValidEmail);
       isValid = false;
     }
 
     // Password validation
     final password = _passwordController.text;
     if (password.isEmpty) {
-      setState(() => _passwordError = 'Password is required');
+      setState(() => _passwordError = context.l10n.corePasswordRequired);
       isValid = false;
     } else if (password.length < 6) {
-      setState(() => _passwordError = 'Password must be at least 6 characters');
+      setState(() => _passwordError = context.l10n.corePasswordMinLength);
       isValid = false;
     }
 
@@ -83,8 +84,8 @@ class _LoginFormState extends State<LoginForm> {
           // Email field
           AppTextField(
             controller: _emailController,
-            label: 'Email',
-            hint: 'Enter your email',
+            label: context.l10n.email,
+            hint: context.l10n.enterEmail,
             errorText: _emailError,
             keyboardType: TextInputType.emailAddress,
             textInputAction: TextInputAction.next,
@@ -102,8 +103,8 @@ class _LoginFormState extends State<LoginForm> {
           // Password field
           PasswordTextField(
             controller: _passwordController,
-            label: 'Password',
-            hint: 'Enter your password',
+            label: context.l10n.password,
+            hint: context.l10n.coreEnterYourPassword,
             errorText: _passwordError,
             onChanged: (_) {
               if (_passwordError != null) {
@@ -119,7 +120,7 @@ class _LoginFormState extends State<LoginForm> {
           Align(
             alignment: Alignment.centerRight,
             child: AppTextButton(
-              text: 'Forgot Password?',
+              text: context.l10n.forgotPassword,
               onPressed: widget.onForgotPasswordPressed,
               isDisabled: widget.isLoading,
             ),
@@ -129,7 +130,7 @@ class _LoginFormState extends State<LoginForm> {
 
           // Login button
           PrimaryButton.large(
-            text: 'Login',
+            text: context.l10n.login,
             onPressed: _handleLogin,
             isLoading: widget.isLoading,
           ),

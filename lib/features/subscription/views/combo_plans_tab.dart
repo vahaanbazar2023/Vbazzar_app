@@ -97,7 +97,7 @@ class ComboPlansTab extends StatelessWidget {
               Padding(
                 padding: EdgeInsets.only(bottom: 10.h),
                 child: Text(
-                  'Owner Contact Packs',
+                  context.l10n.profSubOwnerContactPacks,
                   style: TextStyle(
                     fontFamily: 'Montserrat',
                     fontSize: 14.sp,
@@ -189,7 +189,7 @@ class _ComboCard extends StatelessWidget {
                     Text(
                       combo.description?.isNotEmpty == true
                           ? combo.description!
-                          : 'Get the best value for your money',
+                          : context.l10n.profSubGetBestValue,
                       style: TextStyle(
                         fontFamily: 'Montserrat',
                         fontSize: 11.sp,
@@ -216,7 +216,7 @@ class _ComboCard extends StatelessWidget {
                         : AppAssets.subIconKing,
                     label: combo.plans.isNotEmpty
                         ? combo.plans[0].displayName
-                        : 'Auction Access Plan',
+                        : context.l10n.profSubAuctionAccessPlan,
                   ),
                 ),
                 // Divider
@@ -233,7 +233,7 @@ class _ComboCard extends StatelessWidget {
                         : AppAssets.subIconShield,
                     label: combo.plans.length > 1
                         ? combo.plans[1].displayName
-                        : 'Vehicle Details Plan',
+                        : context.l10n.profSubVehicleDetailsPlan,
                   ),
                 ),
                 // Divider
@@ -247,10 +247,10 @@ class _ComboCard extends StatelessWidget {
                   child: _PlanChip(
                     image: AppAssets.subIconSupport,
                     label: index == 0
-                        ? 'Priority\nSupport'
+                        ? context.l10n.profSubPrioritySupport
                         : index == 1
-                        ? 'Standard\nSupport'
-                        : 'Email\nSupport',
+                        ? context.l10n.profSubStandardSupport
+                        : context.l10n.profSubEmailSupport,
                   ),
                 ),
               ],
@@ -302,7 +302,7 @@ class _ComboCard extends StatelessWidget {
                     if (combo.savings > 0) ...[
                       SizedBox(height: 2.h),
                       Text(
-                        'Save ₹${_fmt(combo.savings)}',
+                        context.l10n.profSubSave(_fmt(combo.savings)),
                         style: TextStyle(
                           fontFamily: 'Montserrat',
                           fontSize: 10.sp,
@@ -316,7 +316,7 @@ class _ComboCard extends StatelessWidget {
               ),
               SizedBox(width: 8.w),
               _PayNowButton(
-                label: 'Pay Now',
+                label: context.l10n.profSubPayNow,
                 onTap: () => _onPayNow(
                   context,
                   combo.comboCode,
@@ -339,7 +339,10 @@ class _ComboCard extends StatelessWidget {
   ) async {
     final userId = await SecureStorageService.to.read(StorageKeys.userId) ?? '';
     if (userId.isEmpty) {
-      Get.snackbar('Error', context.l10n.pleaseLoginToContinue);
+      Get.snackbar(
+        context.l10n.profSubError,
+        context.l10n.pleaseLoginToContinue,
+      );
       return;
     }
     final pc = Get.put(PaymentController());
@@ -347,7 +350,7 @@ class _ComboCard extends StatelessWidget {
       SubscriptionGuardService.to.invalidateAndReload();
       Get.offAllNamed(AppRoutes.mySubscriptions);
       CustomSnackbar.show(
-        message: '$name activated successfully!',
+        message: context.l10n.profSubActivatedSuccessfully(name),
         type: SnackbarType.success,
       );
     };
@@ -427,7 +430,7 @@ class _OwnerPackCard extends StatelessWidget {
                 ),
                 SizedBox(height: 3.h),
                 Text(
-                  '${pack.contactCount} owner contacts',
+                  context.l10n.profSubOwnerContactsCount(pack.contactCount),
                   style: TextStyle(
                     fontFamily: 'Montserrat',
                     fontSize: 11.sp,
@@ -452,7 +455,7 @@ class _OwnerPackCard extends StatelessWidget {
               ),
               SizedBox(height: 8.h),
               _PayNowButton(
-                label: 'Buy',
+                label: context.l10n.profSubBuy,
                 onTap: () =>
                     _onBuy(context, pack.planCode, pack.price, pack.name),
               ),
@@ -471,7 +474,10 @@ class _OwnerPackCard extends StatelessWidget {
   ) async {
     final userId = await SecureStorageService.to.read(StorageKeys.userId) ?? '';
     if (userId.isEmpty) {
-      Get.snackbar('Error', context.l10n.pleaseLoginToContinue);
+      Get.snackbar(
+        context.l10n.profSubError,
+        context.l10n.pleaseLoginToContinue,
+      );
       return;
     }
     final pc = Get.put(PaymentController());
@@ -479,7 +485,7 @@ class _OwnerPackCard extends StatelessWidget {
       SubscriptionGuardService.to.invalidateAndReload();
       Get.offAllNamed(AppRoutes.mySubscriptions);
       CustomSnackbar.show(
-        message: '$name purchased successfully!',
+        message: context.l10n.profSubPurchasedSuccessfully(name),
         type: SnackbarType.success,
       );
     };
@@ -522,7 +528,6 @@ class _PlanChip extends StatelessWidget {
           Text(
             label,
             textAlign: TextAlign.center,
-            maxLines: 2,
             style: TextStyle(
               fontFamily: 'Montserrat',
               fontSize: 10.sp,
@@ -706,7 +711,7 @@ class _EmptyState extends StatelessWidget {
             Image.asset(AppAssets.subIconCombo, width: 64.r, height: 64.r),
             SizedBox(height: 16.h),
             Text(
-              'No Combo Plans',
+              context.l10n.profSubNoComboPlans,
               style: TextStyle(
                 fontFamily: 'Montserrat',
                 fontWeight: FontWeight.w600,
@@ -716,7 +721,7 @@ class _EmptyState extends StatelessWidget {
             ),
             SizedBox(height: 8.h),
             Text(
-              'No combo plans are available right now.',
+              context.l10n.profSubNoComboPlansAvailable,
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontFamily: 'Montserrat',
@@ -734,7 +739,7 @@ class _EmptyState extends StatelessWidget {
                   borderRadius: BorderRadius.circular(8.r),
                 ),
                 child: Text(
-                  'Retry',
+                  context.l10n.retry,
                   style: TextStyle(
                     fontFamily: 'Montserrat',
                     fontWeight: FontWeight.w600,

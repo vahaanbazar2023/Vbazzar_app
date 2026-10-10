@@ -10,6 +10,7 @@ import '../../buy_and_sell/domain/entities/paginated_buy_vehicles_response.dart'
 import '../domain/entities/approved_vehicle_category_entity.dart';
 import '../domain/entities/approved_vehicle_listing_entity.dart';
 import '../domain/repositories/approved_vehicle_repository.dart';
+import '../../../core/extensions/context_extensions.dart';
 
 class ApprovedVehicleController extends GetxController {
   final ApprovedVehicleRepository _repository;
@@ -153,7 +154,7 @@ class ApprovedVehicleController extends GetxController {
       categories.assignAll(result.categories);
       categoriesTotalCount.value = result.totalCount;
     } catch (e) {
-      categoriesError.value = 'Failed to load categories. Pull to refresh.';
+      categoriesError.value = appL10n.apprFailedLoadCategories;
     } finally {
       isLoadingCategories.value = false;
     }
@@ -196,7 +197,7 @@ class ApprovedVehicleController extends GetxController {
       listingsTotalCount.value = result.totalCount;
       hasMoreListings.value = listings.length < result.totalCount;
     } catch (e) {
-      listingsError.value = 'Failed to load vehicles. Please try again.';
+      listingsError.value = appL10n.apprFailedLoadVehicles;
     } finally {
       isLoadingListings.value = false;
     }
@@ -244,8 +245,8 @@ class ApprovedVehicleController extends GetxController {
       return true;
     } catch (e) {
       Get.snackbar(
-        'Error',
-        'Failed to book vehicle. Please try again.',
+        appL10n.apprError,
+        appL10n.apprFailedBookVehicle,
         snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.red.shade100,
         colorText: Colors.red.shade900,
@@ -270,8 +271,8 @@ class ApprovedVehicleController extends GetxController {
       return true;
     } catch (e) {
       Get.snackbar(
-        'Error',
-        'Failed to request inspection. Please try again.',
+        appL10n.apprError,
+        appL10n.apprFailedRequestInspection,
         snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.red.shade100,
         colorText: Colors.red.shade900,
@@ -352,54 +353,54 @@ class ApprovedVehicleController extends GetxController {
 
   void validateSellRegNumber() {
     sellRegNumberError.value = sellRegNumberC.text.trim().isEmpty
-        ? 'Registration number is required'
+        ? appL10n.apprRegNoRequired
         : '';
   }
 
   void validateSellState() {
     sellStateError.value =
         (selectedSellStateId.value.isEmpty && sellStateC.text.trim().isEmpty)
-        ? 'State is required'
+        ? appL10n.stateRequired
         : '';
   }
 
   void validateSellCity() {
     sellCityError.value =
         (selectedSellCityId.value.isEmpty && sellCityC.text.trim().isEmpty)
-        ? 'City is required'
+        ? appL10n.cityRequired
         : '';
   }
 
   void validateSellFitness() {
     sellFitnessError.value = sellFitness.value.isEmpty
-        ? 'Fitness is required'
+        ? appL10n.apprFitnessRequired
         : '';
   }
 
   void validateSellBrand() {
     sellBrandError.value = sellBrandC.text.trim().isEmpty
-        ? 'Brand is required'
+        ? appL10n.brandValidation
         : '';
   }
 
   void validateSellOriginalInvoice() {
     sellOriginalInvoiceError.value = sellOriginalInvoice.value.isEmpty
-        ? 'Original invoice is required'
+        ? appL10n.apprOriginalInvoiceRequired
         : '';
   }
 
   void validateSellAssetDesc() {
     sellAssetDescError.value = sellAssetDescC.text.trim().isEmpty
-        ? 'Asset description is required'
+        ? appL10n.apprAssetDescRequired
         : '';
   }
 
   void validateSellOwnerMobile() {
     final mobile = sellOwnerMobileC.text.trim();
     if (mobile.isEmpty) {
-      sellOwnerMobileError.value = 'Owner mobile number is required';
+      sellOwnerMobileError.value = appL10n.apprOwnerMobileRequired;
     } else if (mobile.length != 10) {
-      sellOwnerMobileError.value = 'Enter valid 10-digit mobile number';
+      sellOwnerMobileError.value = appL10n.apprEnterValidMobile;
     } else {
       sellOwnerMobileError.value = '';
     }
@@ -408,9 +409,9 @@ class ApprovedVehicleController extends GetxController {
   void validateSellPrice() {
     final price = sellPriceC.text.trim();
     if (price.isEmpty) {
-      sellPriceError.value = 'Price is required';
+      sellPriceError.value = appL10n.apprPriceRequired;
     } else if (double.tryParse(price) == null) {
-      sellPriceError.value = 'Enter valid price';
+      sellPriceError.value = appL10n.apprEnterValidPrice;
     } else {
       sellPriceError.value = '';
     }
@@ -418,37 +419,37 @@ class ApprovedVehicleController extends GetxController {
 
   void validateSellMfgYear() {
     sellMfgYearError.value = sellMfgYear.value.isEmpty
-        ? 'Manufacturing year is required'
+        ? appL10n.apprMfgYearRequired
         : '';
   }
 
   void validateSellInsurance() {
     sellInsuranceError.value = sellInsurance.value.isEmpty
-        ? 'Insurance is required'
+        ? appL10n.apprInsuranceRequired
         : '';
   }
 
   void validateSellGSTApplicability() {
     sellGSTApplicabilityError.value = sellGSTApplicability.value.isEmpty
-        ? 'GST applicability is required'
+        ? appL10n.apprGstApplicabilityRequired
         : '';
   }
 
   void validateSellVehicleImages() {
     sellVehicleImagesError.value = sellVehicleImages.isEmpty
-        ? 'Vehicle images are required'
+        ? appL10n.apprVehicleImagesRequired
         : '';
   }
 
   void validateSellOfferEndDate() {
     sellOfferEndDateError.value = sellOfferEndDate.value == null
-        ? 'Offer end date is required'
+        ? appL10n.apprOfferEndDateRequired
         : '';
   }
 
   void validateSellOfferEndTime() {
     sellOfferEndTimeError.value = sellOfferEndTime.value == null
-        ? 'Offer end time is required'
+        ? appL10n.apprOfferEndTimeRequired
         : '';
   }
 
@@ -495,8 +496,8 @@ class ApprovedVehicleController extends GetxController {
     if (isSubmittingSellForm.value) return;
     if (!validateSellForm()) {
       Get.snackbar(
-        'Validation Error',
-        'Please fix the errors before submitting',
+        appL10n.validation_error,
+        appL10n.apprFixErrorsBeforeSubmitting,
         snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.red.shade100,
         colorText: Colors.red.shade900,
@@ -583,8 +584,8 @@ class ApprovedVehicleController extends GetxController {
 
       if (success) {
         Get.snackbar(
-          'Success',
-          'Vehicle submitted successfully!',
+          appL10n.apprSuccess,
+          appL10n.apprVehicleSubmittedSuccess,
           snackPosition: SnackPosition.TOP,
           backgroundColor: Colors.green.shade100,
           colorText: Colors.green.shade900,
@@ -594,8 +595,8 @@ class ApprovedVehicleController extends GetxController {
       }
     } catch (e) {
       Get.snackbar(
-        'Error',
-        'Failed to submit vehicle. Please try again.',
+        appL10n.apprError,
+        appL10n.apprFailedSubmitVehicle,
         snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.red.shade100,
         colorText: Colors.red.shade900,

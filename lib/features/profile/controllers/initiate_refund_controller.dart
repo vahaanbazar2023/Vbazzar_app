@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../core/services/logger_service.dart';
 import '../../../core/design_system/design_system.dart';
+import '../../../core/extensions/context_extensions.dart';
 import '../../../core/design_system/organisms/app_bottom_nav_bar.dart';
 import '../../../routes/app_routes.dart';
 import '../../home/views/main_shell_screen.dart';
@@ -74,7 +75,7 @@ class InitiateRefundController extends GetxController {
   Future<void> submitRefund() async {
     if (!isFormValid) {
       CustomSnackbar.show(
-        message: 'Please fill in all required fields',
+        message: appL10n.profFillRequiredFields,
         type: SnackbarType.error,
       );
       return;
@@ -92,13 +93,11 @@ class InitiateRefundController extends GetxController {
       );
 
       final success = response['success'] as bool? ?? false;
-      final message = response['message'] as String? ?? 'Refund request submitted';
+      final message =
+          response['message'] as String? ?? appL10n.profRefundSubmitted;
 
       if (success) {
-        CustomSnackbar.show(
-          message: message,
-          type: SnackbarType.success,
-        );
+        CustomSnackbar.show(message: message, type: SnackbarType.success);
         // Navigate to home and switch to categories tab
         Get.offAllNamed(AppRoutes.home);
         Future.delayed(const Duration(milliseconds: 100), () {
@@ -106,15 +105,12 @@ class InitiateRefundController extends GetxController {
           shell.switchTab(BottomNavTab.categories);
         });
       } else {
-        CustomSnackbar.show(
-          message: message,
-          type: SnackbarType.error,
-        );
+        CustomSnackbar.show(message: message, type: SnackbarType.error);
       }
     } catch (e) {
       LoggerService.to.error('submitRefund error: $e');
       CustomSnackbar.show(
-        message: 'Failed to initiate refund. Please try again.',
+        message: appL10n.profFailedInitiateRefund,
         type: SnackbarType.error,
       );
     } finally {

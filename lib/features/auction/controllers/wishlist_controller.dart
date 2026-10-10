@@ -6,6 +6,7 @@ import '../../../core/storage/storage_keys.dart';
 import '../models/vehicle_listing.dart';
 import '../models/auction_pagination.dart';
 import '../services/vehicle_listing_service.dart';
+import '../../../core/extensions/context_extensions.dart';
 
 class WishlistController extends GetxController {
   final VehicleListingService _service = Get.find<VehicleListingService>();
@@ -60,7 +61,7 @@ class WishlistController extends GetxController {
       pagination.value = result.pagination;
     } catch (e) {
       debugPrint('❌ [Wishlist._loadWishlist] $e');
-      errorMessage.value = 'Failed to load wishlist. Please try again.';
+      errorMessage.value = appL10n.aucFailedLoadWishlist;
     } finally {
       isLoading.value = false;
     }

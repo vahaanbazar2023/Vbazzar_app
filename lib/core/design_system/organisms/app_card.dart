@@ -201,37 +201,43 @@ class StatCard extends StatelessWidget {
                   size: AppSizes.iconMd,
                 ),
               if (trend != null)
-                Container(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: AppSpacing.sm,
-                    vertical: AppSpacing.xs,
-                  ),
-                  decoration: BoxDecoration(
-                    color:
-                        (isTrendPositive ? AppColors.success : AppColors.error)
-                            .withOpacity(0.1),
-                    borderRadius: AppRadius.borderRadiusSm,
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        isTrendPositive
-                            ? Icons.trending_up
-                            : Icons.trending_down,
-                        size: AppSizes.iconXs,
-                        color: isTrendPositive
-                            ? AppColors.success
-                            : AppColors.error,
-                      ),
-                      SizedBox(width: AppSpacing.xs),
-                      AppText.caption(
-                        trend!,
-                        color: isTrendPositive
-                            ? AppColors.success
-                            : AppColors.error,
-                      ),
-                    ],
+                Flexible(
+                  child: Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: AppSpacing.sm,
+                      vertical: AppSpacing.xs,
+                    ),
+                    decoration: BoxDecoration(
+                      color:
+                          (isTrendPositive
+                                  ? AppColors.success
+                                  : AppColors.error)
+                              .withOpacity(0.1),
+                      borderRadius: AppRadius.borderRadiusSm,
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          isTrendPositive
+                              ? Icons.trending_up
+                              : Icons.trending_down,
+                          size: AppSizes.iconXs,
+                          color: isTrendPositive
+                              ? AppColors.success
+                              : AppColors.error,
+                        ),
+                        SizedBox(width: AppSpacing.xs),
+                        Flexible(
+                          child: AppText.caption(
+                            trend!,
+                            color: isTrendPositive
+                                ? AppColors.success
+                                : AppColors.error,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
             ],

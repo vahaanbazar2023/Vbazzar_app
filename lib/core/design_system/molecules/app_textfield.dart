@@ -5,6 +5,7 @@ import '../tokens/app_radius.dart';
 import '../tokens/app_sizes.dart';
 import '../tokens/app_spacing.dart';
 import '../typography/app_text_styles.dart';
+import '../../extensions/context_extensions.dart';
 
 /// Text field molecule component
 /// Combines input field with label, error, and helper text
@@ -209,8 +210,8 @@ class _PasswordTextFieldState extends State<PasswordTextField> {
   Widget build(BuildContext context) {
     return AppTextField(
       controller: widget.controller,
-      label: widget.label ?? 'Password',
-      hint: widget.hint ?? 'Enter your password',
+      label: widget.label ?? context.l10n.password,
+      hint: widget.hint ?? context.l10n.coreEnterYourPassword,
       errorText: widget.errorText,
       obscureText: _obscureText,
       keyboardType: TextInputType.visiblePassword,

@@ -31,82 +31,176 @@ class LanguageSelectionScreen extends GetView<LanguageController> {
 
           // ── Content ───────────────────────────────────────────
           Expanded(
-            child: Column(
-              children: [
-                SizedBox(height: AppSpacing.lg),
+            child: ListView.separated(
+              physics: const BouncingScrollPhysics(),
+              padding: EdgeInsets.fromLTRB(
+                AppSpacing.lg,
+                AppSpacing.lg,
+                AppSpacing.lg,
+                AppSpacing.lg,
+              ),
+              itemCount: controller.languages.length + 1,
+              separatorBuilder: (_, index) =>
+                  SizedBox(height: index == 0 ? AppSpacing.lg : AppSpacing.md),
+              itemBuilder: (context, index) {
+                if (index == 0) {
+                  return _HeroBanner(
+                    title: context.l10n.chooseYourPreferredLanguage,
+                  );
+                }
+                final language = controller.languages[index - 1];
+                return Obx(() {
+                  final isSelected =
+                      controller.selectedLanguage.value == language;
+                  return _LanguageCard(
+                    language: language,
+                    isSelected: isSelected,
+                    onTap: () => controller.selectLanguage(language),
+                  );
+                });
+              },
+            ),
+          ),
 
-                // Sub-title
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: AppSpacing.xl),
+          // ── Pinned Continue / Save button ─────────────────────
+          Container(
+            width: double.infinity,
+            padding: EdgeInsets.only(
+              left: AppSpacing.xl,
+              right: AppSpacing.xl,
+              top: AppSpacing.md,
+              bottom: MediaQuery.of(context).padding.bottom + AppSpacing.md,
+            ),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              boxShadow: [
+                BoxShadow(
+                  color: AppColors.black.withOpacity(0.06),
+                  offset: Offset(0, -2.h),
+                  blurRadius: 8.r,
+                ),
+              ],
+            ),
+            child: Obx(() {
+              final isLanguageSelected =
+                  controller.selectedLanguage.value != null;
+              final buttonAction = fromProfile
+                  ? controller.switchLanguageAndGoBack
+                  : controller.continueToHome;
+              final text = fromProfile
+                  ? context.l10n.save
+                  : context.l10n.continueButton;
+
+              return Center(
+                child: isLanguageSelected
+                    ? GradientButton.filled(
+                        text: text,
+                        onPressed: buttonAction,
+                        width: 140.w,
+                        height: 36.h,
+                      )
+                    : GradientButton.outlined(
+                        text: text,
+                        onPressed: buttonAction,
+                        width: 140.w,
+                        height: 36.h,
+                      ),
+              );
+            }),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Hero banner: gradient surface with globe motif + title
+// ─────────────────────────────────────────────────────────────────────────────
+
+class _HeroBanner extends StatelessWidget {
+  final String title;
+
+  const _HeroBanner({required this.title});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      clipBehavior: Clip.antiAlias,
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          colors: [AppColors.ctaGradientStart, AppColors.ctaGradientEnd],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(22.r),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.primary.withOpacity(0.28),
+            offset: Offset(0, 8.h),
+            blurRadius: 20.r,
+          ),
+        ],
+      ),
+      child: Stack(
+        children: [
+          // Decorative translucent globe + rings
+          Positioned(
+            right: -28.r,
+            bottom: -34.r,
+            child: Icon(
+              Icons.public_rounded,
+              size: 140.r,
+              color: Colors.white.withOpacity(0.12),
+            ),
+          ),
+          Positioned(
+            right: 60.w,
+            top: -24.r,
+            child: Container(
+              width: 70.r,
+              height: 70.r,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: Colors.white.withOpacity(0.15),
+                  width: 1.5,
+                ),
+              ),
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.all(AppSpacing.lg),
+            child: Row(
+              children: [
+                Container(
+                  width: 48.r,
+                  height: 48.r,
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.2),
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: Colors.white.withOpacity(0.4),
+                      width: 1,
+                    ),
+                  ),
+                  child: Icon(
+                    Icons.translate_rounded,
+                    color: Colors.white,
+                    size: 24.r,
+                  ),
+                ),
+                SizedBox(width: AppSpacing.md),
+                Expanded(
                   child: Text(
-                    context.l10n.chooseYourPreferredLanguage,
+                    title,
                     style: AppTextStyles.headingMedium.copyWith(
-                      color: AppColors.black,
+                      color: Colors.white,
                       fontSize: 18.sp,
                       fontWeight: FontWeight.w600,
+                      height: 1.25,
                     ),
-                    textAlign: TextAlign.center,
                   ),
-                ),
-
-                SizedBox(height: AppSpacing.xl),
-
-                // Language list
-                Expanded(
-                  child: ListView.separated(
-                    padding: EdgeInsets.symmetric(horizontal: AppSpacing.xl),
-                    itemCount: controller.languages.length,
-                    separatorBuilder: (_, __) =>
-                        SizedBox(height: AppSpacing.lg),
-                    itemBuilder: (context, index) {
-                      final language = controller.languages[index];
-                      return Obx(() {
-                        final isSelected =
-                            controller.selectedLanguage.value == language;
-                        return _LanguageCard(
-                          language: language,
-                          isSelected: isSelected,
-                          onTap: () => controller.selectLanguage(language),
-                        );
-                      });
-                    },
-                  ),
-                ),
-
-                // Continue / Save button
-                Padding(
-                  padding: EdgeInsets.only(
-                    left: AppSpacing.xl,
-                    right: AppSpacing.xl,
-                    top: AppSpacing.lg,
-                    bottom:
-                        MediaQuery.of(context).padding.bottom + AppSpacing.xl,
-                  ),
-                  child: Obx(() {
-                    final isLanguageSelected =
-                        controller.selectedLanguage.value != null;
-                    final buttonAction = fromProfile
-                        ? controller.switchLanguageAndGoBack
-                        : controller.continueToHome;
-
-                    return isLanguageSelected
-                        ? GradientButton.filled(
-                            text: fromProfile
-                                ? context.l10n.save
-                                : context.l10n.continueButton,
-                            onPressed: buttonAction,
-                                width: 140.w,
-                                               height: 36.h,
-                          )
-                        : GradientButton.outlined(
-                            text: fromProfile
-                                ? context.l10n.save
-                                : context.l10n.continueButton,
-                            onPressed: buttonAction,
-                                width: 140.w,
-                                               height: 36.h,
-                          );
-                  }),
                 ),
               ],
             ),
@@ -116,6 +210,10 @@ class LanguageSelectionScreen extends GetView<LanguageController> {
     );
   }
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Language card: script glyph badge + names + animated check
+// ─────────────────────────────────────────────────────────────────────────────
 
 class _LanguageCard extends StatelessWidget {
   final LanguageModel language;
@@ -128,64 +226,132 @@ class _LanguageCard extends StatelessWidget {
     required this.onTap,
   });
 
+  static const _accent = Color(0xFF6A0706);
+
+  static const _glyphs = {
+    'en': 'A',
+    'hi': 'अ',
+    'te': 'అ',
+    'kn': 'ಅ',
+    'ml': 'അ',
+    'ta': 'அ',
+  };
+
   @override
   Widget build(BuildContext context) {
+    final glyph = _glyphs[language.code] ?? language.name[0];
+
     return GestureDetector(
       onTap: onTap,
+      behavior: HitTestBehavior.opaque,
       child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        padding: EdgeInsets.symmetric(
-          horizontal: AppSpacing.lg,
-          vertical: AppSpacing.xs,
-        ),
+        duration: const Duration(milliseconds: 220),
+        curve: Curves.easeOut,
+        padding: EdgeInsets.all(AppSpacing.md),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: isSelected ? const Color(0xFFFFF6F5) : Colors.white,
           border: Border.all(
-            color: isSelected
-                ? const Color(0xFF6A0706)
-                : AppColors.black.withOpacity(0.12),
-            width: 1.w,
+            color: isSelected ? _accent : AppColors.black.withOpacity(0.08),
+            width: isSelected ? 1.5.w : 1.w,
           ),
-          borderRadius: AppRadius.borderRadiusSm,
-          boxShadow: isSelected
-              ? [
-                  BoxShadow(
-                    color: const Color(0xFFA50300).withOpacity(0.5),
-                    offset: Offset(0, 4.h),
-                    blurRadius: 12.r,
-                  ),
-                ]
-              : [
-                  BoxShadow(
-                    color: AppColors.black.withOpacity(0.08),
-                    offset: Offset(0, 2.h),
-                    blurRadius: 4.r,
-                  ),
-                ],
+          borderRadius: BorderRadius.circular(18.r),
+          boxShadow: [
+            BoxShadow(
+              color: isSelected
+                  ? AppColors.primary.withOpacity(0.25)
+                  : AppColors.black.withOpacity(0.06),
+              offset: Offset(0, isSelected ? 6.h : 3.h),
+              blurRadius: isSelected ? 16.r : 8.r,
+            ),
+          ],
         ),
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Column(
-              children: [
-                Text(
-                  language.name,
-                  style: AppTextStyles.headingXSmall.copyWith(
-                    fontSize: 22.sp,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.black,
-                  ),
+            // ── Glyph badge ───────────────────────────────────
+            AnimatedContainer(
+              duration: const Duration(milliseconds: 220),
+              width: 52.r,
+              height: 52.r,
+              decoration: BoxDecoration(
+                gradient: isSelected
+                    ? const LinearGradient(
+                        colors: [
+                          AppColors.ctaGradientStart,
+                          AppColors.ctaGradientEnd,
+                        ],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      )
+                    : null,
+                color: isSelected ? null : const Color(0xFFF3F3F5),
+                borderRadius: BorderRadius.circular(14.r),
+              ),
+              alignment: Alignment.center,
+              child: Text(
+                glyph,
+                style: TextStyle(
+                  fontSize: 26.sp,
+                  fontWeight: FontWeight.w700,
+                  color: isSelected ? Colors.white : AppColors.black,
                 ),
-                SizedBox(height: 4.h),
-                Text(
-                  language.localName,
-                  style: AppTextStyles.bodyMedium.copyWith(
-                    fontSize: 14.sp,
-                    fontWeight: FontWeight.w500,
-                    color: AppColors.black.withOpacity(0.6),
+              ),
+            ),
+            SizedBox(width: AppSpacing.md),
+
+            // ── Names ─────────────────────────────────────────
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    language.localName,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: AppTextStyles.headingXSmall.copyWith(
+                      fontSize: 18.sp,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.black,
+                    ),
                   ),
+                  SizedBox(height: 2.h),
+                  Text(
+                    language.name,
+                    style: AppTextStyles.bodyMedium.copyWith(
+                      fontSize: 13.sp,
+                      fontWeight: FontWeight.w500,
+                      color: AppColors.black.withOpacity(0.55),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(width: AppSpacing.sm),
+
+            // ── Check indicator ───────────────────────────────
+            AnimatedContainer(
+              duration: const Duration(milliseconds: 220),
+              width: 24.r,
+              height: 24.r,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: isSelected ? _accent : Colors.transparent,
+                border: Border.all(
+                  color: isSelected
+                      ? _accent
+                      : AppColors.black.withOpacity(0.2),
+                  width: 1.5.w,
                 ),
-              ],
+              ),
+              child: AnimatedScale(
+                scale: isSelected ? 1 : 0,
+                duration: const Duration(milliseconds: 220),
+                curve: Curves.easeOutBack,
+                child: Icon(
+                  Icons.check_rounded,
+                  size: 15.r,
+                  color: Colors.white,
+                ),
+              ),
             ),
           ],
         ),

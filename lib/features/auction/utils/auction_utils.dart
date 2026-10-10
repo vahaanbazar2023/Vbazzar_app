@@ -1,3 +1,5 @@
+import '../../../core/extensions/context_extensions.dart';
+
 /// Utility helpers and constants for the Auction feature.
 class AuctionUtils {
   AuctionUtils._();
@@ -75,13 +77,13 @@ class AuctionUtils {
   static String auctionStatusLabel(String status) {
     switch (status.toLowerCase()) {
       case 'live':
-        return 'Live';
+        return appL10n.liveTab;
       case 'upcoming':
-        return 'Upcoming';
+        return appL10n.upcomingTab;
       case 'completed':
-        return 'Completed';
+        return appL10n.aucStatusCompleted;
       case 'cancelled':
-        return 'Cancelled';
+        return appL10n.aucStatusCancelled;
       default:
         return status;
     }

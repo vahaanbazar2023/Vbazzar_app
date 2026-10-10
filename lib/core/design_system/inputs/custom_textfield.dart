@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../constants/app_colors.dart';
 import '../../constants/app_sizes.dart';
+import '../../extensions/context_extensions.dart';
 
 class CustomTextField extends StatelessWidget {
   final String? label;
@@ -141,7 +142,7 @@ class _PasswordTextFieldState extends State<PasswordTextField> {
 
   @override
   Widget build(BuildContext context) => CustomTextField(
-    label: widget.label ?? 'Password',
+    label: widget.label ?? context.l10n.password,
     hint: widget.hint ?? '••••••••',
     controller: widget.controller,
     validator: widget.validator,

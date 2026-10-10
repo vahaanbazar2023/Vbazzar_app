@@ -168,7 +168,7 @@ class _BuyVehicleDetailsViewState extends State<BuyVehicleDetailsView> {
       actions: [
         IconButton(
           icon: Icon(Icons.share_rounded, size: 22.r, color: AppColors.black),
-          tooltip: 'Share Vehicle',
+          tooltip: context.l10n.spareShareVehicle,
           onPressed: () async {
             if (Get.isRegistered<ShareService>()) {
               await ShareService.to.shareVehicle(
@@ -317,21 +317,21 @@ class _BuyVehicleDetailsViewState extends State<BuyVehicleDetailsView> {
                           Expanded(
                             child: _InfoBox(
                               icon: Icons.badge_outlined,
-                              label: 'Reg. Number',
+                              label: context.l10n.regNumber,
                               value:
                                   vehicle.registrationNumber?.isNotEmpty == true
                                   ? vehicle.registrationNumber!
-                                  : 'N/A',
+                                  : context.l10n.na,
                             ),
                           ),
                           SizedBox(width: 8.w),
                           Expanded(
                             child: _InfoBox(
                               icon: Icons.settings_outlined,
-                              label: 'Chassis No.',
+                              label: context.l10n.chassis_no,
                               value: vehicle.chassisNumber?.isNotEmpty == true
                                   ? vehicle.chassisNumber!
-                                  : 'N/A',
+                                  : context.l10n.na,
                             ),
                           ),
                         ],
@@ -377,7 +377,6 @@ class _BuyVehicleDetailsViewState extends State<BuyVehicleDetailsView> {
                   SizedBox(height: AppSpacing.md),
 
                   // ── Vehicle details accordion ────────────────────────────
-                 
                   SizedBox(height: AppSpacing.md),
 
                   // ── Actions label ────────────────────────────────────────
@@ -472,7 +471,11 @@ class _BuyVehicleDetailsViewState extends State<BuyVehicleDetailsView> {
                   vehicle.isInspectionRequested
                       ? Container(
                           width: double.infinity,
-                          height: 52.h,
+                          constraints: BoxConstraints(minHeight: 52.h),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 12.w,
+                            vertical: 6.h,
+                          ),
                           decoration: BoxDecoration(
                             color: AppColors.grey100,
                             borderRadius: BorderRadius.circular(12.r),
@@ -487,13 +490,16 @@ class _BuyVehicleDetailsViewState extends State<BuyVehicleDetailsView> {
                                 size: 18.r,
                               ),
                               SizedBox(width: 8.w),
-                              Text(
-                                context.l10n.inspectionRequested,
-                                style: TextStyle(
-                                  fontFamily: 'Montserrat',
-                                  fontSize: 14.sp,
-                                  fontWeight: FontWeight.w600,
-                                  color: AppColors.grey600,
+                              Flexible(
+                                child: Text(
+                                  context.l10n.inspectionRequested,
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontFamily: 'Montserrat',
+                                    fontSize: 14.sp,
+                                    fontWeight: FontWeight.w600,
+                                    color: AppColors.grey600,
+                                  ),
                                 ),
                               ),
                             ],
@@ -728,13 +734,15 @@ class _KeySpecsCard extends StatelessWidget {
                   color: AppColors.primary,
                 ),
                 SizedBox(width: 8.w),
-                Text(
-                  context.l10n.keySpecifications,
-                  style: TextStyle(
-                    fontFamily: 'Montserrat',
-                    fontSize: 14.sp,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.black,
+                Expanded(
+                  child: Text(
+                    context.l10n.keySpecifications,
+                    style: TextStyle(
+                      fontFamily: 'Montserrat',
+                      fontSize: 14.sp,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.black,
+                    ),
                   ),
                 ),
               ],
@@ -903,18 +911,15 @@ class _VehicleDetailsAccordionState extends State<_VehicleDetailsAccordion> {
   Widget _buildDetails(BuyVehicleEntity v) {
     final rows = <_DetailRowData>[];
     if (v.brandName != null)
-     
-    if (v.model != null)
-      rows.add(
-        _DetailRowData(
-          Icons.directions_car_outlined,
-          context.l10n.model,
-          v.model!,
-        ),
-      );
-   
-   
-   
+      if (v.model != null)
+        rows.add(
+          _DetailRowData(
+            Icons.directions_car_outlined,
+            context.l10n.model,
+            v.model!,
+          ),
+        );
+
     if (v.fuelType != null)
       rows.add(
         _DetailRowData(
@@ -1093,13 +1098,15 @@ class _SectionLabel extends StatelessWidget {
         SizedBox(width: 10.w),
         Icon(icon, size: 18.r, color: AppColors.primary),
         SizedBox(width: 8.w),
-        Text(
-          title,
-          style: TextStyle(
-            fontFamily: 'Montserrat',
-            fontSize: 16.sp,
-            fontWeight: FontWeight.w800,
-            color: AppColors.black,
+        Expanded(
+          child: Text(
+            title,
+            style: TextStyle(
+              fontFamily: 'Montserrat',
+              fontSize: 16.sp,
+              fontWeight: FontWeight.w800,
+              color: AppColors.black,
+            ),
           ),
         ),
       ],
@@ -1135,7 +1142,7 @@ class _ActionCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 84.h,
+      constraints: BoxConstraints(minHeight: 84.h),
       decoration: BoxDecoration(
         gradient: gradient,
         borderRadius: BorderRadius.circular(16.r),
@@ -1153,7 +1160,7 @@ class _ActionCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(16.r),
           onTap: onTap,
           child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 18.w),
+            padding: EdgeInsets.symmetric(horizontal: 18.w, vertical: 8.h),
             child: Row(
               children: [
                 // Icon
@@ -1194,32 +1201,38 @@ class _ActionCard extends StatelessWidget {
                     ],
                   ),
                 ),
+                SizedBox(width: 8.w),
                 // Button
-                GestureDetector(
-                  onTap: onTap,
-                  child: Container(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 18.w,
-                      vertical: 9.h,
-                    ),
-                    decoration: BoxDecoration(
-                      color: buttonColor,
-                      borderRadius: BorderRadius.circular(24.r),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.15),
-                          blurRadius: 6,
-                          offset: const Offset(0, 2),
+                ConstrainedBox(
+                  constraints: BoxConstraints(maxWidth: 120.w),
+                  child: GestureDetector(
+                    onTap: onTap,
+                    child: Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 18.w,
+                        vertical: 9.h,
+                      ),
+                      decoration: BoxDecoration(
+                        color: buttonColor,
+                        borderRadius: BorderRadius.circular(24.r),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.15),
+                            blurRadius: 6,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: Text(
+                        buttonText,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontFamily: 'Montserrat',
+                          fontSize: 12.sp,
+                          fontWeight: FontWeight.w500,
+                          color: AppColors.black,
                         ),
-                      ],
-                    ),
-                    child: Text(
-                      buttonText,
-                      style: TextStyle(
-                        fontFamily: 'Montserrat',
-                        fontSize: 12.sp,
-                        fontWeight: FontWeight.w500,
-                        color: AppColors.black,
                       ),
                     ),
                   ),
@@ -1283,8 +1296,8 @@ class _OfferCard extends StatelessWidget {
               onTap: onToggle,
               child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: 18.w, vertical: 0),
-                child: SizedBox(
-                  height: 72.h,
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(minHeight: 72.h),
                   child: Row(
                     children: [
                       // Icon box
@@ -1329,30 +1342,38 @@ class _OfferCard extends StatelessWidget {
                           ],
                         ),
                       ),
+                      SizedBox(width: 8.w),
                       // Toggle pill
-                      Container(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 14.w,
-                          vertical: 8.h,
-                        ),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(24.r),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withValues(alpha: 0.12),
-                              blurRadius: 5,
-                              offset: const Offset(0, 2),
+                      ConstrainedBox(
+                        constraints: BoxConstraints(maxWidth: 110.w),
+                        child: Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 14.w,
+                            vertical: 8.h,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(24.r),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withValues(alpha: 0.12),
+                                blurRadius: 5,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
+                          ),
+                          child: Text(
+                            expanded
+                                ? context.l10n.cancel
+                                : context.l10n.submit,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              fontFamily: 'Montserrat',
+                              fontSize: 12.sp,
+                              fontWeight: FontWeight.w500,
+                              color: AppColors.black,
                             ),
-                          ],
-                        ),
-                        child: Text(
-                          expanded ? context.l10n.cancel : context.l10n.submit,
-                          style: TextStyle(
-                            fontFamily: 'Montserrat',
-                            fontSize: 12.sp,
-                            fontWeight: FontWeight.w500,
-                            color: AppColors.black,
                           ),
                         ),
                       ),

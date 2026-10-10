@@ -7,6 +7,7 @@ import '../config/payu_config.dart';
 import '../models/payment_models.dart';
 import '../services/hash_service.dart';
 import '../services/payment_service.dart';
+import '../../../core/extensions/context_extensions.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Payment controller — orchestrates PayU SDK checkout flow
@@ -220,14 +221,14 @@ class PaymentController extends GetxController
 
     final customNotes = [
       {
-        "custom_note": "Secure payment powered by PayU",
+        "custom_note": appL10n.coreSecurePaymentPoweredByPayU,
         "custom_note_category": [
           PayUPaymentTypeKeys.emi,
           PayUPaymentTypeKeys.card,
         ],
       },
       {
-        "custom_note": "Choose your preferred payment method",
+        "custom_note": appL10n.coreChoosePreferredPaymentMethod,
         "custom_note_category": null,
       },
     ];
@@ -285,7 +286,7 @@ class PaymentController extends GetxController
     final callback = _buildCallback(responseData, 'failure');
 
     errorMessage.value =
-        responseData['error_Message'] as String? ?? 'Payment failed';
+        responseData['error_Message'] as String? ?? appL10n.paymentFailed;
     _service.reportPaymentFailure(callback);
     onFailure?.call(errorMessage.value, callback);
 
@@ -297,7 +298,7 @@ class PaymentController extends GetxController
   @override
   void onPaymentCancel(Map? response) {
     status.value = PaymentStatus.cancelled;
-    errorMessage.value = 'Payment cancelled by user';
+    errorMessage.value = appL10n.corePaymentCancelledByUser;
     onCancelled?.call();
 
     if (_paymentCompleter != null && !_paymentCompleter!.isCompleted) {
@@ -308,7 +309,8 @@ class PaymentController extends GetxController
   @override
   void onError(Map? response) {
     status.value = PaymentStatus.failed;
-    final errorMsg = response?['error'] as String? ?? 'Unknown payment error';
+    final errorMsg =
+        response?['error'] as String? ?? appL10n.coreUnknownPaymentError;
     errorMessage.value = errorMsg;
     debugPrint('❌ PayU onError: $response');
     onFailure?.call(errorMessage.value, null);
@@ -349,7 +351,8 @@ class PaymentController extends GetxController
       key: (data['key'] as String?) ?? PayUConfig.merchantKey,
       txnId: (data['txnid'] as String?) ?? paymentData.value?.txnId ?? '',
       amount: amount,
-      productInfo: (data['productinfo'] as String?) ?? formData?.productInfo ?? '',
+      productInfo:
+          (data['productinfo'] as String?) ?? formData?.productInfo ?? '',
       firstname: (data['firstname'] as String?) ?? formData?.firstname ?? '',
       email: (data['email'] as String?) ?? formData?.email ?? '',
       phone: (data['phone'] as String?) ?? formData?.phone ?? '',

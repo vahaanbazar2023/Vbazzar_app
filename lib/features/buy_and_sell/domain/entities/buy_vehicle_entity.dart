@@ -1,3 +1,5 @@
+import '../../../../core/extensions/context_extensions.dart';
+
 class BuyVehicleEntity {
   final String id;
   final String categoryCode;
@@ -104,7 +106,7 @@ class BuyVehicleEntity {
 
   /// Formatted price string with Indian comma formatting, e.g. "₹25,00,000".
   String get formattedPrice {
-    if (price == null || price! <= 0) return 'Price on request';
+    if (price == null || price! <= 0) return appL10n.sparePriceOnRequest;
     return '₹${_formatNumber(price!.toInt())}';
   }
 

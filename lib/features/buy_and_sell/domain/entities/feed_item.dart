@@ -20,8 +20,8 @@ class AdFeedItem extends FeedItem {
   final String bannerImageUrl;
   final String surface;
   final int insertEveryN;
-  final String redirectType;   // "internal_screen" | "external_url"
-  final String redirectValue;  // route name or URL
+  final String redirectType; // "internal_screen" | "external_url"
+  final String redirectValue; // route name or URL
 
   AdFeedItem({
     required this.id,
@@ -36,12 +36,12 @@ class AdFeedItem extends FeedItem {
   bool get isInternal => redirectType == 'internal_screen';
 
   factory AdFeedItem.fromJson(Map<String, dynamic> json) => AdFeedItem(
-        id: (json['id'] as num?)?.toInt() ?? 0,
-        title: json['title'] as String? ?? '',
-        bannerImageUrl: json['banner_image_url'] as String? ?? '',
-        surface: json['surface'] as String? ?? '',
-        insertEveryN: (json['insert_every_n'] as num?)?.toInt() ?? 5,
-        redirectType: json['redirect_type'] as String? ?? '',
-        redirectValue: json['redirect_value'] as String? ?? '',
-      );
+    id: (json['id'] as num?)?.toInt() ?? 0,
+    title: json['title'] as String? ?? '',
+    bannerImageUrl: json['banner_image_url'] as String? ?? '',
+    surface: json['surface'] as String? ?? '',
+    insertEveryN: (json['insert_every_n'] as num?)?.toInt() ?? 5,
+    redirectType: json['redirect_type'] as String? ?? '',
+    redirectValue: json['redirect_value'] as String? ?? '',
+  );
 }

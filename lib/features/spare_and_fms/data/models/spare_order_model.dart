@@ -1,4 +1,5 @@
 import '../../domain/entities/spare_order_entity.dart';
+
 /// Data model for [SpareOrderEntity] – handles JSON serialization.
 class SpareOrderModel extends SpareOrderEntity {
   const SpareOrderModel({
@@ -111,10 +112,7 @@ class SpareOrderListData {
   final List<SpareOrderModel> orders;
   final SpareOrderPaginationModel pagination;
 
-  const SpareOrderListData({
-    required this.orders,
-    required this.pagination,
-  });
+  const SpareOrderListData({required this.orders, required this.pagination});
 
   factory SpareOrderListData.fromJson(Map<String, dynamic> json) {
     return SpareOrderListData(

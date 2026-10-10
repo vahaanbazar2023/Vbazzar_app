@@ -41,7 +41,7 @@ class _RewardsScreenState extends State<RewardsScreen>
   Widget build(BuildContext context) {
     super.build(context);
     return ShellLayout(
-      title: 'Referral & Rewards',
+      title: context.l10n.apprReferralAndRewards,
       subtitle: context.l10n.shareCodeEarnCredits,
       showBack: false,
       actions: [],
@@ -74,8 +74,8 @@ class _RewardsScreenState extends State<RewardsScreen>
                 SizedBox(height: 20.h),
                 // ── Recent Transactions ───────────────────────────
                 _SectionHeader(
-                  title: 'Recent Transactions',
-                  actionLabel: 'View All',
+                  title: context.l10n.apprRecentTransactions,
+                  actionLabel: context.l10n.viewAll,
                   onAction: () {},
                 ),
                 SizedBox(height: 10.h),
@@ -87,7 +87,7 @@ class _RewardsScreenState extends State<RewardsScreen>
                       .map((t) => _TransactionCard(tx: t)),
                 SizedBox(height: 20.h),
                 // ── How it works ──────────────────────────────────
-                _SectionHeader(title: 'How it works'),
+                _SectionHeader(title: context.l10n.apprHowItWorks),
                 SizedBox(height: 14.h),
                 _HowItWorks(),
               ],
@@ -146,7 +146,7 @@ class _WalletBalanceCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Total Wallet Balance',
+                      context.l10n.apprTotalWalletBalance,
                       style: TextStyle(
                         fontFamily: 'Montserrat',
                         fontSize: 10.sp,
@@ -173,13 +173,17 @@ class _WalletBalanceCard extends StatelessWidget {
                           color: AppColors.success,
                         ),
                         SizedBox(width: 2.w),
-                        Text(
-                          '₹${_fmt(wallet.thisMonthEarned)} this month',
-                          style: TextStyle(
-                            fontFamily: 'Montserrat',
-                            fontSize: 11.sp,
-                            color: AppColors.success,
-                            fontWeight: FontWeight.w600,
+                        Flexible(
+                          child: Text(
+                            context.l10n.apprThisMonth(
+                              '₹${_fmt(wallet.thisMonthEarned)}',
+                            ),
+                            style: TextStyle(
+                              fontFamily: 'Montserrat',
+                              fontSize: 11.sp,
+                              color: AppColors.success,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
                         ),
                       ],
@@ -188,36 +192,43 @@ class _WalletBalanceCard extends StatelessWidget {
                 ),
               ),
               // Withdraw button
-              GestureDetector(
-                onTap: () => Get.toNamed(AppRoutes.cashOut),
-                child: Container(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 12.w,
-                    vertical: 8.h,
-                  ),
-                  decoration: BoxDecoration(
-                    color: AppColors.lightOrange.withOpacity(0.3),
-                    borderRadius: BorderRadius.circular(8.r),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        Icons.download_rounded,
-                        color: AppColors.primary,
-                        size: 14.r,
-                      ),
-                      SizedBox(width: 4.w),
-                      Text(
-                        'Withdraw',
-                        style: TextStyle(
-                          fontFamily: 'Montserrat',
-                          fontSize: 12.sp,
-                          fontWeight: FontWeight.w600,
+              ConstrainedBox(
+                constraints: BoxConstraints(maxWidth: 120.w),
+                child: GestureDetector(
+                  onTap: () => Get.toNamed(AppRoutes.cashOut),
+                  child: Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 12.w,
+                      vertical: 8.h,
+                    ),
+                    decoration: BoxDecoration(
+                      color: AppColors.lightOrange.withOpacity(0.3),
+                      borderRadius: BorderRadius.circular(8.r),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.download_rounded,
                           color: AppColors.primary,
+                          size: 14.r,
                         ),
-                      ),
-                    ],
+                        SizedBox(width: 4.w),
+                        Flexible(
+                          child: Text(
+                            context.l10n.apprWithdraw,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              fontFamily: 'Montserrat',
+                              fontSize: 12.sp,
+                              fontWeight: FontWeight.w600,
+                              color: AppColors.primary,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -261,7 +272,7 @@ class _BalanceRow extends StatelessWidget {
           borderRadius: BorderRadius.circular(16.r),
         ),
         title: Text(
-          'Convert Coins',
+          context.l10n.apprConvertCoins,
           style: TextStyle(
             fontFamily: 'Montserrat',
             fontWeight: FontWeight.w600,
@@ -269,16 +280,18 @@ class _BalanceRow extends StatelessWidget {
           ),
         ),
         content: Text(
-          'Convert ${coinBalance.toStringAsFixed(0)} coins into '
-          '₹${rupeesValue.toStringAsFixed(2)} wallet balance?\n\n'
-          'Rate: ${rate.toInt()} coins = ₹1  ·  Once per 24 h',
+          context.l10n.apprConvertCoinsMessage(
+            coinBalance.toStringAsFixed(0),
+            '₹${rupeesValue.toStringAsFixed(2)}',
+            rate.toInt(),
+          ),
           style: TextStyle(fontFamily: 'Montserrat', fontSize: 13.sp),
         ),
         actions: [
           TextButton(
             onPressed: Get.back,
             child: Text(
-              'Cancel',
+              context.l10n.cancel,
               style: TextStyle(
                 fontFamily: 'Montserrat',
                 color: AppColors.grey600,
@@ -297,9 +310,9 @@ class _BalanceRow extends StatelessWidget {
               Get.back();
               ctrl.convertCoins(coinBalance.toInt());
             },
-            child: const Text(
-              'Confirm',
-              style: TextStyle(fontFamily: 'Montserrat'),
+            child: Text(
+              context.l10n.apprConfirm,
+              style: const TextStyle(fontFamily: 'Montserrat'),
             ),
           ),
         ],
@@ -316,7 +329,7 @@ class _BalanceRow extends StatelessWidget {
           Expanded(
             child: _BalanceChip(
               iconAsset: AppAssets.subIconWallet,
-              label: 'Wallet Balance',
+              label: context.l10n.apprWalletBalance,
               value: '₹${_fmt(wallet.walletBalance)}',
               valueColor: AppColors.primary,
             ),
@@ -349,7 +362,7 @@ class _BalanceRow extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Reward Coins',
+                              context.l10n.apprRewardCoins,
                               style: TextStyle(
                                 fontFamily: 'Montserrat',
                                 fontSize: 10.sp,
@@ -396,15 +409,20 @@ class _BalanceRow extends StatelessWidget {
                                   color: Colors.white,
                                 ),
                               )
-                            : Text(
-                                canConvert ? 'Convert Now' : 'Convert',
-                                style: TextStyle(
-                                  fontFamily: 'Montserrat',
-                                  fontSize: 9.sp,
-                                  fontWeight: FontWeight.w600,
-                                  color: canConvert
-                                      ? Colors.white
-                                      : AppColors.grey600,
+                            : FittedBox(
+                                fit: BoxFit.scaleDown,
+                                child: Text(
+                                  canConvert
+                                      ? context.l10n.apprConvertNow
+                                      : context.l10n.apprConvert,
+                                  style: TextStyle(
+                                    fontFamily: 'Montserrat',
+                                    fontSize: 9.sp,
+                                    fontWeight: FontWeight.w600,
+                                    color: canConvert
+                                        ? Colors.white
+                                        : AppColors.grey600,
+                                  ),
                                 ),
                               ),
                       ),
@@ -523,7 +541,7 @@ class _ReferralBanner extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Earn more, grow your wallet!',
+                  context.l10n.apprEarnMoreGrowWallet,
                   style: TextStyle(
                     fontFamily: 'Montserrat',
                     fontWeight: FontWeight.w600,
@@ -533,7 +551,7 @@ class _ReferralBanner extends StatelessWidget {
                 ),
                 SizedBox(height: 2.h),
                 Text(
-                  'Invite more friends and earn exciting rewards.',
+                  context.l10n.apprInviteMoreFriends,
                   style: TextStyle(
                     fontFamily: 'Montserrat',
                     fontSize: 11.sp,
@@ -544,49 +562,58 @@ class _ReferralBanner extends StatelessWidget {
             ),
           ),
 
-          GestureDetector(
-            onTap: () async {
-              if (Get.isRegistered<ShareService>()) {
-                await ShareService.to.shareReferral(referralCode: referralCode);
-              } else if (referralCode.isNotEmpty) {
-                // Fallback — copy to clipboard
-                await Clipboard.setData(ClipboardData(text: referralCode));
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Referral code copied!'),
-                    backgroundColor: AppColors.success,
-                    behavior: SnackBarBehavior.floating,
-                    duration: Duration(seconds: 2),
-                  ),
-                );
-              }
-            },
-            child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 7.h),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(8.r),
-                border: Border.all(color: AppColors.primary),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    'Refer Now',
-                    style: TextStyle(
-                      fontFamily: 'Montserrat',
-                      fontSize: 12.sp,
-                      fontWeight: FontWeight.w600,
+          ConstrainedBox(
+            constraints: BoxConstraints(maxWidth: 120.w),
+            child: GestureDetector(
+              onTap: () async {
+                if (Get.isRegistered<ShareService>()) {
+                  await ShareService.to.shareReferral(
+                    referralCode: referralCode,
+                  );
+                } else if (referralCode.isNotEmpty) {
+                  // Fallback — copy to clipboard
+                  await Clipboard.setData(ClipboardData(text: referralCode));
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(context.l10n.referralCodeCopied),
+                      backgroundColor: AppColors.success,
+                      behavior: SnackBarBehavior.floating,
+                      duration: const Duration(seconds: 2),
+                    ),
+                  );
+                }
+              },
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 7.h),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(8.r),
+                  border: Border.all(color: AppColors.primary),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Flexible(
+                      child: Text(
+                        context.l10n.apprReferNow,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontFamily: 'Montserrat',
+                          fontSize: 12.sp,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.primary,
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: 4.w),
+                    Icon(
+                      Icons.chevron_right_rounded,
+                      size: 16.r,
                       color: AppColors.primary,
                     ),
-                  ),
-                  SizedBox(width: 4.w),
-                  Icon(
-                    Icons.chevron_right_rounded,
-                    size: 16.r,
-                    color: AppColors.primary,
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
@@ -611,13 +638,15 @@ class _SectionHeader extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(
-          title,
-          style: TextStyle(
-            fontFamily: 'Montserrat',
-            fontWeight: FontWeight.w600,
-            fontSize: 15.sp,
-            color: AppColors.black,
+        Expanded(
+          child: Text(
+            title,
+            style: TextStyle(
+              fontFamily: 'Montserrat',
+              fontWeight: FontWeight.w600,
+              fontSize: 15.sp,
+              color: AppColors.black,
+            ),
           ),
         ),
         if (actionLabel != null)
@@ -713,7 +742,7 @@ class _TransactionCard extends StatelessWidget {
                 SizedBox(height: 2.h),
                 if (tx.subscriptionName.isNotEmpty)
                   Text(
-                    'From ${tx.subscriptionName}',
+                    context.l10n.apprFromName(tx.subscriptionName),
                     style: TextStyle(
                       fontFamily: 'Montserrat',
                       fontSize: 11.sp,
@@ -763,40 +792,39 @@ class _TransactionCard extends StatelessWidget {
 class _HowItWorks extends StatelessWidget {
   const _HowItWorks();
 
-  static const _steps = [
-    _Step(
-      n: '1',
-      imageAsset: AppAssets.subIconStep1,
-      title: 'Refer Friends',
-      desc: 'Share your referral link with your friends',
-    ),
-    _Step(
-      n: '2',
-      imageAsset: AppAssets.subIconStep2,
-      title: 'They Join',
-      desc: 'Your friends sign up using your link',
-    ),
-    _Step(
-      n: '3',
-      imageAsset: AppAssets.subIconStep3,
-      title: 'They Actively Use',
-      desc: 'They explore, participate and place bids',
-    ),
-    _Step(
-      n: '4',
-      imageAsset: AppAssets.subIconStep4,
-      title: 'You Earn',
-      desc: 'You earn rewards which reflect in your wallet',
-    ),
-  ];
-
   @override
   Widget build(BuildContext context) {
+    final steps = [
+      _Step(
+        n: '1',
+        imageAsset: AppAssets.subIconStep1,
+        title: context.l10n.apprStepReferFriendsTitle,
+        desc: context.l10n.apprStepReferFriendsDesc,
+      ),
+      _Step(
+        n: '2',
+        imageAsset: AppAssets.subIconStep2,
+        title: context.l10n.apprStepTheyJoinTitle,
+        desc: context.l10n.apprStepTheyJoinDesc,
+      ),
+      _Step(
+        n: '3',
+        imageAsset: AppAssets.subIconStep3,
+        title: context.l10n.apprStepTheyUseTitle,
+        desc: context.l10n.apprStepTheyUseDesc,
+      ),
+      _Step(
+        n: '4',
+        imageAsset: AppAssets.subIconStep4,
+        title: context.l10n.apprStepYouEarnTitle,
+        desc: context.l10n.apprStepYouEarnDesc,
+      ),
+    ];
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: _steps.asMap().entries.map((e) {
+      children: steps.asMap().entries.map((e) {
         final step = e.value;
-        final isLast = e.key == _steps.length - 1;
+        final isLast = e.key == steps.length - 1;
         return Expanded(
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -924,7 +952,7 @@ class _NoTransactions extends StatelessWidget {
       ),
       child: Center(
         child: Text(
-          'No transactions yet',
+          context.l10n.noTransactionsYet,
           style: TextStyle(
             fontFamily: 'Montserrat',
             fontSize: 13.sp,
@@ -951,7 +979,7 @@ class _EmptyState extends StatelessWidget {
             Image.asset(AppAssets.subIconWallet111, width: 80.r, height: 80.r),
             SizedBox(height: 16.h),
             Text(
-              'Unable to load wallet',
+              context.l10n.unableToLoadWallet,
               style: TextStyle(
                 fontFamily: 'Montserrat',
                 fontWeight: FontWeight.w600,
@@ -961,7 +989,7 @@ class _EmptyState extends StatelessWidget {
             ),
             SizedBox(height: 8.h),
             Text(
-              'Please try again later.',
+              context.l10n.apprPleaseTryAgainLater,
               style: TextStyle(
                 fontFamily: 'Montserrat',
                 fontSize: 13.sp,

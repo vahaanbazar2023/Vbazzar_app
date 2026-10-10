@@ -11,6 +11,7 @@ import '../data/models/inspection_vehicle_model.dart';
 import '../data/models/my_inspections_response.dart';
 import '../data/models/valuation_dropdown_options.dart';
 import '../data/services/inspection_service.dart';
+import '../../../core/extensions/context_extensions.dart';
 
 /// Main controller for the Inspection & Valuation module.
 /// Handles: home view, customer form, my inspections list, dropdown options.
@@ -352,7 +353,7 @@ class InspectionValuationController extends GetxController {
       }
     } catch (e) {
       debugPrint('⚠️ InspectionValuation: pickFiles error – $e');
-      _showErrorSnackBar('Failed to pick file. Please try again.');
+      _showErrorSnackBar(appL10n.inspFailedToPickFile);
     }
   }
 
@@ -369,26 +370,26 @@ class InspectionValuationController extends GetxController {
     // Validate dropdowns
     bool hasError = false;
     if (selectedVehicleType.value.isEmpty) {
-      vehicleTypeError.value = 'Please select vehicle type';
+      vehicleTypeError.value = appL10n.inspPleaseSelectVehicleType;
       hasError = true;
     }
     if (selectedVehicleBrand.value.isEmpty) {
-      vehicleBrandError.value = 'Please select vehicle brand';
+      vehicleBrandError.value = appL10n.inspPleaseSelectVehicleBrand;
       hasError = true;
     }
     if (selectedState.value == null) {
-      stateError.value = 'Please select state';
+      stateError.value = appL10n.inspPleaseSelectState;
       hasError = true;
     }
     if (selectedCity.value == null) {
-      cityError.value = 'Please select city';
+      cityError.value = appL10n.inspPleaseSelectCity;
       hasError = true;
     }
     if (hasError) return;
 
     // Validate file uploads
     if (rcFiles.isEmpty) {
-      rcFileError.value = 'Please upload RC document';
+      rcFileError.value = appL10n.inspPleaseUploadRcDocument;
       hasError = true;
     }
     if (hasError) return;
@@ -403,10 +404,10 @@ class InspectionValuationController extends GetxController {
       );
       final brandCode = selectedBrandMap != null
           ? (selectedBrandMap['brand_code'] ??
-                  selectedBrandMap['code'] ??
-                  selectedBrandMap['id'] ??
-                  '')
-              .toString()
+                    selectedBrandMap['code'] ??
+                    selectedBrandMap['id'] ??
+                    '')
+                .toString()
           : selectedVehicleBrand.value;
 
       final uid = await _userId;
@@ -432,7 +433,7 @@ class InspectionValuationController extends GetxController {
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        _showSuccessSnackBar('Your inspection request has been submitted successfully.');
+        _showSuccessSnackBar(appL10n.inspRequestSubmittedSuccessfully);
         resetCustomerForm();
         Get.offAllNamed(AppRoutes.home);
       } else {
@@ -445,10 +446,12 @@ class InspectionValuationController extends GetxController {
         if (responseData is Map<String, dynamic>) {
           _showErrorSnackBar(_extractErrorMessage(responseData));
         } else {
-          _showErrorSnackBar('Server error: ${e.response?.statusCode}');
+          _showErrorSnackBar(
+            appL10n.inspServerErrorWithCode('${e.response?.statusCode}'),
+          );
         }
       } else {
-        _showErrorSnackBar('Failed to submit inspection request.');
+        _showErrorSnackBar(appL10n.inspFailedToSubmitRequest);
       }
     } finally {
       isSubmitting.value = false;
@@ -499,7 +502,7 @@ class InspectionValuationController extends GetxController {
 
       final userId = await _storage.read(StorageKeys.userId);
       if (userId == null || userId.isEmpty) {
-        _showErrorSnackBar('Please log in to view inspections.');
+        _showErrorSnackBar(appL10n.inspPleaseLoginToViewInspections);
         _isApiCallInProgress = false;
         return;
       }
@@ -560,7 +563,7 @@ class InspectionValuationController extends GetxController {
       }
     } catch (e) {
       debugPrint('⚠️ InspectionValuation: fetchMyInspections error – $e');
-      _showErrorSnackBar('Failed to load inspections.');
+      _showErrorSnackBar(appL10n.inspFailedToLoadInspections);
     } finally {
       isInspectionsLoading.value = false;
       isLoadMoreLoading.value = false;
@@ -588,14 +591,14 @@ class InspectionValuationController extends GetxController {
 
   String _extractErrorMessage(dynamic data) {
     if (data is Map<String, dynamic>) {
-      return data['message']?.toString() ?? 'Something went wrong';
+      return data['message']?.toString() ?? appL10n.inspSomethingWentWrong;
     }
-    return 'Something went wrong';
+    return appL10n.inspSomethingWentWrong;
   }
 
   void _showSuccessSnackBar(String message) {
     Get.snackbar(
-      'Success',
+      appL10n.inspSuccess,
       message,
       backgroundColor: Colors.green,
       colorText: Colors.white,
@@ -608,7 +611,7 @@ class InspectionValuationController extends GetxController {
 
   void _showErrorSnackBar(String message) {
     Get.snackbar(
-      'Error',
+      appL10n.inspError,
       message,
       backgroundColor: Colors.red,
       colorText: Colors.white,

@@ -1,3 +1,5 @@
+import '../../../../core/extensions/context_extensions.dart';
+
 class SellVehicleEntity {
   final String id;
   final String? categoryCode;
@@ -61,16 +63,16 @@ class SellVehicleEntity {
 
   /// Human-readable status label.
   String get statusLabel {
-    if (isSold == 'yes') return 'Sold';
+    if (isSold == 'yes') return appL10n.spareSold;
     switch (status) {
       case 'pending':
-        return 'Pending';
+        return appL10n.pendingStatus;
       case 'approved':
-        return 'Approved';
+        return appL10n.spareApproved;
       case 'rejected':
-        return 'Rejected';
+        return appL10n.spareRejected;
       default:
-        return status ?? 'Unknown';
+        return status ?? appL10n.spareUnknown;
     }
   }
 
@@ -89,7 +91,7 @@ class SellVehicleEntity {
   /// Formatted price string, e.g. "₹12,50,000".
   String get formattedPrice {
     final p = price ?? askingPrice;
-    if (p == null || p <= 0) return 'Price on request';
+    if (p == null || p <= 0) return appL10n.sparePriceOnRequest;
     return '₹${_formatNumber(p.toInt())}';
   }
 

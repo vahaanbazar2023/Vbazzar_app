@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../../constants/app_assets.dart';
+import '../../extensions/context_extensions.dart';
 
 /// Custom SVG icon widget for displaying SVG assets throughout the app
 ///
@@ -145,7 +146,7 @@ class BackArrowIcon extends StatelessWidget {
       assetPath: AppAssets.arrowBack,
       color: color ?? Colors.white,
       size: size ?? 24,
-      semanticLabel: 'Back',
+      semanticLabel: context.l10n.back,
     );
   }
 }

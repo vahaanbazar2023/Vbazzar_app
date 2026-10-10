@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import '../../../core/extensions/context_extensions.dart';
 import '../../../core/design_system/organisms/network_image_carousel.dart';
 import '../../../routes/app_routes.dart';
 import '../controllers/vehicle_detail_controller.dart';
@@ -30,12 +31,12 @@ class BuyView extends StatelessWidget {
 
       // ── Error state ──────────────────────────────────────
       if (_ctrl.hasErrorBuyVehicles.value && _ctrl.buyVehicles.isEmpty) {
-        return _buildErrorState();
+        return _buildErrorState(context);
       }
 
       // ── Empty state ──────────────────────────────────────
       if (_ctrl.buyVehicles.isEmpty) {
-        return _buildEmptyState();
+        return _buildEmptyState(context);
       }
 
       // ── Vehicle list ─────────────────────────────────────
@@ -83,7 +84,7 @@ class BuyView extends StatelessWidget {
     });
   }
 
-  Widget _buildErrorState() {
+  Widget _buildErrorState(BuildContext context) {
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(32),
@@ -110,8 +111,8 @@ class BuyView extends StatelessWidget {
                   borderRadius: BorderRadius.circular(12),
                 ),
               ),
-              child: const Text(
-                'Retry',
+              child: Text(
+                context.l10n.retry,
                 style: TextStyle(
                   fontFamily: 'PlusJakartaSans',
                   color: Colors.white,
@@ -124,7 +125,7 @@ class BuyView extends StatelessWidget {
     );
   }
 
-  Widget _buildEmptyState() {
+  Widget _buildEmptyState(BuildContext context) {
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(32),
@@ -138,7 +139,7 @@ class BuyView extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             Text(
-              'No vehicles found',
+              context.l10n.noVehiclesFound,
               style: TextStyle(
                 fontFamily: 'PlusJakartaSans',
                 fontSize: 16,
@@ -148,7 +149,7 @@ class BuyView extends StatelessWidget {
             ),
             const SizedBox(height: 6),
             Text(
-              'Try adjusting your filters',
+              context.l10n.spareTryAdjustingFilters,
               style: TextStyle(
                 fontFamily: 'PlusJakartaSans',
                 fontSize: 13,
@@ -222,7 +223,7 @@ class _VehicleCard extends StatelessWidget {
                 children: [
                   // ── Row 1: brand_name/model | manufacturing_year
                   Text(
-                    _buildTitleLine(),
+                    _buildTitleLine(context),
                     style: const TextStyle(
                       fontFamily: 'PlusJakartaSans',
                       fontSize: 15,
@@ -236,29 +237,29 @@ class _VehicleCard extends StatelessWidget {
 
                   // ── Row 2: city_name | state_name ────────
                   if (_formatLocation().isNotEmpty)
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.location_on_outlined,
-                        size: 15,
-                        color: Colors.grey[400],
-                      ),
-                      const SizedBox(width: 4),
-                      Expanded(
-                        child: Text(
-                          _formatLocation(),
-                          style: TextStyle(
-                            fontFamily: 'PlusJakartaSans',
-                            fontSize: 13,
-                            fontWeight: FontWeight.w500,
-                            color: Colors.grey[600],
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.location_on_outlined,
+                          size: 15,
+                          color: Colors.grey[400],
                         ),
-                      ),
-                    ],
-                  ),
+                        const SizedBox(width: 4),
+                        Expanded(
+                          child: Text(
+                            _formatLocation(),
+                            style: TextStyle(
+                              fontFamily: 'PlusJakartaSans',
+                              fontSize: 13,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.grey[600],
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
+                    ),
 
                   const SizedBox(height: 8),
 
@@ -291,7 +292,9 @@ class _VehicleCard extends StatelessWidget {
                         borderRadius: BorderRadius.circular(20),
                         boxShadow: [
                           BoxShadow(
-                            color: const Color(0xFFD32F2F).withValues(alpha: 0.25),
+                            color: const Color(
+                              0xFFD32F2F,
+                            ).withValues(alpha: 0.25),
                             blurRadius: 6,
                             offset: const Offset(0, 2),
                           ),
@@ -299,14 +302,18 @@ class _VehicleCard extends StatelessWidget {
                       ),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
-                        children: const [
-                          Text(
-                            'View Details',
-                            style: TextStyle(
-                              fontFamily: 'PlusJakartaSans',
-                              fontSize: 12,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.white,
+                        children: [
+                          Flexible(
+                            child: Text(
+                              context.l10n.viewDetails,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                fontFamily: 'PlusJakartaSans',
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.white,
+                              ),
                             ),
                           ),
                           SizedBox(width: 4),
@@ -328,7 +335,7 @@ class _VehicleCard extends StatelessWidget {
     );
   }
 
-  String _buildTitleLine() {
+  String _buildTitleLine(BuildContext context) {
     final brand = (vehicle.brandName ?? '').trim();
     final model = (vehicle.model ?? '').trim();
     final year = vehicle.manufacturingYear;
@@ -340,7 +347,7 @@ class _VehicleCard extends StatelessWidget {
     } else if (model.isNotEmpty) {
       return '$model | $year';
     }
-    return 'Vehicle | $year';
+    return '${context.l10n.spareVehicle} | $year';
   }
 
   String _formatLocation() {

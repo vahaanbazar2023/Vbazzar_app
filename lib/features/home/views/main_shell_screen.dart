@@ -6,6 +6,7 @@ import '../../categories/views/categories_screen.dart';
 import '../../profile/controllers/profile_controller.dart';
 import '../../profile/views/profile_screen.dart';
 import 'home_content.dart';
+import '../../../core/extensions/context_extensions.dart';
 
 /// Main shell controller for bottom nav management
 class MainShellController extends GetxController {
@@ -24,7 +25,7 @@ class MainShellScreen extends GetView<MainShellController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Obx(() => _buildBody(controller.currentTab.value)),
+      body: Obx(() => _buildBody(context, controller.currentTab.value)),
       extendBody: true,
       bottomNavigationBar: Obx(
         () => AppBottomNavBar(
@@ -35,17 +36,17 @@ class MainShellScreen extends GetView<MainShellController> {
     );
   }
 
-  Widget _buildBody(BottomNavTab tab) {
+  Widget _buildBody(BuildContext context, BottomNavTab tab) {
     switch (tab) {
       case BottomNavTab.home:
         return const HomeContent();
       case BottomNavTab.subscriptions:
-        return const _PlaceholderScreen(title: 'Subscriptions');
+        return _PlaceholderScreen(title: context.l10n.coreSubscriptions);
       case BottomNavTab.categories:
         CategoriesBinding().dependencies();
         return const CategoriesScreen();
       case BottomNavTab.rewards:
-        return const _PlaceholderScreen(title: 'Rewards');
+        return _PlaceholderScreen(title: context.l10n.coreRewards);
       case BottomNavTab.settings:
         if (!Get.isRegistered<ProfileController>()) {
           Get.put(ProfileController());
@@ -72,7 +73,7 @@ class _PlaceholderScreen extends StatelessWidget {
             Icon(Icons.construction_rounded, size: 64, color: Colors.grey[400]),
             const SizedBox(height: 16),
             Text(
-              '$title Coming Soon',
+              context.l10n.coreTitleComingSoon(title),
               style: TextStyle(
                 fontSize: 18,
                 color: Colors.grey[600],

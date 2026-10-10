@@ -10,6 +10,7 @@ import '../../../routes/app_routes.dart';
 import '../../../theme/app_fonts.dart';
 import '../controllers/approved_vehicle_controller.dart';
 import '../domain/entities/approved_vehicle_category_entity.dart';
+import '../../../core/extensions/context_extensions.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Vendor Buy/Sell Landing — category list with SELL + BUY buttons per card
@@ -37,8 +38,8 @@ class _BuySellLandingScreenState extends State<BuySellLandingScreen> {
   @override
   Widget build(BuildContext context) {
     return AppLayout(
-      title: 'Approved Vehicles',
-      subtitle: 'Buy & sell verified commercial vehicles',
+      title: context.l10n.approvedVehicles,
+      subtitle: context.l10n.apprBuySellSubtitle,
       body: Obx(() {
         // ── Loading state ──────────────────────────────────────
         if (ctrl.isLoadingCategories.value && ctrl.categories.isEmpty) {
@@ -135,7 +136,7 @@ class _BuySellLandingScreenState extends State<BuySellLandingScreen> {
                   borderRadius: BorderRadius.circular(8.r),
                 ),
                 child: Text(
-                  'Retry',
+                  context.l10n.retry,
                   style: AppFonts.bodyMedium.copyWith(
                     color: Colors.white,
                     fontWeight: FontWeight.w600,
@@ -164,14 +165,14 @@ class _BuySellLandingScreenState extends State<BuySellLandingScreen> {
             ),
             SizedBox(height: 12.h),
             Text(
-              'No categories found',
+              context.l10n.apprNoCategoriesFound,
               style: AppFonts.bodyMedium.copyWith(
                 color: AppColors.textSecondary,
               ),
             ),
             SizedBox(height: 8.h),
             Text(
-              'Pull down to refresh',
+              context.l10n.pullDownToRefresh,
               style: AppFonts.bodySmall.copyWith(color: AppColors.textDisabled),
             ),
           ],
@@ -269,7 +270,11 @@ class _VendorCategoryCard extends StatelessWidget {
                 SizedBox(height: 4.h),
                 // Available count
                 Text(
-                  'Available : ${category.approvedVehAvailableCount}',
+                  context.l10n.apprAvailableCount(
+                    category.approvedVehAvailableCount,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                   style: TextStyle(
                     fontFamily: 'Plus Jakarta Sans',
                     fontSize: 12.sp,
@@ -286,7 +291,7 @@ class _VendorCategoryCard extends StatelessWidget {
                       child: GestureDetector(
                         onTap: onBuyTap,
                         child: Container(
-                          height: 34.h,
+                          constraints: BoxConstraints(minHeight: 34.h),
                           decoration: BoxDecoration(
                             gradient: const LinearGradient(
                               begin: Alignment.topCenter,
@@ -309,7 +314,9 @@ class _VendorCategoryCard extends StatelessWidget {
                           ),
                           child: Center(
                             child: Text(
-                              'Buy',
+                              context.l10n.apprBuy,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                               style: TextStyle(
                                 fontFamily: 'Montserrat',
                                 fontSize: 13.sp,
@@ -327,7 +334,7 @@ class _VendorCategoryCard extends StatelessWidget {
                       child: GestureDetector(
                         onTap: onSellTap,
                         child: Container(
-                          height: 34.h,
+                          constraints: BoxConstraints(minHeight: 34.h),
                           decoration: BoxDecoration(
                             color: AppColors.white,
                             border: Border.all(
@@ -338,7 +345,9 @@ class _VendorCategoryCard extends StatelessWidget {
                           ),
                           child: Center(
                             child: Text(
-                              'Sell',
+                              context.l10n.apprSell,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                               style: TextStyle(
                                 fontFamily: 'Montserrat',
                                 fontSize: 13.sp,

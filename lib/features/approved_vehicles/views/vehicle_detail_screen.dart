@@ -14,6 +14,7 @@ import '../../../features/subscription/views/single_plan_payment_screen.dart';
 import '../../../theme/app_fonts.dart';
 import '../controllers/approved_vehicle_controller.dart';
 import '../domain/entities/approved_vehicle_listing_entity.dart';
+import '../../../core/extensions/context_extensions.dart';
 
 class VehicleDetailScreen extends StatelessWidget {
   const VehicleDetailScreen({super.key});
@@ -26,7 +27,7 @@ class VehicleDetailScreen extends StatelessWidget {
 
     if (listing == null) {
       return AppLayout(
-        title: 'Vehicle Details',
+        title: context.l10n.vehicleDetailsTitle,
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -34,14 +35,14 @@ class VehicleDetailScreen extends StatelessWidget {
               Icon(Icons.error_outline, size: 48.w, color: AppColors.error),
               SizedBox(height: 12.h),
               Text(
-                'Vehicle details not available',
+                context.l10n.apprVehicleDetailsUnavailable,
                 style: AppFonts.bodyMedium.copyWith(
                   color: AppColors.textSecondary,
                 ),
               ),
               SizedBox(height: 16.h),
               GradientButton.filled(
-                text: 'Go Back',
+                text: context.l10n.apprGoBack,
                 onPressed: () => Get.back(),
                 width: 140.w,
               ),
@@ -186,7 +187,7 @@ class _ApprVehicleDetail extends StatelessWidget {
                       Expanded(
                         child: _ApprInfoBox(
                           icon: Icons.fingerprint_rounded,
-                          label: 'Vehicle ID',
+                          label: context.l10n.vehicle_id,
                           value: listing.approvedVehicleId,
                         ),
                       ),
@@ -194,7 +195,7 @@ class _ApprVehicleDetail extends StatelessWidget {
                       Expanded(
                         child: _ApprInfoBox(
                           icon: Icons.category_outlined,
-                          label: 'Category',
+                          label: context.l10n.category,
                           value: listing.categoryType,
                         ),
                       ),
@@ -206,7 +207,7 @@ class _ApprVehicleDetail extends StatelessWidget {
                       Expanded(
                         child: _ApprInfoBox(
                           icon: Icons.location_city_outlined,
-                          label: 'Location',
+                          label: context.l10n.location,
                           value: [
                             listing.cityName,
                             listing.stateName,
@@ -217,10 +218,10 @@ class _ApprVehicleDetail extends StatelessWidget {
                       Expanded(
                         child: _ApprInfoBox(
                           icon: Icons.calendar_month_rounded,
-                          label: 'Year',
+                          label: context.l10n.year,
                           value: listing.yearOfManufacturing > 0
                               ? '${listing.yearOfManufacturing}'
-                              : 'N/A',
+                              : context.l10n.na,
                         ),
                       ),
                     ],
@@ -238,16 +239,15 @@ class _ApprVehicleDetail extends StatelessWidget {
                       // Book Now
                       Expanded(
                         child: listing.isBookedVehicle
-                            ? _disabledBtn('Booked ✓')
+                            ? _disabledBtn(context.l10n.apprBookedCheck)
                             : GradientButton.filled(
-                                text: 'Book Now',
+                                text: context.l10n.apprBookNow,
                                 height: 48.h,
                                 isLoading: false,
                                 onPressed: () => _showPaymentDialog(
                                   context: context,
-                                  title: 'Book Vehicle',
-                                  description:
-                                      'Pay to book this vehicle and access full details.',
+                                  title: context.l10n.apprBookVehicle,
+                                  description: context.l10n.apprBookVehicleDesc,
                                   amount: listing
                                       .categorySubscription
                                       ?.subscriptionAmount,
@@ -264,16 +264,16 @@ class _ApprVehicleDetail extends StatelessWidget {
                       // Request Inspection
                       Expanded(
                         child: listing.isInspectionRequested
-                            ? _disabledBtn('Requested ✓')
+                            ? _disabledBtn(context.l10n.apprRequestedCheck)
                             : GradientButton.filled(
-                                text: 'Inspection',
+                                text: context.l10n.apprInspection,
                                 height: 48.h,
                                 isLoading: false,
                                 onPressed: () => _showPaymentDialog(
                                   context: context,
-                                  title: 'Request Inspection',
+                                  title: context.l10n.requestInspection,
                                   description:
-                                      'Pay to request professional inspection.',
+                                      context.l10n.apprRequestInspectionDesc,
                                   amount: listing
                                       .inspectionSubscription
                                       ?.inspectionAmount,
@@ -359,12 +359,12 @@ class _ApprVehicleDetail extends StatelessWidget {
         ? await ctrl.bookVehicle(approvedVehicleId)
         : await ctrl.requestInspection(approvedVehicleId);
     Get.snackbar(
-      ok ? 'Success' : 'Error',
+      ok ? appL10n.apprSuccess : appL10n.apprError,
       ok
           ? (subscriptionType == 'category'
-                ? 'Vehicle booked successfully!'
-                : 'Inspection requested successfully!')
-          : 'Something went wrong. Please try again.',
+                ? appL10n.apprVehicleBookedSuccess
+                : appL10n.apprInspectionRequestedSuccess)
+          : appL10n.somethingWentWrong,
       snackPosition: SnackPosition.TOP,
       backgroundColor: ok ? Colors.green.shade100 : Colors.red.shade100,
       colorText: ok ? Colors.green.shade900 : Colors.red.shade900,
@@ -377,21 +377,24 @@ class _ApprVehicleDetail extends StatelessWidget {
   }
 
   static Widget _disabledBtn(String text) {
-    return SizedBox(
-      height: 48.h,
+    return ConstrainedBox(
+      constraints: BoxConstraints(minHeight: 48.h),
       child: Container(
         decoration: BoxDecoration(
           color: AppColors.grey200,
           borderRadius: BorderRadius.circular(30.r),
         ),
         child: Center(
-          child: Text(
-            text,
-            style: TextStyle(
-              fontFamily: 'Montserrat',
-              fontSize: 13.sp,
-              fontWeight: FontWeight.w600,
-              color: AppColors.grey600,
+          child: FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Text(
+              text,
+              style: TextStyle(
+                fontFamily: 'Montserrat',
+                fontSize: 13.sp,
+                fontWeight: FontWeight.w600,
+                color: AppColors.grey600,
+              ),
             ),
           ),
         ),
@@ -485,7 +488,7 @@ class _ApprInfoBox extends StatelessWidget {
           ),
           SizedBox(height: 2.h),
           Text(
-            value.isNotEmpty ? value : 'N/A',
+            value.isNotEmpty ? value : context.l10n.na,
             style: TextStyle(
               fontFamily: 'Montserrat',
               fontSize: 12.sp,
@@ -555,7 +558,7 @@ class _ApprDetailsAccordionState extends State<_ApprDetailsAccordion> {
                   SizedBox(width: 8.w),
                   Expanded(
                     child: Text(
-                      'Vehicle Details',
+                      context.l10n.vehicleDetailsTitle,
                       style: TextStyle(
                         fontFamily: 'Montserrat',
                         fontSize: 14.sp,
@@ -595,70 +598,90 @@ class _ApprDetailsAccordionState extends State<_ApprDetailsAccordion> {
     final rows = <_ApprDetailRow>[
       _ApprDetailRow(
         Icons.tag_rounded,
-        'Registration No.',
+        context.l10n.apprRegistrationNo,
         l.registrationNumber,
       ),
       if ((l.brand ?? '').isNotEmpty)
-        _ApprDetailRow(Icons.branding_watermark_outlined, 'Brand', l.brand!),
+        _ApprDetailRow(
+          Icons.branding_watermark_outlined,
+          context.l10n.brand,
+          l.brand!,
+        ),
       if (l.yearOfManufacturing > 0)
         _ApprDetailRow(
           Icons.calendar_today_outlined,
-          'Year',
+          context.l10n.year,
           '${l.yearOfManufacturing}',
         ),
-      _ApprDetailRow(Icons.category_outlined, 'Category', l.categoryType),
+      _ApprDetailRow(
+        Icons.category_outlined,
+        context.l10n.category,
+        l.categoryType,
+      ),
       if (l.chassisNumber.isNotEmpty)
-        _ApprDetailRow(Icons.numbers_rounded, 'Chassis No.', l.chassisNumber),
+        _ApprDetailRow(
+          Icons.numbers_rounded,
+          context.l10n.apprChassisNo,
+          l.chassisNumber,
+        ),
       if (l.cityName.isNotEmpty)
-        _ApprDetailRow(Icons.location_city_outlined, 'City', l.cityName),
+        _ApprDetailRow(
+          Icons.location_city_outlined,
+          context.l10n.city,
+          l.cityName,
+        ),
       if (l.stateName.isNotEmpty)
-        _ApprDetailRow(Icons.map_outlined, 'State', l.stateName),
+        _ApprDetailRow(Icons.map_outlined, context.l10n.state, l.stateName),
       _ApprDetailRow(
         Icons.currency_rupee_rounded,
-        'Price',
+        context.l10n.price,
         '₹${NumberFormat('#,##,###', 'en_IN').format(l.price.toInt())}',
       ),
       _ApprDetailRow(
         Icons.verified_outlined,
-        'Fitness Certificate',
-        l.hasFitnessCertificate ? 'Yes' : 'No',
+        context.l10n.apprFitnessCertificate,
+        l.hasFitnessCertificate ? context.l10n.yes : context.l10n.no,
       ),
       _ApprDetailRow(
         Icons.receipt_long_outlined,
-        'Original Invoice',
-        l.hasOriginalInvoice ? 'Yes' : 'No',
+        context.l10n.apprOriginalInvoice,
+        l.hasOriginalInvoice ? context.l10n.yes : context.l10n.no,
       ),
       _ApprDetailRow(
         Icons.receipt_outlined,
-        'GST Applicable',
-        l.isGstApplicable ? 'Yes' : 'No',
+        context.l10n.apprGstApplicable,
+        l.isGstApplicable ? context.l10n.yes : context.l10n.no,
       ),
       if (l.vehicleInsuranceDate.isNotEmpty &&
           l.vehicleInsuranceDate.toLowerCase() != 'null')
         _ApprDetailRow(
           Icons.shield_outlined,
-          'Insurance Valid Until',
+          context.l10n.apprInsuranceValidUntil,
           _fmtDate(l.vehicleInsuranceDate),
         ),
       if (l.offerEndDate.isNotEmpty && l.offerEndDate.toLowerCase() != 'null')
         _ApprDetailRow(
           Icons.timer_outlined,
-          'Offer Ends',
+          context.l10n.apprOfferEnds,
           '${_fmtDate(l.offerEndDate)} ${l.offerEndTime}',
         ),
       _ApprDetailRow(
         Icons.description_outlined,
-        'RC Document',
-        l.hasRcDocument ? 'Available' : 'Not available',
+        context.l10n.rcDocument,
+        l.hasRcDocument
+            ? context.l10n.apprAvailableLabel
+            : context.l10n.apprNotAvailable,
       ),
       _ApprDetailRow(
         Icons.policy_outlined,
-        'Insurance Doc',
-        l.hasInsuranceDocument ? 'Available' : 'Not available',
+        context.l10n.apprInsuranceDoc,
+        l.hasInsuranceDocument
+            ? context.l10n.apprAvailableLabel
+            : context.l10n.apprNotAvailable,
       ),
       _ApprDetailRow(
         Icons.info_outline,
-        'Status',
+        context.l10n.status,
         l.vehicleStatus.toUpperCase(),
       ),
     ];

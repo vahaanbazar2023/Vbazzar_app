@@ -76,6 +76,7 @@ import '../features/notifications/controllers/notification_controller.dart'
     as nc;
 import '../features/search/controllers/search_controller.dart' as sc;
 import '../features/profile/views/cash_out_screen.dart';
+import '../core/extensions/context_extensions.dart';
 
 class AppPages {
   AppPages._();
@@ -166,10 +167,9 @@ class AppPages {
         );
         return SubscriptionScreen(
           subscriptionSource: source,
-          title: args['title'] as String? ?? 'Choose a Plan',
+          title: args['title'] as String? ?? appL10n.coreChooseAPlan,
           subtitle:
-              args['subtitle'] as String? ??
-              'Select the subscription plan that suits you best',
+              args['subtitle'] as String? ?? appL10n.selectSubscriptionSubtitle,
           prebuiltPlan: prebuiltPlan,
           extraArgs: extraArgs,
         );

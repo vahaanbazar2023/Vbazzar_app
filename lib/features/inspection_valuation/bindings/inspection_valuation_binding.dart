@@ -8,8 +8,6 @@ class InspectionValuationBinding extends Bindings {
     Get.lazyPut<InspectionValuationController>(
       () => InspectionValuationController(),
     );
-    Get.lazyPut<AgentInspectionController>(
-      () => AgentInspectionController(),
-    );
+    Get.lazyPut<AgentInspectionController>(() => AgentInspectionController());
   }
 }

@@ -1,7 +1,10 @@
+import 'dart:ui' show ImageFilter;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
+import '../../../core/extensions/context_extensions.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../theme/app_fonts.dart';
 import '../controllers/spare_and_fms_controller.dart';
@@ -65,7 +68,7 @@ class _FmsTabState extends State<FmsTab> with AutomaticKeepAliveClientMixin {
               ),
               SizedBox(height: 16.h),
               Text(
-                'No spare parts available',
+                context.l10n.spareNoSparePartsAvailable,
                 style: AppFonts.bodyLarge.copyWith(
                   color: AppColors.textSecondary,
                 ),
@@ -80,7 +83,7 @@ class _FmsTabState extends State<FmsTab> with AutomaticKeepAliveClientMixin {
                     borderRadius: BorderRadius.circular(12.r),
                   ),
                 ),
-                child: const Text('Retry'),
+                child: Text(context.l10n.retry),
               ),
             ],
           ),
@@ -125,7 +128,8 @@ class _FmsTabState extends State<FmsTab> with AutomaticKeepAliveClientMixin {
   }
 }
 
-/// Compact e-commerce product card — image with star overlay, name, price.
+/// FMS product card — inset photo with a glass rating pill and a brand-red
+/// price tag, name underneath and a round "open" affordance.
 class _SpareGridCard extends StatelessWidget {
   final SparePartEntity spare;
   final VoidCallback onTap;
@@ -139,111 +143,105 @@ class _SpareGridCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
+        padding: EdgeInsets.all(6.r),
         decoration: BoxDecoration(
           color: AppColors.white,
-          borderRadius: BorderRadius.circular(10.r),
-          border: Border.all(color: AppColors.grey200, width: 0.5),
+          borderRadius: BorderRadius.circular(22.r),
+          border: Border.all(
+            color: AppColors.primary.withValues(alpha: 0.08),
+            width: 1,
+          ),
           boxShadow: [
             BoxShadow(
-              color: AppColors.black.withValues(alpha: 0.05),
-              blurRadius: 6,
-              offset: const Offset(0, 2),
+              color: AppColors.primary.withValues(alpha: 0.10),
+              blurRadius: 18,
+              offset: const Offset(0, 8),
             ),
           ],
         ),
-        clipBehavior: Clip.antiAlias,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // ── Image with star rating overlay ──
-            AspectRatio(
-              aspectRatio: 1.1,
-              child: Stack(
-                children: [
-                  // Image fills the stack
-                  Positioned.fill(
-                    child: spare.primaryPhoto.isNotEmpty
-                        ? Image.network(
-                            spare.primaryPhoto,
-                            fit: BoxFit.cover,
-                            loadingBuilder: (ctx, child, progress) {
-                              if (progress == null) return child;
-                              return Container(
-                                color: AppColors.grey100,
-                                child: Center(
-                                  child: SizedBox(
-                                    width: 24.w,
-                                    height: 24.w,
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 2,
-                                      color: AppColors.primary,
-                                    ),
-                                  ),
-                                ),
-                              );
-                            },
-                            errorBuilder: (_, __, ___) => Container(
-                              color: AppColors.grey100,
-                              child: Center(
-                                child: Icon(
-                                  Icons.broken_image_outlined,
-                                  size: 28.w,
-                                  color: AppColors.grey400,
-                                ),
-                              ),
-                            ),
-                          )
-                        : Container(
-                            color: AppColors.grey100,
-                            child: Center(
-                              child: Icon(
-                                Icons.image_outlined,
-                                size: 28.w,
-                                color: AppColors.grey400,
-                              ),
-                            ),
+            // ── Inset photo ─────────────────────────────────
+            Expanded(
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(17.r),
+                child: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    _photo(),
+                    // Soft scrim so the chips stay readable on any photo
+                    Positioned.fill(
+                      child: DecoratedBox(
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: [
+                              Colors.black.withValues(alpha: 0.18),
+                              Colors.transparent,
+                              Colors.transparent,
+                              Colors.black.withValues(alpha: 0.28),
+                            ],
+                            stops: const [0, 0.3, 0.65, 1],
                           ),
-                  ),
-                  // Rating badge — top right corner on the image
-                  if (rating > 0)
-                    Positioned(
-                      top: 4.h,
-                      right: 4.w,
-                      child: _buildRatingBadge(rating),
+                        ),
+                      ),
                     ),
-                ],
+                    if (rating > 0)
+                      Positioned(
+                        top: 8.h,
+                        left: 8.w,
+                        child: _RatingPill(rating: rating),
+                      ),
+                    Positioned(
+                      left: 8.w,
+                      bottom: 8.h,
+                      child: _PriceTag(text: spare.formattedPrice),
+                    ),
+                  ],
+                ),
               ),
             ),
 
-            // ── Info: name + price ──
+            // ── Name + open affordance ──────────────────────
             Padding(
-              padding: EdgeInsets.fromLTRB(6.w, 4.h, 6.w, 6.h),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
+              padding: EdgeInsets.fromLTRB(6.w, 8.h, 2.w, 4.h),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  // Title
-                  Text(
-                    spare.spareName,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: AppFonts.bodySmall.copyWith(
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.textPrimary,
-                      fontSize: 11.sp,
-                      height: 1.2,
+                  Expanded(
+                    child: Text(
+                      spare.spareName,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: AppFonts.bodySmall.copyWith(
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.textPrimary,
+                        fontSize: 12.sp,
+                        height: 1.25,
+                      ),
                     ),
                   ),
-                  SizedBox(height: 3.h),
-                  // Price
-                  Text(
-                    '₹${spare.price}',
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: AppFonts.bodyMedium.copyWith(
-                      fontWeight: FontWeight.w800,
-                      color: AppColors.textPrimary,
-                      fontSize: 14.sp,
+                  SizedBox(width: 6.w),
+                  Container(
+                    width: 28.r,
+                    height: 28.r,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      gradient: const LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          AppColors.ctaGradientStart,
+                          AppColors.ctaGradientEnd,
+                        ],
+                      ),
+                    ),
+                    child: Icon(
+                      Icons.arrow_outward_rounded,
+                      size: 15.r,
+                      color: Colors.white,
                     ),
                   ),
                 ],
@@ -255,39 +253,124 @@ class _SpareGridCard extends StatelessWidget {
     );
   }
 
-  /// Star rating badge displayed on the image — shows filled stars.
-  Widget _buildRatingBadge(double rating) {
-    final fullStars = rating.floor();
-    final hasHalf = (rating - fullStars) >= 0.5;
+  Widget _photo() {
+    Widget placeholder(IconData icon) => Container(
+      color: const Color(0xFFF4ECEB),
+      child: Center(
+        child: Icon(
+          icon,
+          size: 30.r,
+          color: AppColors.primary.withValues(alpha: 0.35),
+        ),
+      ),
+    );
 
+    if (spare.primaryPhoto.isEmpty)
+      return placeholder(Icons.build_circle_outlined);
+
+    return Image.network(
+      spare.primaryPhoto,
+      fit: BoxFit.cover,
+      loadingBuilder: (ctx, child, progress) {
+        if (progress == null) return child;
+        return Container(
+          color: const Color(0xFFF4ECEB),
+          child: Center(
+            child: SizedBox(
+              width: 22.r,
+              height: 22.r,
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                color: AppColors.primary,
+              ),
+            ),
+          ),
+        );
+      },
+      errorBuilder: (_, __, ___) => placeholder(Icons.broken_image_outlined),
+    );
+  }
+}
+
+/// Translucent dark pill: star + numeric rating.
+class _RatingPill extends StatelessWidget {
+  final double rating;
+
+  const _RatingPill({required this.rating});
+
+  @override
+  Widget build(BuildContext context) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(20.r),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 6, sigmaY: 6),
+        child: Container(
+          padding: EdgeInsets.symmetric(horizontal: 7.w, vertical: 3.h),
+          color: Colors.black.withValues(alpha: 0.38),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                Icons.star_rounded,
+                size: 12.r,
+                color: const Color(0xFFFFC043),
+              ),
+              SizedBox(width: 3.w),
+              Text(
+                rating.toStringAsFixed(1),
+                style: TextStyle(
+                  fontFamily: 'Montserrat',
+                  fontSize: 10.5.sp,
+                  fontWeight: FontWeight.w700,
+                  color: Colors.white,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Brand-gradient price tag that sits on the photo.
+class _PriceTag extends StatelessWidget {
+  final String text;
+
+  const _PriceTag({required this.text});
+
+  @override
+  Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 2.h),
+      constraints: BoxConstraints(maxWidth: 120.w),
+      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
       decoration: BoxDecoration(
-        color: const Color(0xFFFFA726), // Orange
-        borderRadius: BorderRadius.circular(4.r),
+        gradient: const LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [AppColors.ctaGradientStart, AppColors.ctaGradientEnd],
+        ),
+        borderRadius: BorderRadius.circular(20.r),
         boxShadow: [
           BoxShadow(
-            color: AppColors.black.withValues(alpha: 0.15),
-            blurRadius: 4,
-            offset: const Offset(0, 1),
+            color: Colors.black.withValues(alpha: 0.25),
+            blurRadius: 8,
+            offset: const Offset(0, 3),
           ),
         ],
       ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: List.generate(5, (i) {
-          if (i < fullStars) {
-            return Icon(Icons.star, size: 10.r, color: AppColors.white);
-          } else if (i == fullStars && hasHalf) {
-            return Icon(Icons.star_half, size: 10.r, color: AppColors.white);
-          } else {
-            return Icon(
-              Icons.star_border,
-              size: 10.r,
-              color: AppColors.white.withValues(alpha: 0.6),
-            );
-          }
-        }),
+      child: FittedBox(
+        fit: BoxFit.scaleDown,
+        child: Text(
+          text,
+          maxLines: 1,
+          style: TextStyle(
+            fontFamily: 'Montserrat',
+            fontSize: 13.sp,
+            fontWeight: FontWeight.w800,
+            color: Colors.white,
+          ),
+        ),
       ),
     );
   }

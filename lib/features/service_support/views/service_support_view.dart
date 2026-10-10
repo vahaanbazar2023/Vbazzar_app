@@ -9,6 +9,7 @@ import '../../../core/design_system/tokens/app_spacing.dart';
 import '../../../routes/app_routes.dart';
 import '../../../theme/app_fonts.dart';
 import '../controllers/service_support_controller.dart';
+import '../../../core/extensions/context_extensions.dart';
 
 /// Landing page for Service Support module.
 /// Simple promotional page — location is handled by the list view.
@@ -18,8 +19,8 @@ class ServiceSupportView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AppLayout(
-      title: 'Service & Support',
-      subtitle: '24/7 roadside assistance at your fingertips',
+      title: context.l10n.inspServiceAndSupport,
+      subtitle: context.l10n.inspRoadsideSubtitle,
       showBack: true,
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: AppSpacing.lg),
@@ -29,7 +30,7 @@ class ServiceSupportView extends StatelessWidget {
 
             // ── Headline ─────────────────────────────────────────
             Text(
-              '24/7 Breakdown\nAssistance',
+              context.l10n.inspBreakdownAssistanceHeadline,
               textAlign: TextAlign.center,
               style: AppFonts.headlineMedium.copyWith(
                 color: AppColors.textPrimary,
@@ -42,7 +43,7 @@ class ServiceSupportView extends StatelessWidget {
             Padding(
               padding: EdgeInsets.symmetric(horizontal: AppSpacing.lg),
               child: Text(
-                'Instant Help. Anytime, Anywhere.\nQuick response and reliable roadside assistance at your fingertips.',
+                context.l10n.inspRoadsideDescription,
                 textAlign: TextAlign.center,
                 style: AppFonts.bodyMedium.copyWith(
                   color: AppColors.textSecondary,
@@ -77,9 +78,8 @@ class ServiceSupportView extends StatelessWidget {
             SizedBox(height: AppSpacing.xxl),
 
             // ── CTA Button ───────────────────────────────────────
-            SizedBox(
-              width: 240.w,
-              height: 52.h,
+            ConstrainedBox(
+              constraints: BoxConstraints(minWidth: 240.w, minHeight: 52.h),
               child: ElevatedButton.icon(
                 onPressed: () {
                   // Delete existing controller for fresh state
@@ -92,7 +92,7 @@ class ServiceSupportView extends StatelessWidget {
                   size: 20.w,
                 ),
                 label: Text(
-                  'Contact Mechanic',
+                  context.l10n.inspContactMechanic,
                   style: AppFonts.labelLarge.copyWith(
                     color: AppColors.white,
                     fontWeight: FontWeight.w600,

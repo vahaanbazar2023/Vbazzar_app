@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
+import '../../../core/extensions/context_extensions.dart';
 import '../../../core/constants/app_assets.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../routes/app_routes.dart';
@@ -83,15 +84,21 @@ class _BuySellActivityFabState extends State<BuySellActivityFab>
     }
   }
 
-  static final _items = [
+  List<({String label, String iconAsset, String action})> _items(
+    BuildContext context,
+  ) => [
     (
-      label: 'My Vehicles',
+      label: context.l10n.myVehicles,
       iconAsset: AppAssets.subIconVehicle,
       action: 'my_vehicles',
     ),
-    (label: 'Wishlist', iconAsset: AppAssets.subIconWallet, action: 'wishlist'),
     (
-      label: 'Purchase History',
+      label: context.l10n.spareWishlist,
+      iconAsset: AppAssets.subIconWallet,
+      action: 'wishlist',
+    ),
+    (
+      label: context.l10n.sparePurchaseHistory,
       iconAsset: AppAssets.subIconGroup2,
       action: 'purchase_history',
     ),
@@ -113,7 +120,7 @@ class _BuySellActivityFabState extends State<BuySellActivityFab>
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                for (final item in _items) ...[
+                for (final item in _items(context)) ...[
                   _FabItem(
                     label: item.label,
                     iconAsset: item.iconAsset,
@@ -186,7 +193,10 @@ class _FabItem extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        height: 38.r,
+        constraints: BoxConstraints(
+          minHeight: 38.r,
+          maxWidth: MediaQuery.of(context).size.width * 0.8,
+        ),
         clipBehavior: Clip.none,
         decoration: BoxDecoration(
           gradient: LinearGradient(
@@ -208,16 +218,22 @@ class _FabItem extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             // ── Label ──────────────────────────────────────────
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 14.w),
-              child: Text(
-                label,
-                style: TextStyle(
-                  fontFamily: 'Montserrat',
-                  fontSize: 12.sp,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.white,
-                  shadows: const [Shadow(color: Colors.black26, blurRadius: 6)],
+            Flexible(
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 14.w),
+                child: Text(
+                  label,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontFamily: 'Montserrat',
+                    fontSize: 12.sp,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white,
+                    shadows: const [
+                      Shadow(color: Colors.black26, blurRadius: 6),
+                    ],
+                  ),
                 ),
               ),
             ),

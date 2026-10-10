@@ -105,7 +105,8 @@ class BuySellHomeController extends GetxController {
         limit: _limit,
       );
 
-      final List<dynamic> vehicleList = result['vehicles'] ?? result['data'] ?? [];
+      final List<dynamic> vehicleList =
+          result['vehicles'] ?? result['data'] ?? [];
       final newVehicles = vehicleList
           .map((v) => v is Map<String, dynamic> ? v : <String, dynamic>{})
           .toList();
@@ -171,7 +172,8 @@ class BuySellHomeController extends GetxController {
   // ── Get vehicle display name ───────────────────────────────
   String getVehicleName(Map<String, dynamic> vehicle) {
     final brand = vehicle['brand_name']?.toString() ?? '';
-    final model = vehicle['model']?.toString() ?? vehicle['model_name']?.toString() ?? '';
+    final model =
+        vehicle['model']?.toString() ?? vehicle['model_name']?.toString() ?? '';
     final year = vehicle['manufacturing_year']?.toString() ?? '';
     return [brand, model, year].where((s) => s.isNotEmpty).join(' ');
   }

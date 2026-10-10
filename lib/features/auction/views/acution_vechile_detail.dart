@@ -24,7 +24,7 @@ class AuctionVehicleDetailScreen extends StatelessWidget {
       return AppLayout(
         title: context.l10n.placeBidTitle,
         showBack: true,
-        body: const Center(child: Text('Vehicle not found')),
+        body: Center(child: Text(context.l10n.aucVehicleNotFound)),
       );
     }
 
@@ -558,6 +558,7 @@ class _BidInfoItem extends StatelessWidget {
       children: [
         Text(
           label,
+          textAlign: TextAlign.center,
           style: TextStyle(
             fontFamily: 'Plus Jakarta Sans',
             fontSize: 10.sp,
@@ -698,7 +699,7 @@ class _VehicleDetailsAccordionState extends State<_VehicleDetailsAccordion> {
                   icon: Icons.speed_outlined,
                   label: context.l10n.kilometers,
                   value: v.kilometers > 0
-                      ? '${v.kilometers} km'
+                      ? '${v.kilometers} ${context.l10n.km}'
                       : context.l10n.na,
                 ),
                 _DetailRow(
@@ -770,13 +771,15 @@ class _VehicleDetailsAccordionState extends State<_VehicleDetailsAccordion> {
                         color: AppColors.primary,
                       ),
                       SizedBox(width: 6.w),
-                      Text(
-                        context.l10n.contactDetails,
-                        style: TextStyle(
-                          fontFamily: 'Montserrat',
-                          fontSize: 12.sp,
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.primary,
+                      Expanded(
+                        child: Text(
+                          context.l10n.contactDetails,
+                          style: TextStyle(
+                            fontFamily: 'Montserrat',
+                            fontSize: 12.sp,
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.primary,
+                          ),
                         ),
                       ),
                     ],
@@ -914,14 +917,17 @@ class _BidInfoRow extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                '$label :',
-                style: TextStyle(
-                  fontFamily: 'Plus Jakarta Sans',
-                  fontSize: 13.sp,
-                  color: AppColors.grey700,
+              Flexible(
+                child: Text(
+                  '$label :',
+                  style: TextStyle(
+                    fontFamily: 'Plus Jakarta Sans',
+                    fontSize: 13.sp,
+                    color: AppColors.grey700,
+                  ),
                 ),
               ),
+              SizedBox(width: 8.w),
               Text(
                 value,
                 style: TextStyle(

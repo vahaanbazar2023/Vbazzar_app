@@ -3,17 +3,14 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../core/constants/app_colors.dart';
 import '../data/models/inspection_vehicle_model.dart';
+import '../../../core/extensions/context_extensions.dart';
 
 /// Card widget for displaying a single inspection item in the My Inspections list.
 class InspectionCard extends StatelessWidget {
   final InspectionVehicleModel inspection;
   final VoidCallback? onTap;
 
-  const InspectionCard({
-    super.key,
-    required this.inspection,
-    this.onTap,
-  });
+  const InspectionCard({super.key, required this.inspection, this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -55,7 +52,7 @@ class InspectionCard extends StatelessWidget {
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),
-                      _buildStatusBadge(),
+                      Flexible(child: _buildStatusBadge()),
                     ],
                   ),
                   SizedBox(height: 4.h),
@@ -83,11 +80,8 @@ class InspectionCard extends StatelessWidget {
                   SizedBox(height: 2.h),
                   // Chassis number
                   Text(
-                    'Chassis: ${inspection.chasisNo}',
-                    style: TextStyle(
-                      fontSize: 11.sp,
-                      color: AppColors.grey500,
-                    ),
+                    '${context.l10n.chassis_no}: ${inspection.chasisNo}',
+                    style: TextStyle(fontSize: 11.sp, color: AppColors.grey500),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -95,42 +89,49 @@ class InspectionCard extends StatelessWidget {
                   // Owner + View Report
                   Row(
                     children: [
-                      Icon(
-                        Icons.phone,
-                        size: 12.r,
-                        color: AppColors.grey500,
-                      ),
+                      Icon(Icons.phone, size: 12.r, color: AppColors.grey500),
                       SizedBox(width: 4.w),
-                      Text(
-                        inspection.vehicleOwnerNumber,
-                        style: TextStyle(
-                          fontSize: 11.sp,
-                          color: AppColors.textSecondary,
+                      Flexible(
+                        child: Text(
+                          inspection.vehicleOwnerNumber,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontSize: 11.sp,
+                            color: AppColors.textSecondary,
+                          ),
                         ),
                       ),
                       const Spacer(),
                       if (inspection.webUrl?.isNotEmpty == true)
-                        GestureDetector(
-                          onTap: () {
-                            // TODO: Launch URL with url_launcher
-                          },
-                          child: Row(
-                            children: [
-                              Icon(
-                                Icons.open_in_new,
-                                size: 12.r,
-                                color: AppColors.primary,
-                              ),
-                              SizedBox(width: 2.w),
-                              Text(
-                                'View Report',
-                                style: TextStyle(
-                                  fontSize: 11.sp,
+                        Flexible(
+                          child: GestureDetector(
+                            onTap: () {
+                              // TODO: Launch URL with url_launcher
+                            },
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  Icons.open_in_new,
+                                  size: 12.r,
                                   color: AppColors.primary,
-                                  fontWeight: FontWeight.w500,
                                 ),
-                              ),
-                            ],
+                                SizedBox(width: 2.w),
+                                Flexible(
+                                  child: Text(
+                                    context.l10n.inspViewReport,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                      fontSize: 11.sp,
+                                      color: AppColors.primary,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                     ],
@@ -189,6 +190,8 @@ class InspectionCard extends StatelessWidget {
       ),
       child: Text(
         label,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
         style: TextStyle(
           fontSize: 10.sp,
           fontWeight: FontWeight.w600,
@@ -201,14 +204,14 @@ class InspectionCard extends StatelessWidget {
   (Color, String) get _statusStyle {
     switch (inspection.status.toLowerCase()) {
       case 'completed':
-        return (AppColors.success, 'Completed');
+        return (AppColors.success, appL10n.inspStatusCompleted);
       case 'in_progress':
-        return (AppColors.info, 'In Progress');
+        return (AppColors.info, appL10n.inspStatusInProgress);
       case 'rejected':
-        return (AppColors.error, 'Rejected');
+        return (AppColors.error, appL10n.inspStatusRejected);
       case 'pending':
       default:
-        return (AppColors.warning, 'Pending');
+        return (AppColors.warning, appL10n.pendingStatus);
     }
   }
 }

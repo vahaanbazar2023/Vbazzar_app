@@ -76,8 +76,18 @@ class InsuranceFinanceView extends GetView<InsuranceFinanceController> {
         labelPadding: EdgeInsets.zero,
         indicatorPadding: EdgeInsets.all(4.r),
         tabs: [
-          Tab(text: context.l10n.insurance),
-          Tab(text: context.l10n.finance),
+          Tab(
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(context.l10n.insurance),
+            ),
+          ),
+          Tab(
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(context.l10n.finance),
+            ),
+          ),
         ],
       ),
     );

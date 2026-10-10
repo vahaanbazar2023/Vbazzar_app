@@ -6,6 +6,7 @@ import '../../../core/design_system/design_system.dart';
 import '../../../core/utils/custom_text_styles.dart';
 import '../models/intro_model.dart';
 import '../controllers/intro_controller.dart';
+import '../../../core/extensions/context_extensions.dart';
 
 /// A single intro slide matching the Figma layout exactly
 class IntroSlide extends StatelessWidget {
@@ -36,7 +37,7 @@ class IntroSlide extends StatelessWidget {
         Padding(
           padding: EdgeInsets.all(20.w),
           child: Text(
-            slide.title,
+            slide.localizedTitle(context),
             style: AppTextStyles.headingLarge.copyWith(
               color: AppColors.white,
               height: 1.39,
@@ -50,7 +51,7 @@ class IntroSlide extends StatelessWidget {
         Padding(
           padding: EdgeInsets.symmetric(horizontal: 20.w),
           child: Text(
-            slide.description,
+            slide.localizedDescription(context),
             style: AppTextStyles.bodyLarge.copyWith(
               fontSize: 18.sp,
               color: AppColors.white.withOpacity(0.88),
@@ -178,22 +179,25 @@ class IntroSlide extends StatelessWidget {
                 left: 0,
                 right: 0,
                 child: Center(
-                  child: Text(
-                    currentPage == 0
-                        ? 'BUY'
-                        : currentPage == 1
-                        ? 'SELL'
-                        : 'BID',
-                    style: MoulTextStyle.style(
-                      fontSize: 120.sp,
-                      fontWeight: FontWeight.w400,
-                      color: AppColors.white.withOpacity(0.25),
-                      letterSpacing: 2.75,
-                      height: 1.0,
-                      foreground: Paint()
-                        ..style = PaintingStyle.stroke
-                        ..strokeWidth = 7.64
-                        ..color = AppColors.white.withOpacity(0.25),
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Text(
+                      currentPage == 0
+                          ? context.l10n.coreIntroBuy
+                          : currentPage == 1
+                          ? context.l10n.coreIntroSell
+                          : context.l10n.coreIntroBid,
+                      style: MoulTextStyle.style(
+                        fontSize: 120.sp,
+                        fontWeight: FontWeight.w400,
+                        color: AppColors.white.withOpacity(0.25),
+                        letterSpacing: 2.75,
+                        height: 1.0,
+                        foreground: Paint()
+                          ..style = PaintingStyle.stroke
+                          ..strokeWidth = 7.64
+                          ..color = AppColors.white.withOpacity(0.25),
+                      ),
                     ),
                   ),
                 ),

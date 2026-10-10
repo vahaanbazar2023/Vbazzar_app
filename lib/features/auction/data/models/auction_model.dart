@@ -2,10 +2,7 @@ import '../../domain/entities/auction_entity.dart';
 
 /// Data model for [RegionEntity].
 class RegionModel extends RegionEntity {
-  const RegionModel({
-    required super.regionId,
-    required super.name,
-  });
+  const RegionModel({required super.regionId, required super.name});
 
   factory RegionModel.fromJson(Map<String, dynamic> json) {
     return RegionModel(

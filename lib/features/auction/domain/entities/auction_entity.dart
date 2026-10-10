@@ -51,10 +51,7 @@ class RegionEntity {
   final String regionId;
   final String name;
 
-  const RegionEntity({
-    required this.regionId,
-    required this.name,
-  });
+  const RegionEntity({required this.regionId, required this.name});
 }
 
 /// State by region entity for auction filter.

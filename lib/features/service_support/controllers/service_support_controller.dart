@@ -14,6 +14,7 @@ import '../data/services/service_support_service.dart';
 import '../../subscription/models/subscription_plan.dart';
 import '../../subscription/services/subscription_service.dart';
 import '../../subscription/views/single_plan_payment_screen.dart';
+import '../../../core/extensions/context_extensions.dart';
 
 class ServiceSupportController extends GetxController
     with WidgetsBindingObserver {
@@ -161,15 +162,15 @@ class ServiceSupportController extends GetxController
         await loadMechanics(refresh: true);
       } else {
         _showErrorDialog(
-          'Location Error',
-          'Unable to get your location. Please try again.',
+          appL10n.inspLocationError,
+          appL10n.inspUnableToGetLocation,
         );
       }
     } catch (e) {
       Get.back();
       _showErrorDialog(
-        'Location Error',
-        'Unable to enable location services. Please check settings.',
+        appL10n.inspLocationError,
+        appL10n.inspUnableToEnableLocationServices,
       );
     }
   }
@@ -305,7 +306,7 @@ class ServiceSupportController extends GetxController
     final plan = _subt007Plan;
     if (plan == null) {
       CustomSnackbar.show(
-        message: 'Unable to load subscription plan. Please try again.',
+        message: appL10n.inspUnableToLoadSubscriptionPlan,
         type: SnackbarType.error,
       );
       return;
@@ -316,9 +317,11 @@ class ServiceSupportController extends GetxController
         plan: plan,
         source: 'SUBT007',
         mechanicId: mechanic.mechanicId,
-        title: 'Connect with Mechanic',
-        subtitle:
-            'Pay to get the direct contact number for ${mechanic.mechanicName} at ${mechanic.garageName}.',
+        title: appL10n.inspConnectWithMechanic,
+        subtitle: appL10n.inspPayToGetContact(
+          mechanic.mechanicName,
+          mechanic.garageName,
+        ),
         onPaymentSuccess: () {
           Get.back(); // pop payment screen
           _unlockMechanicContact(mechanic);
@@ -338,13 +341,13 @@ class ServiceSupportController extends GetxController
         mechanicId: mechanic.mechanicId,
       );
       CustomSnackbar.show(
-        message: 'Contact unlocked! You can now call the mechanic.',
+        message: appL10n.inspContactUnlocked,
         type: SnackbarType.success,
       );
       _silentRefreshMechanics();
     } catch (_) {
       CustomSnackbar.show(
-        message: 'Something went wrong. Please try again.',
+        message: appL10n.inspSomethingWentWrongTryAgain,
         type: SnackbarType.error,
       );
     }
@@ -366,13 +369,13 @@ class ServiceSupportController extends GetxController
           mechanicId: mechanicId,
         );
         CustomSnackbar.show(
-          message: 'Contact unlocked! You can now call the mechanic.',
+          message: appL10n.inspContactUnlocked,
           type: SnackbarType.success,
         );
         _silentRefreshMechanics();
       } catch (_) {
         CustomSnackbar.show(
-          message: 'Something went wrong. Please try again.',
+          message: appL10n.inspSomethingWentWrongTryAgain,
           type: SnackbarType.error,
         );
       }
@@ -383,8 +386,8 @@ class ServiceSupportController extends GetxController
     final uri = Uri(scheme: 'tel', path: phone);
     launchUrl(uri).catchError((_) {
       Get.snackbar(
-        'Phone',
-        'Contact: $phone',
+        appL10n.inspPhone,
+        appL10n.inspContactWithPhone(phone),
         snackPosition: SnackPosition.TOP,
       );
       return false;
@@ -418,16 +421,15 @@ class ServiceSupportController extends GetxController
     _showCustomDialog(
       icon: Icons.location_on_outlined,
       iconColor: AppColors.primary,
-      title: 'Location Required',
-      content:
-          'This app needs location access to find service providers near you.',
-      features: const [
-        'Find nearest service providers',
-        'Get accurate distance estimates',
-        'Personalized recommendations',
+      title: appL10n.inspLocationRequired,
+      content: appL10n.inspLocationAccessNeeded,
+      features: [
+        appL10n.inspFindNearestProviders,
+        appL10n.inspAccurateDistanceEstimates,
+        appL10n.inspPersonalizedRecommendations,
       ],
-      cancelText: 'Cancel',
-      actionText: 'Enable',
+      cancelText: appL10n.cancel,
+      actionText: appL10n.inspEnable,
       actionColor: AppColors.primary,
       onAction: () {
         Get.back();
@@ -440,10 +442,10 @@ class ServiceSupportController extends GetxController
     _showCustomDialog(
       icon: Icons.warning_amber_rounded,
       iconColor: AppColors.warning,
-      title: 'Enable GPS',
-      content: 'Please turn on GPS in your device settings, then come back.',
-      cancelText: 'Cancel',
-      actionText: 'Settings',
+      title: appL10n.inspEnableGps,
+      content: appL10n.inspTurnOnGps,
+      cancelText: appL10n.cancel,
+      actionText: appL10n.settings,
       actionColor: AppColors.warning,
       onAction: () {
         _openedLocationSettings = true;
@@ -457,11 +459,10 @@ class ServiceSupportController extends GetxController
     _showCustomDialog(
       icon: Icons.settings_outlined,
       iconColor: AppColors.warning,
-      title: 'Permission Required',
-      content:
-          'Location permission is required. Please enable it in app settings.',
-      cancelText: 'Cancel',
-      actionText: 'Settings',
+      title: appL10n.inspPermissionRequired,
+      content: appL10n.inspLocationPermissionRequired,
+      cancelText: appL10n.cancel,
+      actionText: appL10n.settings,
       actionColor: AppColors.warning,
       onAction: () {
         _openedLocationSettings = true;
@@ -475,11 +476,10 @@ class ServiceSupportController extends GetxController
     _showCustomDialog(
       icon: Icons.info_outline,
       iconColor: AppColors.info,
-      title: 'Settings Updated?',
-      content:
-          'Did you enable location permission? Tap "Retry" to find service providers.',
-      cancelText: 'Cancel',
-      actionText: 'Retry',
+      title: appL10n.inspSettingsUpdated,
+      content: appL10n.inspDidYouEnablePermission,
+      cancelText: appL10n.cancel,
+      actionText: appL10n.retry,
       actionColor: AppColors.info,
       onAction: () {
         Get.back();
@@ -492,7 +492,7 @@ class ServiceSupportController extends GetxController
     Get.defaultDialog(
       title: title,
       middleText: message,
-      textConfirm: 'OK',
+      textConfirm: appL10n.ok,
       confirmTextColor: Colors.white,
       onConfirm: () => Get.back(),
     );

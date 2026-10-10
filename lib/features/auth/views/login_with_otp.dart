@@ -63,7 +63,7 @@ class _LoginWithOtpState extends State<LoginWithOtp> {
                   Padding(
                     padding: EdgeInsets.fromLTRB(16.w, 14.h, 16.w, 10.h),
                     child: Text(
-                      'Select Country',
+                      context.l10n.inspSelectCountry,
                       style: TextStyle(
                         fontFamily: 'Plus Jakarta Sans',
                         fontSize: 16.sp,
@@ -77,7 +77,7 @@ class _LoginWithOtpState extends State<LoginWithOtp> {
                     child: TextField(
                       controller: searchCtrl,
                       decoration: InputDecoration(
-                        hintText: 'Search country...',
+                        hintText: context.l10n.inspSearchCountry,
                         prefixIcon: const Icon(Icons.search),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10.r),
@@ -213,7 +213,7 @@ class _LoginWithOtpState extends State<LoginWithOtp> {
                                         CrossAxisAlignment.start,
                                     children: [
                                       Text(
-                                        'Welcome Back! 👋',
+                                        '${context.l10n.welcomeBack} 👋',
                                         style: TextStyle(
                                           fontFamily: 'Plus Jakarta Sans',
                                           fontSize: 13.sp,
@@ -222,7 +222,7 @@ class _LoginWithOtpState extends State<LoginWithOtp> {
                                       ),
                                       SizedBox(height: 4.h),
                                       Text(
-                                        'Log In',
+                                        context.l10n.inspLogIn,
                                         style: TextStyle(
                                           fontFamily: 'Plus Jakarta Sans',
                                           fontSize: 26.sp,
@@ -232,7 +232,7 @@ class _LoginWithOtpState extends State<LoginWithOtp> {
                                         ),
                                       ),
                                       Text(
-                                        'with OTP',
+                                        context.l10n.inspWithOtp,
                                         style: TextStyle(
                                           fontFamily: 'Plus Jakarta Sans',
                                           fontSize: 26.sp,
@@ -260,7 +260,7 @@ class _LoginWithOtpState extends State<LoginWithOtp> {
                                           ),
                                           SizedBox(width: 8.w),
                                           Text(
-                                            'Secure and quick access\nto your account',
+                                            context.l10n.inspSecureQuickAccess,
                                             style: TextStyle(
                                               fontFamily: 'Plus Jakarta Sans',
                                               fontSize: 11.sp,
@@ -486,7 +486,7 @@ class _LoginWithOtpState extends State<LoginWithOtp> {
                                 SizedBox(width: 10.w),
                                 Expanded(
                                   child: Text(
-                                    'Your number is safe with us.\nWe never share it with anyone.',
+                                    context.l10n.inspNumberSafeWithUs,
                                     style: TextStyle(
                                       fontFamily: 'Plus Jakarta Sans',
                                       fontSize: 11.sp,
@@ -513,14 +513,18 @@ class _LoginWithOtpState extends State<LoginWithOtp> {
                             thickness: 1,
                           ),
                         ),
-                        Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 12.w),
-                          child: Text(
-                            'Need help?',
-                            style: TextStyle(
-                              fontFamily: 'Plus Jakarta Sans',
-                              fontSize: 12.sp,
-                              color: AppColors.grey500,
+                        Flexible(
+                          flex: 3,
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 12.w),
+                            child: Text(
+                              context.l10n.inspNeedHelp,
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontFamily: 'Plus Jakarta Sans',
+                                fontSize: 12.sp,
+                                color: AppColors.grey500,
+                              ),
                             ),
                           ),
                         ),
@@ -583,7 +587,8 @@ class _LoginWithOtpState extends State<LoginWithOtp> {
                                   ),
                                 ),
                                 SizedBox(height: 2.h),
-                                Row(
+                                Wrap(
+                                  crossAxisAlignment: WrapCrossAlignment.center,
                                   children: [
                                     Text(
                                       '${context.l10n.contact}: ',

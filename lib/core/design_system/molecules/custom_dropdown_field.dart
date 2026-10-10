@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../constants/app_colors.dart';
 import '../typography/app_text_styles.dart';
+import '../../extensions/context_extensions.dart';
 
 /// Custom dropdown field with search functionality
 ///
@@ -68,7 +69,7 @@ class CustomDropdownField<T> extends StatefulWidget {
   final bool searchable;
 
   /// Search hint text
-  final String searchHint;
+  final String? searchHint;
 
   const CustomDropdownField({
     super.key,
@@ -84,7 +85,7 @@ class CustomDropdownField<T> extends StatefulWidget {
     this.enabled = true,
     this.height,
     this.searchable = true,
-    this.searchHint = 'Search...',
+    this.searchHint,
   });
 
   @override
@@ -170,7 +171,7 @@ class _CustomDropdownFieldState<T> extends State<CustomDropdownField<T>> {
                               ),
                               SizedBox(width: 8.w),
                               Text(
-                                'Loading...',
+                                context.l10n.loading,
                                 style: AppTextStyles.bodyMedium.copyWith(
                                   color: AppColors.textSecondary,
                                   fontSize: 14.sp,
@@ -291,18 +292,18 @@ class _CustomDropdownFieldState<T> extends State<CustomDropdownField<T>> {
       context: context,
       builder: (context) => AlertDialog(
         title: Text(
-          'No Items Available',
+          context.l10n.coreNoItemsAvailableTitle,
           style: AppTextStyles.headingMedium.copyWith(fontSize: 18.sp),
         ),
         content: Text(
-          widget.emptyMessage ?? 'No items to display.',
+          widget.emptyMessage ?? context.l10n.coreNoItemsToDisplay,
           style: AppTextStyles.bodyMedium.copyWith(fontSize: 14.sp),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
             child: Text(
-              'OK',
+              context.l10n.ok,
               style: AppTextStyles.bodyMedium.copyWith(
                 color: AppColors.primary,
                 fontWeight: FontWeight.w600,
@@ -320,7 +321,7 @@ class _DropdownMenu<T> extends StatefulWidget {
   final T? selectedValue;
   final String Function(T) itemLabel;
   final bool searchable;
-  final String searchHint;
+  final String? searchHint;
   final double maxHeight;
 
   const _DropdownMenu({
@@ -383,7 +384,8 @@ class _DropdownMenuState<T> extends State<_DropdownMenu<T>> {
                 controller: _searchController,
                 autofocus: true,
                 decoration: InputDecoration(
-                  hintText: widget.searchHint,
+                  hintText:
+                      widget.searchHint ?? context.l10n.coreSearchEllipsis,
                   hintStyle: AppTextStyles.bodyMedium.copyWith(
                     color: AppColors.textSecondary,
                     fontSize: 14.sp,
@@ -423,7 +425,7 @@ class _DropdownMenuState<T> extends State<_DropdownMenu<T>> {
                 ? Padding(
                     padding: EdgeInsets.all(24.w),
                     child: Text(
-                      'No results found',
+                      context.l10n.coreNoResultsFound,
                       style: AppTextStyles.bodyMedium.copyWith(
                         color: AppColors.textSecondary,
                         fontSize: 14.sp,

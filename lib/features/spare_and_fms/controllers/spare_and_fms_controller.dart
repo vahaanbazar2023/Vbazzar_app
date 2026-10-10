@@ -3,6 +3,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../../core/extensions/context_extensions.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/design_system/molecules/custom_snackbar.dart';
 import '../../../core/storage/secure_storage_service.dart';
@@ -184,8 +185,8 @@ class SpareAndFmsController extends GetxController
   Future<void> recordSpareInterest(SparePartEntity spare) async {
     if (_currentUserId == null) {
       Get.snackbar(
-        'Login Required',
-        'Please login to show interest',
+        appL10n.spareLoginRequired,
+        appL10n.sparePleaseLoginToShowInterest,
         backgroundColor: AppColors.warning,
         colorText: AppColors.black,
       );
@@ -202,14 +203,13 @@ class SpareAndFmsController extends GetxController
       );
 
       _showSuccessDialog(
-        title: 'Interest Recorded',
-        message:
-            'Your interest in "${spare.spareName}" has been recorded successfully.',
+        title: appL10n.spareInterestRecorded,
+        message: appL10n.spareInterestRecordedMessage(spare.spareName),
       );
     } catch (e) {
       Get.snackbar(
-        'Error',
-        'Failed to record interest. Please try again.',
+        appL10n.spareError,
+        appL10n.spareFailedToRecordInterest,
         backgroundColor: AppColors.error,
         colorText: AppColors.white,
       );
@@ -246,8 +246,8 @@ class SpareAndFmsController extends GetxController
       hasFmsInitiallyLoaded.value = true;
     } catch (e) {
       Get.snackbar(
-        'Error',
-        'Failed to load spare parts',
+        appL10n.spareError,
+        appL10n.spareFailedToLoadSpareParts,
         backgroundColor: AppColors.error,
         colorText: AppColors.white,
       );
@@ -338,8 +338,8 @@ class SpareAndFmsController extends GetxController
       shopFeedAds.assignAll(result.ads);
     } catch (e) {
       Get.snackbar(
-        'Error',
-        'Failed to load shops',
+        appL10n.spareError,
+        appL10n.spareFailedToLoadShops,
         backgroundColor: AppColors.error,
         colorText: AppColors.white,
       );
@@ -407,7 +407,7 @@ class SpareAndFmsController extends GetxController
     if (plan == null) {
       // Couldn't load plan — show error
       CustomSnackbar.show(
-        message: 'Unable to load subscription plan. Please try again.',
+        message: appL10n.spareUnableToLoadSubscriptionPlan,
         type: SnackbarType.error,
       );
       return;
@@ -419,8 +419,8 @@ class SpareAndFmsController extends GetxController
         plan: plan,
         source: 'SUBT006',
         shopId: shop.shopId,
-        title: 'Connect with Shop',
-        subtitle: 'Pay to get the direct contact number for ${shop.shopName}.',
+        title: appL10n.spareConnectWithShop,
+        subtitle: appL10n.sparePayToGetShopContact(shop.shopName),
         onPaymentSuccess: () {
           Get.back(); // pop payment screen
           _unlockShopContact(shop);
@@ -446,14 +446,14 @@ class SpareAndFmsController extends GetxController
         );
         if (success) {
           CustomSnackbar.show(
-            message: 'Contact unlocked! You can now call the shop.',
+            message: appL10n.spareContactUnlocked,
             type: SnackbarType.success,
           );
           _silentRefreshShops();
         }
       } catch (_) {
         CustomSnackbar.show(
-          message: 'Something went wrong. Please try again.',
+          message: appL10n.somethingWentWrong,
           type: SnackbarType.error,
         );
       }
@@ -472,20 +472,20 @@ class SpareAndFmsController extends GetxController
       );
       if (success) {
         CustomSnackbar.show(
-          message: 'Contact unlocked! You can now call the shop.',
+          message: appL10n.spareContactUnlocked,
           type: SnackbarType.success,
         );
         // Silent refresh — updates card in-place without showing spinner.
         _silentRefreshShops();
       } else {
         CustomSnackbar.show(
-          message: 'Could not unlock contact. Please try again.',
+          message: appL10n.spareCouldNotUnlockContact,
           type: SnackbarType.error,
         );
       }
     } catch (_) {
       CustomSnackbar.show(
-        message: 'Something went wrong. Please try again.',
+        message: appL10n.somethingWentWrong,
         type: SnackbarType.error,
       );
     }
@@ -495,8 +495,8 @@ class SpareAndFmsController extends GetxController
     final uri = Uri(scheme: 'tel', path: phone);
     launchUrl(uri).catchError((_) {
       Get.snackbar(
-        'Phone',
-        'Contact: $phone',
+        appL10n.sparePhone,
+        appL10n.spareContactPhone(phone),
         snackPosition: SnackPosition.TOP,
       );
       return false;
@@ -538,8 +538,8 @@ class SpareAndFmsController extends GetxController
       hasMoreSpareOrders.value = result.pagination.hasNext;
     } catch (e) {
       Get.snackbar(
-        'Error',
-        'Failed to load orders',
+        appL10n.spareError,
+        appL10n.spareFailedToLoadOrders,
         backgroundColor: AppColors.error,
         colorText: AppColors.white,
       );
@@ -643,8 +643,8 @@ class SpareAndFmsController extends GetxController
       }
     } catch (e) {
       Get.snackbar(
-        'Location Error',
-        'Unable to access location. Please restart the app and try again.',
+        appL10n.spareLocationError,
+        appL10n.spareUnableToAccessLocation,
         backgroundColor: AppColors.error,
         colorText: AppColors.white,
         duration: const Duration(seconds: 4),
@@ -669,13 +669,10 @@ class SpareAndFmsController extends GetxController
     Get.dialog(
       AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Text('Location Permission'),
-        content: const Text(
-          'We need your location to find nearby shops. '
-          'Please grant location permission.',
-        ),
+        title: Text(appL10n.spareLocationPermission),
+        content: Text(appL10n.spareLocationPermissionRationale),
         actions: [
-          TextButton(onPressed: () => Get.back(), child: const Text('Cancel')),
+          TextButton(onPressed: () => Get.back(), child: Text(appL10n.cancel)),
           ElevatedButton(
             onPressed: () async {
               Get.back();
@@ -694,7 +691,7 @@ class SpareAndFmsController extends GetxController
                 _showOpenSettingsDialog();
               }
             },
-            child: const Text('Allow'),
+            child: Text(appL10n.spareAllow),
           ),
         ],
       ),
@@ -705,19 +702,17 @@ class SpareAndFmsController extends GetxController
     Get.dialog(
       AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Text('Enable GPS'),
-        content: const Text(
-          'GPS is disabled. Please enable location services to find nearby shops.',
-        ),
+        title: Text(appL10n.spareEnableGps),
+        content: Text(appL10n.spareGpsDisabledMessage),
         actions: [
-          TextButton(onPressed: () => Get.back(), child: const Text('Cancel')),
+          TextButton(onPressed: () => Get.back(), child: Text(appL10n.cancel)),
           ElevatedButton(
             onPressed: () {
               Get.back();
               _openedLocationSettings = true;
               Geolocator.openLocationSettings();
             },
-            child: const Text('Open Settings'),
+            child: Text(appL10n.spareOpenSettings),
           ),
         ],
       ),
@@ -728,20 +723,17 @@ class SpareAndFmsController extends GetxController
     Get.dialog(
       AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Text('Location Permission Required'),
-        content: const Text(
-          'Location permission has been permanently denied. '
-          'Please enable it from app settings.',
-        ),
+        title: Text(appL10n.spareLocationPermissionRequired),
+        content: Text(appL10n.spareLocationPermissionDeniedForever),
         actions: [
-          TextButton(onPressed: () => Get.back(), child: const Text('Cancel')),
+          TextButton(onPressed: () => Get.back(), child: Text(appL10n.cancel)),
           ElevatedButton(
             onPressed: () {
               Get.back();
               _openedLocationSettings = true;
               Geolocator.openAppSettings();
             },
-            child: const Text('Open Settings'),
+            child: Text(appL10n.spareOpenSettings),
           ),
         ],
       ),
@@ -752,16 +744,19 @@ class SpareAndFmsController extends GetxController
     Get.dialog(
       AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Text('Location Updated?'),
-        content: const Text('Would you like to retry loading shops now?'),
+        title: Text(appL10n.spareLocationUpdated),
+        content: Text(appL10n.spareRetryLoadingShopsPrompt),
         actions: [
-          TextButton(onPressed: () => Get.back(), child: const Text('Not Now')),
+          TextButton(
+            onPressed: () => Get.back(),
+            child: Text(appL10n.spareNotNow),
+          ),
           ElevatedButton(
             onPressed: () {
               Get.back();
               refreshLocationAndReloadShops();
             },
-            child: const Text('Retry'),
+            child: Text(appL10n.retry),
           ),
         ],
       ),
@@ -807,7 +802,7 @@ class SpareAndFmsController extends GetxController
                   borderRadius: BorderRadius.circular(12),
                 ),
               ),
-              child: const Text('OK'),
+              child: Text(appL10n.ok),
             ),
           ),
         ],

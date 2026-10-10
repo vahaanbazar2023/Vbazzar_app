@@ -1,3 +1,5 @@
+import '../../../../core/extensions/context_extensions.dart';
+
 class SubscribedVehicleEntity {
   final String id;
   final String vehicleId;
@@ -45,7 +47,7 @@ class SubscribedVehicleEntity {
   String get sbVehicleId => vehicleId;
 
   String get formattedPrice {
-    if (price == null || price! <= 0) return 'Price on request';
+    if (price == null || price! <= 0) return appL10n.sparePriceOnRequest;
     return '₹${_formatNumber(price!.toInt())}';
   }
 

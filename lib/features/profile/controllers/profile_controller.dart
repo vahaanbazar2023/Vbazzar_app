@@ -5,6 +5,7 @@ import '../../../core/services/logger_service.dart';
 import '../../../core/services/location_service.dart';
 import '../../../core/models/location_models.dart';
 import '../../../core/design_system/design_system.dart';
+import '../../../core/extensions/context_extensions.dart';
 import '../../../routes/app_routes.dart';
 import '../models/profile_models.dart';
 import '../models/wallet_models.dart';
@@ -108,7 +109,7 @@ class ProfileController extends GetxController {
       return;
     }
     if (v.length < 3) {
-      firstNameErrorText.value = 'Min 3 characters';
+      firstNameErrorText.value = appL10n.profMin3Characters;
       return;
     }
     firstNameErrorText.value = null;
@@ -123,12 +124,12 @@ class ProfileController extends GetxController {
     final ok = RegExp(
       r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
     ).hasMatch(v);
-    emailErrorText.value = ok ? null : 'Enter a valid email';
+    emailErrorText.value = ok ? null : appL10n.enterValidEmailAddress;
   }
 
   bool validateState() {
     if (selectedState.value == null) {
-      stateErrorText.value = 'Please select a state';
+      stateErrorText.value = appL10n.profPleaseSelectState;
       return false;
     }
     stateErrorText.value = null;
@@ -137,7 +138,7 @@ class ProfileController extends GetxController {
 
   bool validateCity() {
     if (selectedCity.value == null) {
-      cityErrorText.value = 'Please select a city';
+      cityErrorText.value = appL10n.profPleaseSelectCity;
       return false;
     }
     cityErrorText.value = null;
@@ -252,9 +253,9 @@ class ProfileController extends GetxController {
       final states = await locationService.fetchStates();
       availableStates.value = states;
     } catch (e) {
-      stateErrorText.value = 'Failed to load states';
+      stateErrorText.value = appL10n.profFailedLoadStates;
       CustomSnackbar.show(
-        message: 'Failed to load states. Please try again.',
+        message: appL10n.profFailedLoadStatesTryAgain,
         type: SnackbarType.error,
       );
     } finally {
@@ -284,9 +285,9 @@ class ProfileController extends GetxController {
       final cities = await locationService.fetchCities(stateId);
       availableCities.value = cities;
     } catch (e) {
-      cityErrorText.value = 'Failed to load cities';
+      cityErrorText.value = appL10n.profFailedLoadCities;
       CustomSnackbar.show(
-        message: 'Failed to load cities. Please try again.',
+        message: appL10n.profFailedLoadCitiesTryAgain,
         type: SnackbarType.error,
       );
     } finally {
@@ -312,15 +313,15 @@ class ProfileController extends GetxController {
     validateCity();
 
     if (firstNameText.value.trim().length < 3) {
-      firstNameErrorText.value = 'Min 3 characters';
+      firstNameErrorText.value = appL10n.profMin3Characters;
     }
     if (emailText.value.trim().isEmpty) {
-      emailErrorText.value = 'Email is required';
+      emailErrorText.value = appL10n.emailRequired;
     }
 
     if (!isManageProfileFormValid) {
       CustomSnackbar.show(
-        message: 'Please fill in all required fields correctly',
+        message: appL10n.profFillRequiredFieldsCorrectly,
         type: SnackbarType.error,
       );
       return;
@@ -347,7 +348,7 @@ class ProfileController extends GetxController {
         CustomSnackbar.show(
           message: response.message.isNotEmpty
               ? response.message
-              : 'Profile updated successfully!',
+              : appL10n.profileUpdated,
           type: SnackbarType.success,
         );
         Get.offAllNamed(AppRoutes.home);
@@ -355,14 +356,14 @@ class ProfileController extends GetxController {
         CustomSnackbar.show(
           message: response.message.isNotEmpty
               ? response.message
-              : 'Failed to update profile.',
+              : appL10n.profFailedUpdateProfile,
           type: SnackbarType.error,
         );
       }
     } catch (e) {
       LoggerService.to.error('updateProfile error: $e');
       CustomSnackbar.show(
-        message: 'Failed to update profile. Please try again.',
+        message: appL10n.profFailedUpdateProfileTryAgain,
         type: SnackbarType.error,
       );
     } finally {
@@ -421,13 +422,13 @@ class ProfileController extends GetxController {
         // Refresh wallet and history after successful cash-out
         await Future.wait([fetchWalletDashboard(), fetchCashOutHistory()]);
         CustomSnackbar.show(
-          message: result['message'] as String? ?? 'Cash-out request placed!',
+          message: result['message'] as String? ?? appL10n.profCashOutPlaced,
           type: SnackbarType.success,
         );
         return true;
       } else {
         CustomSnackbar.show(
-          message: result['message'] as String? ?? 'Cash-out request failed.',
+          message: result['message'] as String? ?? appL10n.profCashOutFailed,
           type: SnackbarType.error,
         );
         return false;
@@ -479,13 +480,13 @@ class ProfileController extends GetxController {
       if (isSuccess) {
         await fetchWalletDashboard();
         CustomSnackbar.show(
-          message: message.isNotEmpty ? message : 'Coins converted!',
+          message: message.isNotEmpty ? message : appL10n.profCoinsConverted,
           type: SnackbarType.success,
         );
         return true;
       } else {
         CustomSnackbar.show(
-          message: message.isNotEmpty ? message : 'Conversion failed.',
+          message: message.isNotEmpty ? message : appL10n.profConversionFailed,
           type: SnackbarType.error,
         );
         return false;

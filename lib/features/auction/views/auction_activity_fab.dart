@@ -10,6 +10,7 @@ import '../services/vehicle_excel_download_service.dart';
 import '../../../core/storage/secure_storage_service.dart';
 import '../../../core/storage/storage_keys.dart';
 import '../../../core/design_system/molecules/custom_snackbar.dart';
+import '../../../core/extensions/context_extensions.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Expandable auction activity FAB
@@ -65,7 +66,7 @@ class _AuctionActivityFabState extends State<AuctionActivityFab>
       final userId = await SecureStorageService.to.read(StorageKeys.userId);
       if (userId == null || userId.isEmpty) {
         CustomSnackbar.show(
-          message: 'Please login to download',
+          message: appL10n.aucPleaseLoginToDownload,
           type: SnackbarType.error,
         );
         return;
@@ -78,7 +79,7 @@ class _AuctionActivityFabState extends State<AuctionActivityFab>
 
       if (vehicles.isEmpty) {
         CustomSnackbar.show(
-          message: 'No auction data available',
+          message: appL10n.aucNoAuctionData,
           type: SnackbarType.error,
         );
         return;
@@ -98,45 +99,46 @@ class _AuctionActivityFabState extends State<AuctionActivityFab>
       Get.back(); // Close loading
 
       CustomSnackbar.show(
-        message: 'Excel file downloaded successfully',
+        message: appL10n.aucExcelDownloaded,
         type: SnackbarType.success,
       );
     } catch (e) {
       if (Get.isDialogOpen ?? false) Get.back();
       CustomSnackbar.show(
-        message: 'Failed to download: $e',
+        message: appL10n.aucFailedToDownload(e.toString()),
         type: SnackbarType.error,
       );
     }
   }
 
-  static final _items = [
+  List<({String label, String? iconAsset, IconData? iconData, String route})>
+  _items(BuildContext context) => [
     (
-      label: 'My Wins',
+      label: context.l10n.myWins,
       iconAsset: AppAssets.subIconStar,
       iconData: null,
       route: AppRoutes.myWins,
     ),
     (
-      label: 'My Bids',
+      label: context.l10n.myBids,
       iconAsset: AppAssets.subIconBidLimit,
       iconData: null,
       route: AppRoutes.myBids,
     ),
     (
-      label: 'Wishlist',
+      label: context.l10n.aucWishlist,
       iconAsset: null,
       iconData: Icons.favorite_rounded,
       route: AppRoutes.myWishlist,
     ),
     (
-      label: 'Download Listing',
+      label: context.l10n.download_listing,
       iconAsset: null,
       iconData: Icons.download_rounded,
       route: '', // Empty route triggers download
     ),
     (
-      label: 'Initiate Refund',
+      label: context.l10n.initiateRefund,
       iconAsset: AppAssets.subIconPending,
       iconData: null,
       route: AppRoutes.initiateRefund,
@@ -159,7 +161,7 @@ class _AuctionActivityFabState extends State<AuctionActivityFab>
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                for (final item in _items) ...[
+                for (final item in _items(context)) ...[
                   _FabItem(
                     label: item.label,
                     iconAsset: item.iconAsset,
@@ -257,16 +259,22 @@ class _FabItem extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             // ── Label ──────────────────────────────────────────
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 14.w),
-              child: Text(
-                label,
-                style: TextStyle(
-                  fontFamily: 'Montserrat',
-                  fontSize: 12.sp,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.white,
-                  shadows: const [Shadow(color: Colors.black26, blurRadius: 6)],
+            Flexible(
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 14.w),
+                child: Text(
+                  label,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontFamily: 'Montserrat',
+                    fontSize: 12.sp,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white,
+                    shadows: const [
+                      Shadow(color: Colors.black26, blurRadius: 6),
+                    ],
+                  ),
                 ),
               ),
             ),

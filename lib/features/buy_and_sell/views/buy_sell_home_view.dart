@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import '../../../core/extensions/context_extensions.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/design_system/templates/app_layout.dart';
 import '../../../core/design_system/tokens/app_spacing.dart';
@@ -15,14 +16,14 @@ class BuySellHomeView extends GetView<BuySellHomeController> {
   @override
   Widget build(BuildContext context) {
     return AppLayout(
-      title: 'Buy & Sell',
-      subtitle: 'Browse & post commercial vehicles',
-      body: _buildCategoryGrid(),
+      title: context.l10n.spareBuyAndSellTitle,
+      subtitle: context.l10n.spareBrowseAndPostCommercialVehicles,
+      body: _buildCategoryGrid(context),
     );
   }
 
   // ── Category Grid — 2 columns ─────────────────────────────────────────────
-  Widget _buildCategoryGrid() {
+  Widget _buildCategoryGrid(BuildContext context) {
     return Obx(() {
       if (controller.isLoadingCategories.value) {
         return const Center(
@@ -37,7 +38,7 @@ class BuySellHomeView extends GetView<BuySellHomeController> {
               Icon(Icons.category_outlined, size: 64, color: AppColors.grey300),
               SizedBox(height: AppSpacing.md),
               Text(
-                'No categories available',
+                context.l10n.noCategoriesAvailable,
                 style: TextStyle(
                   fontFamily: 'Montserrat',
                   fontSize: 16.sp,
@@ -187,9 +188,9 @@ class _CategoryCard extends StatelessWidget {
                 // Buy + Sell buttons
                 Row(
                   children: [
-                    Expanded(child: _buildBuyButton()),
+                    Expanded(child: _buildBuyButton(context)),
                     SizedBox(width: 6.w),
-                    Expanded(child: _buildSellButton()),
+                    Expanded(child: _buildSellButton(context)),
                   ],
                 ),
               ],
@@ -200,14 +201,15 @@ class _CategoryCard extends StatelessWidget {
     );
   }
 
-  Widget _buildBuyButton() {
+  Widget _buildBuyButton(BuildContext context) {
     return GestureDetector(
       onTap: () => Get.toNamed(
         AppRoutes.buyVehicleListings,
         arguments: {'category': category},
       ),
       child: Container(
-        height: 26.h,
+        constraints: BoxConstraints(minHeight: 26.h),
+        padding: EdgeInsets.symmetric(horizontal: 4.w),
         decoration: BoxDecoration(
           gradient: const LinearGradient(
             begin: Alignment.topCenter,
@@ -224,13 +226,16 @@ class _CategoryCard extends StatelessWidget {
           ],
         ),
         child: Center(
-          child: Text(
-            'Buy',
-            style: TextStyle(
-              fontFamily: 'Montserrat',
-              fontSize: 11.sp,
-              fontWeight: FontWeight.w600,
-              color: Colors.white,
+          child: FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Text(
+              context.l10n.spareBuy,
+              style: TextStyle(
+                fontFamily: 'Montserrat',
+                fontSize: 11.sp,
+                fontWeight: FontWeight.w600,
+                color: Colors.white,
+              ),
             ),
           ),
         ),
@@ -238,7 +243,7 @@ class _CategoryCard extends StatelessWidget {
     );
   }
 
-  Widget _buildSellButton() {
+  Widget _buildSellButton(BuildContext context) {
     return GestureDetector(
       onTap: () => Get.toNamed(
         AppRoutes.sellVehicle,
@@ -248,20 +253,24 @@ class _CategoryCard extends StatelessWidget {
         },
       ),
       child: Container(
-        height: 26.h,
+        constraints: BoxConstraints(minHeight: 26.h),
+        padding: EdgeInsets.symmetric(horizontal: 4.w),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(13.r),
           border: Border.all(color: AppColors.ctaGradientStart, width: 1.5),
         ),
         child: Center(
-          child: Text(
-            'Sell',
-            style: TextStyle(
-              fontFamily: 'Montserrat',
-              fontSize: 11.sp,
-              fontWeight: FontWeight.w600,
-              color: AppColors.ctaGradientStart,
+          child: FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Text(
+              context.l10n.spareSell,
+              style: TextStyle(
+                fontFamily: 'Montserrat',
+                fontSize: 11.sp,
+                fontWeight: FontWeight.w600,
+                color: AppColors.ctaGradientStart,
+              ),
             ),
           ),
         ),
@@ -362,19 +371,23 @@ class _FilterBottomSheetState extends State<_FilterBottomSheet> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  'Filters',
-                  style: TextStyle(
-                    fontFamily: 'Montserrat',
-                    fontSize: 18.sp,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.textPrimary,
+                Flexible(
+                  child: Text(
+                    context.l10n.spareFilters,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontFamily: 'Montserrat',
+                      fontSize: 18.sp,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.textPrimary,
+                    ),
                   ),
                 ),
                 TextButton(
                   onPressed: () => setState(() => _tempFilters.clear()),
                   child: Text(
-                    'Reset',
+                    context.l10n.spareReset,
                     style: TextStyle(
                       fontFamily: 'Montserrat',
                       color: AppColors.primary,
@@ -396,7 +409,7 @@ class _FilterBottomSheetState extends State<_FilterBottomSheet> {
               if (widget.controller.filterConfigs.isEmpty) {
                 return Center(
                   child: Text(
-                    'No filters available',
+                    context.l10n.spareNoFiltersAvailable,
                     style: TextStyle(
                       fontFamily: 'Montserrat',
                       color: AppColors.grey500,
@@ -423,27 +436,32 @@ class _FilterBottomSheetState extends State<_FilterBottomSheet> {
             padding: const EdgeInsets.fromLTRB(20, 8, 20, 20),
             child: SizedBox(
               width: double.infinity,
-              height: 50,
-              child: ElevatedButton(
-                onPressed: () {
-                  widget.controller.selectedFilters.assignAll(_tempFilters);
-                  widget.controller.loadVehicles();
-                  Get.back();
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primary,
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(26),
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(minHeight: 50),
+                child: ElevatedButton(
+                  onPressed: () {
+                    widget.controller.selectedFilters.assignAll(_tempFilters);
+                    widget.controller.loadVehicles();
+                    Get.back();
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.primary,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(26),
+                    ),
+                    elevation: 0,
                   ),
-                  elevation: 0,
-                ),
-                child: Text(
-                  'Apply Filters',
-                  style: TextStyle(
-                    fontFamily: 'Montserrat',
-                    fontSize: 16.sp,
-                    fontWeight: FontWeight.w600,
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Text(
+                      context.l10n.applyFilters,
+                      style: TextStyle(
+                        fontFamily: 'Montserrat',
+                        fontSize: 16.sp,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
                   ),
                 ),
               ),
@@ -480,7 +498,9 @@ class _FilterBottomSheetState extends State<_FilterBottomSheet> {
             isExpanded: true,
             underline: const SizedBox.shrink(),
             hint: Text(
-              'Select $name',
+              context.l10n.spareSelectFilter(name),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
               style: TextStyle(
                 fontFamily: 'Montserrat',
                 color: AppColors.grey500,
@@ -492,6 +512,8 @@ class _FilterBottomSheetState extends State<_FilterBottomSheet> {
                 value: opt.value,
                 child: Text(
                   opt.label,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                   style: TextStyle(fontFamily: 'Montserrat', fontSize: 13.sp),
                 ),
               );

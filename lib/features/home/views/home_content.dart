@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../core/constants/app_colors.dart';
+import '../../../core/extensions/context_extensions.dart';
 
 /// Home tab content - main landing page
 class HomeContent extends StatelessWidget {
@@ -59,7 +60,7 @@ class HomeContent extends StatelessWidget {
                   Icon(Icons.search, color: AppColors.grey500),
                   const SizedBox(width: 12),
                   Text(
-                    'Search vehicles, equipment...',
+                    context.l10n.coreSearchVehiclesEquipment,
                     style: TextStyle(color: AppColors.grey500, fontSize: 14),
                   ),
                   const Spacer(),
@@ -72,7 +73,7 @@ class HomeContent extends StatelessWidget {
 
             // Categories section placeholder
             Text(
-              'Categories',
+              context.l10n.categories,
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.w600,
@@ -89,10 +90,22 @@ class HomeContent extends StatelessWidget {
               mainAxisSpacing: 16,
               crossAxisSpacing: 16,
               children: [
-                _CategoryItem(icon: Icons.local_shipping, label: 'Trucks'),
-                _CategoryItem(icon: Icons.construction, label: 'Equipment'),
-                _CategoryItem(icon: Icons.agriculture, label: 'Tractors'),
-                _CategoryItem(icon: Icons.directions_bus, label: 'Buses'),
+                _CategoryItem(
+                  icon: Icons.local_shipping,
+                  label: context.l10n.trucks,
+                ),
+                _CategoryItem(
+                  icon: Icons.construction,
+                  label: context.l10n.coreEquipment,
+                ),
+                _CategoryItem(
+                  icon: Icons.agriculture,
+                  label: context.l10n.coreTractors,
+                ),
+                _CategoryItem(
+                  icon: Icons.directions_bus,
+                  label: context.l10n.buses,
+                ),
               ],
             ),
 
@@ -103,7 +116,7 @@ class HomeContent extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'Featured Listings',
+                  context.l10n.coreFeaturedListings,
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w600,
@@ -113,7 +126,7 @@ class HomeContent extends StatelessWidget {
                 TextButton(
                   onPressed: () {},
                   child: Text(
-                    'View All',
+                    context.l10n.viewAll,
                     style: TextStyle(
                       color: AppColors.primary,
                       fontWeight: FontWeight.w500,
@@ -139,7 +152,7 @@ class HomeContent extends StatelessWidget {
 
             // Recent listings placeholder
             Text(
-              'Recently Added',
+              context.l10n.recentlyAdded,
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.w600,

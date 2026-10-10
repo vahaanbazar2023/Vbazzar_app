@@ -29,8 +29,9 @@ class ApprovedVehicleCategoryModel extends ApprovedVehicleCategoryEntity {
       categoryPlan: json['category_plan']?.toString() ?? '',
       sortingOrder: _parseInt(json['sorting_order']),
       iconName: json['icon_name']?.toString() ?? '',
-      approvedVehAvailableCount:
-          _parseInt(json['approved_veh_available_count']),
+      approvedVehAvailableCount: _parseInt(
+        json['approved_veh_available_count'],
+      ),
       insertedAt: _parseDateTime(json['inserted_at']),
       modifiedAt: _parseDateTime(json['modified_at']),
       insertedBy: json['inserted_by']?.toString() ?? '',

@@ -21,6 +21,7 @@ import '../domain/entities/finance_request_entity.dart';
 import '../domain/entities/insurance_request_entity.dart';
 import '../domain/entities/quote_entity.dart';
 import '../domain/repositories/insurance_finance_repository.dart';
+import '../../../core/extensions/context_extensions.dart';
 
 /// Main controller for the Insurance & Finance module.
 ///
@@ -34,8 +35,8 @@ class InsuranceFinanceController extends GetxController
   InsuranceFinanceController({
     required InsuranceFinanceRepository repository,
     required LocationService locationService,
-  })  : _repository = repository,
-        _locationService = locationService;
+  }) : _repository = repository,
+       _locationService = locationService;
 
   // ─── Tab state ──────────────────────────────────────────────
 
@@ -159,8 +160,9 @@ class InsuranceFinanceController extends GetxController
   // ─── Initialization ─────────────────────────────────────────
 
   Future<void> _initializeData() async {
-    _currentUserId =
-        await SecureStorageService.instance.read(StorageKeys.userId);
+    _currentUserId = await SecureStorageService.instance.read(
+      StorageKeys.userId,
+    );
     _loadStates();
   }
 
@@ -259,7 +261,7 @@ class InsuranceFinanceController extends GetxController
 
     final userId = _currentUserId;
     if (userId == null) {
-      _showErrorSnackbar('Please login to submit insurance request');
+      _showErrorSnackbar(appL10n.insLoginToSubmitInsurance);
       return;
     }
 
@@ -287,8 +289,9 @@ class InsuranceFinanceController extends GetxController
         files['pan_file'] = _createMultipartFile(panFiles.first);
       }
       if (previousPolicyFiles.isNotEmpty) {
-        files['previous_policy_file'] =
-            _createMultipartFile(previousPolicyFiles.first);
+        files['previous_policy_file'] = _createMultipartFile(
+          previousPolicyFiles.first,
+        );
       }
 
       final result = await _repository.submitInsuranceRequest(
@@ -306,18 +309,17 @@ class InsuranceFinanceController extends GetxController
 
       if (result.success) {
         _resetInsuranceForm();
-        _showSuccessDialog(
-          'Insurance request submitted successfully! Our team will review and get back to you soon.',
-        );
+        _showSuccessDialog(appL10n.insInsuranceSubmittedSuccess);
       } else {
-        final errorDetail = result.errorMessage != null && result.errorMessage!.isNotEmpty
+        final errorDetail =
+            result.errorMessage != null && result.errorMessage!.isNotEmpty
             ? '\n${result.errorMessage}'
             : '';
         _showErrorSnackbar('${result.message}$errorDetail');
       }
     } catch (e) {
       debugPrint('❌ INSURANCE EXCEPTION: $e');
-      _showErrorSnackbar('An unexpected error occurred. Please try again.');
+      _showErrorSnackbar(appL10n.unexpectedError);
     } finally {
       isSubmitting.value = false;
     }
@@ -343,7 +345,7 @@ class InsuranceFinanceController extends GetxController
       final loadedStates = await _locationService.fetchStates();
       states.assignAll(loadedStates);
     } catch (e) {
-      _showErrorSnackbar('Failed to load states');
+      _showErrorSnackbar(appL10n.insFailedLoadStates);
     } finally {
       isLoadingStates.value = false;
     }
@@ -377,7 +379,7 @@ class InsuranceFinanceController extends GetxController
       final loadedCities = await _locationService.fetchCities(stateId);
       cities.assignAll(loadedCities);
     } catch (e) {
-      _showErrorSnackbar('Failed to load cities');
+      _showErrorSnackbar(appL10n.insFailedLoadCities);
     } finally {
       isLoadingCities.value = false;
     }
@@ -526,7 +528,7 @@ class InsuranceFinanceController extends GetxController
 
     final userId = _currentUserId;
     if (userId == null) {
-      _showErrorSnackbar('Please login to submit finance request');
+      _showErrorSnackbar(appL10n.insLoginToSubmitFinance);
       return;
     }
 
@@ -543,8 +545,7 @@ class InsuranceFinanceController extends GetxController
         vehicleLocation: vehicleLocationController.text.trim(),
         applicantMobileNum: mobileNumberController.text.trim(),
         coApplicantDetails: isCoapplicant.value ? 'checked' : 'unchecked',
-        coApplicantMobileNum:
-            mobileCoApplicantNumberController.text.trim(),
+        coApplicantMobileNum: mobileCoApplicantNumberController.text.trim(),
       );
 
       // Build file map
@@ -553,29 +554,33 @@ class InsuranceFinanceController extends GetxController
         files['rc_file'] = _createMultipartFile(rcCopyFinanceFiles.first);
       }
       if (insuranceCopyFiles.isNotEmpty) {
-        files['insurance_file'] =
-            _createMultipartFile(insuranceCopyFiles.first);
+        files['insurance_file'] = _createMultipartFile(
+          insuranceCopyFiles.first,
+        );
       }
       if (companyGstFiles.isNotEmpty) {
-        files['company_gst_file'] =
-            _createMultipartFile(companyGstFiles.first);
+        files['company_gst_file'] = _createMultipartFile(companyGstFiles.first);
       }
       if (aadharFinanceFiles.isNotEmpty) {
-        files['applicant_aadhar_file'] =
-            _createMultipartFile(aadharFinanceFiles.first);
+        files['applicant_aadhar_file'] = _createMultipartFile(
+          aadharFinanceFiles.first,
+        );
       }
       if (panFinanceFiles.isNotEmpty) {
-        files['applicant_pan_file'] =
-            _createMultipartFile(panFinanceFiles.first);
+        files['applicant_pan_file'] = _createMultipartFile(
+          panFinanceFiles.first,
+        );
       }
       if (isCoapplicant.value) {
         if (aadharCoApplicantFinanceFiles.isNotEmpty) {
-          files['co_applicant_aadhar_file'] =
-              _createMultipartFile(aadharCoApplicantFinanceFiles.first);
+          files['co_applicant_aadhar_file'] = _createMultipartFile(
+            aadharCoApplicantFinanceFiles.first,
+          );
         }
         if (panCoApplicantFinanceFiles.isNotEmpty) {
-          files['co_applicant_pan_file'] =
-              _createMultipartFile(panCoApplicantFinanceFiles.first);
+          files['co_applicant_pan_file'] = _createMultipartFile(
+            panCoApplicantFinanceFiles.first,
+          );
         }
       }
 
@@ -594,18 +599,17 @@ class InsuranceFinanceController extends GetxController
 
       if (result.success) {
         _resetFinanceForm();
-        _showSuccessDialog(
-          'Finance request submitted successfully! Our team will review and get back to you soon.',
-        );
+        _showSuccessDialog(appL10n.insFinanceSubmittedSuccess);
       } else {
-        final errorDetail = result.errorMessage != null && result.errorMessage!.isNotEmpty
+        final errorDetail =
+            result.errorMessage != null && result.errorMessage!.isNotEmpty
             ? '\n${result.errorMessage}'
             : '';
         _showErrorSnackbar('${result.message}$errorDetail');
       }
     } catch (e) {
       debugPrint('❌ FINANCE EXCEPTION: $e');
-      _showErrorSnackbar('An unexpected error occurred. Please try again.');
+      _showErrorSnackbar(appL10n.unexpectedError);
     } finally {
       isSubmitting.value = false;
     }
@@ -639,7 +643,7 @@ class InsuranceFinanceController extends GetxController
   Future<void> loadVehicleQuotes() async {
     final userId = _currentUserId;
     if (userId == null) {
-      quotesErrorMessage.value = 'Please login to view quotes';
+      quotesErrorMessage.value = appL10n.insLoginToViewQuotes;
       return;
     }
 
@@ -647,13 +651,10 @@ class InsuranceFinanceController extends GetxController
     quotesErrorMessage.value = '';
 
     try {
-      final quotes = await _repository.getVehicleListingsQuotes(
-        userId: userId,
-      );
+      final quotes = await _repository.getVehicleListingsQuotes(userId: userId);
       vehicleQuotes.assignAll(quotes);
     } catch (e) {
-      quotesErrorMessage.value =
-          e.toString().replaceFirst('Exception: ', '');
+      quotesErrorMessage.value = e.toString().replaceFirst('Exception: ', '');
       vehicleQuotes.clear();
     } finally {
       isLoadingQuotes.value = false;
@@ -686,7 +687,7 @@ class InsuranceFinanceController extends GetxController
         targetList.addAll(result.files);
       }
     } catch (e) {
-      _showErrorSnackbar('Failed to pick file. Please try again.');
+      _showErrorSnackbar(appL10n.insFailedPickFile);
     }
   }
 
@@ -700,10 +701,7 @@ class InsuranceFinanceController extends GetxController
 
   dynamic _createMultipartFile(PlatformFile file) {
     if (file.bytes != null) {
-      return dio.MultipartFile.fromBytes(
-        file.bytes!,
-        filename: file.name,
-      );
+      return dio.MultipartFile.fromBytes(file.bytes!, filename: file.name);
     }
     return null;
   }
@@ -727,7 +725,7 @@ class InsuranceFinanceController extends GetxController
     String vehicleNo,
   ) async {
     if (pdfUrl.isEmpty || pdfUrl == '#') {
-      _showErrorSnackbar('Download link not available');
+      _showErrorSnackbar(appL10n.insDownloadLinkUnavailable);
       return;
     }
 
@@ -738,8 +736,7 @@ class InsuranceFinanceController extends GetxController
       if (Platform.isAndroid) {
         final status = await Permission.storage.request();
         if (!status.isGranted) {
-          _showErrorSnackbar(
-              'Storage permission is required to download quotes');
+          _showErrorSnackbar(appL10n.insStoragePermissionRequired);
           return;
         }
       }
@@ -748,7 +745,8 @@ class InsuranceFinanceController extends GetxController
       String savePath;
       if (Platform.isAndroid) {
         final downloadsDir = await getExternalStorageDirectory();
-        savePath = downloadsDir?.path ??
+        savePath =
+            downloadsDir?.path ??
             (await getApplicationDocumentsDirectory()).path;
       } else {
         savePath = (await getApplicationDocumentsDirectory()).path;
@@ -758,7 +756,8 @@ class InsuranceFinanceController extends GetxController
       final timestamp = DateTime.now().millisecondsSinceEpoch;
       final sanitizedName = providerName.replaceAll(RegExp(r'[^\w\s-]'), '');
       final sanitizedVehicle = vehicleNo.replaceAll(RegExp(r'[^\w\s-]'), '');
-      final fileName = 'Quote_${sanitizedName}_${sanitizedVehicle}_$timestamp.pdf';
+      final fileName =
+          'Quote_${sanitizedName}_${sanitizedVehicle}_$timestamp.pdf';
       final filePath = '$savePath/$fileName';
 
       // Download file
@@ -775,11 +774,11 @@ class InsuranceFinanceController extends GetxController
       // Open downloaded file
       final result = await OpenFilex.open(filePath);
       if (result.type != ResultType.done) {
-        _showErrorSnackbar('Could not open the downloaded PDF');
+        _showErrorSnackbar(appL10n.insCouldNotOpenPdf);
       } else {
         Get.snackbar(
-          'Downloaded',
-          'Quote PDF saved successfully',
+          appL10n.insDownloaded,
+          appL10n.insQuotePdfSaved,
           snackPosition: SnackPosition.TOP,
           backgroundColor: Colors.green,
           colorText: Colors.white,
@@ -792,24 +791,24 @@ class InsuranceFinanceController extends GetxController
         case dio.DioExceptionType.connectionTimeout:
         case dio.DioExceptionType.sendTimeout:
         case dio.DioExceptionType.receiveTimeout:
-          message = 'Request timeout. Please try again.';
+          message = appL10n.insRequestTimeout;
           break;
         case dio.DioExceptionType.connectionError:
-          message = 'Network error. Please check your connection.';
+          message = appL10n.insNetworkErrorCheckConnection;
           break;
         default:
           final statusCode = e.response?.statusCode;
           if (statusCode == 404) {
-            message = 'Quote file not found.';
+            message = appL10n.insQuoteFileNotFound;
           } else if (statusCode == 403) {
-            message = 'Access denied. Quote may have expired.';
+            message = appL10n.insAccessDeniedQuoteExpired;
           } else {
-            message = 'Failed to download quote PDF.';
+            message = appL10n.insFailedDownloadQuote;
           }
       }
       _showErrorSnackbar(message);
     } catch (e) {
-      _showErrorSnackbar('Failed to save quote PDF: ${e.toString()}');
+      _showErrorSnackbar(appL10n.insFailedSaveQuote(e.toString()));
     } finally {
       isDownloadingQuote.value = false;
     }
@@ -848,7 +847,7 @@ class InsuranceFinanceController extends GetxController
 
               // Thank You Title
               Text(
-                'Thank you for submitting!',
+                appL10n.insThankYouForSubmitting,
                 style: AppFonts.titleMedium.copyWith(
                   fontWeight: FontWeight.w600,
                   color: AppColors.textPrimary,
@@ -860,7 +859,7 @@ class InsuranceFinanceController extends GetxController
 
               // Subtitle
               Text(
-                'Our team will contact you soon..!',
+                appL10n.insTeamWillContactSoon,
                 style: AppFonts.bodyMedium.copyWith(
                   color: AppColors.textSecondary,
                   fontSize: 14.sp,
@@ -873,7 +872,7 @@ class InsuranceFinanceController extends GetxController
               SizedBox(
                 width: double.infinity,
                 child: GradientButton.filled(
-                  text: 'Okay',
+                  text: appL10n.insOkay,
                   onPressed: () {
                     Get.back(); // Close dialog
                     _navigateToCategories();

@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../../core/extensions/context_extensions.dart';
 import '../../../core/design_system/molecules/custom_snackbar.dart';
 import '../../../core/network/network_service.dart';
 import '../../../core/network/endpoints/api_endpoints.dart';
@@ -216,12 +217,12 @@ class BuyVehicleController extends GetxController {
       categories.assignAll(result);
       if (result.isEmpty) {
         hasErrorCategories.value = true;
-        errorMessageCategories.value = 'No categories found';
+        errorMessageCategories.value = appL10n.spareNoCategoriesFound;
       }
     } catch (e) {
       debugPrint('🔴 [CATEGORIES ERROR] $e');
       hasErrorCategories.value = true;
-      errorMessageCategories.value = 'Failed to load categories';
+      errorMessageCategories.value = appL10n.spareFailedToLoadCategories;
     } finally {
       isLoadingCategories.value = false;
     }
@@ -414,7 +415,7 @@ class BuyVehicleController extends GetxController {
       buyPage.value = result.currentPage + 1;
     } catch (e) {
       hasErrorBuyVehicles.value = true;
-      errorMessageBuyVehicles.value = 'Failed to load vehicles';
+      errorMessageBuyVehicles.value = appL10n.spareFailedToLoadVehicles;
       debugPrint('🔴 [BUY VEHICLES ERROR] $e');
     } finally {
       isLoadingBuyVehicles.value = false;
@@ -472,7 +473,8 @@ class BuyVehicleController extends GetxController {
       subscribedPage.value += 1;
     } catch (e) {
       hasErrorSubscribed.value = true;
-      errorMessageSubscribed.value = 'Failed to load subscribed vehicles';
+      errorMessageSubscribed.value =
+          appL10n.spareFailedToLoadSubscribedVehicles;
       debugPrint('🔴 [SUBSCRIBED VEHICLES ERROR] $e');
     } finally {
       isLoadingSubscribed.value = false;
@@ -514,20 +516,21 @@ class BuyVehicleController extends GetxController {
       );
       if (result['status'] == 'success') {
         CustomSnackbar.show(
-          message: 'The seller has been notified of your interest.',
+          message: appL10n.spareSellerNotifiedOfInterest,
           type: SnackbarType.success,
         );
       } else {
         Get.snackbar(
-          'Error',
-          result['message']?.toString() ?? 'Failed to record interest.',
+          appL10n.spareError,
+          result['message']?.toString() ??
+              appL10n.spareFailedToRecordInterestShort,
           snackPosition: SnackPosition.TOP,
         );
       }
     } catch (e) {
       Get.snackbar(
-        'Error',
-        'Something went wrong. Please try again.',
+        appL10n.spareError,
+        appL10n.somethingWentWrong,
         snackPosition: SnackPosition.TOP,
       );
     }
@@ -555,12 +558,15 @@ class BuyVehicleController extends GetxController {
         if (errorCode == 'INSUFFICIENT_OFFER_AMOUNT') {
           final additional = result['additional_data'] as Map<String, dynamic>?;
           final minRequired = additional?['minimum_required'];
-          return 'Offer too low. Minimum required: ₹${_formatNum(minRequired)}';
+          return appL10n.spareOfferTooLowMinimumRequired(
+            _formatNum(minRequired),
+          );
         }
-        return result['message']?.toString() ?? 'Failed to submit offer.';
+        return result['message']?.toString() ??
+            appL10n.spareFailedToSubmitOffer;
       }
     } catch (e) {
-      return 'Something went wrong. Please try again.';
+      return appL10n.somethingWentWrong;
     }
   }
 
@@ -582,12 +588,13 @@ class BuyVehicleController extends GetxController {
       final plan = SubscriptionPlan(
         typeCode: 'INSPECTION',
         planCode: planCode,
-        name: 'Inspection',
+        name: appL10n.spareInspectionPlanName,
         price: amount,
         displayOrder: 0,
         status: 'active',
-        featDescription:
-            'Professional on-site inspection for ${vehicle.categoryName}',
+        featDescription: appL10n.spareProfessionalOnSiteInspectionFor(
+          vehicle.categoryName,
+        ),
         planMetric: 'fixed',
         planMetricValue: '',
       );
@@ -597,9 +604,8 @@ class BuyVehicleController extends GetxController {
       Get.to(
         () => SinglePlanPaymentScreen(
           plan: plan,
-          title: 'Request Inspection',
-          subtitle:
-              'Pay to request a professional inspection for this vehicle.',
+          title: appL10n.requestInspection,
+          subtitle: appL10n.sparePayToRequestInspection,
           onPaymentSuccess: () {
             // Navigate back to the detail screen immediately
             Get.back();
@@ -630,20 +636,21 @@ class BuyVehicleController extends GetxController {
       );
       if (result['status'] == 'success') {
         CustomSnackbar.show(
-          message: 'Our team will contact you to schedule an inspection.',
+          message: appL10n.spareTeamWillContactForInspection,
           type: SnackbarType.success,
         );
       } else {
         Get.snackbar(
-          'Error',
-          result['message']?.toString() ?? 'Failed to request inspection.',
+          appL10n.spareError,
+          result['message']?.toString() ??
+              appL10n.spareFailedToRequestInspection,
           snackPosition: SnackPosition.TOP,
         );
       }
     } catch (e) {
       Get.snackbar(
-        'Error',
-        'Something went wrong. Please try again.',
+        appL10n.spareError,
+        appL10n.somethingWentWrong,
         snackPosition: SnackPosition.TOP,
       );
     }
@@ -730,7 +737,7 @@ class BuyVehicleController extends GetxController {
             ownerPhones[sbVehicleId] = v.sellerPhone!;
           }
         } else if (!silent) {
-          detailError.value = 'Vehicle not found.';
+          detailError.value = appL10n.spareVehicleNotFound;
         }
         return;
       }
@@ -750,12 +757,12 @@ class BuyVehicleController extends GetxController {
           ownerPhones[sbVehicleId] = v.sellerPhone!;
         }
       } else if (!silent) {
-        detailError.value = 'Vehicle not found.';
+        detailError.value = appL10n.spareVehicleNotFound;
       }
     } catch (e) {
       debugPrint('❌ fetchVehicleDetail: $e');
       if (!silent) {
-        detailError.value = 'Failed to load vehicle details. Please try again.';
+        detailError.value = appL10n.spareFailedToLoadVehicleDetails;
       }
     } finally {
       if (!silent) isLoadingDetail.value = false;
@@ -897,7 +904,7 @@ class BuyVehicleController extends GetxController {
         CustomSnackbar.show(
           message:
               result['message']?.toString() ??
-              'Could not access vehicle details.',
+              appL10n.spareCouldNotAccessVehicleDetails,
           type: SnackbarType.error,
         );
         return false;
@@ -981,7 +988,9 @@ class BuyVehicleController extends GetxController {
         return false;
       } else {
         CustomSnackbar.show(
-          message: result['message']?.toString() ?? 'Could not reveal contact.',
+          message:
+              result['message']?.toString() ??
+              appL10n.spareCouldNotRevealContact,
           type: SnackbarType.error,
         );
         return false;
@@ -997,9 +1006,8 @@ class BuyVehicleController extends GetxController {
       AppRoutes.subscription,
       arguments: {
         'subscription_source': SubscriptionTypeCode.vehicleDetailsAccess,
-        'title': 'Vehicle Details Access',
-        'subtitle':
-            'Get full vehicle details + 5 owner contact credits. Pay once, use for the plan period.',
+        'title': appL10n.spareVehicleDetailsAccess,
+        'subtitle': appL10n.spareVehicleDetailsAccessSubtitle,
         'pending_vehicle': vehicle,
       },
     );
@@ -1014,9 +1022,8 @@ class BuyVehicleController extends GetxController {
       AppRoutes.subscription,
       arguments: {
         'subscription_source': SubscriptionTypeCode.ownerContact,
-        'title': 'Owner Contact Pack',
-        'subtitle':
-            'Your contact credits are exhausted. Buy a pack to reveal owner phone numbers.',
+        'title': appL10n.spareOwnerContactPack,
+        'subtitle': appL10n.spareOwnerContactPackSubtitle,
         'pending_vehicle_id': vehicle.sbVehicleId,
         'category_code': vehicle.categoryCode,
         if (planCode != null) 'plan_code_override': planCode,

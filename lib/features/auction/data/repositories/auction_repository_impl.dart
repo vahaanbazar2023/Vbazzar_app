@@ -406,8 +406,6 @@ class AuctionRepositoryImpl implements AuctionRepository {
     }
   }
 
-
-
   // ─── Vehicle Search ──────────────────────────────────────────
 
   @override

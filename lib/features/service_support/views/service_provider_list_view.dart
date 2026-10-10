@@ -38,22 +38,24 @@ class ServiceProviderListView extends GetView<ServiceSupportController> {
                     ),
                     child: Row(
                       children: [
-                        Container(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 12.w,
-                            vertical: 6.h,
-                          ),
-                          decoration: BoxDecoration(
-                            color: AppColors.primary.withValues(alpha: 0.1),
-                            borderRadius: BorderRadius.circular(20.r),
-                          ),
-                          child: Text(
-                            context.l10n.providersFound(
-                              controller.totalCount.value.toString(),
+                        Flexible(
+                          child: Container(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 12.w,
+                              vertical: 6.h,
                             ),
-                            style: AppFonts.bodySmall.copyWith(
-                              color: AppColors.primary,
-                              fontWeight: FontWeight.w600,
+                            decoration: BoxDecoration(
+                              color: AppColors.primary.withValues(alpha: 0.1),
+                              borderRadius: BorderRadius.circular(20.r),
+                            ),
+                            child: Text(
+                              context.l10n.providersFound(
+                                controller.totalCount.value.toString(),
+                              ),
+                              style: AppFonts.bodySmall.copyWith(
+                                color: AppColors.primary,
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
                           ),
                         ),
@@ -125,7 +127,7 @@ class ServiceProviderListView extends GetView<ServiceSupportController> {
                             : Padding(
                                 padding: EdgeInsets.symmetric(vertical: 16.h),
                                 child: GradientButton.filled(
-                                  text: 'Load More',
+                                  text: context.l10n.loadMore,
                                   onPressed: () =>
                                       controller.loadMoreMechanics(),
                                   height: 48.h,
@@ -281,87 +283,96 @@ class ServiceProviderListView extends GetView<ServiceSupportController> {
                 // Rating & Distance row
                 Row(
                   children: [
-                    // Star rating — show individual stars
-                    if (mechanic.rating > 0) ...[
-                      Container(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 8.w,
-                          vertical: 6.h,
-                        ),
-                        decoration: BoxDecoration(
-                          color: Colors.amber.withValues(alpha: 0.1),
-                          borderRadius: BorderRadius.circular(8.r),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            ...List.generate(5, (i) {
-                              if (i < mechanic.rating.floor()) {
-                                return Icon(
-                                  Icons.star_rounded,
-                                  size: 16.sp,
-                                  color: Colors.amber,
-                                );
-                              } else if (i < mechanic.rating) {
-                                return Icon(
-                                  Icons.star_half_rounded,
-                                  size: 16.sp,
-                                  color: Colors.amber,
-                                );
-                              } else {
-                                return Icon(
-                                  Icons.star_border_rounded,
-                                  size: 16.sp,
-                                  color: Colors.amber.shade300,
-                                );
-                              }
-                            }),
-                            SizedBox(width: 4.w),
-                            Text(
-                              mechanic.starRating,
-                              style: AppFonts.bodySmall.copyWith(
-                                fontWeight: FontWeight.bold,
-                                color: Colors.amber.shade800,
+                    Expanded(
+                      child: Wrap(
+                        spacing: 10.w,
+                        runSpacing: 8.h,
+                        crossAxisAlignment: WrapCrossAlignment.center,
+                        children: [
+                          // Star rating — show individual stars
+                          if (mechanic.rating > 0) ...[
+                            Container(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 8.w,
+                                vertical: 6.h,
+                              ),
+                              decoration: BoxDecoration(
+                                color: Colors.amber.withValues(alpha: 0.1),
+                                borderRadius: BorderRadius.circular(8.r),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  ...List.generate(5, (i) {
+                                    if (i < mechanic.rating.floor()) {
+                                      return Icon(
+                                        Icons.star_rounded,
+                                        size: 16.sp,
+                                        color: Colors.amber,
+                                      );
+                                    } else if (i < mechanic.rating) {
+                                      return Icon(
+                                        Icons.star_half_rounded,
+                                        size: 16.sp,
+                                        color: Colors.amber,
+                                      );
+                                    } else {
+                                      return Icon(
+                                        Icons.star_border_rounded,
+                                        size: 16.sp,
+                                        color: Colors.amber.shade300,
+                                      );
+                                    }
+                                  }),
+                                  SizedBox(width: 4.w),
+                                  Text(
+                                    mechanic.starRating,
+                                    style: AppFonts.bodySmall.copyWith(
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.amber.shade800,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                           ],
-                        ),
-                      ),
-                      SizedBox(width: 10.w),
-                    ],
 
-                    // Distance
-                    if (mechanic.distanceKm > 0)
-                      Container(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 10.w,
-                          vertical: 6.h,
-                        ),
-                        decoration: BoxDecoration(
-                          color: AppColors.info.withValues(alpha: 0.1),
-                          borderRadius: BorderRadius.circular(8.r),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              Icons.near_me_rounded,
-                              size: 16.sp,
-                              color: AppColors.info,
-                            ),
-                            SizedBox(width: 4.w),
-                            Text(
-                              '${mechanic.distanceKm.toStringAsFixed(1)} km',
-                              style: AppFonts.bodyMedium.copyWith(
-                                fontWeight: FontWeight.w600,
-                                color: AppColors.info,
+                          // Distance
+                          if (mechanic.distanceKm > 0)
+                            Container(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 10.w,
+                                vertical: 6.h,
+                              ),
+                              decoration: BoxDecoration(
+                                color: AppColors.info.withValues(alpha: 0.1),
+                                borderRadius: BorderRadius.circular(8.r),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(
+                                    Icons.near_me_rounded,
+                                    size: 16.sp,
+                                    color: AppColors.info,
+                                  ),
+                                  SizedBox(width: 4.w),
+                                  Text(
+                                    appL10n.inspDistanceKm(
+                                      mechanic.distanceKm.toStringAsFixed(1),
+                                    ),
+                                    style: AppFonts.bodyMedium.copyWith(
+                                      fontWeight: FontWeight.w600,
+                                      color: AppColors.info,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
-                          ],
-                        ),
+                        ],
                       ),
-
-                    const Spacer(),
+                    ),
+                    SizedBox(width: 8.w),
 
                     // Priority badge
                     if (mechanic.priority.isNotEmpty)
@@ -446,7 +457,7 @@ class ServiceProviderListView extends GetView<ServiceSupportController> {
 
   Widget _buildSubscribeButton(Mechanic mechanic) {
     return GradientButton.filled(
-      text: 'Subscribe to Call',
+      text: appL10n.subscribeToCAll,
       onPressed: () => controller.contactMechanic(mechanic),
       width: double.infinity,
       height: 48.h,
@@ -461,8 +472,8 @@ class ServiceProviderListView extends GetView<ServiceSupportController> {
       await launchUrl(url);
     } else {
       Get.snackbar(
-        'Error',
-        'Could not launch phone dialer',
+        appL10n.inspError,
+        appL10n.couldNotLaunchDialer,
         snackPosition: SnackPosition.TOP,
         backgroundColor: AppColors.error,
         colorText: Colors.white,
@@ -613,12 +624,12 @@ class ServiceProviderListView extends GetView<ServiceSupportController> {
             ),
             SizedBox(height: 24.h),
             Text(
-              'No Mechanics Found',
+              appL10n.noMechanicsFound,
               style: AppFonts.titleLarge.copyWith(fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 8.h),
             Text(
-              'No service providers found near your location.\nTry again or expand your search area.',
+              appL10n.inspNoServiceProvidersTryAgain,
               style: AppFonts.bodyMedium.copyWith(
                 color: AppColors.textSecondary,
               ),
@@ -626,7 +637,7 @@ class ServiceProviderListView extends GetView<ServiceSupportController> {
             ),
             SizedBox(height: 24.h),
             GradientButton.filled(
-              text: 'Try Again',
+              text: appL10n.tryAgain,
               onPressed: () => controller.refreshMechanics(),
               height: 48.h,
               fontSize: 16.sp,
@@ -651,12 +662,12 @@ class ServiceProviderListView extends GetView<ServiceSupportController> {
             ),
             SizedBox(height: 16.h),
             Text(
-              'No results found',
+              appL10n.noResultsFound,
               style: AppFonts.titleMedium.copyWith(fontWeight: FontWeight.w600),
             ),
             SizedBox(height: 8.h),
             Text(
-              'Try a different search term',
+              appL10n.tryDifferentSearch,
               style: AppFonts.bodyMedium.copyWith(
                 color: AppColors.textSecondary,
               ),

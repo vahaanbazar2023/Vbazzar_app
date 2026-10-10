@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import '../../../core/extensions/context_extensions.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/design_system/design_system.dart';
 import '../../../core/design_system/templates/app_layout.dart';
@@ -33,8 +34,8 @@ class _MyVehiclesViewState extends State<MyVehiclesView> {
   @override
   Widget build(BuildContext context) {
     return AppLayout(
-      title: 'My Vehicles',
-      subtitle: 'Your posted vehicle listings',
+      title: context.l10n.myVehicles,
+      subtitle: context.l10n.spareYourPostedVehicleListings,
       body: Obx(() {
         // ── Loading ─────────────────────────────────────────────────────────
         if (controller.isLoadingSellVehicles.value &&
@@ -106,11 +107,12 @@ class _MyVehiclesViewState extends State<MyVehiclesView> {
 
   void _confirmMarkSold(SellVehicleEntity v) {
     Get.defaultDialog(
-      title: 'Mark as Sold',
-      middleText:
-          'Mark "${v.brandName ?? ''} ${v.model ?? ''}".trim() as sold?',
-      textConfirm: 'Confirm',
-      textCancel: 'Cancel',
+      title: context.l10n.spareMarkAsSold,
+      middleText: context.l10n.spareMarkVehicleAsSoldPrompt(
+        '${v.brandName ?? ''} ${v.model ?? ''}'.trim(),
+      ),
+      textConfirm: context.l10n.spareConfirm,
+      textCancel: context.l10n.cancel,
       confirmTextColor: Colors.white,
       buttonColor: AppColors.primary,
       onConfirm: () {
@@ -122,11 +124,12 @@ class _MyVehiclesViewState extends State<MyVehiclesView> {
 
   void _confirmMarkUnsold(SellVehicleEntity v) {
     Get.defaultDialog(
-      title: 'Mark as Available',
-      middleText:
-          'Mark "${v.brandName ?? ''} ${v.model ?? ''}".trim() as available?',
-      textConfirm: 'Confirm',
-      textCancel: 'Cancel',
+      title: context.l10n.spareMarkAsAvailable,
+      middleText: context.l10n.spareMarkVehicleAsAvailablePrompt(
+        '${v.brandName ?? ''} ${v.model ?? ''}'.trim(),
+      ),
+      textConfirm: context.l10n.spareConfirm,
+      textCancel: context.l10n.cancel,
       confirmTextColor: Colors.white,
       buttonColor: AppColors.primary,
       onConfirm: () {
@@ -229,13 +232,17 @@ class _MyVehicleCard extends StatelessWidget {
                     children: [
                       Icon(_statusIcon, size: 12.sp, color: Colors.white),
                       SizedBox(width: 4.w),
-                      Text(
-                        vehicle.statusLabel,
-                        style: TextStyle(
-                          fontFamily: 'Montserrat',
-                          fontSize: 11.sp,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.white,
+                      Flexible(
+                        child: Text(
+                          vehicle.statusLabel,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontFamily: 'Montserrat',
+                            fontSize: 11.sp,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.white,
+                          ),
                         ),
                       ),
                     ],
@@ -255,7 +262,7 @@ class _MyVehicleCard extends StatelessWidget {
                   '${vehicle.brandName ?? ''} ${vehicle.model ?? ''}'
                           .trim()
                           .isEmpty
-                      ? (vehicle.categoryName ?? 'Vehicle')
+                      ? (vehicle.categoryName ?? context.l10n.spareVehicle)
                       : '${vehicle.brandName ?? ''} ${vehicle.model ?? ''}'
                             .trim(),
                   style: TextStyle(
@@ -283,62 +290,75 @@ class _MyVehicleCard extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      vehicle.formattedPrice,
-                      style: TextStyle(
-                        fontFamily: 'Montserrat',
-                        fontSize: 18.sp,
-                        fontWeight: FontWeight.w800,
-                        color: AppColors.primary,
+                    Flexible(
+                      child: Text(
+                        vehicle.formattedPrice,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontFamily: 'Montserrat',
+                          fontSize: 18.sp,
+                          fontWeight: FontWeight.w800,
+                          color: AppColors.primary,
+                        ),
                       ),
                     ),
+                    SizedBox(width: 8.w),
                     // Action button
                     if (!vehicle.isVehicleSold)
-                      GestureDetector(
-                        onTap: onMarkSold,
-                        child: Container(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 14.w,
-                            vertical: 7.h,
-                          ),
-                          decoration: BoxDecoration(
-                            color: AppColors.primary.withValues(alpha: 0.08),
-                            borderRadius: BorderRadius.circular(20),
-                            border: Border.all(
-                              color: AppColors.primary.withValues(alpha: 0.3),
+                      Flexible(
+                        child: GestureDetector(
+                          onTap: onMarkSold,
+                          child: Container(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 14.w,
+                              vertical: 7.h,
                             ),
-                          ),
-                          child: Text(
-                            'Mark Sold',
-                            style: TextStyle(
-                              fontFamily: 'Montserrat',
-                              fontSize: 12.sp,
-                              fontWeight: FontWeight.w600,
-                              color: AppColors.primary,
+                            decoration: BoxDecoration(
+                              color: AppColors.primary.withValues(alpha: 0.08),
+                              borderRadius: BorderRadius.circular(20),
+                              border: Border.all(
+                                color: AppColors.primary.withValues(alpha: 0.3),
+                              ),
+                            ),
+                            child: Text(
+                              context.l10n.spareMarkSold,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                fontFamily: 'Montserrat',
+                                fontSize: 12.sp,
+                                fontWeight: FontWeight.w600,
+                                color: AppColors.primary,
+                              ),
                             ),
                           ),
                         ),
                       )
                     else
-                      GestureDetector(
-                        onTap: onMarkUnsold,
-                        child: Container(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 14.w,
-                            vertical: 7.h,
-                          ),
-                          decoration: BoxDecoration(
-                            color: AppColors.grey100,
-                            borderRadius: BorderRadius.circular(20),
-                            border: Border.all(color: AppColors.grey300),
-                          ),
-                          child: Text(
-                            'Mark Available',
-                            style: TextStyle(
-                              fontFamily: 'Montserrat',
-                              fontSize: 12.sp,
-                              fontWeight: FontWeight.w600,
-                              color: AppColors.grey600,
+                      Flexible(
+                        child: GestureDetector(
+                          onTap: onMarkUnsold,
+                          child: Container(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 14.w,
+                              vertical: 7.h,
+                            ),
+                            decoration: BoxDecoration(
+                              color: AppColors.grey100,
+                              borderRadius: BorderRadius.circular(20),
+                              border: Border.all(color: AppColors.grey300),
+                            ),
+                            child: Text(
+                              context.l10n.spareMarkAvailable,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                fontFamily: 'Montserrat',
+                                fontSize: 12.sp,
+                                fontWeight: FontWeight.w600,
+                                color: AppColors.grey600,
+                              ),
                             ),
                           ),
                         ),
@@ -442,7 +462,7 @@ class _ErrorState extends StatelessWidget {
                 ),
               ),
               child: Text(
-                'Retry',
+                context.l10n.retry,
                 style: TextStyle(
                   fontFamily: 'Montserrat',
                   fontWeight: FontWeight.w600,
@@ -472,7 +492,7 @@ class _EmptyState extends StatelessWidget {
           ),
           SizedBox(height: AppSpacing.md),
           Text(
-            "You haven't posted any vehicles yet",
+            context.l10n.spareNoPostedVehiclesYet,
             style: TextStyle(
               fontFamily: 'Montserrat',
               fontSize: 16.sp,
@@ -483,7 +503,7 @@ class _EmptyState extends StatelessWidget {
           ),
           SizedBox(height: AppSpacing.xs),
           Text(
-            'Tap Sell on any category to post your vehicle',
+            context.l10n.spareTapSellToPostVehicle,
             style: TextStyle(
               fontFamily: 'Montserrat',
               fontSize: 13.sp,

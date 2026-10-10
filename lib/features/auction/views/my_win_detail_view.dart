@@ -103,7 +103,7 @@ class MyWinDetailView extends StatelessWidget {
                             label: context.l10n.regNumber,
                             value: v.registrationNo.isNotEmpty
                                 ? v.registrationNo
-                                : 'N/A',
+                                : context.l10n.na,
                           ),
                         ),
                         SizedBox(width: 8.w),
@@ -130,13 +130,13 @@ class MyWinDetailView extends StatelessWidget {
                         label: context.l10n.bidApprovedAt,
                         value: item.bidApprovedAt.isNotEmpty
                             ? item.bidApprovedAt
-                            : 'N/A',
+                            : context.l10n.na,
                       ),
                       _Row(
                         label: context.l10n.paymentStatus,
                         value: item.paymentStatus.isNotEmpty
                             ? item.paymentStatus
-                            : 'N/A',
+                            : context.l10n.na,
                         valueColor: item.isPaid
                             ? AppColors.success
                             : AppColors.warning,
@@ -154,7 +154,7 @@ class MyWinDetailView extends StatelessWidget {
                         label: context.l10n.auctionEnded,
                         value: item.auctionEndTime.isNotEmpty
                             ? item.auctionEndTime
-                            : 'N/A',
+                            : context.l10n.na,
                         isLast: true,
                       ),
                     ],
@@ -218,7 +218,8 @@ class MyWinDetailView extends StatelessWidget {
                 SizedBox(width: AppSpacing.md),
                 Expanded(
                   child: Container(
-                    height: 44.h,
+                    constraints: BoxConstraints(minHeight: 44.h),
+                    padding: EdgeInsets.symmetric(horizontal: 8.w),
                     alignment: Alignment.center,
                     decoration: BoxDecoration(
                       gradient: item.isPaid
@@ -234,6 +235,7 @@ class MyWinDetailView extends StatelessWidget {
                     ),
                     child: Text(
                       item.userAuctionStatus,
+                      textAlign: TextAlign.center,
                       style: TextStyle(
                         fontFamily: 'Montserrat',
                         fontWeight: FontWeight.w600,
@@ -365,21 +367,27 @@ class _Row extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                '$label :',
-                style: TextStyle(
-                  fontFamily: 'Plus Jakarta Sans',
-                  fontSize: 13.sp,
-                  color: AppColors.grey700,
+              Flexible(
+                child: Text(
+                  '$label :',
+                  style: TextStyle(
+                    fontFamily: 'Plus Jakarta Sans',
+                    fontSize: 13.sp,
+                    color: AppColors.grey700,
+                  ),
                 ),
               ),
-              Text(
-                value,
-                style: TextStyle(
-                  fontFamily: 'Montserrat',
-                  fontSize: 13.sp,
-                  fontWeight: FontWeight.w600,
-                  color: valueColor ?? AppColors.black,
+              SizedBox(width: 8.w),
+              Flexible(
+                child: Text(
+                  value,
+                  textAlign: TextAlign.end,
+                  style: TextStyle(
+                    fontFamily: 'Montserrat',
+                    fontSize: 13.sp,
+                    fontWeight: FontWeight.w600,
+                    color: valueColor ?? AppColors.black,
+                  ),
                 ),
               ),
             ],
@@ -483,62 +491,64 @@ class _VehicleAccordionState extends State<_VehicleAccordion> {
                 _DR(
                   Icons.build_circle_outlined,
                   context.l10n.variant,
-                  v.variant.isNotEmpty ? v.variant : 'N/A',
+                  v.variant.isNotEmpty ? v.variant : context.l10n.na,
                 ),
                 _DR(
                   Icons.date_range_outlined,
                   context.l10n.mfgYear,
-                  v.year > 0 ? v.year.toString() : 'N/A',
+                  v.year > 0 ? v.year.toString() : context.l10n.na,
                 ),
                 _DR(
                   Icons.color_lens_outlined,
                   context.l10n.colour,
-                  v.colour.isNotEmpty ? v.colour : 'N/A',
+                  v.colour.isNotEmpty ? v.colour : context.l10n.na,
                 ),
                 _DR(
                   Icons.speed_outlined,
                   context.l10n.kilometers,
-                  v.kilometers > 0 ? '${v.kilometers} km' : 'N/A',
+                  v.kilometers > 0
+                      ? '${v.kilometers} ${context.l10n.km}'
+                      : context.l10n.na,
                 ),
                 _DR(
                   Icons.local_gas_station_outlined,
                   context.l10n.fuelType,
-                  v.fuelType.isNotEmpty ? v.fuelType : 'N/A',
+                  v.fuelType.isNotEmpty ? v.fuelType : context.l10n.na,
                 ),
                 _DR(
                   Icons.settings_outlined,
                   context.l10n.transmission,
-                  v.transmission.isNotEmpty ? v.transmission : 'N/A',
+                  v.transmission.isNotEmpty ? v.transmission : context.l10n.na,
                 ),
                 _DR(
                   Icons.person_outline_rounded,
                   context.l10n.owner,
-                  v.owner.isNotEmpty ? v.owner : 'N/A',
+                  v.owner.isNotEmpty ? v.owner : context.l10n.na,
                 ),
                 _DR(
                   Icons.confirmation_number_outlined,
                   context.l10n.chassisNumber,
-                  v.chassisNo.isNotEmpty ? v.chassisNo : 'N/A',
+                  v.chassisNo.isNotEmpty ? v.chassisNo : context.l10n.na,
                 ),
                 _DR(
                   Icons.memory_outlined,
                   context.l10n.engineNumber,
-                  v.engineNo.isNotEmpty ? v.engineNo : 'N/A',
+                  v.engineNo.isNotEmpty ? v.engineNo : context.l10n.na,
                 ),
                 _DR(
                   Icons.warehouse_outlined,
                   context.l10n.yard_name,
-                  v.yardName.isNotEmpty ? v.yardName : 'N/A',
+                  v.yardName.isNotEmpty ? v.yardName : context.l10n.na,
                 ),
                 _DR(
                   Icons.location_city_outlined,
                   context.l10n.yard_location,
-                  v.yardLocation.isNotEmpty ? v.yardLocation : 'N/A',
+                  v.yardLocation.isNotEmpty ? v.yardLocation : context.l10n.na,
                 ),
                 _DR(
                   Icons.notes_outlined,
                   context.l10n.remarks,
-                  v.remarks.isNotEmpty ? v.remarks : 'N/A',
+                  v.remarks.isNotEmpty ? v.remarks : context.l10n.na,
                   isLast: true,
                 ),
               ],

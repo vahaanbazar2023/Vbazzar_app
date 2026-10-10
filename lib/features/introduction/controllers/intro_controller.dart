@@ -20,18 +20,21 @@ class IntroController extends GetxController {
       description:
           'Buy and sell vehicles in one place Across trucks, equipment, and more',
       imagePath: AppAssets.introSlide1,
+      index: 0,
     ),
     IntroModel(
       title: 'Welcome to\nVAHAAN BAZAR',
       description:
           'Create listings in minutes and connect with thousands of buyers instantly.',
       imagePath: AppAssets.introSlide2,
+      index: 1,
     ),
     IntroModel(
       title: 'Welcome to\nVAHAAN BAZAR',
       description:
           'Join live auctions and secure vehicles at competitive prices.',
       imagePath: AppAssets.introSlide3,
+      index: 2,
     ),
   ];
 

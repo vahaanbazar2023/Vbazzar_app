@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import '../../../core/extensions/context_extensions.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/design_system/molecules/custom_autocomplete_field.dart';
 import '../../../core/design_system/molecules/inline_dropdown_field.dart';
@@ -109,20 +110,23 @@ class _BuyFilterSheetState extends State<BuyFilterSheet> {
                 padding: const EdgeInsets.fromLTRB(20, 8, 8, 0),
                 child: Row(
                   children: [
-                    Text(
-                      'Filters',
-                      style: TextStyle(
-                        fontFamily: 'Montserrat',
-                        fontSize: 17.sp,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.textPrimary,
+                    Expanded(
+                      child: Text(
+                        context.l10n.spareFilters,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontFamily: 'Montserrat',
+                          fontSize: 17.sp,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.textPrimary,
+                        ),
                       ),
                     ),
-                    const Spacer(),
                     TextButton(
                       onPressed: _reset,
                       child: Text(
-                        'Reset',
+                        context.l10n.spareReset,
                         style: TextStyle(
                           fontFamily: 'Montserrat',
                           color: AppColors.primary,
@@ -157,7 +161,7 @@ class _BuyFilterSheetState extends State<BuyFilterSheet> {
                         padding: const EdgeInsets.symmetric(vertical: 24),
                         child: Center(
                           child: Text(
-                            'No filters available',
+                            context.l10n.spareNoFiltersAvailable,
                             style: TextStyle(
                               fontFamily: 'Montserrat',
                               color: AppColors.grey500,
@@ -195,23 +199,28 @@ class _BuyFilterSheetState extends State<BuyFilterSheet> {
                         // ── Apply button ───────────────────────────────────
                         SizedBox(
                           width: double.infinity,
-                          height: 50,
-                          child: ElevatedButton(
-                            onPressed: _apply,
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: AppColors.primary,
-                              foregroundColor: Colors.white,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(25),
+                          child: ConstrainedBox(
+                            constraints: const BoxConstraints(minHeight: 50),
+                            child: ElevatedButton(
+                              onPressed: _apply,
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: AppColors.primary,
+                                foregroundColor: Colors.white,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(25),
+                                ),
+                                elevation: 0,
                               ),
-                              elevation: 0,
-                            ),
-                            child: Text(
-                              'Apply Filters',
-                              style: TextStyle(
-                                fontFamily: 'Montserrat',
-                                fontSize: 15.sp,
-                                fontWeight: FontWeight.w600,
+                              child: FittedBox(
+                                fit: BoxFit.scaleDown,
+                                child: Text(
+                                  context.l10n.applyFilters,
+                                  style: TextStyle(
+                                    fontFamily: 'Montserrat',
+                                    fontSize: 15.sp,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
                               ),
                             ),
                           ),
@@ -263,17 +272,20 @@ class _FilterField extends StatelessWidget {
         // ── Label row ────────────────────────────────────────────────────
         Row(
           children: [
-            Text(
-              filterKey,
-              style: TextStyle(
-                fontFamily: 'Montserrat',
-                fontSize: 13.sp,
-                fontWeight: FontWeight.w600,
-                color: AppColors.textPrimary,
+            Expanded(
+              child: Text(
+                filterKey,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  fontFamily: 'Montserrat',
+                  fontSize: 13.sp,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.textPrimary,
+                ),
               ),
             ),
             if (selectedValue != null) ...[
-              const Spacer(),
               GestureDetector(
                 onTap: () => onCleared(filterKey),
                 child: const Icon(
@@ -301,7 +313,7 @@ class _FilterField extends StatelessWidget {
           )
         else if (staticOptions != null && staticOptions!.isNotEmpty)
           _StaticField(
-            hint: 'Select $filterKey',
+            hint: context.l10n.spareSelectFilter(filterKey),
             selected: selectedValue,
             options: staticOptions!.map((o) {
               if (o is Map<String, dynamic>) {
@@ -319,7 +331,7 @@ class _FilterField extends StatelessWidget {
             onChanged: (v) => onSelected(filterKey, v, v),
             style: TextStyle(fontFamily: 'Montserrat', fontSize: 14.sp),
             decoration: InputDecoration(
-              hintText: 'Enter $filterKey',
+              hintText: context.l10n.spareEnterFilter(filterKey),
               hintStyle: TextStyle(
                 fontFamily: 'Montserrat',
                 fontSize: 14.sp,
@@ -395,8 +407,8 @@ class _BrandFieldState extends State<_BrandField> {
             .map((b) => _Opt(b.brandCode, b.brandName))
             .toList(),
         placeholder: widget.controller.isLoadingFilters.value
-            ? 'Loading...'
-            : 'Search brand',
+            ? context.l10n.loading
+            : context.l10n.spareSearchBrand,
         prefixIcon: Icons.branding_watermark_outlined,
         isLoading: widget.controller.isLoadingFilters.value,
         displayStringForOption: (o) => o.label,
@@ -453,8 +465,8 @@ class _StateFieldState extends State<_StateField> {
             .map((s) => _Opt(s['state_id'] ?? '', s['state_name'] ?? ''))
             .toList(),
         placeholder: widget.controller.isLoadingFilterStates.value
-            ? 'Loading...'
-            : 'Search state',
+            ? context.l10n.loading
+            : context.l10n.spareSearchState,
         prefixIcon: Icons.location_on_outlined,
         isLoading: widget.controller.isLoadingFilterStates.value,
         displayStringForOption: (o) => o.label,

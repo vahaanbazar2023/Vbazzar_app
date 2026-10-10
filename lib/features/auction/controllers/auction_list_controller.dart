@@ -8,6 +8,7 @@ import '../domain/entities/auction_entity.dart';
 import '../models/auction_listing.dart';
 import '../models/auction_pagination.dart';
 import '../services/auction_service.dart';
+import '../../../core/extensions/context_extensions.dart';
 
 /// Controller for the main auction list screen with filtering support.
 ///
@@ -110,7 +111,7 @@ class AuctionListController extends GetxController {
       tab.pagination.value = result.pagination;
       tab.initialized = true;
     } catch (e) {
-      tab.errorMessage.value = 'Failed to load auctions. Please try again.';
+      tab.errorMessage.value = appL10n.aucFailedLoadAuctions;
     } finally {
       tab.isLoading.value = false;
     }

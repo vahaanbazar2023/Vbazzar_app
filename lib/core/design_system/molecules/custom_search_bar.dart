@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../constants/app_colors.dart';
+import '../../extensions/context_extensions.dart';
 import '../molecules/gradient_button.dart'; // GradientBorder
 
 /// A fully customisable search bar inspired by _VehicleSearchBar.
@@ -34,7 +35,7 @@ import '../molecules/gradient_button.dart'; // GradientBorder
 /// ```
 class CustomSearchBar extends StatefulWidget {
   final TextEditingController? controller;
-  final String hint;
+  final String? hint;
   final bool enabled;
   final bool autofocus;
   final bool showGradientBorder;
@@ -57,7 +58,7 @@ class CustomSearchBar extends StatefulWidget {
   const CustomSearchBar({
     super.key,
     this.controller,
-    this.hint = 'Search...',
+    this.hint,
     this.enabled = true,
     this.autofocus = false,
     this.showGradientBorder = true,
@@ -184,7 +185,7 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
                 )
               : null,
           suffixIconConstraints: const BoxConstraints(),
-          hintText: widget.hint,
+          hintText: widget.hint ?? context.l10n.coreSearchEllipsis,
           hintStyle: TextStyle(
             fontFamily: 'Montserrat',
             fontSize: 13.sp,

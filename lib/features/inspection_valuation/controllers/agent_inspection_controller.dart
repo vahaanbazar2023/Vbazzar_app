@@ -13,6 +13,7 @@ import '../data/models/agent_inspection_request.dart';
 import '../data/models/valuation_dropdown_options.dart';
 import '../data/services/inspection_service.dart';
 import 'inspection_valuation_controller.dart';
+import '../../../core/extensions/context_extensions.dart';
 
 /// Controller for the Agent Valuation multi-step inspection form.
 /// Manages 6-step wizard state, image uploads, condition ratings, and submission.
@@ -160,23 +161,23 @@ class AgentInspectionController extends GetxController {
 
   bool _validateStep1() {
     if (vehicleRegNoController.text.trim().length < 5) {
-      _showValidationError('Please enter valid vehicle registration number');
+      _showValidationError(appL10n.inspEnterValidVehicleRegNumber);
       return false;
     }
     if (selectedVehicleType.value.isEmpty) {
-      _showValidationError('Please select vehicle type');
+      _showValidationError(appL10n.inspPleaseSelectVehicleType);
       return false;
     }
     if (selectedVehicleBrand.value.isEmpty) {
-      _showValidationError('Please select vehicle brand');
+      _showValidationError(appL10n.inspPleaseSelectVehicleBrand);
       return false;
     }
     if (selectedState.value == null) {
-      _showValidationError('Please select state');
+      _showValidationError(appL10n.inspPleaseSelectState);
       return false;
     }
     if (selectedCity.value == null) {
-      _showValidationError('Please select city');
+      _showValidationError(appL10n.inspPleaseSelectCity);
       return false;
     }
     return true;
@@ -190,11 +191,11 @@ class AgentInspectionController extends GetxController {
   bool _validateStep3() {
     // Validate tyre percentages range
     if (frontAxleTyresPercent.value < 0 || frontAxleTyresPercent.value > 100) {
-      _showValidationError('Front axle tyre percentage must be 0-100');
+      _showValidationError(appL10n.inspFrontAxlePercentRange);
       return false;
     }
     if (rearAxleTyresPercent.value < 0 || rearAxleTyresPercent.value > 100) {
-      _showValidationError('Rear axle tyre percentage must be 0-100');
+      _showValidationError(appL10n.inspRearAxlePercentRange);
       return false;
     }
     return true;
@@ -224,7 +225,7 @@ class AgentInspectionController extends GetxController {
     for (final list in allImageLists) {
       if (list.length > maxFilesPerCategory) {
         _showValidationError(
-          'Maximum $maxFilesPerCategory images per category allowed',
+          appL10n.inspMaxImagesPerCategory(maxFilesPerCategory),
         );
         return false;
       }
@@ -238,7 +239,7 @@ class AgentInspectionController extends GetxController {
     if (value.isNotEmpty) {
       final parsed = double.tryParse(value);
       if (parsed == null || parsed < 0) {
-        _showValidationError('Please enter a valid market value');
+        _showValidationError(appL10n.inspEnterValidMarketValue);
         return false;
       }
     }
@@ -253,7 +254,7 @@ class AgentInspectionController extends GetxController {
   Future<void> pickFiles(RxList<PlatformFile> targetList) async {
     if (targetList.length >= maxFilesPerCategory) {
       _showValidationError(
-        'Maximum $maxFilesPerCategory files per category',
+        appL10n.inspMaxFilesPerCategory(maxFilesPerCategory),
       );
       return;
     }
@@ -272,13 +273,16 @@ class AgentInspectionController extends GetxController {
         targetList.addAll(filesToAdd);
         if (result.files.length > remaining) {
           _showValidationError(
-            'Only $remaining more file(s) allowed. ${result.files.length - remaining} file(s) skipped.',
+            appL10n.inspOnlyMoreFilesAllowed(
+              remaining,
+              result.files.length - remaining,
+            ),
           );
         }
       }
     } catch (e) {
       debugPrint('⚠️ AgentInspection: pickFiles error – $e');
-      _showValidationError('Failed to pick file. Please try again.');
+      _showValidationError(appL10n.inspFailedToPickFile);
     }
   }
 
@@ -308,7 +312,7 @@ class AgentInspectionController extends GetxController {
   Future<void> submitAgentForm() async {
     // Validate all steps before submission
     if (!validateAllSteps()) {
-      _showValidationError('Please fix errors before submitting');
+      _showValidationError(appL10n.inspFixErrorsBeforeSubmitting);
       return;
     }
 
@@ -322,11 +326,12 @@ class AgentInspectionController extends GetxController {
       if (response.statusCode == 200 || response.statusCode == 201) {
         final data = response.data as Map<String, dynamic>;
         _showSuccessDialog(
-          title: 'Inspection Submitted',
-          submissionId: data['data']?['submission_id']?.toString() ??
+          title: appL10n.inspInspectionSubmitted,
+          submissionId:
+              data['data']?['submission_id']?.toString() ??
               data['data']?['inspection_id']?.toString() ??
               '',
-          message: 'Your inspection report has been submitted successfully.',
+          message: appL10n.inspReportSubmittedSuccessfully,
         );
         resetForm();
       } else {
@@ -334,7 +339,7 @@ class AgentInspectionController extends GetxController {
       }
     } catch (e) {
       debugPrint('⚠️ AgentInspection: submit error – $e');
-      _showValidationError('Failed to submit inspection report.');
+      _showValidationError(appL10n.inspFailedToSubmitReport);
     } finally {
       isSubmitting.value = false;
     }
@@ -349,11 +354,12 @@ class AgentInspectionController extends GetxController {
           selectedVehicleType.value,
     );
     if (cat != null) {
-      vehicleTypeCode = (cat['category_code'] ??
-              cat['code'] ??
-              cat['id'] ??
-              selectedVehicleType.value)
-          .toString();
+      vehicleTypeCode =
+          (cat['category_code'] ??
+                  cat['code'] ??
+                  cat['id'] ??
+                  selectedVehicleType.value)
+              .toString();
     }
 
     // Resolve vehicle brand code from parent's brand list
@@ -364,11 +370,12 @@ class AgentInspectionController extends GetxController {
           selectedVehicleBrand.value,
     );
     if (brand != null) {
-      vehicleBrandCode = (brand['brand_code'] ??
-              brand['code'] ??
-              brand['id'] ??
-              selectedVehicleBrand.value)
-          .toString();
+      vehicleBrandCode =
+          (brand['brand_code'] ??
+                  brand['code'] ??
+                  brand['id'] ??
+                  selectedVehicleBrand.value)
+              .toString();
     }
 
     return AgentInspectionRequest(
@@ -428,7 +435,9 @@ class AgentInspectionController extends GetxController {
       bodyBackImage: bodyBackImages.map((f) => File(f.path!)).toList(),
       bodyLeftImage: bodyLeftImages.map((f) => File(f.path!)).toList(),
       bodyRightImage: bodyRightImages.map((f) => File(f.path!)).toList(),
-      cabinInteriorImages: cabinInteriorImages.map((f) => File(f.path!)).toList(),
+      cabinInteriorImages: cabinInteriorImages
+          .map((f) => File(f.path!))
+          .toList(),
       electricalImages: electricalImages.map((f) => File(f.path!)).toList(),
       chasisImages: chasisImages.map((f) => File(f.path!)).toList(),
       odometerImages: odometerImages.map((f) => File(f.path!)).toList(),
@@ -531,14 +540,14 @@ class AgentInspectionController extends GetxController {
 
   String _extractErrorMessage(dynamic data) {
     if (data is Map<String, dynamic>) {
-      return data['message']?.toString() ?? 'Something went wrong';
+      return data['message']?.toString() ?? appL10n.inspSomethingWentWrong;
     }
-    return 'Something went wrong';
+    return appL10n.inspSomethingWentWrong;
   }
 
   void _showValidationError(String message) {
     Get.snackbar(
-      'Validation Error',
+      appL10n.validation_error,
       message,
       backgroundColor: Colors.orange,
       colorText: Colors.white,
@@ -579,7 +588,7 @@ class AgentInspectionController extends GetxController {
 
               // Thank You Title
               Text(
-                'Thank you for submitting!',
+                appL10n.inspThankYouForSubmitting,
                 style: AppFonts.titleMedium.copyWith(
                   fontWeight: FontWeight.w600,
                   color: AppColors.textPrimary,
@@ -591,7 +600,7 @@ class AgentInspectionController extends GetxController {
 
               // Subtitle
               Text(
-                'Our team will contact you soon..!',
+                appL10n.inspTeamWillContactSoon,
                 style: AppFonts.bodyMedium.copyWith(
                   color: AppColors.textSecondary,
                   fontSize: 14,
@@ -618,12 +627,9 @@ class AgentInspectionController extends GetxController {
                     ),
                     elevation: 0,
                   ),
-                  child: const Text(
-                    'Okay',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                    ),
+                  child: Text(
+                    appL10n.inspOkay,
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                   ),
                 ),
               ),

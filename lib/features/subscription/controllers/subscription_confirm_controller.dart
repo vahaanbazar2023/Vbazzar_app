@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:get/get.dart';
 import '../../../core/design_system/molecules/custom_snackbar.dart';
+import '../../../core/extensions/context_extensions.dart';
 import '../../../core/storage/secure_storage_service.dart';
 import '../../../core/storage/storage_keys.dart';
 import '../../../features/auction/controllers/vehicle_listing_controller.dart';
@@ -112,7 +113,7 @@ class SubscriptionConfirmController extends GetxController {
     final plan = _plan;
     if (plan == null) {
       CustomSnackbar.show(
-        message: 'No plan selected',
+        message: appL10n.profSubNoPlanSelected,
         type: SnackbarType.error,
       );
       return;
@@ -121,7 +122,7 @@ class SubscriptionConfirmController extends GetxController {
     final userId = await SecureStorageService.to.read(StorageKeys.userId);
     if (userId == null || userId.isEmpty) {
       CustomSnackbar.show(
-        message: 'Please login to continue',
+        message: appL10n.pleaseLoginToContinue,
         type: SnackbarType.error,
       );
       return;
@@ -139,7 +140,7 @@ class SubscriptionConfirmController extends GetxController {
     _paymentCtrl.onFailure = (message, callback) {
       isPaymentInProgress.value = false;
       CustomSnackbar.show(
-        message: 'Payment failed: $message',
+        message: appL10n.profSubPaymentFailedMsg(message),
         type: SnackbarType.error,
       );
     };
@@ -174,7 +175,7 @@ class SubscriptionConfirmController extends GetxController {
         );
         Get.toNamed(AppRoutes.auctionType);
         CustomSnackbar.show(
-          message: 'Auction Access Activated! You can now browse and bid.',
+          message: appL10n.profSubAuctionActivatedBrowse,
           type: SnackbarType.success,
         );
         // Refresh guard cache in background — no await needed here.
@@ -214,7 +215,7 @@ class SubscriptionConfirmController extends GetxController {
                 route.settings.name != AppRoutes.walletPayment,
           );
           CustomSnackbar.show(
-            message: 'Buying limit updated!',
+            message: appL10n.buyingLimitUpdated,
             type: SnackbarType.success,
           );
           SubscriptionGuardService.to.invalidateAndReload();
@@ -235,7 +236,7 @@ class SubscriptionConfirmController extends GetxController {
         );
 
         CustomSnackbar.show(
-          message: 'Contact pack activated! Fetching owner contact...',
+          message: appL10n.profSubContactPackActivated,
           type: SnackbarType.success,
         );
 
@@ -273,7 +274,7 @@ class SubscriptionConfirmController extends GetxController {
           );
         } else {
           CustomSnackbar.show(
-            message: 'Inspection request submitted!',
+            message: appL10n.inspectionSubmitted,
             type: SnackbarType.success,
           );
         }
@@ -295,7 +296,7 @@ class SubscriptionConfirmController extends GetxController {
           Get.find<SpareAndFmsController>().unlockShopContactById(shopId006);
         } else {
           CustomSnackbar.show(
-            message: 'Shop contact unlocked!',
+            message: appL10n.profSubShopContactUnlocked,
             type: SnackbarType.success,
           );
         }
@@ -319,7 +320,7 @@ class SubscriptionConfirmController extends GetxController {
           );
         } else {
           CustomSnackbar.show(
-            message: 'Mechanic contact unlocked!',
+            message: appL10n.profSubMechanicContactUnlocked,
             type: SnackbarType.success,
           );
         }
@@ -345,8 +346,7 @@ class SubscriptionConfirmController extends GetxController {
         }
 
         CustomSnackbar.show(
-          message:
-              'Vehicle Details unlocked! You now have full details access + 5 owner contact credits.',
+          message: appL10n.profSubVehicleDetailsUnlockedCredits,
           type: SnackbarType.success,
         );
         // Refresh guard cache + quota status in background.
@@ -359,7 +359,7 @@ class SubscriptionConfirmController extends GetxController {
       default:
         Get.offAllNamed(AppRoutes.mySubscriptions);
         CustomSnackbar.show(
-          message: 'Subscription Activated! Your plan is now active.',
+          message: appL10n.profSubActivatedPlanActive,
           type: SnackbarType.success,
         );
         SubscriptionGuardService.to.invalidateAndReload();
@@ -379,7 +379,7 @@ class SubscriptionConfirmController extends GetxController {
       await SubscriptionGuardService.to.invalidateAndReload();
     } catch (_) {
       CustomSnackbar.show(
-        message: 'Could not refresh subscription. Please try again.',
+        message: appL10n.couldNotRefreshSubscription,
         type: SnackbarType.error,
       );
       return;
@@ -402,7 +402,7 @@ class SubscriptionConfirmController extends GetxController {
       await SubscriptionGuardService.to.invalidateAndReload();
     } catch (_) {
       CustomSnackbar.show(
-        message: 'Could not refresh subscription. Please try again.',
+        message: appL10n.couldNotRefreshSubscription,
         type: SnackbarType.error,
       );
       return;

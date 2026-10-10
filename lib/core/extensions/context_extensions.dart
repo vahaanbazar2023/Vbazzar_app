@@ -1,4 +1,5 @@
 import 'package:flutter/widgets.dart';
+import 'package:get/get.dart';
 import '../localisation/app_localizations.dart';
 
 /// Extension on BuildContext to simplify access to localized strings.
@@ -25,4 +26,13 @@ extension LocalizationExt on BuildContext {
   /// print(localizations.welcome);
   /// ```
   AppLocalizations get l10n => AppLocalizations.of(this)!;
+}
+
+/// Localized strings for code that has no BuildContext (controllers, services).
+///
+/// Resolves against the locale currently selected in GetX, falling back to
+/// English. Prefer `context.l10n` in widgets.
+AppLocalizations get appL10n {
+  final locale = Get.locale ?? const Locale('en');
+  return lookupAppLocalizations(Locale(locale.languageCode));
 }

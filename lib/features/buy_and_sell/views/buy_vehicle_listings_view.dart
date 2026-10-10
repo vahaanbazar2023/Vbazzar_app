@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../../../core/extensions/context_extensions.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_assets.dart';
 import '../../../core/design_system/design_system.dart';
@@ -38,11 +39,11 @@ class BuyVehicleListingsView extends GetView<BuyVehicleController> {
       });
     }
 
-    final categoryName = category?.categoryName ?? 'Vehicles';
+    final categoryName = category?.categoryName ?? context.l10n.spareVehicles;
 
     return AppLayout(
       title: categoryName,
-      subtitle: 'Browse available listings',
+      subtitle: context.l10n.spareBrowseAvailableListings,
       body: Stack(
         children: [
           Column(
@@ -61,7 +62,7 @@ class BuyVehicleListingsView extends GetView<BuyVehicleController> {
                     Expanded(
                       child: CustomSearchBar(
                         controller: controller.searchController,
-                        hint: 'Search vehicles...',
+                        hint: context.l10n.searchVehicles,
                         onChanged: (value) {
                           // Search functionality preserved
                         },
@@ -274,17 +275,22 @@ class _ActiveFiltersStrip extends StatelessWidget {
               },
             ),
           ),
-          GestureDetector(
-            onTap: controller.clearAllFilters,
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: AppSpacing.sm),
-              child: Text(
-                'Clear',
-                style: TextStyle(
-                  fontFamily: 'Montserrat',
-                  fontSize: 12.sp,
-                  color: AppColors.primary,
-                  fontWeight: FontWeight.w600,
+          ConstrainedBox(
+            constraints: BoxConstraints(maxWidth: 130.w),
+            child: GestureDetector(
+              onTap: controller.clearAllFilters,
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: AppSpacing.sm),
+                child: Text(
+                  context.l10n.clearFilters,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontFamily: 'Montserrat',
+                    fontSize: 12.sp,
+                    color: AppColors.primary,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ),
             ),
@@ -679,11 +685,12 @@ class _VehicleCard extends StatelessWidget {
                     ),
                     SizedBox(height: 6.h),
                     // Specs row (fuel, transmission, km)
-                    Row(
+                    Wrap(
+                      spacing: 6.w,
+                      runSpacing: 4.h,
                       children: [
-                        _specChip(Icons.local_gas_station, 'Diesel'),
-                        SizedBox(width: 6.w),
-                        _specChip(Icons.settings, 'Manual'),
+                        _specChip(Icons.local_gas_station, context.l10n.diesel),
+                        _specChip(Icons.settings, context.l10n.manual),
                       ],
                     ),
                     SizedBox(height: 10.h),
@@ -691,19 +698,23 @@ class _VehicleCard extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(
-                          vehicle.formattedPrice,
-                          style: TextStyle(
-                            fontFamily: 'Montserrat',
-                            fontSize: 12.sp,
-                            fontWeight: FontWeight.w800,
-                            color: AppColors.error,
+                        Flexible(
+                          child: Text(
+                            vehicle.formattedPrice,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              fontFamily: 'Montserrat',
+                              fontSize: 12.sp,
+                              fontWeight: FontWeight.w800,
+                              color: AppColors.error,
+                            ),
                           ),
                         ),
                         Padding(
                           padding: const EdgeInsets.only(right: 4.0, bottom: 4),
                           child: GradientButton.filled(
-                            text: 'View More',
+                            text: context.l10n.spareViewMore,
                             onPressed: () async {
                               final ctrl = Get.find<BuyVehicleController>();
                               final granted = await ctrl.requestVehicleDetails(
@@ -748,13 +759,17 @@ class _VehicleCard extends StatelessWidget {
     children: [
       Icon(icon, size: 12.r, color: AppColors.grey500),
       SizedBox(width: 3.w),
-      Text(
-        text,
-        style: TextStyle(
-          fontFamily: 'Montserrat',
-          fontSize: 10.sp,
-          fontWeight: FontWeight.w500,
-          color: AppColors.grey600,
+      Flexible(
+        child: Text(
+          text,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: TextStyle(
+            fontFamily: 'Montserrat',
+            fontSize: 10.sp,
+            fontWeight: FontWeight.w500,
+            color: AppColors.grey600,
+          ),
         ),
       ),
     ],
@@ -970,7 +985,7 @@ class _ErrorState extends StatelessWidget {
                 ),
               ),
               child: Text(
-                'Retry',
+                context.l10n.retry,
                 style: TextStyle(
                   fontFamily: 'Montserrat',
                   fontWeight: FontWeight.w600,
@@ -994,7 +1009,7 @@ class _EmptyState extends StatelessWidget {
           Icon(Icons.inventory_2_outlined, size: 64, color: AppColors.grey300),
           SizedBox(height: AppSpacing.md),
           Text(
-            'No vehicles found',
+            context.l10n.noVehiclesFound,
             style: TextStyle(
               fontFamily: 'Montserrat',
               fontSize: 18.sp,
@@ -1004,7 +1019,7 @@ class _EmptyState extends StatelessWidget {
           ),
           SizedBox(height: AppSpacing.xs),
           Text(
-            'Try adjusting your filters',
+            context.l10n.spareTryAdjustingFilters,
             style: TextStyle(
               fontFamily: 'Montserrat',
               fontSize: 13.sp,

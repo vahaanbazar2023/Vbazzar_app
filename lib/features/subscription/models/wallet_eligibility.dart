@@ -31,8 +31,9 @@ class WalletEligibility {
       maximumRedeemableAmount: _toDouble(json['maximum_redeemable_amount']),
       commissionAmount: _toDouble(json['commission_amount']),
       referralCode: json['referral_code'] as String?,
-      referralCommissionPercentage:
-          _toDouble(json['referral_commission_percentage']),
+      referralCommissionPercentage: _toDouble(
+        json['referral_commission_percentage'],
+      ),
     );
   }
 

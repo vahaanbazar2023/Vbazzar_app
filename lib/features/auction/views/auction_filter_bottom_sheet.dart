@@ -149,7 +149,7 @@ class AuctionFilterBottomSheetV2 extends StatelessWidget {
                 children: [
                   // ── Vehicle Type ────────────────────────────────
                   _FilterSectionLabel(
-                    label: 'Vehicle Type',
+                    label: context.l10n.vehicleType,
                     icon: Icons.directions_car_outlined,
                   ),
                   SizedBox(height: 8.h),
@@ -292,7 +292,7 @@ class _VehicleTypeField extends StatelessWidget {
       return InlineDropdownField<String>(
         value: controller.selectedVehicleTypeFilter.value,
         items: vehicleTypes.map((v) => v['category'] as String).toList(),
-        placeholder: 'Select Vehicle Type',
+        placeholder: context.l10n.selectVehicleTypeFilter,
         prefixIcon: Icons.directions_car_outlined,
         isLoading: isLoading,
         itemLabel: (v) => v.toUpperCase(),

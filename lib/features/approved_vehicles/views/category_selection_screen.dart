@@ -8,6 +8,7 @@ import '../../../routes/app_routes.dart';
 import '../../../theme/app_fonts.dart';
 import '../controllers/approved_vehicle_controller.dart';
 import '../domain/entities/approved_vehicle_category_entity.dart';
+import '../../../core/extensions/context_extensions.dart';
 
 class CategorySelectionScreen extends StatelessWidget {
   const CategorySelectionScreen({super.key});
@@ -17,17 +18,17 @@ class CategorySelectionScreen extends StatelessWidget {
     final ctrl = Get.find<ApprovedVehicleController>();
 
     return AppLayout(
-      title: 'Approved Vehicles',
-      subtitle: 'Select a category to browse',
+      title: context.l10n.approvedVehicles,
+      subtitle: context.l10n.apprSelectCategoryToBrowse,
       body: Obx(() {
         if (ctrl.isLoadingCategories.value && ctrl.categories.isEmpty) {
           return _buildShimmerGrid();
         }
         if (ctrl.categoriesError.value.isNotEmpty && ctrl.categories.isEmpty) {
-          return _buildErrorState(ctrl);
+          return _buildErrorState(context, ctrl);
         }
         if (ctrl.categories.isEmpty) {
-          return _buildEmptyState(ctrl);
+          return _buildEmptyState(context, ctrl);
         }
         return RefreshIndicator(
           color: AppColors.primary,
@@ -79,7 +80,10 @@ class CategorySelectionScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildErrorState(ApprovedVehicleController ctrl) {
+  Widget _buildErrorState(
+    BuildContext context,
+    ApprovedVehicleController ctrl,
+  ) {
     return Center(
       child: Padding(
         padding: EdgeInsets.all(AppSpacing.xl),
@@ -109,7 +113,7 @@ class CategorySelectionScreen extends StatelessWidget {
                   borderRadius: BorderRadius.circular(8.r),
                 ),
                 child: Text(
-                  'Retry',
+                  context.l10n.retry,
                   style: AppFonts.bodyMedium.copyWith(
                     color: Colors.white,
                     fontWeight: FontWeight.w600,
@@ -123,7 +127,10 @@ class CategorySelectionScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildEmptyState(ApprovedVehicleController ctrl) {
+  Widget _buildEmptyState(
+    BuildContext context,
+    ApprovedVehicleController ctrl,
+  ) {
     return Center(
       child: Padding(
         padding: EdgeInsets.all(AppSpacing.xl),
@@ -133,14 +140,14 @@ class CategorySelectionScreen extends StatelessWidget {
             Icon(Icons.category_outlined, size: 48.w, color: AppColors.grey400),
             SizedBox(height: 12.h),
             Text(
-              'No categories available',
+              context.l10n.noCategoriesAvailable,
               style: AppFonts.bodyMedium.copyWith(
                 color: AppColors.textSecondary,
               ),
             ),
             SizedBox(height: 8.h),
             Text(
-              'Pull down to refresh',
+              context.l10n.pullDownToRefresh,
               style: AppFonts.bodySmall.copyWith(color: AppColors.textDisabled),
             ),
           ],
@@ -225,16 +232,22 @@ class _CategoryCard extends StatelessWidget {
                   ),
                 ),
                 SizedBox(width: 5.w),
-                Text(
-                  category.approvedVehAvailableCount > 0
-                      ? '${category.approvedVehAvailableCount} vehicles'
-                      : 'Unavailable',
-                  style: AppFonts.bodySmall.copyWith(
-                    fontSize: 10.sp,
-                    color: category.approvedVehAvailableCount > 0
-                        ? AppColors.primary
-                        : AppColors.grey500,
-                    fontWeight: FontWeight.w500,
+                Flexible(
+                  child: Text(
+                    category.approvedVehAvailableCount > 0
+                        ? context.l10n.apprVehiclesCount(
+                            category.approvedVehAvailableCount,
+                          )
+                        : context.l10n.apprUnavailable,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: AppFonts.bodySmall.copyWith(
+                      fontSize: 10.sp,
+                      color: category.approvedVehAvailableCount > 0
+                          ? AppColors.primary
+                          : AppColors.grey500,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
                 ),
               ],

@@ -1,3 +1,5 @@
+import '../../../../core/extensions/context_extensions.dart';
+
 class VehicleFileDetail {
   final int id;
   final String fileType;
@@ -157,7 +159,7 @@ class VehicleDetailEntity {
   }
 
   String get formattedPrice {
-    if (price == null || price! <= 0) return 'Price on request';
+    if (price == null || price! <= 0) return appL10n.sparePriceOnRequest;
     return '₹${_fmt(price!.toInt())}';
   }
 

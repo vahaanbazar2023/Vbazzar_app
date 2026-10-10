@@ -8,6 +8,7 @@ import '../../../core/network/network_service.dart';
 import '../../../core/storage/secure_storage_service.dart';
 import '../../../core/storage/storage_keys.dart';
 import '../../../routes/app_routes.dart';
+import '../../../core/extensions/context_extensions.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Models
@@ -37,8 +38,7 @@ class GlobalSearchItem {
       subtitle: j['subtitle']?.toString() ?? '',
       matchedField: j['matched_field']?.toString() ?? '',
       navigationRoute: j['navigation_route']?.toString() ?? '',
-      navigationParams:
-          (j['navigation_params'] as Map<String, dynamic>?) ?? {},
+      navigationParams: (j['navigation_params'] as Map<String, dynamic>?) ?? {},
     );
   }
 
@@ -93,7 +93,7 @@ class SearchController extends GetxController {
   final NetworkService _network;
 
   SearchController({NetworkService? network})
-      : _network = network ?? NetworkService.to;
+    : _network = network ?? NetworkService.to;
 
   final TextEditingController textController = TextEditingController();
   final query = ''.obs;
@@ -150,13 +150,12 @@ class SearchController extends GetxController {
       final raw = (data['sections'] as List<dynamic>?) ?? [];
       sections.assignAll(
         raw
-            .map((e) =>
-                GlobalSearchSection.fromJson(e as Map<String, dynamic>))
+            .map((e) => GlobalSearchSection.fromJson(e as Map<String, dynamic>))
             .where((s) => s.items.isNotEmpty)
             .toList(),
       );
     } catch (e) {
-      errorMessage.value = 'Search failed. Please try again.';
+      errorMessage.value = appL10n.aucSearchFailed;
       debugPrint('❌ [SearchController._search] $e');
     } finally {
       isLoading.value = false;
@@ -170,12 +169,16 @@ class SearchController extends GetxController {
         Get.toNamed(AppRoutes.vehicleDetail, arguments: item.navigationParams);
         break;
       case 'AppRoutes.approvedVehicleDetail':
-        Get.toNamed(AppRoutes.approvedVehicleDetail,
-            arguments: item.navigationParams);
+        Get.toNamed(
+          AppRoutes.approvedVehicleDetail,
+          arguments: item.navigationParams,
+        );
         break;
       case 'AppRoutes.buyVehicleDetail':
-        Get.toNamed(AppRoutes.buyVehicleDetail,
-            arguments: item.navigationParams);
+        Get.toNamed(
+          AppRoutes.buyVehicleDetail,
+          arguments: item.navigationParams,
+        );
         break;
       case 'AppRoutes.spareDetail':
         Get.toNamed(AppRoutes.spareDetail, arguments: item.navigationParams);
@@ -186,7 +189,8 @@ class SearchController extends GetxController {
       default:
         // Unknown route — do nothing
         debugPrint(
-            '⚠️ [SearchController.navigate] Unknown route: ${item.navigationRoute}');
+          '⚠️ [SearchController.navigate] Unknown route: ${item.navigationRoute}',
+        );
     }
   }
 }

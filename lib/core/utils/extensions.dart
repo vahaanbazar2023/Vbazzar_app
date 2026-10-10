@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../extensions/context_extensions.dart';
 
 // ── String ──────────────────────────────────────────────────────────────────
 extension StringX on String {
@@ -35,12 +36,16 @@ extension DateTimeX on DateTime {
 
   String get timeAgo {
     final diff = DateTime.now().difference(this);
-    if (diff.inDays > 365) return '${diff.inDays ~/ 365}y ago';
-    if (diff.inDays > 30) return '${diff.inDays ~/ 30}mo ago';
-    if (diff.inDays > 0) return '${diff.inDays}d ago';
-    if (diff.inHours > 0) return '${diff.inHours}h ago';
-    if (diff.inMinutes > 0) return '${diff.inMinutes}m ago';
-    return 'Just now';
+    if (diff.inDays > 365) {
+      return appL10n.coreYearsAgoShort(diff.inDays ~/ 365);
+    }
+    if (diff.inDays > 30) {
+      return appL10n.coreMonthsAgoShort(diff.inDays ~/ 30);
+    }
+    if (diff.inDays > 0) return appL10n.coreDaysAgoShort(diff.inDays);
+    if (diff.inHours > 0) return appL10n.coreHoursAgoShort(diff.inHours);
+    if (diff.inMinutes > 0) return appL10n.coreMinutesAgoShort(diff.inMinutes);
+    return appL10n.coreJustNow;
   }
 }
 

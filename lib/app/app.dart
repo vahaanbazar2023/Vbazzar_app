@@ -45,6 +45,9 @@ class VahaanApp extends StatelessWidget {
               Locale('en'), // English
               Locale('hi'), // Hindi
               Locale('te'), // Telugu
+              Locale('kn'), // Kannada
+              Locale('ml'), // Malayalam
+              Locale('ta'), // Tamil
             ],
             locale: const Locale('en'),
             fallbackLocale: const Locale('en'),

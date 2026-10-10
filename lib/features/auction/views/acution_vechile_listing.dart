@@ -66,7 +66,7 @@ class _TabAndFilterBar extends StatelessWidget {
               Expanded(
                 child: CustomSearchBar(
                   controller: controller.searchController,
-                  hint: 'Search Vehicles',
+                  hint: context.l10n.aucSearchVehicles,
                   showGradientBorder: false,
                   borderColor: AppColors.grey300,
                   height: 40,
@@ -165,7 +165,7 @@ class _TabContent extends StatelessWidget {
         if (searchVehicles.isEmpty) {
           return Center(
             child: Text(
-              'No vehicles found',
+              context.l10n.aucNoVehiclesFoundShort,
               style: TextStyle(
                 fontFamily: 'Montserrat',
                 fontSize: 12.sp,
@@ -465,7 +465,7 @@ class _VehicleCardState extends State<_VehicleCard> {
                           GestureDetector(
                             onTap: () => setState(() => _expanded = !_expanded),
                             child: Container(
-                              height: 26.h,
+                              constraints: BoxConstraints(minHeight: 26.h),
                               padding: EdgeInsets.symmetric(horizontal: 10.w),
                               margin: EdgeInsets.only(left: 30.w, top: 10.h),
                               decoration: BoxDecoration(
@@ -478,13 +478,19 @@ class _VehicleCardState extends State<_VehicleCard> {
                               child: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  Text(
-                                    _expanded ? 'See Less' : 'See More',
-                                    style: TextStyle(
-                                      fontFamily: 'Montserrat',
-                                      fontSize: 11.sp,
-                                      fontWeight: FontWeight.w600,
-                                      color: AppColors.black,
+                                  Flexible(
+                                    child: Text(
+                                      _expanded
+                                          ? context.l10n.aucSeeLess
+                                          : context.l10n.seeMore,
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                        fontFamily: 'Montserrat',
+                                        fontSize: 11.sp,
+                                        fontWeight: FontWeight.w600,
+                                        color: AppColors.black,
+                                      ),
                                     ),
                                   ),
                                   SizedBox(width: 3.w),
@@ -515,8 +521,8 @@ class _VehicleCardState extends State<_VehicleCard> {
                                   if (hasBid)
                                     TextSpan(
                                       text: isWinning
-                                          ? 'You Are Winning'
-                                          : 'You Are Losing',
+                                          ? context.l10n.aucYouAreWinning
+                                          : context.l10n.aucYouAreLosing,
                                       style: TextStyle(
                                         fontWeight: FontWeight.w600,
                                         color: isWinning
@@ -526,8 +532,10 @@ class _VehicleCardState extends State<_VehicleCard> {
                                     )
                                   else
                                     TextSpan(
-                                      text:
-                                          'Start Bidding — Start Price ₹ ${_fmt(v.minimumPrice)}',
+                                      text: context.l10n
+                                          .aucStartBiddingStartPrice(
+                                            _fmt(v.minimumPrice),
+                                          ),
                                       style: TextStyle(
                                         fontWeight: FontWeight.w600,
                                         color: AppColors.secondary,
@@ -554,55 +562,68 @@ class _VehicleCardState extends State<_VehicleCard> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       _OptGridRow(
-                        'RC Availability',
+                        context.l10n.rc_availability,
                         v.rcAvailability,
-                        'Repo Date',
+                        context.l10n.repo_date,
                         v.repoDate,
                       ),
                       _OptGridRow(
-                        'Chassis No',
+                        context.l10n.chassis_no,
                         v.chassisNo,
-                        'Engine No',
+                        context.l10n.engine_no,
                         v.engineNo,
                       ),
                       _OptGridRow(
-                        'Registered RTO',
+                        context.l10n.registered_rto,
                         v.registeredRto,
-                        'Transmission',
+                        context.l10n.transmission,
                         v.transmission,
                       ),
-                      _OptGridRow('Variant', v.variant, 'Colour', v.colour),
-                      _OptGridRow('Fuel Type', v.fuelType, 'Owner', v.owner),
                       _OptGridRow(
-                        'Contact Person',
+                        context.l10n.variant,
+                        v.variant,
+                        context.l10n.colour,
+                        v.colour,
+                      ),
+                      _OptGridRow(
+                        context.l10n.fuel_type,
+                        v.fuelType,
+                        context.l10n.owner,
+                        v.owner,
+                      ),
+                      _OptGridRow(
+                        context.l10n.aucContactPerson,
                         v.contactPersonName,
-                        'Mobile',
+                        context.l10n.aucMobile,
                         v.contactPersonNumber,
                       ),
                       // _OptGridRow(
-                      //   'Start Price',
+                      //   context.l10n.start_price,
                       //   '₹ ${_fmt(v.minimumPrice)}',
-                      //   'Highest Bid',
+                      //   context.l10n.aucHighestBid,
                       //   v.currentHighestBid != null
                       //       ? '₹ ${_fmt(v.currentHighestBid!)}'
-                      //       : 'No bids',
+                      //       : context.l10n.aucNoBids,
                       // ),
                       _OptGridRow(
-                        'Parking Charges',
+                        context.l10n.parking_charges,
                         v.parkingCharges,
-                        'Transaction Fees',
+                        context.l10n.transaction_fees,
                         v.transactionFees,
                       ),
                       _OptGridRow(
-                        'Yard Name',
+                        context.l10n.yard_name,
                         v.yardName,
-                        'Yard Location',
+                        context.l10n.yard_location,
                         v.yardLocation,
                       ),
                       if (v.remarks.isNotEmpty)
                         Padding(
                           padding: EdgeInsets.only(bottom: 6.h),
-                          child: _Cell(label: 'Remarks', value: v.remarks),
+                          child: _Cell(
+                            label: context.l10n.remarks,
+                            value: v.remarks,
+                          ),
                         ),
                       SizedBox(height: 4.h),
                       Container(
@@ -618,12 +639,14 @@ class _VehicleCardState extends State<_VehicleCard> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Text(
-                              'Available Buying Limit: ',
-                              style: TextStyle(
-                                fontFamily: 'Montserrat',
-                                fontSize: 12.sp,
-                                color: AppColors.grey600,
+                            Flexible(
+                              child: Text(
+                                '${context.l10n.availableBuyingLimit}: ',
+                                style: TextStyle(
+                                  fontFamily: 'Montserrat',
+                                  fontSize: 12.sp,
+                                  color: AppColors.grey600,
+                                ),
                               ),
                             ),
                             Text(
@@ -643,7 +666,7 @@ class _VehicleCardState extends State<_VehicleCard> {
                         children: [
                           Expanded(
                             child: _BidChip(
-                              label: 'Your Bid',
+                              label: context.l10n.your_bid,
                               value: v.yourBid > 0
                                   ? '₹ ${_fmt(v.yourBid)}'
                                   : '₹ 0',
@@ -652,14 +675,14 @@ class _VehicleCardState extends State<_VehicleCard> {
                           SizedBox(width: 8.w),
                           Expanded(
                             child: _BidChip(
-                              label: 'Bids Left',
+                              label: context.l10n.bids_left,
                               value: v.bidsLeft.toString(),
                             ),
                           ),
                           SizedBox(width: 8.w),
                           Expanded(
                             child: _BidChip(
-                              label: 'Bids',
+                              label: context.l10n.aucBids,
                               value: v.bidsReceived.toString(),
                             ),
                           ),
@@ -678,17 +701,17 @@ class _VehicleCardState extends State<_VehicleCard> {
                     children: [
                       Expanded(
                         child: _BidChip(
-                          label: 'Start Price',
+                          label: context.l10n.start_price,
                           value: '₹ ${_fmt(v.minimumPrice)}',
                         ),
                       ),
                       SizedBox(width: 8.w),
                       Expanded(
                         child: _BidChip(
-                          label: 'Highest Bid',
+                          label: context.l10n.aucHighestBid,
                           value: (v.currentHighestBid ?? 0) > 0
                               ? '₹ ${_fmt(v.currentHighestBid!)}'
-                              : 'No bids',
+                              : context.l10n.aucNoBids,
                         ),
                       ),
                     ],
@@ -718,13 +741,16 @@ class _VehicleCardState extends State<_VehicleCard> {
                           color: AppColors.grey600,
                         ),
                         SizedBox(width: 6.w),
-                        Text(
-                          'Upcoming Auction — Bidding Not Started',
-                          style: TextStyle(
-                            fontFamily: 'Montserrat',
-                            fontSize: 11.sp,
-                            fontWeight: FontWeight.w600,
-                            color: AppColors.grey600,
+                        Flexible(
+                          child: Text(
+                            context.l10n.aucUpcomingBiddingNotStarted,
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontFamily: 'Montserrat',
+                              fontSize: 11.sp,
+                              fontWeight: FontWeight.w600,
+                              color: AppColors.grey600,
+                            ),
                           ),
                         ),
                       ],
@@ -813,45 +839,53 @@ class _VehicleCardState extends State<_VehicleCard> {
                         ),
                       ),
                       SizedBox(width: 8.w),
-                      GestureDetector(
-                        onTap: _isPlacingBid ? null : () => _placeBid(context),
-                        child: Container(
-                          height: 28.h,
-                          padding: EdgeInsets.symmetric(horizontal: 14.w),
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: _isPlacingBid
-                                  ? [
-                                      const Color(0xFFAA5555),
-                                      const Color(0xFF884444),
-                                    ]
-                                  : [
-                                      AppColors.ctaGradientStart,
-                                      AppColors.ctaGradientEnd,
-                                    ],
+                      Flexible(
+                        child: GestureDetector(
+                          onTap: _isPlacingBid
+                              ? null
+                              : () => _placeBid(context),
+                          child: Container(
+                            constraints: BoxConstraints(minHeight: 28.h),
+                            padding: EdgeInsets.symmetric(horizontal: 14.w),
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: _isPlacingBid
+                                    ? [
+                                        const Color(0xFFAA5555),
+                                        const Color(0xFF884444),
+                                      ]
+                                    : [
+                                        AppColors.ctaGradientStart,
+                                        AppColors.ctaGradientEnd,
+                                      ],
+                              ),
+                              borderRadius: BorderRadius.circular(19.r),
                             ),
-                            borderRadius: BorderRadius.circular(19.r),
+                            alignment: Alignment.center,
+                            child: _isPlacingBid
+                                ? SizedBox(
+                                    width: 18.r,
+                                    height: 18.r,
+                                    child: const CircularProgressIndicator(
+                                      color: Colors.white,
+                                      strokeWidth: 2,
+                                    ),
+                                  )
+                                : FittedBox(
+                                    fit: BoxFit.scaleDown,
+                                    child: Text(
+                                      context.l10n.placeBid.toUpperCase(),
+                                      maxLines: 1,
+                                      style: TextStyle(
+                                        fontFamily: 'Montserrat',
+                                        fontSize: 12.sp,
+                                        fontWeight: FontWeight.w600,
+                                        color: Colors.white,
+                                        letterSpacing: 0.8,
+                                      ),
+                                    ),
+                                  ),
                           ),
-                          alignment: Alignment.center,
-                          child: _isPlacingBid
-                              ? SizedBox(
-                                  width: 18.r,
-                                  height: 18.r,
-                                  child: const CircularProgressIndicator(
-                                    color: Colors.white,
-                                    strokeWidth: 2,
-                                  ),
-                                )
-                              : Text(
-                                  'PLACE BID',
-                                  style: TextStyle(
-                                    fontFamily: 'Montserrat',
-                                    fontSize: 12.sp,
-                                    fontWeight: FontWeight.w600,
-                                    color: Colors.white,
-                                    letterSpacing: 0.8,
-                                  ),
-                                ),
                         ),
                       ),
                     ],
@@ -886,7 +920,7 @@ class _VehicleCardState extends State<_VehicleCard> {
       CustomSnackbar.show(message: error, type: SnackbarType.error);
     } else if (error == null) {
       CustomSnackbar.show(
-        message: 'Bid placed successfully!',
+        message: appL10n.bidPlacedSuccessfully,
         type: SnackbarType.success,
       );
     }
@@ -1137,15 +1171,18 @@ class AuctionFilterBottomSheetV2 extends StatelessWidget {
               children: [
                 Icon(Icons.tune_rounded, color: AppColors.primary, size: 22.r),
                 SizedBox(width: 8.w),
-                Text(
-                  context.l10n.filterAuctions,
-                  style: TextStyle(
-                    fontFamily: 'Montserrat',
-                    fontSize: 17.sp,
-                    fontWeight: FontWeight.w600,
+                Expanded(
+                  child: Text(
+                    context.l10n.filterAuctions,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontFamily: 'Montserrat',
+                      fontSize: 17.sp,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ),
-                const Spacer(),
                 Obx(
                   () => ctrl.hasActiveFilters
                       ? GestureDetector(
@@ -1190,7 +1227,7 @@ class AuctionFilterBottomSheetV2 extends StatelessWidget {
                           .map((cat) => cat['value'] ?? '')
                           .where((v) => v.isNotEmpty)
                           .toList(),
-                      placeholder: 'All Categories',
+                      placeholder: context.l10n.aucAllCategories,
                       prefixIcon: Icons.category_outlined,
                       isLoading: isLoading,
                       itemLabel: (v) {
@@ -1218,7 +1255,7 @@ class AuctionFilterBottomSheetV2 extends StatelessWidget {
                     return InlineDropdownField<StateByRegionEntity>(
                       value: ctrl.selectedState.value,
                       items: states,
-                      placeholder: 'All States',
+                      placeholder: context.l10n.aucAllStates,
                       prefixIcon: Icons.location_city_outlined,
                       isLoading: isLoading,
                       itemLabel: (s) => s.stateName,
@@ -1237,7 +1274,7 @@ class AuctionFilterBottomSheetV2 extends StatelessWidget {
               children: [
                 Expanded(
                   child: GradientButton.outlined(
-                    text: 'Cancel',
+                    text: context.l10n.cancel,
                     onPressed: () {
                       ctrl.restoreFilters();
                       Get.back();
@@ -1248,7 +1285,7 @@ class AuctionFilterBottomSheetV2 extends StatelessWidget {
                 SizedBox(width: 12.w),
                 Expanded(
                   child: GradientButton.filled(
-                    text: 'Apply',
+                    text: context.l10n.aucApply,
                     onPressed: () {
                       ctrl.applyFilters();
                       Get.back();
@@ -1278,13 +1315,15 @@ class _FilterLabel extends StatelessWidget {
       children: [
         Icon(icon, size: 16.r, color: AppColors.primary),
         SizedBox(width: 6.w),
-        Text(
-          label,
-          style: TextStyle(
-            fontFamily: 'Montserrat',
-            fontSize: 14.sp,
-            fontWeight: FontWeight.w600,
-            color: AppColors.grey900,
+        Expanded(
+          child: Text(
+            label,
+            style: TextStyle(
+              fontFamily: 'Montserrat',
+              fontSize: 14.sp,
+              fontWeight: FontWeight.w600,
+              color: AppColors.grey900,
+            ),
           ),
         ),
       ],
@@ -1305,7 +1344,7 @@ class _BidChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 36.h,
+      constraints: BoxConstraints(minHeight: 36.h),
       decoration: BoxDecoration(
         color: AppColors.grey200,
         border: Border.all(color: AppColors.grey300),
@@ -1316,6 +1355,7 @@ class _BidChip extends StatelessWidget {
         children: [
           Text(
             label,
+            textAlign: TextAlign.center,
             style: TextStyle(
               fontFamily: 'Montserrat',
               fontSize: 10.sp,
@@ -1325,6 +1365,7 @@ class _BidChip extends StatelessWidget {
 
           Text(
             value,
+            textAlign: TextAlign.center,
             style: TextStyle(
               fontFamily: 'Montserrat',
               fontSize: 12.sp,

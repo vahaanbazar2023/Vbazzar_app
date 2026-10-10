@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../constants/app_colors.dart';
 import '../typography/app_text_styles.dart';
+import '../../extensions/context_extensions.dart';
 
 /// Custom input field with dynamic error handling
 ///
@@ -434,7 +435,7 @@ class _CustomPasswordFieldState extends State<CustomPasswordField> {
   Widget build(BuildContext context) {
     return CustomInputField(
       controller: widget.controller,
-      placeholder: widget.placeholder ?? 'Enter password',
+      placeholder: widget.placeholder ?? context.l10n.coreEnterPassword,
       errorText: widget.errorText,
       onChanged: widget.onChanged,
       onSubmitted: widget.onSubmitted,

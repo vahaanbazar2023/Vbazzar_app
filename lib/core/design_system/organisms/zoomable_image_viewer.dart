@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
+import '../../extensions/context_extensions.dart';
 
 /// Full-screen pinch-to-zoom image gallery.
 ///
@@ -171,8 +172,8 @@ class _ZoomableImageViewerState extends State<ZoomableImageViewer> {
                     color: Colors.black54,
                     borderRadius: BorderRadius.circular(25),
                   ),
-                  child: const Text(
-                    'Pinch to zoom  •  Swipe to navigate',
+                  child: Text(
+                    context.l10n.corePinchToZoomHint,
                     style: TextStyle(color: Colors.white70, fontSize: 13),
                   ),
                 ),

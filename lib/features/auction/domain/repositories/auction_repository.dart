@@ -8,7 +8,7 @@ import '../entities/vehicle_listing_entity.dart';
 abstract class AuctionRepository {
   /// Fetch paginated auction listings.
   Future<({List<AuctionEntity> auctions, PaginationEntity pagination})>
-      fetchAuctionListings({
+  fetchAuctionListings({
     required String userId,
     required String auctionType,
     String categoryType = '',
@@ -21,7 +21,7 @@ abstract class AuctionRepository {
 
   /// Fetch paginated vehicle listings for a given auction.
   Future<({List<VehicleListingEntity> vehicles, PaginationEntity pagination})>
-      fetchVehicleListings({
+  fetchVehicleListings({
     required String userId,
     required String auctionId,
     int page = 1,

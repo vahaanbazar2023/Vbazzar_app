@@ -89,12 +89,12 @@ class _ProfilePage extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _section(context, 'My Account', [
+                _section(context, context.l10n.profMyAccount, [
                   _Item(
                     iconAsset: AppAssets.subIconAuction,
                     iconBg: const Color(0xFFFFEEEE),
                     label: context.l10n.manageProfile,
-                    subtitle: 'Update your personal information',
+                    subtitle: context.l10n.profUpdatePersonalInfo,
                     onTap: () => controller.openManageProfile(),
                   ),
 
@@ -102,7 +102,7 @@ class _ProfilePage extends StatelessWidget {
                     iconAsset: AppAssets.subIconSubscriptions,
                     iconBg: const Color(0xFFEEF4FF),
                     label: context.l10n.my_subscriptions_title,
-                    subtitle: 'View and manage your plans',
+                    subtitle: context.l10n.profViewManagePlans,
                     onTap: () => Get.toNamed(AppRoutes.mySubscriptions),
                   ),
 
@@ -110,7 +110,7 @@ class _ProfilePage extends StatelessWidget {
                     iconAsset: AppAssets.subIconGroup1,
                     iconBg: const Color(0xFFF0FFF0),
                     label: context.l10n.language,
-                    subtitle: 'Choose your preferred language',
+                    subtitle: context.l10n.profChoosePreferredLanguage,
                     onTap: () => Get.toNamed(
                       AppRoutes.languageSelection,
                       arguments: {'fromProfile': true},
@@ -120,12 +120,12 @@ class _ProfilePage extends StatelessWidget {
 
                 SizedBox(height: 22.h),
 
-                _section(context, 'Auction', [
+                _section(context, context.l10n.auction, [
                   _Item(
                     iconAsset: AppAssets.subIconStar,
                     iconBg: const Color(0xFFFFF8E0),
                     label: context.l10n.myWins,
-                    subtitle: 'View items you have won',
+                    subtitle: context.l10n.profViewItemsWon,
                     onTap: () => Get.toNamed(AppRoutes.myWins),
                   ),
 
@@ -133,15 +133,15 @@ class _ProfilePage extends StatelessWidget {
                     iconAsset: AppAssets.subIconBidLimit,
                     iconBg: const Color(0xFFEEF4FF),
                     label: context.l10n.myBids,
-                    subtitle: 'Track your active and past bids',
+                    subtitle: context.l10n.profTrackBids,
                     onTap: () => Get.toNamed(AppRoutes.myBids),
                   ),
 
                   _Item(
                     iconData: Icons.favorite_rounded,
                     iconBg: const Color(0xFFFFF0F0),
-                    label: 'Wishlist',
-                    subtitle: 'Auction vehicles you have saved',
+                    label: context.l10n.profWishlist,
+                    subtitle: context.l10n.profAuctionVehiclesSaved,
                     onTap: () => Get.toNamed(AppRoutes.myWishlist),
                   ),
 
@@ -149,19 +149,19 @@ class _ProfilePage extends StatelessWidget {
                     iconAsset: AppAssets.subIconPending,
                     iconBg: const Color(0xFFFFF0F0),
                     label: context.l10n.initiateRefund,
-                    subtitle: 'Request a refund for your orders',
+                    subtitle: context.l10n.profRequestRefund,
                     onTap: () => Get.toNamed(AppRoutes.initiateRefund),
                   ),
                 ]),
 
                 SizedBox(height: 22.h),
 
-                _section(context, 'Buy & Sell', [
+                _section(context, context.l10n.profBuyAndSell, [
                   _Item(
                     iconAsset: AppAssets.subIconVehicle,
                     iconBg: const Color(0xFFEEF4FF),
                     label: context.l10n.myVehicles,
-                    subtitle: 'Manage your listed vehicles',
+                    subtitle: context.l10n.profManageListedVehicles,
                     onTap: () => Get.to(
                       () => const MyVehiclesView(),
                       binding: BindingsBuilder(() {
@@ -179,8 +179,8 @@ class _ProfilePage extends StatelessWidget {
                   _Item(
                     iconAsset: AppAssets.subIconWallet,
                     iconBg: const Color(0xFFFFF8E0),
-                    label: 'Wishlist',
-                    subtitle: 'Items you have saved',
+                    label: context.l10n.profWishlist,
+                    subtitle: context.l10n.profItemsSaved,
                     onTap: () => Get.to(
                       () => const SubscribedVehiclesView(),
                       binding: BindingsBuilder(() {
@@ -198,8 +198,8 @@ class _ProfilePage extends StatelessWidget {
                   _Item(
                     iconAsset: AppAssets.subIconGroup2,
                     iconBg: const Color(0xFFF0FFF0),
-                    label: 'Purchase History',
-                    subtitle: 'View your past purchases',
+                    label: context.l10n.profPurchaseHistory,
+                    subtitle: context.l10n.profViewPastPurchases,
                     onTap: () => Get.toNamed(AppRoutes.spareOrders),
                   ),
                 ]),
@@ -325,7 +325,7 @@ class _ProfileInfoCard extends StatelessWidget {
                       children: [
                         Flexible(
                           child: Text(
-                            profile?.fullName ?? 'User',
+                            profile?.fullName ?? context.l10n.profUser,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(
@@ -369,7 +369,7 @@ class _ProfileInfoCard extends StatelessWidget {
                     SizedBox(height: 8.h),
                     _Badge(
                       icon: Icons.star_rounded,
-                      label: _memberLabel(profile?.userType ?? ''),
+                      label: _memberLabel(context, profile?.userType ?? ''),
                       iconColor: const Color(0xFFFFD700),
                     ),
                   ],
@@ -406,13 +406,13 @@ class _ProfileInfoCard extends StatelessWidget {
     );
   }
 
-  String _memberLabel(String type) {
+  String _memberLabel(BuildContext context, String type) {
     switch (type.toUpperCase()) {
       case 'VENDOR':
       case 'AGENT':
-        return 'Agent';
+        return context.l10n.profAgent;
       default:
-        return 'Premium Member';
+        return context.l10n.profPremiumMember;
     }
   }
 }
@@ -588,14 +588,14 @@ class _ProfileInfoCard extends StatelessWidget {
 //     );
 //   }
 
-String _memberLabel(String type) {
+String _memberLabel(BuildContext context, String type) {
   switch (type.toUpperCase()) {
     case 'VENDOR':
     case 'AGENT':
-      return 'Agent';
+      return context.l10n.profAgent;
 
     default:
-      return 'Premium Member';
+      return context.l10n.profPremiumMember;
   }
 }
 
@@ -648,13 +648,17 @@ class _Badge extends StatelessWidget {
         children: [
           Icon(icon, size: 12.r, color: iconColor),
           SizedBox(width: 4.w),
-          Text(
-            label,
-            style: TextStyle(
-              fontFamily: 'Montserrat',
-              fontSize: 10.sp,
-              fontWeight: FontWeight.w600,
-              color: Colors.white,
+          Flexible(
+            child: Text(
+              label,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                fontFamily: 'Montserrat',
+                fontSize: 10.sp,
+                fontWeight: FontWeight.w600,
+                color: Colors.white,
+              ),
             ),
           ),
         ],
@@ -690,7 +694,7 @@ class _StatsCard extends StatelessWidget {
             child: _StatCell(
               iconAsset: AppAssets.subIconStar,
               value: '12',
-              label: 'Total Wins',
+              label: context.l10n.profTotalWins,
             ),
           ),
 
@@ -700,7 +704,7 @@ class _StatsCard extends StatelessWidget {
             child: _StatCell(
               iconAsset: AppAssets.subIconVehicle,
               value: '3',
-              label: 'Vehicles',
+              label: context.l10n.profVehicles,
             ),
           ),
 
@@ -710,7 +714,7 @@ class _StatsCard extends StatelessWidget {
             child: _StatCell(
               iconAsset: AppAssets.subIconBidLimit,
               value: '5',
-              label: 'Active Bids',
+              label: context.l10n.profActiveBids,
             ),
           ),
         ],
@@ -749,34 +753,37 @@ class _StatCell extends StatelessWidget {
                 child: Image.asset(iconAsset, fit: BoxFit.contain),
               ),
               SizedBox(width: 8.w),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    value,
-                    style: TextStyle(
-                      fontFamily: 'Montserrat',
-                      fontWeight: FontWeight.w600,
-                      fontSize: 14.sp,
-                      color: AppColors.black,
+              Expanded(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      value,
+                      maxLines: 1,
+                      style: TextStyle(
+                        fontFamily: 'Montserrat',
+                        fontWeight: FontWeight.w600,
+                        fontSize: 14.sp,
+                        color: AppColors.black,
+                      ),
                     ),
-                  ),
 
-                  SizedBox(height: 2.h),
+                    SizedBox(height: 2.h),
 
-                  Text(
-                    label,
-                    textAlign: TextAlign.center,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      fontFamily: 'Montserrat',
-                      fontSize: 10.5.sp,
-                      color: AppColors.grey500,
+                    Text(
+                      label,
+                      textAlign: TextAlign.center,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontFamily: 'Montserrat',
+                        fontSize: 10.5.sp,
+                        color: AppColors.grey500,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ],
           ),
@@ -915,9 +922,9 @@ class _LogoutButton extends StatelessWidget {
               fontWeight: FontWeight.w600,
             ),
           ),
-          content: const Text(
-            'Are you sure you want to log out?',
-            style: TextStyle(fontFamily: 'Montserrat'),
+          content: Text(
+            context.l10n.areYouSureLogout,
+            style: const TextStyle(fontFamily: 'Montserrat'),
           ),
           actions: [
             TextButton(
@@ -980,13 +987,17 @@ class _LogoutButton extends StatelessWidget {
 
               SizedBox(width: 8.w),
 
-              Text(
-                context.l10n.logout,
-                style: TextStyle(
-                  fontFamily: 'Montserrat',
-                  fontWeight: FontWeight.w600,
-                  fontSize: 14.sp,
-                  color: AppColors.primary,
+              Flexible(
+                child: Text(
+                  context.l10n.logout,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontFamily: 'Montserrat',
+                    fontWeight: FontWeight.w600,
+                    fontSize: 14.sp,
+                    color: AppColors.primary,
+                  ),
                 ),
               ),
             ],
@@ -1098,7 +1109,7 @@ class _ProfileBottomBar extends StatelessWidget {
                   SizedBox(height: 3.h),
 
                   Text(
-                    'Settings',
+                    context.l10n.settings,
                     style: TextStyle(
                       fontFamily: 'Montserrat',
                       fontSize: 10.sp,

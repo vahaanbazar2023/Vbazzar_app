@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import '../../../core/extensions/context_extensions.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/design_system/design_system.dart';
 import '../../../core/design_system/molecules/custom_autocomplete_field.dart';
@@ -41,8 +42,10 @@ class SellVehicleView extends StatelessWidget {
     }
 
     return AppLayout(
-      title: 'Sell Vehicle',
-      subtitle: preName.isNotEmpty ? preName : 'Post your vehicle for sale',
+      title: context.l10n.spareSellVehicle,
+      subtitle: preName.isNotEmpty
+          ? preName
+          : context.l10n.sparePostYourVehicleForSale,
       body: Obx(() {
         if (ctrl.isSubmittingForm.value) return _SubmittingOverlay();
 
@@ -54,7 +57,7 @@ class SellVehicleView extends StatelessWidget {
               // ── Category picker (only when NOT pre-selected) ──────────────
               if (preCode.isEmpty) ...[
                 _SellField(
-                  label: 'Vehicle Category *',
+                  label: '${context.l10n.vehicleCategory} *',
                   child: Obx(
                     () => SizedBox(
                       height: _kFieldH.h,
@@ -67,11 +70,11 @@ class SellVehicleView extends StatelessWidget {
                                     ctrl.selectedCategoryCode.value,
                               ),
                         items: ctrl.categories,
-                        placeholder: 'Select category',
+                        placeholder: context.l10n.selectCategory,
                         prefixIcon: Icons.category_outlined,
                         isLoading: ctrl.isLoadingCategories.value,
                         searchable: true,
-                        searchHint: 'Search category...',
+                        searchHint: context.l10n.spareSearchCategory,
                         itemLabel: (cat) => cat.categoryName as String,
                         height: _kFieldH.h,
                         onChanged: (cat) {
@@ -140,7 +143,7 @@ class _SubmittingOverlay extends StatelessWidget {
           ),
           SizedBox(height: 20.h),
           Text(
-            'Submitting your vehicle...',
+            context.l10n.spareSubmittingYourVehicle,
             style: TextStyle(
               fontFamily: 'Montserrat',
               fontSize: 16.sp,
@@ -150,7 +153,7 @@ class _SubmittingOverlay extends StatelessWidget {
           ),
           SizedBox(height: 6.h),
           Text(
-            'Please wait while we process your listing',
+            context.l10n.sparePleaseWaitProcessingListing,
             style: TextStyle(
               fontFamily: 'Montserrat',
               fontSize: 13.sp,
@@ -375,7 +378,7 @@ class _DynamicFormBody extends StatelessWidget {
       if (fields.isEmpty) {
         return Center(
           child: Text(
-            'No form fields available.',
+            context.l10n.spareNoFormFieldsAvailable,
             style: TextStyle(
               fontFamily: 'Montserrat',
               fontSize: 13.sp,
@@ -431,7 +434,7 @@ class _DynamicFormBody extends StatelessWidget {
           // ── Regular fields ────────────────────────────────────────────────
           if (regularWithoutCategory.isNotEmpty) ...[
             _SectionHeader(
-              label: 'Vehicle Details',
+              label: context.l10n.vehicleDetailsTitle,
               icon: Icons.directions_car_outlined,
             ),
             SizedBox(height: 10.h),
@@ -453,7 +456,7 @@ class _DynamicFormBody extends StatelessWidget {
           if (toggles.isNotEmpty) ...[
             SizedBox(height: 20.h),
             _SectionHeader(
-              label: 'Vehicle Condition',
+              label: context.l10n.vehicleCondition,
               icon: Icons.verified_outlined,
             ),
             SizedBox(height: 10.h),
@@ -464,7 +467,7 @@ class _DynamicFormBody extends StatelessWidget {
           if (files.isNotEmpty) ...[
             SizedBox(height: 20.h),
             _SectionHeader(
-              label: 'Photos & Documents',
+              label: context.l10n.sparePhotosAndDocuments,
               icon: Icons.photo_library_outlined,
             ),
             SizedBox(height: 10.h),
@@ -514,13 +517,17 @@ class _SectionHeader extends StatelessWidget {
           child: Icon(icon, color: Colors.white, size: 15.sp),
         ),
         SizedBox(width: 10.w),
-        Text(
-          label,
-          style: TextStyle(
-            fontFamily: 'Montserrat',
-            fontSize: 14.sp,
-            fontWeight: FontWeight.w600,
-            color: AppColors.textPrimary,
+        Flexible(
+          child: Text(
+            label,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+              fontFamily: 'Montserrat',
+              fontSize: 14.sp,
+              fontWeight: FontWeight.w600,
+              color: AppColors.textPrimary,
+            ),
           ),
         ),
         SizedBox(width: 10.w),
@@ -751,6 +758,8 @@ class _FieldBuilder extends StatelessWidget {
               Expanded(
                 child: Text(
                   displayName,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                   style: TextStyle(
                     fontFamily: 'Montserrat',
                     fontSize: 14.sp,
@@ -767,7 +776,7 @@ class _FieldBuilder extends StatelessWidget {
                   borderRadius: BorderRadius.circular(20.r),
                 ),
                 child: Text(
-                  'Auto-filled',
+                  context.l10n.spareAutoFilled,
                   style: TextStyle(
                     fontFamily: 'Montserrat',
                     fontSize: 10.sp,
@@ -791,7 +800,7 @@ class _FieldBuilder extends StatelessWidget {
       return _SellField(
         label: label,
         child: _UniformInput(
-          hint: 'e.g. 2021',
+          hint: context.l10n.spareExampleHint('2021'),
           icon: Icons.calendar_today_outlined,
           keyboardType: TextInputType.number,
           inputFormatters: [
@@ -814,8 +823,8 @@ class _FieldBuilder extends StatelessWidget {
             ),
             options: ctrl.brands,
             placeholder: ctrl.isLoadingBrands.value
-                ? 'Loading brands...'
-                : 'Search brand',
+                ? context.l10n.loadingBrands
+                : context.l10n.spareSearchBrand,
             prefixIcon: Icons.branding_watermark_outlined,
             isLoading: ctrl.isLoadingBrands.value,
             displayStringForOption: (b) => b['brand_name'] ?? '',
@@ -857,7 +866,7 @@ class _FieldBuilder extends StatelessWidget {
             child: CustomDropdownField<String>(
               value: ctrl.formValues[name]?.toString(),
               items: options,
-              placeholder: 'Select $name',
+              placeholder: context.l10n.spareSelectFilter(name),
               searchable: options.length > 5,
               itemLabel: (o) => o,
               height: _kFieldH.h,
@@ -873,7 +882,7 @@ class _FieldBuilder extends StatelessWidget {
       return _SellField(
         label: label,
         child: _UniformInput(
-          hint: 'e.g. 2500000',
+          hint: context.l10n.spareExampleHint('2500000'),
           prefixWidget: Text(
             '₹',
             style: TextStyle(
@@ -894,7 +903,7 @@ class _FieldBuilder extends StatelessWidget {
       return _SellField(
         label: label,
         child: _UniformInput(
-          hint: '10-digit mobile number',
+          hint: context.l10n.spareTenDigitMobileNumber,
           icon: Icons.phone_outlined,
           keyboardType: TextInputType.phone,
           inputFormatters: [
@@ -911,7 +920,7 @@ class _FieldBuilder extends StatelessWidget {
       return _SellField(
         label: label,
         child: _UniformInput(
-          hint: 'e.g. MH12AB1234',
+          hint: context.l10n.spareExampleHint('MH12AB1234'),
           icon: Icons.badge_outlined,
           inputFormatters: [
             FilteringTextInputFormatter.allow(RegExp(r'[A-Za-z0-9]')),
@@ -926,7 +935,7 @@ class _FieldBuilder extends StatelessWidget {
       return _SellField(
         label: label,
         child: _UniformInput(
-          hint: 'e.g. 50000',
+          hint: context.l10n.spareExampleHint('50000'),
           icon: Icons.speed_outlined,
           keyboardType: TextInputType.number,
           inputFormatters: [FilteringTextInputFormatter.digitsOnly],
@@ -939,7 +948,7 @@ class _FieldBuilder extends StatelessWidget {
     return _SellField(
       label: label,
       child: _UniformInput(
-        hint: 'Enter $name',
+        hint: context.l10n.spareEnterFilter(name),
         initialValue: ctrl.formValues[name]?.toString(),
         onChanged: (v) => ctrl.updateFormValue(name, v),
       ),
@@ -985,7 +994,7 @@ class _StateFieldState extends State<_StateField> {
       () => CustomAutocompleteField<Map<String, String>>(
         controller: _textCtrl,
         options: widget.ctrl.states,
-        placeholder: 'Search state',
+        placeholder: context.l10n.spareSearchState,
         prefixIcon: Icons.location_on_outlined,
         isLoading: widget.ctrl.isLoadingStates.value,
         displayStringForOption: (s) => s['state_name'] ?? '',
@@ -1037,7 +1046,9 @@ class _CityFieldState extends State<_CityField> {
       return CustomAutocompleteField<Map<String, String>>(
         controller: _textCtrl,
         options: widget.ctrl.cities,
-        placeholder: stateSelected ? 'Search city' : 'Select state first',
+        placeholder: stateSelected
+            ? context.l10n.spareSearchCity
+            : context.l10n.spareSelectStateFirst,
         prefixIcon: Icons.location_city_outlined,
         isLoading: widget.ctrl.isLoadingCities.value,
         enabled: stateSelected,
@@ -1119,7 +1130,9 @@ class _DatePickerField extends StatelessWidget {
                 SizedBox(width: 8.w),
                 Expanded(
                   child: Text(
-                    val.isEmpty ? 'Select date' : val,
+                    val.isEmpty ? context.l10n.selectDate : val,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                     style: TextStyle(
                       fontFamily: 'Montserrat',
                       fontSize: 14.sp,
@@ -1243,7 +1256,7 @@ class _ToggleCard extends StatelessWidget {
                             ),
                             if (on)
                               Text(
-                                'Confirmed ✓',
+                                context.l10n.spareConfirmedCheck,
                                 style: TextStyle(
                                   fontFamily: 'Montserrat',
                                   fontSize: 11.sp,
@@ -1317,8 +1330,8 @@ class _FileField extends StatelessWidget {
       }
     } catch (e) {
       Get.snackbar(
-        'Error',
-        'Could not open picker: $e',
+        appL10n.spareError,
+        appL10n.spareCouldNotOpenPicker(e.toString()),
         snackPosition: SnackPosition.TOP,
         backgroundColor: AppColors.grey900,
         colorText: Colors.white,
@@ -1335,13 +1348,15 @@ class _FileField extends StatelessWidget {
       children: [
         Row(
           children: [
-            Text(
-              '$fieldName${isRequired ? ' *' : ''}',
-              style: TextStyle(
-                fontFamily: 'Montserrat',
-                fontSize: 12.sp,
-                fontWeight: FontWeight.w600,
-                color: AppColors.grey700,
+            Flexible(
+              child: Text(
+                '$fieldName${isRequired ? ' *' : ''}',
+                style: TextStyle(
+                  fontFamily: 'Montserrat',
+                  fontSize: 12.sp,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.grey700,
+                ),
               ),
             ),
             if (_isImages) ...[
@@ -1380,7 +1395,11 @@ class _FileField extends StatelessWidget {
                   onTap: imgs.length < 10 ? _pick : null,
                   child: Container(
                     width: double.infinity,
-                    height: 110.h,
+                    constraints: BoxConstraints(minHeight: 110.h),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 8.w,
+                      vertical: 8.h,
+                    ),
                     decoration: BoxDecoration(
                       color: imgs.isEmpty
                           ? AppColors.primary.withValues(alpha: 0.04)
@@ -1412,8 +1431,9 @@ class _FileField extends StatelessWidget {
                         SizedBox(height: 8.h),
                         Text(
                           imgs.isEmpty
-                              ? 'Tap to add vehicle photos'
-                              : 'Tap to add more',
+                              ? context.l10n.spareTapToAddVehiclePhotos
+                              : context.l10n.spareTapToAddMore,
+                          textAlign: TextAlign.center,
                           style: TextStyle(
                             fontFamily: 'Montserrat',
                             fontSize: 13.sp,
@@ -1423,7 +1443,8 @@ class _FileField extends StatelessWidget {
                         ),
                         SizedBox(height: 2.h),
                         Text(
-                          'Up to 10 photos  •  JPG, PNG',
+                          context.l10n.spareUpTo10PhotosFormats,
+                          textAlign: TextAlign.center,
                           style: TextStyle(
                             fontFamily: 'Montserrat',
                             fontSize: 10.sp,
@@ -1476,7 +1497,11 @@ class _FileField extends StatelessWidget {
                   onTap: _pick,
                   child: Container(
                     width: double.infinity,
-                    height: 100.h,
+                    constraints: BoxConstraints(minHeight: 100.h),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 8.w,
+                      vertical: 8.h,
+                    ),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(12.r),
@@ -1497,7 +1522,8 @@ class _FileField extends StatelessWidget {
                         ),
                         SizedBox(height: 6.h),
                         Text(
-                          'Tap to upload',
+                          context.l10n.spareTapToUpload,
+                          textAlign: TextAlign.center,
                           style: TextStyle(
                             fontFamily: 'Montserrat',
                             fontSize: 12.sp,
@@ -1509,7 +1535,8 @@ class _FileField extends StatelessWidget {
                         ),
                         SizedBox(height: 2.h),
                         Text(
-                          'Multiple files allowed  •  Max 12 MB each  •  JPG, PNG',
+                          context.l10n.spareMultipleFilesAllowedFormats,
+                          textAlign: TextAlign.center,
                           style: TextStyle(
                             fontFamily: 'Montserrat',
                             fontSize: 10.sp,
@@ -1660,7 +1687,9 @@ class _SubmitButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Obx(
       () => GradientButton.filled(
-        text: ctrl.isEditMode.value ? 'Update Vehicle' : 'Submit',
+        text: ctrl.isEditMode.value
+            ? context.l10n.spareUpdateVehicle
+            : context.l10n.submit,
         width: double.infinity,
         height: 52.h,
         fontSize: 15.sp,

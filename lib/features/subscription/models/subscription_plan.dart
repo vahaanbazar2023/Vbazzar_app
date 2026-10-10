@@ -1,3 +1,5 @@
+import '../../../core/extensions/context_extensions.dart';
+
 class SubscriptionPlan {
   final String typeCode;
   final String planCode;
@@ -62,10 +64,10 @@ class SubscriptionPlan {
   /// e.g. "99 Days" or "₹1,00,000 Limit"
   String get metricLabel {
     if (planMetric == 'days') {
-      return '$planMetricValue Days';
+      return appL10n.profSubDaysMetric(planMetricValue);
     }
     final amount = int.tryParse(planMetricValue) ?? 0;
-    return '₹${_formatAmount(amount)} Limit';
+    return appL10n.profSubLimitMetric(_formatAmount(amount));
   }
 
   String _formatAmount(int amount) {

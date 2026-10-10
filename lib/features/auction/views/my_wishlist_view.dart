@@ -32,8 +32,8 @@ class MyWishlistView extends GetView<WishlistController> {
   @override
   Widget build(BuildContext context) {
     return AppLayout(
-      title: 'My Wishlist',
-      subtitle: 'Your favorite vehicles',
+      title: context.l10n.aucMyWishlist,
+      subtitle: context.l10n.aucYourFavoriteVehicles,
       showBack: true,
       body: Obx(() {
         if (controller.isLoading.value) {
@@ -48,7 +48,7 @@ class MyWishlistView extends GetView<WishlistController> {
         if (controller.vehicles.isEmpty) {
           return _EmptyState(
             icon: Icons.gavel_outlined,
-            message: 'No wishlist items yet',
+            message: context.l10n.aucNoWishlistItems,
           );
         }
         return RefreshIndicator(
@@ -155,7 +155,7 @@ class _WishlistCardState extends State<_WishlistCard> {
       CustomSnackbar.show(message: error, type: SnackbarType.error);
     } else if (error == null) {
       CustomSnackbar.show(
-        message: 'Bid placed successfully!',
+        message: appL10n.bidPlacedSuccessfully,
         type: SnackbarType.success,
       );
     }
@@ -163,7 +163,7 @@ class _WishlistCardState extends State<_WishlistCard> {
 
   Color get _statusColor => AppColors.error;
 
-  String get _statusLabel => 'Wishlisted';
+  String get _statusLabel => context.l10n.aucWishlisted;
 
   static String _fmt(int n) {
     if (n == 0) return '0';
@@ -319,13 +319,19 @@ class _WishlistCardState extends State<_WishlistCard> {
                                 color: Colors.white,
                               ),
                               SizedBox(width: 3.w),
-                              Text(
-                                isWinning ? 'Winning' : 'Losing',
-                                style: TextStyle(
-                                  fontFamily: 'Montserrat',
-                                  fontSize: 9.sp,
-                                  fontWeight: FontWeight.w600,
-                                  color: Colors.white,
+                              Flexible(
+                                child: Text(
+                                  isWinning
+                                      ? context.l10n.aucWinning
+                                      : context.l10n.aucLosing,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    fontFamily: 'Montserrat',
+                                    fontSize: 9.sp,
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.white,
+                                  ),
                                 ),
                               ),
                             ],
@@ -347,7 +353,7 @@ class _WishlistCardState extends State<_WishlistCard> {
                             borderRadius: BorderRadius.circular(12.r),
                           ),
                           child: Text(
-                            'CLOSED',
+                            context.l10n.closedBadge,
                             style: TextStyle(
                               fontFamily: 'Montserrat',
                               fontSize: 9.sp,
@@ -432,30 +438,30 @@ class _WishlistCardState extends State<_WishlistCard> {
               children: [
                 if (!_expanded) ...[
                   _GRow(
-                    'Yard Name',
+                    context.l10n.yard_name,
                     v.yardName,
-                    'Yard Location',
+                    context.l10n.yard_location,
                     v.yardLocation,
                     single: true,
                   ),
                   SizedBox(height: 6.h),
                 ],
                 _GRow(
-                  'Auction ID',
+                  context.l10n.auction_id,
                   v.auctionId,
-                  'Vehicle ID',
+                  context.l10n.vehicle_id,
                   v.vehicleId,
                   single: true,
                 ),
                 SizedBox(height: 6.h),
                 // Always-visible bid summary
                 _GRow(
-                  'Your Bid',
+                  context.l10n.your_bid,
                   v.yourBid > 0 ? '₹ ${_fmt(v.yourBid)}' : '₹ 0',
-                  'Highest Bid',
+                  context.l10n.aucHighestBid,
                   (v.currentHighestBid ?? 0) > 0
                       ? '₹ ${_fmt((v.currentHighestBid ?? 0))}'
-                      : 'No bids',
+                      : context.l10n.aucNoBids,
                 ),
               ],
             ),
@@ -470,55 +476,73 @@ class _WishlistCardState extends State<_WishlistCard> {
               child: Column(
                 children: [
                   _OptRow(
-                    'RC Availability',
+                    context.l10n.rc_availability,
                     v.rcAvailability,
-                    'Repo Date',
+                    context.l10n.repo_date,
                     v.repoDate,
                   ),
-                  _OptRow('Chassis No', v.chassisNo, 'Engine No', v.engineNo),
                   _OptRow(
-                    'Registered RTO',
+                    context.l10n.chassis_no,
+                    v.chassisNo,
+                    context.l10n.engine_no,
+                    v.engineNo,
+                  ),
+                  _OptRow(
+                    context.l10n.registered_rto,
                     v.registeredRto,
-                    'Transmission',
+                    context.l10n.transmission,
                     v.transmission,
                   ),
-                  _OptRow('Variant', v.variant, 'Colour', v.colour),
-                  _OptRow('Fuel Type', v.fuelType, 'Owner', v.owner),
                   _OptRow(
-                    'Contact Person',
+                    context.l10n.variant,
+                    v.variant,
+                    context.l10n.colour,
+                    v.colour,
+                  ),
+                  _OptRow(
+                    context.l10n.fuel_type,
+                    v.fuelType,
+                    context.l10n.owner,
+                    v.owner,
+                  ),
+                  _OptRow(
+                    context.l10n.aucContactPerson,
                     v.contactPersonName,
-                    'Mobile',
+                    context.l10n.aucMobile,
                     v.contactPersonNumber,
                   ),
                   _OptRow(
-                    'Start Price',
+                    context.l10n.start_price,
                     '₹ ${_fmt(v.minimumPrice)}',
-                    'Market Value',
+                    context.l10n.market_value,
                     v.marketValue.isNotEmpty ? '₹ ${v.marketValue}' : '',
                   ),
                   _OptRow(
-                    'Parking Charges',
+                    context.l10n.parking_charges,
                     v.parkingCharges,
-                    'Transaction Fees',
+                    context.l10n.transaction_fees,
                     v.transactionFees,
                   ),
                   _OptRow(
-                    'Yard Name',
+                    context.l10n.yard_name,
                     v.yardName,
-                    'Yard Location',
+                    context.l10n.yard_location,
                     v.yardLocation,
                   ),
                   if (v.remarks.isNotEmpty)
                     Padding(
                       padding: EdgeInsets.only(bottom: 6.h),
-                      child: _GCell(label: 'Remarks', value: v.remarks),
+                      child: _GCell(
+                        label: context.l10n.remarks,
+                        value: v.remarks,
+                      ),
                     ),
                   // Bid placed + count info
                   SizedBox(height: 4.h),
                   _GRow(
-                    'Bids Placed',
+                    context.l10n.aucBidsPlaced,
                     v.bidsReceived.toString(),
-                    'Bids Left',
+                    context.l10n.bids_left,
                     v.bidsLeft.toString(),
                   ),
                   SizedBox(height: 4.h),
@@ -536,12 +560,14 @@ class _WishlistCardState extends State<_WishlistCard> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text(
-                            'Available Buying Limit: ',
-                            style: TextStyle(
-                              fontFamily: 'Montserrat',
-                              fontSize: 12.sp,
-                              color: AppColors.grey600,
+                          Flexible(
+                            child: Text(
+                              '${context.l10n.availableBuyingLimit}: ',
+                              style: TextStyle(
+                                fontFamily: 'Montserrat',
+                                fontSize: 12.sp,
+                                color: AppColors.grey600,
+                              ),
                             ),
                           ),
                           Text(
@@ -574,27 +600,35 @@ class _WishlistCardState extends State<_WishlistCard> {
                     child: Divider(color: AppColors.grey300, thickness: 1),
                   ),
                   SizedBox(width: 8.w),
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        _expanded ? 'See Less' : 'Details',
-                        style: TextStyle(
-                          fontFamily: 'Montserrat',
-                          fontSize: 11.sp,
-                          fontWeight: FontWeight.w600,
+                  Flexible(
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Flexible(
+                          child: Text(
+                            _expanded
+                                ? context.l10n.aucSeeLess
+                                : context.l10n.aucDetails,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              fontFamily: 'Montserrat',
+                              fontSize: 11.sp,
+                              fontWeight: FontWeight.w600,
+                              color: AppColors.grey700,
+                            ),
+                          ),
+                        ),
+                        SizedBox(width: 4.w),
+                        Icon(
+                          _expanded
+                              ? Icons.keyboard_arrow_up_rounded
+                              : Icons.keyboard_arrow_down_rounded,
+                          size: 16.r,
                           color: AppColors.grey700,
                         ),
-                      ),
-                      SizedBox(width: 4.w),
-                      Icon(
-                        _expanded
-                            ? Icons.keyboard_arrow_up_rounded
-                            : Icons.keyboard_arrow_down_rounded,
-                        size: 16.r,
-                        color: AppColors.grey700,
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                   SizedBox(width: 8.w),
                   Expanded(
@@ -613,14 +647,14 @@ class _WishlistCardState extends State<_WishlistCard> {
             child: isClosed
                 ? Container(
                     width: double.infinity,
-                    height: 42.h,
+                    constraints: BoxConstraints(minHeight: 42.h),
                     alignment: Alignment.center,
                     decoration: BoxDecoration(
                       color: AppColors.grey200,
                       borderRadius: BorderRadius.circular(8.r),
                     ),
                     child: Text(
-                      'Auction Closed',
+                      context.l10n.auctionClosed,
                       style: TextStyle(
                         fontFamily: 'Montserrat',
                         fontWeight: FontWeight.w600,
@@ -723,45 +757,51 @@ class _WishlistCardState extends State<_WishlistCard> {
                       ),
                       SizedBox(width: 10.w),
                       // PLACE BID
-                      GestureDetector(
-                        onTap: _isPlacing ? null : _placeBid,
-                        child: Container(
-                          height: 42.h,
-                          padding: EdgeInsets.symmetric(horizontal: 18.w),
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: _isPlacing
-                                  ? [
-                                      const Color(0xFFAA5555),
-                                      const Color(0xFF884444),
-                                    ]
-                                  : [
-                                      AppColors.ctaGradientStart,
-                                      AppColors.ctaGradientEnd,
-                                    ],
+                      Flexible(
+                        child: GestureDetector(
+                          onTap: _isPlacing ? null : _placeBid,
+                          child: Container(
+                            constraints: BoxConstraints(minHeight: 42.h),
+                            padding: EdgeInsets.symmetric(horizontal: 18.w),
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: _isPlacing
+                                    ? [
+                                        const Color(0xFFAA5555),
+                                        const Color(0xFF884444),
+                                      ]
+                                    : [
+                                        AppColors.ctaGradientStart,
+                                        AppColors.ctaGradientEnd,
+                                      ],
+                              ),
+                              borderRadius: BorderRadius.circular(8.r),
                             ),
-                            borderRadius: BorderRadius.circular(8.r),
+                            alignment: Alignment.center,
+                            child: _isPlacing
+                                ? SizedBox(
+                                    width: 16.r,
+                                    height: 16.r,
+                                    child: const CircularProgressIndicator(
+                                      color: Colors.white,
+                                      strokeWidth: 2,
+                                    ),
+                                  )
+                                : FittedBox(
+                                    fit: BoxFit.scaleDown,
+                                    child: Text(
+                                      context.l10n.placeBid.toUpperCase(),
+                                      maxLines: 1,
+                                      style: TextStyle(
+                                        fontFamily: 'Montserrat',
+                                        fontSize: 13.sp,
+                                        fontWeight: FontWeight.w800,
+                                        color: Colors.white,
+                                        letterSpacing: 0.5,
+                                      ),
+                                    ),
+                                  ),
                           ),
-                          alignment: Alignment.center,
-                          child: _isPlacing
-                              ? SizedBox(
-                                  width: 16.r,
-                                  height: 16.r,
-                                  child: const CircularProgressIndicator(
-                                    color: Colors.white,
-                                    strokeWidth: 2,
-                                  ),
-                                )
-                              : Text(
-                                  'PLACE BID',
-                                  style: TextStyle(
-                                    fontFamily: 'Montserrat',
-                                    fontSize: 13.sp,
-                                    fontWeight: FontWeight.w800,
-                                    color: Colors.white,
-                                    letterSpacing: 0.5,
-                                  ),
-                                ),
                         ),
                       ),
                     ],
@@ -786,7 +826,7 @@ class _WishlistCardState extends State<_WishlistCard> {
                   borderRadius: BorderRadius.circular(16.r),
                 ),
                 child: Text(
-                  'View Full Details →',
+                  context.l10n.aucViewFullDetails,
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontFamily: 'Montserrat',

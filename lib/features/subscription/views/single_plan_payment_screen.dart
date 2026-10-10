@@ -6,6 +6,7 @@ import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_sizes.dart';
 import '../../../core/design_system/molecules/custom_snackbar.dart';
 import '../../../core/design_system/organisms/app_bottom_nav_bar.dart';
+import '../../../core/extensions/context_extensions.dart';
 import '../../../core/storage/secure_storage_service.dart';
 import '../../../core/storage/storage_keys.dart';
 import '../../main_shell/controllers/main_shell_controller.dart';
@@ -21,7 +22,7 @@ import 'wallet_payment_screen.dart';
 
 class SinglePlanPaymentScreen extends StatefulWidget {
   final SubscriptionPlan plan;
-  final String title;
+  final String? title;
   final String subtitle;
 
   /// Source identifier used when routing through WalletPaymentScreen
@@ -41,7 +42,7 @@ class SinglePlanPaymentScreen extends StatefulWidget {
     super.key,
     required this.plan,
     required this.onPaymentSuccess,
-    this.title = 'Subscribe',
+    this.title,
     this.subtitle = '',
     this.source = 'INSPECTION',
     this.shopId,
@@ -69,7 +70,7 @@ class _SinglePlanPaymentScreenState extends State<SinglePlanPaymentScreen> {
     final userId = await SecureStorageService.to.read(StorageKeys.userId);
     if (userId == null || userId.isEmpty) {
       CustomSnackbar.show(
-        message: 'Please login to continue',
+        message: context.l10n.pleaseLoginToContinue,
         type: SnackbarType.error,
       );
       return;
@@ -85,7 +86,7 @@ class _SinglePlanPaymentScreenState extends State<SinglePlanPaymentScreen> {
     _paymentCtrl.onFailure = (message, callback) {
       setState(() => _isProcessing = false);
       CustomSnackbar.show(
-        message: 'Payment failed: $message',
+        message: context.l10n.profSubPaymentFailedMsg(message),
         type: SnackbarType.error,
       );
     };
@@ -157,7 +158,9 @@ class _SinglePlanPaymentScreenState extends State<SinglePlanPaymentScreen> {
           ),
         ),
         title: Text(
-          widget.title,
+          widget.title ?? context.l10n.subscribe,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
           style: const TextStyle(
             fontFamily: 'Montserrat',
             fontWeight: FontWeight.w600,
@@ -333,14 +336,18 @@ class _SinglePlanPaymentScreenState extends State<SinglePlanPaymentScreen> {
                                 color: Colors.white,
                               ),
                             )
-                          : Text(
-                              'Proceed Payment',
-                              style: TextStyle(
-                                fontFamily: 'Montserrat',
-                                fontWeight: FontWeight.w600,
-                                fontSize: 14.sp,
-                                color: AppColors.white,
-                                letterSpacing: 0.3,
+                          : FittedBox(
+                              fit: BoxFit.scaleDown,
+                              child: Text(
+                                context.l10n.proceedPayment,
+                                maxLines: 1,
+                                style: TextStyle(
+                                  fontFamily: 'Montserrat',
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 14.sp,
+                                  color: AppColors.white,
+                                  letterSpacing: 0.3,
+                                ),
                               ),
                             ),
                     ),
@@ -359,9 +366,9 @@ class _SinglePlanPaymentScreenState extends State<SinglePlanPaymentScreen> {
                         color: AppColors.grey650,
                       ),
                       children: [
-                        const TextSpan(text: 'or pay from '),
+                        TextSpan(text: context.l10n.orPayFromWallet),
                         TextSpan(
-                          text: '"My wallet"',
+                          text: context.l10n.myWalletLink,
                           style: TextStyle(
                             fontWeight: FontWeight.w600,
                             color: _isProcessing

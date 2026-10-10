@@ -14,6 +14,7 @@ import '../models/vehicle_listing.dart';
 import '../domain/entities/bid_entity.dart';
 import '../data/repositories/auction_repository_impl.dart';
 import '../domain/repositories/auction_repository.dart';
+import '../../../core/extensions/context_extensions.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // My Bids Controller
@@ -68,7 +69,7 @@ class MyBidsController extends GetxController {
       );
       _parse(response.data, replace: true);
     } catch (e, st) {
-      errorMessage.value = 'Failed to load bids. Please try again.';
+      errorMessage.value = appL10n.aucFailedLoadBids;
       debugPrint('❌ MyBidsController._load: $e\n$st');
     } finally {
       isLoading.value = false;
@@ -125,13 +126,13 @@ class MyBidsController extends GetxController {
 
     // 1. Validate >= minimum price
     if (bidAmount < bidItem.minimumPrice) {
-      return 'Minimum bid is ₹${_fmt(bidItem.minimumPrice)}';
+      return appL10n.aucMinimumBid(_fmt(bidItem.minimumPrice));
     }
 
     // 2. Validate > current highest bid
     final highest = bidItem.currentHighestBid ?? bidItem.yourBid;
     if (highest > 0 && bidAmount <= highest) {
-      return 'Must be higher than current bid';
+      return appL10n.aucMustBeHigherThanCurrentBid;
     }
 
     // 3. Check SUBT002 (bid limit subscription)
@@ -154,18 +155,15 @@ class MyBidsController extends GetxController {
         bidAmount: bidAmount,
       );
       CustomSnackbar.show(
-        message:
-            'You need a Bid Limit subscription to place bids. '
-            'Please subscribe to continue.',
+        message: appL10n.aucBidLimitSubscriptionRequired,
         type: SnackbarType.error,
       );
       Get.toNamed(
         AppRoutes.subscription,
         arguments: {
           'subscription_source': SubscriptionTypeCode.auctionBidLimit,
-          'title': 'Bid Limit Plan Required',
-          'subtitle':
-              'Subscribe to a bid limit plan to place bids in auctions.',
+          'title': appL10n.aucBidLimitPlanRequired,
+          'subtitle': appL10n.aucBidLimitPlanRequiredSubtitle,
         },
       );
       return '__navigated__';
@@ -193,22 +191,21 @@ class MyBidsController extends GetxController {
       );
       CustomSnackbar.show(
         message: availableBalance <= 0
-            ? 'Your available buying limit is ₹0. '
-                  'Please upgrade your bid limit plan to continue.'
-            : 'Your bid of ₹${_fmt(bidAmount)} exceeds your available buying '
-                  'limit of ₹${_fmt(availableBalance)}. '
-                  'Please upgrade your plan to place higher bids.',
+            ? appL10n.aucBuyingLimitZeroUpgrade
+            : appL10n.aucBidExceedsLimitUpgradeHigher(
+                _fmt(bidAmount),
+                _fmt(availableBalance),
+              ),
         type: SnackbarType.error,
       );
       Get.toNamed(
         AppRoutes.subscription,
         arguments: {
           'subscription_source': SubscriptionTypeCode.auctionBidLimit,
-          'title': 'Bid Limit Exceeded',
+          'title': appL10n.aucBidLimitExceeded,
           'subtitle': availableBalance <= 0
-              ? 'You have no available buying limit. Upgrade your bid limit plan to continue.'
-              : 'Your available buying limit is ₹${_fmt(availableBalance)}. '
-                    'Upgrade your plan to place higher bids.',
+              ? appL10n.aucNoBuyingLimitUpgrade
+              : appL10n.aucBuyingLimitUpgradeHigher(_fmt(availableBalance)),
         },
       );
       return '__navigated__';
@@ -231,7 +228,7 @@ class MyBidsController extends GetxController {
       );
       debugPrint('✅ [MyBidsController.placeBid] Success');
       CustomSnackbar.show(
-        message: 'Bid placed successfully!',
+        message: appL10n.bidPlacedSuccessfully,
         type: SnackbarType.success,
       );
       // Refresh list so new bid amounts show
@@ -241,12 +238,12 @@ class MyBidsController extends GetxController {
       debugPrint('❌ [MyBidsController.placeBid] BidException: ${e.message}');
       if (e.message.toLowerCase().contains('higher') ||
           e.code == 'BID_TOO_LOW') {
-        return 'Bid must be higher than the current highest bid';
+        return appL10n.aucBidMustBeHigherThanHighest;
       }
       return e.message;
     } catch (e) {
       debugPrint('❌ [MyBidsController.placeBid] Error: $e');
-      return 'Something went wrong. Please try again.';
+      return appL10n.somethingWentWrong;
     } finally {
       isPlacingBid.value = false;
     }
@@ -306,7 +303,7 @@ class MyBidsController extends GetxController {
             '❌ [MyBidsController.revalidatePendingBid] Bid item not found in list',
           );
           CustomSnackbar.show(
-            message: 'Vehicle not found. Please refresh and try again.',
+            message: appL10n.aucVehicleNotFoundRefresh,
             type: SnackbarType.error,
           );
           return;
@@ -338,7 +335,7 @@ class MyBidsController extends GetxController {
         );
 
         CustomSnackbar.show(
-          message: 'Bid placed successfully!',
+          message: appL10n.bidPlacedSuccessfully,
           type: SnackbarType.success,
         );
 
@@ -351,13 +348,13 @@ class MyBidsController extends GetxController {
         CustomSnackbar.show(
           message: e.message.isNotEmpty
               ? e.message
-              : 'Bid could not be placed.',
+              : appL10n.aucBidCouldNotBePlaced,
           type: SnackbarType.error,
         );
       } catch (e) {
         debugPrint('❌ [MyBidsController.revalidatePendingBid] Error: $e');
         CustomSnackbar.show(
-          message: 'Something went wrong. Please try again.',
+          message: appL10n.somethingWentWrong,
           type: SnackbarType.error,
         );
       } finally {
@@ -370,10 +367,10 @@ class MyBidsController extends GetxController {
         '(bid=${bid.bidAmount}, limit=$newLimit)',
       );
       CustomSnackbar.show(
-        message:
-            'Your bid of ₹${_fmt(bid.bidAmount)} exceeds your available '
-            'buying limit of ₹${_fmt(newLimit)}. '
-            'Please upgrade your plan to continue.',
+        message: appL10n.aucBidExceedsLimitUpgradeContinue(
+          _fmt(bid.bidAmount),
+          _fmt(newLimit),
+        ),
         type: SnackbarType.error,
       );
       // Keep pendingBid alive for next attempt
@@ -443,7 +440,7 @@ class MyWinsController extends GetxController {
       );
       _parse(response.data, replace: true);
     } catch (e) {
-      errorMessage.value = 'Failed to load wins. Please try again.';
+      errorMessage.value = appL10n.aucFailedLoadWins;
       debugPrint('❌ MyWinsController: $e');
     } finally {
       isLoading.value = false;

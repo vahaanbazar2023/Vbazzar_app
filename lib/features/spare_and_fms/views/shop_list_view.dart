@@ -119,7 +119,7 @@ class _ShopListViewState extends State<ShopListView> {
             ),
             SizedBox(height: AppSpacing.xs),
             Text(
-              'No $_category shops found near your location.\nTry enabling location or check back later.',
+              context.l10n.spareNoCategoryShopsFound(_category),
               textAlign: TextAlign.center,
               style: AppFonts.bodySmall.copyWith(color: AppColors.grey500),
             ),

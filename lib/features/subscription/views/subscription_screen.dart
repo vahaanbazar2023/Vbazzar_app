@@ -25,16 +25,16 @@ import '../../../routes/app_routes.dart';
 
 class SubscriptionScreen extends StatefulWidget {
   final String subscriptionSource;
-  final String title;
-  final String subtitle;
+  final String? title;
+  final String? subtitle;
   final SubscriptionPlan? prebuiltPlan;
   final Map<String, dynamic> extraArgs;
 
   const SubscriptionScreen({
     super.key,
     required this.subscriptionSource,
-    this.title = 'Subscription',
-    this.subtitle = 'Choose Your Subscription',
+    this.title,
+    this.subtitle,
     this.prebuiltPlan,
     this.extraArgs = const {},
   });
@@ -84,10 +84,10 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
           );
 
     return AppLayout(
-      title: widget.title,
-      subtitle: widget.subtitle.isEmpty
-          ? 'Choose Your Subscription'
-          : widget.subtitle,
+      title: widget.title ?? context.l10n.profSubSubscription,
+      subtitle: (widget.subtitle == null || widget.subtitle!.isEmpty)
+          ? context.l10n.profSubChooseYourSubscription
+          : widget.subtitle!,
       showBack: true,
       onBack: _onBack,
       body: Obx(() {
@@ -135,7 +135,10 @@ class _SubscriptionPlanBodyState extends State<SubscriptionPlanBody> {
     if (plan == null) return;
     final userId = await SecureStorageService.to.read(StorageKeys.userId) ?? '';
     if (userId.isEmpty) {
-      Get.snackbar('Error', context.l10n.pleaseLoginToContinue);
+      Get.snackbar(
+        context.l10n.profSubError,
+        context.l10n.pleaseLoginToContinue,
+      );
       return;
     }
     final pc = Get.put(PaymentController());
@@ -301,7 +304,7 @@ class _SubscriptionPlanBodyState extends State<SubscriptionPlanBody> {
             color: Colors.white,
             padding: EdgeInsets.fromLTRB(16.w, 12.h, 16.w, 28.h),
             child: GradientButton.filled(
-              text: 'Pay Now',
+              text: context.l10n.profSubPayNow,
               onPressed: hasPlan ? _onProceed : null,
               height: 36.h,
               width: 120,
@@ -382,7 +385,7 @@ class _PlanCard extends StatelessWidget {
     }
   }
 
-  String get _supportLabel {
+  String _supportLabel(BuildContext context) {
     // Use label from API if available, otherwise fallback to tier-based
     if (plan.supportLabel != null && plan.supportLabel!.isNotEmpty) {
       return plan.supportLabel!;
@@ -390,12 +393,12 @@ class _PlanCard extends StatelessWidget {
     switch (plan.name.toLowerCase()) {
       case 'gold':
       case 'elite':
-        return 'Elite Support';
+        return context.l10n.profSubEliteSupport;
       case 'silver':
       case 'premium':
-        return 'Premium Support';
+        return context.l10n.profSubPremiumSupport;
       default:
-        return 'Basic Support';
+        return context.l10n.profSubBasicSupport;
     }
   }
 
@@ -417,16 +420,16 @@ class _PlanCard extends StatelessWidget {
     }
   }
 
-  String get _badgeLabel {
+  String _badgeLabel(BuildContext context) {
     switch (plan.name.toLowerCase()) {
       case 'gold':
       case 'elite':
-        return 'Elite Plan';
+        return context.l10n.profSubElitePlan;
       case 'silver':
       case 'premium':
-        return 'Premium Plan';
+        return context.l10n.profSubPremiumPlan;
       default:
-        return 'Basic Plan';
+        return context.l10n.profSubBasicPlan;
     }
   }
 
@@ -498,7 +501,7 @@ class _PlanCard extends StatelessWidget {
                             Text(
                               plan.featDescription.isNotEmpty
                                   ? plan.featDescription
-                                  : 'Unlimited Access',
+                                  : context.l10n.profSubUnlimitedAccess,
                               style: TextStyle(
                                 fontFamily: 'Montserrat',
                                 fontSize: 11.sp,
@@ -596,13 +599,17 @@ class _PlanCard extends StatelessWidget {
                               fit: BoxFit.contain,
                             ),
                       SizedBox(width: 6.w),
-                      Text(
-                        _supportLabel,
-                        style: TextStyle(
-                          fontFamily: 'Montserrat',
-                          fontSize: 12.sp,
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.textPrimary,
+                      Expanded(
+                        child: Text(
+                          _supportLabel(context),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontFamily: 'Montserrat',
+                            fontSize: 12.sp,
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.textPrimary,
+                          ),
                         ),
                       ),
                     ],
@@ -619,7 +626,9 @@ class _PlanCard extends StatelessWidget {
                                 child: _FeatureChip(
                                   icon: AppAssets.bidPng,
                                   iconUrl: plan.iconUrlBenefit,
-                                  label: plan.benefitLabel ?? 'Bid Limit',
+                                  label:
+                                      plan.benefitLabel ??
+                                      context.l10n.profSubBidLimit,
                                   value: plan.metricLabel,
                                 ),
                               ),
@@ -632,8 +641,8 @@ class _PlanCard extends StatelessWidget {
                                 child: _FeatureChip(
                                   icon: AppAssets.subIconShield2,
                                   iconUrl: plan.iconUrlShield,
-                                  label: 'Secure & Trusted',
-                                  value: '100% Safe',
+                                  label: context.l10n.profSubSecureTrusted,
+                                  value: context.l10n.profSubHundredSafe,
                                 ),
                               ),
                             ],
@@ -644,7 +653,7 @@ class _PlanCard extends StatelessWidget {
                                 child: _FeatureChip(
                                   icon: AppAssets.calendarPng,
                                   iconUrl: plan.iconUrlCalendar,
-                                  label: 'Validity',
+                                  label: context.l10n.profSubValidityLabel,
                                   value: plan.metricLabel,
                                 ),
                               ),
@@ -657,8 +666,8 @@ class _PlanCard extends StatelessWidget {
                                 child: _FeatureChip(
                                   icon: AppAssets.subIconShield2,
                                   iconUrl: plan.iconUrlShield,
-                                  label: 'Secure & Trusted',
-                                  value: '100% Safe',
+                                  label: context.l10n.profSubSecureTrusted,
+                                  value: context.l10n.profSubHundredSafe,
                                 ),
                               ),
                               VerticalDivider(
@@ -671,9 +680,10 @@ class _PlanCard extends StatelessWidget {
                                   icon: AppAssets.subIconStar,
                                   iconUrl: plan.iconUrlBenefit,
                                   label: isMostPopular
-                                      ? (plan.benefitLabel ?? 'Elite Benefits')
+                                      ? (plan.benefitLabel ??
+                                            context.l10n.profSubEliteBenefits)
                                       : '',
-                                  value: _badgeLabel,
+                                  value: _badgeLabel(context),
                                 ),
                               ),
                             ],
@@ -702,7 +712,7 @@ class _PlanCard extends StatelessWidget {
                     ),
                   ),
                   child: Text(
-                    'MOST POPULAR',
+                    context.l10n.profSubMostPopular,
                     style: TextStyle(
                       fontFamily: 'Montserrat',
                       fontSize: 9.sp,
@@ -776,7 +786,7 @@ class _FeatureChip extends StatelessWidget {
                       fontSize: 9.sp,
                       color: AppColors.grey400,
                     ),
-                    maxLines: 1,
+                    maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
                 Text(
@@ -787,7 +797,7 @@ class _FeatureChip extends StatelessWidget {
                     fontWeight: FontWeight.w600,
                     color: AppColors.textPrimary,
                   ),
-                  maxLines: 1,
+                  maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
               ],

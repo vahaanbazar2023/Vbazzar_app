@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../core/constants/app_colors.dart';
+import '../../../core/extensions/context_extensions.dart';
 
 /// 6-step progress indicator for the agent inspection form.
 class InspectionStepIndicator extends StatelessWidget {
@@ -54,8 +55,8 @@ class InspectionStepIndicator extends StatelessWidget {
                           color: isCompleted
                               ? AppColors.success
                               : isActive
-                                  ? AppColors.primary
-                                  : AppColors.grey200,
+                              ? AppColors.primary
+                              : AppColors.grey200,
                           border: isActive
                               ? Border.all(
                                   color: AppColors.primaryDark,
@@ -103,7 +104,10 @@ class InspectionStepIndicator extends StatelessWidget {
           Text(
             stepLabels.length > currentStep
                 ? stepLabels[currentStep]
-                : 'Step ${currentStep + 1}',
+                : context.l10n.inspStepNumber(currentStep + 1),
+            textAlign: TextAlign.center,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
             style: TextStyle(
               fontSize: 13.sp,
               fontWeight: FontWeight.w600,

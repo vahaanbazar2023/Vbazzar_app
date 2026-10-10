@@ -5,6 +5,7 @@ import '../../../core/storage/storage_keys.dart';
 import '../models/auction_listing.dart';
 import '../models/auction_pagination.dart';
 import '../services/auction_service.dart';
+import '../../../core/extensions/context_extensions.dart';
 
 /// Auction type identifiers matching the API.
 class AuctionType {
@@ -17,11 +18,11 @@ class AuctionType {
   static String label(String type) {
     switch (type) {
       case live:
-        return 'Live Bidding';
+        return appL10n.aucLiveBidding;
       case closingToday:
-        return 'Closing Today';
+        return appL10n.closingTodayTab;
       case upcoming:
-        return 'Upcoming';
+        return appL10n.upcomingTab;
       default:
         return type;
     }
@@ -136,7 +137,7 @@ class AuctionController extends GetxController
       tab.pagination.value = result.pagination;
       tab.initialized = true;
     } catch (e) {
-      tab.errorMessage.value = 'Failed to load auctions. Please try again.';
+      tab.errorMessage.value = appL10n.aucFailedLoadAuctions;
     } finally {
       tab.isLoading.value = false;
     }

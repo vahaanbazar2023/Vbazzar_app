@@ -127,6 +127,7 @@ class GradientButton extends StatelessWidget {
           borderRadius: BorderRadius.circular(188.r),
           child: Container(
             alignment: Alignment.center,
+            padding: EdgeInsets.symmetric(horizontal: 12.w),
             child: isLoading
                 ? SizedBox(
                     width: 24.w,
@@ -139,21 +140,28 @@ class GradientButton extends StatelessWidget {
                     ),
                   )
                 : isFilled
-                ? Text(
-                    text,
-                    style: TextStyle(
-                      fontSize: textSize,
-                      fontWeight: textWeight,
-                      color: Colors.white,
-                      fontFamily: 'montserrat',
+                ? FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Text(
+                      text,
+                      maxLines: 1,
+                      style: TextStyle(
+                        fontSize: textSize,
+                        fontWeight: textWeight,
+                        color: Colors.white,
+                        fontFamily: 'montserrat',
+                      ),
                     ),
                   )
-                : GradientText(
-                    text,
-                    style: TextStyle(
-                      fontSize: textSize,
-                      fontWeight: textWeight,
-                      fontFamily: 'PlusJakartaSans',
+                : FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: GradientText(
+                      text,
+                      style: TextStyle(
+                        fontSize: textSize,
+                        fontWeight: textWeight,
+                        fontFamily: 'PlusJakartaSans',
+                      ),
                     ),
                   ),
           ),

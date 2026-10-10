@@ -122,7 +122,9 @@ class FmsDetailView extends GetView<SpareAndFmsController> {
                           child: _InfoBox(
                             icon: Icons.star_outline_rounded,
                             label: context.l10n.rating,
-                            value: rating > 0 ? '$rating / 5.0' : 'N/A',
+                            value: rating > 0
+                                ? '$rating / 5.0'
+                                : context.l10n.na,
                           ),
                         ),
                       ],
@@ -170,7 +172,7 @@ class FmsDetailView extends GetView<SpareAndFmsController> {
                       ),
                       _InfoRow(
                         label: context.l10n.rating,
-                        value: rating > 0 ? '⭐ $rating' : 'N/A',
+                        value: rating > 0 ? '⭐ $rating' : context.l10n.na,
                       ),
                       _InfoRow(
                         label: context.l10n.status,
@@ -520,14 +522,17 @@ class _InfoRow extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                '$label :',
-                style: TextStyle(
-                  fontFamily: 'Plus Jakarta Sans',
-                  fontSize: 13.sp,
-                  color: AppColors.grey700,
+              Flexible(
+                child: Text(
+                  '$label :',
+                  style: TextStyle(
+                    fontFamily: 'Plus Jakarta Sans',
+                    fontSize: 13.sp,
+                    color: AppColors.grey700,
+                  ),
                 ),
               ),
+              SizedBox(width: 8.w),
               Flexible(
                 child: Text(
                   value,

@@ -12,6 +12,7 @@ import '../../../core/design_system/tokens/app_spacing.dart';
 import '../controllers/approved_vehicle_controller.dart';
 import '../domain/entities/approved_vehicle_listing_entity.dart';
 import '../../../routes/app_routes.dart';
+import '../../../core/extensions/context_extensions.dart';
 
 class MyBookingsScreen extends StatefulWidget {
   const MyBookingsScreen({super.key});
@@ -43,10 +44,12 @@ class _MyBookingsScreenState extends State<MyBookingsScreen> {
   @override
   Widget build(BuildContext context) {
     return AppLayout(
-      title: _isInspections ? 'My Inspections' : 'My Bookings',
+      title: _isInspections
+          ? context.l10n.myInspections
+          : context.l10n.myBookings,
       subtitle: _isInspections
-          ? 'Vehicles you requested inspection for'
-          : 'Vehicles you have booked',
+          ? context.l10n.apprInspectionsSubtitle
+          : context.l10n.apprBookingsSubtitle,
       showBack: true,
       body: Obx(() {
         final loading = _isInspections
@@ -95,8 +98,8 @@ class _MyBookingsScreenState extends State<MyBookingsScreen> {
             SizedBox(height: 16.h),
             Text(
               _isInspections
-                  ? 'No inspections requested yet'
-                  : 'No vehicles booked yet',
+                  ? context.l10n.apprNoInspectionsYet
+                  : context.l10n.apprNoBookingsYet,
               style: TextStyle(
                 fontFamily: 'Montserrat',
                 fontSize: 16.sp,
@@ -108,8 +111,8 @@ class _MyBookingsScreenState extends State<MyBookingsScreen> {
             SizedBox(height: 8.h),
             Text(
               _isInspections
-                  ? 'Vehicles you request inspection for will appear here.'
-                  : 'Vehicles you book will appear here.',
+                  ? context.l10n.apprInspectionsEmptyHint
+                  : context.l10n.apprBookingsEmptyHint,
               style: TextStyle(
                 fontFamily: 'Plus Jakarta Sans',
                 fontSize: 13.sp,
@@ -119,7 +122,7 @@ class _MyBookingsScreenState extends State<MyBookingsScreen> {
             ),
             SizedBox(height: 24.h),
             GradientButton.filled(
-              text: 'Refresh',
+              text: context.l10n.apprRefresh,
               width: 120.w,
               isLoading: false,
               onPressed: _loadData,
@@ -240,7 +243,12 @@ class _BookingCard extends StatelessWidget {
                       if (vehicle.yearOfManufacturing > 0)
                         SizedBox(width: AppSpacing.sm),
                       if (vehicle.stateName.isNotEmpty)
-                        _chip(Icons.location_on_outlined, vehicle.stateName),
+                        Flexible(
+                          child: _chip(
+                            Icons.location_on_outlined,
+                            vehicle.stateName,
+                          ),
+                        ),
                       const Spacer(),
                       if (vehicle.price > 0)
                         Text(
@@ -260,9 +268,9 @@ class _BookingCard extends StatelessWidget {
                     children: [
                       Expanded(
                         child: vehicle.isBookedVehicle
-                            ? _disabledBtn('Booked ✓')
+                            ? _disabledBtn(context.l10n.apprBookedCheck)
                             : GradientButton.filled(
-                                text: 'Book Now',
+                                text: context.l10n.apprBookNow,
                                 height: 44.h,
                                 isLoading: false,
                                 onPressed: () {},
@@ -271,9 +279,9 @@ class _BookingCard extends StatelessWidget {
                       SizedBox(width: 12.w),
                       Expanded(
                         child: vehicle.isInspectionRequested
-                            ? _disabledBtn('Requested ✓')
+                            ? _disabledBtn(context.l10n.apprRequestedCheck)
                             : GradientButton.filled(
-                                text: 'Inspection',
+                                text: context.l10n.apprInspection,
                                 height: 44.h,
                                 isLoading: false,
                                 onPressed: () {},
@@ -295,32 +303,39 @@ class _BookingCard extends StatelessWidget {
     children: [
       Icon(icon, size: 12, color: AppColors.grey500),
       SizedBox(width: 3.w),
-      Text(
-        text,
-        style: TextStyle(
-          fontFamily: 'Montserrat',
-          fontSize: 11.sp,
-          color: AppColors.grey600,
+      Flexible(
+        child: Text(
+          text,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: TextStyle(
+            fontFamily: 'Montserrat',
+            fontSize: 11.sp,
+            color: AppColors.grey600,
+          ),
         ),
       ),
     ],
   );
 
-  Widget _disabledBtn(String text) => SizedBox(
-    height: 44.h,
+  Widget _disabledBtn(String text) => ConstrainedBox(
+    constraints: BoxConstraints(minHeight: 44.h),
     child: Container(
       decoration: BoxDecoration(
         color: AppColors.grey200,
         borderRadius: BorderRadius.circular(30.r),
       ),
       child: Center(
-        child: Text(
-          text,
-          style: TextStyle(
-            fontFamily: 'Montserrat',
-            fontSize: 13.sp,
-            fontWeight: FontWeight.w600,
-            color: AppColors.grey600,
+        child: FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Text(
+            text,
+            style: TextStyle(
+              fontFamily: 'Montserrat',
+              fontSize: 13.sp,
+              fontWeight: FontWeight.w600,
+              color: AppColors.grey600,
+            ),
           ),
         ),
       ),
@@ -335,7 +350,6 @@ class _BookingCard extends StatelessWidget {
 // ─────────────────────────────────────────────────────────────────────────────
 // Shimmer
 // ─────────────────────────────────────────────────────────────────────────────
-
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Shimmer

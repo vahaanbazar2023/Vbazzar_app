@@ -6,6 +6,7 @@ import '../../../core/network/network_service.dart';
 import '../../../core/storage/secure_storage_service.dart';
 import '../../../core/storage/storage_keys.dart';
 import '../models/notification_model.dart';
+import '../../../core/extensions/context_extensions.dart';
 
 class NotificationController extends GetxController {
   final NetworkService _network;
@@ -107,7 +108,7 @@ class NotificationController extends GetxController {
     } catch (e) {
       debugPrint('❌ fetchNotifications error: $e');
       if (_currentPage == 1) {
-        errorMessage.value = 'Failed to load notifications.';
+        errorMessage.value = appL10n.coreFailedToLoadNotifications;
       }
     } finally {
       isLoading.value = false;

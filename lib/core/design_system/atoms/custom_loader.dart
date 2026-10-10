@@ -24,11 +24,7 @@ class CustomLoader extends StatelessWidget {
   /// The size of the loader in logical pixels. Defaults to 40.
   final double size;
 
-  const CustomLoader({
-    super.key,
-    this.color,
-    this.size = 40,
-  });
+  const CustomLoader({super.key, this.color, this.size = 40});
 
   /// Creates a full-screen backdrop overlay with a centered loader.
   static Widget backdrop({

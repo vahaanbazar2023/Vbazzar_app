@@ -159,13 +159,19 @@ class _MyBidDetailViewState extends State<MyBidDetailView> {
                                         color: Colors.white,
                                       ),
                                       SizedBox(width: 4.w),
-                                      Text(
-                                        isWinning ? 'Winning' : 'Losing',
-                                        style: TextStyle(
-                                          fontFamily: 'Montserrat',
-                                          fontSize: 11.sp,
-                                          fontWeight: FontWeight.w600,
-                                          color: Colors.white,
+                                      Flexible(
+                                        child: Text(
+                                          isWinning
+                                              ? context.l10n.aucWinning
+                                              : context.l10n.aucLosing,
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: TextStyle(
+                                            fontFamily: 'Montserrat',
+                                            fontSize: 11.sp,
+                                            fontWeight: FontWeight.w600,
+                                            color: Colors.white,
+                                          ),
                                         ),
                                       ),
                                     ],
@@ -239,7 +245,7 @@ class _MyBidDetailViewState extends State<MyBidDetailView> {
                             label: context.l10n.regNumber,
                             value: v.registrationNo.isNotEmpty
                                 ? v.registrationNo
-                                : 'N/A',
+                                : context.l10n.na,
                           ),
                         ),
                         SizedBox(width: 8.w),
@@ -249,7 +255,7 @@ class _MyBidDetailViewState extends State<MyBidDetailView> {
                             label: context.l10n.endTime,
                             value: item.auctionEndTime.isNotEmpty
                                 ? item.auctionEndTime
-                                : 'N/A',
+                                : context.l10n.na,
                           ),
                         ),
                       ],
@@ -285,7 +291,7 @@ class _MyBidDetailViewState extends State<MyBidDetailView> {
                         label: context.l10n.placedAt,
                         value: item.bidPlacedAt.isNotEmpty
                             ? item.bidPlacedAt
-                            : 'N/A',
+                            : context.l10n.na,
                         isLast: true,
                       ),
                     ],
@@ -337,7 +343,7 @@ class _MyBidDetailViewState extends State<MyBidDetailView> {
                 isClosed
                     ? Container(
                         width: double.infinity,
-                        height: 48.h,
+                        constraints: BoxConstraints(minHeight: 48.h),
                         alignment: Alignment.center,
                         decoration: BoxDecoration(
                           color: AppColors.grey200,
@@ -455,45 +461,54 @@ class _MyBidDetailViewState extends State<MyBidDetailView> {
                           Obx(() {
                             final ctrl = Get.find<MyBidsController>();
                             final loading = ctrl.isPlacingBid.value;
-                            return GestureDetector(
-                              onTap: loading ? null : () => _onBidNow(ctrl),
-                              child: Container(
-                                height: 32.h,
-                                padding: EdgeInsets.symmetric(horizontal: 18.w),
-                                decoration: BoxDecoration(
-                                  gradient: LinearGradient(
-                                    colors: loading
-                                        ? [
-                                            const Color(0xFFAA5555),
-                                            const Color(0xFF884444),
-                                          ]
-                                        : [
-                                            AppColors.ctaGradientStart,
-                                            AppColors.ctaGradientEnd,
-                                          ],
+                            return Flexible(
+                              child: GestureDetector(
+                                onTap: loading ? null : () => _onBidNow(ctrl),
+                                child: Container(
+                                  constraints: BoxConstraints(minHeight: 32.h),
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: 18.w,
                                   ),
-                                  borderRadius: BorderRadius.circular(16.r),
+                                  decoration: BoxDecoration(
+                                    gradient: LinearGradient(
+                                      colors: loading
+                                          ? [
+                                              const Color(0xFFAA5555),
+                                              const Color(0xFF884444),
+                                            ]
+                                          : [
+                                              AppColors.ctaGradientStart,
+                                              AppColors.ctaGradientEnd,
+                                            ],
+                                    ),
+                                    borderRadius: BorderRadius.circular(16.r),
+                                  ),
+                                  alignment: Alignment.center,
+                                  child: loading
+                                      ? SizedBox(
+                                          width: 18.r,
+                                          height: 18.r,
+                                          child:
+                                              const CircularProgressIndicator(
+                                                color: Colors.white,
+                                                strokeWidth: 2,
+                                              ),
+                                        )
+                                      : FittedBox(
+                                          fit: BoxFit.scaleDown,
+                                          child: Text(
+                                            context.l10n.placeBid.toUpperCase(),
+                                            maxLines: 1,
+                                            style: TextStyle(
+                                              fontFamily: 'Montserrat',
+                                              fontSize: 13.sp,
+                                              fontWeight: FontWeight.w800,
+                                              color: Colors.white,
+                                              letterSpacing: 0.5,
+                                            ),
+                                          ),
+                                        ),
                                 ),
-                                alignment: Alignment.center,
-                                child: loading
-                                    ? SizedBox(
-                                        width: 18.r,
-                                        height: 18.r,
-                                        child: const CircularProgressIndicator(
-                                          color: Colors.white,
-                                          strokeWidth: 2,
-                                        ),
-                                      )
-                                    : Text(
-                                        'PLACE BID',
-                                        style: TextStyle(
-                                          fontFamily: 'Montserrat',
-                                          fontSize: 13.sp,
-                                          fontWeight: FontWeight.w800,
-                                          color: Colors.white,
-                                          letterSpacing: 0.5,
-                                        ),
-                                      ),
                               ),
                             );
                           }),
@@ -737,21 +752,27 @@ class _BidRow extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                '$label :',
-                style: TextStyle(
-                  fontFamily: 'Plus Jakarta Sans',
-                  fontSize: 13.sp,
-                  color: AppColors.grey700,
+              Flexible(
+                child: Text(
+                  '$label :',
+                  style: TextStyle(
+                    fontFamily: 'Plus Jakarta Sans',
+                    fontSize: 13.sp,
+                    color: AppColors.grey700,
+                  ),
                 ),
               ),
-              Text(
-                value,
-                style: TextStyle(
-                  fontFamily: 'Montserrat',
-                  fontSize: 13.sp,
-                  fontWeight: FontWeight.w600,
-                  color: valueColor ?? AppColors.black,
+              SizedBox(width: 8.w),
+              Flexible(
+                child: Text(
+                  value,
+                  textAlign: TextAlign.end,
+                  style: TextStyle(
+                    fontFamily: 'Montserrat',
+                    fontSize: 13.sp,
+                    fontWeight: FontWeight.w600,
+                    color: valueColor ?? AppColors.black,
+                  ),
                 ),
               ),
             ],
@@ -859,62 +880,64 @@ class _VehicleAccordionState extends State<_VehicleAccordion> {
                 _DR(
                   Icons.build_circle_outlined,
                   context.l10n.variant,
-                  v.variant.isNotEmpty ? v.variant : 'N/A',
+                  v.variant.isNotEmpty ? v.variant : context.l10n.na,
                 ),
                 _DR(
                   Icons.date_range_outlined,
                   context.l10n.mfgYear,
-                  v.year > 0 ? v.year.toString() : 'N/A',
+                  v.year > 0 ? v.year.toString() : context.l10n.na,
                 ),
                 _DR(
                   Icons.color_lens_outlined,
                   context.l10n.colour,
-                  v.colour.isNotEmpty ? v.colour : 'N/A',
+                  v.colour.isNotEmpty ? v.colour : context.l10n.na,
                 ),
                 _DR(
                   Icons.speed_outlined,
                   context.l10n.kilometers,
-                  v.kilometers > 0 ? '${v.kilometers} km' : 'N/A',
+                  v.kilometers > 0
+                      ? '${v.kilometers} ${context.l10n.km}'
+                      : context.l10n.na,
                 ),
                 _DR(
                   Icons.local_gas_station_outlined,
                   context.l10n.fuelType,
-                  v.fuelType.isNotEmpty ? v.fuelType : 'N/A',
+                  v.fuelType.isNotEmpty ? v.fuelType : context.l10n.na,
                 ),
                 _DR(
                   Icons.settings_outlined,
                   context.l10n.transmission,
-                  v.transmission.isNotEmpty ? v.transmission : 'N/A',
+                  v.transmission.isNotEmpty ? v.transmission : context.l10n.na,
                 ),
                 _DR(
                   Icons.person_outline_rounded,
                   context.l10n.owner,
-                  v.owner.isNotEmpty ? v.owner : 'N/A',
+                  v.owner.isNotEmpty ? v.owner : context.l10n.na,
                 ),
                 _DR(
                   Icons.confirmation_number_outlined,
                   context.l10n.chassisNumber,
-                  v.chassisNo.isNotEmpty ? v.chassisNo : 'N/A',
+                  v.chassisNo.isNotEmpty ? v.chassisNo : context.l10n.na,
                 ),
                 _DR(
                   Icons.memory_outlined,
                   context.l10n.engineNumber,
-                  v.engineNo.isNotEmpty ? v.engineNo : 'N/A',
+                  v.engineNo.isNotEmpty ? v.engineNo : context.l10n.na,
                 ),
                 _DR(
                   Icons.warehouse_outlined,
                   context.l10n.yard_name,
-                  v.yardName.isNotEmpty ? v.yardName : 'N/A',
+                  v.yardName.isNotEmpty ? v.yardName : context.l10n.na,
                 ),
                 _DR(
                   Icons.location_city_outlined,
                   context.l10n.yard_location,
-                  v.yardLocation.isNotEmpty ? v.yardLocation : 'N/A',
+                  v.yardLocation.isNotEmpty ? v.yardLocation : context.l10n.na,
                 ),
                 _DR(
                   Icons.notes_outlined,
                   context.l10n.remarks,
-                  v.remarks.isNotEmpty ? v.remarks : 'N/A',
+                  v.remarks.isNotEmpty ? v.remarks : context.l10n.na,
                   isLast: true,
                 ),
               ],

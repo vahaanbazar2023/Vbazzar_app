@@ -4,6 +4,7 @@ import 'package:flutter_svg/svg.dart';
 
 import '../../../core/constants/app_colors.dart';
 import '../../../theme/app_fonts.dart';
+import '../../extensions/context_extensions.dart';
 
 class CustomYearPicker extends StatefulWidget {
   final String labelText;
@@ -85,10 +86,7 @@ class _CustomYearPickerState extends State<CustomYearPicker> {
           onTap: () => _showYearPicker(context, startYr, endYr),
           child: Container(
             width: double.infinity,
-            padding: EdgeInsets.symmetric(
-              horizontal: 14.w,
-              vertical: 14.h,
-            ),
+            padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 14.h),
             decoration: BoxDecoration(
               color: widget.fillColor ?? AppColors.white,
               borderRadius: BorderRadius.circular(10.r),
@@ -113,7 +111,8 @@ class _CustomYearPickerState extends State<CustomYearPicker> {
                         ? widget.selectedYear!
                         : widget.hintText,
                     style: AppFonts.bodyMedium.copyWith(
-                      color: (widget.selectedYear != null &&
+                      color:
+                          (widget.selectedYear != null &&
                               widget.selectedYear!.isNotEmpty)
                           ? AppColors.textPrimary
                           : AppColors.textDisabled,
@@ -166,7 +165,7 @@ class _CustomYearPickerState extends State<CustomYearPicker> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  'Select Year',
+                  context.l10n.coreSelectYear,
                   style: AppFonts.titleMedium.copyWith(
                     fontWeight: FontWeight.w600,
                     color: AppColors.textPrimary,
@@ -177,11 +176,11 @@ class _CustomYearPickerState extends State<CustomYearPicker> {
                   child: GridView.builder(
                     gridDelegate:
                         const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 4,
-                      childAspectRatio: 2,
-                      crossAxisSpacing: 8,
-                      mainAxisSpacing: 8,
-                    ),
+                          crossAxisCount: 4,
+                          childAspectRatio: 2,
+                          crossAxisSpacing: 8,
+                          mainAxisSpacing: 8,
+                        ),
                     itemCount: (endYear - startYear + 1),
                     itemBuilder: (context, index) {
                       final year = (endYear - index).toString();
@@ -234,7 +233,7 @@ class _CustomYearPickerState extends State<CustomYearPicker> {
                       ),
                     ),
                     child: Text(
-                      'Cancel',
+                      context.l10n.cancel,
                       style: AppFonts.bodyMedium.copyWith(
                         fontWeight: FontWeight.w500,
                         color: AppColors.textPrimary,

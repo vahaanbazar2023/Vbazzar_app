@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../core/constants/app_colors.dart';
 import '../controllers/agent_inspection_controller.dart';
+import '../../../core/extensions/context_extensions.dart';
 
 /// Summary card shown at Step 6 of the agent inspection form.
 /// Displays a recap of all entered data across all steps.
@@ -31,13 +32,13 @@ class ValuationSummaryCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildHeader(),
-          _buildSection('Vehicle Info', _vehicleInfoRows()),
-          _buildSection('Documentation', _documentationRows()),
-          _buildSection('Mechanical Inspection', _mechanicalRows()),
-          _buildSection('Body & Interior', _bodyRows()),
-          _buildSection('Photos', _photoRows()),
+          _buildSection(appL10n.inspVehicleInfo, _vehicleInfoRows()),
+          _buildSection(appL10n.inspDocumentation, _documentationRows()),
+          _buildSection(appL10n.inspMechanicalInspection, _mechanicalRows()),
+          _buildSection(appL10n.inspBodyAndInterior, _bodyRows()),
+          _buildSection(appL10n.inspPhotos, _photoRows()),
           if (controller.assetMarketValueController.text.isNotEmpty)
-            _buildSection('Valuation', _valuationRows()),
+            _buildSection(appL10n.inspValuation, _valuationRows()),
           SizedBox(height: 8.h),
         ],
       ),
@@ -59,12 +60,14 @@ class ValuationSummaryCard extends StatelessWidget {
         children: [
           Icon(Icons.summarize, size: 20.r, color: AppColors.primary),
           SizedBox(width: 8.w),
-          Text(
-            'Inspection Summary',
-            style: TextStyle(
-              fontSize: 15.sp,
-              fontWeight: FontWeight.w600,
-              color: AppColors.primary,
+          Expanded(
+            child: Text(
+              appL10n.inspInspectionSummary,
+              style: TextStyle(
+                fontSize: 15.sp,
+                fontWeight: FontWeight.w600,
+                color: AppColors.primary,
+              ),
             ),
           ),
         ],
@@ -92,7 +95,12 @@ class ValuationSummaryCard extends StatelessWidget {
           padding: EdgeInsets.symmetric(horizontal: 16.w),
           child: Column(children: rows),
         ),
-        Divider(color: AppColors.grey200, height: 1, indent: 16.w, endIndent: 16.w),
+        Divider(
+          color: AppColors.grey200,
+          height: 1,
+          indent: 16.w,
+          endIndent: 16.w,
+        ),
       ],
     );
   }
@@ -139,18 +147,22 @@ class ValuationSummaryCard extends StatelessWidget {
               style: TextStyle(fontSize: 12.sp, color: AppColors.textSecondary),
             ),
           ),
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 2.h),
-            decoration: BoxDecoration(
-              color: AppColors.success.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(12.r),
-            ),
-            child: Text(
-              '${images.length} photo${images.length > 1 ? 's' : ''}',
-              style: TextStyle(
-                fontSize: 11.sp,
-                fontWeight: FontWeight.w500,
-                color: AppColors.success,
+          Flexible(
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 2.h),
+              decoration: BoxDecoration(
+                color: AppColors.success.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(12.r),
+              ),
+              child: Text(
+                images.length > 1
+                    ? appL10n.inspPhotosCount(images.length)
+                    : appL10n.inspPhotoCount(images.length),
+                style: TextStyle(
+                  fontSize: 11.sp,
+                  fontWeight: FontWeight.w500,
+                  color: AppColors.success,
+                ),
               ),
             ),
           ),
@@ -161,80 +173,103 @@ class ValuationSummaryCard extends StatelessWidget {
 
   List<Widget> _vehicleInfoRows() {
     return [
-      _buildRow('Reg. Number', controller.vehicleRegNoController.text),
-      _buildRow('Vehicle Type', controller.selectedVehicleType.value),
-      _buildRow('Vehicle Brand', controller.selectedVehicleBrand.value),
-      _buildRow('State', controller.selectedState.value?.name ?? ''),
-      _buildRow('City', controller.selectedCity.value?.name ?? ''),
-      _buildRow('Owner Name', controller.ownerNameController.text),
-      _buildRow('Chassis No', controller.chasisNumberController.text),
-      _buildRow('Mfg Year', controller.manufacturingYearController.text),
-      _buildRow('Engine No', controller.engineNumberController.text),
-      _buildRow('RTO', controller.rtoLocationController.text),
+      _buildRow(appL10n.regNumber, controller.vehicleRegNoController.text),
+      _buildRow(appL10n.vehicleType, controller.selectedVehicleType.value),
+      _buildRow(
+        appL10n.inspVehicleBrand,
+        controller.selectedVehicleBrand.value,
+      ),
+      _buildRow(appL10n.state, controller.selectedState.value?.name ?? ''),
+      _buildRow(appL10n.city, controller.selectedCity.value?.name ?? ''),
+      _buildRow(appL10n.ownerName, controller.ownerNameController.text),
+      _buildRow(appL10n.chassis_no, controller.chasisNumberController.text),
+      _buildRow(appL10n.mfgYear, controller.manufacturingYearController.text),
+      _buildRow(appL10n.engine_no, controller.engineNumberController.text),
+      _buildRow(appL10n.inspRto, controller.rtoLocationController.text),
     ];
   }
 
   List<Widget> _documentationRows() {
     return [
-      _buildRow('Condition', controller.selectedCondition.value),
-      _buildRow('Insurance Valid', controller.insuranceValidTill.value),
-      _buildRow('Fitness Valid', controller.fitnessValidTill.value),
-      _buildRow('Tax Pending', controller.taxPendingController.text),
-      _buildRow('Hypothecation', controller.selectedHypothecation.value),
+      _buildRow(appL10n.inspCondition, controller.selectedCondition.value),
+      _buildRow(
+        appL10n.inspInsuranceValid,
+        controller.insuranceValidTill.value,
+      ),
+      _buildRow(appL10n.inspFitnessValid, controller.fitnessValidTill.value),
+      _buildRow(appL10n.taxPending, controller.taxPendingController.text),
+      _buildRow(appL10n.hypothecation, controller.selectedHypothecation.value),
       if (controller.selectedHypothecation.value == 'Yes')
-        _buildRow('Hypothecated To', controller.hypothecatedToController.text),
-      _buildRow('Case Type', controller.selectedCaseType.value),
-      _buildRow('Odometer', controller.odometerController.text),
-      _buildRow('Fuel', controller.selectedFuel.value),
-      _buildRow('Transmission', controller.selectedTransmission.value),
-      _buildRow('Accidental', controller.selectedAccidentalStatus.value),
+        _buildRow(
+          appL10n.hypothecatedTo,
+          controller.hypothecatedToController.text,
+        ),
+      _buildRow(appL10n.caseType, controller.selectedCaseType.value),
+      _buildRow(appL10n.odometer, controller.odometerController.text),
+      _buildRow(appL10n.fuel, controller.selectedFuel.value),
+      _buildRow(appL10n.transmission, controller.selectedTransmission.value),
+      _buildRow(
+        appL10n.inspAccidental,
+        controller.selectedAccidentalStatus.value,
+      ),
     ];
   }
 
   List<Widget> _mechanicalRows() {
     return [
-      _buildRow('Engine', controller.engineCondition.value),
-      _buildRow('Transmission', controller.transmissionCondition.value),
-      _buildRow('Suspension', controller.suspensionCondition.value),
+      _buildRow(appL10n.engine, controller.engineCondition.value),
+      _buildRow(appL10n.transmission, controller.transmissionCondition.value),
+      _buildRow(appL10n.inspSuspension, controller.suspensionCondition.value),
       if (controller.frontAxleTyresPercent.value > 0 ||
           controller.rearAxleTyresPercent.value > 0)
         _buildRow(
-          'Tyres',
-          'Front: ${controller.frontAxleTyresPercent.value}%, Rear: ${controller.rearAxleTyresPercent.value}%',
+          appL10n.tyres,
+          appL10n.inspFrontRearTyres(
+            controller.frontAxleTyresPercent.value,
+            controller.rearAxleTyresPercent.value,
+          ),
         ),
     ];
   }
 
   List<Widget> _bodyRows() {
     return [
-      _buildRow('Body', controller.bodyCondition.value),
-      _buildRow('Cabin/Interior', controller.cabinInteriorCondition.value),
-      _buildRow('Electrical', controller.electricalCondition.value),
-      _buildRow('Chassis', controller.chasisCondition.value),
+      _buildRow(appL10n.body, controller.bodyCondition.value),
+      _buildRow(
+        appL10n.inspCabinInterior,
+        controller.cabinInteriorCondition.value,
+      ),
+      _buildRow(appL10n.electrical, controller.electricalCondition.value),
+      _buildRow(appL10n.chassis, controller.chasisCondition.value),
     ];
   }
 
   List<Widget> _photoRows() {
     return [
-      _buildPhotoRow('Engine', controller.engineImages),
-      _buildPhotoRow('Transmission', controller.transmissionImages),
-      _buildPhotoRow('Suspension', controller.suspensionImages),
-      _buildPhotoRow('Tyres', controller.tyreImages),
-      _buildPhotoRow('Body Front', controller.bodyFrontImages),
-      _buildPhotoRow('Body Back', controller.bodyBackImages),
-      _buildPhotoRow('Body Left', controller.bodyLeftImages),
-      _buildPhotoRow('Body Right', controller.bodyRightImages),
-      _buildPhotoRow('Cabin/Interior', controller.cabinInteriorImages),
-      _buildPhotoRow('Electrical', controller.electricalImages),
-      _buildPhotoRow('Chassis', controller.chasisImages),
-      _buildPhotoRow('Odometer', controller.odometerImages),
+      _buildPhotoRow(appL10n.engine, controller.engineImages),
+      _buildPhotoRow(appL10n.transmission, controller.transmissionImages),
+      _buildPhotoRow(appL10n.inspSuspension, controller.suspensionImages),
+      _buildPhotoRow(appL10n.tyres, controller.tyreImages),
+      _buildPhotoRow(appL10n.inspBodyFront, controller.bodyFrontImages),
+      _buildPhotoRow(appL10n.inspBodyBack, controller.bodyBackImages),
+      _buildPhotoRow(appL10n.inspBodyLeft, controller.bodyLeftImages),
+      _buildPhotoRow(appL10n.inspBodyRight, controller.bodyRightImages),
+      _buildPhotoRow(appL10n.inspCabinInterior, controller.cabinInteriorImages),
+      _buildPhotoRow(appL10n.electrical, controller.electricalImages),
+      _buildPhotoRow(appL10n.chassis, controller.chasisImages),
+      _buildPhotoRow(appL10n.odometer, controller.odometerImages),
     ];
   }
 
   List<Widget> _valuationRows() {
     return [
-      _buildRow('Market Value', '₹ ${controller.assetMarketValueController.text}'),
-      _buildRow('Remarks', controller.otherRemarksController.text),
+      _buildRow(
+        appL10n.market_value,
+        appL10n.inspMarketValueRupee(
+          controller.assetMarketValueController.text,
+        ),
+      ),
+      _buildRow(appL10n.remarks, controller.otherRemarksController.text),
     ];
   }
 }

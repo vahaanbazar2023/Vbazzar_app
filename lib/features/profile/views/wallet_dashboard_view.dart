@@ -31,6 +31,8 @@ class _WalletDashboardViewState extends State<WalletDashboardView> {
       appBar: AppBar(
         title: Text(
           context.l10n.myWallet,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
           style: const TextStyle(
             fontFamily: 'Montserrat',
             fontWeight: FontWeight.w600,
@@ -109,12 +111,16 @@ class _WalletDashboardViewState extends State<WalletDashboardView> {
                                     ),
                                   ),
                                   const SizedBox(width: 8),
-                                  Text(
-                                    'Wallet Balance',
-                                    style: TextStyle(
-                                      fontFamily: 'Montserrat',
-                                      fontSize: 11,
-                                      color: AppColors.grey600,
+                                  Expanded(
+                                    child: Text(
+                                      context.l10n.profWalletBalance,
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                        fontFamily: 'Montserrat',
+                                        fontSize: 11,
+                                        color: AppColors.grey600,
+                                      ),
                                     ),
                                   ),
                                 ],
@@ -173,12 +179,16 @@ class _WalletDashboardViewState extends State<WalletDashboardView> {
                                     ),
                                   ),
                                   const SizedBox(width: 8),
-                                  Text(
-                                    'Reward Coins',
-                                    style: TextStyle(
-                                      fontFamily: 'Montserrat',
-                                      fontSize: 11,
-                                      color: AppColors.grey600,
+                                  Expanded(
+                                    child: Text(
+                                      context.l10n.profRewardCoins,
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                        fontFamily: 'Montserrat',
+                                        fontSize: 11,
+                                        color: AppColors.grey600,
+                                      ),
                                     ),
                                   ),
                                 ],
@@ -220,13 +230,17 @@ class _WalletDashboardViewState extends State<WalletDashboardView> {
                         ),
                       ),
                       const SizedBox(width: 10),
-                      Text(
-                        context.l10n.transactions,
-                        style: const TextStyle(
-                          fontFamily: 'Montserrat',
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.textPrimary,
+                      Flexible(
+                        child: Text(
+                          context.l10n.transactions,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            fontFamily: 'Montserrat',
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.textPrimary,
+                          ),
                         ),
                       ),
                       const Spacer(),
@@ -388,7 +402,7 @@ class _WalletDashboardViewState extends State<WalletDashboardView> {
                     children: [
                       Text(
                         wallet.myReferralCode.isEmpty
-                            ? 'N/A'
+                            ? context.l10n.na
                             : wallet.myReferralCode,
                         style: const TextStyle(
                           fontFamily: 'Montserrat',
@@ -413,9 +427,11 @@ class _WalletDashboardViewState extends State<WalletDashboardView> {
                 ),
                 const SizedBox(height: 18),
                 // Copy button
-                SizedBox(
-                  width: double.infinity,
-                  height: 44,
+                ConstrainedBox(
+                  constraints: const BoxConstraints(
+                    minWidth: double.infinity,
+                    minHeight: 44,
+                  ),
                   child: ElevatedButton.icon(
                     onPressed: () {
                       Clipboard.setData(
@@ -440,12 +456,16 @@ class _WalletDashboardViewState extends State<WalletDashboardView> {
                       );
                     },
                     icon: const Icon(Icons.copy_rounded, size: 18),
-                    label: Text(
-                      context.l10n.copyReferralCode,
-                      style: const TextStyle(
-                        fontFamily: 'Montserrat',
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
+                    label: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Text(
+                        context.l10n.copyReferralCode,
+                        maxLines: 1,
+                        style: const TextStyle(
+                          fontFamily: 'Montserrat',
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ),
                     style: ElevatedButton.styleFrom(
@@ -705,7 +725,8 @@ class _TransactionCard extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
-                Row(
+                Wrap(
+                  crossAxisAlignment: WrapCrossAlignment.center,
                   children: [
                     const Icon(
                       Icons.calendar_today_rounded,

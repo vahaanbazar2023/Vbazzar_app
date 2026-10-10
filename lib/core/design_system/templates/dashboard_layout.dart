@@ -43,7 +43,12 @@ class DashboardLayout extends StatelessWidget {
                 onPressed: onBackPressed ?? () => Navigator.of(context).pop(),
               )
             : null,
-        title: AppText.headingMedium(title, color: AppColors.textPrimary),
+        title: AppText.headingMedium(
+          title,
+          color: AppColors.textPrimary,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        ),
         actions: actions,
         bottom: bottom,
       ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../constants/app_colors.dart';
+import '../../extensions/context_extensions.dart';
 
 /// A dropdown that expands inline below the field.
 /// The main page scroll view handles scrolling naturally.
@@ -139,7 +140,8 @@ class _InlineDropdownFieldState<T> extends State<InlineDropdownField<T>>
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        if (widget.label != null && widget.label!.trim().isNotEmpty) ...<Widget>[
+        if (widget.label != null &&
+            widget.label!.trim().isNotEmpty) ...<Widget>[
           Text(
             widget.label!,
             style: theme.textTheme.labelLarge?.copyWith(
@@ -154,9 +156,7 @@ class _InlineDropdownFieldState<T> extends State<InlineDropdownField<T>>
             duration: const Duration(milliseconds: 120),
             height: widget.height ?? 52,
             decoration: BoxDecoration(
-              color: widget.enabled
-                  ? AppColors.surface
-                  : AppColors.white,
+              color: widget.enabled ? AppColors.surface : AppColors.white,
               border: Border.all(color: borderColor),
               borderRadius: BorderRadius.circular(14),
               boxShadow: <BoxShadow>[
@@ -179,8 +179,8 @@ class _InlineDropdownFieldState<T> extends State<InlineDropdownField<T>>
                       color: hasError
                           ? AppColors.error
                           : widget.enabled
-                              ? AppColors.textSecondary
-                              : AppColors.border,
+                          ? AppColors.textSecondary
+                          : AppColors.border,
                     ),
                     const SizedBox(width: 10),
                   ],
@@ -197,7 +197,7 @@ class _InlineDropdownFieldState<T> extends State<InlineDropdownField<T>>
                               ),
                               const SizedBox(width: 8),
                               Text(
-                                'Loading...',
+                                context.l10n.loading,
                                 style: theme.textTheme.bodyMedium?.copyWith(
                                   color: AppColors.textSecondary,
                                 ),
@@ -268,7 +268,8 @@ class _InlineDropdownFieldState<T> extends State<InlineDropdownField<T>>
                           ),
                           const SizedBox(width: 8),
                           Text(
-                            widget.emptyMessage ?? 'No items available',
+                            widget.emptyMessage ??
+                                context.l10n.coreNoItemsAvailable,
                             style: theme.textTheme.bodyMedium?.copyWith(
                               color: AppColors.textSecondary,
                             ),

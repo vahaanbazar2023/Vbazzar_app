@@ -226,7 +226,7 @@ class _AuctionCard extends StatelessWidget {
                   Text(
                     listing.auctionTitle.isNotEmpty
                         ? listing.auctionTitle
-                        : 'Auction',
+                        : context.l10n.auction,
                     style: TextStyle(
                       fontFamily: 'Montserrat',
                       fontSize: 15.sp,
@@ -249,7 +249,7 @@ class _AuctionCard extends StatelessWidget {
                       SizedBox(width: 8.w),
                       _InfoRow(
                         icon: AppAssets.bidPng,
-                        label: '# LOT',
+                        label: context.l10n.aucLotLabel,
                         value: listing.vehicleCount.toString().padLeft(2, '0'),
                       ),
                     ],
@@ -315,7 +315,7 @@ class _TopBanner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 38.h,
+      constraints: BoxConstraints(minHeight: 38.h),
       decoration: const BoxDecoration(
         border: Border(bottom: BorderSide(color: Color(0xFFEEEEEE))),
       ),
@@ -326,51 +326,62 @@ class _TopBanner extends StatelessWidget {
           const Spacer(),
           // ── CTA pill
           if (!isUpcoming)
-            GestureDetector(
-              onTap: () => Get.toNamed(
-                AppRoutes.vehicleListings,
-                arguments: {'auction': listing},
-              ),
-              child: Container(
-                margin: EdgeInsets.only(right: 10.w),
-                padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 5.h),
-                decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      AppColors.ctaGradientStart,
-                      AppColors.ctaGradientEnd,
-                    ],
-                  ),
-                  borderRadius: BorderRadius.circular(20.r),
+            Flexible(
+              child: GestureDetector(
+                onTap: () => Get.toNamed(
+                  AppRoutes.vehicleListings,
+                  arguments: {'auction': listing},
                 ),
-                child: Text(
-                  context.l10n.tapToBid,
-                  style: TextStyle(
-                    fontFamily: 'Montserrat',
-                    fontSize: 12.sp,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.white,
+                child: Container(
+                  margin: EdgeInsets.only(right: 10.w),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 24.w,
+                    vertical: 5.h,
+                  ),
+                  decoration: BoxDecoration(
+                    gradient: const LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        AppColors.ctaGradientStart,
+                        AppColors.ctaGradientEnd,
+                      ],
+                    ),
+                    borderRadius: BorderRadius.circular(20.r),
+                  ),
+                  child: Text(
+                    context.l10n.tapToBid,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontFamily: 'Montserrat',
+                      fontSize: 12.sp,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
               ),
             )
           else
-            Container(
-              margin: EdgeInsets.only(right: 10.w),
-              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 6.h),
-              decoration: BoxDecoration(
-                color: AppColors.grey200,
-                borderRadius: BorderRadius.circular(20.r),
-              ),
-              child: Text(
-                context.l10n.upcomingTab,
-                style: TextStyle(
-                  fontFamily: 'Montserrat',
-                  fontSize: 12.sp,
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.grey600,
+            Flexible(
+              child: Container(
+                margin: EdgeInsets.only(right: 10.w),
+                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 6.h),
+                decoration: BoxDecoration(
+                  color: AppColors.grey200,
+                  borderRadius: BorderRadius.circular(20.r),
+                ),
+                child: Text(
+                  context.l10n.upcomingTab,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontFamily: 'Montserrat',
+                    fontSize: 12.sp,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.grey600,
+                  ),
                 ),
               ),
             ),
@@ -402,13 +413,17 @@ class _InfoRow extends StatelessWidget {
       children: [
         Image.asset(icon, width: 13.r, height: 13.r, color: AppColors.grey600),
         SizedBox(width: 5.w),
-        Text(
-          '$label : ',
-          style: TextStyle(
-            fontFamily: 'Montserrat',
-            fontSize: 12.sp,
-            fontWeight: FontWeight.w500,
-            color: AppColors.grey600,
+        Flexible(
+          child: Text(
+            '$label : ',
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+              fontFamily: 'Montserrat',
+              fontSize: 12.sp,
+              fontWeight: FontWeight.w500,
+              color: AppColors.grey600,
+            ),
           ),
         ),
         Flexible(

@@ -4,6 +4,7 @@ import 'package:file_picker/file_picker.dart';
 
 import '../../constants/app_colors.dart';
 import '../../../theme/app_fonts.dart';
+import '../../extensions/context_extensions.dart';
 
 /// A custom file upload field with a dashed border design.
 ///
@@ -35,7 +36,7 @@ class CustomFileUploadField extends StatelessWidget {
   final String label;
 
   /// Subtitle text describing allowed file types
-  final String subtitle;
+  final String? subtitle;
 
   /// Callback when the upload area is tapped
   final VoidCallback onTap;
@@ -71,7 +72,7 @@ class CustomFileUploadField extends StatelessWidget {
     required this.files,
     this.onRemove,
     this.errorText,
-    this.subtitle = 'JPEG, PNG & PDF (up to 12 MB)',
+    this.subtitle,
     this.icon = Icons.cloud_upload,
     this.accentColor,
     this.allowMultiple = false,
@@ -118,7 +119,7 @@ class CustomFileUploadField extends StatelessWidget {
                 color: AppColors.cardBackground,
                 borderRadius: BorderRadius.circular(12.r),
               ),
-              child: _buildEmptyState(),
+              child: _buildEmptyState(context),
             ),
           ),
         ),
@@ -151,7 +152,7 @@ class CustomFileUploadField extends StatelessWidget {
   }
 
   /// Empty state inside the dashed upload area
-  Widget _buildEmptyState() {
+  Widget _buildEmptyState(BuildContext context) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -173,7 +174,7 @@ class CustomFileUploadField extends StatelessWidget {
 
         // Subtitle / file type info
         Text(
-          subtitle,
+          subtitle ?? context.l10n.coreFileUploadHint,
           style: AppFonts.bodySmall.copyWith(
             color: AppColors.grey500,
             fontSize: 12.sp,

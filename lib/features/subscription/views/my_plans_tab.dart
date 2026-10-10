@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_assets.dart';
+import '../../../core/extensions/context_extensions.dart';
 import '../controllers/subscription_controller.dart';
 import '../models/user_subscription.dart';
 
@@ -81,23 +82,24 @@ class MyPlanCard extends StatelessWidget {
     }
   }
 
-  String _fmtDate(String? raw) {
+  String _fmtDate(BuildContext context, String? raw) {
     if (raw == null || raw.isEmpty) return '—';
     final dt = UserSubscription.parseApiDate(raw);
     if (dt == null) return raw;
-    const m = [
-      'Jan',
-      'Feb',
-      'Mar',
-      'Apr',
-      'May',
-      'Jun',
-      'Jul',
-      'Aug',
-      'Sep',
-      'Oct',
-      'Nov',
-      'Dec',
+    final l = context.l10n;
+    final m = [
+      l.profSubMonthJan,
+      l.profSubMonthFeb,
+      l.profSubMonthMar,
+      l.profSubMonthApr,
+      l.profSubMonthMay,
+      l.profSubMonthJun,
+      l.profSubMonthJul,
+      l.profSubMonthAug,
+      l.profSubMonthSep,
+      l.profSubMonthOct,
+      l.profSubMonthNov,
+      l.profSubMonthDec,
     ];
     return '${dt.day.toString().padLeft(2, '0')} ${m[dt.month - 1]} ${dt.year}';
   }
@@ -168,34 +170,40 @@ class MyPlanCard extends StatelessWidget {
               ),
               SizedBox(width: 8.w),
               // Badge + chevron stacked vertically
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Container(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 12.w,
-                      vertical: 5.h,
-                    ),
-                    decoration: BoxDecoration(
-                      color: active
-                          ? const Color(0xFFE8F5E9)
-                          : const Color(0xFFF5F5F5),
-                      borderRadius: BorderRadius.circular(20.r),
-                    ),
-                    child: Text(
-                      active ? 'Active' : 'Inactive',
-                      style: TextStyle(
-                        fontFamily: 'Montserrat',
-                        fontSize: 12.sp,
-                        fontWeight: FontWeight.w600,
+              Flexible(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 12.w,
+                        vertical: 5.h,
+                      ),
+                      decoration: BoxDecoration(
                         color: active
-                            ? const Color(0xFF2E7D32)
-                            : AppColors.grey500,
+                            ? const Color(0xFFE8F5E9)
+                            : const Color(0xFFF5F5F5),
+                        borderRadius: BorderRadius.circular(20.r),
+                      ),
+                      child: Text(
+                        active
+                            ? context.l10n.profSubActive
+                            : context.l10n.profSubInactive,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontFamily: 'Montserrat',
+                          fontSize: 12.sp,
+                          fontWeight: FontWeight.w600,
+                          color: active
+                              ? const Color(0xFF2E7D32)
+                              : AppColors.grey500,
+                        ),
                       ),
                     ),
-                  ),
-                  SizedBox(height: 10.h),
-                ],
+                    SizedBox(height: 10.h),
+                  ],
+                ),
               ),
             ],
           ),
@@ -219,28 +227,30 @@ class MyPlanCard extends StatelessWidget {
                 ),
               ),
               SizedBox(width: 10.w),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Valid Until',
-                    style: TextStyle(
-                      fontFamily: 'Montserrat',
-                      fontSize: 11.sp,
-                      color: AppColors.grey500,
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      context.l10n.profSubValidUntil,
+                      style: TextStyle(
+                        fontFamily: 'Montserrat',
+                        fontSize: 11.sp,
+                        color: AppColors.grey500,
+                      ),
                     ),
-                  ),
-                  SizedBox(height: 2.h),
-                  Text(
-                    _fmtDate(sub.endDate),
-                    style: TextStyle(
-                      fontFamily: 'Montserrat',
-                      fontWeight: FontWeight.w600,
-                      fontSize: 13.sp,
-                      color: AppColors.black,
+                    SizedBox(height: 2.h),
+                    Text(
+                      _fmtDate(context, sub.endDate),
+                      style: TextStyle(
+                        fontFamily: 'Montserrat',
+                        fontWeight: FontWeight.w600,
+                        fontSize: 13.sp,
+                        color: AppColors.black,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ],
           ),
@@ -297,7 +307,7 @@ class ExploreBanner extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Need more benefits?',
+                    context.l10n.profSubNeedMoreBenefits,
                     style: TextStyle(
                       fontFamily: 'Montserrat',
                       fontWeight: FontWeight.w600,
@@ -307,7 +317,7 @@ class ExploreBanner extends StatelessWidget {
                   ),
                   SizedBox(height: 2.h),
                   Text(
-                    'Explore our other plans and choose the one that fits your needs.',
+                    context.l10n.profSubExploreOtherPlans,
                     style: TextStyle(
                       fontFamily: 'Montserrat',
                       fontSize: 11.sp,
@@ -352,7 +362,7 @@ class EmptyPlans extends StatelessWidget {
             ),
             SizedBox(height: 16.h),
             Text(
-              'No Active Plans',
+              context.l10n.profSubNoActivePlans,
               style: TextStyle(
                 fontFamily: 'Montserrat',
                 fontWeight: FontWeight.w600,
@@ -362,7 +372,7 @@ class EmptyPlans extends StatelessWidget {
             ),
             SizedBox(height: 8.h),
             Text(
-              "You don't have any active subscriptions yet.",
+              context.l10n.profSubNoActiveSubscriptionsYet,
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontFamily: 'Montserrat',
@@ -387,7 +397,7 @@ class EmptyPlans extends StatelessWidget {
                   borderRadius: BorderRadius.circular(24.r),
                 ),
                 child: Text(
-                  'Explore Plans',
+                  context.l10n.profSubExplorePlans,
                   style: TextStyle(
                     fontFamily: 'Montserrat',
                     fontWeight: FontWeight.w600,
@@ -443,7 +453,7 @@ class _ErrorWidget extends StatelessWidget {
                   borderRadius: BorderRadius.circular(8.r),
                 ),
                 child: Text(
-                  'Retry',
+                  context.l10n.retry,
                   style: TextStyle(
                     fontFamily: 'Montserrat',
                     fontWeight: FontWeight.w600,

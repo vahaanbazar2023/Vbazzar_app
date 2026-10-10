@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import '../../../core/extensions/context_extensions.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/design_system/design_system.dart';
 import '../../../core/design_system/templates/app_layout.dart';
@@ -34,8 +35,8 @@ class _SubscribedVehiclesViewState extends State<SubscribedVehiclesView> {
   @override
   Widget build(BuildContext context) {
     return AppLayout(
-      title: 'Subscribed Vehicles',
-      subtitle: 'Vehicles you have premium access to',
+      title: context.l10n.spareSubscribedVehicles,
+      subtitle: context.l10n.spareVehiclesWithPremiumAccess,
       body: Obx(() {
         // ── Loading ───────────────────────────────────────────────────────
         if (controller.isLoadingSubscribed.value &&
@@ -186,13 +187,17 @@ class _SubscribedCard extends StatelessWidget {
                           color: Colors.white,
                         ),
                         SizedBox(width: 4.w),
-                        Text(
-                          'Premium Access',
-                          style: TextStyle(
-                            fontFamily: 'Montserrat',
-                            fontSize: 10.sp,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.white,
+                        Flexible(
+                          child: Text(
+                            context.l10n.sparePremiumAccess,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              fontFamily: 'Montserrat',
+                              fontSize: 10.sp,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.white,
+                            ),
                           ),
                         ),
                       ],
@@ -212,7 +217,7 @@ class _SubscribedCard extends StatelessWidget {
                     '${vehicle.brandName ?? ''} ${vehicle.model ?? ''}'
                             .trim()
                             .isEmpty
-                        ? (vehicle.categoryName ?? 'Vehicle')
+                        ? (vehicle.categoryName ?? context.l10n.spareVehicle)
                         : '${vehicle.brandName ?? ''} ${vehicle.model ?? ''}'
                               .trim(),
                     style: TextStyle(
@@ -279,36 +284,45 @@ class _SubscribedCard extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                        vehicle.formattedPrice,
-                        style: TextStyle(
-                          fontFamily: 'Montserrat',
-                          fontSize: 18.sp,
-                          fontWeight: FontWeight.w800,
-                          color: AppColors.primary,
-                        ),
-                      ),
-                      Container(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 14.w,
-                          vertical: 7.h,
-                        ),
-                        decoration: BoxDecoration(
-                          gradient: const LinearGradient(
-                            colors: [
-                              AppColors.ctaGradientStart,
-                              AppColors.ctaGradientEnd,
-                            ],
-                          ),
-                          borderRadius: BorderRadius.circular(20),
-                        ),
+                      Flexible(
                         child: Text(
-                          'View Details',
+                          vehicle.formattedPrice,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                           style: TextStyle(
                             fontFamily: 'Montserrat',
-                            fontSize: 12.sp,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.white,
+                            fontSize: 18.sp,
+                            fontWeight: FontWeight.w800,
+                            color: AppColors.primary,
+                          ),
+                        ),
+                      ),
+                      SizedBox(width: 8.w),
+                      Flexible(
+                        child: Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 14.w,
+                            vertical: 7.h,
+                          ),
+                          decoration: BoxDecoration(
+                            gradient: const LinearGradient(
+                              colors: [
+                                AppColors.ctaGradientStart,
+                                AppColors.ctaGradientEnd,
+                              ],
+                            ),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Text(
+                            context.l10n.viewDetails,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              fontFamily: 'Montserrat',
+                              fontSize: 12.sp,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.white,
+                            ),
                           ),
                         ),
                       ),
@@ -415,7 +429,7 @@ class _ErrorState extends StatelessWidget {
                 ),
               ),
               child: Text(
-                'Retry',
+                context.l10n.retry,
                 style: TextStyle(
                   fontFamily: 'Montserrat',
                   fontWeight: FontWeight.w600,
@@ -445,7 +459,7 @@ class _EmptyState extends StatelessWidget {
           ),
           SizedBox(height: AppSpacing.md),
           Text(
-            'No subscribed vehicles',
+            context.l10n.spareNoSubscribedVehicles,
             style: TextStyle(
               fontFamily: 'Montserrat',
               fontSize: 16.sp,
@@ -455,7 +469,7 @@ class _EmptyState extends StatelessWidget {
           ),
           SizedBox(height: AppSpacing.xs),
           Text(
-            'Vehicles you get premium access to will appear here',
+            context.l10n.spareSubscribedVehiclesAppearHere,
             style: TextStyle(
               fontFamily: 'Montserrat',
               fontSize: 13.sp,

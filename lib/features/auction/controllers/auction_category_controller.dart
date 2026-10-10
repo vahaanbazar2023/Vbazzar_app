@@ -4,6 +4,7 @@ import '../../../core/network/network_service.dart';
 import '../../../core/storage/secure_storage_service.dart';
 import '../../../core/storage/storage_keys.dart';
 import '../../../routes/app_routes.dart';
+import '../../../core/extensions/context_extensions.dart';
 
 // ─── Model ───────────────────────────────────────────────────────────────────
 
@@ -35,17 +36,17 @@ class AuctionLiveCategory {
   String get displayName {
     switch (categoryCode.toUpperCase()) {
       case '2W':
-        return 'Two Wheeler';
+        return appL10n.aucTwoWheeler;
       case '3W':
-        return 'Three Wheeler';
+        return appL10n.aucThreeWheeler;
       case '4W':
-        return 'Four Wheeler';
+        return appL10n.aucFourWheeler;
       case 'CV':
-        return 'Commercial Vehicle';
+        return appL10n.aucCommercialVehicle;
       case 'CE':
-        return 'Construction Equipment';
+        return appL10n.aucConstructionEquipment;
       case 'FE':
-        return 'Farm Equipment';
+        return appL10n.aucFarmEquipment;
       default:
         return categoryCode;
     }
@@ -95,7 +96,7 @@ class AuctionCategoryController extends GetxController {
             .toList(),
       );
     } catch (e) {
-      categoriesError.value = 'Failed to load categories. Pull to refresh.';
+      categoriesError.value = appL10n.aucFailedLoadCategories;
     } finally {
       isLoadingCategories.value = false;
     }

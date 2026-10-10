@@ -16,6 +16,7 @@ import '../models/complete_profile_models.dart';
 import '../../../core/services/deep_link_service.dart';
 import '../../../routes/app_routes.dart';
 import '../../language/controllers/language_controller.dart';
+import '../../../core/extensions/context_extensions.dart';
 
 class AuthController extends GetxController {
   AuthRepository? _authRepository;
@@ -139,7 +140,7 @@ class AuthController extends GetxController {
       return;
     }
     if (v.length < 3) {
-      firstNameErrorText.value = 'Min 3 characters';
+      firstNameErrorText.value = appL10n.inspMin3Characters;
       return;
     }
     firstNameErrorText.value = null;
@@ -154,7 +155,7 @@ class AuthController extends GetxController {
     final ok = RegExp(
       r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
     ).hasMatch(v);
-    emailErrorText.value = ok ? null : 'Enter a valid email';
+    emailErrorText.value = ok ? null : appL10n.inspEnterValidEmail;
   }
 
   String? validatePhoneNumber(BuildContext context, String? value) {
@@ -235,7 +236,7 @@ class AuthController extends GetxController {
       CustomSnackbar.show(message: e.toString(), type: SnackbarType.error);
     } catch (e) {
       LoggerService.to.error('sendOtp error: $e');
-      errorText.value = 'Failed to send OTP. Please try again.';
+      errorText.value = appL10n.failedToSendOTP;
       CustomSnackbar.show(message: errorText.value!, type: SnackbarType.error);
     } finally {
       isLoading.value = false;
@@ -249,7 +250,7 @@ class AuthController extends GetxController {
       final phone = phoneController.text.trim();
       if (phone.isEmpty) {
         CustomSnackbar.show(
-          message: 'Phone number not found. Please go back and try again.',
+          message: appL10n.inspPhoneNumberNotFound,
           type: SnackbarType.error,
         );
         return;
@@ -267,14 +268,14 @@ class AuthController extends GetxController {
         CustomSnackbar.show(
           message: response.message.isNotEmpty
               ? response.message
-              : 'OTP resent successfully',
+              : appL10n.inspOtpResentSuccessfully,
           type: SnackbarType.success,
         );
       } else {
         CustomSnackbar.show(
           message: response.message.isNotEmpty
               ? response.message
-              : 'Failed to resend OTP.',
+              : appL10n.failedToResendOtp,
           type: SnackbarType.error,
         );
       }
@@ -283,7 +284,7 @@ class AuthController extends GetxController {
     } catch (e) {
       LoggerService.to.error('resendOtp error: $e');
       CustomSnackbar.show(
-        message: 'Failed to resend OTP. Please try again.',
+        message: appL10n.inspFailedToResendOtpTryAgain,
         type: SnackbarType.error,
       );
     } finally {
@@ -310,7 +311,7 @@ class AuthController extends GetxController {
 
       final uid = userId.value;
       if (uid == null || uid.isEmpty) {
-        throw ValidationException('Session expired. Please go back and retry.');
+        throw ValidationException(l10n.inspSessionExpiredRetry);
       }
 
       final fcmToken = NotificationService.instance.fcmToken;
@@ -396,15 +397,15 @@ class AuthController extends GetxController {
     validateCity();
 
     if (firstNameText.value.trim().length < 3) {
-      firstNameErrorText.value = 'Min 3 characters';
+      firstNameErrorText.value = appL10n.inspMin3Characters;
     }
     if (emailText.value.trim().isEmpty) {
-      emailErrorText.value = 'Email is required';
+      emailErrorText.value = appL10n.inspEmailRequired;
     }
 
     if (!isCompleteProfileFormValid) {
       CustomSnackbar.show(
-        message: 'Please fill in all required fields correctly',
+        message: appL10n.inspFillRequiredFields,
         type: SnackbarType.error,
       );
       return;
@@ -437,7 +438,7 @@ class AuthController extends GetxController {
         CustomSnackbar.show(
           message: response.message.isNotEmpty
               ? response.message
-              : 'Profile completed!',
+              : appL10n.inspProfileCompleted,
           type: SnackbarType.success,
         );
         Get.offAllNamed(AppRoutes.home);
@@ -445,7 +446,7 @@ class AuthController extends GetxController {
         CustomSnackbar.show(
           message: response.message.isNotEmpty
               ? response.message
-              : 'Failed to save profile.',
+              : appL10n.inspFailedToSaveProfile,
           type: SnackbarType.error,
         );
       }
@@ -456,7 +457,7 @@ class AuthController extends GetxController {
     } catch (e) {
       LoggerService.to.error('completeProfile error: $e');
       CustomSnackbar.show(
-        message: 'Failed to save profile. Please try again.',
+        message: appL10n.inspFailedToSaveProfileTryAgain,
         type: SnackbarType.error,
       );
     } finally {
@@ -472,9 +473,9 @@ class AuthController extends GetxController {
       final states = await locationService.fetchStates();
       availableStates.value = states;
     } catch (e) {
-      stateErrorText.value = 'Failed to load states';
+      stateErrorText.value = appL10n.inspFailedToLoadStates;
       CustomSnackbar.show(
-        message: 'Failed to load states. Please try again.',
+        message: appL10n.inspFailedToLoadStatesTryAgain,
         type: SnackbarType.error,
       );
     } finally {
@@ -498,9 +499,9 @@ class AuthController extends GetxController {
       final cities = await locationService.fetchCities(stateId);
       availableCities.value = cities;
     } catch (e) {
-      cityErrorText.value = 'Failed to load cities';
+      cityErrorText.value = appL10n.inspFailedToLoadCities;
       CustomSnackbar.show(
-        message: 'Failed to load cities. Please try again.',
+        message: appL10n.inspFailedToLoadCitiesTryAgain,
         type: SnackbarType.error,
       );
     } finally {
@@ -515,7 +516,7 @@ class AuthController extends GetxController {
 
   bool validateState() {
     if (selectedState.value == null) {
-      stateErrorText.value = 'Please select a state';
+      stateErrorText.value = appL10n.inspPleaseSelectAState;
       return false;
     }
     stateErrorText.value = null;
@@ -524,7 +525,7 @@ class AuthController extends GetxController {
 
   bool validateCity() {
     if (selectedCity.value == null) {
-      cityErrorText.value = 'Please select a city';
+      cityErrorText.value = appL10n.inspPleaseSelectACity;
       return false;
     }
     cityErrorText.value = null;

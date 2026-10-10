@@ -18,7 +18,7 @@ class CompleteProfileScreen extends GetView<AuthController> {
     });
 
     return AuthLayout(
-      title: 'Complete Profile',
+      title: context.l10n.inspCompleteProfile,
       subtitle: '',
       subtitleUnderlinedText: '',
       onSubtitleUnderlinedTap: () {},
@@ -29,7 +29,8 @@ class CompleteProfileScreen extends GetView<AuthController> {
         children: [
           Center(
             child: Text(
-              'Tell us about yourself',
+              context.l10n.inspTellUsAboutYourself,
+              textAlign: TextAlign.center,
               style: AppTextStyles.headingMedium.copyWith(
                 fontSize: 18.sp,
                 fontWeight: FontWeight.w600,
@@ -39,7 +40,8 @@ class CompleteProfileScreen extends GetView<AuthController> {
           SizedBox(height: AppSpacing.xs),
           Center(
             child: Text(
-              'Complete your profile to get started',
+              context.l10n.inspCompleteProfileSubtitle,
+              textAlign: TextAlign.center,
               style: AppTextStyles.bodyMedium.copyWith(
                 fontSize: 12.sp,
                 color: AppColors.grey650,
@@ -50,7 +52,7 @@ class CompleteProfileScreen extends GetView<AuthController> {
 
           // First Name (required)
           Text(
-            'First Name *',
+            '${context.l10n.firstName} *',
             style: AppTextStyles.headingMedium.copyWith(
               fontSize: 14.sp,
               fontWeight: FontWeight.w600,
@@ -60,7 +62,7 @@ class CompleteProfileScreen extends GetView<AuthController> {
           Obx(
             () => CustomInputField(
               controller: controller.firstNameController,
-              placeholder: 'Enter first name',
+              placeholder: context.l10n.inspEnterFirstName,
               prefixIcon: Icons.person_outline,
               errorText: controller.firstNameErrorText.value,
               keyboardType: TextInputType.name,
@@ -72,7 +74,7 @@ class CompleteProfileScreen extends GetView<AuthController> {
 
           // Last Name (optional)
           Text(
-            'Last Name',
+            context.l10n.lastName,
             style: AppTextStyles.headingMedium.copyWith(
               fontSize: 14.sp,
               fontWeight: FontWeight.w600,
@@ -81,7 +83,7 @@ class CompleteProfileScreen extends GetView<AuthController> {
           SizedBox(height: AppSpacing.sm),
           CustomInputField(
             controller: controller.lastNameController,
-            placeholder: 'Enter last name (optional)',
+            placeholder: context.l10n.enterLastNameOptional,
             prefixIcon: Icons.person_outline,
             keyboardType: TextInputType.name,
             textInputAction: TextInputAction.next,
@@ -91,7 +93,7 @@ class CompleteProfileScreen extends GetView<AuthController> {
 
           // Email (required)
           Text(
-            'Email *',
+            '${context.l10n.email} *',
             style: AppTextStyles.headingMedium.copyWith(
               fontSize: 14.sp,
               fontWeight: FontWeight.w600,
@@ -101,7 +103,7 @@ class CompleteProfileScreen extends GetView<AuthController> {
           Obx(
             () => CustomInputField(
               controller: controller.emailController,
-              placeholder: 'Enter email address',
+              placeholder: context.l10n.inspEnterEmailAddress,
               prefixIcon: Icons.email_outlined,
               errorText: controller.emailErrorText.value,
               keyboardType: TextInputType.emailAddress,
@@ -114,7 +116,7 @@ class CompleteProfileScreen extends GetView<AuthController> {
 
           // State dropdown
           Text(
-            'State *',
+            '${context.l10n.state} *',
             style: AppTextStyles.headingMedium.copyWith(
               fontSize: 14.sp,
               fontWeight: FontWeight.w600,
@@ -134,7 +136,7 @@ class CompleteProfileScreen extends GetView<AuthController> {
 
           // City dropdown
           Text(
-            'City *',
+            '${context.l10n.city} *',
             style: AppTextStyles.headingMedium.copyWith(
               fontSize: 14.sp,
               fontWeight: FontWeight.w600,
@@ -157,7 +159,7 @@ class CompleteProfileScreen extends GetView<AuthController> {
             final isValid = controller.isCompleteProfileFormValid;
             return isValid
                 ? GradientButton.filled(
-                    text: 'Save & Continue',
+                    text: context.l10n.inspSaveAndContinue,
                     onPressed: controller.isLoading.value
                         ? null
                         : () => controller.completeProfile(context),
@@ -165,7 +167,7 @@ class CompleteProfileScreen extends GetView<AuthController> {
                     width: double.infinity,
                   )
                 : GradientButton.outlined(
-                    text: 'Save & Continue',
+                    text: context.l10n.inspSaveAndContinue,
                     onPressed: null,
                     width: double.infinity,
                   );
@@ -204,7 +206,9 @@ class _StateDropdown extends StatelessWidget {
             hint: Padding(
               padding: EdgeInsets.symmetric(horizontal: 12.w),
               child: Text(
-                'Select state',
+                context.l10n.selectState,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
                 style: AppTextStyles.bodyMedium.copyWith(
                   color: AppColors.grey650,
                   fontSize: 14.sp,
@@ -217,7 +221,11 @@ class _StateDropdown extends StatelessWidget {
                 .map(
                   (s) => DropdownMenuItem(
                     value: s.stateId,
-                    child: Text(s.stateName),
+                    child: Text(
+                      s.stateName,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ),
                 )
                 .toList(),
@@ -261,8 +269,10 @@ class _CityDropdown extends StatelessWidget {
               padding: EdgeInsets.symmetric(horizontal: 12.w),
               child: Text(
                 controller.selectedState.value == null
-                    ? 'Select state first'
-                    : 'Select city',
+                    ? context.l10n.inspSelectStateFirst
+                    : context.l10n.selectCity,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
                 style: AppTextStyles.bodyMedium.copyWith(
                   color: AppColors.grey650,
                   fontSize: 14.sp,
@@ -275,7 +285,11 @@ class _CityDropdown extends StatelessWidget {
                 .map(
                   (c) => DropdownMenuItem(
                     value: c.cityId,
-                    child: Text(c.cityName),
+                    child: Text(
+                      c.cityName,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ),
                 )
                 .toList(),

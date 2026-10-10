@@ -5,10 +5,10 @@ import 'data/repositories/approved_vehicle_repository_impl.dart';
 class ApprovedVehicleBinding extends Bindings {
   @override
   void dependencies() {
-    Get.lazyPut(() => ApprovedVehicleController(
-          repository: ApprovedVehicleRepositoryImpl(),
-        ));
+    Get.lazyPut(
+      () => ApprovedVehicleController(
+        repository: ApprovedVehicleRepositoryImpl(),
+      ),
+    );
   }
 }
-
-

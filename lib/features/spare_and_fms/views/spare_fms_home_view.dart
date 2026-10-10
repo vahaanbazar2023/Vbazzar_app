@@ -24,7 +24,7 @@ class SpareFmsHomeView extends GetView<SpareAndFmsController> {
       showBack: true,
       body: Column(
         children: [
-          _buildTabBar(),
+          _buildTabBar(context),
           Expanded(
             child: TabBarView(
               controller: controller.tabController,
@@ -36,7 +36,7 @@ class SpareFmsHomeView extends GetView<SpareAndFmsController> {
     );
   }
 
-  Widget _buildTabBar() {
+  Widget _buildTabBar(BuildContext context) {
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
       decoration: BoxDecoration(
@@ -59,7 +59,10 @@ class SpareFmsHomeView extends GetView<SpareAndFmsController> {
         unselectedLabelStyle: AppFonts.labelMedium.copyWith(fontSize: 13.sp),
         dividerColor: Colors.transparent,
         indicatorPadding: EdgeInsets.all(3.r),
-        tabs: SpareAndFmsController.tabs.map((t) => Tab(text: t)).toList(),
+        tabs: [
+          Tab(text: context.l10n.coreFms),
+          Tab(text: context.l10n.spareHeaderTitle),
+        ],
       ),
     );
   }

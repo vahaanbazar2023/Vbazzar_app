@@ -6,6 +6,7 @@ import '../network/endpoints/api_endpoints.dart';
 import '../services/logger_service.dart';
 import '../storage/secure_storage_service.dart';
 import '../storage/storage_keys.dart';
+import '../extensions/context_extensions.dart';
 
 /// ShareService — calls the backend generate-link API and opens the
 /// native share sheet with the returned share_url.
@@ -75,8 +76,8 @@ class ShareService extends GetxService {
     await Share.share(
       text,
       subject: displayName.isNotEmpty
-          ? '$displayName — Vahaan Bazar'
-          : 'Check out this vehicle on Vahaan Bazar',
+          ? appL10n.coreShareVehicleSubject(displayName)
+          : appL10n.coreShareVehicleSubjectFallback,
     );
   }
 
@@ -107,11 +108,8 @@ class ShareService extends GetxService {
     }
 
     await Share.share(
-      '🚛 Join Vahaan Bazar — India\'s trusted vehicle marketplace!\n\n'
-      'Sign up using my referral link and start buying & selling vehicles:\n\n'
-      '$shareUrl\n\n'
-      '📱 Available on Android & iOS.',
-      subject: 'Join Vahaan Bazar',
+      appL10n.coreShareReferralText(shareUrl),
+      subject: appL10n.coreShareReferralSubject,
     );
   }
 
@@ -154,13 +152,13 @@ class ShareService extends GetxService {
     String? year,
     required String url,
   }) {
-    final nameLine = name.isNotEmpty ? '🚛 *$name*' : '🚛 Vehicle';
+    final nameLine = name.isNotEmpty
+        ? '🚛 *$name*'
+        : '🚛 ${appL10n.coreShareVehicleLabel}';
     final yearLine = (year != null && year.isNotEmpty)
-        ? '\n📅 Year: $year'
+        ? '\n📅 ${appL10n.coreShareYearLine(year)}'
         : '';
 
-    return '$nameLine$yearLine\n\n'
-        'Found on *Vahaan Bazar* — India\'s trusted vehicle marketplace.\n\n'
-        '👉 View details & contact seller:\n$url';
+    return '$nameLine$yearLine\n\n${appL10n.coreShareVehicleBody(url)}';
   }
 }

@@ -5,6 +5,7 @@ import '../storage/secure_storage_service.dart';
 import '../storage/local_storage_service.dart';
 import '../storage/storage_keys.dart';
 import 'api_constants.dart';
+import '../extensions/context_extensions.dart';
 
 class NetworkService extends GetxService {
   static NetworkService get to {
@@ -304,8 +305,8 @@ class NetworkService extends GetxService {
     LocalStorageService.to.setBool('is_logged_in', false);
 
     Get.snackbar(
-      'Session Expired',
-      'Please login again to continue',
+      appL10n.coreSessionExpiredTitle,
+      appL10n.coreSessionExpiredMessage,
       snackPosition: SnackPosition.TOP,
       backgroundColor: Get.theme.colorScheme.errorContainer,
       colorText: Get.theme.colorScheme.onErrorContainer,

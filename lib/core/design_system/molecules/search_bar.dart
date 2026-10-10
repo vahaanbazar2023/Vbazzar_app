@@ -5,6 +5,7 @@ import '../tokens/app_radius.dart';
 import '../tokens/app_sizes.dart';
 import '../tokens/app_spacing.dart';
 import '../typography/app_text_styles.dart';
+import '../../extensions/context_extensions.dart';
 
 /// Search bar molecule component
 /// Specialized text field for search functionality
@@ -124,7 +125,7 @@ class _AppSearchBarState extends State<AppSearchBar> {
               onSubmitted: widget.onSubmitted,
               style: AppTextStyles.bodyMedium,
               decoration: InputDecoration(
-                hintText: widget.hint ?? 'Search...',
+                hintText: widget.hint ?? context.l10n.coreSearchEllipsis,
                 hintStyle: AppTextStyles.bodyMedium.copyWith(
                   color: AppColors.grey400,
                 ),

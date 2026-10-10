@@ -67,16 +67,20 @@ class ValuationDropdownOptions {
       yesNo: DropdownItem.parseList(data['yes_no'] as List<dynamic>?),
       condition: DropdownItem.parseList(data['condition'] as List<dynamic>?),
       fuel: DropdownItem.parseList(data['fuel'] as List<dynamic>?),
-      transmissionType:
-          DropdownItem.parseList(data['transmission_type'] as List<dynamic>?),
+      transmissionType: DropdownItem.parseList(
+        data['transmission_type'] as List<dynamic>?,
+      ),
       caseType: DropdownItem.parseList(data['case_type'] as List<dynamic>?),
       accidentalStatus: DropdownItem.parseList(
-          data['accidental_status'] as List<dynamic>?),
-      tyreCondition:
-          DropdownItem.parseList(data['tyre_condition'] as List<dynamic>?),
+        data['accidental_status'] as List<dynamic>?,
+      ),
+      tyreCondition: DropdownItem.parseList(
+        data['tyre_condition'] as List<dynamic>?,
+      ),
       hypothecation: DropdownItem.parseList(
-          (data['hypothecation'] ?? data['hypothecation_options'])
-              as List<dynamic>?),
+        (data['hypothecation'] ?? data['hypothecation_options'])
+            as List<dynamic>?,
+      ),
     );
   }
 }
@@ -86,11 +90,7 @@ class LocationOption {
   final String name;
   final String? stateId;
 
-  const LocationOption({
-    required this.id,
-    required this.name,
-    this.stateId,
-  });
+  const LocationOption({required this.id, required this.name, this.stateId});
 
   factory LocationOption.fromJson(Map<String, dynamic> json) {
     return LocationOption(

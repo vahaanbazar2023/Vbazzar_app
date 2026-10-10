@@ -2,6 +2,8 @@
 // Combo listing models — mirrors /api/v1/subscription/combo-listing response
 // ─────────────────────────────────────────────────────────────────────────────
 
+import '../../../core/extensions/context_extensions.dart';
+
 class ComboIncludedPlan {
   final String planCode;
   final String typeCode;
@@ -35,13 +37,20 @@ class ComboIncludedPlan {
   /// Human-readable label: "Auction Access", "Vehicle Details", etc.
   String get displayName {
     switch (typeCode.toUpperCase()) {
-      case 'SUBT001': return 'Auction Access Plan';
-      case 'SUBT002': return 'Bid Limit Plan';
-      case 'SUBT003': return 'Owner Contact Plan';
-      case 'SUBT004': return 'Vehicle Details Plan';
-      case 'SUBT005': return 'Inspection Plan';
-      case 'SUBT006': return 'Mechanic Contact Plan';
-      default: return name;
+      case 'SUBT001':
+        return appL10n.profSubAuctionAccessPlan;
+      case 'SUBT002':
+        return appL10n.profSubBidLimitPlan;
+      case 'SUBT003':
+        return appL10n.profSubOwnerContactPlan;
+      case 'SUBT004':
+        return appL10n.profSubVehicleDetailsPlan;
+      case 'SUBT005':
+        return appL10n.profSubInspectionPlan;
+      case 'SUBT006':
+        return appL10n.profSubMechanicContactPlan;
+      default:
+        return name;
     }
   }
 }
@@ -70,18 +79,18 @@ class ComboProduct {
   });
 
   factory ComboProduct.fromJson(Map<String, dynamic> j) => ComboProduct(
-        comboCode: j['combo_code'] as String? ?? '',
-        name: j['name'] as String? ?? '',
-        description: j['description'] as String?,
-        actualPrice: (j['actual_price'] as num?)?.toDouble() ?? 0,
-        sellingPrice: (j['selling_price'] as num?)?.toDouble() ?? 0,
-        savings: (j['savings'] as num?)?.toDouble() ?? 0,
-        displayOrder: (j['display_order'] as num?)?.toInt() ?? 0,
-        status: j['status'] as String? ?? '',
-        plans: ((j['plans'] as List<dynamic>?) ?? [])
-            .map((e) => ComboIncludedPlan.fromJson(e as Map<String, dynamic>))
-            .toList(),
-      );
+    comboCode: j['combo_code'] as String? ?? '',
+    name: j['name'] as String? ?? '',
+    description: j['description'] as String?,
+    actualPrice: (j['actual_price'] as num?)?.toDouble() ?? 0,
+    sellingPrice: (j['selling_price'] as num?)?.toDouble() ?? 0,
+    savings: (j['savings'] as num?)?.toDouble() ?? 0,
+    displayOrder: (j['display_order'] as num?)?.toInt() ?? 0,
+    status: j['status'] as String? ?? '',
+    plans: ((j['plans'] as List<dynamic>?) ?? [])
+        .map((e) => ComboIncludedPlan.fromJson(e as Map<String, dynamic>))
+        .toList(),
+  );
 
   bool get isActive => status.toLowerCase() == 'active';
 }
@@ -110,16 +119,16 @@ class OwnerPackProduct {
   });
 
   factory OwnerPackProduct.fromJson(Map<String, dynamic> j) => OwnerPackProduct(
-        planCode: j['plan_code'] as String? ?? '',
-        typeCode: j['type_code'] as String? ?? '',
-        name: j['name'] as String? ?? '',
-        price: (j['price'] as num?)?.toDouble() ?? 0,
-        contactCount: (j['contact_count'] as num?)?.toInt() ?? 0,
-        planMetric: j['plan_metric'] as String? ?? '',
-        planMetricValue: j['plan_metric_value'] as String? ?? '',
-        displayOrder: (j['display_order'] as num?)?.toInt() ?? 0,
-        status: j['status'] as String? ?? '',
-      );
+    planCode: j['plan_code'] as String? ?? '',
+    typeCode: j['type_code'] as String? ?? '',
+    name: j['name'] as String? ?? '',
+    price: (j['price'] as num?)?.toDouble() ?? 0,
+    contactCount: (j['contact_count'] as num?)?.toInt() ?? 0,
+    planMetric: j['plan_metric'] as String? ?? '',
+    planMetricValue: j['plan_metric_value'] as String? ?? '',
+    displayOrder: (j['display_order'] as num?)?.toInt() ?? 0,
+    status: j['status'] as String? ?? '',
+  );
 
   bool get isActive => status.toLowerCase() == 'active';
 }

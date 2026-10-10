@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 
 import '../../../core/constants/app_colors.dart';
 import '../../../core/design_system/templates/shell_layout.dart';
+import '../../../core/extensions/context_extensions.dart';
 import '../controllers/subscription_controller.dart';
 import 'my_plans_tab.dart';
 import 'explore_plans_tab.dart';
@@ -25,7 +26,11 @@ class _MySubscriptionScreenState extends State<MySubscriptionScreen>
   late final TabController _tabController;
   late final MySubscriptionController _myCtrl;
 
-  static const _subtitles = ['My Plans', 'Explore Plans', 'Combo Plans'];
+  List<String> _subtitles(BuildContext context) => [
+    context.l10n.profSubMyPlans,
+    context.l10n.profSubExplorePlans,
+    context.l10n.profSubComboPlans,
+  ];
 
   @override
   void initState() {
@@ -48,8 +53,8 @@ class _MySubscriptionScreenState extends State<MySubscriptionScreen>
       animation: _tabController,
       builder: (_, __) {
         return ShellLayout(
-          title: 'Subscription',
-          subtitle: _subtitles[_tabController.index],
+          title: context.l10n.profSubSubscription,
+          subtitle: _subtitles(context)[_tabController.index],
           showBack: false,
           headerExtra: _SubTabBar(controller: _tabController),
           body: TabBarView(
@@ -97,10 +102,25 @@ class _SubTabBar extends StatelessWidget {
         fontSize: 12.sp,
         fontWeight: FontWeight.w500,
       ),
-      tabs: const [
-        Tab(text: 'My Plans'),
-        Tab(text: 'Explore Plans'),
-        Tab(text: 'Combo Plans'),
+      tabs: [
+        Tab(
+          child: FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Text(context.l10n.profSubMyPlans, maxLines: 1),
+          ),
+        ),
+        Tab(
+          child: FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Text(context.l10n.profSubExplorePlans, maxLines: 1),
+          ),
+        ),
+        Tab(
+          child: FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Text(context.l10n.profSubComboPlans, maxLines: 1),
+          ),
+        ),
       ],
     );
   }

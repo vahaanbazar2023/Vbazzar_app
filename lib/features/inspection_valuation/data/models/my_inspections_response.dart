@@ -18,13 +18,17 @@ class MyInspectionsResponse {
     return MyInspectionsResponse(
       success: data['success'] as bool? ?? false,
       message: data['message']?.toString() ?? '',
-      inspections: (data['data'] as List<dynamic>?)
-              ?.map((e) =>
-                  InspectionVehicleModel.fromJson(e as Map<String, dynamic>))
+      inspections:
+          (data['data'] as List<dynamic>?)
+              ?.map(
+                (e) =>
+                    InspectionVehicleModel.fromJson(e as Map<String, dynamic>),
+              )
               .toList() ??
           [],
       pagination: InspectionPagination.fromJson(
-          data['pagination'] as Map<String, dynamic>? ?? {}),
+        data['pagination'] as Map<String, dynamic>? ?? {},
+      ),
     );
   }
 }

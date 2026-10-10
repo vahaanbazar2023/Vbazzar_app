@@ -322,7 +322,12 @@ class _VehicleListingCard extends StatelessWidget {
                       if (listing.yearOfManufacturing > 0)
                         SizedBox(width: AppSpacing.sm),
                       if (listing.stateName.isNotEmpty)
-                        _chip(Icons.location_on_outlined, listing.stateName),
+                        Flexible(
+                          child: _chip(
+                            Icons.location_on_outlined,
+                            listing.stateName,
+                          ),
+                        ),
                       const Spacer(),
                       if (listing.price > 0)
                         Text(
@@ -386,12 +391,16 @@ class _VehicleListingCard extends StatelessWidget {
     children: [
       Icon(icon, size: 12, color: AppColors.grey500),
       SizedBox(width: 3.w),
-      Text(
-        text,
-        style: TextStyle(
-          fontFamily: 'Montserrat',
-          fontSize: 11.sp,
-          color: AppColors.grey600,
+      Flexible(
+        child: Text(
+          text,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: TextStyle(
+            fontFamily: 'Montserrat',
+            fontSize: 11.sp,
+            color: AppColors.grey600,
+          ),
         ),
       ),
     ],
