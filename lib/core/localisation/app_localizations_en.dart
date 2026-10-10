@@ -6128,4 +6128,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get spareCouldNotRevealContact => 'Could not reveal contact.';
+
+  @override
+  String get profCustomer => 'Customer';
+
+  @override
+  String get profVendor => 'Vendor';
+
+  @override
+  String get profMechanic => 'Mechanic';
 }

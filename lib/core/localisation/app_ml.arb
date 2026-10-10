@@ -1879,5 +1879,8 @@
   "spareApproved": "അംഗീകരിച്ചു",
   "spareRejected": "നിരസിച്ചു",
   "spareUnknown": "അജ്ഞാതം",
-  "spareCouldNotRevealContact": "കോൺടാക്റ്റ് കാണിക്കാനായില്ല."
+  "spareCouldNotRevealContact": "കോൺടാക്റ്റ് കാണിക്കാനായില്ല.",
+  "profCustomer": "ഉപഭോക്താവ്",
+  "profVendor": "വെണ്ടർ",
+  "profMechanic": "മെക്കാനിക്"
 }

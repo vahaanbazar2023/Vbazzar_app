@@ -6247,4 +6247,13 @@ class AppLocalizationsTa extends AppLocalizations {
 
   @override
   String get spareCouldNotRevealContact => 'தொடர்பை வெளிப்படுத்த முடியவில்லை.';
+
+  @override
+  String get profCustomer => 'வாடிக்கையாளர்';
+
+  @override
+  String get profVendor => 'விற்பனையாளர்';
+
+  @override
+  String get profMechanic => 'மெக்கானிக்';
 }

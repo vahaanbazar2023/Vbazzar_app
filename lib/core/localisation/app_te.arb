@@ -1707,5 +1707,8 @@
   "spareApproved": "ఆమోదించబడింది",
   "spareRejected": "తిరస్కరించబడింది",
   "spareUnknown": "తెలియదు",
-  "spareCouldNotRevealContact": "కాంటాక్ట్‌ను చూపించలేకపోయాము."
+  "spareCouldNotRevealContact": "కాంటాక్ట్‌ను చూపించలేకపోయాము.",
+  "profCustomer": "కస్టమర్",
+  "profVendor": "విక్రేత",
+  "profMechanic": "మెకానిక్"
 }

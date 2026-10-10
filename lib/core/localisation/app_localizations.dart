@@ -11385,6 +11385,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Could not reveal contact.'**
   String get spareCouldNotRevealContact;
+
+  /// No description provided for @profCustomer.
+  ///
+  /// In en, this message translates to:
+  /// **'Customer'**
+  String get profCustomer;
+
+  /// No description provided for @profVendor.
+  ///
+  /// In en, this message translates to:
+  /// **'Vendor'**
+  String get profVendor;
+
+  /// No description provided for @profMechanic.
+  ///
+  /// In en, this message translates to:
+  /// **'Mechanic'**
+  String get profMechanic;
 }
 
 class _AppLocalizationsDelegate

@@ -1879,5 +1879,8 @@
   "spareApproved": "ஒப்புதல் அளிக்கப்பட்டது",
   "spareRejected": "நிராகரிக்கப்பட்டது",
   "spareUnknown": "அறியப்படாதது",
-  "spareCouldNotRevealContact": "தொடர்பை வெளிப்படுத்த முடியவில்லை."
+  "spareCouldNotRevealContact": "தொடர்பை வெளிப்படுத்த முடியவில்லை.",
+  "profCustomer": "வாடிக்கையாளர்",
+  "profVendor": "விற்பனையாளர்",
+  "profMechanic": "மெக்கானிக்"
 }

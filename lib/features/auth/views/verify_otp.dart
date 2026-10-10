@@ -181,7 +181,7 @@ class VerifyOTP extends GetView<AuthController> {
                                   color: AppColors.grey600,
                                 ),
                                 children: [
-                                  TextSpan(text: context.l10n.inspSentTo),
+                                  
                                   TextSpan(
                                     text: phone.isNotEmpty
                                         ? '+91 $phone'

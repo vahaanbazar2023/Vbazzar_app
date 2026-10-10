@@ -6143,4 +6143,13 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get spareCouldNotRevealContact => 'संपर्क नहीं दिखाया जा सका।';
+
+  @override
+  String get profCustomer => 'ग्राहक';
+
+  @override
+  String get profVendor => 'विक्रेता';
+
+  @override
+  String get profMechanic => 'मैकेनिक';
 }

@@ -6211,4 +6211,13 @@ class AppLocalizationsMl extends AppLocalizations {
 
   @override
   String get spareCouldNotRevealContact => 'കോൺടാക്റ്റ് കാണിക്കാനായില്ല.';
+
+  @override
+  String get profCustomer => 'ഉപഭോക്താവ്';
+
+  @override
+  String get profVendor => 'വെണ്ടർ';
+
+  @override
+  String get profMechanic => 'മെക്കാനിക്';
 }

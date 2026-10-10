@@ -2667,5 +2667,8 @@
   "spareApproved": "Approved",
   "spareRejected": "Rejected",
   "spareUnknown": "Unknown",
-  "spareCouldNotRevealContact": "Could not reveal contact."
+  "spareCouldNotRevealContact": "Could not reveal contact.",
+  "profCustomer": "Customer",
+  "profVendor": "Vendor",
+  "profMechanic": "Mechanic"
 }

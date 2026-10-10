@@ -1879,5 +1879,8 @@
   "spareApproved": "ಅನುಮೋದಿಸಲಾಗಿದೆ",
   "spareRejected": "ತಿರಸ್ಕರಿಸಲಾಗಿದೆ",
   "spareUnknown": "ಅಜ್ಞಾತ",
-  "spareCouldNotRevealContact": "ಸಂಪರ್ಕವನ್ನು ತೋರಿಸಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ."
+  "spareCouldNotRevealContact": "ಸಂಪರ್ಕವನ್ನು ತೋರಿಸಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ.",
+  "profCustomer": "ಗ್ರಾಹಕ",
+  "profVendor": "ವಿಕ್ರೇತ",
+  "profMechanic": "ಮೆಕ್ಯಾನಿಕ್"
 }

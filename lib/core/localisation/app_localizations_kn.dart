@@ -6205,4 +6205,13 @@ class AppLocalizationsKn extends AppLocalizations {
 
   @override
   String get spareCouldNotRevealContact => 'ಸಂಪರ್ಕವನ್ನು ತೋರಿಸಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ.';
+
+  @override
+  String get profCustomer => 'ಗ್ರಾಹಕ';
+
+  @override
+  String get profVendor => 'ವಿಕ್ರೇತ';
+
+  @override
+  String get profMechanic => 'ಮೆಕ್ಯಾನಿಕ್';
 }

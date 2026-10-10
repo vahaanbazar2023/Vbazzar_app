@@ -6210,4 +6210,13 @@ class AppLocalizationsTe extends AppLocalizations {
 
   @override
   String get spareCouldNotRevealContact => 'కాంటాక్ట్‌ను చూపించలేకపోయాము.';
+
+  @override
+  String get profCustomer => 'కస్టమర్';
+
+  @override
+  String get profVendor => 'విక్రేత';
+
+  @override
+  String get profMechanic => 'మెకానిక్';
 }

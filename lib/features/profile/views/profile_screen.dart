@@ -293,7 +293,7 @@ class _ProfileInfoCard extends StatelessWidget {
       children: [
         Container(
           margin: EdgeInsets.fromLTRB(16.w, 12.h, 16.w, 0),
-          padding: EdgeInsets.all(16.r),
+         
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(16.r),
@@ -407,12 +407,21 @@ class _ProfileInfoCard extends StatelessWidget {
   }
 
   String _memberLabel(BuildContext context, String type) {
-    switch (type.toUpperCase()) {
+    final l10n = context.l10n;
+    switch (type.toUpperCase().trim()) {
+      case 'CUSTOMER':
+        return l10n.profCustomer;
       case 'VENDOR':
+        return l10n.profVendor;
       case 'AGENT':
-        return context.l10n.profAgent;
+        return l10n.profAgent;
+      case 'MECHANIC':
+        return l10n.profMechanic;
+      case '':
+        return l10n.profPremiumMember;
       default:
-        return context.l10n.profPremiumMember;
+        // Unknown type from the API: show it as-is rather than hiding it.
+        return type;
     }
   }
 }
@@ -639,9 +648,9 @@ class _Badge extends StatelessWidget {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 9.w, vertical: 5.h),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.14),
+        color: AppColors.primary.withValues(alpha: 0.08),
         borderRadius: BorderRadius.circular(15.r),
-        border: Border.all(color: Colors.white30),
+        border: Border.all(color: AppColors.primary.withValues(alpha: 0.25)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -657,7 +666,7 @@ class _Badge extends StatelessWidget {
                 fontFamily: 'Montserrat',
                 fontSize: 10.sp,
                 fontWeight: FontWeight.w600,
-                color: Colors.white,
+                color: AppColors.primary,
               ),
             ),
           ),

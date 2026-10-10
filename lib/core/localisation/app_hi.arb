@@ -1941,5 +1941,8 @@
   "spareApproved": "अनुमोदित",
   "spareRejected": "अस्वीकृत",
   "spareUnknown": "अज्ञात",
-  "spareCouldNotRevealContact": "संपर्क नहीं दिखाया जा सका।"
+  "spareCouldNotRevealContact": "संपर्क नहीं दिखाया जा सका।",
+  "profCustomer": "ग्राहक",
+  "profVendor": "विक्रेता",
+  "profMechanic": "मैकेनिक"
 }
