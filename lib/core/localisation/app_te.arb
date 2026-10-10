@@ -1710,5 +1710,6 @@
   "spareCouldNotRevealContact": "కాంటాక్ట్‌ను చూపించలేకపోయాము.",
   "profCustomer": "కస్టమర్",
   "profVendor": "విక్రేత",
-  "profMechanic": "మెకానిక్"
+  "profMechanic": "మెకానిక్",
+  "coreMechanics": "మెకానిక్స్"
 }

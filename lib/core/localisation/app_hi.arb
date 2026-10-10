@@ -1944,5 +1944,6 @@
   "spareCouldNotRevealContact": "संपर्क नहीं दिखाया जा सका।",
   "profCustomer": "ग्राहक",
   "profVendor": "विक्रेता",
-  "profMechanic": "मैकेनिक"
+  "profMechanic": "मैकेनिक",
+  "coreMechanics": "मैकेनिक"
 }

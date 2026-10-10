@@ -2670,5 +2670,6 @@
   "spareCouldNotRevealContact": "Could not reveal contact.",
   "profCustomer": "Customer",
   "profVendor": "Vendor",
-  "profMechanic": "Mechanic"
+  "profMechanic": "Mechanic",
+  "coreMechanics": "Mechanics"
 }

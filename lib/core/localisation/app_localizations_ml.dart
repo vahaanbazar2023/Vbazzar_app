@@ -6220,4 +6220,7 @@ class AppLocalizationsMl extends AppLocalizations {
 
   @override
   String get profMechanic => 'മെക്കാനിക്';
+
+  @override
+  String get coreMechanics => 'മെക്കാനിക്സ്';
 }

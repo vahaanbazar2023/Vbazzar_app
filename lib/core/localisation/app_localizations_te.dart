@@ -6219,4 +6219,7 @@ class AppLocalizationsTe extends AppLocalizations {
 
   @override
   String get profMechanic => 'మెకానిక్';
+
+  @override
+  String get coreMechanics => 'మెకానిక్స్';
 }

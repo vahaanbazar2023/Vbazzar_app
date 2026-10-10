@@ -42,6 +42,8 @@ class CategoryItem {
   /// Localized short title, falling back to [localizedTitle].
   String localizedShortTitle(BuildContext context) {
     if (id == 'insurance') return context.l10n.insurance;
+    // Home grid shows the Service Support category as "Mechanics".
+    if (id == 'service_support') return context.l10n.coreMechanics;
     return shortTitle ?? localizedTitle(context);
   }
 }

@@ -1882,5 +1882,6 @@
   "spareCouldNotRevealContact": "ಸಂಪರ್ಕವನ್ನು ತೋರಿಸಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ.",
   "profCustomer": "ಗ್ರಾಹಕ",
   "profVendor": "ವಿಕ್ರೇತ",
-  "profMechanic": "ಮೆಕ್ಯಾನಿಕ್"
+  "profMechanic": "ಮೆಕ್ಯಾನಿಕ್",
+  "coreMechanics": "ಮೆಕ್ಯಾನಿಕ್ಸ್"
 }

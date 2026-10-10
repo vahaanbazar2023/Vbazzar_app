@@ -6152,4 +6152,7 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get profMechanic => 'मैकेनिक';
+
+  @override
+  String get coreMechanics => 'मैकेनिक';
 }

@@ -1882,5 +1882,6 @@
   "spareCouldNotRevealContact": "தொடர்பை வெளிப்படுத்த முடியவில்லை.",
   "profCustomer": "வாடிக்கையாளர்",
   "profVendor": "விற்பனையாளர்",
-  "profMechanic": "மெக்கானிக்"
+  "profMechanic": "மெக்கானிக்",
+  "coreMechanics": "மெக்கானிக்ஸ்"
 }

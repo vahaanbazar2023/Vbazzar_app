@@ -6256,4 +6256,7 @@ class AppLocalizationsTa extends AppLocalizations {
 
   @override
   String get profMechanic => 'மெக்கானிக்';
+
+  @override
+  String get coreMechanics => 'மெக்கானிக்ஸ்';
 }

@@ -6137,4 +6137,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get profMechanic => 'Mechanic';
+
+  @override
+  String get coreMechanics => 'Mechanics';
 }

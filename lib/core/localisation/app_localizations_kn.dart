@@ -6214,4 +6214,7 @@ class AppLocalizationsKn extends AppLocalizations {
 
   @override
   String get profMechanic => 'ಮೆಕ್ಯಾನಿಕ್';
+
+  @override
+  String get coreMechanics => 'ಮೆಕ್ಯಾನಿಕ್ಸ್';
 }

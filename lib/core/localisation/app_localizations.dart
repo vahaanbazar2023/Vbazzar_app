@@ -11403,6 +11403,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Mechanic'**
   String get profMechanic;
+
+  /// No description provided for @coreMechanics.
+  ///
+  /// In en, this message translates to:
+  /// **'Mechanics'**
+  String get coreMechanics;
 }
 
 class _AppLocalizationsDelegate

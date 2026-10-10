@@ -1882,5 +1882,6 @@
   "spareCouldNotRevealContact": "കോൺടാക്റ്റ് കാണിക്കാനായില്ല.",
   "profCustomer": "ഉപഭോക്താവ്",
   "profVendor": "വെണ്ടർ",
-  "profMechanic": "മെക്കാനിക്"
+  "profMechanic": "മെക്കാനിക്",
+  "coreMechanics": "മെക്കാനിക്സ്"
 }
