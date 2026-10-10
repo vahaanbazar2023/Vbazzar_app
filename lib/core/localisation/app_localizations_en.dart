@@ -5026,7 +5026,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get profChoosePreferredLanguage => 'Choose your preferred language';
 
   @override
-  String get profViewItemsWon => 'View items you have won';
+  String get profViewItemsWon => 'View vehicles you have won';
 
   @override
   String get profTrackBids => 'Track your active and past bids';
@@ -5047,7 +5047,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get profManageListedVehicles => 'Manage your listed vehicles';
 
   @override
-  String get profItemsSaved => 'Items you have saved';
+  String get profItemsSaved => 'Vehicles you have saved';
 
   @override
   String get profPurchaseHistory => 'Purchase History';

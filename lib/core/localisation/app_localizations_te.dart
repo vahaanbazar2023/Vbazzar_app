@@ -5094,7 +5094,7 @@ class AppLocalizationsTe extends AppLocalizations {
   String get profChoosePreferredLanguage => 'మీకు ఇష్టమైన భాషను ఎంచుకోండి';
 
   @override
-  String get profViewItemsWon => 'మీరు గెలిచిన వస్తువులను చూడండి';
+  String get profViewItemsWon => 'మీరు గెలిచిన వాహనాలను చూడండి';
 
   @override
   String get profTrackBids => 'మీ ప్రస్తుత మరియు గత బిడ్‌లను ట్రాక్ చేయండి';
@@ -5116,7 +5116,7 @@ class AppLocalizationsTe extends AppLocalizations {
       'మీరు జాబితా చేసిన వాహనాలను నిర్వహించండి';
 
   @override
-  String get profItemsSaved => 'మీరు సేవ్ చేసిన అంశాలు';
+  String get profItemsSaved => 'మీరు సేవ్ చేసిన వాహనాలు';
 
   @override
   String get profPurchaseHistory => 'కొనుగోలు చరిత్ర';

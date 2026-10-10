@@ -5120,7 +5120,7 @@ class AppLocalizationsTa extends AppLocalizations {
       'உங்கள் விருப்பமான மொழியைத் தேர்ந்தெடுக்கவும்';
 
   @override
-  String get profViewItemsWon => 'நீங்கள் வென்ற பொருட்களைக் காணுங்கள்';
+  String get profViewItemsWon => 'நீங்கள் வென்ற வாகனங்களைக் காணுங்கள்';
 
   @override
   String get profTrackBids =>
@@ -5144,7 +5144,7 @@ class AppLocalizationsTa extends AppLocalizations {
       'நீங்கள் பட்டியலிட்ட வாகனங்களை நிர்வகியுங்கள்';
 
   @override
-  String get profItemsSaved => 'நீங்கள் சேமித்த பொருட்கள்';
+  String get profItemsSaved => 'நீங்கள் சேமித்த வாகனங்கள்';
 
   @override
   String get profPurchaseHistory => 'வாங்கிய வரலாறு';

@@ -5085,7 +5085,7 @@ class AppLocalizationsMl extends AppLocalizations {
   String get profChoosePreferredLanguage => 'നിങ്ങളുടെ ഇഷ്ട ഭാഷ തിരഞ്ഞെടുക്കുക';
 
   @override
-  String get profViewItemsWon => 'നിങ്ങൾ വിജയിച്ച ഇനങ്ങൾ കാണുക';
+  String get profViewItemsWon => 'നിങ്ങൾ വിജയിച്ച വാഹനങ്ങൾ കാണുക';
 
   @override
   String get profTrackBids =>
@@ -5109,7 +5109,7 @@ class AppLocalizationsMl extends AppLocalizations {
       'നിങ്ങളുടെ ലിസ്റ്റ് ചെയ്ത വാഹനങ്ങൾ നിയന്ത്രിക്കുക';
 
   @override
-  String get profItemsSaved => 'നിങ്ങൾ സേവ് ചെയ്ത ഇനങ്ങൾ';
+  String get profItemsSaved => 'നിങ്ങൾ സേവ് ചെയ്ത വാഹനങ്ങൾ';
 
   @override
   String get profPurchaseHistory => 'വാങ്ങൽ ചരിത്രം';

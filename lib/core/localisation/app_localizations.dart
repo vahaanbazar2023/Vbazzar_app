@@ -9415,7 +9415,7 @@ abstract class AppLocalizations {
   /// No description provided for @profViewItemsWon.
   ///
   /// In en, this message translates to:
-  /// **'View items you have won'**
+  /// **'View vehicles you have won'**
   String get profViewItemsWon;
 
   /// No description provided for @profTrackBids.
@@ -9457,7 +9457,7 @@ abstract class AppLocalizations {
   /// No description provided for @profItemsSaved.
   ///
   /// In en, this message translates to:
-  /// **'Items you have saved'**
+  /// **'Vehicles you have saved'**
   String get profItemsSaved;
 
   /// No description provided for @profPurchaseHistory.

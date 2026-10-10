@@ -8,6 +8,8 @@ import '../../../core/constants/app_colors.dart';
 import '../../../core/design_system/organisms/app_header.dart';
 import '../../../core/extensions/context_extensions.dart';
 import '../../../routes/app_routes.dart';
+import '../../../core/design_system/organisms/app_bottom_nav_bar.dart';
+import '../../main_shell/controllers/main_shell_controller.dart';
 import '../controllers/profile_controller.dart';
 import '../models/profile_models.dart';
 import '../../buy_and_sell/views/my_vehicles_view.dart';
@@ -16,11 +18,32 @@ import '../../buy_and_sell/controllers/sell_vehicle_controller.dart';
 import '../../buy_and_sell/controllers/vehicle_detail_controller.dart';
 import '../../buy_and_sell/data/repositories/buy_sell_repository_impl.dart';
 
+/// Back from Profile always lands on the Categories tab.
+///
+/// Profile can be shown as a bottom-nav tab (nothing to pop) or pushed as its
+/// own route (e.g. from the Home avatar). In both cases we make sure the shell
+/// shows Categories and that no stray route is left on top of it. We never pop
+/// the shell itself, which would leave a black screen.
+void _goToCategories(BuildContext context) {
+  if (Get.isRegistered<MainShellController>()) {
+    Get.find<MainShellController>().changePage(BottomNavTab.categories.index);
+  }
+  if (Navigator.of(context).canPop()) {
+    Get.until((route) => route.isFirst);
+  }
+}
+
 class ProfileScreen extends GetView<ProfileController> {
   const ProfileScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    // Profile exists both as a shell tab and as a pushed route. Popping the
+    // pushed route disposes the controller its binding created, which would
+    // leave the (still mounted) shell tab without one. Re-create on demand.
+    if (!Get.isRegistered<ProfileController>()) {
+      Get.put(ProfileController());
+    }
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: const SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
@@ -28,7 +51,7 @@ class ProfileScreen extends GetView<ProfileController> {
         statusBarBrightness: Brightness.dark,
       ),
       child: Scaffold(
-        backgroundColor: const Color(0xFFF7F7F7),
+        backgroundColor: const Color(0xFFFFF6F5),
         body: Obx(() {
           if (controller.isLoading.value) {
             return const Center(
@@ -71,28 +94,20 @@ class _ProfilePage extends StatelessWidget {
           ),
         ),
 
-        // ── Profile info card ────────────────────────────────────────
+        // ── Hero: identity + floating stats ──────────────────────────
         SliverToBoxAdapter(
-          child: _ProfileInfoCard(profile: profile, controller: controller),
-        ),
-
-        // ── Stats card ───────────────────────────────────────────────
-        SliverToBoxAdapter(
-          child: Padding(
-            padding: EdgeInsets.fromLTRB(16.w, 12.h, 16.w, 0),
-            child: _StatsCard(),
-          ),
+          child: _ProfileHero(profile: profile, controller: controller),
         ),
         SliverToBoxAdapter(
           child: Padding(
-            padding: EdgeInsets.fromLTRB(16.w, 0, 16.w, 40.h),
+            padding: EdgeInsets.fromLTRB(16.w, 0, 16.w, 24.h),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 _section(context, context.l10n.profMyAccount, [
                   _Item(
                     iconAsset: AppAssets.subIconAuction,
-                    iconBg: const Color(0xFFFFEEEE),
+                    iconBg: const Color(0xFFFFE3E1),
                     label: context.l10n.manageProfile,
                     subtitle: context.l10n.profUpdatePersonalInfo,
                     onTap: () => controller.openManageProfile(),
@@ -100,7 +115,8 @@ class _ProfilePage extends StatelessWidget {
 
                   _Item(
                     iconAsset: AppAssets.subIconSubscriptions,
-                    iconBg: const Color(0xFFEEF4FF),
+                    iconBg: const Color(0xFFE3EBFF),
+                    chipColor: const Color(0xFF4C6EF5),
                     label: context.l10n.my_subscriptions_title,
                     subtitle: context.l10n.profViewManagePlans,
                     onTap: () => Get.toNamed(AppRoutes.mySubscriptions),
@@ -108,7 +124,7 @@ class _ProfilePage extends StatelessWidget {
 
                   _Item(
                     iconAsset: AppAssets.subIconGroup1,
-                    iconBg: const Color(0xFFF0FFF0),
+                    iconBg: const Color(0xFFDDF5E0),
                     label: context.l10n.language,
                     subtitle: context.l10n.profChoosePreferredLanguage,
                     onTap: () => Get.toNamed(
@@ -118,12 +134,12 @@ class _ProfilePage extends StatelessWidget {
                   ),
                 ]),
 
-                SizedBox(height: 22.h),
+                SizedBox(height: 14.h),
 
                 _section(context, context.l10n.auction, [
                   _Item(
                     iconAsset: AppAssets.subIconStar,
-                    iconBg: const Color(0xFFFFF8E0),
+                    iconBg: const Color(0xFFFFEFC2),
                     label: context.l10n.myWins,
                     subtitle: context.l10n.profViewItemsWon,
                     onTap: () => Get.toNamed(AppRoutes.myWins),
@@ -131,7 +147,7 @@ class _ProfilePage extends StatelessWidget {
 
                   _Item(
                     iconAsset: AppAssets.subIconBidLimit,
-                    iconBg: const Color(0xFFEEF4FF),
+                    iconBg: const Color(0xFFE3EBFF),
                     label: context.l10n.myBids,
                     subtitle: context.l10n.profTrackBids,
                     onTap: () => Get.toNamed(AppRoutes.myBids),
@@ -139,7 +155,7 @@ class _ProfilePage extends StatelessWidget {
 
                   _Item(
                     iconData: Icons.favorite_rounded,
-                    iconBg: const Color(0xFFFFF0F0),
+                    iconBg: const Color(0xFFFFE1E1),
                     label: context.l10n.profWishlist,
                     subtitle: context.l10n.profAuctionVehiclesSaved,
                     onTap: () => Get.toNamed(AppRoutes.myWishlist),
@@ -147,19 +163,19 @@ class _ProfilePage extends StatelessWidget {
 
                   _Item(
                     iconAsset: AppAssets.subIconPending,
-                    iconBg: const Color(0xFFFFF0F0),
+                    iconBg: const Color(0xFFFFE1E1),
                     label: context.l10n.initiateRefund,
                     subtitle: context.l10n.profRequestRefund,
                     onTap: () => Get.toNamed(AppRoutes.initiateRefund),
                   ),
                 ]),
 
-                SizedBox(height: 22.h),
+                SizedBox(height: 14.h),
 
                 _section(context, context.l10n.profBuyAndSell, [
                   _Item(
                     iconAsset: AppAssets.subIconVehicle,
-                    iconBg: const Color(0xFFEEF4FF),
+                    iconBg: const Color(0xFFE3EBFF),
                     label: context.l10n.myVehicles,
                     subtitle: context.l10n.profManageListedVehicles,
                     onTap: () => Get.to(
@@ -178,7 +194,7 @@ class _ProfilePage extends StatelessWidget {
 
                   _Item(
                     iconAsset: AppAssets.subIconWallet,
-                    iconBg: const Color(0xFFFFF8E0),
+                    iconBg: const Color(0xFFFFEFC2),
                     label: context.l10n.profWishlist,
                     subtitle: context.l10n.profItemsSaved,
                     onTap: () => Get.to(
@@ -197,18 +213,18 @@ class _ProfilePage extends StatelessWidget {
 
                   _Item(
                     iconAsset: AppAssets.subIconGroup2,
-                    iconBg: const Color(0xFFF0FFF0),
+                    iconBg: const Color(0xFFDDF5E0),
                     label: context.l10n.profPurchaseHistory,
                     subtitle: context.l10n.profViewPastPurchases,
                     onTap: () => Get.toNamed(AppRoutes.spareOrders),
                   ),
                 ]),
 
-                SizedBox(height: 28.h),
+                SizedBox(height: 16.h),
 
                 _LogoutButton(controller: controller),
 
-                SizedBox(height: 30.h),
+                SizedBox(height: 8.h),
               ],
             ),
           ),
@@ -229,50 +245,46 @@ Widget _section(BuildContext context, String title, List<_Item> items) {
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
       Padding(
-        padding: EdgeInsets.only(left: 2.w, bottom: 10.h),
-        child: Text(
-          title,
-          style: TextStyle(
-            fontFamily: 'Montserrat',
-            fontSize: 16.sp,
-            fontWeight: FontWeight.w600,
-            color: AppColors.textPrimary,
-          ),
-        ),
-      ),
-
-      Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(20.r),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.035),
-              blurRadius: 18,
-              offset: const Offset(0, 5),
+        padding: EdgeInsets.only(left: 2.w, bottom: 8.h),
+        child: Row(
+          children: [
+            Container(
+              width: 4.w,
+              height: 16.h,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(2.r),
+                gradient: const LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    AppColors.ctaGradientStart,
+                    AppColors.ctaGradientEnd,
+                  ],
+                ),
+              ),
+            ),
+            SizedBox(width: 8.w),
+            Flexible(
+              child: Text(
+                title,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  fontFamily: 'Montserrat',
+                  fontSize: 16.sp,
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.textPrimary,
+                ),
+              ),
             ),
           ],
         ),
-        clipBehavior: Clip.antiAlias,
-        child: Column(
-          children: List.generate(items.length, (index) {
-            return Column(
-              children: [
-                _ItemTile(item: items[index]),
-                if (index != items.length - 1)
-                  Padding(
-                    padding: EdgeInsets.only(left: 70.w),
-                    child: Divider(
-                      height: 1,
-                      thickness: 0.8,
-                      color: AppColors.grey100,
-                    ),
-                  ),
-              ],
-            );
-          }),
-        ),
       ),
+
+      for (int i = 0; i < items.length; i++) ...[
+        _ItemTile(item: items[i]),
+        if (i != items.length - 1) SizedBox(height: 8.h),
+      ],
     ],
   );
 }
@@ -281,148 +293,195 @@ Widget _section(BuildContext context, String title, List<_Item> items) {
 // PROFILE HEADER
 // ============================================================================
 
-class _ProfileInfoCard extends StatelessWidget {
+class _ProfileHero extends StatelessWidget {
   final ProfileData? profile;
   final ProfileController controller;
 
-  const _ProfileInfoCard({required this.profile, required this.controller});
+  const _ProfileHero({required this.profile, required this.controller});
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
+    final hasUsername = profile?.username.isNotEmpty == true;
+    final hasPhone = profile?.phoneNumber.isNotEmpty == true;
+
+    return Column(
       children: [
-        Container(
-          margin: EdgeInsets.fromLTRB(16.w, 12.h, 16.w, 0),
-         
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(16.r),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.06),
-                blurRadius: 12,
-                offset: const Offset(0, 4),
+        Stack(
+          clipBehavior: Clip.none,
+          children: [
+            // ── Brand gradient surface ──────────────────────────────
+            Container(
+              width: double.infinity,
+              margin: EdgeInsets.fromLTRB(16.w, 8.h, 16.w, 0),
+              clipBehavior: Clip.antiAlias,
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    AppColors.ctaGradientStart,
+                    AppColors.ctaGradientEnd,
+                  ],
+                ),
+                borderRadius: BorderRadius.circular(26.r),
+                boxShadow: [
+                  BoxShadow(
+                    color: AppColors.primary.withValues(alpha: 0.30),
+                    blurRadius: 24,
+                    offset: const Offset(0, 12),
+                  ),
+                ],
               ),
-            ],
-          ),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              // ── Avatar ─────────────────────────────────────────────────
-              Image.asset(
-                'assets/images/png/Boy_avatar.png',
-                width: 52.r,
-                height: 52.r,
-                fit: BoxFit.cover,
-              ),
-              SizedBox(width: 14.w),
-              // ── Name + details ─────────────────────────────────────────
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
+              child: Stack(
+                children: [
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(16.w, 14.h, 16.w, 58.h),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Flexible(
-                          child: Text(
-                            profile?.fullName ?? context.l10n.profUser,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              fontFamily: 'Montserrat',
-                              fontSize: 17.sp,
-                              fontWeight: FontWeight.w600,
-                              color: AppColors.textPrimary,
+                        // ── Avatar with ring ────────────────────────
+                        Container(
+                          padding: EdgeInsets.all(3.r),
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Colors.white.withValues(alpha: 0.25),
+                            border: Border.all(
+                              color: Colors.white.withValues(alpha: 0.6),
+                              width: 1.5,
+                            ),
+                          ),
+                          child: ClipOval(
+                            child: Container(
+                              color: Colors.white,
+                              child: Image.asset(
+                                'assets/images/png/Boy_avatar.png',
+                                width: 54.r,
+                                height: 54.r,
+                                fit: BoxFit.cover,
+                              ),
                             ),
                           ),
                         ),
-                        SizedBox(width: 4.w),
-                        Icon(
-                          Icons.verified_rounded,
-                          color: AppColors.primary,
-                          size: 16.r,
+                        SizedBox(width: 14.w),
+                        // ── Identity ───────────────────────────────
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Flexible(
+                                    child: Text(
+                                      profile?.fullName ??
+                                          context.l10n.profUser,
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                        fontFamily: 'Montserrat',
+                                        fontSize: 18.sp,
+                                        fontWeight: FontWeight.w700,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(width: 5.w),
+                                  Icon(
+                                    Icons.verified_rounded,
+                                    color: const Color(0xFFFFD700),
+                                    size: 17.r,
+                                  ),
+                                ],
+                              ),
+                              if (hasUsername) ...[
+                                SizedBox(height: 3.h),
+                                Text(
+                                  '@${profile!.username}',
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    fontFamily: 'Montserrat',
+                                    fontSize: 12.sp,
+                                    color: Colors.white.withValues(alpha: 0.8),
+                                  ),
+                                ),
+                              ],
+
+                              Row(
+                                children: [
+                                  if (hasPhone) ...[
+                                    SizedBox(height: 2.h),
+                                    Text(
+                                      profile!.phoneNumber,
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                        fontFamily: 'Montserrat',
+                                        fontSize: 12.sp,
+                                        color: Colors.white.withValues(
+                                          alpha: 0.8,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                  Spacer(),
+                                  _Badge(
+                                    icon: Icons.workspace_premium_rounded,
+                                    label: _memberLabel(
+                                      context,
+                                      profile?.userType ?? '',
+                                    ),
+                                    iconColor: const Color(0xFFFFD700),
+                                  ),
+                                ],
+                              ),
+
+                              SizedBox(height: 8.h),
+                            ],
+                          ),
                         ),
                       ],
                     ),
-                    if (profile?.username.isNotEmpty == true) ...[
-                      SizedBox(height: 4.h),
-                      Text(
-                        "@${profile!.username}",
-                        style: TextStyle(
-                          fontFamily: 'Montserrat',
-                          fontSize: 12.sp,
-                          color: AppColors.textSecondary,
+                  ),
+                  // ── Edit ───────────────────────────────────────
+                  Positioned(
+                    top: 12.h,
+                    right: 12.w,
+                    child: GestureDetector(
+                      onTap: () => controller.openManageProfile(),
+                      child: Container(
+                        width: 32.r,
+                        height: 32.r,
+                        decoration: BoxDecoration(
+                          color: Colors.white.withValues(alpha: 0.18),
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: Colors.white.withValues(alpha: 0.4),
+                          ),
+                        ),
+                        child: Icon(
+                          Icons.edit_rounded,
+                          size: 15.r,
+                          color: Colors.white,
                         ),
                       ),
-                    ],
-                    if (profile?.phoneNumber.isNotEmpty == true) ...[
-                      SizedBox(height: 3.h),
-                      Text(
-                        profile!.phoneNumber,
-                        style: TextStyle(
-                          fontFamily: 'Montserrat',
-                          fontSize: 12.sp,
-                          color: AppColors.textSecondary,
-                        ),
-                      ),
-                    ],
-                    SizedBox(height: 8.h),
-                    _Badge(
-                      icon: Icons.star_rounded,
-                      label: _memberLabel(context, profile?.userType ?? ''),
-                      iconColor: const Color(0xFFFFD700),
                     ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ), // Container
-        // ── Edit icon top-right ───────────────────────────────────────
-        Positioned(
-          top: 12.h + 8.h,
-          right: 16.w + 8.w,
-          child: GestureDetector(
-            onTap: () => controller.openManageProfile(),
-            child: Container(
-              width: 28.r,
-              height: 28.r,
-              decoration: BoxDecoration(
-                color: AppColors.primary.withValues(alpha: 0.1),
-                shape: BoxShape.circle,
-                border: Border.all(
-                  color: AppColors.primary.withValues(alpha: 0.3),
-                ),
-              ),
-              child: Icon(
-                Icons.edit_rounded,
-                color: AppColors.primary,
-                size: 14.r,
+                  ),
+                ],
               ),
             ),
-          ),
+
+            // ── Floating stats panel overlapping the hero ───────────
+            Positioned(
+              left: 32.w,
+              right: 32.w,
+              bottom: -44.h,
+              child: _StatsCard(),
+            ),
+          ],
         ),
+        SizedBox(height: 52.h),
       ],
     );
-  }
-
-  String _memberLabel(BuildContext context, String type) {
-    final l10n = context.l10n;
-    switch (type.toUpperCase().trim()) {
-      case 'CUSTOMER':
-        return l10n.profCustomer;
-      case 'VENDOR':
-        return l10n.profVendor;
-      case 'AGENT':
-        return l10n.profAgent;
-      case 'MECHANIC':
-        return l10n.profMechanic;
-      case '':
-        return l10n.profPremiumMember;
-      default:
-        // Unknown type from the API: show it as-is rather than hiding it.
-        return type;
-    }
   }
 }
 
@@ -541,7 +600,7 @@ class _ProfileInfoCard extends StatelessWidget {
 //                         horizontal: 11.w,
 //                         vertical: 4.h,
 //                       ),
-//                       decoration: BoxDecoration(
+//                       decoration: BoxDecoration(e
 //                         color: Colors.white.withValues(alpha: 0.14),
 //                         borderRadius: BorderRadius.circular(22.r),
 //                         border: Border.all(color: Colors.white38, width: 1),
@@ -598,13 +657,20 @@ class _ProfileInfoCard extends StatelessWidget {
 //   }
 
 String _memberLabel(BuildContext context, String type) {
-  switch (type.toUpperCase()) {
+  final l10n = context.l10n;
+  switch (type.toUpperCase().trim()) {
+    case 'CUSTOMER':
+      return l10n.profCustomer;
     case 'VENDOR':
+      return l10n.profVendor;
     case 'AGENT':
-      return context.l10n.profAgent;
-
+      return l10n.profAgent;
+    case 'MECHANIC':
+      return l10n.profMechanic;
+    case '':
+      return l10n.profPremiumMember;
     default:
-      return context.l10n.profPremiumMember;
+      return type;
   }
 }
 
@@ -648,9 +714,9 @@ class _Badge extends StatelessWidget {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 9.w, vertical: 5.h),
       decoration: BoxDecoration(
-        color: AppColors.primary.withValues(alpha: 0.08),
+        color: Colors.white.withValues(alpha: 0.18),
         borderRadius: BorderRadius.circular(15.r),
-        border: Border.all(color: AppColors.primary.withValues(alpha: 0.25)),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.4)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -666,7 +732,7 @@ class _Badge extends StatelessWidget {
                 fontFamily: 'Montserrat',
                 fontSize: 10.sp,
                 fontWeight: FontWeight.w600,
-                color: AppColors.primary,
+                color: Colors.white,
               ),
             ),
           ),
@@ -683,21 +749,25 @@ class _Badge extends StatelessWidget {
 class _StatsCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    Widget divider() =>
+        Container(width: 1, height: 40.h, color: AppColors.grey100);
+
     return Container(
       width: double.infinity,
-
+      padding: EdgeInsets.symmetric(vertical: 12.h),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16.r),
-        // boxShadow: [
-        //   BoxShadow(
-        //     color: Colors.black.withValues(alpha: 0.07),
-        //     blurRadius: 18,
-        //     offset: const Offset(0, 7),
-        //   ),
-        // ],
+        borderRadius: BorderRadius.circular(18.r),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.12),
+            blurRadius: 20,
+            offset: const Offset(0, 8),
+          ),
+        ],
       ),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Expanded(
             child: _StatCell(
@@ -706,9 +776,7 @@ class _StatsCard extends StatelessWidget {
               label: context.l10n.profTotalWins,
             ),
           ),
-
-          VerticalDivider(width: 1, thickness: 1, color: AppColors.grey100),
-
+          divider(),
           Expanded(
             child: _StatCell(
               iconAsset: AppAssets.subIconVehicle,
@@ -716,9 +784,7 @@ class _StatsCard extends StatelessWidget {
               label: context.l10n.profVehicles,
             ),
           ),
-
-          VerticalDivider(width: 1, thickness: 1, color: AppColors.grey100),
-
+          divider(),
           Expanded(
             child: _StatCell(
               iconAsset: AppAssets.subIconBidLimit,
@@ -732,6 +798,7 @@ class _StatsCard extends StatelessWidget {
   }
 }
 
+/// One stat: icon chip, big value, small label — all centred in an equal column.
 class _StatCell extends StatelessWidget {
   final String iconAsset;
   final String value;
@@ -746,58 +813,44 @@ class _StatCell extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 4.w),
+      padding: EdgeInsets.symmetric(horizontal: 4.w),
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
-          Row(
-            children: [
-              Container(
-                width: 36.r,
-                height: 36.r,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: AppColors.lightOrange.withOpacity(0.5),
-                ),
-                padding: EdgeInsets.all(7.r),
-                child: Image.asset(iconAsset, fit: BoxFit.contain),
-              ),
-              SizedBox(width: 8.w),
-              Expanded(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      value,
-                      maxLines: 1,
-                      style: TextStyle(
-                        fontFamily: 'Montserrat',
-                        fontWeight: FontWeight.w600,
-                        fontSize: 14.sp,
-                        color: AppColors.black,
-                      ),
-                    ),
-
-                    SizedBox(height: 2.h),
-
-                    Text(
-                      label,
-                      textAlign: TextAlign.center,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        fontFamily: 'Montserrat',
-                        fontSize: 10.5.sp,
-                        color: AppColors.grey500,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
+          Container(
+            width: 30.r,
+            height: 30.r,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: AppColors.primary.withValues(alpha: 0.09),
+            ),
+            padding: EdgeInsets.all(6.r),
+            child: Image.asset(iconAsset, fit: BoxFit.contain),
           ),
-
+          SizedBox(height: 6.h),
+          Text(
+            value,
+            maxLines: 1,
+            style: TextStyle(
+              fontFamily: 'Montserrat',
+              fontWeight: FontWeight.w800,
+              fontSize: 18.sp,
+              height: 1.1,
+              color: AppColors.textPrimary,
+            ),
+          ),
           SizedBox(height: 2.h),
+          Text(
+            label,
+            maxLines: 1,
+            textAlign: TextAlign.center,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+              fontFamily: 'Montserrat',
+              fontSize: 10.5.sp,
+              color: AppColors.grey500,
+            ),
+          ),
         ],
       ),
     );
@@ -812,6 +865,9 @@ class _Item {
   final String? iconAsset;
   final IconData? iconData;
   final Color iconBg;
+
+  /// Solid backdrop behind artwork that is itself white (e.g. the crown).
+  final Color? chipColor;
   final String label;
   final String subtitle;
   final VoidCallback? onTap;
@@ -820,6 +876,7 @@ class _Item {
     this.iconAsset,
     this.iconData,
     required this.iconBg,
+    this.chipColor,
     required this.label,
     required this.subtitle,
     this.onTap,
@@ -838,28 +895,35 @@ class _ItemTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: Colors.transparent,
+      color: item.iconBg,
+      borderRadius: BorderRadius.circular(18.r),
+      clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: item.onTap,
         child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 14.h),
+          padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
           child: Row(
             children: [
               Container(
-                width: 46.r,
-                height: 46.r,
+                width: 40.r,
+                height: 40.r,
                 decoration: BoxDecoration(
-                  color: item.iconBg,
+                  color: item.chipColor ?? Colors.white,
                   borderRadius: BorderRadius.circular(13.r),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.07),
+                      blurRadius: 8,
+                      offset: const Offset(0, 3),
+                    ),
+                  ],
                 ),
-                padding: EdgeInsets.all(10.r),
+                padding: EdgeInsets.all(9.r),
                 child: item.iconData != null
                     ? Icon(item.iconData, color: AppColors.primary)
                     : Image.asset(item.iconAsset!, fit: BoxFit.contain),
               ),
-
-              SizedBox(width: 13.w),
-
+              SizedBox(width: 12.w),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -870,14 +934,12 @@ class _ItemTile extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                         fontFamily: 'Montserrat',
-                        fontWeight: FontWeight.w600,
+                        fontWeight: FontWeight.w700,
                         fontSize: 14.sp,
                         color: AppColors.textPrimary,
                       ),
                     ),
-
-                    SizedBox(height: 4.h),
-
+                    SizedBox(height: 2.h),
                     Text(
                       item.subtitle,
                       maxLines: 1,
@@ -885,19 +947,25 @@ class _ItemTile extends StatelessWidget {
                       style: TextStyle(
                         fontFamily: 'Montserrat',
                         fontSize: 11.sp,
-                        color: AppColors.grey500,
+                        color: AppColors.textPrimary.withValues(alpha: 0.6),
                       ),
                     ),
                   ],
                 ),
               ),
-
               SizedBox(width: 8.w),
-
-              Icon(
-                Icons.chevron_right_rounded,
-                size: 21.r,
-                color: AppColors.grey400,
+              Container(
+                width: 26.r,
+                height: 26.r,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.white.withValues(alpha: 0.8),
+                ),
+                child: Icon(
+                  Icons.chevron_right_rounded,
+                  size: 18.r,
+                  color: AppColors.textPrimary,
+                ),
               ),
             ],
           ),
@@ -976,9 +1044,9 @@ class _LogoutButton extends StatelessWidget {
             : () => _confirmLogout(context),
         child: Container(
           width: double.infinity,
-          padding: EdgeInsets.symmetric(vertical: 15.h),
+          padding: EdgeInsets.symmetric(vertical: 12.h),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: const Color(0xFFFFE9E7),
             borderRadius: BorderRadius.circular(18.r),
             border: Border.all(color: const Color(0xFFFFCACA)),
             boxShadow: [

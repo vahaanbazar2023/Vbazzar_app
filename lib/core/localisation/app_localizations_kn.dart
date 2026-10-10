@@ -5084,7 +5084,7 @@ class AppLocalizationsKn extends AppLocalizations {
   String get profChoosePreferredLanguage => 'ನಿಮ್ಮ ಆದ್ಯತೆಯ ಭಾಷೆಯನ್ನು ಆಯ್ಕೆಮಾಡಿ';
 
   @override
-  String get profViewItemsWon => 'ನೀವು ಗೆದ್ದ ಐಟಂಗಳನ್ನು ವೀಕ್ಷಿಸಿ';
+  String get profViewItemsWon => 'ನೀವು ಗೆದ್ದ ವಾಹನಗಳನ್ನು ವೀಕ್ಷಿಸಿ';
 
   @override
   String get profTrackBids =>
@@ -5107,7 +5107,7 @@ class AppLocalizationsKn extends AppLocalizations {
       'ನೀವು ಪಟ್ಟಿ ಮಾಡಿದ ವಾಹನಗಳನ್ನು ನಿರ್ವಹಿಸಿ';
 
   @override
-  String get profItemsSaved => 'ನೀವು ಉಳಿಸಿದ ಐಟಂಗಳು';
+  String get profItemsSaved => 'ನೀವು ಉಳಿಸಿದ ವಾಹನಗಳು';
 
   @override
   String get profPurchaseHistory => 'ಖರೀದಿ ಇತಿಹಾಸ';
