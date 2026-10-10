@@ -487,7 +487,7 @@ abstract class AppLocalizations {
   /// No description provided for @weWillSendYouOtp.
   ///
   /// In en, this message translates to:
-  /// **'( We will send you OTP to the mentioned input )'**
+  /// **'( We will send you OTP to the mentioned Number )'**
   String get weWillSendYouOtp;
 
   /// No description provided for @phoneNumberPlaceholder.

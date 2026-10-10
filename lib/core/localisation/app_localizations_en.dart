@@ -203,7 +203,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get weWillSendYouOtp =>
-      '( We will send you OTP to the mentioned input )';
+      '( We will send you OTP to the mentioned Number )';
 
   @override
   String get phoneNumberPlaceholder => 'Phone number';

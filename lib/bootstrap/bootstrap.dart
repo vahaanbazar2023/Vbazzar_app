@@ -77,9 +77,13 @@ class Bootstrap {
   /// Initialize core services
   static Future<void> _initializeCoreServices() async {
     try {
-      // Initialize Firebase
-      await Firebase.initializeApp();
-      _logger.info('Firebase initialized');
+      // Initialize Firebase (skip on web for now since Firebase options aren't configured)
+      if (!kIsWeb) {
+        await Firebase.initializeApp();
+        _logger.info('Firebase initialized');
+      } else {
+        _logger.info('Firebase skipped on web (not configured)');
+      }
 
       // Initialize storage service
       await LocalStorageService.initialize();
@@ -88,9 +92,13 @@ class Bootstrap {
       // NOTE: ConnectivityService will be registered in AppBinding after GetMaterialApp
       // to avoid GetX context issues
 
-      // Initialize notification service (includes FCM)
-      await NotificationService.initialize();
-      _logger.info('Notification service initialized');
+      // Initialize notification service (includes FCM) - skip on web
+      if (!kIsWeb) {
+        await NotificationService.initialize();
+        _logger.info('Notification service initialized');
+      } else {
+        _logger.info('Notification service skipped on web');
+      }
     } catch (e, stack) {
       _logger.error('Failed to initialize core services', e, stack);
       rethrow;

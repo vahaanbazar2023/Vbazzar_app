@@ -258,31 +258,8 @@ class _BuyVehicleDetailsViewState extends State<BuyVehicleDetailsView> {
                   SizedBox(height: AppSpacing.sm),
 
                   // ── Vehicle title + location ─────────────────────────────
-                  Center(
-                    child: Text(
-                      title.isEmpty ? vehicle.categoryName : title,
-                      style: TextStyle(
-                        fontFamily: 'Montserrat',
-                        fontSize: 16.sp,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.black,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
 
                   // Red underline accent
-                  Center(
-                    child: Container(
-                      margin: EdgeInsets.only(top: 5.h, bottom: AppSpacing.sm),
-                      height: 3.h,
-                      width: 55.w,
-                      decoration: BoxDecoration(
-                        color: AppColors.primary,
-                        borderRadius: BorderRadius.circular(2.r),
-                      ),
-                    ),
-                  ),
 
                   // // Location row
                   // if ((vehicle.city ?? '').isNotEmpty ||
@@ -327,13 +304,6 @@ class _BuyVehicleDetailsViewState extends State<BuyVehicleDetailsView> {
                           ),
                         ),
                         SizedBox(width: 8.w),
-                        Expanded(
-                          child: _InfoBox(
-                            icon: Icons.category_outlined,
-                            label: context.l10n.category,
-                            value: vehicle.categoryName,
-                          ),
-                        ),
                       ],
                     ),
                   ),
@@ -407,7 +377,7 @@ class _BuyVehicleDetailsViewState extends State<BuyVehicleDetailsView> {
                   SizedBox(height: AppSpacing.md),
 
                   // ── Vehicle details accordion ────────────────────────────
-                  _VehicleDetailsAccordion(vehicle: vehicle),
+                 
                   SizedBox(height: AppSpacing.md),
 
                   // ── Actions label ────────────────────────────────────────
@@ -933,13 +903,7 @@ class _VehicleDetailsAccordionState extends State<_VehicleDetailsAccordion> {
   Widget _buildDetails(BuyVehicleEntity v) {
     final rows = <_DetailRowData>[];
     if (v.brandName != null)
-      rows.add(
-        _DetailRowData(
-          Icons.branding_watermark_outlined,
-          context.l10n.brand,
-          v.brandName!,
-        ),
-      );
+     
     if (v.model != null)
       rows.add(
         _DetailRowData(
@@ -948,32 +912,9 @@ class _VehicleDetailsAccordionState extends State<_VehicleDetailsAccordion> {
           v.model!,
         ),
       );
-    if (v.year != null)
-      rows.add(
-        _DetailRowData(
-          Icons.calendar_today_outlined,
-          context.l10n.yearOfManufacture,
-          v.year!,
-        ),
-      );
-    rows.add(
-      _DetailRowData(
-        Icons.category_outlined,
-        context.l10n.category,
-        v.categoryName,
-      ),
-    );
-    rows.add(
-      _DetailRowData(
-        Icons.code_rounded,
-        context.l10n.categoryCode,
-        v.categoryCode,
-      ),
-    );
-    if (v.brandCode != null)
-      rows.add(
-        _DetailRowData(Icons.tag_rounded, context.l10n.brandCode, v.brandCode!),
-      );
+   
+   
+   
     if (v.fuelType != null)
       rows.add(
         _DetailRowData(
