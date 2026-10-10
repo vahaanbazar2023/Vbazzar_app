@@ -17,7 +17,12 @@ import '../controllers/vehicle_detail_controller.dart';
 import '../domain/entities/buy_vehicle_entity.dart';
 
 class BuyVehicleDetailsView extends StatefulWidget {
-  const BuyVehicleDetailsView({super.key});
+  /// When true the screen is opened by the vehicle's owner (from My Vehicles):
+  /// same layout, but no buyer actions (interest / owner contact / offer /
+  /// inspection / wishlist), and registration + chassis are always shown.
+  final bool ownerMode;
+
+  const BuyVehicleDetailsView({super.key, this.ownerMode = false});
 
   @override
   State<BuyVehicleDetailsView> createState() => _BuyVehicleDetailsViewState();
@@ -240,18 +245,19 @@ class _BuyVehicleDetailsViewState extends State<BuyVehicleDetailsView> {
                             child: _StatusBadge(status: vehicle.status!),
                           ),
                         // Wishlist button — below status badge
-                        Positioned(
-                          top: vehicle.status != null ? 48 : 10,
-                          right: 10,
-                          child: Obx(
-                            () => WishlistButton(
-                              isWishlisted: ctrl.isWishlisted(
-                                vehicle.sbVehicleId,
+                        if (!widget.ownerMode)
+                          Positioned(
+                            top: vehicle.status != null ? 48 : 10,
+                            right: 10,
+                            child: Obx(
+                              () => WishlistButton(
+                                isWishlisted: ctrl.isWishlisted(
+                                  vehicle.sbVehicleId,
+                                ),
+                                onTap: () => ctrl.toggleWishlist(vehicle),
                               ),
-                              onTap: () => ctrl.toggleWishlist(vehicle),
                             ),
                           ),
-                        ),
                       ],
                     ),
                   ),
@@ -308,7 +314,7 @@ class _BuyVehicleDetailsViewState extends State<BuyVehicleDetailsView> {
                     ),
                   ),
                   // ── Registration & Chassis — shown when details unlocked ──
-                  if (vehicle.hasVehicleDetailsAccess) ...[
+                  if (vehicle.hasVehicleDetailsAccess || widget.ownerMode) ...[
                     SizedBox(height: 8.h),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -376,144 +382,151 @@ class _BuyVehicleDetailsViewState extends State<BuyVehicleDetailsView> {
                   // _KeySpecsCard(vehicle: vehicle),
                   SizedBox(height: AppSpacing.md),
 
-                  // ── Vehicle details accordion ────────────────────────────
-                  SizedBox(height: AppSpacing.md),
+                  // ── Vehicle details accordion (owner view) ───────────────
+                  if (widget.ownerMode) ...[
+                    _VehicleDetailsAccordion(vehicle: vehicle),
+                    SizedBox(height: AppSpacing.md),
+                  ],
 
-                  // ── Actions label ────────────────────────────────────────
-                  _SectionLabel(
-                    icon: Icons.bolt_rounded,
-                    title: context.l10n.actions,
-                  ),
-                  SizedBox(height: 12.h),
-
-                  // ── Action card 1: Show Interest ──────────────────────────
-                  _ActionCard(
-                    gradient: const LinearGradient(
-                      colors: [Color(0xFF0F9B8E), Color(0xFF16C79A)],
+                  // Buyer actions — hidden for the owner
+                  if (!widget.ownerMode) ...[
+                    // ── Actions label ────────────────────────────────────────
+                    _SectionLabel(
+                      icon: Icons.bolt_rounded,
+                      title: context.l10n.actions,
                     ),
-                    icon: Icons.favorite_rounded,
-                    title: context.l10n.letUsKnow,
-                    subtitle: context.l10n.youreInterested,
-                    buttonText: context.l10n.interested,
-                    buttonColor: Colors.white,
-                    buttonTextColor: const Color(0xFF0F9B8E),
-                    onTap: () {
-                      final c = Get.find<BuyVehicleController>();
-                      c.submitInterest(vehicle);
-                    },
-                  ),
-                  SizedBox(height: 10.h),
+                    SizedBox(height: 12.h),
 
-                  // ── Action card 2: Become a Member / Connect with Owner ──
-                  _ConnectWithOwnerCard(vehicle: vehicle),
-                  SizedBox(height: 10.h),
+                    // ── Action card 1: Show Interest ──────────────────────────
+                    _ActionCard(
+                      gradient: const LinearGradient(
+                        colors: [Color(0xFF0F9B8E), Color(0xFF16C79A)],
+                      ),
+                      icon: Icons.favorite_rounded,
+                      title: context.l10n.letUsKnow,
+                      subtitle: context.l10n.youreInterested,
+                      buttonText: context.l10n.interested,
+                      buttonColor: Colors.white,
+                      buttonTextColor: const Color(0xFF0F9B8E),
+                      onTap: () {
+                        final c = Get.find<BuyVehicleController>();
+                        c.submitInterest(vehicle);
+                      },
+                    ),
+                    SizedBox(height: 10.h),
 
-                  // ── Action card 3: Make Offer (expands inline) ──────────
-                  _OfferCard(
-                    offerCtrl: _offerCtrl,
-                    expanded: _showOfferField,
-                    onToggle: () => setState(() {
-                      _showOfferField = !_showOfferField;
-                      if (!_showOfferField) _offerCtrl.clear();
-                    }),
-                    onSubmit: () async {
-                      final amount = int.tryParse(
-                        _offerCtrl.text.replaceAll(',', '').trim(),
-                      );
-                      if (amount == null || amount <= 0) {
-                        Get.snackbar(
-                          context.l10n.invalidAmount,
-                          context.l10n.pleaseEnterValidOfferAmount,
-                          snackPosition: SnackPosition.TOP,
+                    // ── Action card 2: Become a Member / Connect with Owner ──
+                    _ConnectWithOwnerCard(vehicle: vehicle),
+                    SizedBox(height: 10.h),
+
+                    // ── Action card 3: Make Offer (expands inline) ──────────
+                    _OfferCard(
+                      offerCtrl: _offerCtrl,
+                      expanded: _showOfferField,
+                      onToggle: () => setState(() {
+                        _showOfferField = !_showOfferField;
+                        if (!_showOfferField) _offerCtrl.clear();
+                      }),
+                      onSubmit: () async {
+                        final amount = int.tryParse(
+                          _offerCtrl.text.replaceAll(',', '').trim(),
                         );
-                        return;
-                      }
-                      // Client-side 60% validation
-                      if (vehicle.price != null && vehicle.price! > 0) {
-                        final minRequired = (vehicle.price! * 0.6).ceil();
-                        if (amount < minRequired) {
+                        if (amount == null || amount <= 0) {
                           Get.snackbar(
-                            context.l10n.offerTooLow,
-                            context.l10n.minimumOfferPercent(_fmt(minRequired)),
+                            context.l10n.invalidAmount,
+                            context.l10n.pleaseEnterValidOfferAmount,
                             snackPosition: SnackPosition.TOP,
-                            backgroundColor: Colors.red.shade700,
-                            colorText: Colors.white,
-                            duration: const Duration(seconds: 4),
                           );
                           return;
                         }
-                      }
-                      final c = Get.find<BuyVehicleController>();
-                      final error = await c.submitOffer(vehicle, amount);
-                      if (error == null) {
-                        setState(() {
-                          _showOfferField = false;
-                          _offerCtrl.clear();
-                        });
-                        CustomSnackbar.show(
-                          message: context.l10n.offerSent,
-                          type: SnackbarType.success,
-                        );
-                      } else {
-                        Get.snackbar(
-                          context.l10n.offerFailed,
-                          error,
-                          snackPosition: SnackPosition.TOP,
-                          backgroundColor: Colors.red.shade700,
-                          colorText: Colors.white,
-                        );
-                      }
-                    },
-                  ),
-                  SizedBox(height: 50.h),
-
-                  // ── Inspection button ────────────────────────────────────
-                  vehicle.isInspectionRequested
-                      ? Container(
-                          width: double.infinity,
-                          constraints: BoxConstraints(minHeight: 52.h),
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 12.w,
-                            vertical: 6.h,
-                          ),
-                          decoration: BoxDecoration(
-                            color: AppColors.grey100,
-                            borderRadius: BorderRadius.circular(12.r),
-                            border: Border.all(color: AppColors.grey300),
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(
-                                Icons.check_circle_rounded,
-                                color: AppColors.success,
-                                size: 18.r,
+                        // Client-side 60% validation
+                        if (vehicle.price != null && vehicle.price! > 0) {
+                          final minRequired = (vehicle.price! * 0.6).ceil();
+                          if (amount < minRequired) {
+                            Get.snackbar(
+                              context.l10n.offerTooLow,
+                              context.l10n.minimumOfferPercent(
+                                _fmt(minRequired),
                               ),
-                              SizedBox(width: 8.w),
-                              Flexible(
-                                child: Text(
-                                  context.l10n.inspectionRequested,
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    fontFamily: 'Montserrat',
-                                    fontSize: 14.sp,
-                                    fontWeight: FontWeight.w600,
-                                    color: AppColors.grey600,
+                              snackPosition: SnackPosition.TOP,
+                              backgroundColor: Colors.red.shade700,
+                              colorText: Colors.white,
+                              duration: const Duration(seconds: 4),
+                            );
+                            return;
+                          }
+                        }
+                        final c = Get.find<BuyVehicleController>();
+                        final error = await c.submitOffer(vehicle, amount);
+                        if (error == null) {
+                          setState(() {
+                            _showOfferField = false;
+                            _offerCtrl.clear();
+                          });
+                          CustomSnackbar.show(
+                            message: context.l10n.offerSent,
+                            type: SnackbarType.success,
+                          );
+                        } else {
+                          Get.snackbar(
+                            context.l10n.offerFailed,
+                            error,
+                            snackPosition: SnackPosition.TOP,
+                            backgroundColor: Colors.red.shade700,
+                            colorText: Colors.white,
+                          );
+                        }
+                      },
+                    ),
+                    SizedBox(height: 50.h),
+
+                    // ── Inspection button ────────────────────────────────────
+                    vehicle.isInspectionRequested
+                        ? Container(
+                            width: double.infinity,
+                            constraints: BoxConstraints(minHeight: 52.h),
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 12.w,
+                              vertical: 6.h,
+                            ),
+                            decoration: BoxDecoration(
+                              color: AppColors.grey100,
+                              borderRadius: BorderRadius.circular(12.r),
+                              border: Border.all(color: AppColors.grey300),
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.check_circle_rounded,
+                                  color: AppColors.success,
+                                  size: 18.r,
+                                ),
+                                SizedBox(width: 8.w),
+                                Flexible(
+                                  child: Text(
+                                    context.l10n.inspectionRequested,
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      fontFamily: 'Montserrat',
+                                      fontSize: 14.sp,
+                                      fontWeight: FontWeight.w600,
+                                      color: AppColors.grey600,
+                                    ),
                                   ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
+                          )
+                        : GradientButton.filled(
+                            text: context.l10n.requestVehicleInspection,
+                            width: double.infinity,
+                            onPressed: () {
+                              Get.find<BuyVehicleController>()
+                                  .requestInspection(vehicle);
+                            },
                           ),
-                        )
-                      : GradientButton.filled(
-                          text: context.l10n.requestVehicleInspection,
-                          width: double.infinity,
-                          onPressed: () {
-                            Get.find<BuyVehicleController>().requestInspection(
-                              vehicle,
-                            );
-                          },
-                        ),
+                  ],
                   SizedBox(height: 24.h),
                 ],
               ),

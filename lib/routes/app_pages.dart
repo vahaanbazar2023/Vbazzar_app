@@ -10,6 +10,7 @@ import '../features/auth/views/verify_otp.dart';
 import '../features/auth/views/complete_profile_screen.dart';
 import '../features/auth/auth_binding.dart';
 import '../features/main_shell/views/main_shell_screen.dart';
+import '../features/auction/services/vehicle_listing_service.dart';
 import '../features/main_shell/bindings/main_shell_binding.dart';
 import '../features/profile/views/profile_screen.dart';
 import '../features/profile/views/manage_profile_view.dart';
@@ -257,6 +258,12 @@ class AppPages {
       name: AppRoutes.myWishlist,
       page: () => const MyWishlistView(),
       binding: BindingsBuilder(() {
+        // WishlistController needs the listing service, which is otherwise only
+        // registered by the auction listing screen — so opening Wishlist
+        // directly (e.g. from Profile) used to crash.
+        if (!Get.isRegistered<VehicleListingService>()) {
+          Get.lazyPut<VehicleListingService>(() => VehicleListingService());
+        }
         Get.lazyPut(() => WishlistController());
       }),
       transition: Transition.rightToLeft,

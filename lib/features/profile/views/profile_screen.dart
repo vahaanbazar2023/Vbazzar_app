@@ -214,9 +214,20 @@ class _ProfilePage extends StatelessWidget {
                   _Item(
                     iconAsset: AppAssets.subIconGroup2,
                     iconBg: const Color(0xFFDDF5E0),
-                    label: context.l10n.profPurchaseHistory,
-                    subtitle: context.l10n.profViewPastPurchases,
-                    onTap: () => Get.toNamed(AppRoutes.spareOrders),
+                    label: context.l10n.spareSubscribedVehicles,
+                    subtitle: context.l10n.spareVehiclesWithPremiumAccess,
+                    onTap: () => Get.to(
+                      () => const SubscribedVehiclesView(),
+                      binding: BindingsBuilder(() {
+                        if (!Get.isRegistered<BuyVehicleController>()) {
+                          Get.put(
+                            BuyVehicleController(
+                              repository: BuySellRepositoryImpl(),
+                            ),
+                          );
+                        }
+                      }),
+                    ),
                   ),
                 ]),
 

@@ -8,6 +8,7 @@ import '../../../core/design_system/templates/app_layout.dart';
 import '../controllers/sell_vehicle_controller.dart';
 import '../data/repositories/buy_sell_repository_impl.dart';
 import '../domain/entities/sell_vehicle_entity.dart';
+import 'buy_vehicle_details_view.dart';
 
 class MyVehiclesView extends StatefulWidget {
   const MyVehiclesView({super.key});
@@ -93,6 +94,7 @@ class _MyVehiclesViewState extends State<MyVehiclesView> {
                   padding: EdgeInsets.only(bottom: AppSpacing.md),
                   child: _MyVehicleCard(
                     vehicle: vehicles[i],
+                    onDetails: () => _openDetails(vehicles[i]),
                     onMarkSold: () => _confirmMarkSold(vehicles[i]),
                     onMarkUnsold: () => _confirmMarkUnsold(vehicles[i]),
                   ),
@@ -102,6 +104,16 @@ class _MyVehiclesViewState extends State<MyVehiclesView> {
           ),
         );
       }),
+    );
+  }
+
+  void _openDetails(SellVehicleEntity v) {
+    Get.to(
+      () => const BuyVehicleDetailsView(ownerMode: true),
+      arguments: {
+        'sb_vehicle_id': v.sbVehicleId,
+        'category_code': v.categoryCode ?? '',
+      },
     );
   }
 
@@ -146,10 +158,12 @@ class _MyVehiclesViewState extends State<MyVehiclesView> {
 
 class _MyVehicleCard extends StatelessWidget {
   final SellVehicleEntity vehicle;
+  final VoidCallback onDetails;
   final VoidCallback onMarkSold;
   final VoidCallback onMarkUnsold;
   const _MyVehicleCard({
     required this.vehicle,
+    required this.onDetails,
     required this.onMarkSold,
     required this.onMarkUnsold,
   });
@@ -173,202 +187,218 @@ class _MyVehicleCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final imageUrl = vehicle.primaryImageUrl;
 
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(AppRadius.lg),
-        border: Border.all(color: AppColors.grey200),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 3),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // ── Image with status badge overlay ─────────────────────────────
-          Stack(
-            children: [
-              ClipRRect(
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(AppRadius.lg),
-                  topRight: Radius.circular(AppRadius.lg),
-                ),
-                child: imageUrl.isNotEmpty
-                    ? Image.network(
-                        imageUrl,
-                        height: 180.h,
-                        width: double.infinity,
-                        fit: BoxFit.cover,
-                        errorBuilder: (_, __, ___) => _placeholder(),
-                      )
-                    : _placeholder(),
-              ),
-              // Status badge top-right
-              Positioned(
-                top: 10,
-                right: 10,
-                child: Container(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 10.w,
-                    vertical: 5.h,
+    return GestureDetector(
+      onTap: onDetails,
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(AppRadius.lg),
+          border: Border.all(color: AppColors.grey200),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.05),
+              blurRadius: 10,
+              offset: const Offset(0, 3),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // ── Image with status badge overlay ─────────────────────────────
+            Stack(
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(AppRadius.lg),
+                    topRight: Radius.circular(AppRadius.lg),
                   ),
-                  decoration: BoxDecoration(
-                    color: _statusColor,
-                    borderRadius: BorderRadius.circular(20),
-                    boxShadow: [
-                      BoxShadow(
-                        color: _statusColor.withValues(alpha: 0.3),
-                        blurRadius: 6,
-                        offset: const Offset(0, 2),
-                      ),
+                  child: imageUrl.isNotEmpty
+                      ? Image.network(
+                          imageUrl,
+                          height: 180.h,
+                          width: double.infinity,
+                          fit: BoxFit.cover,
+                          errorBuilder: (_, __, ___) => _placeholder(),
+                        )
+                      : _placeholder(),
+                ),
+                // Status badge top-right
+                Positioned(
+                  top: 10,
+                  right: 10,
+                  child: Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 10.w,
+                      vertical: 5.h,
+                    ),
+                    decoration: BoxDecoration(
+                      color: _statusColor,
+                      borderRadius: BorderRadius.circular(20),
+                      boxShadow: [
+                        BoxShadow(
+                          color: _statusColor.withValues(alpha: 0.3),
+                          blurRadius: 6,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(_statusIcon, size: 12.sp, color: Colors.white),
+                        SizedBox(width: 4.w),
+                        Flexible(
+                          child: Text(
+                            vehicle.statusLabel,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              fontFamily: 'Montserrat',
+                              fontSize: 11.sp,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+
+            // ── Details ─────────────────────────────────────────────────────
+            Padding(
+              padding: EdgeInsets.all(AppSpacing.md),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '${vehicle.brandName ?? ''} ${vehicle.model ?? ''}'
+                            .trim()
+                            .isEmpty
+                        ? (vehicle.categoryName ?? context.l10n.spareVehicle)
+                        : '${vehicle.brandName ?? ''} ${vehicle.model ?? ''}'
+                              .trim(),
+                    style: TextStyle(
+                      fontFamily: 'Montserrat',
+                      fontSize: 15.sp,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.textPrimary,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  SizedBox(height: AppSpacing.xs),
+                  Row(
+                    children: [
+                      if (vehicle.year != null) ...[
+                        _chip(Icons.calendar_today_outlined, vehicle.year!),
+                        SizedBox(width: AppSpacing.xs),
+                      ],
+                      if (vehicle.registrationNumber != null) ...[
+                        _chip(
+                          Icons.badge_outlined,
+                          vehicle.registrationNumber!,
+                        ),
+                      ],
                     ],
                   ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
+                  SizedBox(height: AppSpacing.sm),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Icon(_statusIcon, size: 12.sp, color: Colors.white),
-                      SizedBox(width: 4.w),
                       Flexible(
                         child: Text(
-                          vehicle.statusLabel,
+                          vehicle.formattedPrice,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
                             fontFamily: 'Montserrat',
-                            fontSize: 11.sp,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.white,
+                            fontSize: 18.sp,
+                            fontWeight: FontWeight.w800,
+                            color: AppColors.primary,
                           ),
+                        ),
+                      ),
+                      SizedBox(width: 8.w),
+                      Flexible(
+                        child: Wrap(
+                          alignment: WrapAlignment.end,
+                          spacing: 8.w,
+                          runSpacing: 6.h,
+                          children: [
+                            _pill(
+                              context.l10n.aucDetails,
+                              onTap: onDetails,
+                              filled: true,
+                            ),
+                            if (!vehicle.isVehicleSold)
+                              _pill(
+                                context.l10n.spareMarkSold,
+                                onTap: onMarkSold,
+                                tint: AppColors.primary,
+                              )
+                            else
+                              _pill(
+                                context.l10n.spareMarkAvailable,
+                                onTap: onMarkUnsold,
+                                tint: AppColors.grey600,
+                              ),
+                          ],
                         ),
                       ),
                     ],
                   ),
-                ),
+                ],
               ),
-            ],
-          ),
-
-          // ── Details ─────────────────────────────────────────────────────
-          Padding(
-            padding: EdgeInsets.all(AppSpacing.md),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  '${vehicle.brandName ?? ''} ${vehicle.model ?? ''}'
-                          .trim()
-                          .isEmpty
-                      ? (vehicle.categoryName ?? context.l10n.spareVehicle)
-                      : '${vehicle.brandName ?? ''} ${vehicle.model ?? ''}'
-                            .trim(),
-                  style: TextStyle(
-                    fontFamily: 'Montserrat',
-                    fontSize: 15.sp,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.textPrimary,
-                  ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                SizedBox(height: AppSpacing.xs),
-                Row(
-                  children: [
-                    if (vehicle.year != null) ...[
-                      _chip(Icons.calendar_today_outlined, vehicle.year!),
-                      SizedBox(width: AppSpacing.xs),
-                    ],
-                    if (vehicle.registrationNumber != null) ...[
-                      _chip(Icons.badge_outlined, vehicle.registrationNumber!),
-                    ],
-                  ],
-                ),
-                SizedBox(height: AppSpacing.sm),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Flexible(
-                      child: Text(
-                        vehicle.formattedPrice,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          fontFamily: 'Montserrat',
-                          fontSize: 18.sp,
-                          fontWeight: FontWeight.w800,
-                          color: AppColors.primary,
-                        ),
-                      ),
-                    ),
-                    SizedBox(width: 8.w),
-                    // Action button
-                    if (!vehicle.isVehicleSold)
-                      Flexible(
-                        child: GestureDetector(
-                          onTap: onMarkSold,
-                          child: Container(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 14.w,
-                              vertical: 7.h,
-                            ),
-                            decoration: BoxDecoration(
-                              color: AppColors.primary.withValues(alpha: 0.08),
-                              borderRadius: BorderRadius.circular(20),
-                              border: Border.all(
-                                color: AppColors.primary.withValues(alpha: 0.3),
-                              ),
-                            ),
-                            child: Text(
-                              context.l10n.spareMarkSold,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                fontFamily: 'Montserrat',
-                                fontSize: 12.sp,
-                                fontWeight: FontWeight.w600,
-                                color: AppColors.primary,
-                              ),
-                            ),
-                          ),
-                        ),
-                      )
-                    else
-                      Flexible(
-                        child: GestureDetector(
-                          onTap: onMarkUnsold,
-                          child: Container(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 14.w,
-                              vertical: 7.h,
-                            ),
-                            decoration: BoxDecoration(
-                              color: AppColors.grey100,
-                              borderRadius: BorderRadius.circular(20),
-                              border: Border.all(color: AppColors.grey300),
-                            ),
-                            child: Text(
-                              context.l10n.spareMarkAvailable,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                fontFamily: 'Montserrat',
-                                fontSize: 12.sp,
-                                fontWeight: FontWeight.w600,
-                                color: AppColors.grey600,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                  ],
-                ),
-              ],
             ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// Small rounded action pill. [filled] uses the brand gradient.
+  Widget _pill(
+    String text, {
+    required VoidCallback onTap,
+    bool filled = false,
+    Color tint = AppColors.primary,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 7.h),
+        decoration: BoxDecoration(
+          gradient: filled
+              ? const LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    AppColors.ctaGradientStart,
+                    AppColors.ctaGradientEnd,
+                  ],
+                )
+              : null,
+          color: filled ? null : tint.withValues(alpha: 0.08),
+          borderRadius: BorderRadius.circular(20),
+          border: filled
+              ? null
+              : Border.all(color: tint.withValues(alpha: 0.3)),
+        ),
+        child: Text(
+          text,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: TextStyle(
+            fontFamily: 'Montserrat',
+            fontSize: 12.sp,
+            fontWeight: FontWeight.w600,
+            color: filled ? Colors.white : tint,
           ),
-        ],
+        ),
       ),
     );
   }
