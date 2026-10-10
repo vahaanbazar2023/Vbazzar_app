@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import '../../../core/constants/app_assets.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/design_system/organisms/app_header.dart';
+import '../../../core/design_system/molecules/gradient_button.dart';
 import '../../../core/extensions/context_extensions.dart';
 import '../../../routes/app_routes.dart';
 import '../../../core/design_system/organisms/app_bottom_nav_bar.dart';
@@ -1014,31 +1015,31 @@ class _LogoutButton extends StatelessWidget {
             context.l10n.areYouSureLogout,
             style: const TextStyle(fontFamily: 'Montserrat'),
           ),
+          actionsPadding: EdgeInsets.fromLTRB(20.w, 0, 20.w, 16.h),
           actions: [
-            TextButton(
-              onPressed: () => Get.back(),
-              child: Text(
-                context.l10n.cancel,
-                style: const TextStyle(
-                  color: AppColors.grey500,
-                  fontFamily: 'Montserrat',
+            Row(
+              children: [
+                Expanded(
+                  child: GradientButton.outlined(
+                    text: context.l10n.cancel,
+                    onPressed: () => Get.back(),
+                    width: double.infinity,
+                    height: 36.h,
+                  ),
                 ),
-              ),
-            ),
-
-            TextButton(
-              onPressed: () {
-                Get.back();
-                controller.logout();
-              },
-              child: Text(
-                context.l10n.logout,
-                style: const TextStyle(
-                  color: AppColors.primary,
-                  fontFamily: 'Montserrat',
-                  fontWeight: FontWeight.w600,
+                SizedBox(width: 12.w),
+                Expanded(
+                  child: GradientButton.filled(
+                    text: context.l10n.logout,
+                    onPressed: () {
+                      Get.back();
+                      controller.logout();
+                    },
+                    width: double.infinity,
+                    height: 36.h,
+                  ),
                 ),
-              ),
+              ],
             ),
           ],
         );
@@ -1049,47 +1050,14 @@ class _LogoutButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Obx(
-      () => GestureDetector(
-        onTap: controller.isLoading.value
-            ? null
-            : () => _confirmLogout(context),
-        child: Container(
-          width: double.infinity,
-          padding: EdgeInsets.symmetric(vertical: 12.h),
-          decoration: BoxDecoration(
-            color: const Color(0xFFFFE9E7),
-            borderRadius: BorderRadius.circular(18.r),
-            border: Border.all(color: const Color(0xFFFFCACA)),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.035),
-                blurRadius: 10,
-                offset: const Offset(0, 3),
-              ),
-            ],
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(Icons.logout_rounded, color: AppColors.primary, size: 18.r),
-
-              SizedBox(width: 8.w),
-
-              Flexible(
-                child: Text(
-                  context.l10n.logout,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    fontFamily: 'Montserrat',
-                    fontWeight: FontWeight.w600,
-                    fontSize: 14.sp,
-                    color: AppColors.primary,
-                  ),
-                ),
-              ),
-            ],
-          ),
+      () => Center(
+        child: GradientButton.outlined(
+          text: context.l10n.logout,
+          onPressed: controller.isLoading.value
+              ? null
+              : () => _confirmLogout(context),
+          width: 140.w,
+          height: 36.h,
         ),
       ),
     );

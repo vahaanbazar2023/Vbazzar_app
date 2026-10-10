@@ -5134,7 +5134,7 @@ class AppLocalizationsTa extends AppLocalizations {
 
   @override
   String get profRequestRefund =>
-      'உங்கள் ஆர்டர்களுக்கான பணத்திருப்பத்தைக் கோருங்கள்';
+      'உங்கள் EMD-க்கு பணத்தைத் திரும்பக் கோருங்கள்';
 
   @override
   String get profBuyAndSell => 'வாங்கு & விற்கவும்';

@@ -5046,7 +5046,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get profAuctionVehiclesSaved => 'आपके द्वारा सेव किए गए नीलामी वाहन';
 
   @override
-  String get profRequestRefund => 'अपने ऑर्डर के लिए रिफंड का अनुरोध करें';
+  String get profRequestRefund => 'अपने EMD के लिए रिफंड का अनुरोध करें';
 
   @override
   String get profBuyAndSell => 'खरीदें और बेचें';

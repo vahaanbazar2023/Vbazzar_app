@@ -149,20 +149,24 @@ class _ManageProfileViewState extends State<ManageProfileView> {
                     // Save button
                     Obx(() {
                       final isValid = controller.isManageProfileFormValid;
-                      return isValid
-                          ? GradientButton.filled(
-                              text: context.l10n.saveChanges,
-                              onPressed: controller.isUpdatingProfile.value
-                                  ? null
-                                  : () => controller.updateProfile(),
-                              isLoading: controller.isUpdatingProfile.value,
-                              width: double.infinity,
-                            )
-                          : GradientButton.outlined(
-                              text: context.l10n.saveChanges,
-                              onPressed: null,
-                              width: double.infinity,
-                            );
+                      return Center(
+                        child: isValid
+                            ? GradientButton.filled(
+                                text: context.l10n.saveChanges,
+                                onPressed: controller.isUpdatingProfile.value
+                                    ? null
+                                    : () => controller.updateProfile(),
+                                isLoading: controller.isUpdatingProfile.value,
+                                width: 140.w,
+                                height: 36.h,
+                              )
+                            : GradientButton.outlined(
+                                text: context.l10n.saveChanges,
+                                onPressed: null,
+                                width: 140.w,
+                                height: 36.h,
+                              ),
+                      );
                     }),
                     SizedBox(height: AppSpacing.md),
                   ],

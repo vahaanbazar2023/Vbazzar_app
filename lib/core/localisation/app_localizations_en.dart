@@ -5038,7 +5038,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get profAuctionVehiclesSaved => 'Auction vehicles you have saved';
 
   @override
-  String get profRequestRefund => 'Request a refund for your orders';
+  String get profRequestRefund => 'Request a refund for your EMD';
 
   @override
   String get profBuyAndSell => 'Buy & Sell';

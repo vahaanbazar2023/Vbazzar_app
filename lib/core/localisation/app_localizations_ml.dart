@@ -5098,8 +5098,7 @@ class AppLocalizationsMl extends AppLocalizations {
   String get profAuctionVehiclesSaved => 'നിങ്ങൾ സേവ് ചെയ്ത ലേല വാഹനങ്ങൾ';
 
   @override
-  String get profRequestRefund =>
-      'നിങ്ങളുടെ ഓർഡറുകൾക്ക് റീഫണ്ട് അഭ്യർത്ഥിക്കുക';
+  String get profRequestRefund => 'നിങ്ങളുടെ EMD-ക്ക് റീഫണ്ട് അഭ്യർത്ഥിക്കുക';
 
   @override
   String get profBuyAndSell => 'വാങ്ങലും വിൽക്കലും';

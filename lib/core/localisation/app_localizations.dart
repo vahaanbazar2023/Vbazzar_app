@@ -9439,7 +9439,7 @@ abstract class AppLocalizations {
   /// No description provided for @profRequestRefund.
   ///
   /// In en, this message translates to:
-  /// **'Request a refund for your orders'**
+  /// **'Request a refund for your EMD'**
   String get profRequestRefund;
 
   /// No description provided for @profBuyAndSell.

@@ -5106,7 +5106,7 @@ class AppLocalizationsTe extends AppLocalizations {
   String get profAuctionVehiclesSaved => 'మీరు సేవ్ చేసిన వేలం వాహనాలు';
 
   @override
-  String get profRequestRefund => 'మీ ఆర్డర్‌లకు రీఫండ్ కోసం అభ్యర్థించండి';
+  String get profRequestRefund => 'మీ EMD కోసం రీఫండ్‌ను అభ్యర్థించండి';
 
   @override
   String get profBuyAndSell => 'కొనుగోలు & అమ్మకం';

@@ -5097,7 +5097,7 @@ class AppLocalizationsKn extends AppLocalizations {
   String get profAuctionVehiclesSaved => 'ನೀವು ಉಳಿಸಿದ ಹರಾಜು ವಾಹನಗಳು';
 
   @override
-  String get profRequestRefund => 'ನಿಮ್ಮ ಆರ್ಡರ್‌ಗಳಿಗೆ ಮರುಪಾವತಿಗೆ ವಿನಂತಿಸಿ';
+  String get profRequestRefund => 'ನಿಮ್ಮ EMD ಗಾಗಿ ರೀಫಂಡ್ ವಿನಂತಿಸಿ';
 
   @override
   String get profBuyAndSell => 'ಖರೀದಿ ಮತ್ತು ಮಾರಾಟ';
