@@ -700,7 +700,7 @@ class _VehicleCard extends StatelessWidget {
                       children: [
                         Flexible(
                           child: Text(
-                            vehicle.formattedPrice,
+                            vehicle.displayPrice,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(

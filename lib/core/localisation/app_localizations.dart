@@ -10858,6 +10858,18 @@ abstract class AppLocalizations {
   /// **'Vehicle submitted for approval.'**
   String get spareVehicleSubmittedForApproval;
 
+  /// No description provided for @spareAdminApprovalRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Admin approval required'**
+  String get spareAdminApprovalRequired;
+
+  /// No description provided for @spareTeamWillReachYouShortly.
+  ///
+  /// In en, this message translates to:
+  /// **'Your listing will be reviewed by our admin. Our team will reach you shortly.'**
+  String get spareTeamWillReachYouShortly;
+
   /// No description provided for @spareFailedToSubmitVehicle.
   ///
   /// In en, this message translates to:

@@ -5941,6 +5941,13 @@ class AppLocalizationsTa extends AppLocalizations {
       'வாகனம் ஒப்புதலுக்காகச் சமர்ப்பிக்கப்பட்டது.';
 
   @override
+  String get spareAdminApprovalRequired => 'நிர்வாகி ஒப்புதல் தேவை';
+
+  @override
+  String get spareTeamWillReachYouShortly =>
+      'உங்கள் வாகனத்தை எங்கள் நிர்வாகி மதிப்பாய்வு செய்வார். எங்கள் குழு விரைவில் உங்களைத் தொடர்பு கொள்ளும்.';
+
+  @override
   String spareFailedToSubmitVehicle(String error) {
     return 'வாகனத்தைச் சமர்ப்பிக்க முடியவில்லை: $error';
   }

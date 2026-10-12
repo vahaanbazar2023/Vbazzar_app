@@ -1792,6 +1792,8 @@
   "spareMaxTenImagesAllowed": "ಗರಿಷ್ಠ 10 ಚಿತ್ರಗಳಿಗೆ ಅನುಮತಿ ಇದೆ",
   "spareEachDocumentUnder12Mb": "ಪ್ರತಿ ದಾಖಲೆಯು 12 MB ಗಿಂತ ಕಡಿಮೆ ಇರಬೇಕು",
   "spareVehicleSubmittedForApproval": "ವಾಹನವನ್ನು ಅನುಮೋದನೆಗಾಗಿ ಸಲ್ಲಿಸಲಾಗಿದೆ.",
+  "spareAdminApprovalRequired": "ಅಡ್ಮಿನ್ ಅನುಮೋದನೆ ಅಗತ್ಯ",
+  "spareTeamWillReachYouShortly": "ನಿಮ್ಮ ವಾಹನವನ್ನು ನಮ್ಮ ಅಡ್ಮಿನ್ ಪರಿಶೀಲಿಸುತ್ತಾರೆ. ನಮ್ಮ ತಂಡ ಶೀಘ್ರದಲ್ಲೇ ನಿಮ್ಮನ್ನು ಸಂಪರ್ಕಿಸುತ್ತದೆ.",
   "spareFailedToSubmitVehicle": "ವಾಹನ ಸಲ್ಲಿಸಲು ವಿಫಲವಾಗಿದೆ: {error}",
   "spareVehicleUpdatedPendingApproval": "ವಾಹನವನ್ನು ನವೀಕರಿಸಲಾಗಿದೆ. ಬದಲಾವಣೆಗಳು ಅಡ್ಮಿನ್ ಅನುಮೋದನೆಗೆ ಬಾಕಿ ಇವೆ.",
   "spareFailedToUpdateVehicle": "ವಾಹನ ನವೀಕರಿಸಲು ವಿಫಲವಾಗಿದೆ: {error}",

@@ -266,7 +266,7 @@ class _VehicleCard extends StatelessWidget {
                   // ── Row 3: price ─────────────────────────
                   if (vehicle.price != null && vehicle.price! > 0)
                     Text(
-                      vehicle.formattedPrice,
+                      vehicle.displayPrice,
                       style: const TextStyle(
                         fontFamily: 'PlusJakartaSans',
                         fontSize: 17,

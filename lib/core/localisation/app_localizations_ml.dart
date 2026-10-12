@@ -5905,6 +5905,13 @@ class AppLocalizationsMl extends AppLocalizations {
       'വാഹനം അംഗീകാരത്തിനായി സമർപ്പിച്ചു.';
 
   @override
+  String get spareAdminApprovalRequired => 'അഡ്മിൻ അംഗീകാരം ആവശ്യമാണ്';
+
+  @override
+  String get spareTeamWillReachYouShortly =>
+      'നിങ്ങളുടെ വാഹനം ഞങ്ങളുടെ അഡ്മിൻ അവലോകനം ചെയ്യും. ഞങ്ങളുടെ ടീം ഉടൻ നിങ്ങളെ ബന്ധപ്പെടും.';
+
+  @override
   String spareFailedToSubmitVehicle(String error) {
     return 'വാഹനം സമർപ്പിക്കാനായില്ല: $error';
   }

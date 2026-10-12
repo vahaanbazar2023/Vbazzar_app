@@ -11,6 +11,7 @@ class AppAssets {
   static const String logoWhite = '${_images}logo_white.png';
   static const String splash = '${_images}splash_bg.png';
   static const String placeholder = '${_images}placeholder.png';
+  static const String contactUs = '${_images}contact_us.png';
   static const String CE = '${_images}CE.png';
   static const String CV = '${_images}CV.png';
   static const String CC = '${_images}cc.png';

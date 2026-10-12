@@ -12,6 +12,7 @@ import '../../../routes/app_routes.dart';
 import '../domain/entities/sell_vehicle_entity.dart';
 import '../domain/entities/vehicle_category_entity.dart';
 import '../domain/repositories/buy_sell_repository.dart';
+import '../widgets/admin_approval_dialog.dart';
 
 /// Controller managing the Sell tab: sell vehicle listing, form submission,
 /// dynamic forms, vehicle editing, and mark-as-sold.
@@ -60,6 +61,7 @@ class SellVehicleController extends GetxController {
 
   final isEditMode = false.obs;
   final editingVehicleId = ''.obs;
+  final isLoadingEditData = false.obs;
 
   // ─── Sold Status ─────────────────────────────────────────────
 
@@ -218,6 +220,15 @@ class SellVehicleController extends GetxController {
     for (final field in dynamicFormFields) {
       if (!field.required) continue;
       if (_skipLabels.contains(field.fieldName)) continue;
+      // Switches always hold an answer (off = No), so never "missing".
+      if (field.fieldType == 'yes_no' ||
+          const {
+            'Fitness',
+            'Original Invoice',
+            'GST Applicability',
+          }.contains(field.fieldName)) {
+        continue;
+      }
 
       final value = formValues[field.fieldName];
       if (value == null || (value is String && value.trim().isEmpty)) {
@@ -251,7 +262,7 @@ class SellVehicleController extends GetxController {
     }
 
     // Validate required images
-    if (vehicleImages.isEmpty) {
+    if (vehicleImages.isEmpty && !isEditMode.value) {
       isValid = false;
       Get.snackbar(
         appL10n.validation_error,
@@ -275,6 +286,12 @@ class SellVehicleController extends GetxController {
     }
 
     debugPrint('🚗 [validateForm] isValid=$isValid formErrors=$formErrors');
+    if (!isValid && formErrors.isNotEmpty) {
+      CustomSnackbar.show(
+        message: appL10n.please_fix_all_validation_errors,
+        type: SnackbarType.warning,
+      );
+    }
     return isValid;
   }
 
@@ -510,11 +527,8 @@ class SellVehicleController extends GetxController {
       resetForm();
       await refreshSellVehiclesList();
 
-      // Show success message after navigation
-      CustomSnackbar.show(
-        message: appL10n.spareVehicleSubmittedForApproval,
-        type: SnackbarType.success,
-      );
+      // Admin approval notice after navigation
+      AdminApprovalDialog.show();
 
       return true;
     } catch (e) {
@@ -534,6 +548,46 @@ class SellVehicleController extends GetxController {
 
   // ─── Update Vehicle ──────────────────────────────────────────
 
+  /// Form label → API key for `update-sell-vehicles`.
+  static const _apiKeys = <String, String>{
+    'Asset Description': 'asset_desc_or_model',
+    'Model': 'asset_desc_or_model',
+    'Registration Number': 'registration_number',
+    'Year of Manufacturing': 'manufacturing_year',
+    'Chassis Number': 'chassis_number',
+    'Price': 'price',
+    'Owner Mobile Number': 'owner_mobile',
+    'Odometer': 'odometer',
+    'No Of Tyres': 'no_of_tyres',
+    'Tonnage': 'tonnage',
+    'Hours': 'hours',
+    'Body Type': 'body_type',
+    'Body Length': 'body_length',
+    'Fuel Type': 'fuel_type',
+    'KV': 'kv',
+    'Fitness': 'fitness',
+    'Original Invoice': 'original_invoice',
+    'GST Applicability': 'gst_applicability',
+    'Vehicle Insurance': 'insurance_dates',
+  };
+
+  static const _nonApiLabels = {
+    'State',
+    'City',
+    'Brand',
+    'Category',
+    'Vehicle Images',
+    'Upload Vehicle RC',
+    'Insurance Upload',
+  };
+
+  String _apiKeyFor(String label) =>
+      _apiKeys[label] ??
+      label.trim().toLowerCase().replaceAll(RegExp(r'[^a-z0-9]+'), '_');
+
+  /// Saves the edit form using two APIs: every form field goes to
+  /// `update-sell-vehicles` (JSON) and any newly added files go to
+  /// `update-sell-vehicles-files` (multipart).
   Future<bool> updateVehicle() async {
     if (!isEditMode.value || editingVehicleId.value.isEmpty) return false;
     if (!validateForm()) return false;
@@ -541,95 +595,72 @@ class SellVehicleController extends GetxController {
     isSubmittingForm.value = true;
     try {
       final uid = await _userId;
-      await repository.updateSellVehicle(
-        sbVehicleId: editingVehicleId.value,
-        userId: uid,
-        categoryCode: selectedCategoryCode.value,
-        brandCode: (formValues['brand_code'] ?? formValues['Brand'] ?? '')
-            .toString(),
-        assetDescOrModel:
-            (formValues['Asset Description'] ??
-                    formValues['asset_desc_or_model'] ??
-                    formValues['model'] ??
-                    '')
-                .toString(),
-        registrationNumber:
-            (formValues['Registration Number'] ??
-                    formValues['registration_number'] ??
-                    '')
-                .toString(),
-        manufacturingYear:
-            int.tryParse(
-              '${formValues['Year of Manufacturing'] ?? formValues['manufacturing_year'] ?? 0}',
-            ) ??
-            0,
-        chassisNumber:
-            (formValues['Chassis Number'] ?? formValues['chassis_number'] ?? '')
-                .toString(),
-        price:
-            double.tryParse(
-              '${formValues['Price'] ?? formValues['price'] ?? 0}',
-            ) ??
-            0,
-        ownerMobile:
-            (formValues['Owner Mobile Number'] ??
-                    formValues['owner_mobile'] ??
-                    '')
-                .toString(),
-        stateCode: (formValues['state_code'] ?? '').toString(),
-        cityCode: (formValues['city_code'] ?? '').toString(),
-        vehicleImages: vehicleImages.isNotEmpty ? vehicleImages.toList() : null,
-        rcDocument: rcDocuments.isNotEmpty ? rcDocuments.first : null,
-        insuranceDocument: insuranceDocuments.isNotEmpty
-            ? insuranceDocuments.first
-            : null,
-        odometer: (formValues['Odometer'] ?? formValues['odometer'])
-            ?.toString(),
-        noOfTyres: (formValues['No Of Tyres'] ?? formValues['no_of_tyres'])
-            ?.toString(),
-        fitness: formValues['Fitness'] == true || formValues['fitness'] == true,
-        insurance:
-            formValues['Vehicle Insurance'] != null ||
-            formValues['insurance'] == true,
-        originalInvoice:
-            formValues['Original Invoice'] == true ||
-            formValues['original_invoice'] == true,
-        gstApplicability:
-            formValues['GST Applicability'] == true ||
-            formValues['gst_applicability'] == true,
-        tonnage: (formValues['Tonnage'] ?? formValues['tonnage'])?.toString(),
-        hours: (formValues['Hours'] ?? formValues['hours'])?.toString(),
-        bodyType: (formValues['Body Type'] ?? formValues['body_type'])
-            ?.toString(),
-        bodyLength: (formValues['Body Length'] ?? formValues['body_length'])
-            ?.toString(),
-        fuelType: (formValues['Fuel Type'] ?? formValues['fuel_type'])
-            ?.toString(),
-        insuranceDates:
-            (formValues['Vehicle Insurance'] ?? formValues['insurance_dates'])
-                ?.toString(),
-        kv: (formValues['KV'] ?? formValues['kv'])?.toString(),
-        otherBrand: formValues['other_brand']?.toString(),
-        otherTipper: formValues['other_tipper']?.toString(),
-        otherBodyType: formValues['other_body_type']?.toString(),
-        otherTyre: formValues['other_tyre']?.toString(),
-      );
+      final fields = <String, dynamic>{};
 
-      CustomSnackbar.show(
-        message: appL10n.spareVehicleUpdatedPendingApproval,
-        type: SnackbarType.success,
-      );
+      for (final f in dynamicFormFields) {
+        final label = f.fieldName;
+        if (_nonApiLabels.contains(label)) continue;
+        final v = formValues[label];
+        final isToggle =
+            f.fieldType == 'yes_no' ||
+            const {
+              'Fitness',
+              'Original Invoice',
+              'GST Applicability',
+            }.contains(label);
+        if (isToggle && v == null) {
+          fields[_apiKeyFor(label)] = false;
+          continue;
+        }
+        if (v == null || (v is String && v.trim().isEmpty)) continue;
+        final key = _apiKeyFor(label);
+        if (v is bool) {
+          fields[key] = v;
+        } else if (key == 'price') {
+          fields[key] = num.tryParse(v.toString()) ?? v;
+        } else if (key == 'manufacturing_year') {
+          fields[key] = int.tryParse(v.toString()) ?? v;
+        } else {
+          fields[key] = v.toString().trim();
+        }
+      }
+      for (final k in const ['brand_code', 'state_code', 'city_code']) {
+        final v = formValues[k]?.toString() ?? '';
+        if (v.isNotEmpty) fields[k] = v;
+      }
 
+      if (fields.isNotEmpty) {
+        await repository.updateSellVehicleDetails(
+          sbVehicleId: editingVehicleId.value,
+          userId: uid,
+          fields: fields,
+        );
+      }
+      if (vehicleImages.isNotEmpty ||
+          rcDocuments.isNotEmpty ||
+          insuranceDocuments.isNotEmpty) {
+        await repository.uploadSellVehicleFiles(
+          sbVehicleId: editingVehicleId.value,
+          userId: uid,
+          images: vehicleImages.toList(),
+          rcDocuments: rcDocuments.toList(),
+          insuranceDocs: insuranceDocuments.toList(),
+        );
+      }
+
+      // Return to the Buy & Sell home (or the app root if it isn't in the stack)
+      Get.until(
+        (route) =>
+            route.isFirst || route.settings.name == AppRoutes.buySellHome,
+      );
       resetForm();
       await refreshSellVehiclesList();
+      AdminApprovalDialog.show();
       return true;
     } catch (e) {
-      Get.snackbar(
-        appL10n.spareError,
-        appL10n.spareFailedToUpdateVehicle(e.toString()),
-        snackPosition: SnackPosition.TOP,
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
+      CustomSnackbar.show(
+        message: e.toString().replaceFirst('Exception: ', ''),
+        type: SnackbarType.error,
       );
       return false;
     } finally {
@@ -639,18 +670,88 @@ class SellVehicleController extends GetxController {
 
   // ─── Edit Mode ───────────────────────────────────────────────
 
-  void enterEditMode(SellVehicleEntity vehicle) {
+  /// Opens the sell form in edit mode: loads the category's form fields and
+  /// pre-fills them from the vehicle's full details.
+  Future<void> enterEditMode(SellVehicleEntity vehicle) async {
+    resetForm();
     isEditMode.value = true;
     editingVehicleId.value = vehicle.id;
-    selectedCategoryCode.value = vehicle.categoryCode ?? '';
-    formValues['brand_code'] = vehicle.brandName ?? '';
-    formValues['model'] = vehicle.model ?? '';
-    formValues['registration_number'] = vehicle.registrationNumber ?? '';
-    formValues['price'] = (vehicle.price ?? vehicle.askingPrice ?? 0)
-        .toString();
-    if (selectedCategoryCode.value.isNotEmpty) {
-      loadFormFields(selectedCategoryCode.value);
+    isLoadingEditData.value = true;
+    try {
+      final code = vehicle.categoryCode ?? '';
+      if (code.isNotEmpty) await loadFormFields(code);
+      final json = await _fetchVehicleJson(vehicle.id);
+      _prefillFromJson(json, vehicle);
+    } catch (e) {
+      debugPrint('🔴 [enterEditMode] $e');
+      _prefillFromJson(const {}, vehicle);
+    } finally {
+      isLoadingEditData.value = false;
     }
+  }
+
+  Future<Map<String, dynamic>> _fetchVehicleJson(String id) async {
+    final res = await NetworkService.to.get(
+      ApiEndpoints.sellBuyVehicleById(id),
+    );
+    dynamic d = res.data;
+    if (d is Map && d['data'] != null) d = d['data'];
+    if (d is Map && d['vehicle'] is Map) d = d['vehicle'];
+    if (d is Map &&
+        d['vehicles'] is List &&
+        (d['vehicles'] as List).isNotEmpty) {
+      d = (d['vehicles'] as List).first;
+    }
+    return d is Map ? Map<String, dynamic>.from(d) : <String, dynamic>{};
+  }
+
+  void _prefillFromJson(Map<String, dynamic> j, SellVehicleEntity v) {
+    bool? asBool(dynamic x) {
+      if (x == null) return null;
+      if (x is bool) return x;
+      final s = x.toString().toLowerCase();
+      return s == 'true' || s == 'yes' || s == '1';
+    }
+
+    for (final f in dynamicFormFields) {
+      final label = f.fieldName;
+      if (_nonApiLabels.contains(label)) continue;
+      final raw = j[_apiKeyFor(label)];
+      if (raw == null) continue;
+      if (f.fieldType == 'yes_no' ||
+          const {
+            'Fitness',
+            'Original Invoice',
+            'GST Applicability',
+          }.contains(label)) {
+        final b = asBool(raw);
+        if (b != null) formValues[label] = b;
+      } else {
+        formValues[label] = raw.toString();
+      }
+    }
+    // Fallbacks from the list entity when the detail call lacks a field
+    formValues.putIfAbsent('Registration Number', () => v.registrationNumber);
+    final p = v.price ?? v.askingPrice;
+    if (p != null && p > 0)
+      formValues.putIfAbsent('Price', () => p.toInt().toString());
+
+    // Brand / location use dedicated keys
+    formValues['brand_code'] = (j['brand_code'] ?? v.brandCode ?? '')
+        .toString();
+    formValues['brand_name'] = (j['brand_name'] ?? v.brandName ?? '')
+        .toString();
+    final st = (j['state_code'] ?? j['state_id'] ?? '').toString();
+    final ct = (j['city_code'] ?? j['city_id'] ?? '').toString();
+    if (st.isNotEmpty) {
+      formValues['state_code'] = st;
+      selectedStateId.value = st;
+      fetchCities(st).then((_) {
+        if (ct.isNotEmpty) selectCity(ct);
+      });
+    }
+    if (ct.isNotEmpty) formValues['city_code'] = ct;
+    formValues.refresh();
   }
 
   // ─── Location ────────────────────────────────────────────────

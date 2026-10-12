@@ -171,6 +171,24 @@ abstract class BuySellRepository {
     dynamic otherTyre,
   });
 
+  /// Partial update of a posted vehicle (`update-sell-vehicles`, JSON body).
+  /// Only non-null fields are sent. Returns the API response body.
+  Future<Map<String, dynamic>> updateSellVehicleDetails({
+    required String sbVehicleId,
+    required String userId,
+    required Map<String, dynamic> fields,
+  });
+
+  /// Uploads additional files to a posted vehicle
+  /// (`update-sell-vehicles-files`, multipart). Returns the API response body.
+  Future<Map<String, dynamic>> uploadSellVehicleFiles({
+    required String sbVehicleId,
+    required String userId,
+    List<File> images = const [],
+    List<File> rcDocuments = const [],
+    List<File> insuranceDocs = const [],
+  });
+
   /// Updates the sold status of a vehicle
   Future<void> updateVehicleSoldStatus({
     required String sbVehicleId,

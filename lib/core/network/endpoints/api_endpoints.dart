@@ -60,6 +60,8 @@ class ApiEndpoints {
   static const String listSellVehicles = '$buySellPrefix/list-sell-vehicles';
   static const String updateSellVehicles =
       '$buySellPrefix/update-sell-vehicles';
+  static const String updateSellVehicleFiles =
+      '$buySellPrefix/update-sell-vehicles-files';
   static const String listBuySubscribedVehicles =
       '$buySellPrefix/list-buy-subscribed-vehicles';
   static const String vehicleCategoryFormFields =

@@ -9,6 +9,7 @@ import '../controllers/sell_vehicle_controller.dart';
 import '../data/repositories/buy_sell_repository_impl.dart';
 import '../domain/entities/sell_vehicle_entity.dart';
 import 'buy_vehicle_details_view.dart';
+import 'sell_view.dart';
 
 class MyVehiclesView extends StatefulWidget {
   const MyVehiclesView({super.key});
@@ -95,6 +96,7 @@ class _MyVehiclesViewState extends State<MyVehiclesView> {
                   child: _MyVehicleCard(
                     vehicle: vehicles[i],
                     onDetails: () => _openDetails(vehicles[i]),
+                    onEdit: () => _openEdit(vehicles[i]),
                     onMarkSold: () => _confirmMarkSold(vehicles[i]),
                     onMarkUnsold: () => _confirmMarkUnsold(vehicles[i]),
                   ),
@@ -104,6 +106,17 @@ class _MyVehiclesViewState extends State<MyVehiclesView> {
           ),
         );
       }),
+    );
+  }
+
+  void _openEdit(SellVehicleEntity v) {
+    controller.enterEditMode(v);
+    Get.to(
+      () => const SellVehicleView(),
+      arguments: {
+        'categoryCode': v.categoryCode ?? '',
+        'categoryName': v.categoryName ?? '',
+      },
     );
   }
 
@@ -159,11 +172,13 @@ class _MyVehiclesViewState extends State<MyVehiclesView> {
 class _MyVehicleCard extends StatelessWidget {
   final SellVehicleEntity vehicle;
   final VoidCallback onDetails;
+  final VoidCallback onEdit;
   final VoidCallback onMarkSold;
   final VoidCallback onMarkUnsold;
   const _MyVehicleCard({
     required this.vehicle,
     required this.onDetails,
+    required this.onEdit,
     required this.onMarkSold,
     required this.onMarkUnsold,
   });
@@ -334,6 +349,12 @@ class _MyVehicleCard extends StatelessWidget {
                               onTap: onDetails,
                               filled: true,
                             ),
+                            if (!vehicle.isVehicleSold)
+                              _pill(
+                                context.l10n.edit,
+                                onTap: onEdit,
+                                tint: AppColors.primary,
+                              ),
                             if (!vehicle.isVehicleSold)
                               _pill(
                                 context.l10n.spareMarkSold,

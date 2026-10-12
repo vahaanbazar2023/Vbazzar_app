@@ -263,7 +263,7 @@ class _BuyVehicleDetailsViewState extends State<BuyVehicleDetailsView> {
                   SizedBox(height: 8.h),
 
                   // ── Price + model year ───────────────────────────────────
-                  _PriceHeader(vehicle: vehicle),
+                  _PriceHeader(vehicle: vehicle, ownerMode: widget.ownerMode),
                   SizedBox(height: 6.h),
 
                   // ── Compact info tiles (2 per row) ───────────────────────
@@ -530,12 +530,13 @@ class _ShareButton extends StatelessWidget {
 /// Plain price line.
 class _PriceHeader extends StatelessWidget {
   final BuyVehicleEntity vehicle;
-  const _PriceHeader({required this.vehicle});
+  final bool ownerMode;
+  const _PriceHeader({required this.vehicle, this.ownerMode = false});
 
   @override
   Widget build(BuildContext context) {
     return Text(
-      vehicle.formattedPrice,
+      ownerMode ? vehicle.formattedPrice : vehicle.displayPrice,
       maxLines: 1,
       overflow: TextOverflow.ellipsis,
       style: TextStyle(

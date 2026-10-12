@@ -2510,6 +2510,8 @@
   "spareMaxTenImagesAllowed": "Maximum 10 images allowed",
   "spareEachDocumentUnder12Mb": "Each document must be under 12 MB",
   "spareVehicleSubmittedForApproval": "Vehicle submitted for approval.",
+  "spareAdminApprovalRequired": "Admin approval required",
+  "spareTeamWillReachYouShortly": "Your listing will be reviewed by our admin. Our team will reach you shortly.",
   "spareFailedToSubmitVehicle": "Failed to submit vehicle: {error}",
   "@spareFailedToSubmitVehicle": {
     "placeholders": {

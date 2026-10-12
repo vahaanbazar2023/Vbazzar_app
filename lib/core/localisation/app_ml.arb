@@ -1792,6 +1792,8 @@
   "spareMaxTenImagesAllowed": "പരമാവധി 10 ചിത്രങ്ങൾ മാത്രം അനുവദനീയം",
   "spareEachDocumentUnder12Mb": "ഓരോ രേഖയും 12 MB-യിൽ താഴെയായിരിക്കണം",
   "spareVehicleSubmittedForApproval": "വാഹനം അംഗീകാരത്തിനായി സമർപ്പിച്ചു.",
+  "spareAdminApprovalRequired": "അഡ്മിൻ അംഗീകാരം ആവശ്യമാണ്",
+  "spareTeamWillReachYouShortly": "നിങ്ങളുടെ വാഹനം ഞങ്ങളുടെ അഡ്മിൻ അവലോകനം ചെയ്യും. ഞങ്ങളുടെ ടീം ഉടൻ നിങ്ങളെ ബന്ധപ്പെടും.",
   "spareFailedToSubmitVehicle": "വാഹനം സമർപ്പിക്കാനായില്ല: {error}",
   "spareVehicleUpdatedPendingApproval": "വാഹനം അപ്ഡേറ്റ് ചെയ്തു. മാറ്റങ്ങൾ അഡ്മിൻ അംഗീകാരത്തിനായി കാത്തിരിക്കുന്നു.",
   "spareFailedToUpdateVehicle": "വാഹനം അപ്ഡേറ്റ് ചെയ്യാനായില്ല: {error}",

@@ -1854,6 +1854,8 @@
   "spareMaxTenImagesAllowed": "अधिकतम 10 तस्वीरों की अनुमति है",
   "spareEachDocumentUnder12Mb": "प्रत्येक दस्तावेज़ 12 MB से कम होना चाहिए",
   "spareVehicleSubmittedForApproval": "वाहन अनुमोदन के लिए जमा हो गया।",
+  "spareAdminApprovalRequired": "एडमिन की मंज़ूरी आवश्यक",
+  "spareTeamWillReachYouShortly": "आपके वाहन की समीक्षा हमारे एडमिन द्वारा की जाएगी। हमारी टीम शीघ्र ही आपसे संपर्क करेगी।",
   "spareFailedToSubmitVehicle": "वाहन जमा नहीं हो सका: {error}",
   "spareVehicleUpdatedPendingApproval": "वाहन अपडेट हुआ। बदलाव एडमिन के अनुमोदन के लिए लंबित हैं।",
   "spareFailedToUpdateVehicle": "वाहन अपडेट नहीं हो सका: {error}",

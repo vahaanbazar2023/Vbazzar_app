@@ -5831,6 +5831,13 @@ class AppLocalizationsEn extends AppLocalizations {
       'Vehicle submitted for approval.';
 
   @override
+  String get spareAdminApprovalRequired => 'Admin approval required';
+
+  @override
+  String get spareTeamWillReachYouShortly =>
+      'Your listing will be reviewed by our admin. Our team will reach you shortly.';
+
+  @override
   String spareFailedToSubmitVehicle(String error) {
     return 'Failed to submit vehicle: $error';
   }

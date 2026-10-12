@@ -5842,6 +5842,13 @@ class AppLocalizationsHi extends AppLocalizations {
       'वाहन अनुमोदन के लिए जमा हो गया।';
 
   @override
+  String get spareAdminApprovalRequired => 'एडमिन की मंज़ूरी आवश्यक';
+
+  @override
+  String get spareTeamWillReachYouShortly =>
+      'आपके वाहन की समीक्षा हमारे एडमिन द्वारा की जाएगी। हमारी टीम शीघ्र ही आपसे संपर्क करेगी।';
+
+  @override
   String spareFailedToSubmitVehicle(String error) {
     return 'वाहन जमा नहीं हो सका: $error';
   }

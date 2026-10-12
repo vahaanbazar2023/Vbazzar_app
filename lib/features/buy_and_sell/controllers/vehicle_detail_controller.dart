@@ -75,6 +75,13 @@ class BuyVehicleController extends GetxController {
 
   bool isWishlisted(String vehicleId) => wishlistedIds.contains(vehicleId);
 
+  /// Marks vehicles the API reports as `is_interested == "yes"` as wishlisted.
+  void _seedInterested(Iterable<BuyVehicleEntity> vehicles) {
+    for (final v in vehicles) {
+      if (v.isInterested) wishlistedIds.add(v.sbVehicleId);
+    }
+  }
+
   /// Toggles wishlist state and calls the interest API (isInterested: yes).
   /// Keeps the heart filled optimistically; reverts on failure.
   Future<void> toggleWishlist(BuyVehicleEntity vehicle) async {
@@ -403,9 +410,11 @@ class BuyVehicleController extends GetxController {
       );
 
       if (isFirstPage) {
+        _seedInterested(result.vehicles);
         buyVehicles.assignAll(result.vehicles);
         feedAds.assignAll(result.ads); // store ads on first page load
       } else {
+        _seedInterested(result.vehicles);
         buyVehicles.addAll(result.vehicles);
       }
 
@@ -731,6 +740,7 @@ class BuyVehicleController extends GetxController {
           filters: {'sb_vehicle_id': sbVehicleId},
         );
         if (result.vehicles.isNotEmpty) {
+          _seedInterested(result.vehicles);
           currentVehicleDetail.value = result.vehicles.first;
           final v = result.vehicles.first;
           if (v.hasOwnerAccess && (v.sellerPhone?.isNotEmpty ?? false)) {
@@ -751,6 +761,7 @@ class BuyVehicleController extends GetxController {
         filters: {'sb_vehicle_id': sbVehicleId},
       );
       if (result.vehicles.isNotEmpty) {
+        _seedInterested(result.vehicles);
         currentVehicleDetail.value = result.vehicles.first;
         final v = result.vehicles.first;
         if (v.hasOwnerAccess && (v.sellerPhone?.isNotEmpty ?? false)) {

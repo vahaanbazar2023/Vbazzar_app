@@ -5907,6 +5907,13 @@ class AppLocalizationsTe extends AppLocalizations {
       'వాహనం ఆమోదం కోసం సమర్పించబడింది.';
 
   @override
+  String get spareAdminApprovalRequired => 'అడ్మిన్ ఆమోదం అవసరం';
+
+  @override
+  String get spareTeamWillReachYouShortly =>
+      'మీ వాహనాన్ని మా అడ్మిన్ సమీక్షిస్తారు. మా బృందం త్వరలో మిమ్మల్ని సంప్రదిస్తుంది.';
+
+  @override
   String spareFailedToSubmitVehicle(String error) {
     return 'వాహనాన్ని సమర్పించడం విఫలమైంది: $error';
   }

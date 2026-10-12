@@ -36,6 +36,7 @@ class BuyVehicleModel extends BuyVehicleEntity {
     super.insurance,
     super.originalInvoice,
     super.gstApplicability,
+    super.isInterested,
   });
 
   factory BuyVehicleModel.fromJson(Map<String, dynamic> json) {
@@ -111,6 +112,7 @@ class BuyVehicleModel extends BuyVehicleEntity {
       insurance: BuyVehicleEntity.parseFlag(json['insurance']),
       originalInvoice: BuyVehicleEntity.parseFlag(json['original_invoice']),
       gstApplicability: BuyVehicleEntity.parseFlag(json['gst_applicability']),
+      isInterested: BuyVehicleEntity.parseFlag(json['is_interested']) ?? false,
     );
   }
 }

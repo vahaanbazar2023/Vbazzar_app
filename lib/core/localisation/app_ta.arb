@@ -1792,6 +1792,8 @@
   "spareMaxTenImagesAllowed": "அதிகபட்சம் 10 படங்கள் அனுமதிக்கப்படும்",
   "spareEachDocumentUnder12Mb": "ஒவ்வொரு ஆவணமும் 12 MB க்குள் இருக்க வேண்டும்",
   "spareVehicleSubmittedForApproval": "வாகனம் ஒப்புதலுக்காகச் சமர்ப்பிக்கப்பட்டது.",
+  "spareAdminApprovalRequired": "நிர்வாகி ஒப்புதல் தேவை",
+  "spareTeamWillReachYouShortly": "உங்கள் வாகனத்தை எங்கள் நிர்வாகி மதிப்பாய்வு செய்வார். எங்கள் குழு விரைவில் உங்களைத் தொடர்பு கொள்ளும்.",
   "spareFailedToSubmitVehicle": "வாகனத்தைச் சமர்ப்பிக்க முடியவில்லை: {error}",
   "spareVehicleUpdatedPendingApproval": "வாகனம் புதுப்பிக்கப்பட்டது. மாற்றங்கள் நிர்வாகியின் ஒப்புதலுக்காகக் காத்திருக்கின்றன.",
   "spareFailedToUpdateVehicle": "வாகனத்தைப் புதுப்பிக்க முடியவில்லை: {error}",

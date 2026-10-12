@@ -5898,6 +5898,13 @@ class AppLocalizationsKn extends AppLocalizations {
       'ವಾಹನವನ್ನು ಅನುಮೋದನೆಗಾಗಿ ಸಲ್ಲಿಸಲಾಗಿದೆ.';
 
   @override
+  String get spareAdminApprovalRequired => 'ಅಡ್ಮಿನ್ ಅನುಮೋದನೆ ಅಗತ್ಯ';
+
+  @override
+  String get spareTeamWillReachYouShortly =>
+      'ನಿಮ್ಮ ವಾಹನವನ್ನು ನಮ್ಮ ಅಡ್ಮಿನ್ ಪರಿಶೀಲಿಸುತ್ತಾರೆ. ನಮ್ಮ ತಂಡ ಶೀಘ್ರದಲ್ಲೇ ನಿಮ್ಮನ್ನು ಸಂಪರ್ಕಿಸುತ್ತದೆ.';
+
+  @override
   String spareFailedToSubmitVehicle(String error) {
     return 'ವಾಹನ ಸಲ್ಲಿಸಲು ವಿಫಲವಾಗಿದೆ: $error';
   }

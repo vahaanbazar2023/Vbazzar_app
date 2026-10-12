@@ -1620,6 +1620,8 @@
   "spareMaxTenImagesAllowed": "గరిష్ఠంగా 10 చిత్రాలు అనుమతించబడతాయి",
   "spareEachDocumentUnder12Mb": "ప్రతి పత్రం 12 MB లోపు ఉండాలి",
   "spareVehicleSubmittedForApproval": "వాహనం ఆమోదం కోసం సమర్పించబడింది.",
+  "spareAdminApprovalRequired": "అడ్మిన్ ఆమోదం అవసరం",
+  "spareTeamWillReachYouShortly": "మీ వాహనాన్ని మా అడ్మిన్ సమీక్షిస్తారు. మా బృందం త్వరలో మిమ్మల్ని సంప్రదిస్తుంది.",
   "spareFailedToSubmitVehicle": "వాహనాన్ని సమర్పించడం విఫలమైంది: {error}",
   "spareVehicleUpdatedPendingApproval": "వాహనం అప్‌డేట్ చేయబడింది. మార్పులు అడ్మిన్ ఆమోదం కోసం పెండింగ్‌లో ఉన్నాయి.",
   "spareFailedToUpdateVehicle": "వాహనాన్ని అప్‌డేట్ చేయడం విఫలమైంది: {error}",

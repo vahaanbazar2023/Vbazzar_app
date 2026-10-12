@@ -41,68 +41,79 @@ class SellVehicleView extends StatelessWidget {
       });
     }
 
-    return AppLayout(
-      title: context.l10n.spareSellVehicle,
-      subtitle: preName.isNotEmpty
-          ? preName
-          : context.l10n.sparePostYourVehicleForSale,
-      body: Obx(() {
-        if (ctrl.isSubmittingForm.value) return _SubmittingOverlay();
+    return PopScope(
+      onPopInvokedWithResult: (_, __) {
+        // Leaving the edit form without saving must not leave the sell form
+        // stuck in edit mode.
+        if (ctrl.isEditMode.value) ctrl.resetForm();
+      },
+      child: AppLayout(
+        title: ctrl.isEditMode.value
+            ? context.l10n.edit
+            : context.l10n.spareSellVehicle,
+        subtitle: preName.isNotEmpty
+            ? preName
+            : context.l10n.sparePostYourVehicleForSale,
+        body: Obx(() {
+          if (ctrl.isSubmittingForm.value) return _SubmittingOverlay();
+          if (ctrl.isLoadingEditData.value) return _FormLoadingState();
 
-        return SingleChildScrollView(
-          padding: EdgeInsets.fromLTRB(16.w, 16.h, 16.w, 120.h),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // ── Category picker (only when NOT pre-selected) ──────────────
-              if (preCode.isEmpty) ...[
-                _SellField(
-                  label: '${context.l10n.vehicleCategory} *',
-                  child: Obx(
-                    () => SizedBox(
-                      height: _kFieldH.h,
-                      child: CustomDropdownField<dynamic>(
-                        value: ctrl.selectedCategoryCode.value.isEmpty
-                            ? null
-                            : ctrl.categories.firstWhereOrNull(
-                                (c) =>
-                                    c.categoryCode ==
-                                    ctrl.selectedCategoryCode.value,
-                              ),
-                        items: ctrl.categories,
-                        placeholder: context.l10n.selectCategory,
-                        prefixIcon: Icons.category_outlined,
-                        isLoading: ctrl.isLoadingCategories.value,
-                        searchable: true,
-                        searchHint: context.l10n.spareSearchCategory,
-                        itemLabel: (cat) => cat.categoryName as String,
+          return SingleChildScrollView(
+            padding: EdgeInsets.fromLTRB(16.w, 16.h, 16.w, 120.h),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // ── Category picker (only when NOT pre-selected) ──────────────
+                if (preCode.isEmpty) ...[
+                  _SellField(
+                    label: '${context.l10n.vehicleCategory} *',
+                    child: Obx(
+                      () => SizedBox(
                         height: _kFieldH.h,
-                        onChanged: (cat) {
-                          if (cat != null)
-                            ctrl.loadFormFields(cat.categoryCode as String);
-                        },
+                        child: CustomDropdownField<dynamic>(
+                          value: ctrl.selectedCategoryCode.value.isEmpty
+                              ? null
+                              : ctrl.categories.firstWhereOrNull(
+                                  (c) =>
+                                      c.categoryCode ==
+                                      ctrl.selectedCategoryCode.value,
+                                ),
+                          items: ctrl.categories,
+                          placeholder: context.l10n.selectCategory,
+                          prefixIcon: Icons.category_outlined,
+                          isLoading: ctrl.isLoadingCategories.value,
+                          searchable: true,
+                          searchHint: context.l10n.spareSearchCategory,
+                          itemLabel: (cat) => cat.categoryName as String,
+                          height: _kFieldH.h,
+                          onChanged: (cat) {
+                            if (cat != null)
+                              ctrl.loadFormFields(cat.categoryCode as String);
+                          },
+                        ),
                       ),
                     ),
                   ),
-                ),
-                SizedBox(height: 16.h),
-              ],
+                  SizedBox(height: 16.h),
+                ],
 
-              // ── Dynamic form ──────────────────────────────────────────────
-              Obx(() {
-                if (ctrl.selectedCategoryCode.value.isEmpty)
-                  return const SizedBox.shrink();
-                if (ctrl.isLoadingFormFields.value) return _FormLoadingState();
-                return _DynamicFormBody(
-                  ctrl: ctrl,
-                  preCode: preCode,
-                  preName: preName,
-                );
-              }),
-            ],
-          ),
-        );
-      }),
+                // ── Dynamic form ──────────────────────────────────────────────
+                Obx(() {
+                  if (ctrl.selectedCategoryCode.value.isEmpty)
+                    return const SizedBox.shrink();
+                  if (ctrl.isLoadingFormFields.value)
+                    return _FormLoadingState();
+                  return _DynamicFormBody(
+                    ctrl: ctrl,
+                    preCode: preCode,
+                    preName: preName,
+                  );
+                }),
+              ],
+            ),
+          );
+        }),
+      ),
     );
   }
 }
@@ -580,6 +591,45 @@ class _FormCard extends StatelessWidget {
 // _SellField — label + child
 // ─────────────────────────────────────────────────────────────────────────────
 
+/// Inline validation message for [name] from the controller's `formErrors`.
+class _FieldError extends StatelessWidget {
+  final String name;
+  final bool padded;
+  const _FieldError({required this.name, this.padded = false});
+
+  @override
+  Widget build(BuildContext context) {
+    final ctrl = Get.find<SellVehicleController>();
+    return Obx(() {
+      final msg = ctrl.formErrors[name];
+      if (msg == null || msg.isEmpty) return const SizedBox.shrink();
+      return Padding(
+        padding: EdgeInsets.only(top: 4.h, left: padded ? 14.w : 2.w),
+        child: Row(
+          children: [
+            Icon(
+              Icons.error_outline_rounded,
+              size: 13.r,
+              color: AppColors.error,
+            ),
+            SizedBox(width: 4.w),
+            Expanded(
+              child: Text(
+                msg,
+                style: TextStyle(
+                  fontFamily: 'Plus Jakarta Sans',
+                  fontSize: 11.sp,
+                  color: AppColors.error,
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    });
+  }
+}
+
 class _SellField extends StatelessWidget {
   final String label;
   final Widget child;
@@ -601,6 +651,7 @@ class _SellField extends StatelessWidget {
         ),
         SizedBox(height: 5.h),
         child,
+        _FieldError(name: label.replaceAll(RegExp(r'\s*\*$'), '')),
       ],
     );
   }
@@ -1026,12 +1077,22 @@ class _CityFieldState extends State<_CityField> {
   @override
   void initState() {
     super.initState();
-    _textCtrl = TextEditingController();
-    // When a new state is selected, cities list changes → clear the text
+    _textCtrl = TextEditingController(text: _selectedCityName());
+    // Show the selected city's name (edit mode) or clear when a new state is
+    // chosen and the list changes.
     ever(widget.ctrl.cities, (_) {
-      if (mounted) _textCtrl.clear();
+      if (mounted) _textCtrl.text = _selectedCityName();
+    });
+    ever(widget.ctrl.selectedCityId, (_) {
+      if (mounted) _textCtrl.text = _selectedCityName();
     });
   }
+
+  String _selectedCityName() =>
+      widget.ctrl.cities.firstWhereOrNull(
+        (c) => c['city_id'] == widget.ctrl.selectedCityId.value,
+      )?['city_name'] ??
+      '';
 
   @override
   void dispose() {
@@ -1279,6 +1340,7 @@ class _ToggleCard extends StatelessWidget {
                   ),
                 );
               }),
+              _FieldError(name: name, padded: true),
               if (!isLast)
                 Divider(
                   height: 1,
@@ -1687,13 +1749,9 @@ class _SubmitButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Obx(
       () => GradientButton.filled(
-        text: ctrl.isEditMode.value
-            ? context.l10n.spareUpdateVehicle
-            : context.l10n.submit,
+        text: ctrl.isEditMode.value ? context.l10n.save : context.l10n.submit,
         width: 140.w,
         height: 36.h,
-        fontSize: 15.sp,
-        fontWeight: FontWeight.w600,
         isLoading: ctrl.isSubmittingForm.value,
         onPressed: () async {
           if (ctrl.isSubmittingForm.value) return; // guard double-tap

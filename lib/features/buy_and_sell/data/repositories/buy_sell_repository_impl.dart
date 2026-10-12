@@ -982,6 +982,78 @@ class BuySellRepositoryImpl implements BuySellRepository {
   }
 
   @override
+  Future<Map<String, dynamic>> updateSellVehicleDetails({
+    required String sbVehicleId,
+    required String userId,
+    required Map<String, dynamic> fields,
+  }) async {
+    try {
+      final response = await _network.post(
+        ApiEndpoints.updateSellVehicles,
+        data: {...fields, 'sb_vehicle_id': sbVehicleId, 'user_id': userId},
+      );
+      final data = response.data;
+      if (response.statusCode == 200 &&
+          data is Map<String, dynamic> &&
+          data['status'] == 'success') {
+        return data;
+      }
+      throw Exception(
+        data is Map
+            ? (data['message'] ?? 'Failed to update vehicle')
+            : 'Failed to update vehicle',
+      );
+    } on DioException catch (e) {
+      final d = e.response?.data;
+      throw Exception(
+        d is Map && d['message'] != null ? d['message'] : e.message,
+      );
+    }
+  }
+
+  @override
+  Future<Map<String, dynamic>> uploadSellVehicleFiles({
+    required String sbVehicleId,
+    required String userId,
+    List<File> images = const [],
+    List<File> rcDocuments = const [],
+    List<File> insuranceDocs = const [],
+  }) async {
+    MultipartFile mp(File f) =>
+        MultipartFile.fromFileSync(f.path, filename: f.path.split('/').last);
+    try {
+      final formData = FormData.fromMap({
+        'sb_vehicle_id': sbVehicleId,
+        'user_id': userId,
+        if (images.isNotEmpty) 'images': images.map(mp).toList(),
+        if (rcDocuments.isNotEmpty) 'rc': rcDocuments.map(mp).toList(),
+        if (insuranceDocs.isNotEmpty)
+          'insurance_docs': insuranceDocs.map(mp).toList(),
+      });
+      final response = await _network.post(
+        ApiEndpoints.updateSellVehicleFiles,
+        data: formData,
+      );
+      final data = response.data;
+      if (response.statusCode == 200 &&
+          data is Map<String, dynamic> &&
+          data['status'] == 'success') {
+        return data;
+      }
+      throw Exception(
+        data is Map
+            ? (data['message'] ?? 'Failed to upload files')
+            : 'Failed to upload files',
+      );
+    } on DioException catch (e) {
+      final d = e.response?.data;
+      throw Exception(
+        d is Map && d['message'] != null ? d['message'] : e.message,
+      );
+    }
+  }
+
+  @override
   Future<void> updateVehicleSoldStatus({
     required String sbVehicleId,
     required String isSold,

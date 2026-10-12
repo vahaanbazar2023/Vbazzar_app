@@ -56,6 +56,9 @@ class BuyVehicleEntity {
   final bool? originalInvoice;
   final bool? gstApplicability;
 
+  /// API `is_interested == "yes"` — user already showed interest (heart filled).
+  final bool isInterested;
+
   const BuyVehicleEntity({
     required this.id,
     required this.categoryCode,
@@ -89,6 +92,7 @@ class BuyVehicleEntity {
     this.insurance,
     this.originalInvoice,
     this.gstApplicability,
+    this.isInterested = false,
   });
 
   /// True if inspection has already been requested for this vehicle.
@@ -120,6 +124,21 @@ class BuyVehicleEntity {
   String get formattedPrice {
     if (price == null || price! <= 0) return appL10n.sparePriceOnRequest;
     return '₹${_formatNumber(price!.toInt())}';
+  }
+
+  /// Price for buyer-facing screens: full when [hasVehicleDetailsAccess],
+  /// otherwise only the first digit is shown, e.g. "₹2x,xx,xxx".
+  String get displayPrice {
+    final full = formattedPrice;
+    if (hasVehicleDetailsAccess || price == null || price! <= 0) return full;
+    var seenDigit = false;
+    return full.replaceAllMapped(RegExp(r'\d'), (m) {
+      if (!seenDigit) {
+        seenDigit = true;
+        return m[0]!;
+      }
+      return 'x';
+    });
   }
 
   /// Indian number formatting — inserts commas at thousands, then every 2 digits.
@@ -175,6 +194,7 @@ class BuyVehicleEntity {
       insurance: parseFlag(j['insurance']),
       originalInvoice: parseFlag(j['original_invoice']),
       gstApplicability: parseFlag(j['gst_applicability']),
+      isInterested: parseFlag(j['is_interested']) ?? false,
     );
   }
 
