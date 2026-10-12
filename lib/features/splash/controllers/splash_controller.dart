@@ -7,6 +7,7 @@ import '../../../core/storage/local_storage_service.dart';
 import '../../../core/storage/secure_storage_service.dart';
 import '../../../core/storage/storage_keys.dart';
 import '../../../routes/app_routes.dart';
+import '../../auth/services/profile_gate.dart';
 
 // ── Figma SMART_ANIMATE position data ────────────────────────────
 // Each element's (left, top, width, height) at each of the 5 keyframes
@@ -235,10 +236,12 @@ class SplashController extends GetxController with GetTickerProviderStateMixin {
     );
 
     if (token != null && token.isNotEmpty) {
-      if (profileCompleted == 'true') {
-        Get.offAllNamed(AppRoutes.home);
-      } else {
+      // Profile is only forced after a payment (see ProfileGate).
+      if (profileCompleted != 'true' &&
+          await ProfileGate.mustCompleteProfile()) {
         Get.offAllNamed(AppRoutes.completeProfile);
+      } else {
+        Get.offAllNamed(AppRoutes.home);
       }
     } else if (hasSeenIntro) {
       Get.offAllNamed(AppRoutes.login);

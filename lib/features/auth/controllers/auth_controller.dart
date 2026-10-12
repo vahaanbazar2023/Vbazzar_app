@@ -354,11 +354,9 @@ class AuthController extends GetxController {
           type: SnackbarType.success,
         );
 
-        if (data.profileCompleted) {
-          Get.offAllNamed(AppRoutes.home);
-        } else {
-          Get.offAllNamed(AppRoutes.completeProfile);
-        }
+        // Profile is requested after the user's first payment (ProfileGate),
+        // not at login.
+        Get.offAllNamed(AppRoutes.home);
       } else {
         errorText.value = response.message.isNotEmpty
             ? response.message

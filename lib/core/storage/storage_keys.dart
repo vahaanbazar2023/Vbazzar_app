@@ -11,6 +11,8 @@ class StorageKeys {
   static const String userType = 'user_type';
   static const String tokenExpiresAt = 'token_expires_at';
   static const String profileCompleted = 'profile_completed';
+  static const String profileRequiredAfterPayment =
+      'profile_required_after_payment';
 
   // User prefs (local storage)
   static const String hasSeenIntro = 'has_seen_intro';

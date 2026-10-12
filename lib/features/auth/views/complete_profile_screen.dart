@@ -17,165 +17,168 @@ class CompleteProfileScreen extends GetView<AuthController> {
       if (controller.availableStates.isEmpty) controller.fetchStates();
     });
 
-    return AuthLayout(
-      title: context.l10n.inspCompleteProfile,
-      subtitle: '',
-      subtitleUnderlinedText: '',
-      onSubtitleUnderlinedTap: () {},
-      showBackButton: false,
-      onBackPressed: () {},
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Center(
-            child: Text(
-              context.l10n.inspTellUsAboutYourself,
-              textAlign: TextAlign.center,
+    return PopScope(
+      canPop: false,
+      child: AuthLayout(
+        title: context.l10n.inspCompleteProfile,
+        subtitle: '',
+        subtitleUnderlinedText: '',
+        onSubtitleUnderlinedTap: () {},
+        showBackButton: false,
+        onBackPressed: () {},
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Center(
+              child: Text(
+                context.l10n.inspTellUsAboutYourself,
+                textAlign: TextAlign.center,
+                style: AppTextStyles.headingMedium.copyWith(
+                  fontSize: 18.sp,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+            SizedBox(height: AppSpacing.xs),
+            Center(
+              child: Text(
+                context.l10n.inspCompleteProfileSubtitle,
+                textAlign: TextAlign.center,
+                style: AppTextStyles.bodyMedium.copyWith(
+                  fontSize: 12.sp,
+                  color: AppColors.grey650,
+                ),
+              ),
+            ),
+            SizedBox(height: AppSpacing.xl),
+
+            // First Name (required)
+            Text(
+              '${context.l10n.firstName} *',
               style: AppTextStyles.headingMedium.copyWith(
-                fontSize: 18.sp,
+                fontSize: 14.sp,
                 fontWeight: FontWeight.w600,
               ),
             ),
-          ),
-          SizedBox(height: AppSpacing.xs),
-          Center(
-            child: Text(
-              context.l10n.inspCompleteProfileSubtitle,
-              textAlign: TextAlign.center,
-              style: AppTextStyles.bodyMedium.copyWith(
-                fontSize: 12.sp,
-                color: AppColors.grey650,
+            SizedBox(height: AppSpacing.sm),
+            Obx(
+              () => CustomInputField(
+                controller: controller.firstNameController,
+                placeholder: context.l10n.inspEnterFirstName,
+                prefixIcon: Icons.person_outline,
+                errorText: controller.firstNameErrorText.value,
+                keyboardType: TextInputType.name,
+                textInputAction: TextInputAction.next,
+                onChanged: (_) {},
               ),
             ),
-          ),
-          SizedBox(height: AppSpacing.xl),
+            SizedBox(height: AppSpacing.md),
 
-          // First Name (required)
-          Text(
-            '${context.l10n.firstName} *',
-            style: AppTextStyles.headingMedium.copyWith(
-              fontSize: 14.sp,
-              fontWeight: FontWeight.w600,
+            // Last Name (optional)
+            Text(
+              context.l10n.lastName,
+              style: AppTextStyles.headingMedium.copyWith(
+                fontSize: 14.sp,
+                fontWeight: FontWeight.w600,
+              ),
             ),
-          ),
-          SizedBox(height: AppSpacing.sm),
-          Obx(
-            () => CustomInputField(
-              controller: controller.firstNameController,
-              placeholder: context.l10n.inspEnterFirstName,
+            SizedBox(height: AppSpacing.sm),
+            CustomInputField(
+              controller: controller.lastNameController,
+              placeholder: context.l10n.enterLastNameOptional,
               prefixIcon: Icons.person_outline,
-              errorText: controller.firstNameErrorText.value,
               keyboardType: TextInputType.name,
               textInputAction: TextInputAction.next,
               onChanged: (_) {},
             ),
-          ),
-          SizedBox(height: AppSpacing.md),
+            SizedBox(height: AppSpacing.md),
 
-          // Last Name (optional)
-          Text(
-            context.l10n.lastName,
-            style: AppTextStyles.headingMedium.copyWith(
-              fontSize: 14.sp,
-              fontWeight: FontWeight.w600,
+            // Email (required)
+            Text(
+              '${context.l10n.email} *',
+              style: AppTextStyles.headingMedium.copyWith(
+                fontSize: 14.sp,
+                fontWeight: FontWeight.w600,
+              ),
             ),
-          ),
-          SizedBox(height: AppSpacing.sm),
-          CustomInputField(
-            controller: controller.lastNameController,
-            placeholder: context.l10n.enterLastNameOptional,
-            prefixIcon: Icons.person_outline,
-            keyboardType: TextInputType.name,
-            textInputAction: TextInputAction.next,
-            onChanged: (_) {},
-          ),
-          SizedBox(height: AppSpacing.md),
+            SizedBox(height: AppSpacing.sm),
+            Obx(
+              () => CustomInputField(
+                controller: controller.emailController,
+                placeholder: context.l10n.inspEnterEmailAddress,
+                prefixIcon: Icons.email_outlined,
+                errorText: controller.emailErrorText.value,
+                keyboardType: TextInputType.emailAddress,
+                textInputAction: TextInputAction.next,
+                onChanged: (_) {},
+                inputFormatters: [InputFormatters.email],
+              ),
+            ),
+            SizedBox(height: AppSpacing.md),
 
-          // Email (required)
-          Text(
-            '${context.l10n.email} *',
-            style: AppTextStyles.headingMedium.copyWith(
-              fontSize: 14.sp,
-              fontWeight: FontWeight.w600,
+            // State dropdown
+            Text(
+              '${context.l10n.state} *',
+              style: AppTextStyles.headingMedium.copyWith(
+                fontSize: 14.sp,
+                fontWeight: FontWeight.w600,
+              ),
             ),
-          ),
-          SizedBox(height: AppSpacing.sm),
-          Obx(
-            () => CustomInputField(
-              controller: controller.emailController,
-              placeholder: context.l10n.inspEnterEmailAddress,
-              prefixIcon: Icons.email_outlined,
-              errorText: controller.emailErrorText.value,
-              keyboardType: TextInputType.emailAddress,
-              textInputAction: TextInputAction.next,
-              onChanged: (_) {},
-              inputFormatters: [InputFormatters.email],
-            ),
-          ),
-          SizedBox(height: AppSpacing.md),
+            SizedBox(height: AppSpacing.sm),
+            Obx(() {
+              if (controller.isLoadingStates.value) {
+                return SizedBox(
+                  height: 48.h,
+                  child: const Center(child: CircularProgressIndicator()),
+                );
+              }
+              return _StateDropdown(controller: controller);
+            }),
+            SizedBox(height: AppSpacing.md),
 
-          // State dropdown
-          Text(
-            '${context.l10n.state} *',
-            style: AppTextStyles.headingMedium.copyWith(
-              fontSize: 14.sp,
-              fontWeight: FontWeight.w600,
+            // City dropdown
+            Text(
+              '${context.l10n.city} *',
+              style: AppTextStyles.headingMedium.copyWith(
+                fontSize: 14.sp,
+                fontWeight: FontWeight.w600,
+              ),
             ),
-          ),
-          SizedBox(height: AppSpacing.sm),
-          Obx(() {
-            if (controller.isLoadingStates.value) {
-              return SizedBox(
-                height: 48.h,
-                child: const Center(child: CircularProgressIndicator()),
-              );
-            }
-            return _StateDropdown(controller: controller);
-          }),
-          SizedBox(height: AppSpacing.md),
+            SizedBox(height: AppSpacing.sm),
+            Obx(() {
+              if (controller.isLoadingCities.value) {
+                return SizedBox(
+                  height: 48.h,
+                  child: const Center(child: CircularProgressIndicator()),
+                );
+              }
+              return _CityDropdown(controller: controller);
+            }),
+            SizedBox(height: AppSpacing.xxl),
 
-          // City dropdown
-          Text(
-            '${context.l10n.city} *',
-            style: AppTextStyles.headingMedium.copyWith(
-              fontSize: 14.sp,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-          SizedBox(height: AppSpacing.sm),
-          Obx(() {
-            if (controller.isLoadingCities.value) {
-              return SizedBox(
-                height: 48.h,
-                child: const Center(child: CircularProgressIndicator()),
-              );
-            }
-            return _CityDropdown(controller: controller);
-          }),
-          SizedBox(height: AppSpacing.xxl),
-
-          // Submit button
-          Obx(() {
-            final isValid = controller.isCompleteProfileFormValid;
-            return isValid
-                ? GradientButton.filled(
-                    text: context.l10n.inspSaveAndContinue,
-                    onPressed: controller.isLoading.value
-                        ? null
-                        : () => controller.completeProfile(context),
-                    isLoading: controller.isLoading.value,
-                    width: double.infinity,
-                  )
-                : GradientButton.outlined(
-                    text: context.l10n.inspSaveAndContinue,
-                    onPressed: null,
-                    width: double.infinity,
-                  );
-          }),
-          SizedBox(height: AppSpacing.md),
-        ],
+            // Submit button
+            Obx(() {
+              final isValid = controller.isCompleteProfileFormValid;
+              return isValid
+                  ? GradientButton.filled(
+                      text: context.l10n.inspSaveAndContinue,
+                      onPressed: controller.isLoading.value
+                          ? null
+                          : () => controller.completeProfile(context),
+                      isLoading: controller.isLoading.value,
+                      width: double.infinity,
+                    )
+                  : GradientButton.outlined(
+                      text: context.l10n.inspSaveAndContinue,
+                      onPressed: null,
+                      width: double.infinity,
+                    );
+            }),
+            SizedBox(height: AppSpacing.md),
+          ],
+        ),
+        bottomWidget: const SizedBox.shrink(),
       ),
-      bottomWidget: const SizedBox.shrink(),
     );
   }
 }

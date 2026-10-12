@@ -107,6 +107,7 @@ class AuthRepository {
       _secureStorage.delete(StorageKeys.userId),
       _secureStorage.delete(StorageKeys.userType),
       _secureStorage.delete(StorageKeys.profileCompleted),
+      _secureStorage.delete(StorageKeys.profileRequiredAfterPayment),
     ]);
   }
 }

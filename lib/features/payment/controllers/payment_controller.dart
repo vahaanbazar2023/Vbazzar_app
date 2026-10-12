@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:payu_checkoutpro_flutter/payu_checkoutpro_flutter.dart';
 import 'package:payu_checkoutpro_flutter/PayUConstantKeys.dart';
+import '../../auth/services/profile_gate.dart';
 import '../config/payu_config.dart';
 import '../models/payment_models.dart';
 import '../services/hash_service.dart';
@@ -272,6 +273,7 @@ class PaymentController extends GetxController
 
     _service.reportPaymentSuccess(callback);
     onSuccess?.call(paymentData.value!, callback);
+    ProfileGate.onPaymentSuccess();
 
     if (_paymentCompleter != null && !_paymentCompleter!.isCompleted) {
       _paymentCompleter!.complete(true);
