@@ -170,26 +170,6 @@ class _BuyVehicleDetailsViewState extends State<BuyVehicleDetailsView> {
       subtitle: vehicle.sbVehicleId.isNotEmpty ? vehicle.sbVehicleId : '',
       showBack: true,
       bodyColor: AppColors.cardBackground,
-      actions: [
-        IconButton(
-          icon: Icon(Icons.share_rounded, size: 22.r, color: AppColors.black),
-          tooltip: context.l10n.spareShareVehicle,
-          onPressed: () async {
-            if (Get.isRegistered<ShareService>()) {
-              await ShareService.to.shareVehicle(
-                sbVehicleId: vehicle.sbVehicleId,
-                brandName: vehicle.brandName,
-                modelName: vehicle.model,
-                year: vehicle.year,
-                categoryName: vehicle.categoryName,
-                imageUrl: vehicle.allImageUrls.isNotEmpty
-                    ? vehicle.allImageUrls.first
-                    : null,
-              );
-            }
-          },
-        ),
-      ],
       body: Column(
         children: [
           Expanded(
@@ -210,7 +190,7 @@ class _BuyVehicleDetailsViewState extends State<BuyVehicleDetailsView> {
                       children: [
                         NetworkImageCarousel(
                           imageUrls: vehicle.allImageUrls,
-                          height: 220.h,
+                          height: 180.h,
                         ),
                         // Category badge top-left
                         Positioned(
@@ -237,154 +217,105 @@ class _BuyVehicleDetailsViewState extends State<BuyVehicleDetailsView> {
                             ),
                           ),
                         ),
-                        // Status badge top-right
-                        if (vehicle.status != null)
-                          Positioned(
-                            top: 10,
-                            right: 10,
-                            child: _StatusBadge(status: vehicle.status!),
-                          ),
-                        // Wishlist button — below status badge
-                        if (!widget.ownerMode)
-                          Positioned(
-                            top: vehicle.status != null ? 48 : 10,
-                            right: 10,
-                            child: Obx(
-                              () => WishlistButton(
-                                isWishlisted: ctrl.isWishlisted(
-                                  vehicle.sbVehicleId,
+                        // Status / wishlist / share — stacked top-right
+                        Positioned(
+                          top: 10,
+                          right: 10,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              if (vehicle.status != null)
+                                _StatusBadge(status: vehicle.status!),
+                              if (!widget.ownerMode) ...[
+                                SizedBox(height: 8.h),
+                                Obx(
+                                  () => WishlistButton(
+                                    isWishlisted: ctrl.isWishlisted(
+                                      vehicle.sbVehicleId,
+                                    ),
+                                    onTap: () => ctrl.toggleWishlist(vehicle),
+                                  ),
                                 ),
-                                onTap: () => ctrl.toggleWishlist(vehicle),
+                              ],
+                              SizedBox(height: 8.h),
+                              _ShareButton(
+                                onTap: () async {
+                                  if (Get.isRegistered<ShareService>()) {
+                                    await ShareService.to.shareVehicle(
+                                      sbVehicleId: vehicle.sbVehicleId,
+                                      brandName: vehicle.brandName,
+                                      modelName: vehicle.model,
+                                      year: vehicle.year,
+                                      categoryName: vehicle.categoryName,
+                                      imageUrl: vehicle.allImageUrls.isNotEmpty
+                                          ? vehicle.allImageUrls.first
+                                          : null,
+                                    );
+                                  }
+                                },
                               ),
-                            ),
-                          ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(height: AppSpacing.sm),
-
-                  // ── Vehicle title + location ─────────────────────────────
-
-                  // Red underline accent
-
-                  // // Location row
-                  // if ((vehicle.city ?? '').isNotEmpty ||
-                  //     (vehicle.state ?? '').isNotEmpty)
-                  //   Center(
-                  //     child: Padding(
-                  //       padding: EdgeInsets.only(bottom: AppSpacing.sm),
-                  //       child: Row(
-                  //         mainAxisSize: MainAxisSize.min,
-                  //         children: [
-                  //           Icon(
-                  //             Icons.location_on_rounded,
-                  //             size: 14.sp,
-                  //             color: AppColors.primary,
-                  //           ),
-                  //           SizedBox(width: 4.w),
-                  //           Text(
-                  //             [vehicle.city, vehicle.state]
-                  //                 .where((s) => s != null && s.isNotEmpty)
-                  //                 .join(', '),
-                  //             style: TextStyle(
-                  //               fontFamily: 'Plus Jakarta Sans',
-                  //               fontSize: 13.sp,
-                  //               color: AppColors.grey600,
-                  //             ),
-                  //           ),
-                  //         ],
-                  //       ),
-                  //     ),
-                  //   ),
-
-                  // ── 2×2 Info boxes ───────────────────────────────────────
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: _InfoBox(
-                            icon: Icons.fingerprint_rounded,
-                            label: context.l10n.vehicle_id,
-                            value: vehicle.sbVehicleId,
+                            ],
                           ),
                         ),
-                        SizedBox(width: 8.w),
                       ],
                     ),
                   ),
-                  // ── Registration & Chassis — shown when details unlocked ──
-                  if (vehicle.hasVehicleDetailsAccess || widget.ownerMode) ...[
-                    SizedBox(height: 8.h),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: _InfoBox(
-                              icon: Icons.badge_outlined,
-                              label: context.l10n.regNumber,
-                              value:
-                                  vehicle.registrationNumber?.isNotEmpty == true
-                                  ? vehicle.registrationNumber!
-                                  : context.l10n.na,
-                            ),
-                          ),
-                          SizedBox(width: 8.w),
-                          Expanded(
-                            child: _InfoBox(
-                              icon: Icons.settings_outlined,
-                              label: context.l10n.chassis_no,
-                              value: vehicle.chassisNumber?.isNotEmpty == true
-                                  ? vehicle.chassisNumber!
-                                  : context.l10n.na,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
                   SizedBox(height: 8.h),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: _InfoBox(
-                            icon: Icons.location_city_outlined,
-                            label: context.l10n.location,
-                            value:
-                                [vehicle.city, vehicle.state]
-                                    .where((s) => s != null && s.isNotEmpty)
-                                    .join(', ')
-                                    .isEmpty
-                                ? context.l10n.na
-                                : [vehicle.city, vehicle.state]
-                                      .where((s) => s != null && s.isNotEmpty)
-                                      .join(', '),
-                          ),
-                        ),
 
-                        SizedBox(width: 8.w),
-                        Expanded(
-                          child: _InfoBox(
-                            icon: Icons.calendar_month_rounded,
-                            label: context.l10n.modelYear,
-                            value: vehicle.year ?? context.l10n.na,
-                          ),
+                  // ── Price + model year ───────────────────────────────────
+                  _PriceHeader(vehicle: vehicle),
+                  SizedBox(height: 6.h),
+
+                  // ── Compact info tiles (2 per row) ───────────────────────
+                  _InfoGrid(
+                    tiles: [
+                      _InfoTileData(
+                        Icons.fingerprint_rounded,
+                        context.l10n.vehicle_id,
+                        vehicle.sbVehicleId,
+                      ),
+                      _InfoTileData(
+                        Icons.calendar_month_rounded,
+                        context.l10n.modelYear,
+                        vehicle.year ?? context.l10n.na,
+                      ),
+                      if (vehicle.hasVehicleDetailsAccess ||
+                          widget.ownerMode) ...[
+                        _InfoTileData(
+                          Icons.badge_outlined,
+                          context.l10n.regNumber,
+                          vehicle.registrationNumber?.isNotEmpty == true
+                              ? vehicle.registrationNumber!
+                              : context.l10n.na,
+                        ),
+                        _InfoTileData(
+                          Icons.settings_outlined,
+                          context.l10n.chassis_no,
+                          vehicle.chassisNumber?.isNotEmpty == true
+                              ? vehicle.chassisNumber!
+                              : context.l10n.na,
                         ),
                       ],
-                    ),
+                      _InfoTileData(
+                        Icons.location_on_outlined,
+                        context.l10n.location,
+                        [vehicle.city, vehicle.state]
+                                .where((e) => e != null && e.isNotEmpty)
+                                .join(', ')
+                                .isEmpty
+                            ? context.l10n.na
+                            : [vehicle.city, vehicle.state]
+                                  .where((e) => e != null && e.isNotEmpty)
+                                  .join(', '),
+                        fullWidth: true,
+                      ),
+                    ],
                   ),
-                  SizedBox(height: AppSpacing.md),
-
-                  // // ── Key specs card ───────────────────────────────────────
-                  // _KeySpecsCard(vehicle: vehicle),
-                  SizedBox(height: AppSpacing.md),
+                  SizedBox(height: 10.h),
 
                   // ── Vehicle details accordion ────────────────────────────
                   _VehicleDetailsAccordion(vehicle: vehicle),
-                  SizedBox(height: AppSpacing.md),
+                  SizedBox(height: 8.h),
 
                   // Buyer actions — hidden for the owner
                   if (!widget.ownerMode) ...[
@@ -393,7 +324,7 @@ class _BuyVehicleDetailsViewState extends State<BuyVehicleDetailsView> {
                       icon: Icons.bolt_rounded,
                       title: context.l10n.actions,
                     ),
-                    SizedBox(height: 12.h),
+                    SizedBox(height: 8.h),
 
                     // ── Action card 1: Show Interest ──────────────────────────
                     _ActionCard(
@@ -411,11 +342,11 @@ class _BuyVehicleDetailsViewState extends State<BuyVehicleDetailsView> {
                         c.submitInterest(vehicle);
                       },
                     ),
-                    SizedBox(height: 10.h),
+                    SizedBox(height: 8.h),
 
                     // ── Action card 2: Become a Member / Connect with Owner ──
                     _ConnectWithOwnerCard(vehicle: vehicle),
-                    SizedBox(height: 10.h),
+                    SizedBox(height: 8.h),
 
                     // ── Action card 3: Make Offer (expands inline) ──────────
                     _OfferCard(
@@ -476,7 +407,7 @@ class _BuyVehicleDetailsViewState extends State<BuyVehicleDetailsView> {
                         }
                       },
                     ),
-                    SizedBox(height: 50.h),
+                    SizedBox(height: 16.h),
 
                     // ── Inspection button ────────────────────────────────────
                     vehicle.isInspectionRequested
@@ -559,6 +490,165 @@ class _BuyVehicleDetailsViewState extends State<BuyVehicleDetailsView> {
 // ─────────────────────────────────────────────────────────────────────────────
 // Status badge overlay on image
 // ─────────────────────────────────────────────────────────────────────────────
+
+class _ShareButton extends StatelessWidget {
+  final VoidCallback onTap;
+  const _ShareButton({required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return Semantics(
+      button: true,
+      label: context.l10n.spareShareVehicle,
+      child: GestureDetector(
+        onTap: onTap,
+        child: Container(
+          width: 32.w,
+          height: 32.w,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            shape: BoxShape.circle,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.10),
+                blurRadius: 6,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: Icon(
+            Icons.share_rounded,
+            size: 16.r,
+            color: AppColors.primary,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Plain price line.
+class _PriceHeader extends StatelessWidget {
+  final BuyVehicleEntity vehicle;
+  const _PriceHeader({required this.vehicle});
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      vehicle.formattedPrice,
+      maxLines: 1,
+      overflow: TextOverflow.ellipsis,
+      style: TextStyle(
+        fontFamily: 'Montserrat',
+        fontSize: 20.sp,
+        fontWeight: FontWeight.w800,
+        color: AppColors.primary,
+      ),
+    );
+  }
+}
+
+class _InfoTileData {
+  final IconData icon;
+  final String label;
+  final String value;
+  final bool fullWidth;
+  const _InfoTileData(
+    this.icon,
+    this.label,
+    this.value, {
+    this.fullWidth = false,
+  });
+}
+
+/// Two-per-row grid of compact horizontal tiles (icon | label + value).
+class _InfoGrid extends StatelessWidget {
+  final List<_InfoTileData> tiles;
+  const _InfoGrid({required this.tiles});
+
+  @override
+  Widget build(BuildContext context) {
+    final rows = <Widget>[];
+    var i = 0;
+    while (i < tiles.length) {
+      if (rows.isNotEmpty) rows.add(SizedBox(height: 6.h));
+      final t = tiles[i];
+      final next = i + 1 < tiles.length ? tiles[i + 1] : null;
+      if (t.fullWidth || next == null || next.fullWidth) {
+        rows.add(_InfoTile(data: t));
+        i += 1;
+      } else {
+        rows.add(
+          IntrinsicHeight(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Expanded(child: _InfoTile(data: t)),
+                SizedBox(width: 6.w),
+                Expanded(child: _InfoTile(data: next)),
+              ],
+            ),
+          ),
+        );
+        i += 2;
+      }
+    }
+    return Column(children: rows);
+  }
+}
+
+class _InfoTile extends StatelessWidget {
+  final _InfoTileData data;
+  const _InfoTile({required this.data});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 6.h),
+      decoration: BoxDecoration(
+        color: AppColors.grey50,
+        borderRadius: BorderRadius.circular(10.r),
+        border: Border.all(color: AppColors.grey200),
+      ),
+      child: Row(
+        children: [
+          Icon(data.icon, size: 18.r, color: AppColors.grey600),
+          SizedBox(width: 8.w),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  data.label,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontFamily: 'Plus Jakarta Sans',
+                    fontSize: 10.sp,
+                    color: AppColors.grey500,
+                  ),
+                ),
+                SizedBox(height: 1.h),
+                Text(
+                  data.value,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontFamily: 'Montserrat',
+                    fontSize: 12.sp,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.black,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
 
 class _StatusBadge extends StatelessWidget {
   final String status;
@@ -843,7 +933,7 @@ class _VehicleDetailsAccordion extends StatefulWidget {
 }
 
 class _VehicleDetailsAccordionState extends State<_VehicleDetailsAccordion> {
-  bool _expanded = true; // open by default so user sees the details
+  bool _expanded = false; // collapsed by default to keep the screen short
 
   @override
   Widget build(BuildContext context) {
@@ -972,7 +1062,6 @@ class _VehicleDetailsAccordionState extends State<_VehicleDetailsAccordion> {
           l10n.apprGstApplicable,
           yn(v.gstApplicability!),
         ),
-     
     ];
 
     return Column(
@@ -1140,7 +1229,7 @@ class _ActionCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      constraints: BoxConstraints(minHeight: 84.h),
+      constraints: BoxConstraints(minHeight: 68.h),
       decoration: BoxDecoration(
         gradient: gradient,
         borderRadius: BorderRadius.circular(16.r),
@@ -1158,13 +1247,13 @@ class _ActionCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(16.r),
           onTap: onTap,
           child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 18.w, vertical: 8.h),
+            padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 6.h),
             child: Row(
               children: [
                 // Icon
                 Container(
-                  width: 42.w,
-                  height: 42.w,
+                  width: 36.w,
+                  height: 36.w,
                   decoration: BoxDecoration(
                     color: Colors.white.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(12.r),
