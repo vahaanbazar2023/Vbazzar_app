@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 
 import '../../../core/constants/app_assets.dart' show AppAssets;
 import '../../../core/constants/app_colors.dart';
+import '../../../core/design_system/molecules/gradient_button.dart';
 import '../../../core/design_system/templates/app_layout.dart';
 import '../../../core/design_system/tokens/app_spacing.dart';
 import '../../../routes/app_routes.dart';
@@ -78,35 +79,16 @@ class ServiceSupportView extends StatelessWidget {
             SizedBox(height: AppSpacing.xxl),
 
             // ── CTA Button ───────────────────────────────────────
-            ConstrainedBox(
-              constraints: BoxConstraints(minWidth: 240.w, minHeight: 52.h),
-              child: ElevatedButton.icon(
+            Center(
+              child: GradientButton.filled(
+                text: context.l10n.inspContactMechanic,
                 onPressed: () {
                   // Delete existing controller for fresh state
                   Get.delete<ServiceSupportController>();
                   Get.toNamed(AppRoutes.serviceSupportListView);
                 },
-                icon: Icon(
-                  Icons.phone_outlined,
-                  color: AppColors.white,
-                  size: 20.w,
-                ),
-                label: Text(
-                  context.l10n.inspContactMechanic,
-                  style: AppFonts.labelLarge.copyWith(
-                    color: AppColors.white,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primary,
-                  foregroundColor: AppColors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(90),
-                  ),
-                  elevation: 2,
-                  shadowColor: AppColors.primary.withValues(alpha: 0.4),
-                ),
+                width: 140.w,
+                height: 36.h,
               ),
             ),
 

@@ -451,7 +451,6 @@ class ServiceProviderListView extends GetView<ServiceSupportController> {
       onPressed: () => _makeDirectCall(mechanic),
       width: double.infinity,
       height: 48.h,
-      fontSize: 15.sp,
     );
   }
 
@@ -461,7 +460,6 @@ class ServiceProviderListView extends GetView<ServiceSupportController> {
       onPressed: () => controller.contactMechanic(mechanic),
       width: double.infinity,
       height: 48.h,
-      fontSize: 15.sp,
       backgroundColor: AppColors.warning,
     );
   }
@@ -639,8 +637,8 @@ class ServiceProviderListView extends GetView<ServiceSupportController> {
             GradientButton.filled(
               text: appL10n.tryAgain,
               onPressed: () => controller.refreshMechanics(),
-              height: 48.h,
-              fontSize: 16.sp,
+              width: 140.w,
+              height: 36.h,
             ),
           ],
         ),

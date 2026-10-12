@@ -446,8 +446,8 @@ class FinanceFormView extends StatelessWidget {
                   onPressed: controller.isSubmitting.value
                       ? null
                       : () => controller.submitFinanceRequest(),
-                  width: double.infinity,
-                  height: 48.h,
+                  width: 140.w,
+                  height: 36.h,
                 ),
               ),
             ),

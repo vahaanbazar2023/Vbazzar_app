@@ -484,7 +484,7 @@ class _DynamicFormBody extends StatelessWidget {
           ],
 
           SizedBox(height: 28.h),
-          _SubmitButton(ctrl: ctrl),
+          Center(child: _SubmitButton(ctrl: ctrl)),
         ],
       );
     });
@@ -1690,8 +1690,8 @@ class _SubmitButton extends StatelessWidget {
         text: ctrl.isEditMode.value
             ? context.l10n.spareUpdateVehicle
             : context.l10n.submit,
-        width: double.infinity,
-        height: 52.h,
+        width: 140.w,
+        height: 36.h,
         fontSize: 15.sp,
         fontWeight: FontWeight.w600,
         isLoading: ctrl.isSubmittingForm.value,

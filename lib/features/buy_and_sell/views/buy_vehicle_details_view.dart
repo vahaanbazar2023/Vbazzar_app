@@ -518,14 +518,17 @@ class _BuyVehicleDetailsViewState extends State<BuyVehicleDetailsView> {
                               ],
                             ),
                           )
-                        : GradientButton.filled(
-                            text: context.l10n.requestVehicleInspection,
-                            width: double.infinity,
-                            onPressed: () {
-                              Get.find<BuyVehicleController>()
-                                  .requestInspection(vehicle);
-                            },
-                          ),
+                        : Center(
+                          child: GradientButton.filled(
+                              text: context.l10n.apprInspection,
+                               width: 140.w,
+                                  height: 36.h,
+                              onPressed: () {
+                                Get.find<BuyVehicleController>()
+                                    .requestInspection(vehicle);
+                              },
+                            ),
+                        ),
                   ],
                   SizedBox(height: 24.h),
                 ],

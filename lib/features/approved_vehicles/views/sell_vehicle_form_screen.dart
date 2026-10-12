@@ -310,14 +310,14 @@ class _SellVehicleFormScreenState extends State<SellVehicleFormScreen> {
 
             SizedBox(height: 28.h),
             Obx(
-              () => GradientButton.filled(
-                text: context.l10n.apprSubmitVehicle,
-                width: double.infinity,
-                height: 52.h,
-                fontSize: 15.sp,
-                fontWeight: FontWeight.w600,
-                isLoading: _ctrl.isSubmittingSellForm.value,
-                onPressed: _ctrl.isSubmittingSellForm.value ? null : _submit,
+              () => Center(
+                child: GradientButton.filled(
+                  text: context.l10n.apprSubmitVehicle,
+                  width: 140.w,
+                  height: 36.h,
+                  isLoading: _ctrl.isSubmittingSellForm.value,
+                  onPressed: _ctrl.isSubmittingSellForm.value ? null : _submit,
+                ),
               ),
             ),
           ],

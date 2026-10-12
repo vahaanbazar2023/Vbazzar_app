@@ -258,8 +258,8 @@ class InsuranceFormView extends StatelessWidget {
                   onPressed: controller.isSubmitting.value
                       ? null
                       : () => controller.submitInsuranceRequest(),
-                  width: double.infinity,
-                  height: 48.h,
+                  width: 140.w,
+                  height: 36.h,
                 ),
               ),
             ),

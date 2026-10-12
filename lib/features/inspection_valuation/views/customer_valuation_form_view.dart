@@ -377,15 +377,16 @@ class CustomerValuationFormView extends GetView<InspectionValuationController> {
 
   Widget _buildSubmitButton() {
     return Obx(
-      () => GradientButton.filled(
-        text: appL10n.inspSubmitInspectionRequest,
-        onPressed: controller.isSubmitting.value
-            ? null
-            : () => controller.submitCustomerForm(),
-        width: double.infinity,
-        height: 48.h,
-        fontSize: 15.sp,
-        isLoading: controller.isSubmitting.value,
+      () => Center(
+        child: GradientButton.filled(
+          text: appL10n.submit,
+          onPressed: controller.isSubmitting.value
+              ? null
+              : () => controller.submitCustomerForm(),
+          width: 140.w,
+          height: 36.h,
+          isLoading: controller.isSubmitting.value,
+        ),
       ),
     );
   }
