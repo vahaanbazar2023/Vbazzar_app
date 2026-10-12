@@ -49,6 +49,13 @@ class BuyVehicleEntity {
   /// "yes" = already requested, "no" = not yet.
   final String inspectionRequested;
 
+  /// Odometer reading and document flags. Null when the API didn't send them.
+  final String? odometer;
+  final bool? fitness;
+  final bool? insurance;
+  final bool? originalInvoice;
+  final bool? gstApplicability;
+
   const BuyVehicleEntity({
     required this.id,
     required this.categoryCode,
@@ -77,6 +84,11 @@ class BuyVehicleEntity {
     this.categoryPlan,
     this.subscriptionAmount,
     this.inspectionRequested = 'no',
+    this.odometer,
+    this.fitness,
+    this.insurance,
+    this.originalInvoice,
+    this.gstApplicability,
   });
 
   /// True if inspection has already been requested for this vehicle.
@@ -158,6 +170,20 @@ class BuyVehicleEntity {
       imageUrls: imageUrls,
       vehicleFileUrls: imageUrls,
       inspectionRequested: 'no',
+      odometer: j['odometer']?.toString(),
+      fitness: parseFlag(j['fitness']),
+      insurance: parseFlag(j['insurance']),
+      originalInvoice: parseFlag(j['original_invoice']),
+      gstApplicability: parseFlag(j['gst_applicability']),
     );
+  }
+
+  /// Lenient bool parser for API flags (true/'true'/'yes'/1). Null if absent.
+  static bool? parseFlag(dynamic v) {
+    if (v == null) return null;
+    if (v is bool) return v;
+    final s = v.toString().toLowerCase();
+    if (s.isEmpty) return null;
+    return s == 'true' || s == 'yes' || s == '1';
   }
 }

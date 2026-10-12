@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+
 import '../../domain/entities/buy_vehicle_entity.dart';
 
 class BuyVehicleModel extends BuyVehicleEntity {
@@ -29,6 +31,11 @@ class BuyVehicleModel extends BuyVehicleEntity {
     super.categoryPlan,
     super.subscriptionAmount,
     super.inspectionRequested,
+    super.odometer,
+    super.fitness,
+    super.insurance,
+    super.originalInvoice,
+    super.gstApplicability,
   });
 
   factory BuyVehicleModel.fromJson(Map<String, dynamic> json) {
@@ -54,6 +61,12 @@ class BuyVehicleModel extends BuyVehicleEntity {
         }
       }
     }
+
+    debugPrint(
+      '🚚 BuyVehicleModel flags: odometer=${json['odometer']} fitness=${json['fitness']} '
+      'insurance=${json['insurance']} original_invoice=${json['original_invoice']} '
+      'gst_applicability=${json['gst_applicability']}',
+    );
 
     return BuyVehicleModel(
       id: json['sb_vehicle_id']?.toString() ?? json['id']?.toString() ?? '',
@@ -93,6 +106,11 @@ class BuyVehicleModel extends BuyVehicleEntity {
           ? (json['subscription_amount'] as num).toDouble()
           : double.tryParse(json['subscription_amount']?.toString() ?? ''),
       inspectionRequested: json['inspection_requested']?.toString() ?? 'no',
+      odometer: json['odometer']?.toString(),
+      fitness: BuyVehicleEntity.parseFlag(json['fitness']),
+      insurance: BuyVehicleEntity.parseFlag(json['insurance']),
+      originalInvoice: BuyVehicleEntity.parseFlag(json['original_invoice']),
+      gstApplicability: BuyVehicleEntity.parseFlag(json['gst_applicability']),
     );
   }
 }

@@ -382,11 +382,9 @@ class _BuyVehicleDetailsViewState extends State<BuyVehicleDetailsView> {
                   // _KeySpecsCard(vehicle: vehicle),
                   SizedBox(height: AppSpacing.md),
 
-                  // ── Vehicle details accordion (owner view) ───────────────
-                  if (widget.ownerMode) ...[
-                    _VehicleDetailsAccordion(vehicle: vehicle),
-                    SizedBox(height: AppSpacing.md),
-                  ],
+                  // ── Vehicle details accordion ────────────────────────────
+                  _VehicleDetailsAccordion(vehicle: vehicle),
+                  SizedBox(height: AppSpacing.md),
 
                   // Buyer actions — hidden for the owner
                   if (!widget.ownerMode) ...[
@@ -519,16 +517,16 @@ class _BuyVehicleDetailsViewState extends State<BuyVehicleDetailsView> {
                             ),
                           )
                         : Center(
-                          child: GradientButton.filled(
+                            child: GradientButton.filled(
                               text: context.l10n.apprInspection,
-                               width: 140.w,
-                                  height: 36.h,
+                              width: 140.w,
+                              height: 36.h,
                               onPressed: () {
                                 Get.find<BuyVehicleController>()
                                     .requestInspection(vehicle);
                               },
                             ),
-                        ),
+                          ),
                   ],
                   SizedBox(height: 24.h),
                 ],
@@ -872,7 +870,7 @@ class _VehicleDetailsAccordionState extends State<_VehicleDetailsAccordion> {
             child: Container(
               padding: EdgeInsets.symmetric(
                 horizontal: AppSpacing.md,
-                vertical: 14.h,
+                vertical: 10.h,
               ),
               color: _expanded
                   ? AppColors.lightOrange.withValues(alpha: 0.18)
@@ -925,73 +923,57 @@ class _VehicleDetailsAccordionState extends State<_VehicleDetailsAccordion> {
   }
 
   Widget _buildDetails(BuyVehicleEntity v) {
-    final rows = <_DetailRowData>[];
-    if (v.brandName != null)
+    final l10n = context.l10n;
+    String yn(bool b) => b ? l10n.yes : l10n.no;
+    final rows = <_DetailRowData>[
       if (v.model != null)
-        rows.add(
-          _DetailRowData(
-            Icons.directions_car_outlined,
-            context.l10n.model,
-            v.model!,
-          ),
-        );
-
-    if (v.fuelType != null)
-      rows.add(
+        _DetailRowData(Icons.directions_car_outlined, l10n.model, v.model!),
+      if (v.fuelType != null)
         _DetailRowData(
           Icons.local_gas_station_outlined,
-          context.l10n.fuelType,
+          l10n.fuelType,
           v.fuelType!,
         ),
-      );
-    if (v.bodyType != null)
-      rows.add(
-        _DetailRowData(
-          Icons.view_in_ar_outlined,
-          context.l10n.bodyType,
-          v.bodyType!,
-        ),
-      );
-    if (v.tonnage != null)
-      rows.add(
-        _DetailRowData(
-          Icons.fitness_center_outlined,
-          context.l10n.tonnage,
-          v.tonnage!,
-        ),
-      );
-    if (v.noOfTyres != null)
-      rows.add(
+      if (v.bodyType != null)
+        _DetailRowData(Icons.view_in_ar_outlined, l10n.bodyType, v.bodyType!),
+      if (v.tonnage != null)
+        _DetailRowData(Icons.fitness_center_outlined, l10n.tonnage, v.tonnage!),
+      if (v.noOfTyres != null)
         _DetailRowData(
           Icons.radio_button_unchecked_rounded,
-          context.l10n.noOfTyres,
+          l10n.noOfTyres,
           v.noOfTyres!,
         ),
-      );
-    if (v.kv != null)
-      rows.add(
+      if (v.kv != null)
         _DetailRowData(
           Icons.electrical_services_outlined,
-          context.l10n.kvRating,
+          l10n.kvRating,
           v.kv!,
         ),
-      );
-    if (v.city != null)
-      rows.add(
+      if (v.odometer != null && v.odometer!.isNotEmpty)
+        _DetailRowData(Icons.speed_outlined, l10n.odometer, v.odometer!),
+      if (v.fitness != null)
         _DetailRowData(
-          Icons.location_city_outlined,
-          context.l10n.city,
-          v.city!,
+          Icons.verified_outlined,
+          l10n.apprFitnessCertificate,
+          yn(v.fitness!),
         ),
-      );
-    if (v.state != null)
-      rows.add(
-        _DetailRowData(Icons.map_outlined, context.l10n.state, v.state!),
-      );
-    if (v.status != null)
-      rows.add(
-        _DetailRowData(Icons.info_outline, context.l10n.status, v.status!),
-      );
+      if (v.insurance != null)
+        _DetailRowData(Icons.shield_outlined, l10n.insurance, yn(v.insurance!)),
+      if (v.originalInvoice != null)
+        _DetailRowData(
+          Icons.receipt_long_outlined,
+          l10n.apprOriginalInvoice,
+          yn(v.originalInvoice!),
+        ),
+      if (v.gstApplicability != null)
+        _DetailRowData(
+          Icons.percent_rounded,
+          l10n.apprGstApplicable,
+          yn(v.gstApplicability!),
+        ),
+     
+    ];
 
     return Column(
       children: [
@@ -1039,11 +1021,11 @@ class _DetailRow extends StatelessWidget {
         Padding(
           padding: EdgeInsets.symmetric(
             horizontal: AppSpacing.md,
-            vertical: 11.h,
+            vertical: 7.h,
           ),
           child: Row(
             children: [
-              Icon(icon, size: 16.r, color: AppColors.grey500),
+              Icon(icon, size: 15.r, color: AppColors.grey500),
               SizedBox(width: 8.w),
               Expanded(
                 flex: 2,
