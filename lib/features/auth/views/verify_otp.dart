@@ -254,7 +254,25 @@ class VerifyOTP extends GetView<AuthController> {
                             },
                           ),
 
-                          SizedBox(height: 16.h),
+                          SizedBox(height: 20.h),
+
+                          // Referral code carried over from login (read-only)
+                          if (controller.referralController.text
+                              .trim()
+                              .isNotEmpty) ...[
+                            Center(
+                              child: SizedBox(
+                                width: 180.w,
+                                child: CustomInputField(
+                                  controller: controller.referralController,
+                                  prefixIcon: Icons.card_giftcard_outlined,
+                                  readOnly: true,
+                                  maxLength: 9,
+                                ),
+                              ),
+                            ),
+                            SizedBox(height: 16.h),
+                          ],
 
                           // Timer / Resend
                           Obx(() {
@@ -363,18 +381,15 @@ class VerifyOTP extends GetView<AuthController> {
                             thickness: 1,
                           ),
                         ),
-                        Flexible(
-                          flex: 3,
-                          child: Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 12.w),
-                            child: Text(
-                              context.l10n.inspNeedHelp,
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontFamily: 'Plus Jakarta Sans',
-                                fontSize: 12.sp,
-                                color: AppColors.grey500,
-                              ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 12.w),
+                          child: Text(
+                            context.l10n.inspNeedHelp,
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontFamily: 'Plus Jakarta Sans',
+                              fontSize: 12.sp,
+                              color: AppColors.grey500,
                             ),
                           ),
                         ),

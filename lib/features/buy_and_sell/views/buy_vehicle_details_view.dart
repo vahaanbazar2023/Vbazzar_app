@@ -13,6 +13,8 @@ import '../../../core/extensions/context_extensions.dart';
 import '../../../core/services/share_service.dart';
 import '../../../routes/app_routes.dart';
 import '../../subscription/models/user_subscription.dart';
+import '../../revvot/revvot_buying_power_button.dart';
+import '../../revvot/revvot_service.dart';
 import '../controllers/vehicle_detail_controller.dart';
 import '../domain/entities/buy_vehicle_entity.dart';
 
@@ -535,7 +537,7 @@ class _PriceHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(
+    final price = Text(
       ownerMode ? vehicle.formattedPrice : vehicle.displayPrice,
       maxLines: 1,
       overflow: TextOverflow.ellipsis,
@@ -545,6 +547,14 @@ class _PriceHeader extends StatelessWidget {
         fontWeight: FontWeight.w800,
         color: AppColors.primary,
       ),
+    );
+    if (ownerMode || !RevvotService.sdkAvailable) return price;
+    return Row(
+      children: [
+        Expanded(child: price),
+        SizedBox(width: 8.w),
+        RevvotBuyingPowerButton(externalRef: vehicle.sbVehicleId),
+      ],
     );
   }
 }

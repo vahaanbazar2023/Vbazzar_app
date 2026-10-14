@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:intl_phone_field/countries.dart';
@@ -26,6 +27,7 @@ class _LoginWithOtpState extends State<LoginWithOtp> {
   @override
   void initState() {
     super.initState();
+    controller.prefillReferralFromDeepLink();
     _selectedCountry = countries.firstWhere(
       (c) => c.code == 'IN',
       orElse: () => countries.first,
@@ -432,6 +434,27 @@ class _LoginWithOtpState extends State<LoginWithOtp> {
                                     ),
                                   ],
                                 ),
+                                SizedBox(height: 12.h),
+
+                                // Referral code (optional, prefilled from deep link)
+                                Center(
+                                  child: SizedBox(
+                                    width: 180.w,
+                                    child: CustomInputField(
+                                      controller: controller.referralController,
+                                      placeholder: 'Referral code',
+                                      prefixIcon: Icons.card_giftcard_outlined,
+                                      textInputAction: TextInputAction.done,
+                                      maxLength: 9,
+                                      inputFormatters: [
+                                        UpperCaseTextFormatter(),
+                                        FilteringTextInputFormatter.allow(
+                                          RegExp(r'[A-Za-z0-9]'),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
                                 SizedBox(height: 20.h),
 
                                 // Send OTP button
@@ -513,18 +536,15 @@ class _LoginWithOtpState extends State<LoginWithOtp> {
                             thickness: 1,
                           ),
                         ),
-                        Flexible(
-                          flex: 3,
-                          child: Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 12.w),
-                            child: Text(
-                              context.l10n.inspNeedHelp,
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontFamily: 'Plus Jakarta Sans',
-                                fontSize: 12.sp,
-                                color: AppColors.grey500,
-                              ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 12.w),
+                          child: Text(
+                            context.l10n.inspNeedHelp,
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontFamily: 'Plus Jakarta Sans',
+                              fontSize: 12.sp,
+                              color: AppColors.grey500,
                             ),
                           ),
                         ),
@@ -630,4 +650,12 @@ class _LoginWithOtpState extends State<LoginWithOtp> {
       ),
     );
   }
+}
+
+class UpperCaseTextFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) => newValue.copyWith(text: newValue.text.toUpperCase());
 }

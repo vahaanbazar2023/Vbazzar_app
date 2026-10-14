@@ -749,9 +749,9 @@ class BuySellRepositoryImpl implements BuySellRepository {
         'owner_mobile': ownerMobile,
         'state_code': stateCode,
         'city_code': cityCode,
-        'fitness': fitness,
-        'original_invoice': originalInvoice,
-        'gst_applicability': gstApplicability,
+        'fitness': fitness ? 'Yes' : 'No',
+        'original_invoice': originalInvoice ? 'Yes' : 'No',
+        'gst_applicability': gstApplicability ? 'Yes' : 'No',
         'insurance': insurance == true,
       };
 

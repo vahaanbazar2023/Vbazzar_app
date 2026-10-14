@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import '../services/logger_service.dart';
 import '../storage/local_storage_service.dart';
 import '../../routes/app_routes.dart';
+import '../../features/auth/controllers/auth_controller.dart';
 
 /// DeepLinkService handles inbound universal links and App Links.
 ///
@@ -86,6 +87,15 @@ class DeepLinkService extends GetxService {
     return code;
   }
 
+  /// Reads the pending referral code without clearing it (used to prefill
+  /// the referral input on the verify-OTP screen).
+  String? peekPendingReferralCode() =>
+      LocalStorageService.to.read<String>(_kPendingRef);
+
+  /// Clears only the stored referral code once it has been used.
+  void clearPendingReferralCode() =>
+      LocalStorageService.to.remove(_kPendingRef);
+
   String? consumePendingContentType() =>
       LocalStorageService.to.read<String>(_kPendingContentType);
 
@@ -126,6 +136,10 @@ class DeepLinkService extends GetxService {
   void _persistPending({String? ref, String? contentType, String? contentId}) {
     if (ref != null && ref.isNotEmpty) {
       LocalStorageService.to.write(_kPendingRef, ref);
+      // If the login screen is already open, fill its referral field now.
+      if (Get.isRegistered<AuthController>()) {
+        Get.find<AuthController>().prefillReferralFromDeepLink();
+      }
     }
     if (contentType != null) {
       LocalStorageService.to.write(_kPendingContentType, contentType);

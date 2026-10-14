@@ -10,6 +10,10 @@ class ApiEndpoints {
   static const String logout = '/api/v1/auth/logout';
   static const String refreshToken = '/api/v1/auth/refresh-token';
 
+  // ─── Revvot (finance buying power) ───────────────────────────
+  static const String revvotSessions = '/api/v1/revvot/sessions';
+  static String revvotSession(String id) => '/api/v1/revvot/sessions/$id';
+
   // ─── User / Profile ──────────────────────────────────────────
   static const String profile = '/api/v1/dashboard/profile';
   static const String updateProfile = '/api/v1/dashboard/profile-update';

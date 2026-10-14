@@ -27,6 +27,7 @@ class AuthController extends GetxController {
   // ── Text controllers ──────────────────────────────────────────
   final phoneController = TextEditingController();
   final otpController = TextEditingController();
+  final referralController = TextEditingController();
 
   // Complete-profile form controllers
   final firstNameController = TextEditingController();
@@ -125,6 +126,7 @@ class AuthController extends GetxController {
 
     phoneController.dispose();
     otpController.dispose();
+    referralController.dispose();
     firstNameController.dispose();
     lastNameController.dispose();
     emailController.dispose();
@@ -320,6 +322,8 @@ class AuthController extends GetxController {
       );
 
       // Pick up any deep-link referral code saved before login
+      // The referral input (prefilled from the deep link, editable by the
+      // user) takes precedence over the stored code.
       String? pendingRef;
       String? pendingContentType;
       String? pendingContentId;
@@ -328,6 +332,9 @@ class AuthController extends GetxController {
         pendingContentType = DeepLinkService.to.consumePendingContentType();
         pendingContentId = DeepLinkService.to.consumePendingContentId();
       }
+
+      final typedRef = referralController.text.trim();
+      if (typedRef.isNotEmpty) pendingRef = typedRef;
 
       final OtpVerifyResponse response = await authRepository.verifyOtp(
         userId: uid,
@@ -539,8 +546,19 @@ class AuthController extends GetxController {
         clean.length <= 8;
   }
 
+  /// Prefills the referral input from a stored deep-link code, if the user
+  /// hasn't typed one already. Call when the login screen opens or a new
+  /// deep link arrives.
+  void prefillReferralFromDeepLink() {
+    if (referralController.text.trim().isNotEmpty) return;
+    if (!Get.isRegistered<DeepLinkService>()) return;
+    final code = DeepLinkService.to.peekPendingReferralCode();
+    if (code != null && code.isNotEmpty) referralController.text = code;
+  }
+
   void _clearTransactionData() {
     transactionId.value = null;
     otpController.clear();
+    referralController.clear();
   }
 }
