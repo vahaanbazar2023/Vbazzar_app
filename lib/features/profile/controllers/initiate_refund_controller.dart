@@ -1,3 +1,4 @@
+import '../../../core/utils/api_response.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../core/services/logger_service.dart';
@@ -92,7 +93,9 @@ class InitiateRefundController extends GetxController {
         refundType: refundTypeController.text.trim(),
       );
 
-      final success = response['success'] as bool? ?? false;
+      // The API answers {"status": "success", "code": 201, ...} (no
+      // `success` key), so a created refund was shown as an error before.
+      final success = isApiSuccess(response);
       final message =
           response['message'] as String? ?? appL10n.profRefundSubmitted;
 

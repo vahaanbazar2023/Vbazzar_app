@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:open_filex/open_filex.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../../core/network/network_service.dart';
@@ -19,16 +20,17 @@ class VehicleExcelDownloadService {
     required String userId,
   }) async {
     try {
-      // No storage permission needed: the file is saved in the app's own
-      // storage and then opened / shared (Android 11+ blocks direct writes to
-      // the public Downloads folder, and Android 13+ has no storage permission).
+      // The file is first written to the app's own storage (no permission
+      // needed); saveToDevice() then lets the user save it to Downloads or any
+      // folder through the system "Save as" dialog.
       // Get download directory
       final directory = await _getDownloadDirectory();
       final timestamp = DateTime.now().millisecondsSinceEpoch;
-      final fileName = 'vehicles_${auctionId}_$timestamp.xlsx';
-      final filePath = '${directory.path}/$fileName';
+      // Fallback name; replaced below by the server's own filename when sent.
+      var fileName = 'vehicles_${auctionId}_$timestamp.xlsx';
+      var filePath = '${directory.path}/$fileName';
 
-      debugPrint('📥 [Download] Starting download to: $filePath');
+      debugPrint('📥 [Download] Starting download for auction $auctionId');
 
       // API expects POST request with body data
       // Response is binary Excel file data, not JSON
@@ -42,6 +44,14 @@ class VehicleExcelDownloadService {
       );
 
       if (response.statusCode == 200 && response.data != null) {
+        // Prefer the server's name, e.g. vehicles_TVS_Telangana_4W_20261017_205034.xlsx
+        final serverName = filenameFromContentDisposition(
+          response.headers.value('content-disposition'),
+        );
+        if (serverName != null) {
+          fileName = serverName;
+          filePath = '${directory.path}/$fileName';
+        }
         final file = File(filePath);
 
         // Delete file if it already exists (shouldn't happen with timestamp, but just in case)
@@ -64,23 +74,6 @@ class VehicleExcelDownloadService {
 
         debugPrint('✅ [Download] File saved successfully: $filePath');
         debugPrint('📂 [Download] File size: ${await file.length()} bytes');
-
-        // Notify media scanner on Android so file appears in Downloads
-        if (Platform.isAndroid) {
-          try {
-            // This makes the file visible in the device's Downloads folder
-            await Process.run('am', [
-              'broadcast',
-              '-a',
-              'android.intent.action.MEDIA_SCANNER_SCAN_FILE',
-              '-d',
-              'file://$filePath',
-            ]);
-            debugPrint('📢 [Download] Media scanner notified');
-          } catch (e) {
-            debugPrint('⚠️ [Download] Could not notify media scanner: $e');
-          }
-        }
 
         return filePath;
       } else {
@@ -108,6 +101,29 @@ class VehicleExcelDownloadService {
     return dir;
   }
 
+  /// Saves the downloaded file where the user can find it, via the system
+  /// "Save as" dialog (works on every Android version without a storage
+  /// permission, and on iOS). Returns false if the user cancelled. If the
+  /// dialog can't be shown, falls back to the share sheet.
+  Future<bool> saveToDevice(String filePath) async {
+    try {
+      final bytes = await File(filePath).readAsBytes();
+      final saved = await FilePicker.platform.saveFile(
+        dialogTitle: 'Save vehicle list',
+        fileName: filePath.split(Platform.pathSeparator).last,
+        type: FileType.custom,
+        allowedExtensions: const ['xlsx'],
+        bytes: bytes,
+      );
+      debugPrint('💾 [Download] saveFile result: $saved');
+      return saved != null;
+    } catch (e) {
+      debugPrint('⚠️ [Download] Save dialog failed ($e); sharing instead');
+      await Share.shareXFiles([XFile(filePath)]);
+      return true;
+    }
+  }
+
   /// Open the downloaded file in a spreadsheet app; if none is installed,
   /// fall back to the share sheet so the user can save it anywhere.
   Future<void> openFile(String filePath) async {
@@ -117,4 +133,26 @@ class VehicleExcelDownloadService {
       await Share.shareXFiles([XFile(filePath)]);
     }
   }
+}
+
+/// Extracts a safe `.xlsx` filename from a Content-Disposition header, or null.
+/// Handles `filename="x.xlsx"`, `filename=x.xlsx` and `filename*=UTF-8''x.xlsx`.
+String? filenameFromContentDisposition(String? header) {
+  if (header == null || header.isEmpty) return null;
+  final star = RegExp(r"filename\*\s*=\s*[^']*'[^']*'([^;]+)", caseSensitive: false)
+      .firstMatch(header);
+  final plain = RegExp(r'filename\s*=\s*"?([^";]+)"?', caseSensitive: false)
+      .firstMatch(header);
+  final raw = (star?.group(1) ?? plain?.group(1))?.trim();
+  if (raw == null || raw.isEmpty) return null;
+  var name = raw;
+  try {
+    name = Uri.decodeComponent(raw);
+  } catch (_) {}
+  // Keep it a plain file name: no folders, no odd characters.
+  name = name.split('/').last.split('\\').last;
+  name = name.replaceAll(RegExp(r'[^A-Za-z0-9._-]'), '_');
+  if (name.isEmpty || name.startsWith('.')) return null;
+  if (!name.toLowerCase().endsWith('.xlsx')) name = '$name.xlsx';
+  return name;
 }

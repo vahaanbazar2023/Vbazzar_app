@@ -1,3 +1,5 @@
+import '../../../core/design_system/molecules/header_share_button.dart';
+import '../../../core/services/share_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -83,6 +85,19 @@ class _ApprVehicleDetail extends StatelessWidget {
       title: title,
       subtitle: listing.approvedVehicleId,
       showBack: true,
+      actions: [
+        HeaderShareButton(
+          onShare: () async {
+            if (!Get.isRegistered<ShareService>()) return;
+            await ShareService.to.shareApprovedVehicle(
+              approvedVehicleId: listing.approvedVehicleId,
+              name: title,
+              year: listing.yearOfManufacturing,
+              price: listing.price,
+            );
+          },
+        ),
+      ],
       bodyColor: AppColors.cardBackground,
       body: Column(
         children: [

@@ -101,11 +101,14 @@ class _AuctionActivityFabState extends State<AuctionActivityFab>
 
       Get.back(); // Close loading
 
-      CustomSnackbar.show(
-        message: appL10n.aucExcelDownloaded,
-        type: SnackbarType.success,
-      );
-      await service.openFile(path);
+      // Let the user pick where to keep it (Downloads by default).
+      final saved = await service.saveToDevice(path);
+      if (saved) {
+        CustomSnackbar.show(
+          message: appL10n.aucExcelDownloaded,
+          type: SnackbarType.success,
+        );
+      }
     } catch (e) {
       if (Get.isDialogOpen ?? false) Get.back();
       CustomSnackbar.show(

@@ -150,7 +150,9 @@ class _CustomSnackbarContentState extends State<_CustomSnackbarContent>
       child: Container(
         margin: EdgeInsets.only(top: 8.h, left: 16.w, right: 16.w),
         child: Container(
-          height: 40.h,
+          // Grows to fit up to two lines of text (it used to be a fixed 40px
+          // single line that cut longer messages off).
+          constraints: BoxConstraints(minHeight: 40.h),
           decoration: BoxDecoration(
             color: widget.backgroundColor,
             borderRadius: BorderRadius.circular(40.r),
@@ -163,8 +165,9 @@ class _CustomSnackbarContentState extends State<_CustomSnackbarContent>
               ),
             ],
           ),
-          padding: EdgeInsets.symmetric(horizontal: 16.w),
+          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 6.h),
           child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               // Icon based on type
               _buildIcon(),
@@ -181,7 +184,7 @@ class _CustomSnackbarContentState extends State<_CustomSnackbarContent>
                     fontWeight: FontWeight.w600,
                     height: 1.2,
                   ),
-                  maxLines: 1,
+                  maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
               ),

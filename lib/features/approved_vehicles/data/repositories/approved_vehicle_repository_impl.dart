@@ -129,7 +129,34 @@ class ApprovedVehicleRepositoryImpl implements ApprovedVehicleRepository {
     );
   }
 
+  @override
+  Future<ApprovedVehicleListingEntity?> getListingByVehicleId({
+    required String userId,
+    required String approvedVehicleId,
+  }) async {
+    final response = await _network.post<Map<String, dynamic>>(
+      _listingsPath,
+      data: {
+        'user_id': userId,
+        'approved_vehicle_id': approvedVehicleId,
+        'page': 1,
+        'limit': 1,
+      },
+    );
+    final raw =
+        (response.data?['data'] as Map<String, dynamic>?)?['listings']
+            as List<dynamic>? ??
+        const [];
+    for (final item in raw) {
+      final map = item as Map<String, dynamic>;
+      if (map['is_advertisement'] == true) continue;
+      return ApprovedVehicleListingModel.fromJson(map);
+    }
+    return null;
+  }
+
   // ── User Interest (Book / Inspection) ───────────────────────
+
 
   @override
   Future<UserInterestResult> updateUserInterest({

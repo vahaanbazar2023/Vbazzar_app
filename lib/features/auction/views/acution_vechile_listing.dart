@@ -1,3 +1,6 @@
+import '../../../core/design_system/molecules/custom_snackbar.dart';
+import '../../../core/design_system/molecules/share_circle_button.dart';
+import '../../../core/services/share_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -924,6 +927,22 @@ class _VehicleCardState extends State<_VehicleCard> {
               isWishlisted: v.isWishlisted,
               onTap: () => widget.controller.toggleWishlist(v),
               size: 32.r,
+            ),
+          ),
+          // Share button — directly below the heart
+          Positioned(
+            top: 8.h + 32.r + 8.h,
+            right: 8.w,
+            child: ShareCircleButton(
+              size: 32.r,
+              onShare: () async {
+                if (!Get.isRegistered<ShareService>()) return;
+                await ShareService.to.shareAuctionVehicle(
+                  vehicleId: v.vehicleId,
+                  name: '${v.make} ${v.model}'.trim(),
+                  auctionId: v.auctionId,
+                );
+              },
             ),
           ),
         ],

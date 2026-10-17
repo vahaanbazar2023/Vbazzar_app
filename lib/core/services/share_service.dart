@@ -81,6 +81,83 @@ class ShareService extends GetxService {
     );
   }
 
+  // ── Share approved vehicle / auction / auction vehicle ─────────
+
+  /// Public site path per content type (mirrors the backend link builder).
+  static const _sitePaths = <String, String>{
+    'approved_vehicle': 'approved-vehicle',
+    'live_auction': 'auction',
+    'upcoming_auction': 'auction',
+    'closed_auction': 'auction',
+    'auction_vehicle': 'auction-vehicle',
+  };
+  static const _siteBase = 'https://www.vahaanbazar.com';
+
+  /// Asks the backend for a link carrying the sharer's referral code. If the
+  /// API is unreachable, builds the same URL locally so sharing still works.
+  Future<String> _linkFor(String contentType, String contentId) async {
+    try {
+      final resp = await NetworkService.to.post(
+        ApiEndpoints.generateShareLink,
+        data: {'content_type': contentType, 'content_id': contentId},
+      );
+      final url = _extractUrl(resp.data);
+      if (url.isNotEmpty) return url;
+    } catch (e) {
+      LoggerService.to.error('[ShareService] generate-link($contentType) failed: $e');
+    }
+    final userId = await SecureStorageService.to.read(StorageKeys.userId) ?? '';
+    final path = _sitePaths[contentType] ?? 'vehicle';
+    return '$_siteBase/$path/$contentId${userId.isNotEmpty ? '?ref=$userId' : ''}';
+  }
+
+  Future<void> shareApprovedVehicle({
+    required String approvedVehicleId,
+    String? name,
+    int? year,
+    double? price,
+  }) async {
+    final url = await _linkFor('approved_vehicle', approvedVehicleId);
+    final title = (name ?? '').trim().isNotEmpty ? name!.trim() : 'Approved vehicle';
+    final lines = <String>[
+      '🚛 *$title*',
+      if (year != null && year > 0) '📅 Year: $year',
+      if (price != null && price > 0) '💰 Price: ₹${price.toStringAsFixed(price % 1 == 0 ? 0 : 2)}',
+      '',
+      'Check out this approved vehicle on Vahaan Bazar:\n$url',
+    ];
+    await Share.share(lines.join('\n'), subject: title);
+  }
+
+  /// [auctionType]: live_auction | upcoming_auction | closed_auction
+  Future<void> shareAuction({
+    required String auctionId,
+    String auctionType = 'live_auction',
+    String? title,
+  }) async {
+    final url = await _linkFor(auctionType, auctionId);
+    final name = (title ?? '').trim().isNotEmpty ? title!.trim() : 'Auction $auctionId';
+    await Share.share(
+      '🔨 *$name*\n\nJoin this auction on Vahaan Bazar:\n$url',
+      subject: name,
+    );
+  }
+
+  Future<void> shareAuctionVehicle({
+    required String vehicleId,
+    String? name,
+    String? auctionId,
+  }) async {
+    final url = await _linkFor('auction_vehicle', vehicleId);
+    final title = (name ?? '').trim().isNotEmpty ? name!.trim() : 'Auction vehicle';
+    await Share.share(
+      '🚛 *$title*'
+      '${(auctionId ?? '').isNotEmpty ? '\n🔨 Auction: $auctionId' : ''}'
+      '\n\nSee this vehicle on Vahaan Bazar:\n$url',
+      subject: title,
+    );
+  }
+
   // ── Share referral link ────────────────────────────────────────
 
   Future<void> shareReferral({String? referralCode}) async {

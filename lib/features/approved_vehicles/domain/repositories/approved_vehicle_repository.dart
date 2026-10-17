@@ -34,6 +34,13 @@ abstract class ApprovedVehicleRepository {
     int limit = 20,
   });
 
+  /// One listing by its approved vehicle id (AVEH...), or null if not found.
+  /// Used to open a shared link.
+  Future<ApprovedVehicleListingEntity?> getListingByVehicleId({
+    required String userId,
+    required String approvedVehicleId,
+  });
+
   // ── User Interest ───────────────────────────────────────────
 
   Future<UserInterestResult> updateUserInterest({

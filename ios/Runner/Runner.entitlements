@@ -5,6 +5,8 @@
     <key>com.apple.developer.associated-domains</key>
     <array>
         <string>applinks:vahaanbazar.in</string>
+        <string>applinks:www.vahaanbazar.com</string>
+        <string>applinks:vahaanbazar.com</string>
     </array>
 </dict>
 </plist>
