@@ -9,6 +9,7 @@ import '../../../core/design_system/design_system.dart';
 import '../../../core/design_system/molecules/custom_snackbar.dart';
 import '../../../core/design_system/organisms/network_image_carousel.dart';
 import '../../../core/design_system/molecules/gradient_button.dart';
+import '../../../core/design_system/molecules/collapsible_section.dart';
 import '../../../core/design_system/molecules/custom_search_bar.dart';
 import '../../../core/services/share_service.dart';
 import '../widgets/buy_filter_sheet.dart';
@@ -44,11 +45,17 @@ class BuyVehicleListingsView extends GetView<BuyVehicleController> {
     return AppLayout(
       title: categoryName,
       subtitle: context.l10n.spareBrowseAvailableListings,
+      hideBottomNav: controller.chromeHidden,
       body: Stack(
         children: [
           Column(
             children: [
-              // ── Search bar + filter icon (white section) ──────────────────────
+              // ── Search bar + filter icon (tucked away while scrolling) ────────
+              Obx(
+                () => CollapsibleSection(
+                  hidden: controller.chromeHidden.value,
+                  child: Column(
+                    children: [
               Padding(
                 padding: EdgeInsets.fromLTRB(
                   AppSpacing.md,
@@ -108,6 +115,10 @@ class BuyVehicleListingsView extends GetView<BuyVehicleController> {
                 ),
               ),
               SizedBox(height: AppSpacing.xs),
+                    ],
+                  ),
+                ),
+              ),
               // ── Active filters strip ──────────────────────────────────────────
               Obx(() {
                 if (controller.appliedFilters.isEmpty)
@@ -136,6 +147,7 @@ class BuyVehicleListingsView extends GetView<BuyVehicleController> {
                     onRefresh: () => controller.refreshBuyVehiclesList(),
                     child: NotificationListener<ScrollNotification>(
                       onNotification: (n) {
+                        controller.onListScroll(n);
                         if (n is ScrollEndNotification &&
                             n.metrics.pixels >=
                                 n.metrics.maxScrollExtent - 150) {

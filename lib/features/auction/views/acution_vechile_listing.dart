@@ -18,6 +18,7 @@ import '../controllers/vehicle_listing_controller.dart';
 import '../domain/entities/auction_entity.dart';
 import '../models/vehicle_listing.dart';
 import 'auction_activity_fab.dart';
+import '../../../core/design_system/molecules/collapsible_section.dart';
 import 'auction_filter_bottom_sheet.dart';
 import 'gate_pass_sheet.dart';
 
@@ -31,13 +32,17 @@ class AuctionVehicleListingScreen extends GetView<VehicleListingController> {
           ? controller.auctionTitle
           : context.l10n.liveAuctions,
       showBack: true,
+      hideBottomNav: controller.chromeHidden,
       headerExtra: _TabAndFilterBar(controller: controller),
       body: Stack(
         fit: StackFit.expand,
         children: [
-          TabBarView(
-            controller: controller.tabController,
-            children: List.generate(3, (i) => _TabContent(tabIndex: i)),
+          NotificationListener<ScrollNotification>(
+            onNotification: controller.onListScroll,
+            child: TabBarView(
+              controller: controller.tabController,
+              children: List.generate(3, (i) => _TabContent(tabIndex: i)),
+            ),
           ),
           const Positioned(right: 16, bottom: 24, child: AuctionActivityFab()),
         ],
@@ -59,8 +64,11 @@ class _TabAndFilterBar extends StatelessWidget {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        // ── Search bar + Filter icon ────────────────────────
-        Padding(
+        // ── Search bar + Filter icon (tucked away while scrolling) ──
+        Obx(
+          () => CollapsibleSection(
+            hidden: controller.chromeHidden.value,
+            child: Padding(
           padding: EdgeInsets.fromLTRB(16.w, 4.h, 8.w, 0.h),
           child: Row(
             children: [
@@ -89,6 +97,8 @@ class _TabAndFilterBar extends StatelessWidget {
                 ),
               ),
             ],
+          ),
+        ),
           ),
         ),
         // ── Tab bar ─────────────────────────────────────────

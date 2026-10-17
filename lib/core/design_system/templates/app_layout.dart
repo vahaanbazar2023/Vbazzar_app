@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
+import '../molecules/collapsible_section.dart';
 import '../organisms/app_bottom_nav_bar.dart';
 import '../organisms/app_header.dart';
 import '../../../features/main_shell/controllers/main_shell_controller.dart';
@@ -19,6 +20,9 @@ class AppLayout extends StatelessWidget {
   final Widget? headerExtra;
   final Widget? floatingActionButton;
 
+  /// When true the bottom nav slides away (e.g. while a list is scrolling).
+  final RxBool? hideBottomNav;
+
   const AppLayout({
     super.key,
     required this.title,
@@ -30,6 +34,7 @@ class AppLayout extends StatelessWidget {
     this.headerExtra,
     this.bodyColor,
     this.floatingActionButton,
+    this.hideBottomNav,
   });
 
   @override
@@ -41,15 +46,7 @@ class AppLayout extends StatelessWidget {
       child: Scaffold(
         backgroundColor: bodyColor ?? Colors.white,
         floatingActionButton: floatingActionButton,
-        bottomNavigationBar: GetBuilder<MainShellController>(
-          builder: (ctrl) => AppBottomNavBar(
-            currentTab: BottomNavTab.values[ctrl.currentIndex.value],
-            onTabSelected: (tab) {
-              ctrl.changePage(tab.index);
-              Get.until((route) => route.settings.name == AppRoutes.home);
-            },
-          ),
-        ),
+        bottomNavigationBar: _bottomNav(),
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -66,6 +63,27 @@ class AppLayout extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _bottomNav() {
+    final nav = GetBuilder<MainShellController>(
+      builder: (ctrl) => AppBottomNavBar(
+        currentTab: BottomNavTab.values[ctrl.currentIndex.value],
+        onTabSelected: (tab) {
+          ctrl.changePage(tab.index);
+          Get.until((route) => route.settings.name == AppRoutes.home);
+        },
+      ),
+    );
+    final hide = hideBottomNav;
+    if (hide == null) return nav;
+    return Obx(
+      () => CollapsibleSection(
+        hidden: hide.value,
+        overflowTop: true,
+        child: nav,
       ),
     );
   }

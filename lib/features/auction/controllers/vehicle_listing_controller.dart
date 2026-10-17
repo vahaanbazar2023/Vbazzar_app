@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import '../../../core/design_system/molecules/custom_snackbar.dart';
 import '../../../core/network/endpoints/api_endpoints.dart';
 import '../../../core/network/network_service.dart';
+import '../../../core/utils/scroll_chrome.dart';
 import '../../../core/storage/secure_storage_service.dart';
 import '../../../core/storage/storage_keys.dart';
 import '../../../features/subscription/models/user_subscription.dart';
@@ -168,8 +169,18 @@ class VehicleListingController extends GetxController
     loadAllStates(); // Load all states upfront for filter
   }
 
+  // ── Hide search / filter / bottom nav while the list is scrolling ─────────
+  final ScrollChrome _chrome = ScrollChrome();
+
+  /// True while the user is scrolling; the bars come back once it stops.
+  RxBool get chromeHidden => _chrome.hidden;
+
+  /// Wire to a NotificationListener around the tab views.
+  bool onListScroll(ScrollNotification n) => _chrome.onNotification(n);
+
   @override
   void onClose() {
+    _chrome.dispose();
     _searchDebouncer?.dispose();
     tabController.dispose();
     scrollController.dispose();

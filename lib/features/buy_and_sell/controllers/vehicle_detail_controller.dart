@@ -18,6 +18,7 @@ import '../domain/entities/vehicle_brand_entity.dart';
 import '../domain/entities/vehicle_category_entity.dart';
 import '../domain/entities/vehicle_tire_entity.dart';
 import '../domain/repositories/buy_sell_repository.dart';
+import '../../../core/utils/scroll_chrome.dart';
 
 /// Controller managing the Buy tab: category-driven vehicle listing,
 /// dynamic filters, search, pagination, and subscribed vehicles.
@@ -277,8 +278,18 @@ class BuyVehicleController extends GetxController {
     fetchSubscribedVehicles();
   }
 
+  // ── Hide search / filter / bottom nav while the list is scrolling ─────────
+  final ScrollChrome _chrome = ScrollChrome();
+
+  /// True while the user is scrolling; the bars come back once it stops.
+  RxBool get chromeHidden => _chrome.hidden;
+
+  /// Call from the list's NotificationListener (never consumes the event).
+  bool onListScroll(ScrollNotification n) => _chrome.onNotification(n);
+
   @override
   void onClose() {
+    _chrome.dispose();
     searchController.removeListener(_onSearchChanged);
     searchController.dispose();
     scrollController.dispose();
