@@ -12,6 +12,8 @@ import '../../../core/extensions/context_extensions.dart';
 import '../../../routes/app_routes.dart';
 import '../../../theme/app_fonts.dart';
 import '../../buy_and_sell/domain/entities/paginated_buy_vehicles_response.dart';
+import '../../partner/models/partner_models.dart';
+import '../../partner/widgets/partner_cta_banner.dart';
 import '../controllers/service_support_controller.dart';
 import '../data/models/mechanic_model.dart';
 
@@ -26,6 +28,10 @@ class ServiceProviderListView extends GetView<ServiceSupportController> {
       showBack: true,
       body: Column(
         children: [
+          const PartnerCtaBanner(
+            presetRole: PartnerRole.mechanic,
+            margin: EdgeInsets.fromLTRB(16, 8, 16, 0),
+          ),
           // ── Search Bar ─────────────────────────────────────────
 
           // ── Count Badge ────────────────────────────────────────

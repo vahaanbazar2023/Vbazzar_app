@@ -5,6 +5,7 @@ import '../../../core/services/logger_service.dart';
 import '../models/login_request.dart';
 import '../models/otp_response.dart';
 import '../models/otp_verify_models.dart';
+import '../models/referral_validation.dart';
 import '../models/complete_profile_models.dart';
 import '../../../core/extensions/context_extensions.dart';
 
@@ -66,6 +67,23 @@ class AuthDataSource {
     }
   }
 
+  /// GET /api/v1/share/validate-referral-code — API key only, so it works on the login screen
+  /// before the user has a token.
+  Future<ReferralValidation> validateReferralCode(String code) async {
+    try {
+      final response = await networkService.get(
+        ApiEndpoints.validateReferralCode,
+        queryParameters: {'code': code},
+      );
+      if (response.data is! Map<String, dynamic>) {
+        throw ApiException(appL10n.inspEmptyServerResponse, 500);
+      }
+      return ReferralValidation.fromJson(response.data as Map<String, dynamic>);
+    } on DioException catch (e) {
+      throw _handleError(e);
+    }
+  }
+
   /// POST /api/v2/auth/complete-profile — fill required profile fields
   Future<CompleteProfileResponse> completeProfile(
     CompleteProfileRequest request,
@@ -91,6 +109,32 @@ class AuthDataSource {
     }
   }
 
+  /// Best human-readable message from an API error body:
+  /// FastAPI 422 `detail: [{msg}]`, custom `detail: {message}`, or `message`.
+  String _extractErrorMessage(Map<String, dynamic> data) {
+    final detail = data['detail'];
+    if (detail is List && detail.isNotEmpty) {
+      return detail
+          .map((d) {
+            if (d is! Map) return '$d';
+            final msg = '${d['msg']}'.replaceFirst('Value error, ', '');
+            final loc = d['loc'];
+            final field = loc is List && loc.length > 1 ? '${loc.last}' : '';
+            return field.isNotEmpty && field != 'body'
+                ? '${field.replaceAll('_', ' ')}: $msg'
+                : msg;
+          })
+          .join('\n');
+    }
+    if (detail is Map && detail['message'] is String) {
+      return detail['message'] as String;
+    }
+    if (detail is String && detail.isNotEmpty) return detail;
+    return data['message'] as String? ??
+        data['error'] as String? ??
+        appL10n.inspAnErrorOccurred;
+  }
+
   /// Convert DioException to a typed app exception
   Exception _handleError(DioException error) {
     switch (error.type) {
@@ -104,10 +148,7 @@ class AuthDataSource {
         final data = error.response?.data;
 
         if (data is Map<String, dynamic>) {
-          final message =
-              data['message'] as String? ??
-              data['error'] as String? ??
-              appL10n.inspAnErrorOccurred;
+          final message = _extractErrorMessage(data);
 
           if (statusCode == 401) {
             return AuthException(message);

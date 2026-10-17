@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart' show visibleForTesting;
+import 'package:flutter/material.dart' show AlertDialog, Text, TextButton;
 import 'package:dio/dio.dart' hide Response, FormData;
 import 'package:dio/dio.dart' as dio show Response, FormData;
 import 'package:get/get.dart';
@@ -140,6 +142,7 @@ class NetworkService extends GetxService {
 
     // Auth v2
     '/api/v2/auth/complete-profile',
+    '/api/v2/auth/language',
 
     // Insurance and Finance
     '/api/v1/insurance-finance/insurance-request',
@@ -161,15 +164,28 @@ class NetworkService extends GetxService {
     '/api/v1/spares-fms/user-shop-subscription',
     '/api/v1/spares-fms/user-spares-orders-listing',
 
+    // Vendor self-service (shop enrol, spare listing, my listings)
+    '/api/v1/spares-fms-vendor/',
+
     // wallet
     '/api/v1/wallet/eligibility',
     '/api/v1/wallet/dashboard',
     '/api/v1/wallet/cash-out',
     '/api/v1/wallet/cash-out/eligibility',
+    '/api/v1/wallet/cash-out/history',
 
     // Share & Refer
+    // NOTE: '/api/v1/share/validate-referral-code' is intentionally NOT listed —
+    // it is API-key only so it can be called on the signup screen, before login.
     '/api/v1/share/generate-link',
     '/api/v1/share/referral-link',
+
+    // Partner with us (Vendor / Mechanic / Spare Part Shop)
+    '/api/v1/partner/request',
+    '/api/v1/partner/my-request',
+
+    // Vendor portal (approved vendors: summary, inventory, orders)
+    '/api/v1/vendor-portal/',
 
     // Reward Coins
     '/api/v1/reward-coins/balance',
@@ -194,7 +210,16 @@ class NetworkService extends GetxService {
     '/api/v1/auctions/auction-my-wins-pagination',
     '/api/v1/auctions/my-bids',
     '/api/v1/auctions/my-wins',
+    '/api/v1/auction-inspection',
+
+
+    '/api/v1/partner/my-request',
   ];
+
+  /// Exposes the allow-list check to tests.
+  @visibleForTesting
+  bool requiresAuthenticationForTest(String path) =>
+      _requiresAuthentication(path);
 
   /// Check if a path requires authentication
   bool _requiresAuthentication(String path) {
@@ -260,8 +285,43 @@ class NetworkService extends GetxService {
               await _handleUnauthorized();
             }
           }
+          if (error.response?.statusCode == 403) {
+            _maybeShowIncompleteProfileWarning(error.response?.data);
+          }
           handler.next(error);
         },
+      ),
+    );
+  }
+
+  bool _incompleteProfileWarningShown = false;
+
+  /// Backend answers 403 "Registration is incomplete" for users who haven't
+  /// filled their profile. Show a dismissible, non-blocking reminder once.
+  void _maybeShowIncompleteProfileWarning(dynamic body) {
+    if (_incompleteProfileWarningShown) return;
+    final message = body is Map ? '${body['message'] ?? body['detail'] ?? ''}' : '';
+    if (!message.toLowerCase().contains('incomplete')) return;
+    if (Get.currentRoute == '/complete-profile' || Get.isDialogOpen == true) {
+      return;
+    }
+    _incompleteProfileWarningShown = true;
+    Get.dialog(
+      AlertDialog(
+        title: const Text('Complete your profile'),
+        content: const Text(
+          'Your profile is incomplete. Some features may be limited until you complete it.',
+        ),
+        actions: [
+          TextButton(onPressed: () => Get.back(), child: const Text('Later')),
+          TextButton(
+            onPressed: () {
+              Get.back();
+              Get.toNamed('/complete-profile');
+            },
+            child: const Text('Complete now'),
+          ),
+        ],
       ),
     );
   }

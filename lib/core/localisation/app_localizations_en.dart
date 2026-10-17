@@ -3776,7 +3776,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String aucStartBiddingStartPrice(String price) {
-    return 'Start Bidding — Start Price ₹ $price';
+    return 'Start Price ₹ $price';
   }
 
   @override
@@ -6147,4 +6147,234 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get coreMechanics => 'Mechanics';
+
+  @override
+  String get partnerWithUsTitle => 'Partner with us';
+
+  @override
+  String get partnerWithUsSubtitle => 'Grow your business with Vahaan Bazar';
+
+  @override
+  String get partnerProfileSubtitle => 'Join as vendor, mechanic or shop';
+
+  @override
+  String get partnerCtaSubtitle => 'Own a shop or garage? Join Vahaan Bazar';
+
+  @override
+  String get partnerHeroTitle => 'Become a Vahaan Bazar partner';
+
+  @override
+  String get partnerHeroBody =>
+      'Tell us about your business. Our team will review your request and get in touch.';
+
+  @override
+  String get partnerRoleLabel => 'I want to join as';
+
+  @override
+  String get partnerRoleHint => 'Select role';
+
+  @override
+  String get partnerRoleVendor => 'Vendor';
+
+  @override
+  String get partnerRoleMechanic => 'Mechanic';
+
+  @override
+  String get partnerRoleSpareShop => 'Spare Part Shop';
+
+  @override
+  String get partnerRole => 'Role';
+
+  @override
+  String get partnerYourDetails => 'Your details';
+
+  @override
+  String get partnerName => 'Name';
+
+  @override
+  String get partnerMobile => 'Mobile number';
+
+  @override
+  String get partnerFromProfileNote => 'Taken from your profile';
+
+  @override
+  String get partnerBusinessName => 'Business name';
+
+  @override
+  String get partnerBusinessNameHint => 'e.g. Sri Balaji Auto Spares';
+
+  @override
+  String get partnerAadhaar => 'Aadhaar number (optional)';
+
+  @override
+  String get partnerAadhaarHint => '12-digit Aadhaar number';
+
+  @override
+  String get partnerLocationSection => 'Business location';
+
+  @override
+  String get partnerUseCurrentLocation => 'Use my current location';
+
+  @override
+  String get partnerLocationCaptured => 'Location captured';
+
+  @override
+  String get partnerLocationAutoNote =>
+      'We detect your city and state from your location.';
+
+  @override
+  String get partnerLocationFailed =>
+      'Couldn\'t get your location. Turn on GPS and allow permission, or enter the address below.';
+
+  @override
+  String get partnerAddressLabel => 'Address (optional)';
+
+  @override
+  String get partnerAddressHint => 'Shop / garage address';
+
+  @override
+  String get partnerSubmit => 'Submit request';
+
+  @override
+  String get partnerSelectRole => 'Please select a role';
+
+  @override
+  String get partnerEnterBusinessName => 'Enter your business name';
+
+  @override
+  String get partnerInvalidAadhaar => 'Enter a valid 12-digit Aadhaar number';
+
+  @override
+  String get partnerSubmittedTitle => 'Request received';
+
+  @override
+  String get partnerSubmitFailed =>
+      'Couldn\'t submit your request. Please try again.';
+
+  @override
+  String get partnerProfileLoadFailed => 'Couldn\'t load your profile details.';
+
+  @override
+  String get partnerStatusPendingTitle => 'Request under review';
+
+  @override
+  String partnerStatusPendingBody(String mobile) {
+    return 'We\'ll contact you on $mobile once it\'s reviewed.';
+  }
+
+  @override
+  String get partnerStatusApprovedTitle => 'You\'re a partner!';
+
+  @override
+  String partnerStatusApprovedBody(String role) {
+    return 'Your account is now a $role account. Our team will share portal access with you.';
+  }
+
+  @override
+  String get partnerStatusRejectedTitle => 'Request not approved';
+
+  @override
+  String partnerStatusRejectedReason(String reason) {
+    return 'Reason: $reason';
+  }
+
+  @override
+  String get partnerApplyAgain => 'Apply again';
+
+  @override
+  String get partnerRequestIdLabel => 'Request ID';
+
+  @override
+  String get partnerAlreadyPartnerTitle => 'You\'re already a partner';
+
+  @override
+  String partnerAlreadyPartnerBody(String role) {
+    return 'Your account type is $role.';
+  }
+
+  @override
+  String get partnerCompleteProfileTitle => 'Complete your profile first';
+
+  @override
+  String get partnerCompleteProfileBody =>
+      'We use your name and mobile number from your profile. Please complete your profile to partner with us.';
+
+  @override
+  String get partnerCompleteProfileButton => 'Complete profile';
+
+  @override
+  String get revvotCardTitle => 'Check Loan Eligibility';
+
+  @override
+  String get revvotCardTag => 'FINANCE';
+
+  @override
+  String get revvotCardSubtitle =>
+      'See what you can afford — get your loan eligibility in minutes';
+
+  @override
+  String get revvotCardChecking => 'Checking your eligibility…';
+
+  @override
+  String get revvotStartError =>
+      'Unable to start the finance check. Please try again.';
+
+  @override
+  String get revvotApprovedTitle => 'Pre-approved';
+
+  @override
+  String revvotApprovedBody(String amount) {
+    return 'You can afford up to ₹$amount.';
+  }
+
+  @override
+  String revvotInterestRate(String rate) {
+    return 'Interest rate: $rate% p.a.';
+  }
+
+  @override
+  String revvotTenure(String months) {
+    return 'Tenure: $months months';
+  }
+
+  @override
+  String get revvotNotEligibleTitle => 'Not eligible';
+
+  @override
+  String get revvotNotEligibleBody =>
+      'You do not qualify for financing right now.';
+
+  @override
+  String get revvotUnderReviewTitle => 'Under review';
+
+  @override
+  String get revvotUnderReviewBody =>
+      'Your decision is pending. Please check again shortly.';
+
+  @override
+  String get revvotOk => 'OK';
+
+  @override
+  String get referralChecking => 'Checking code…';
+
+  @override
+  String referralInvitedBy(String name) {
+    return 'Invited by $name';
+  }
+
+  @override
+  String get referralInvalidCode => 'This referral code is not valid';
+
+  @override
+  String get referralDisabled => 'Referral rewards are not available right now';
+
+  @override
+  String get aucBankName => 'Bank Name';
+
+  @override
+  String get buySellWishlistSubtitle => 'Vehicles you are interested in';
+
+  @override
+  String get buySellWishlistEmpty =>
+      'You have not added any vehicles to your wishlist yet';
 }

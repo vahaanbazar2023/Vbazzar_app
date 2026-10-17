@@ -35,6 +35,17 @@ class SinglePlanPaymentScreen extends StatefulWidget {
   /// Optional mechanic ID — used by SUBT007 wallet flow to unlock mechanic contact.
   final String? mechanicId;
 
+  /// Auction mechanic inspection (plan codes AUCIxx): the Inspection_Request
+  /// being paid for. Sent to /payments/initiate with the plan code.
+  final String? inspectionId;
+
+  /// Wallet portion already chosen by the caller (server caps it at 50%).
+  /// [plan.price] is then the gateway amount.
+  final double? fromWallet;
+
+  /// Hide the "or pay from My wallet" link when the caller handles the wallet.
+  final bool showWalletLink;
+
   /// Called immediately after payment success (direct pay path).
   final VoidCallback onPaymentSuccess;
 
@@ -47,6 +58,9 @@ class SinglePlanPaymentScreen extends StatefulWidget {
     this.source = 'INSPECTION',
     this.shopId,
     this.mechanicId,
+    this.inspectionId,
+    this.fromWallet,
+    this.showWalletLink = true,
   });
 
   @override
@@ -99,6 +113,8 @@ class _SinglePlanPaymentScreenState extends State<SinglePlanPaymentScreen> {
       userId: userId,
       planCode: widget.plan.planCode,
       forPayment: widget.plan.price,
+      fromWallet: widget.fromWallet,
+      inspectionId: widget.inspectionId,
     );
 
     if (!success && _isProcessing) {
@@ -353,6 +369,7 @@ class _SinglePlanPaymentScreenState extends State<SinglePlanPaymentScreen> {
                     ),
                   ),
                 ),
+                if (widget.showWalletLink) ...[
                 const SizedBox(height: AppSizes.spaceSm),
                 // "or pay from My wallet" link
                 GestureDetector(
@@ -380,6 +397,7 @@ class _SinglePlanPaymentScreenState extends State<SinglePlanPaymentScreen> {
                     ),
                   ),
                 ),
+                ],
               ],
             ),
           ),

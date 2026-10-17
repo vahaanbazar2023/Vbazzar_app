@@ -3831,7 +3831,7 @@ class AppLocalizationsTa extends AppLocalizations {
 
   @override
   String aucStartBiddingStartPrice(String price) {
-    return 'ஏலத்தைத் தொடங்குங்கள் — தொடக்க விலை ₹ $price';
+    return 'தொடக்க விலை ₹ $price';
   }
 
   @override
@@ -6266,4 +6266,240 @@ class AppLocalizationsTa extends AppLocalizations {
 
   @override
   String get coreMechanics => 'மெக்கானிக்ஸ்';
+
+  @override
+  String get partnerWithUsTitle => 'எங்களுடன் கூட்டாளியாகுங்கள்';
+
+  @override
+  String get partnerWithUsSubtitle =>
+      'வாகன் பஜாருடன் உங்கள் தொழிலை வளர்க்கவும்';
+
+  @override
+  String get partnerProfileSubtitle =>
+      'விற்பனையாளர், மெக்கானிக் அல்லது கடையாக இணையுங்கள்';
+
+  @override
+  String get partnerCtaSubtitle =>
+      'கடை அல்லது கேரேஜ் உள்ளதா? வாகன் பஜாரில் இணையுங்கள்';
+
+  @override
+  String get partnerHeroTitle => 'வாகன் பஜார் கூட்டாளியாகுங்கள்';
+
+  @override
+  String get partnerHeroBody =>
+      'உங்கள் தொழிலைப் பற்றி கூறுங்கள். எங்கள் குழு உங்கள் கோரிக்கையை பரிசீலித்து தொடர்பு கொள்ளும்.';
+
+  @override
+  String get partnerRoleLabel => 'நான் இவ்வாறு இணைய விரும்புகிறேன்';
+
+  @override
+  String get partnerRoleHint => 'பங்கைத் தேர்ந்தெடுக்கவும்';
+
+  @override
+  String get partnerRoleVendor => 'விற்பனையாளர்';
+
+  @override
+  String get partnerRoleMechanic => 'மெக்கானிக்';
+
+  @override
+  String get partnerRoleSpareShop => 'உதிரிபாகக் கடை';
+
+  @override
+  String get partnerRole => 'பங்கு';
+
+  @override
+  String get partnerYourDetails => 'உங்கள் விவரங்கள்';
+
+  @override
+  String get partnerName => 'பெயர்';
+
+  @override
+  String get partnerMobile => 'மொபைல் எண்';
+
+  @override
+  String get partnerFromProfileNote =>
+      'உங்கள் சுயவிவரத்திலிருந்து எடுக்கப்பட்டது';
+
+  @override
+  String get partnerBusinessName => 'தொழில் பெயர்';
+
+  @override
+  String get partnerBusinessNameHint => 'எ.கா. ஸ்ரீ பாலாஜி ஆட்டோ ஸ்பேர்ஸ்';
+
+  @override
+  String get partnerAadhaar => 'ஆதார் எண் (விருப்பம்)';
+
+  @override
+  String get partnerAadhaarHint => '12 இலக்க ஆதார் எண்';
+
+  @override
+  String get partnerLocationSection => 'தொழில் இடம்';
+
+  @override
+  String get partnerUseCurrentLocation => 'எனது தற்போதைய இடத்தைப் பயன்படுத்து';
+
+  @override
+  String get partnerLocationCaptured => 'இடம் பெறப்பட்டது';
+
+  @override
+  String get partnerLocationAutoNote =>
+      'உங்கள் இடத்திலிருந்து நகரம் மற்றும் மாநிலத்தை நாங்கள் கண்டறிவோம்.';
+
+  @override
+  String get partnerLocationFailed =>
+      'உங்கள் இடத்தைப் பெற முடியவில்லை. GPS ஐ இயக்கி அனுமதி வழங்கவும், அல்லது கீழே முகவரியை உள்ளிடவும்.';
+
+  @override
+  String get partnerAddressLabel => 'முகவரி (விருப்பம்)';
+
+  @override
+  String get partnerAddressHint => 'கடை / கேரேஜ் முகவரி';
+
+  @override
+  String get partnerSubmit => 'கோரிக்கையைச் சமர்ப்பி';
+
+  @override
+  String get partnerSelectRole => 'தயவுசெய்து ஒரு பங்கைத் தேர்ந்தெடுக்கவும்';
+
+  @override
+  String get partnerEnterBusinessName => 'உங்கள் தொழில் பெயரை உள்ளிடவும்';
+
+  @override
+  String get partnerInvalidAadhaar => 'சரியான 12 இலக்க ஆதார் எண்ணை உள்ளிடவும்';
+
+  @override
+  String get partnerSubmittedTitle => 'கோரிக்கை பெறப்பட்டது';
+
+  @override
+  String get partnerSubmitFailed =>
+      'உங்கள் கோரிக்கையைச் சமர்ப்பிக்க முடியவில்லை. மீண்டும் முயற்சிக்கவும்.';
+
+  @override
+  String get partnerProfileLoadFailed =>
+      'உங்கள் சுயவிவர விவரங்களை ஏற்ற முடியவில்லை.';
+
+  @override
+  String get partnerStatusPendingTitle => 'கோரிக்கை பரிசீலனையில் உள்ளது';
+
+  @override
+  String partnerStatusPendingBody(String mobile) {
+    return 'பரிசீலனைக்குப் பிறகு $mobile எண்ணில் உங்களைத் தொடர்பு கொள்வோம்.';
+  }
+
+  @override
+  String get partnerStatusApprovedTitle => 'நீங்கள் எங்கள் கூட்டாளி!';
+
+  @override
+  String partnerStatusApprovedBody(String role) {
+    return 'உங்கள் கணக்கு இப்போது $role கணக்காக உள்ளது. எங்கள் குழு போர்டல் அணுகலை பகிரும்.';
+  }
+
+  @override
+  String get partnerStatusRejectedTitle => 'கோரிக்கை ஏற்கப்படவில்லை';
+
+  @override
+  String partnerStatusRejectedReason(String reason) {
+    return 'காரணம்: $reason';
+  }
+
+  @override
+  String get partnerApplyAgain => 'மீண்டும் விண்ணப்பிக்கவும்';
+
+  @override
+  String get partnerRequestIdLabel => 'கோரிக்கை ஐடி';
+
+  @override
+  String get partnerAlreadyPartnerTitle => 'நீங்கள் ஏற்கனவே கூட்டாளி';
+
+  @override
+  String partnerAlreadyPartnerBody(String role) {
+    return 'உங்கள் கணக்கு வகை $role.';
+  }
+
+  @override
+  String get partnerCompleteProfileTitle =>
+      'முதலில் உங்கள் சுயவிவரத்தை முடிக்கவும்';
+
+  @override
+  String get partnerCompleteProfileBody =>
+      'உங்கள் சுயவிவரத்திலிருந்து பெயர் மற்றும் மொபைல் எண்ணை நாங்கள் பயன்படுத்துகிறோம். எங்களுடன் கூட்டாளியாக, தயவுசெய்து உங்கள் சுயவிவரத்தை முடிக்கவும்.';
+
+  @override
+  String get partnerCompleteProfileButton => 'சுயவிவரத்தை முடிக்கவும்';
+
+  @override
+  String get revvotCardTitle => 'கடன் தகுதியை சரிபார்க்கவும்';
+
+  @override
+  String get revvotCardTag => 'நிதி';
+
+  @override
+  String get revvotCardSubtitle =>
+      'நீங்கள் எவ்வளவு வாங்க முடியும் என்று பாருங்கள் — சில நிமிடங்களில் கடன் தகுதியை சரிபார்க்கவும்';
+
+  @override
+  String get revvotCardChecking => 'உங்கள் தகுதி சரிபார்க்கப்படுகிறது…';
+
+  @override
+  String get revvotStartError =>
+      'நிதி சரிபார்ப்பைத் தொடங்க முடியவில்லை. மீண்டும் முயற்சிக்கவும்.';
+
+  @override
+  String get revvotApprovedTitle => 'முன்-ஒப்புதல்';
+
+  @override
+  String revvotApprovedBody(String amount) {
+    return 'நீங்கள் ₹$amount வரை கடன் பெறலாம்.';
+  }
+
+  @override
+  String revvotInterestRate(String rate) {
+    return 'வட்டி விகிதம்: ஆண்டுக்கு $rate%';
+  }
+
+  @override
+  String revvotTenure(String months) {
+    return 'காலம்: $months மாதங்கள்';
+  }
+
+  @override
+  String get revvotNotEligibleTitle => 'தகுதி இல்லை';
+
+  @override
+  String get revvotNotEligibleBody =>
+      'தற்போது நீங்கள் நிதிக்குத் தகுதியற்றவர்.';
+
+  @override
+  String get revvotUnderReviewTitle => 'பரிசீலனையில் உள்ளது';
+
+  @override
+  String get revvotUnderReviewBody =>
+      'உங்கள் முடிவு நிலுவையில் உள்ளது. சிறிது நேரம் கழித்து மீண்டும் சரிபார்க்கவும்.';
+
+  @override
+  String get revvotOk => 'சரி';
+
+  @override
+  String get referralChecking => 'குறியீடு சரிபார்க்கப்படுகிறது…';
+
+  @override
+  String referralInvitedBy(String name) {
+    return '$name அழைத்தார்';
+  }
+
+  @override
+  String get referralInvalidCode => 'இந்த பரிந்துரை குறியீடு செல்லாது';
+
+  @override
+  String get referralDisabled => 'பரிந்துரை வெகுமதிகள் தற்போது கிடைக்கவில்லை';
+
+  @override
+  String get aucBankName => 'வங்கி பெயர்';
+
+  @override
+  String get buySellWishlistSubtitle => 'நீங்கள் ஆர்வம் காட்டிய வாகனங்கள்';
+
+  @override
+  String get buySellWishlistEmpty =>
+      'நீங்கள் இன்னும் விருப்பப்பட்டியலில் எந்த வாகனமும் சேர்க்கவில்லை';
 }

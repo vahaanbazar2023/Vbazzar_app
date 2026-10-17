@@ -5,6 +5,7 @@ import '../../../core/extensions/context_extensions.dart';
 import '../../../core/storage/local_storage_service.dart';
 import '../../../core/storage/storage_keys.dart';
 import '../../../routes/app_routes.dart';
+import '../data/language_sync_service.dart';
 import '../models/language_model.dart';
 
 class LanguageController extends GetxController {
@@ -118,6 +119,9 @@ class LanguageController extends GetxController {
       StorageKeys.languageCode,
       selectedLanguage.value!.code,
     );
+
+    // Let the backend know (fire-and-forget; never blocks or fails the switch).
+    LanguageSyncService.push(selectedLanguage.value!.code);
 
     Get.back();
   }

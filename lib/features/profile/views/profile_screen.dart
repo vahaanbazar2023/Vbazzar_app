@@ -124,6 +124,14 @@ class _ProfilePage extends StatelessWidget {
                   ),
 
                   _Item(
+                    iconData: Icons.handshake_rounded,
+                    iconBg: const Color(0xFFFFEFC2),
+                    label: context.l10n.partnerWithUsTitle,
+                    subtitle: context.l10n.partnerProfileSubtitle,
+                    onTap: () => Get.toNamed(AppRoutes.partnerWithUs),
+                  ),
+
+                  _Item(
                     iconAsset: AppAssets.subIconGroup1,
                     iconBg: const Color(0xFFDDF5E0),
                     label: context.l10n.language,
@@ -152,6 +160,14 @@ class _ProfilePage extends StatelessWidget {
                     label: context.l10n.myBids,
                     subtitle: context.l10n.profTrackBids,
                     onTap: () => Get.toNamed(AppRoutes.myBids),
+                  ),
+
+                  _Item(
+                    iconData: Icons.qr_code_2_rounded,
+                    iconBg: const Color(0xFFE0F5E6),
+                    label: 'My Gate Passes',
+                    subtitle: 'View and download your gate passes',
+                    onTap: () => Get.toNamed(AppRoutes.myGatePasses),
                   ),
 
                   _Item(

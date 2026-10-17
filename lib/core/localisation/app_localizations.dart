@@ -7201,7 +7201,7 @@ abstract class AppLocalizations {
   /// No description provided for @aucStartBiddingStartPrice.
   ///
   /// In en, this message translates to:
-  /// **'Start Bidding — Start Price ₹ {price}'**
+  /// **'Start Price ₹ {price}'**
   String aucStartBiddingStartPrice(String price);
 
   /// No description provided for @coreSearchEllipsis.
@@ -11421,6 +11421,414 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Mechanics'**
   String get coreMechanics;
+
+  /// No description provided for @partnerWithUsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Partner with us'**
+  String get partnerWithUsTitle;
+
+  /// No description provided for @partnerWithUsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Grow your business with Vahaan Bazar'**
+  String get partnerWithUsSubtitle;
+
+  /// No description provided for @partnerProfileSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Join as vendor, mechanic or shop'**
+  String get partnerProfileSubtitle;
+
+  /// No description provided for @partnerCtaSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Own a shop or garage? Join Vahaan Bazar'**
+  String get partnerCtaSubtitle;
+
+  /// No description provided for @partnerHeroTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Become a Vahaan Bazar partner'**
+  String get partnerHeroTitle;
+
+  /// No description provided for @partnerHeroBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Tell us about your business. Our team will review your request and get in touch.'**
+  String get partnerHeroBody;
+
+  /// No description provided for @partnerRoleLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'I want to join as'**
+  String get partnerRoleLabel;
+
+  /// No description provided for @partnerRoleHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Select role'**
+  String get partnerRoleHint;
+
+  /// No description provided for @partnerRoleVendor.
+  ///
+  /// In en, this message translates to:
+  /// **'Vendor'**
+  String get partnerRoleVendor;
+
+  /// No description provided for @partnerRoleMechanic.
+  ///
+  /// In en, this message translates to:
+  /// **'Mechanic'**
+  String get partnerRoleMechanic;
+
+  /// No description provided for @partnerRoleSpareShop.
+  ///
+  /// In en, this message translates to:
+  /// **'Spare Part Shop'**
+  String get partnerRoleSpareShop;
+
+  /// No description provided for @partnerRole.
+  ///
+  /// In en, this message translates to:
+  /// **'Role'**
+  String get partnerRole;
+
+  /// No description provided for @partnerYourDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Your details'**
+  String get partnerYourDetails;
+
+  /// No description provided for @partnerName.
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get partnerName;
+
+  /// No description provided for @partnerMobile.
+  ///
+  /// In en, this message translates to:
+  /// **'Mobile number'**
+  String get partnerMobile;
+
+  /// No description provided for @partnerFromProfileNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Taken from your profile'**
+  String get partnerFromProfileNote;
+
+  /// No description provided for @partnerBusinessName.
+  ///
+  /// In en, this message translates to:
+  /// **'Business name'**
+  String get partnerBusinessName;
+
+  /// No description provided for @partnerBusinessNameHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. Sri Balaji Auto Spares'**
+  String get partnerBusinessNameHint;
+
+  /// No description provided for @partnerAadhaar.
+  ///
+  /// In en, this message translates to:
+  /// **'Aadhaar number (optional)'**
+  String get partnerAadhaar;
+
+  /// No description provided for @partnerAadhaarHint.
+  ///
+  /// In en, this message translates to:
+  /// **'12-digit Aadhaar number'**
+  String get partnerAadhaarHint;
+
+  /// No description provided for @partnerLocationSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Business location'**
+  String get partnerLocationSection;
+
+  /// No description provided for @partnerUseCurrentLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Use my current location'**
+  String get partnerUseCurrentLocation;
+
+  /// No description provided for @partnerLocationCaptured.
+  ///
+  /// In en, this message translates to:
+  /// **'Location captured'**
+  String get partnerLocationCaptured;
+
+  /// No description provided for @partnerLocationAutoNote.
+  ///
+  /// In en, this message translates to:
+  /// **'We detect your city and state from your location.'**
+  String get partnerLocationAutoNote;
+
+  /// No description provided for @partnerLocationFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t get your location. Turn on GPS and allow permission, or enter the address below.'**
+  String get partnerLocationFailed;
+
+  /// No description provided for @partnerAddressLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Address (optional)'**
+  String get partnerAddressLabel;
+
+  /// No description provided for @partnerAddressHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Shop / garage address'**
+  String get partnerAddressHint;
+
+  /// No description provided for @partnerSubmit.
+  ///
+  /// In en, this message translates to:
+  /// **'Submit request'**
+  String get partnerSubmit;
+
+  /// No description provided for @partnerSelectRole.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select a role'**
+  String get partnerSelectRole;
+
+  /// No description provided for @partnerEnterBusinessName.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your business name'**
+  String get partnerEnterBusinessName;
+
+  /// No description provided for @partnerInvalidAadhaar.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid 12-digit Aadhaar number'**
+  String get partnerInvalidAadhaar;
+
+  /// No description provided for @partnerSubmittedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Request received'**
+  String get partnerSubmittedTitle;
+
+  /// No description provided for @partnerSubmitFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t submit your request. Please try again.'**
+  String get partnerSubmitFailed;
+
+  /// No description provided for @partnerProfileLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load your profile details.'**
+  String get partnerProfileLoadFailed;
+
+  /// No description provided for @partnerStatusPendingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Request under review'**
+  String get partnerStatusPendingTitle;
+
+  /// No description provided for @partnerStatusPendingBody.
+  ///
+  /// In en, this message translates to:
+  /// **'We\'ll contact you on {mobile} once it\'s reviewed.'**
+  String partnerStatusPendingBody(String mobile);
+
+  /// No description provided for @partnerStatusApprovedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re a partner!'**
+  String get partnerStatusApprovedTitle;
+
+  /// No description provided for @partnerStatusApprovedBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Your account is now a {role} account. Our team will share portal access with you.'**
+  String partnerStatusApprovedBody(String role);
+
+  /// No description provided for @partnerStatusRejectedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Request not approved'**
+  String get partnerStatusRejectedTitle;
+
+  /// No description provided for @partnerStatusRejectedReason.
+  ///
+  /// In en, this message translates to:
+  /// **'Reason: {reason}'**
+  String partnerStatusRejectedReason(String reason);
+
+  /// No description provided for @partnerApplyAgain.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply again'**
+  String get partnerApplyAgain;
+
+  /// No description provided for @partnerRequestIdLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Request ID'**
+  String get partnerRequestIdLabel;
+
+  /// No description provided for @partnerAlreadyPartnerTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re already a partner'**
+  String get partnerAlreadyPartnerTitle;
+
+  /// No description provided for @partnerAlreadyPartnerBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Your account type is {role}.'**
+  String partnerAlreadyPartnerBody(String role);
+
+  /// No description provided for @partnerCompleteProfileTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Complete your profile first'**
+  String get partnerCompleteProfileTitle;
+
+  /// No description provided for @partnerCompleteProfileBody.
+  ///
+  /// In en, this message translates to:
+  /// **'We use your name and mobile number from your profile. Please complete your profile to partner with us.'**
+  String get partnerCompleteProfileBody;
+
+  /// No description provided for @partnerCompleteProfileButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Complete profile'**
+  String get partnerCompleteProfileButton;
+
+  /// No description provided for @revvotCardTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Check Loan Eligibility'**
+  String get revvotCardTitle;
+
+  /// No description provided for @revvotCardTag.
+  ///
+  /// In en, this message translates to:
+  /// **'FINANCE'**
+  String get revvotCardTag;
+
+  /// No description provided for @revvotCardSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'See what you can afford — get your loan eligibility in minutes'**
+  String get revvotCardSubtitle;
+
+  /// No description provided for @revvotCardChecking.
+  ///
+  /// In en, this message translates to:
+  /// **'Checking your eligibility…'**
+  String get revvotCardChecking;
+
+  /// No description provided for @revvotStartError.
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to start the finance check. Please try again.'**
+  String get revvotStartError;
+
+  /// No description provided for @revvotApprovedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Pre-approved'**
+  String get revvotApprovedTitle;
+
+  /// No description provided for @revvotApprovedBody.
+  ///
+  /// In en, this message translates to:
+  /// **'You can afford up to ₹{amount}.'**
+  String revvotApprovedBody(String amount);
+
+  /// No description provided for @revvotInterestRate.
+  ///
+  /// In en, this message translates to:
+  /// **'Interest rate: {rate}% p.a.'**
+  String revvotInterestRate(String rate);
+
+  /// No description provided for @revvotTenure.
+  ///
+  /// In en, this message translates to:
+  /// **'Tenure: {months} months'**
+  String revvotTenure(String months);
+
+  /// No description provided for @revvotNotEligibleTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Not eligible'**
+  String get revvotNotEligibleTitle;
+
+  /// No description provided for @revvotNotEligibleBody.
+  ///
+  /// In en, this message translates to:
+  /// **'You do not qualify for financing right now.'**
+  String get revvotNotEligibleBody;
+
+  /// No description provided for @revvotUnderReviewTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Under review'**
+  String get revvotUnderReviewTitle;
+
+  /// No description provided for @revvotUnderReviewBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Your decision is pending. Please check again shortly.'**
+  String get revvotUnderReviewBody;
+
+  /// No description provided for @revvotOk.
+  ///
+  /// In en, this message translates to:
+  /// **'OK'**
+  String get revvotOk;
+
+  /// No description provided for @referralChecking.
+  ///
+  /// In en, this message translates to:
+  /// **'Checking code…'**
+  String get referralChecking;
+
+  /// No description provided for @referralInvitedBy.
+  ///
+  /// In en, this message translates to:
+  /// **'Invited by {name}'**
+  String referralInvitedBy(String name);
+
+  /// No description provided for @referralInvalidCode.
+  ///
+  /// In en, this message translates to:
+  /// **'This referral code is not valid'**
+  String get referralInvalidCode;
+
+  /// No description provided for @referralDisabled.
+  ///
+  /// In en, this message translates to:
+  /// **'Referral rewards are not available right now'**
+  String get referralDisabled;
+
+  /// No description provided for @aucBankName.
+  ///
+  /// In en, this message translates to:
+  /// **'Bank Name'**
+  String get aucBankName;
+
+  /// No description provided for @buySellWishlistSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Vehicles you are interested in'**
+  String get buySellWishlistSubtitle;
+
+  /// No description provided for @buySellWishlistEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'You have not added any vehicles to your wishlist yet'**
+  String get buySellWishlistEmpty;
 }
 
 class _AppLocalizationsDelegate

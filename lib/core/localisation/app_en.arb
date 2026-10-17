@@ -1395,7 +1395,7 @@
   "aucYouAreWinning": "You Are Winning",
   "aucYourFavoriteVehicles": "Your favorite vehicles",
   "aucSearchVehicles": "Search Vehicles",
-  "aucStartBiddingStartPrice": "Start Bidding — Start Price ₹ {price}",
+  "aucStartBiddingStartPrice": "Start Price ₹ {price}",
   "@aucStartBiddingStartPrice": {
     "placeholders": {
       "price": {
@@ -2673,5 +2673,121 @@
   "profCustomer": "Customer",
   "profVendor": "Vendor",
   "profMechanic": "Mechanic",
-  "coreMechanics": "Mechanics"
+  "coreMechanics": "Mechanics",
+  "partnerWithUsTitle": "Partner with us",
+  "partnerWithUsSubtitle": "Grow your business with Vahaan Bazar",
+  "partnerProfileSubtitle": "Join as vendor, mechanic or shop",
+  "partnerCtaSubtitle": "Own a shop or garage? Join Vahaan Bazar",
+  "partnerHeroTitle": "Become a Vahaan Bazar partner",
+  "partnerHeroBody": "Tell us about your business. Our team will review your request and get in touch.",
+  "partnerRoleLabel": "I want to join as",
+  "partnerRoleHint": "Select role",
+  "partnerRoleVendor": "Vendor",
+  "partnerRoleMechanic": "Mechanic",
+  "partnerRoleSpareShop": "Spare Part Shop",
+  "partnerRole": "Role",
+  "partnerYourDetails": "Your details",
+  "partnerName": "Name",
+  "partnerMobile": "Mobile number",
+  "partnerFromProfileNote": "Taken from your profile",
+  "partnerBusinessName": "Business name",
+  "partnerBusinessNameHint": "e.g. Sri Balaji Auto Spares",
+  "partnerAadhaar": "Aadhaar number (optional)",
+  "partnerAadhaarHint": "12-digit Aadhaar number",
+  "partnerLocationSection": "Business location",
+  "partnerUseCurrentLocation": "Use my current location",
+  "partnerLocationCaptured": "Location captured",
+  "partnerLocationAutoNote": "We detect your city and state from your location.",
+  "partnerLocationFailed": "Couldn't get your location. Turn on GPS and allow permission, or enter the address below.",
+  "partnerAddressLabel": "Address (optional)",
+  "partnerAddressHint": "Shop / garage address",
+  "partnerSubmit": "Submit request",
+  "partnerSelectRole": "Please select a role",
+  "partnerEnterBusinessName": "Enter your business name",
+  "partnerInvalidAadhaar": "Enter a valid 12-digit Aadhaar number",
+  "partnerSubmittedTitle": "Request received",
+  "partnerSubmitFailed": "Couldn't submit your request. Please try again.",
+  "partnerProfileLoadFailed": "Couldn't load your profile details.",
+  "partnerStatusPendingTitle": "Request under review",
+  "partnerStatusPendingBody": "We'll contact you on {mobile} once it's reviewed.",
+  "@partnerStatusPendingBody": {
+    "placeholders": {
+      "mobile": {
+        "type": "String"
+      }
+    }
+  },
+  "partnerStatusApprovedTitle": "You're a partner!",
+  "partnerStatusApprovedBody": "Your account is now a {role} account. Our team will share portal access with you.",
+  "@partnerStatusApprovedBody": {
+    "placeholders": {
+      "role": {
+        "type": "String"
+      }
+    }
+  },
+  "partnerStatusRejectedTitle": "Request not approved",
+  "partnerStatusRejectedReason": "Reason: {reason}",
+  "@partnerStatusRejectedReason": {
+    "placeholders": {
+      "reason": {
+        "type": "String"
+      }
+    }
+  },
+  "partnerApplyAgain": "Apply again",
+  "partnerRequestIdLabel": "Request ID",
+  "partnerAlreadyPartnerTitle": "You're already a partner",
+  "partnerAlreadyPartnerBody": "Your account type is {role}.",
+  "@partnerAlreadyPartnerBody": {
+    "placeholders": {
+      "role": {
+        "type": "String"
+      }
+    }
+  },
+  "partnerCompleteProfileTitle": "Complete your profile first",
+  "partnerCompleteProfileBody": "We use your name and mobile number from your profile. Please complete your profile to partner with us.",
+  "partnerCompleteProfileButton": "Complete profile",
+  "revvotCardTitle": "Check Loan Eligibility",
+  "revvotCardTag": "FINANCE",
+  "revvotCardSubtitle": "See what you can afford — get your loan eligibility in minutes",
+  "revvotCardChecking": "Checking your eligibility…",
+  "revvotStartError": "Unable to start the finance check. Please try again.",
+  "revvotApprovedTitle": "Pre-approved",
+  "revvotApprovedBody": "You can afford up to ₹{amount}.",
+  "@revvotApprovedBody": {
+    "placeholders": {
+      "amount": { "type": "String" }
+    }
+  },
+  "revvotInterestRate": "Interest rate: {rate}% p.a.",
+  "@revvotInterestRate": {
+    "placeholders": {
+      "rate": { "type": "String" }
+    }
+  },
+  "revvotTenure": "Tenure: {months} months",
+  "@revvotTenure": {
+    "placeholders": {
+      "months": { "type": "String" }
+    }
+  },
+  "revvotNotEligibleTitle": "Not eligible",
+  "revvotNotEligibleBody": "You do not qualify for financing right now.",
+  "revvotUnderReviewTitle": "Under review",
+  "revvotUnderReviewBody": "Your decision is pending. Please check again shortly.",
+  "revvotOk": "OK",
+  "referralChecking": "Checking code…",
+  "referralInvitedBy": "Invited by {name}",
+  "@referralInvitedBy": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "referralInvalidCode": "This referral code is not valid",
+  "referralDisabled": "Referral rewards are not available right now",
+  "aucBankName": "Bank Name",
+  "buySellWishlistSubtitle": "Vehicles you are interested in",
+  "buySellWishlistEmpty": "You have not added any vehicles to your wishlist yet"
 }

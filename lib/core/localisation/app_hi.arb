@@ -1244,7 +1244,7 @@
   "aucYouAreWinning": "आप आगे चल रहे हैं",
   "aucYourFavoriteVehicles": "आपके पसंदीदा वाहन",
   "aucSearchVehicles": "वाहन खोजें",
-  "aucStartBiddingStartPrice": "बोली शुरू करें — शुरुआती मूल्य ₹ {price}",
+  "aucStartBiddingStartPrice": "शुरुआती मूल्य ₹ {price}",
   "coreSearchEllipsis": "खोजें...",
   "coreNoOptionsAvailable": "कोई विकल्प उपलब्ध नहीं",
   "coreNoResultsFoundFor": "\"{query}\" के लिए कोई परिणाम नहीं मिला",
@@ -1947,5 +1947,106 @@
   "profCustomer": "ग्राहक",
   "profVendor": "विक्रेता",
   "profMechanic": "मैकेनिक",
-  "coreMechanics": "मैकेनिक"
+  "coreMechanics": "मैकेनिक",
+  "partnerWithUsTitle": "हमारे साथ जुड़ें",
+  "partnerWithUsSubtitle": "वाहन बाज़ार के साथ अपना व्यवसाय बढ़ाएँ",
+  "partnerProfileSubtitle": "वेंडर, मैकेनिक या दुकान के रूप में जुड़ें",
+  "partnerCtaSubtitle": "दुकान या गैराज है? वाहन बाज़ार से जुड़ें",
+  "partnerHeroTitle": "वाहन बाज़ार के पार्टनर बनें",
+  "partnerHeroBody": "अपने व्यवसाय के बारे में बताएँ। हमारी टीम आपके अनुरोध की समीक्षा करके संपर्क करेगी।",
+  "partnerRoleLabel": "मैं इस रूप में जुड़ना चाहता/चाहती हूँ",
+  "partnerRoleHint": "भूमिका चुनें",
+  "partnerRoleVendor": "वेंडर",
+  "partnerRoleMechanic": "मैकेनिक",
+  "partnerRoleSpareShop": "स्पेयर पार्ट दुकान",
+  "partnerRole": "भूमिका",
+  "partnerYourDetails": "आपका विवरण",
+  "partnerName": "नाम",
+  "partnerMobile": "मोबाइल नंबर",
+  "partnerFromProfileNote": "आपकी प्रोफ़ाइल से लिया गया",
+  "partnerBusinessName": "व्यवसाय का नाम",
+  "partnerBusinessNameHint": "जैसे श्री बालाजी ऑटो स्पेयर्स",
+  "partnerAadhaar": "आधार नंबर (वैकल्पिक)",
+  "partnerAadhaarHint": "12 अंकों का आधार नंबर",
+  "partnerLocationSection": "व्यवसाय का स्थान",
+  "partnerUseCurrentLocation": "मेरा वर्तमान स्थान उपयोग करें",
+  "partnerLocationCaptured": "स्थान प्राप्त हो गया",
+  "partnerLocationAutoNote": "हम आपके स्थान से शहर और राज्य पहचान लेते हैं।",
+  "partnerLocationFailed": "आपका स्थान नहीं मिल सका। GPS चालू करें और अनुमति दें, या नीचे पता दर्ज करें।",
+  "partnerAddressLabel": "पता (वैकल्पिक)",
+  "partnerAddressHint": "दुकान / गैराज का पता",
+  "partnerSubmit": "अनुरोध जमा करें",
+  "partnerSelectRole": "कृपया भूमिका चुनें",
+  "partnerEnterBusinessName": "अपने व्यवसाय का नाम दर्ज करें",
+  "partnerInvalidAadhaar": "मान्य 12 अंकों का आधार नंबर दर्ज करें",
+  "partnerSubmittedTitle": "अनुरोध प्राप्त हुआ",
+  "partnerSubmitFailed": "आपका अनुरोध जमा नहीं हो सका। कृपया पुनः प्रयास करें।",
+  "partnerProfileLoadFailed": "आपकी प्रोफ़ाइल का विवरण लोड नहीं हो सका।",
+  "partnerStatusPendingTitle": "अनुरोध समीक्षा में है",
+  "partnerStatusPendingBody": "समीक्षा के बाद हम {mobile} पर आपसे संपर्क करेंगे।",
+  "@partnerStatusPendingBody": {
+    "placeholders": {
+      "mobile": {
+        "type": "String"
+      }
+    }
+  },
+  "partnerStatusApprovedTitle": "आप हमारे पार्टनर हैं!",
+  "partnerStatusApprovedBody": "आपका खाता अब {role} खाता है। हमारी टीम आपके साथ पोर्टल एक्सेस साझा करेगी।",
+  "@partnerStatusApprovedBody": {
+    "placeholders": {
+      "role": {
+        "type": "String"
+      }
+    }
+  },
+  "partnerStatusRejectedTitle": "अनुरोध स्वीकृत नहीं हुआ",
+  "partnerStatusRejectedReason": "कारण: {reason}",
+  "@partnerStatusRejectedReason": {
+    "placeholders": {
+      "reason": {
+        "type": "String"
+      }
+    }
+  },
+  "partnerApplyAgain": "फिर से आवेदन करें",
+  "partnerRequestIdLabel": "अनुरोध आईडी",
+  "partnerAlreadyPartnerTitle": "आप पहले से पार्टनर हैं",
+  "partnerAlreadyPartnerBody": "आपका खाता प्रकार {role} है।",
+  "@partnerAlreadyPartnerBody": {
+    "placeholders": {
+      "role": {
+        "type": "String"
+      }
+    }
+  },
+  "partnerCompleteProfileTitle": "पहले अपनी प्रोफ़ाइल पूरी करें",
+  "partnerCompleteProfileBody": "हम आपके नाम और मोबाइल नंबर आपकी प्रोफ़ाइल से लेते हैं। हमारे साथ जुड़ने के लिए कृपया अपनी प्रोफ़ाइल पूरी करें।",
+  "partnerCompleteProfileButton": "प्रोफ़ाइल पूरी करें",
+  "revvotCardTitle": "लोन पात्रता जांचें",
+  "revvotCardTag": "फाइनेंस",
+  "revvotCardSubtitle": "जानें आप कितना खर्च कर सकते हैं — कुछ ही मिनटों में अपनी लोन पात्रता जांचें",
+  "revvotCardChecking": "आपकी पात्रता जांची जा रही है…",
+  "revvotStartError": "फाइनेंस जांच शुरू नहीं हो सकी। कृपया पुनः प्रयास करें।",
+  "revvotApprovedTitle": "पूर्व-स्वीकृत",
+  "revvotApprovedBody": "आप ₹{amount} तक का लोन ले सकते हैं।",
+  "revvotInterestRate": "ब्याज दर: {rate}% प्रति वर्ष",
+  "revvotTenure": "अवधि: {months} महीने",
+  "revvotNotEligibleTitle": "पात्र नहीं",
+  "revvotNotEligibleBody": "अभी आप फाइनेंस के लिए पात्र नहीं हैं।",
+  "revvotUnderReviewTitle": "समीक्षाधीन",
+  "revvotUnderReviewBody": "आपका निर्णय लंबित है। कृपया थोड़ी देर बाद फिर जांचें।",
+  "revvotOk": "ठीक है",
+  "referralChecking": "कोड जांचा जा रहा है…",
+  "referralInvitedBy": "{name} ने आमंत्रित किया",
+  "@referralInvitedBy": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "referralInvalidCode": "यह रेफ़रल कोड मान्य नहीं है",
+  "referralDisabled": "रेफ़रल रिवॉर्ड अभी उपलब्ध नहीं हैं",
+  "aucBankName": "बैंक का नाम",
+  "buySellWishlistSubtitle": "वे वाहन जिनमें आपकी रुचि है",
+  "buySellWishlistEmpty": "आपने अभी तक विशलिस्ट में कोई वाहन नहीं जोड़ा है"
 }

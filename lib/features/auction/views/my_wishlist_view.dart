@@ -524,6 +524,12 @@ class _WishlistCardState extends State<_WishlistCard> {
                     v.transactionFees,
                   ),
                   _OptRow(
+                    context.l10n.aucBankName,
+                    v.displayBankName,
+                    '',
+                    '',
+                  ),
+                  _OptRow(
                     context.l10n.yard_name,
                     v.yardName,
                     context.l10n.yard_location,

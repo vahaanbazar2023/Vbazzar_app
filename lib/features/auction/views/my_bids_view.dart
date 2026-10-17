@@ -547,6 +547,12 @@ class _BidCardState extends State<_BidCard> {
                     v.transactionFees,
                   ),
                   _OptRow(
+                    context.l10n.aucBankName,
+                    v.displayBankName,
+                    '',
+                    '',
+                  ),
+                  _OptRow(
                     context.l10n.yard_name,
                     v.yardName,
                     context.l10n.yard_location,

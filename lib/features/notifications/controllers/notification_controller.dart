@@ -213,6 +213,8 @@ class NotificationController extends GetxController {
         return '/wallet-dashboard';
       case 'AppRoutes.profile':
         return '/profile';
+      case 'AppRoutes.partnerWithUs':
+        return '/partner-with-us';
       default:
         return null;
     }

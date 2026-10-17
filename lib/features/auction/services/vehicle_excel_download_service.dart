@@ -2,7 +2,8 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:permission_handler/permission_handler.dart';
+import 'package:open_filex/open_filex.dart';
+import 'package:share_plus/share_plus.dart';
 import '../../../core/network/network_service.dart';
 import '../../../core/network/endpoints/api_endpoints.dart';
 
@@ -18,12 +19,9 @@ class VehicleExcelDownloadService {
     required String userId,
   }) async {
     try {
-      // Request storage permission
-      final hasPermission = await _requestStoragePermission();
-      if (!hasPermission) {
-        throw Exception('Storage permission denied');
-      }
-
+      // No storage permission needed: the file is saved in the app's own
+      // storage and then opened / shared (Android 11+ blocks direct writes to
+      // the public Downloads folder, and Android 13+ has no storage permission).
       // Get download directory
       final directory = await _getDownloadDirectory();
       final timestamp = DateTime.now().millisecondsSinceEpoch;
@@ -95,90 +93,28 @@ class VehicleExcelDownloadService {
     }
   }
 
-  /// Request storage permission
-  Future<bool> _requestStoragePermission() async {
-    if (Platform.isAndroid) {
-      // For Android 13+ (API 33+), we need different permissions
-      if (await Permission.photos.isGranted ||
-          await Permission.videos.isGranted) {
-        return true;
-      }
-
-      // Try to request storage permission
-      var status = await Permission.storage.status;
-      if (!status.isGranted) {
-        status = await Permission.storage.request();
-      }
-
-      // If storage is permanently denied, try manage external storage
-      if (status.isPermanentlyDenied) {
-        final manageStatus = await Permission.manageExternalStorage.request();
-        return manageStatus.isGranted;
-      }
-
-      return status.isGranted;
-    } else if (Platform.isIOS) {
-      // iOS doesn't require explicit permission for app's document directory
-      return true;
-    }
-
-    return false;
-  }
-
-  /// Get appropriate download directory based on platform
+  /// App-scoped directory (no permission required on any Android version / iOS).
   Future<Directory> _getDownloadDirectory() async {
+    Directory? base;
     if (Platform.isAndroid) {
-      // For Android, try multiple paths for Downloads directory
-      final possiblePaths = [
-        '/storage/emulated/0/Download',
-        '/storage/emulated/0/Downloads',
-        '/sdcard/Download',
-        '/sdcard/Downloads',
-      ];
-
-      for (final path in possiblePaths) {
-        try {
-          final directory = Directory(path);
-          if (await directory.exists()) {
-            debugPrint('✅ [Download] Using directory: $path');
-            return directory;
-          }
-        } catch (e) {
-          debugPrint('⚠️ Could not access $path: $e');
-        }
-      }
-
-      // If none of the standard paths work, use external storage
-      debugPrint(
-        '⚠️ Standard Downloads paths not accessible, using external storage',
-      );
-      final directory = await getExternalStorageDirectory();
-      if (directory != null) {
-        // Create a Downloads folder in external storage
-        final downloadDir = Directory('${directory.path}/Downloads');
-        if (!await downloadDir.exists()) {
-          await downloadDir.create(recursive: true);
-        }
-        debugPrint('✅ [Download] Created directory: ${downloadDir.path}');
-        return downloadDir;
-      }
-    } else if (Platform.isIOS) {
-      // For iOS, save to app's documents directory (accessible via Files app)
-      final directory = await getApplicationDocumentsDirectory();
-      debugPrint('✅ [Download] Using iOS documents: ${directory.path}');
-      return directory;
+      base = await getExternalStorageDirectory();
     }
-
-    // Final fallback to app's documents directory
-    final fallback = await getApplicationDocumentsDirectory();
-    debugPrint('⚠️ [Download] Using fallback directory: ${fallback.path}');
-    return fallback;
+    base ??= await getApplicationDocumentsDirectory();
+    final dir = Directory('${base.path}/Downloads');
+    if (!await dir.exists()) {
+      await dir.create(recursive: true);
+    }
+    debugPrint('✅ [Download] Using directory: ${dir.path}');
+    return dir;
   }
 
-  /// Open the downloaded file (optional helper method)
+  /// Open the downloaded file in a spreadsheet app; if none is installed,
+  /// fall back to the share sheet so the user can save it anywhere.
   Future<void> openFile(String filePath) async {
-    // This would require a plugin like open_file or url_launcher
-    // For now, just log the path
-    debugPrint('📂 File location: $filePath');
+    final result = await OpenFilex.open(filePath);
+    if (result.type != ResultType.done) {
+      debugPrint('⚠️ [Download] No viewer (${result.message}); sharing instead');
+      await Share.shareXFiles([XFile(filePath)]);
+    }
   }
 }

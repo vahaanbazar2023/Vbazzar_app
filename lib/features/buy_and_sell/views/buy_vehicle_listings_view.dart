@@ -181,7 +181,7 @@ class BuyVehicleListingsView extends GetView<BuyVehicleController> {
                           final vehicle = resolved as BuyVehicleEntity;
                           return Padding(
                             padding: EdgeInsets.only(bottom: AppSpacing.sm),
-                            child: _VehicleCard(vehicle: vehicle),
+                            child: BuyVehicleCard(vehicle: vehicle),
                           );
                         },
                       ),
@@ -397,9 +397,10 @@ class _ListingAdBanner extends StatelessWidget {
 
 // ─────────────────────────────────────────────────────────────────────────────
 
-class _VehicleCard extends StatelessWidget {
+/// One vehicle in the Buy & Sell listing; also used by the Buy & Sell wishlist.
+class BuyVehicleCard extends StatelessWidget {
   final BuyVehicleEntity vehicle;
-  const _VehicleCard({required this.vehicle});
+  const BuyVehicleCard({required this.vehicle});
 
   @override
   Widget build(BuildContext context) {

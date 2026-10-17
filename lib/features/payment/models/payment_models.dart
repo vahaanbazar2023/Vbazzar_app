@@ -8,6 +8,7 @@ class InitiatePaymentReq {
   final double? fromWallet;
   final double? forPayment;
   final String? referralCode;
+  final String? inspectionId; // only for planCode == 'INSPCHARGE'
 
   const InitiatePaymentReq({
     required this.userId,
@@ -15,6 +16,7 @@ class InitiatePaymentReq {
     this.fromWallet,
     this.forPayment,
     this.referralCode,
+    this.inspectionId,
   });
 
   Map<String, dynamic> toJson() {
@@ -22,6 +24,9 @@ class InitiatePaymentReq {
       'user_id': userId,
       'plan_code': planCode,
     };
+    if (inspectionId != null && inspectionId!.isNotEmpty) {
+      map['inspection_id'] = inspectionId;
+    }
     if (fromWallet != null && fromWallet! > 0) {
       map['from_wallet'] = fromWallet;
     }

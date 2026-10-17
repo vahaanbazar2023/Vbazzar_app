@@ -6,6 +6,8 @@ import '../../../core/constants/app_colors.dart';
 import '../../../core/design_system/templates/app_layout.dart';
 import '../../../core/extensions/context_extensions.dart';
 import '../../../theme/app_fonts.dart';
+import '../../partner/models/partner_models.dart';
+import '../../partner/widgets/partner_cta_banner.dart';
 import '../controllers/spare_and_fms_controller.dart';
 import 'fms_tab.dart';
 import 'spare_support_tab.dart';
@@ -25,6 +27,7 @@ class SpareFmsHomeView extends GetView<SpareAndFmsController> {
       body: Column(
         children: [
           _buildTabBar(context),
+          const PartnerCtaBanner(presetRole: PartnerRole.sparePartShop),
           Expanded(
             child: TabBarView(
               controller: controller.tabController,

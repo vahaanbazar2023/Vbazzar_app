@@ -89,14 +89,27 @@ class _AppBottomNavBarState extends State<AppBottomNavBar>
 
   @override
   Widget build(BuildContext context) {
-    final safePad = MediaQuery.of(context).padding.bottom;
     // circle top = overlap - lift - radius  →  46 - 18 - 24 = 4 px from widget top
     const circleTop = _kOverlap - _kCircleLift - _kCircleSize / 2;
 
+    // The bar keeps its fixed height inside a SafeArea, so the system
+    // navigation buttons / gesture handle (3-button nav, edge-to-edge) sit
+    // below it instead of covering it. The bar colour fills that inset.
+    return ColoredBox(
+      color: const Color(0xFF1E1E1E),
+      child: SafeArea(
+        top: false,
+        left: false,
+        right: false,
+        child: SizedBox(height: _kBarH, child: _buildBar(circleTop)),
+      ),
+    );
+  }
+
+  Widget _buildBar(double circleTop) {
     return SizedBox(
-      height: _kBarH + safePad, // total widget height includes safe area
       child: OverflowBox(
-        alignment: Alignment.bottomCenter,
+        alignment: Alignment.topCenter,
         minHeight: _kOverlap + _kBarH, // painter only gets 60px
         maxHeight: _kOverlap + _kBarH,
         child: SizedBox(

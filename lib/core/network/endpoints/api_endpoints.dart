@@ -9,6 +9,9 @@ class ApiEndpoints {
   static const String completeProfile = '/api/v2/auth/complete-profile';
   static const String logout = '/api/v1/auth/logout';
   static const String refreshToken = '/api/v1/auth/refresh-token';
+  // GET/PUT — current / change the app language (Bearer). The language chosen before login is
+  // sent on login + verify-otp instead.
+  static const String userLanguage = '/api/v2/auth/language';
 
   // ─── Revvot (finance buying power) ───────────────────────────
   static const String revvotSessions = '/api/v1/revvot/sessions';
@@ -88,6 +91,22 @@ class ApiEndpoints {
 
   // ─── Auction ──────────────────────────────────────────────────
   static const String auctionPrefix = '/api/v1/auctions';
+
+  // ─── Auction Inspection / Gate Pass ──────────────────────────
+  static const String inspectionPrefix = '/api/v1/auction-inspection';
+  static const String inspectionRequests = '$inspectionPrefix/requests';
+  static const String inspectionDocumentsUpload =
+      '$inspectionPrefix/documents/upload';
+  static const String inspectionChargeEstimate =
+      '$inspectionPrefix/charge-estimate';
+  static String inspectionRequestDetail(String id) => '$inspectionRequests/$id';
+  static String inspectionPaymentOptions(String id) =>
+      '$inspectionRequests/$id/payment-options';
+  static const String myGatePasses = '$inspectionPrefix/gate-passes';
+  static String inspectionGatePassDownload(String inspectionId) =>
+      '${inspectionGatePass(inspectionId)}/download';
+  static String inspectionGatePass(String inspectionId) =>
+      '$inspectionRequests/$inspectionId/gate-pass';
   static const String liveAuctionCategoryCounts =
       '$auctionPrefix/live-auction-category-counts';
   static const String auctionListings =
@@ -135,6 +154,24 @@ class ApiEndpoints {
   static const String userMechanicSubscription =
       '$serviceSupportPrefix/user-mechanic-subscription';
 
+  // ─── Partner with us ─────────────────────────────────────────
+  static const String partnerPrefix = '/api/v1/partner';
+  static const String partnerRequest = '$partnerPrefix/request';
+  static const String partnerMyRequest = '$partnerPrefix/my-request';
+
+  // ─── Vendor portal & vendor self-service ─────────────────────
+  static const String vendorPortalPrefix = '/api/v1/vendor-portal';
+  static const String vendorPortalSummary = '$vendorPortalPrefix/summary';
+  static const String vendorPortalInventory = '$vendorPortalPrefix/inventory';
+  static const String vendorPortalInventoryUpdate =
+      '$vendorPortalPrefix/inventory-update';
+  static const String vendorPortalSpareUpdate =
+      '$vendorPortalPrefix/spare-update';
+  static const String vendorPortalMyOrders = '$vendorPortalPrefix/my-orders';
+  static const String vendorPortalOrderStatus =
+      '$vendorPortalPrefix/order-status';
+  static const String spareFmsVendorPrefix = '/api/v1/spares-fms-vendor';
+
   // ─── Insurance & Finance ────────────────────────────────────
   static const String insuranceFinancePrefix = '/api/v1/insurance-finance';
   static const String insuranceRequest =
@@ -149,6 +186,9 @@ class ApiEndpoints {
   static const String sharePrefix = '/api/v1/share';
   static const String generateShareLink = '$sharePrefix/generate-link';
   static const String referralLink = '$sharePrefix/referral-link';
+  // API-key only (no Bearer): callable on the signup screen before login.
+  static const String validateReferralCode =
+      '$sharePrefix/validate-referral-code';
   static const String resolveShareLink = '$sharePrefix/resolve';
   static const String attributionSession = '$sharePrefix/attribution-session';
 

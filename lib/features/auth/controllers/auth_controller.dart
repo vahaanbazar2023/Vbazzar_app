@@ -18,9 +18,14 @@ import '../../../routes/app_routes.dart';
 import '../../language/controllers/language_controller.dart';
 import '../../../core/extensions/context_extensions.dart';
 
+/// Where the referral code typed on the login screen stands.
+enum ReferralStatus { idle, checking, valid, invalid, disabled, unavailable }
+
 class AuthController extends GetxController {
   AuthRepository? _authRepository;
   AuthRepository get authRepository => _authRepository ??= AuthRepository();
+  @visibleForTesting
+  set authRepository(AuthRepository value) => _authRepository = value;
 
   LocationService get locationService => LocationService.to;
 
@@ -41,6 +46,14 @@ class AuthController extends GetxController {
   final otpText = ''.obs;
   final transactionId = Rxn<String>();
   final userId = Rxn<String>();
+  final isNewUser = false.obs;
+
+  // Referral-code check (GET /share/validate-referral-code, API key only)
+  final referralStatus = ReferralStatus.idle.obs;
+  final referrerName = Rxn<String>();
+  Timer? _referralDebounce;
+  int _referralCheckSeq = 0; // ignore answers that arrive after the text changed
+  static const int referralCodeLength = 9; // e.g. VB0000013
 
   // Complete-profile form state
   final firstNameText = ''.obs;
@@ -108,9 +121,80 @@ class AuthController extends GetxController {
     } catch (_) {}
   }
 
+  /// Check the code shortly after the user stops typing a full-length code.
+  void _referralListener() {
+    final code = referralController.text.trim();
+    _referralDebounce?.cancel();
+    _referralCheckSeq++;
+    referrerName.value = null;
+    if (code.length < referralCodeLength) {
+      referralStatus.value = ReferralStatus.idle;
+      return;
+    }
+    referralStatus.value = ReferralStatus.checking;
+    _referralDebounce = Timer(
+      const Duration(milliseconds: 400),
+      () => validateReferralCode(code),
+    );
+  }
+
+  /// Ask the backend whether [code] (default: the typed one) can be applied at signup.
+  /// A network failure leaves the status `unavailable` and never blocks login: the server
+  /// validates the code again when the OTP is verified.
+  Future<void> validateReferralCode([String? code]) async {
+    final value = (code ?? referralController.text).trim().toUpperCase();
+    if (value.isEmpty) {
+      referralStatus.value = ReferralStatus.idle;
+      return;
+    }
+    final seq = ++_referralCheckSeq;
+    referralStatus.value = ReferralStatus.checking;
+    try {
+      final result = await authRepository.validateReferralCode(value);
+      if (seq != _referralCheckSeq) return;
+      referrerName.value = result.valid ? result.referrerFirstName : null;
+      referralStatus.value = result.valid
+          ? ReferralStatus.valid
+          : result.isDisabled
+          ? ReferralStatus.disabled
+          : ReferralStatus.invalid;
+    } catch (e) {
+      LoggerService.to.error('validateReferralCode failed: $e');
+      if (seq == _referralCheckSeq) {
+        referralStatus.value = ReferralStatus.unavailable;
+      }
+    }
+  }
+
+  /// Make sure a typed code has been checked (e.g. the user tapped Send OTP before the debounce fired).
+  @visibleForTesting
+  Future<void> ensureReferralChecked() async {
+    if (referralController.text.trim().isEmpty) return;
+    if (referralStatus.value == ReferralStatus.idle ||
+        referralStatus.value == ReferralStatus.checking ||
+        referralStatus.value == ReferralStatus.unavailable) {
+      await validateReferralCode();
+    }
+  }
+
+  /// False (and tells the user) when a typed referral code is not valid. A code that could not be
+  /// checked (offline, server error) or that Refer & Earn is switched off for does not block login.
+  Future<bool> _referralAllowsLogin() async {
+    await ensureReferralChecked();
+    if (referralController.text.trim().isNotEmpty &&
+        referralStatus.value == ReferralStatus.invalid) {
+      final message = appL10n.referralInvalidCode;
+      errorText.value = message;
+      CustomSnackbar.show(message: message, type: SnackbarType.error);
+      return false;
+    }
+    return true;
+  }
+
   @override
   void onInit() {
     super.onInit();
+    referralController.addListener(_referralListener);
     phoneController.addListener(_phoneListener);
     otpController.addListener(_otpListener);
     firstNameController.addListener(_firstNameListener);
@@ -119,6 +203,8 @@ class AuthController extends GetxController {
 
   @override
   void onClose() {
+    _referralDebounce?.cancel();
+    referralController.removeListener(_referralListener);
     phoneController.removeListener(_phoneListener);
     otpController.removeListener(_otpListener);
     firstNameController.removeListener(_firstNameListener);
@@ -201,6 +287,11 @@ class AuthController extends GetxController {
       return;
     }
 
+    if (!await _referralAllowsLogin()) {
+      isLoading.value = false;
+      return;
+    }
+
     try {
       final fcmToken = NotificationService.instance.fcmToken ?? '';
       LoggerService.to.info('Sending OTP to: $phone');
@@ -213,6 +304,7 @@ class AuthController extends GetxController {
       if (response.isSuccess && response.data != null) {
         transactionId.value = response.data!.transactionId;
         userId.value = response.data!.userId;
+        isNewUser.value = response.data!.isNewUser;
         otpController.clear();
         _startOtpTimer();
 
@@ -333,8 +425,10 @@ class AuthController extends GetxController {
         pendingContentId = DeepLinkService.to.consumePendingContentId();
       }
 
+      // Referral applies to new users only; don't send it for existing ones.
       final typedRef = referralController.text.trim();
       if (typedRef.isNotEmpty) pendingRef = typedRef;
+      if (!isNewUser.value) pendingRef = null;
 
       final OtpVerifyResponse response = await authRepository.verifyOtp(
         userId: uid,
@@ -455,19 +549,23 @@ class AuthController extends GetxController {
           type: SnackbarType.error,
         );
       }
-    } on NetworkException catch (e) {
-      CustomSnackbar.show(message: e.toString(), type: SnackbarType.error);
-    } on ValidationException catch (e) {
-      CustomSnackbar.show(message: e.toString(), type: SnackbarType.error);
     } catch (e) {
       LoggerService.to.error('completeProfile error: $e');
-      CustomSnackbar.show(
-        message: appL10n.inspFailedToSaveProfileTryAgain,
-        type: SnackbarType.error,
-      );
+      final msg = _apiErrorMessage(e) ?? appL10n.inspFailedToSaveProfileTryAgain;
+      if (msg.toLowerCase().contains('email')) emailErrorText.value = msg;
+      CustomSnackbar.show(message: msg, type: SnackbarType.error);
     } finally {
       isLoading.value = false;
     }
+  }
+
+  /// Message carried by an API/validation/network exception, if any.
+  String? _apiErrorMessage(Object e) {
+    try {
+      final m = (e as dynamic).message;
+      if (m is String && m.trim().isNotEmpty) return m;
+    } catch (_) {}
+    return null;
   }
 
   // ── Location helpers ──────────────────────────────────────────
@@ -560,5 +658,7 @@ class AuthController extends GetxController {
     transactionId.value = null;
     otpController.clear();
     referralController.clear();
+    referralStatus.value = ReferralStatus.idle;
+    referrerName.value = null;
   }
 }

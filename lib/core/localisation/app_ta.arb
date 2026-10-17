@@ -1182,7 +1182,7 @@
   "aucYouAreWinning": "நீங்கள் முன்னிலையில் உள்ளீர்கள்",
   "aucYourFavoriteVehicles": "உங்கள் விருப்பமான வாகனங்கள்",
   "aucSearchVehicles": "வாகனங்களைத் தேடுங்கள்",
-  "aucStartBiddingStartPrice": "ஏலத்தைத் தொடங்குங்கள் — தொடக்க விலை ₹ {price}",
+  "aucStartBiddingStartPrice": "தொடக்க விலை ₹ {price}",
   "coreSearchEllipsis": "தேடு...",
   "coreNoOptionsAvailable": "விருப்பங்கள் இல்லை",
   "coreNoResultsFoundFor": "\"{query}\" க்கு முடிவுகள் எதுவும் இல்லை",
@@ -1885,5 +1885,106 @@
   "profCustomer": "வாடிக்கையாளர்",
   "profVendor": "விற்பனையாளர்",
   "profMechanic": "மெக்கானிக்",
-  "coreMechanics": "மெக்கானிக்ஸ்"
+  "coreMechanics": "மெக்கானிக்ஸ்",
+  "partnerWithUsTitle": "எங்களுடன் கூட்டாளியாகுங்கள்",
+  "partnerWithUsSubtitle": "வாகன் பஜாருடன் உங்கள் தொழிலை வளர்க்கவும்",
+  "partnerProfileSubtitle": "விற்பனையாளர், மெக்கானிக் அல்லது கடையாக இணையுங்கள்",
+  "partnerCtaSubtitle": "கடை அல்லது கேரேஜ் உள்ளதா? வாகன் பஜாரில் இணையுங்கள்",
+  "partnerHeroTitle": "வாகன் பஜார் கூட்டாளியாகுங்கள்",
+  "partnerHeroBody": "உங்கள் தொழிலைப் பற்றி கூறுங்கள். எங்கள் குழு உங்கள் கோரிக்கையை பரிசீலித்து தொடர்பு கொள்ளும்.",
+  "partnerRoleLabel": "நான் இவ்வாறு இணைய விரும்புகிறேன்",
+  "partnerRoleHint": "பங்கைத் தேர்ந்தெடுக்கவும்",
+  "partnerRoleVendor": "விற்பனையாளர்",
+  "partnerRoleMechanic": "மெக்கானிக்",
+  "partnerRoleSpareShop": "உதிரிபாகக் கடை",
+  "partnerRole": "பங்கு",
+  "partnerYourDetails": "உங்கள் விவரங்கள்",
+  "partnerName": "பெயர்",
+  "partnerMobile": "மொபைல் எண்",
+  "partnerFromProfileNote": "உங்கள் சுயவிவரத்திலிருந்து எடுக்கப்பட்டது",
+  "partnerBusinessName": "தொழில் பெயர்",
+  "partnerBusinessNameHint": "எ.கா. ஸ்ரீ பாலாஜி ஆட்டோ ஸ்பேர்ஸ்",
+  "partnerAadhaar": "ஆதார் எண் (விருப்பம்)",
+  "partnerAadhaarHint": "12 இலக்க ஆதார் எண்",
+  "partnerLocationSection": "தொழில் இடம்",
+  "partnerUseCurrentLocation": "எனது தற்போதைய இடத்தைப் பயன்படுத்து",
+  "partnerLocationCaptured": "இடம் பெறப்பட்டது",
+  "partnerLocationAutoNote": "உங்கள் இடத்திலிருந்து நகரம் மற்றும் மாநிலத்தை நாங்கள் கண்டறிவோம்.",
+  "partnerLocationFailed": "உங்கள் இடத்தைப் பெற முடியவில்லை. GPS ஐ இயக்கி அனுமதி வழங்கவும், அல்லது கீழே முகவரியை உள்ளிடவும்.",
+  "partnerAddressLabel": "முகவரி (விருப்பம்)",
+  "partnerAddressHint": "கடை / கேரேஜ் முகவரி",
+  "partnerSubmit": "கோரிக்கையைச் சமர்ப்பி",
+  "partnerSelectRole": "தயவுசெய்து ஒரு பங்கைத் தேர்ந்தெடுக்கவும்",
+  "partnerEnterBusinessName": "உங்கள் தொழில் பெயரை உள்ளிடவும்",
+  "partnerInvalidAadhaar": "சரியான 12 இலக்க ஆதார் எண்ணை உள்ளிடவும்",
+  "partnerSubmittedTitle": "கோரிக்கை பெறப்பட்டது",
+  "partnerSubmitFailed": "உங்கள் கோரிக்கையைச் சமர்ப்பிக்க முடியவில்லை. மீண்டும் முயற்சிக்கவும்.",
+  "partnerProfileLoadFailed": "உங்கள் சுயவிவர விவரங்களை ஏற்ற முடியவில்லை.",
+  "partnerStatusPendingTitle": "கோரிக்கை பரிசீலனையில் உள்ளது",
+  "partnerStatusPendingBody": "பரிசீலனைக்குப் பிறகு {mobile} எண்ணில் உங்களைத் தொடர்பு கொள்வோம்.",
+  "@partnerStatusPendingBody": {
+    "placeholders": {
+      "mobile": {
+        "type": "String"
+      }
+    }
+  },
+  "partnerStatusApprovedTitle": "நீங்கள் எங்கள் கூட்டாளி!",
+  "partnerStatusApprovedBody": "உங்கள் கணக்கு இப்போது {role} கணக்காக உள்ளது. எங்கள் குழு போர்டல் அணுகலை பகிரும்.",
+  "@partnerStatusApprovedBody": {
+    "placeholders": {
+      "role": {
+        "type": "String"
+      }
+    }
+  },
+  "partnerStatusRejectedTitle": "கோரிக்கை ஏற்கப்படவில்லை",
+  "partnerStatusRejectedReason": "காரணம்: {reason}",
+  "@partnerStatusRejectedReason": {
+    "placeholders": {
+      "reason": {
+        "type": "String"
+      }
+    }
+  },
+  "partnerApplyAgain": "மீண்டும் விண்ணப்பிக்கவும்",
+  "partnerRequestIdLabel": "கோரிக்கை ஐடி",
+  "partnerAlreadyPartnerTitle": "நீங்கள் ஏற்கனவே கூட்டாளி",
+  "partnerAlreadyPartnerBody": "உங்கள் கணக்கு வகை {role}.",
+  "@partnerAlreadyPartnerBody": {
+    "placeholders": {
+      "role": {
+        "type": "String"
+      }
+    }
+  },
+  "partnerCompleteProfileTitle": "முதலில் உங்கள் சுயவிவரத்தை முடிக்கவும்",
+  "partnerCompleteProfileBody": "உங்கள் சுயவிவரத்திலிருந்து பெயர் மற்றும் மொபைல் எண்ணை நாங்கள் பயன்படுத்துகிறோம். எங்களுடன் கூட்டாளியாக, தயவுசெய்து உங்கள் சுயவிவரத்தை முடிக்கவும்.",
+  "partnerCompleteProfileButton": "சுயவிவரத்தை முடிக்கவும்",
+  "revvotCardTitle": "கடன் தகுதியை சரிபார்க்கவும்",
+  "revvotCardTag": "நிதி",
+  "revvotCardSubtitle": "நீங்கள் எவ்வளவு வாங்க முடியும் என்று பாருங்கள் — சில நிமிடங்களில் கடன் தகுதியை சரிபார்க்கவும்",
+  "revvotCardChecking": "உங்கள் தகுதி சரிபார்க்கப்படுகிறது…",
+  "revvotStartError": "நிதி சரிபார்ப்பைத் தொடங்க முடியவில்லை. மீண்டும் முயற்சிக்கவும்.",
+  "revvotApprovedTitle": "முன்-ஒப்புதல்",
+  "revvotApprovedBody": "நீங்கள் ₹{amount} வரை கடன் பெறலாம்.",
+  "revvotInterestRate": "வட்டி விகிதம்: ஆண்டுக்கு {rate}%",
+  "revvotTenure": "காலம்: {months} மாதங்கள்",
+  "revvotNotEligibleTitle": "தகுதி இல்லை",
+  "revvotNotEligibleBody": "தற்போது நீங்கள் நிதிக்குத் தகுதியற்றவர்.",
+  "revvotUnderReviewTitle": "பரிசீலனையில் உள்ளது",
+  "revvotUnderReviewBody": "உங்கள் முடிவு நிலுவையில் உள்ளது. சிறிது நேரம் கழித்து மீண்டும் சரிபார்க்கவும்.",
+  "revvotOk": "சரி",
+  "referralChecking": "குறியீடு சரிபார்க்கப்படுகிறது…",
+  "referralInvitedBy": "{name} அழைத்தார்",
+  "@referralInvitedBy": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "referralInvalidCode": "இந்த பரிந்துரை குறியீடு செல்லாது",
+  "referralDisabled": "பரிந்துரை வெகுமதிகள் தற்போது கிடைக்கவில்லை",
+  "aucBankName": "வங்கி பெயர்",
+  "buySellWishlistSubtitle": "நீங்கள் ஆர்வம் காட்டிய வாகனங்கள்",
+  "buySellWishlistEmpty": "நீங்கள் இன்னும் விருப்பப்பட்டியலில் எந்த வாகனமும் சேர்க்கவில்லை"
 }

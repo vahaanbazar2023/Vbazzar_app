@@ -9,6 +9,8 @@ import '../../../core/design_system/templates/app_layout.dart';
 import '../../../core/design_system/tokens/app_spacing.dart';
 import '../../../routes/app_routes.dart';
 import '../../../theme/app_fonts.dart';
+import '../../partner/models/partner_models.dart';
+import '../../partner/widgets/partner_cta_banner.dart';
 import '../controllers/service_support_controller.dart';
 import '../../../core/extensions/context_extensions.dart';
 
@@ -92,6 +94,11 @@ class ServiceSupportView extends StatelessWidget {
               ),
             ),
 
+            SizedBox(height: AppSpacing.lg),
+            const PartnerCtaBanner(
+              presetRole: PartnerRole.mechanic,
+              margin: EdgeInsets.zero,
+            ),
             SizedBox(height: AppSpacing.xxl),
           ],
         ),

@@ -750,6 +750,7 @@ class VehicleListingController extends GetxController
             remarks: vehicle.remarks,
             category: vehicle.category,
             yardName: vehicle.yardName,
+            bankName: vehicle.bankName,
             yardLocation: vehicle.yardLocation,
             contactPersonName: vehicle.contactPersonName,
             contactPersonNumber: vehicle.contactPersonNumber,

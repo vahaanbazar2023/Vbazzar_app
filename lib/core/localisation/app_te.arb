@@ -1010,7 +1010,7 @@
   "aucYouAreWinning": "మీరు ముందంజలో ఉన్నారు",
   "aucYourFavoriteVehicles": "మీకు ఇష్టమైన వాహనాలు",
   "aucSearchVehicles": "వాహనాలను వెతకండి",
-  "aucStartBiddingStartPrice": "బిడ్డింగ్ ప్రారంభించండి — ప్రారంభ ధర ₹ {price}",
+  "aucStartBiddingStartPrice": "ప్రారంభ ధర ₹ {price}",
   "coreSearchEllipsis": "వెతకండి...",
   "coreNoOptionsAvailable": "ఎంపికలు అందుబాటులో లేవు",
   "coreNoResultsFoundFor": "\"{query}\" కోసం ఫలితాలు కనుగొనబడలేదు",
@@ -1713,5 +1713,106 @@
   "profCustomer": "కస్టమర్",
   "profVendor": "విక్రేత",
   "profMechanic": "మెకానిక్",
-  "coreMechanics": "మెకానిక్స్"
+  "coreMechanics": "మెకానిక్స్",
+  "partnerWithUsTitle": "మాతో భాగస్వామి అవ్వండి",
+  "partnerWithUsSubtitle": "వాహన్ బజార్‌తో మీ వ్యాపారాన్ని పెంచుకోండి",
+  "partnerProfileSubtitle": "వెండర్, మెకానిక్ లేదా షాపుగా చేరండి",
+  "partnerCtaSubtitle": "షాప్ లేదా గ్యారేజ్ ఉందా? వాహన్ బజార్‌లో చేరండి",
+  "partnerHeroTitle": "వాహన్ బజార్ భాగస్వామి అవ్వండి",
+  "partnerHeroBody": "మీ వ్యాపారం గురించి చెప్పండి. మా బృందం మీ అభ్యర్థనను సమీక్షించి సంప్రదిస్తుంది.",
+  "partnerRoleLabel": "నేను ఇలా చేరాలనుకుంటున్నాను",
+  "partnerRoleHint": "పాత్రను ఎంచుకోండి",
+  "partnerRoleVendor": "వెండర్",
+  "partnerRoleMechanic": "మెకానిక్",
+  "partnerRoleSpareShop": "స్పేర్ పార్ట్ షాప్",
+  "partnerRole": "పాత్ర",
+  "partnerYourDetails": "మీ వివరాలు",
+  "partnerName": "పేరు",
+  "partnerMobile": "మొబైల్ నంబర్",
+  "partnerFromProfileNote": "మీ ప్రొఫైల్ నుండి తీసుకోబడింది",
+  "partnerBusinessName": "వ్యాపార పేరు",
+  "partnerBusinessNameHint": "ఉదా. శ్రీ బాలాజీ ఆటో స్పేర్స్",
+  "partnerAadhaar": "ఆధార్ నంబర్ (ఐచ్ఛికం)",
+  "partnerAadhaarHint": "12 అంకెల ఆధార్ నంబర్",
+  "partnerLocationSection": "వ్యాపార స్థానం",
+  "partnerUseCurrentLocation": "నా ప్రస్తుత స్థానాన్ని ఉపయోగించండి",
+  "partnerLocationCaptured": "స్థానం సేకరించబడింది",
+  "partnerLocationAutoNote": "మీ స్థానం నుండి నగరం మరియు రాష్ట్రాన్ని మేము గుర్తిస్తాము.",
+  "partnerLocationFailed": "మీ స్థానాన్ని పొందలేకపోయాం. GPS ఆన్ చేసి అనుమతి ఇవ్వండి, లేదా క్రింద చిరునామా నమోదు చేయండి.",
+  "partnerAddressLabel": "చిరునామా (ఐచ్ఛికం)",
+  "partnerAddressHint": "షాప్ / గ్యారేజ్ చిరునామా",
+  "partnerSubmit": "అభ్యర్థనను సమర్పించండి",
+  "partnerSelectRole": "దయచేసి ఒక పాత్రను ఎంచుకోండి",
+  "partnerEnterBusinessName": "మీ వ్యాపార పేరును నమోదు చేయండి",
+  "partnerInvalidAadhaar": "చెల్లుబాటు అయ్యే 12 అంకెల ఆధార్ నంబర్ నమోదు చేయండి",
+  "partnerSubmittedTitle": "అభ్యర్థన అందింది",
+  "partnerSubmitFailed": "మీ అభ్యర్థనను సమర్పించలేకపోయాం. దయచేసి మళ్లీ ప్రయత్నించండి.",
+  "partnerProfileLoadFailed": "మీ ప్రొఫైల్ వివరాలను లోడ్ చేయలేకపోయాం.",
+  "partnerStatusPendingTitle": "అభ్యర్థన సమీక్షలో ఉంది",
+  "partnerStatusPendingBody": "సమీక్ష తర్వాత మేము {mobile} నంబర్‌లో మిమ్మల్ని సంప్రదిస్తాము.",
+  "@partnerStatusPendingBody": {
+    "placeholders": {
+      "mobile": {
+        "type": "String"
+      }
+    }
+  },
+  "partnerStatusApprovedTitle": "మీరు మా భాగస్వామి!",
+  "partnerStatusApprovedBody": "మీ ఖాతా ఇప్పుడు {role} ఖాతా. మా బృందం పోర్టల్ యాక్సెస్‌ను పంచుకుంటుంది.",
+  "@partnerStatusApprovedBody": {
+    "placeholders": {
+      "role": {
+        "type": "String"
+      }
+    }
+  },
+  "partnerStatusRejectedTitle": "అభ్యర్థన ఆమోదించబడలేదు",
+  "partnerStatusRejectedReason": "కారణం: {reason}",
+  "@partnerStatusRejectedReason": {
+    "placeholders": {
+      "reason": {
+        "type": "String"
+      }
+    }
+  },
+  "partnerApplyAgain": "మళ్లీ దరఖాస్తు చేయండి",
+  "partnerRequestIdLabel": "అభ్యర్థన ఐడి",
+  "partnerAlreadyPartnerTitle": "మీరు ఇప్పటికే భాగస్వామి",
+  "partnerAlreadyPartnerBody": "మీ ఖాతా రకం {role}.",
+  "@partnerAlreadyPartnerBody": {
+    "placeholders": {
+      "role": {
+        "type": "String"
+      }
+    }
+  },
+  "partnerCompleteProfileTitle": "ముందుగా మీ ప్రొఫైల్‌ను పూర్తి చేయండి",
+  "partnerCompleteProfileBody": "మీ ప్రొఫైల్ నుండి మీ పేరు మరియు మొబైల్ నంబర్‌ను మేము ఉపయోగిస్తాము. మాతో భాగస్వామి అవ్వడానికి దయచేసి మీ ప్రొఫైల్‌ను పూర్తి చేయండి.",
+  "partnerCompleteProfileButton": "ప్రొఫైల్ పూర్తి చేయండి",
+  "revvotCardTitle": "లోన్ అర్హతను తనిఖీ చేయండి",
+  "revvotCardTag": "ఫైనాన్స్",
+  "revvotCardSubtitle": "మీరు ఎంత భరించగలరో చూడండి — కొన్ని నిమిషాల్లో మీ లోన్ అర్హతను తనిఖీ చేయండి",
+  "revvotCardChecking": "మీ అర్హతను తనిఖీ చేస్తున్నాం…",
+  "revvotStartError": "ఫైనాన్స్ తనిఖీని ప్రారంభించలేకపోయాం. దయచేసి మళ్లీ ప్రయత్నించండి.",
+  "revvotApprovedTitle": "ముందస్తు ఆమోదం",
+  "revvotApprovedBody": "మీరు ₹{amount} వరకు లోన్ పొందవచ్చు.",
+  "revvotInterestRate": "వడ్డీ రేటు: సంవత్సరానికి {rate}%",
+  "revvotTenure": "కాలవ్యవధి: {months} నెలలు",
+  "revvotNotEligibleTitle": "అర్హత లేదు",
+  "revvotNotEligibleBody": "ప్రస్తుతం మీరు ఫైనాన్స్‌కు అర్హులు కారు.",
+  "revvotUnderReviewTitle": "పరిశీలనలో ఉంది",
+  "revvotUnderReviewBody": "మీ నిర్ణయం పెండింగ్‌లో ఉంది. దయచేసి కొంత సమయం తర్వాత మళ్లీ తనిఖీ చేయండి.",
+  "revvotOk": "సరే",
+  "referralChecking": "కోడ్ తనిఖీ చేస్తోంది…",
+  "referralInvitedBy": "{name} ఆహ్వానించారు",
+  "@referralInvitedBy": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "referralInvalidCode": "ఈ రెఫరల్ కోడ్ చెల్లదు",
+  "referralDisabled": "రెఫరల్ రివార్డులు ప్రస్తుతం అందుబాటులో లేవు",
+  "aucBankName": "బ్యాంక్ పేరు",
+  "buySellWishlistSubtitle": "మీకు ఆసక్తి ఉన్న వాహనాలు",
+  "buySellWishlistEmpty": "మీరు ఇంకా విష్‌లిస్ట్‌కు ఏ వాహనాన్ని జోడించలేదు"
 }

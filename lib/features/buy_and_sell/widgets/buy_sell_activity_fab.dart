@@ -10,7 +10,7 @@ import '../controllers/sell_vehicle_controller.dart';
 import '../controllers/vehicle_detail_controller.dart';
 import '../data/repositories/buy_sell_repository_impl.dart';
 import '../views/my_vehicles_view.dart';
-import '../views/subscribed_vehicles_view.dart';
+import '../views/buy_sell_wishlist_view.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Expandable Buy & Sell activity FAB — matches Auction FAB design
@@ -68,7 +68,7 @@ class _BuySellActivityFabState extends State<BuySellActivityFab>
         break;
       case 'wishlist':
         Get.to(
-          () => const SubscribedVehiclesView(),
+          () => const BuySellWishlistView(),
           binding: BindingsBuilder(() {
             if (!Get.isRegistered<BuyVehicleController>()) {
               Get.put(

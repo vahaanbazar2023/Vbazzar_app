@@ -33,6 +33,7 @@ import '../features/auction/views/acution_vechile_listing.dart';
 import '../features/auction/views/acution_vechile_detail.dart';
 import '../features/auction/views/my_bids_view.dart';
 import '../features/auction/views/my_wins_view.dart';
+import '../features/auction/views/my_gate_passes_view.dart';
 import '../features/auction/views/my_wishlist_view.dart';
 import '../features/auction/auction_binding.dart';
 import '../features/auction/controllers/auction_category_controller.dart';
@@ -77,6 +78,8 @@ import '../features/notifications/controllers/notification_controller.dart'
     as nc;
 import '../features/search/controllers/search_controller.dart' as sc;
 import '../features/profile/views/cash_out_screen.dart';
+import '../features/partner/partner_binding.dart';
+import '../features/partner/views/partner_with_us_view.dart';
 import '../core/extensions/context_extensions.dart';
 
 class AppPages {
@@ -252,6 +255,11 @@ class AppPages {
       binding: BindingsBuilder(() {
         Get.lazyPut(() => MyWinsController());
       }),
+      transition: Transition.rightToLeft,
+    ),
+    GetPage(
+      name: AppRoutes.myGatePasses,
+      page: () => const MyGatePassesView(),
       transition: Transition.rightToLeft,
     ),
     GetPage(
@@ -479,6 +487,12 @@ class AppPages {
     GetPage(
       name: AppRoutes.cashOut,
       page: () => const CashOutScreen(),
+      transition: Transition.rightToLeft,
+    ),
+    GetPage(
+      name: AppRoutes.partnerWithUs,
+      page: () => const PartnerWithUsView(),
+      binding: PartnerBinding(),
       transition: Transition.rightToLeft,
     ),
   ];

@@ -816,6 +816,8 @@ class _VehicleAccordionState extends State<_VehicleAccordion> {
                   _DetailRow(context.l10n.registered_rto, v.registeredRto),
                   _DetailRow(context.l10n.parking_charges, v.parkingCharges),
                   _DetailRow(context.l10n.transaction_fees, v.transactionFees),
+                  if (v.displayBankName.isNotEmpty)
+                    _DetailRow(context.l10n.aucBankName, v.displayBankName),
                   _DetailRow(context.l10n.yard_name, v.yardName),
                   _DetailRow(context.l10n.yard_location, v.yardLocation),
                   _DetailRow(

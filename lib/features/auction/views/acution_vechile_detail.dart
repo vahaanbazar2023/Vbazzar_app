@@ -11,6 +11,7 @@ import '../../../core/extensions/context_extensions.dart';
 import '../controllers/vehicle_listing_controller.dart';
 import '../models/auction_listing.dart';
 import '../models/vehicle_listing.dart';
+import 'gate_pass_sheet.dart';
 
 class AuctionVehicleDetailScreen extends StatelessWidget {
   const AuctionVehicleDetailScreen({super.key});
@@ -195,6 +196,14 @@ class AuctionVehicleDetailScreen extends StatelessWidget {
                     );
                   }),
                   SizedBox(height: AppSpacing.md),
+
+                  // ── Gate Pass (small) ─────────────────────
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: GatePassButton(vehicle: v),
+                  ),
+                  
+                  SizedBox(height: AppSpacing.sm),
 
                   // ── Vehicle Details accordion ─────────────
                   _VehicleDetailsAccordion(v: v),
@@ -719,6 +728,12 @@ class _VehicleDetailsAccordionState extends State<_VehicleDetailsAccordion> {
                   label: context.l10n.owner,
                   value: v.owner.isNotEmpty ? v.owner : context.l10n.na,
                 ),
+                if (v.displayBankName.isNotEmpty)
+                  _DetailRow(
+                    icon: Icons.account_balance_outlined,
+                    label: context.l10n.aucBankName,
+                    value: v.displayBankName,
+                  ),
                 _DetailRow(
                   icon: Icons.confirmation_number_outlined,
                   label: context.l10n.chassisNumber,

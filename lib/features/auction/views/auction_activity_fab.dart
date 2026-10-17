@@ -94,7 +94,10 @@ class _AuctionActivityFabState extends State<AuctionActivityFab>
       );
 
       final service = Get.find<VehicleExcelDownloadService>();
-      await service.downloadVehicleExcel(auctionId: auctionId, userId: userId);
+      final path = await service.downloadVehicleExcel(
+        auctionId: auctionId,
+        userId: userId,
+      );
 
       Get.back(); // Close loading
 
@@ -102,6 +105,7 @@ class _AuctionActivityFabState extends State<AuctionActivityFab>
         message: appL10n.aucExcelDownloaded,
         type: SnackbarType.success,
       );
+      await service.openFile(path);
     } catch (e) {
       if (Get.isDialogOpen ?? false) Get.back();
       CustomSnackbar.show(
@@ -130,6 +134,12 @@ class _AuctionActivityFabState extends State<AuctionActivityFab>
       iconAsset: null,
       iconData: Icons.favorite_rounded,
       route: AppRoutes.myWishlist,
+    ),
+    (
+      label: 'My Gate Passes',
+      iconAsset: null,
+      iconData: Icons.qr_code_2_rounded,
+      route: AppRoutes.myGatePasses,
     ),
     (
       label: context.l10n.download_listing,

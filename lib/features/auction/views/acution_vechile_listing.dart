@@ -19,6 +19,7 @@ import '../domain/entities/auction_entity.dart';
 import '../models/vehicle_listing.dart';
 import 'auction_activity_fab.dart';
 import 'auction_filter_bottom_sheet.dart';
+import 'gate_pass_sheet.dart';
 
 class AuctionVehicleListingScreen extends GetView<VehicleListingController> {
   const AuctionVehicleListingScreen({super.key});
@@ -562,6 +563,12 @@ class _VehicleCardState extends State<_VehicleCard> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       _OptGridRow(
+                        context.l10n.aucBankName,
+                        v.displayBankName,
+                        '',
+                        '',
+                      ),
+                      _OptGridRow(
                         context.l10n.rc_availability,
                         v.rcAvailability,
                         context.l10n.repo_date,
@@ -687,6 +694,11 @@ class _VehicleCardState extends State<_VehicleCard> {
                             ),
                           ),
                         ],
+                      ),
+                      SizedBox(height: 8.h),
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: GatePassButton(vehicle: v),
                       ),
                       SizedBox(height: 6.h),
                     ],

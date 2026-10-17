@@ -26,6 +26,8 @@ class VehicleListing {
   final String remarks;
   final String category;
   final String yardName;
+  /// Bank the vehicle belongs to; the API sends "NIL" when not applicable.
+  final String bankName;
   final String yardLocation;
   final String contactPersonName;
   final String contactPersonNumber;
@@ -80,6 +82,7 @@ class VehicleListing {
     required this.contactPersonName,
     required this.contactPersonNumber,
     this.rcAvailability = '',
+    this.bankName = '',
     this.transactionFees = '0.00',
     this.parkingCharges = '0.00',
     required this.yourBid,
@@ -145,6 +148,7 @@ class VehicleListing {
       remarks: json['remarks']?.toString() ?? '',
       category: json['category']?.toString() ?? '',
       yardName: json['yard_name']?.toString() ?? '',
+      bankName: json['bank_name']?.toString() ?? '',
       yardLocation: json['yard_location']?.toString() ?? '',
       contactPersonName: json['contact_person_name']?.toString() ?? '',
       contactPersonNumber: json['contact_person_number']?.toString() ?? '',
@@ -172,6 +176,12 @@ class VehicleListing {
   }
 
   String get displayTitle => '$make $model'.trim();
+
+  /// Bank to show in the UI: empty when there is none (the API sends "NIL" for "not applicable").
+  String get displayBankName {
+    final t = bankName.trim();
+    return t.toUpperCase() == 'NIL' ? '' : t;
+  }
 
   /// Safely converts any value to int — returns null for non-numeric strings
   /// like "high" that the API sometimes sends for bid fields.

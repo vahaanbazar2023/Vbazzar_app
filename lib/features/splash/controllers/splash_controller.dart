@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../language/data/language_sync_service.dart';
 import '../../../core/services/logger_service.dart';
 import '../../../core/storage/local_storage_service.dart';
 import '../../../core/storage/secure_storage_service.dart';
@@ -236,6 +237,8 @@ class SplashController extends GetxController with GetTickerProviderStateMixin {
     );
 
     if (token != null && token.isNotEmpty) {
+      // Backfill the server with this device's language (fire-and-forget, never blocks startup).
+      LanguageSyncService.syncSavedLanguageOnce();
       // Profile is only forced after a payment (see ProfileGate).
       if (profileCompleted != 'true' &&
           await ProfileGate.mustCompleteProfile()) {

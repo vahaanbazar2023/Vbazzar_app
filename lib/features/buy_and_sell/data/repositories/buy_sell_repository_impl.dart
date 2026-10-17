@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show visibleForTesting;
 import 'dart:io';
 import 'package:dio/dio.dart';
 import '../../../../core/network/network_service.dart';
@@ -393,6 +394,29 @@ class BuySellRepositoryImpl implements BuySellRepository {
     }
   }
 
+  /// Body of POST /api/v1/sell-buy/vehicle-category-list-by-filters. `category_code: 'all'` lists every
+  /// category; extra filters (e.g. `is_interested: 'yes'` for the wishlist) are merged in; blank
+  /// filters are ignored by the server.
+  @visibleForTesting
+  static Map<String, dynamic> buildCategoryFilterBody({
+    required String userId,
+    required String categoryCode,
+    required int limit,
+    required int page,
+    Map<String, dynamic>? filters,
+  }) {
+    final body = <String, dynamic>{
+      'category_code': categoryCode,
+      'page': page,
+      'limit': limit,
+      'user_id': userId,
+    };
+    if (filters != null && filters.isNotEmpty) {
+      body.addAll(filters);
+    }
+    return body;
+  }
+
   @override
   Future<PaginatedBuyVehiclesResponse> listVehiclesByCategoryFilters({
     required String userId,
@@ -402,15 +426,13 @@ class BuySellRepositoryImpl implements BuySellRepository {
     Map<String, dynamic>? filters,
   }) async {
     try {
-      final body = <String, dynamic>{
-        'category_code': categoryCode,
-        'page': page,
-        'limit': limit,
-        'user_id': userId,
-      };
-      if (filters != null && filters.isNotEmpty) {
-        body.addAll(filters);
-      }
+      final body = buildCategoryFilterBody(
+        userId: userId,
+        categoryCode: categoryCode,
+        limit: limit,
+        page: page,
+        filters: filters,
+      );
       final response = await _network.post(
         ApiEndpoints.vehicleCategoryListByFilters,
         data: body,

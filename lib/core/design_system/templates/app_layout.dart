@@ -42,16 +42,12 @@ class AppLayout extends StatelessWidget {
         backgroundColor: bodyColor ?? Colors.white,
         floatingActionButton: floatingActionButton,
         bottomNavigationBar: GetBuilder<MainShellController>(
-          builder: (ctrl) => MediaQuery.removePadding(
-            context: context,
-            removeBottom: true,
-            child: AppBottomNavBar(
-              currentTab: BottomNavTab.values[ctrl.currentIndex.value],
-              onTabSelected: (tab) {
-                ctrl.changePage(tab.index);
-                Get.until((route) => route.settings.name == AppRoutes.home);
-              },
-            ),
+          builder: (ctrl) => AppBottomNavBar(
+            currentTab: BottomNavTab.values[ctrl.currentIndex.value],
+            onTabSelected: (tab) {
+              ctrl.changePage(tab.index);
+              Get.until((route) => route.settings.name == AppRoutes.home);
+            },
           ),
         ),
         body: Column(

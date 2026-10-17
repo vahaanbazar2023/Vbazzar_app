@@ -924,6 +924,12 @@ class _VehicleAccordionState extends State<_VehicleAccordion> {
                   context.l10n.engineNumber,
                   v.engineNo.isNotEmpty ? v.engineNo : context.l10n.na,
                 ),
+                if (v.displayBankName.isNotEmpty)
+                  _DR(
+                    Icons.account_balance_outlined,
+                    context.l10n.aucBankName,
+                    v.displayBankName,
+                  ),
                 _DR(
                   Icons.warehouse_outlined,
                   context.l10n.yard_name,

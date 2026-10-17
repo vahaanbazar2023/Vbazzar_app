@@ -62,6 +62,16 @@ class BuyVehicleController extends GetxController {
   final buyTotalCount = 0.obs;
   final hasMoreBuyVehicles = true.obs;
 
+  // ─── Wishlist list (vehicle-category-list-by-filters, is_interested: yes) ─
+
+  final wishlistVehicles = <BuyVehicleEntity>[].obs;
+  final isLoadingWishlist = false.obs;
+  final isLoadingMoreWishlist = false.obs;
+  final hasErrorWishlist = false.obs;
+  final hasMoreWishlist = true.obs;
+  final wishlistPage = 1.obs;
+  final wishlistTotalCount = 0.obs;
+
   // ─── Subscribed Vehicles ─────────────────────────────────────
 
   final subscribedVehicles = <SubscribedVehicleEntity>[].obs;
@@ -82,8 +92,8 @@ class BuyVehicleController extends GetxController {
     }
   }
 
-  /// Toggles wishlist state and calls the interest API (isInterested: yes).
-  /// Keeps the heart filled optimistically; reverts on failure.
+  /// Toggles wishlist state and tells the server (`is_interested` yes / no).
+  /// Keeps the heart in its new state optimistically; reverts on failure.
   Future<void> toggleWishlist(BuyVehicleEntity vehicle) async {
     final id = vehicle.sbVehicleId;
     final wasWishlisted = wishlistedIds.contains(id);
@@ -91,20 +101,99 @@ class BuyVehicleController extends GetxController {
     // Optimistic toggle
     if (wasWishlisted) {
       wishlistedIds.remove(id);
-    } else {
-      wishlistedIds.add(id);
+      final index = wishlistVehicles.indexWhere((v) => v.sbVehicleId == id);
+      final removed = index >= 0 ? wishlistVehicles.removeAt(index) : null;
+      try {
+        final ok = await _setInterest(vehicle, 'no');
+        if (!ok) throw Exception('server refused');
+      } catch (_) {
+        // Revert on failure: keep the vehicle wishlisted
+        wishlistedIds.add(id);
+        if (removed != null) {
+          wishlistVehicles.insert(index.clamp(0, wishlistVehicles.length), removed);
+        }
+        try {
+          Get.snackbar(
+            appL10n.spareError,
+            appL10n.somethingWentWrong,
+            snackPosition: SnackPosition.TOP,
+          );
+        } catch (_) {
+          // no screen to show it on; the wishlist state is already restored
+        }
+      }
+      return;
     }
 
-    if (!wasWishlisted) {
-      // Only call the API when adding to wishlist (interest = yes)
-      try {
-        await submitInterest(vehicle);
-      } catch (_) {
-        // Revert on failure
-        wishlistedIds.remove(id);
-      }
+    wishlistedIds.add(id);
+    try {
+      await submitInterest(vehicle);
+    } catch (_) {
+      // Revert on failure
+      wishlistedIds.remove(id);
     }
   }
+
+  /// Records is_interested = [value] ('yes' | 'no') for the vehicle. True when the server accepted it.
+  Future<bool> _setInterest(BuyVehicleEntity vehicle, String value) async {
+    final uid = await _userId;
+    final result = await repository.userInterest(
+      vehicleId: vehicle.sbVehicleId,
+      userId: uid,
+      vehicleOffer: null,
+      isInterested: value,
+      ownerDetailsAccess: '',
+      vehicleDetailsAccess: '',
+      inspectionRequest: '',
+    );
+    return result['status'] == 'success';
+  }
+
+  /// The user's wishlist: every category, only vehicles they marked interested.
+  Future<void> fetchWishlist({bool isRefresh = false}) async {
+    if (isLoadingWishlist.value || isLoadingMoreWishlist.value) return;
+    if (isRefresh) {
+      wishlistPage.value = 1;
+      hasMoreWishlist.value = true;
+    }
+    if (!hasMoreWishlist.value && !isRefresh) return;
+
+    final isFirstPage = wishlistPage.value == 1;
+    if (isFirstPage) {
+      isLoadingWishlist.value = true;
+      hasErrorWishlist.value = false;
+    } else {
+      isLoadingMoreWishlist.value = true;
+    }
+
+    try {
+      final uid = await _userId;
+      final result = await repository.listVehiclesByCategoryFilters(
+        userId: uid,
+        categoryCode: 'all',
+        limit: _limit,
+        page: wishlistPage.value,
+        filters: const {'is_interested': 'yes'},
+      );
+      _seedInterested(result.vehicles);
+      if (isFirstPage) {
+        wishlistVehicles.assignAll(result.vehicles);
+      } else {
+        wishlistVehicles.addAll(result.vehicles);
+      }
+      wishlistTotalCount.value = result.totalCount;
+      hasMoreWishlist.value = result.hasMore;
+      wishlistPage.value = result.currentPage + 1;
+    } catch (e) {
+      hasErrorWishlist.value = true;
+      debugPrint('🔴 [WISHLIST ERROR] $e');
+    } finally {
+      isLoadingWishlist.value = false;
+      isLoadingMoreWishlist.value = false;
+    }
+  }
+
+  Future<void> refreshWishlist() => fetchWishlist(isRefresh: true);
 
   final hasErrorSubscribed = false.obs;
   final errorMessageSubscribed = ''.obs;

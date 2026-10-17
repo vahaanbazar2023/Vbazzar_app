@@ -247,7 +247,7 @@ class _LanguageCard extends StatelessWidget {
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 220),
         curve: Curves.easeOut,
-        padding: EdgeInsets.all(AppSpacing.md),
+        padding: EdgeInsets.all(AppSpacing.xs),
         decoration: BoxDecoration(
           color: isSelected ? const Color(0xFFFFF6F5) : Colors.white,
           border: Border.all(
@@ -265,95 +265,91 @@ class _LanguageCard extends StatelessWidget {
             ),
           ],
         ),
-        child: Row(
-          children: [
-            // ── Glyph badge ───────────────────────────────────
-            AnimatedContainer(
-              duration: const Duration(milliseconds: 220),
-              width: 52.r,
-              height: 52.r,
-              decoration: BoxDecoration(
-                gradient: isSelected
-                    ? const LinearGradient(
-                        colors: [
-                          AppColors.ctaGradientStart,
-                          AppColors.ctaGradientEnd,
-                        ],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      )
-                    : null,
-                color: isSelected ? null : const Color(0xFFF3F3F5),
-                borderRadius: BorderRadius.circular(14.r),
-              ),
-              alignment: Alignment.center,
-              child: Text(
-                glyph,
-                style: TextStyle(
-                  fontSize: 26.sp,
-                  fontWeight: FontWeight.w700,
-                  color: isSelected ? Colors.white : AppColors.black,
-                ),
-              ),
-            ),
-            SizedBox(width: AppSpacing.md),
-
-            // ── Names ─────────────────────────────────────────
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    language.localName,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: AppTextStyles.headingXSmall.copyWith(
-                      fontSize: 18.sp,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.black,
-                    ),
-                  ),
-                  SizedBox(height: 2.h),
-                  Text(
-                    language.name,
-                    style: AppTextStyles.bodyMedium.copyWith(
-                      fontSize: 13.sp,
-                      fontWeight: FontWeight.w500,
-                      color: AppColors.black.withOpacity(0.55),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(width: AppSpacing.sm),
-
-            // ── Check indicator ───────────────────────────────
-            AnimatedContainer(
-              duration: const Duration(milliseconds: 220),
-              width: 24.r,
-              height: 24.r,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: isSelected ? _accent : Colors.transparent,
-                border: Border.all(
-                  color: isSelected
-                      ? _accent
-                      : AppColors.black.withOpacity(0.2),
-                  width: 1.5.w,
-                ),
-              ),
-              child: AnimatedScale(
-                scale: isSelected ? 1 : 0,
+        child: Padding(
+          padding: const EdgeInsets.only(left: 8.0,right: 8.0,),
+          child: Row(
+            children: [
+              // ── Glyph badge ───────────────────────────────────
+              AnimatedContainer(
                 duration: const Duration(milliseconds: 220),
-                curve: Curves.easeOutBack,
-                child: Icon(
-                  Icons.check_rounded,
-                  size: 15.r,
-                  color: Colors.white,
+                width: 52.r,
+                height: 52.r,
+                decoration: BoxDecoration(
+                  gradient: isSelected
+                      ? const LinearGradient(
+                          colors: [
+                            AppColors.ctaGradientStart,
+                            AppColors.ctaGradientEnd,
+                          ],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        )
+                      : null,
+                  color: isSelected ? null : const Color(0xFFF3F3F5),
+                  borderRadius: BorderRadius.circular(14.r),
+                ),
+                alignment: Alignment.center,
+                child: Text(
+                  glyph,
+                  style: TextStyle(
+                    fontSize: 26.sp,
+                    fontWeight: FontWeight.w700,
+                    color: isSelected ? Colors.white : AppColors.black,
+                  ),
                 ),
               ),
-            ),
-          ],
+              SizedBox(width: AppSpacing.md),
+          
+              // ── Names ─────────────────────────────────────────
+              Expanded(
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      language.localName,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: AppTextStyles.headingXSmall.copyWith(
+                        fontSize: 18.sp,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.black,
+                      ),
+                    ),
+                    SizedBox(width: 2.h),
+                    
+                  ],
+                ),
+              ),
+              SizedBox(width: AppSpacing.sm),
+          
+              // ── Check indicator ───────────────────────────────
+              AnimatedContainer(
+                duration: const Duration(milliseconds: 220),
+                width: 24.r,
+                height: 24.r,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: isSelected ? _accent : Colors.transparent,
+                  border: Border.all(
+                    color: isSelected
+                        ? _accent
+                        : AppColors.black.withOpacity(0.2),
+                    width: 1.5.w,
+                  ),
+                ),
+                child: AnimatedScale(
+                  scale: isSelected ? 1 : 0,
+                  duration: const Duration(milliseconds: 220),
+                  curve: Curves.easeOutBack,
+                  child: Icon(
+                    Icons.check_rounded,
+                    size: 15.r,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

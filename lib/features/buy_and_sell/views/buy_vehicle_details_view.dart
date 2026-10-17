@@ -549,10 +549,11 @@ class _PriceHeader extends StatelessWidget {
       ),
     );
     if (ownerMode || !RevvotService.sdkAvailable) return price;
-    return Row(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Expanded(child: price),
-        SizedBox(width: 8.w),
+        price,
+        SizedBox(height: 10.h),
         RevvotBuyingPowerButton(externalRef: vehicle.sbVehicleId),
       ],
     );

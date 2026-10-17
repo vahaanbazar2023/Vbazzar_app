@@ -1182,7 +1182,7 @@
   "aucYouAreWinning": "ನೀವು ಮುಂದಿದ್ದೀರಿ",
   "aucYourFavoriteVehicles": "ನಿಮ್ಮ ಮೆಚ್ಚಿನ ವಾಹನಗಳು",
   "aucSearchVehicles": "ವಾಹನಗಳನ್ನು ಹುಡುಕಿ",
-  "aucStartBiddingStartPrice": "ಬಿಡ್ಡಿಂಗ್ ಪ್ರಾರಂಭಿಸಿ — ಆರಂಭಿಕ ಬೆಲೆ ₹ {price}",
+  "aucStartBiddingStartPrice": "ಆರಂಭಿಕ ಬೆಲೆ ₹ {price}",
   "coreSearchEllipsis": "ಹುಡುಕಿ...",
   "coreNoOptionsAvailable": "ಯಾವುದೇ ಆಯ್ಕೆಗಳು ಲಭ್ಯವಿಲ್ಲ",
   "coreNoResultsFoundFor": "\"{query}\" ಗಾಗಿ ಯಾವುದೇ ಫಲಿತಾಂಶಗಳು ಕಂಡುಬಂದಿಲ್ಲ",
@@ -1885,5 +1885,106 @@
   "profCustomer": "ಗ್ರಾಹಕ",
   "profVendor": "ವಿಕ್ರೇತ",
   "profMechanic": "ಮೆಕ್ಯಾನಿಕ್",
-  "coreMechanics": "ಮೆಕ್ಯಾನಿಕ್ಸ್"
+  "coreMechanics": "ಮೆಕ್ಯಾನಿಕ್ಸ್",
+  "partnerWithUsTitle": "ನಮ್ಮೊಂದಿಗೆ ಪಾಲುದಾರರಾಗಿ",
+  "partnerWithUsSubtitle": "ವಾಹನ್ ಬಜಾರ್‌ನೊಂದಿಗೆ ನಿಮ್ಮ ವ್ಯವಹಾರ ಬೆಳೆಸಿ",
+  "partnerProfileSubtitle": "ವೆಂಡರ್, ಮೆಕ್ಯಾನಿಕ್ ಅಥವಾ ಅಂಗಡಿಯಾಗಿ ಸೇರಿ",
+  "partnerCtaSubtitle": "ಅಂಗಡಿ ಅಥವಾ ಗ್ಯಾರೇಜ್ ಇದೆಯೇ? ವಾಹನ್ ಬಜಾರ್ ಸೇರಿ",
+  "partnerHeroTitle": "ವಾಹನ್ ಬಜಾರ್ ಪಾಲುದಾರರಾಗಿ",
+  "partnerHeroBody": "ನಿಮ್ಮ ವ್ಯವಹಾರದ ಬಗ್ಗೆ ತಿಳಿಸಿ. ನಮ್ಮ ತಂಡ ನಿಮ್ಮ ವಿನಂತಿಯನ್ನು ಪರಿಶೀಲಿಸಿ ಸಂಪರ್ಕಿಸುತ್ತದೆ.",
+  "partnerRoleLabel": "ನಾನು ಹೀಗೆ ಸೇರಲು ಬಯಸುತ್ತೇನೆ",
+  "partnerRoleHint": "ಪಾತ್ರ ಆಯ್ಕೆಮಾಡಿ",
+  "partnerRoleVendor": "ವೆಂಡರ್",
+  "partnerRoleMechanic": "ಮೆಕ್ಯಾನಿಕ್",
+  "partnerRoleSpareShop": "ಬಿಡಿಭಾಗ ಅಂಗಡಿ",
+  "partnerRole": "ಪಾತ್ರ",
+  "partnerYourDetails": "ನಿಮ್ಮ ವಿವರಗಳು",
+  "partnerName": "ಹೆಸರು",
+  "partnerMobile": "ಮೊಬೈಲ್ ಸಂಖ್ಯೆ",
+  "partnerFromProfileNote": "ನಿಮ್ಮ ಪ್ರೊಫೈಲ್‌ನಿಂದ ತೆಗೆದುಕೊಳ್ಳಲಾಗಿದೆ",
+  "partnerBusinessName": "ವ್ಯವಹಾರದ ಹೆಸರು",
+  "partnerBusinessNameHint": "ಉದಾ. ಶ್ರೀ ಬಾಲಾಜಿ ಆಟೋ ಸ್ಪೇರ್ಸ್",
+  "partnerAadhaar": "ಆಧಾರ್ ಸಂಖ್ಯೆ (ಐಚ್ಛಿಕ)",
+  "partnerAadhaarHint": "12 ಅಂಕಿಯ ಆಧಾರ್ ಸಂಖ್ಯೆ",
+  "partnerLocationSection": "ವ್ಯವಹಾರದ ಸ್ಥಳ",
+  "partnerUseCurrentLocation": "ನನ್ನ ಪ್ರಸ್ತುತ ಸ್ಥಳ ಬಳಸಿ",
+  "partnerLocationCaptured": "ಸ್ಥಳ ಪಡೆಯಲಾಗಿದೆ",
+  "partnerLocationAutoNote": "ನಿಮ್ಮ ಸ್ಥಳದಿಂದ ನಗರ ಮತ್ತು ರಾಜ್ಯವನ್ನು ನಾವು ಗುರುತಿಸುತ್ತೇವೆ.",
+  "partnerLocationFailed": "ನಿಮ್ಮ ಸ್ಥಳ ಪಡೆಯಲಾಗಲಿಲ್ಲ. GPS ಆನ್ ಮಾಡಿ ಅನುಮತಿ ನೀಡಿ, ಅಥವಾ ಕೆಳಗೆ ವಿಳಾಸ ನಮೂದಿಸಿ.",
+  "partnerAddressLabel": "ವಿಳಾಸ (ಐಚ್ಛಿಕ)",
+  "partnerAddressHint": "ಅಂಗಡಿ / ಗ್ಯಾರೇಜ್ ವಿಳಾಸ",
+  "partnerSubmit": "ವಿನಂತಿ ಸಲ್ಲಿಸಿ",
+  "partnerSelectRole": "ದಯವಿಟ್ಟು ಪಾತ್ರ ಆಯ್ಕೆಮಾಡಿ",
+  "partnerEnterBusinessName": "ನಿಮ್ಮ ವ್ಯವಹಾರದ ಹೆಸರನ್ನು ನಮೂದಿಸಿ",
+  "partnerInvalidAadhaar": "ಮಾನ್ಯವಾದ 12 ಅಂಕಿಯ ಆಧಾರ್ ಸಂಖ್ಯೆ ನಮೂದಿಸಿ",
+  "partnerSubmittedTitle": "ವಿನಂತಿ ಸ್ವೀಕರಿಸಲಾಗಿದೆ",
+  "partnerSubmitFailed": "ನಿಮ್ಮ ವಿನಂತಿ ಸಲ್ಲಿಸಲಾಗಲಿಲ್ಲ. ದಯವಿಟ್ಟು ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "partnerProfileLoadFailed": "ನಿಮ್ಮ ಪ್ರೊಫೈಲ್ ವಿವರಗಳನ್ನು ಲೋಡ್ ಮಾಡಲಾಗಲಿಲ್ಲ.",
+  "partnerStatusPendingTitle": "ವಿನಂತಿ ಪರಿಶೀಲನೆಯಲ್ಲಿದೆ",
+  "partnerStatusPendingBody": "ಪರಿಶೀಲನೆಯ ನಂತರ ನಾವು {mobile} ಗೆ ಸಂಪರ್ಕಿಸುತ್ತೇವೆ.",
+  "@partnerStatusPendingBody": {
+    "placeholders": {
+      "mobile": {
+        "type": "String"
+      }
+    }
+  },
+  "partnerStatusApprovedTitle": "ನೀವು ನಮ್ಮ ಪಾಲುದಾರರು!",
+  "partnerStatusApprovedBody": "ನಿಮ್ಮ ಖಾತೆ ಈಗ {role} ಖಾತೆಯಾಗಿದೆ. ನಮ್ಮ ತಂಡ ಪೋರ್ಟಲ್ ಪ್ರವೇಶವನ್ನು ಹಂಚಿಕೊಳ್ಳುತ್ತದೆ.",
+  "@partnerStatusApprovedBody": {
+    "placeholders": {
+      "role": {
+        "type": "String"
+      }
+    }
+  },
+  "partnerStatusRejectedTitle": "ವಿನಂತಿ ಅನುಮೋದಿಸಲಾಗಿಲ್ಲ",
+  "partnerStatusRejectedReason": "ಕಾರಣ: {reason}",
+  "@partnerStatusRejectedReason": {
+    "placeholders": {
+      "reason": {
+        "type": "String"
+      }
+    }
+  },
+  "partnerApplyAgain": "ಮತ್ತೆ ಅರ್ಜಿ ಸಲ್ಲಿಸಿ",
+  "partnerRequestIdLabel": "ವಿನಂತಿ ಐಡಿ",
+  "partnerAlreadyPartnerTitle": "ನೀವು ಈಗಾಗಲೇ ಪಾಲುದಾರರು",
+  "partnerAlreadyPartnerBody": "ನಿಮ್ಮ ಖಾತೆ ಪ್ರಕಾರ {role}.",
+  "@partnerAlreadyPartnerBody": {
+    "placeholders": {
+      "role": {
+        "type": "String"
+      }
+    }
+  },
+  "partnerCompleteProfileTitle": "ಮೊದಲು ನಿಮ್ಮ ಪ್ರೊಫೈಲ್ ಪೂರ್ಣಗೊಳಿಸಿ",
+  "partnerCompleteProfileBody": "ನಾವು ನಿಮ್ಮ ಹೆಸರು ಮತ್ತು ಮೊಬೈಲ್ ಸಂಖ್ಯೆಯನ್ನು ನಿಮ್ಮ ಪ್ರೊಫೈಲ್‌ನಿಂದ ಬಳಸುತ್ತೇವೆ. ನಮ್ಮೊಂದಿಗೆ ಪಾಲುದಾರರಾಗಲು ದಯವಿಟ್ಟು ನಿಮ್ಮ ಪ್ರೊಫೈಲ್ ಪೂರ್ಣಗೊಳಿಸಿ.",
+  "partnerCompleteProfileButton": "ಪ್ರೊಫೈಲ್ ಪೂರ್ಣಗೊಳಿಸಿ",
+  "revvotCardTitle": "ಸಾಲ ಅರ್ಹತೆ ಪರಿಶೀಲಿಸಿ",
+  "revvotCardTag": "ಫೈನಾನ್ಸ್",
+  "revvotCardSubtitle": "ನೀವು ಎಷ್ಟು ಖರೀದಿಸಬಹುದು ಎಂದು ತಿಳಿಯಿರಿ — ಕೆಲವೇ ನಿಮಿಷಗಳಲ್ಲಿ ನಿಮ್ಮ ಸಾಲ ಅರ್ಹತೆ ಪರಿಶೀಲಿಸಿ",
+  "revvotCardChecking": "ನಿಮ್ಮ ಅರ್ಹತೆ ಪರಿಶೀಲಿಸಲಾಗುತ್ತಿದೆ…",
+  "revvotStartError": "ಫೈನಾನ್ಸ್ ಪರಿಶೀಲನೆ ಪ್ರಾರಂಭಿಸಲಾಗಲಿಲ್ಲ. ದಯವಿಟ್ಟು ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "revvotApprovedTitle": "ಪೂರ್ವ-ಅನುಮೋದಿತ",
+  "revvotApprovedBody": "ನೀವು ₹{amount} ವರೆಗೆ ಸಾಲ ಪಡೆಯಬಹುದು.",
+  "revvotInterestRate": "ಬಡ್ಡಿ ದರ: ವರ್ಷಕ್ಕೆ {rate}%",
+  "revvotTenure": "ಅವಧಿ: {months} ತಿಂಗಳು",
+  "revvotNotEligibleTitle": "ಅರ್ಹರಲ್ಲ",
+  "revvotNotEligibleBody": "ಪ್ರಸ್ತುತ ನೀವು ಫೈನಾನ್ಸ್‌ಗೆ ಅರ್ಹರಲ್ಲ.",
+  "revvotUnderReviewTitle": "ಪರಿಶೀಲನೆಯಲ್ಲಿದೆ",
+  "revvotUnderReviewBody": "ನಿಮ್ಮ ನಿರ್ಧಾರ ಬಾಕಿ ಇದೆ. ದಯವಿಟ್ಟು ಸ್ವಲ್ಪ ಸಮಯದ ನಂತರ ಮತ್ತೆ ಪರಿಶೀಲಿಸಿ.",
+  "revvotOk": "ಸರಿ",
+  "referralChecking": "ಕೋಡ್ ಪರಿಶೀಲಿಸಲಾಗುತ್ತಿದೆ…",
+  "referralInvitedBy": "{name} ಆಹ್ವಾನಿಸಿದ್ದಾರೆ",
+  "@referralInvitedBy": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "referralInvalidCode": "ಈ ರೆಫರಲ್ ಕೋಡ್ ಮಾನ್ಯವಾಗಿಲ್ಲ",
+  "referralDisabled": "ರೆಫರಲ್ ರಿವಾರ್ಡ್‌ಗಳು ಈಗ ಲಭ್ಯವಿಲ್ಲ",
+  "aucBankName": "ಬ್ಯಾಂಕ್ ಹೆಸರು",
+  "buySellWishlistSubtitle": "ನೀವು ಆಸಕ್ತಿ ಹೊಂದಿರುವ ವಾಹನಗಳು",
+  "buySellWishlistEmpty": "ನೀವು ಇನ್ನೂ ವಿಶ್‌ಲಿಸ್ಟ್‌ಗೆ ಯಾವುದೇ ವಾಹನ ಸೇರಿಸಿಲ್ಲ"
 }

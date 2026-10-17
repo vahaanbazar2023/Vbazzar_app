@@ -28,14 +28,17 @@ import '../../categories/models/category_item.dart';
 
 /// Gate for any auction navigation from the home screen.
 /// Checks SUBT001 — if not active, redirects to the subscription screen.
-Future<void> _openAuction({Map<String, dynamic>? arguments}) async {
+Future<void> _openAuction({
+  Map<String, dynamic>? arguments,
+  String route = AppRoutes.auctionListings,
+}) async {
   final guard = SubscriptionGuardService.to;
   await guard.ensureLoaded(forceRefresh: false);
 
   final hasAccess = guard.hasActiveSubscription(SubscriptionTypeCode.auction);
 
   if (hasAccess) {
-    Get.toNamed(AppRoutes.auctionListings, arguments: arguments);
+    Get.toNamed(route, arguments: arguments);
     return;
   }
 
@@ -146,8 +149,7 @@ class HomeScreen extends GetView<HomeController> {
                     // ── Mechanics Near You ───────────────────────
                     _SectionHeader(
                       title: context.l10n.mechanicsNearYou,
-                      onViewAll: () =>
-                          Get.toNamed(AppRoutes.serviceSupportListView),
+                      onViewAll: () => Get.toNamed(AppRoutes.serviceSupport),
                     ),
                     SizedBox(height: 12.h),
                     _MechanicsMarquee(),
@@ -493,7 +495,12 @@ class _PromoPostCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    // Poster promotes the auction module: tapping applies the same SUBT001
+    // rule as the auction cards (subscribed -> auction module, else plans).
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: () => _openAuction(route: AppRoutes.auctionType),
+      child: Container(
       margin: EdgeInsets.symmetric(horizontal: 16.w),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16.r),
@@ -523,6 +530,7 @@ class _PromoPostCard extends StatelessWidget {
             ),
           ),
         ),
+      ),
       ),
     );
   }
@@ -1129,21 +1137,26 @@ class _RadialGlowPainter extends CustomPainter {
 // Inspection Banner
 // ─────────────────────────────────────────────────────────────────────────────
 
+/// Inspection entry rule: vendors / agents / mechanics get the agent form,
+/// everyone else the customer form. Shared by the inspection banner and ad
+/// banners that point at inspection.
+Future<void> _openInspectionByRole() async {
+  final userType =
+      await SecureStorageService.to.read(StorageKeys.userType) ?? '';
+  final normalized = userType.toUpperCase().trim();
+  if (normalized == 'VENDOR' ||
+      normalized == 'AGENT' ||
+      normalized == 'MECHANIC') {
+    Get.toNamed(AppRoutes.agentValuationForm);
+  } else {
+    Get.toNamed(AppRoutes.customerValuationForm);
+  }
+}
+
 class _InspectionBanner extends StatelessWidget {
   const _InspectionBanner();
 
-  Future<void> _openInspection() async {
-    final userType =
-        await SecureStorageService.to.read(StorageKeys.userType) ?? '';
-    final normalized = userType.toUpperCase().trim();
-    if (normalized == 'VENDOR' ||
-        normalized == 'AGENT' ||
-        normalized == 'MECHANIC') {
-      Get.toNamed(AppRoutes.agentValuationForm);
-    } else {
-      Get.toNamed(AppRoutes.customerValuationForm);
-    }
-  }
+  Future<void> _openInspection() => _openInspectionByRole();
 
   @override
   Widget build(BuildContext context) {
@@ -1422,7 +1435,17 @@ class _AdBanner extends StatelessWidget {
         if (ad.isInternal) {
           // Internal route — map redirect_value string to route
           final route = _resolveRoute(ad.redirectValue);
-          if (route != null) Get.toNamed(route);
+          if (route == AppRoutes.auctionType ||
+              route == AppRoutes.auctionListings) {
+            // Auction banners need the SUBT001 subscription: active ->
+            // auction module, otherwise -> choose-a-plan screen.
+            await _openAuction(route: route!);
+          } else if (route == AppRoutes.inspectionHome) {
+            // Same role rule as the inspection banner.
+            await _openInspectionByRole();
+          } else if (route != null) {
+            Get.toNamed(route);
+          }
         } else {
           // External URL
           final uri = Uri.tryParse(ad.redirectValue);
@@ -1888,69 +1911,62 @@ class _MarqueeRow extends StatefulWidget {
   State<_MarqueeRow> createState() => _MarqueeRowState();
 }
 
-class _MarqueeRowState extends State<_MarqueeRow> {
+class _MarqueeRowState extends State<_MarqueeRow>
+    with SingleTickerProviderStateMixin {
   late final ScrollController _ctrl;
+  late final AnimationController _anim;
   // Each card width + gap
   static const double _cardW = 110;
   static const double _gap = 10;
   static const double _itemStride = _cardW + _gap;
 
+  double get _half => widget.items.length * _itemStride / 2;
+
   @override
   void initState() {
     super.initState();
     // Start at the midpoint so we can scroll both ways
-    final mid = widget.items.length / 2 * _itemStride;
-    _ctrl = ScrollController(initialScrollOffset: mid);
-    WidgetsBinding.instance.addPostFrameCallback((_) => _startScroll());
+    _ctrl = ScrollController(initialScrollOffset: _half);
+    // Drive the scroll with per-frame jumpTo, NOT animateTo: while a scroll
+    // view runs an animateTo it ignores pointer events, which made the cards
+    // untappable. jumpTo keeps the list idle, so taps reach the cards.
+    _anim = AnimationController(
+      vsync: this,
+      duration: Duration(milliseconds: (_half * 18).round()),
+    )..addListener(_tick);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) _anim.repeat();
+    });
+  }
+
+  void _tick() {
+    if (!_ctrl.hasClients) return;
+    final p = _ctrl.position;
+    final half = _half;
+    final target = (widget.reverse ? half - half : half + half)
+        .clamp(p.minScrollExtent, p.maxScrollExtent)
+        .toDouble();
+    final offset = half + (target - half) * _anim.value;
+    _ctrl.jumpTo(offset.clamp(p.minScrollExtent, p.maxScrollExtent));
   }
 
   @override
   void dispose() {
+    _anim.dispose();
     _ctrl.dispose();
     super.dispose();
   }
 
-  void _startScroll() {
-    if (!mounted || !_ctrl.hasClients) return;
-    _loop();
-  }
-
-  Future<void> _loop() async {
-    while (mounted && _ctrl.hasClients) {
-      final current = _ctrl.offset;
-      final total = widget.items.length * _itemStride;
-      final half = total / 2;
-
-      double target;
-      if (!widget.reverse) {
-        target = current + half;
-      } else {
-        target = current - half;
-      }
-
-      // Clamp to valid range
-      final max = _ctrl.position.maxScrollExtent;
-      final min = _ctrl.position.minScrollExtent;
-      target = target.clamp(min, max);
-
-      await _ctrl.animateTo(
-        target,
-        duration: Duration(milliseconds: (half * 18).round()),
-        curve: Curves.linear,
-      );
-
-      if (!mounted || !_ctrl.hasClients) break;
-
-      // Jump back to midpoint to create seamless infinite illusion
-      _ctrl.jumpTo(half);
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 160.h,
-      child: ListView.separated(
+    // Row-level tap as well: every mechanic card goes to the same place, and
+    // this keeps the row tappable even if the inner list swallows the touch.
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: () => Get.toNamed(AppRoutes.serviceSupport),
+      child: SizedBox(
+        height: 160.h,
+        child: ListView.separated(
         controller: _ctrl,
         scrollDirection: Axis.horizontal,
         padding: EdgeInsets.symmetric(horizontal: 16.w),
@@ -1958,6 +1974,7 @@ class _MarqueeRowState extends State<_MarqueeRow> {
         itemCount: widget.items.length,
         separatorBuilder: (_, __) => SizedBox(width: _gap.w),
         itemBuilder: (_, i) => _MechanicCard(data: widget.items[i]),
+        ),
       ),
     );
   }
@@ -1970,7 +1987,7 @@ class _MechanicCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => Get.toNamed(AppRoutes.serviceSupportListView),
+      onTap: () => Get.toNamed(AppRoutes.serviceSupport),
       child: SizedBox(
         width: 110.w,
         child: Image.asset(

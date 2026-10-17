@@ -23,11 +23,27 @@ class _LoginWithOtpState extends State<LoginWithOtp> {
   final AuthController controller = Get.find<AuthController>();
 
   late Country _selectedCountry;
+  bool _showReferral = false;
+
+  void _expandIfReferralPresent() {
+    if (!_showReferral && controller.referralController.text.isNotEmpty) {
+      setState(() => _showReferral = true);
+    }
+  }
+
+  @override
+  void dispose() {
+    controller.referralController.removeListener(_expandIfReferralPresent);
+    super.dispose();
+  }
 
   @override
   void initState() {
     super.initState();
     controller.prefillReferralFromDeepLink();
+    _showReferral = controller.referralController.text.isNotEmpty;
+    // A deep link arriving later fills the controller; expand when it does.
+    controller.referralController.addListener(_expandIfReferralPresent);
     _selectedCountry = countries.firstWhere(
       (c) => c.code == 'IN',
       orElse: () => countries.first,
@@ -436,25 +452,46 @@ class _LoginWithOtpState extends State<LoginWithOtp> {
                                 ),
                                 SizedBox(height: 12.h),
 
-                                // Referral code (optional, prefilled from deep link)
-                                Center(
-                                  child: SizedBox(
-                                    width: 180.w,
-                                    child: CustomInputField(
-                                      controller: controller.referralController,
-                                      placeholder: 'Referral code',
-                                      prefixIcon: Icons.card_giftcard_outlined,
-                                      textInputAction: TextInputAction.done,
-                                      maxLength: 9,
-                                      inputFormatters: [
-                                        UpperCaseTextFormatter(),
-                                        FilteringTextInputFormatter.allow(
-                                          RegExp(r'[A-Za-z0-9]'),
+                                // Referral code — collapsed behind a link unless
+                                // a deep link already supplied one.
+                                if (!_showReferral)
+                                  Center(
+                                    child: GestureDetector(
+                                      onTap: () =>
+                                          setState(() => _showReferral = true),
+                                      child: GradientText(
+                                        'Have a referral code?',
+                                        style: TextStyle(
+                                          fontFamily: 'Plus Jakarta Sans',
+                                          fontSize: 12.sp,
+                                          fontWeight: FontWeight.w600,
+                                          decoration: TextDecoration.underline,
                                         ),
-                                      ],
+                                      ),
+                                    ),
+                                  )
+                                else
+                                  Center(
+                                    child: SizedBox(
+                                      width: 180.w,
+                                      child: CustomInputField(
+                                        controller:
+                                            controller.referralController,
+                                        placeholder: 'Referral code',
+                                        prefixIcon:
+                                            Icons.card_giftcard_outlined,
+                                        textInputAction: TextInputAction.done,
+                                        maxLength: 9,
+                                        inputFormatters: [
+                                          UpperCaseTextFormatter(),
+                                          FilteringTextInputFormatter.allow(
+                                            RegExp(r'[A-Za-z0-9]'),
+                                          ),
+                                        ],
+                                      ),
                                     ),
                                   ),
-                                ),
+                                if (_showReferral) _buildReferralStatus(context),
                                 SizedBox(height: 20.h),
 
                                 // Send OTP button
@@ -651,6 +688,70 @@ class _LoginWithOtpState extends State<LoginWithOtp> {
     );
   }
 }
+
+extension _ReferralStatusView on _LoginWithOtpState {
+  /// One line under the referral field: checking / "Invited by <name>" / invalid / disabled.
+  Widget _buildReferralStatus(BuildContext context) {
+    return Obx(() {
+      final status = controller.referralStatus.value;
+      final l10n = context.l10n;
+      String? text;
+      Color color = Colors.grey;
+      IconData? icon;
+      switch (status) {
+        case ReferralStatus.checking:
+          text = l10n.referralChecking;
+          break;
+        case ReferralStatus.valid:
+          final name = controller.referrerName.value?.trim() ?? '';
+          if (name.isNotEmpty) text = l10n.referralInvitedBy(name);
+          color = const Color(0xFF2E7D32);
+          icon = Icons.check_circle_outline;
+          break;
+        case ReferralStatus.invalid:
+          text = l10n.referralInvalidCode;
+          color = const Color(0xFFC62828);
+          icon = Icons.error_outline;
+          break;
+        case ReferralStatus.disabled:
+          text = l10n.referralDisabled;
+          break;
+        case ReferralStatus.idle:
+        case ReferralStatus.unavailable:
+          break;
+      }
+      if (text == null) return const SizedBox.shrink();
+      return Padding(
+        padding: EdgeInsets.only(top: 6.h),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            if (status == ReferralStatus.checking)
+              SizedBox(
+                width: 12.w,
+                height: 12.w,
+                child: const CircularProgressIndicator(strokeWidth: 1.5),
+              )
+            else if (icon != null)
+              Icon(icon, size: 14.sp, color: color),
+            SizedBox(width: 6.w),
+            Flexible(
+              child: Text(
+                text,
+                style: TextStyle(
+                  fontFamily: 'Plus Jakarta Sans',
+                  fontSize: 12.sp,
+                  color: color,
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    });
+  }
+}
+
 
 class UpperCaseTextFormatter extends TextInputFormatter {
   @override

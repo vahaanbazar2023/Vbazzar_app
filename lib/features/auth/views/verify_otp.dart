@@ -257,9 +257,10 @@ class VerifyOTP extends GetView<AuthController> {
                           SizedBox(height: 20.h),
 
                           // Referral code carried over from login (read-only)
-                          if (controller.referralController.text
-                              .trim()
-                              .isNotEmpty) ...[
+                          if (controller.isNewUser.value &&
+                              controller.referralController.text
+                                  .trim()
+                                  .isNotEmpty) ...[
                             Center(
                               child: SizedBox(
                                 width: 180.w,

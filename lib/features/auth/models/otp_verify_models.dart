@@ -10,6 +10,9 @@ class OtpVerifyRequest {
   final String? contentType;
   final String? contentId;
 
+  /// App language the user picked (en, hi, te, kn, ml, ta) — lets the backend segment users.
+  final String? language;
+
   const OtpVerifyRequest({
     required this.userId,
     required this.phoneNumber,
@@ -19,6 +22,7 @@ class OtpVerifyRequest {
     this.referralCode,
     this.contentType,
     this.contentId,
+    this.language,
   });
 
   bool isValid() {
@@ -44,6 +48,7 @@ class OtpVerifyRequest {
       json['content_type'] = contentType!;
     if (contentId != null && contentId!.isNotEmpty)
       json['content_id'] = contentId!;
+    if (language != null && language!.isNotEmpty) json['language'] = language!;
     return json;
   }
 

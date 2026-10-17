@@ -1,9 +1,10 @@
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 
 import '../../core/network/endpoints/api_endpoints.dart';
 import '../../core/network/network_service.dart';
 import '../../core/storage/secure_storage_service.dart';
 import '../../core/storage/storage_keys.dart';
+import 'revvot_webview_sheet.dart';
 
 /// Embed session minted by the backend (secret key never reaches the app).
 class RevvotSession {
@@ -74,18 +75,25 @@ class RevvotService {
     );
   }
 
-  /// Flip to true once the Revvot SDK (or its embed URL + JS bridge spec) is
-  /// wired into [openSheet]. While false, the vehicle screen hides the button.
-  static const bool sdkAvailable = false;
+  /// The hosted Revvot flow is rendered in a WebView sheet.
+  static const bool sdkAvailable = true;
 
-  /// Opens the Revvot sheet; returns true if the user finished the flow.
-  /// TODO: replace with `RevvotBuyingPower.open(context, publicKey:
-  /// session.platformKey, embedToken: session.embedToken)` once the package
-  /// is available (it is not on pub.dev and its GitHub repo has no source).
-  static Future<bool> openSheet(
+  /// Opens the Revvot sheet. Returns the session id when the flow completes,
+  /// or null if the user dismissed it. The outcome is decided server-side by
+  /// [confirmSession], never from what the WebView reports.
+  static Future<String?> openSheet(
     BuildContext context,
     RevvotSession session,
-  ) async {
-    throw UnimplementedError('Revvot SDK not integrated');
+  ) {
+    return showModalBottomSheet<String>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) => RevvotWebViewSheet(
+        publicKey: session.platformKey,
+        embedToken: session.embedToken,
+        sessionId: session.sessionId,
+      ),
+    );
   }
 }

@@ -54,6 +54,7 @@ class PaymentController extends GetxController
     double? fromWallet,
     double? forPayment,
     String? referralCode,
+    String? inspectionId,
   }) async {
     try {
       status.value = PaymentStatus.initiating;
@@ -65,6 +66,7 @@ class PaymentController extends GetxController
         fromWallet: fromWallet,
         forPayment: forPayment,
         referralCode: referralCode,
+        inspectionId: inspectionId,
       );
 
       final res = await _service.initiatePayment(req);

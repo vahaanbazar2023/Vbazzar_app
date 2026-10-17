@@ -1,7 +1,9 @@
+import '../../../core/storage/local_storage_service.dart';
 import '../../../core/storage/secure_storage_service.dart';
 import '../../../core/storage/storage_keys.dart';
 import '../../../core/services/logger_service.dart';
 import '../data/auth_data_source.dart';
+import '../models/referral_validation.dart';
 import '../models/login_request.dart';
 import '../models/otp_response.dart';
 import '../models/otp_verify_models.dart';
@@ -18,12 +20,32 @@ class AuthRepository {
   }) : _dataSource = dataSource ?? AuthDataSource(),
        _secureStorage = secureStorage ?? SecureStorageService.to;
 
+  /// The language chosen on the language-selection screen (null if none saved).
+  /// Sent with login so the backend knows which language each user speaks.
+  String? _savedLanguage() {
+    try {
+      final code = LocalStorageService.to.getString(StorageKeys.languageCode);
+      return code.isEmpty ? null : code;
+    } catch (_) {
+      return null; // never let language tracking get in the way of logging in
+    }
+  }
+
+  /// Is this referral code valid? (API key only; used on the login screen)
+  Future<ReferralValidation> validateReferralCode(String code) =>
+      _dataSource.validateReferralCode(code);
+
   /// POST /api/v2/auth/login — sends OTP (creates user if new)
   Future<OtpResponse> sendOtp({
     required String phone,
     required String fcmToken,
+    String? language,
   }) async {
-    final request = LoginRequest(phoneNumber: phone, fcmToken: fcmToken);
+    final request = LoginRequest(
+      phoneNumber: phone,
+      fcmToken: fcmToken,
+      language: language ?? _savedLanguage(),
+    );
     return _dataSource.sendOtp(request);
   }
 
@@ -37,6 +59,7 @@ class AuthRepository {
     String? referralCode,
     String? contentType,
     String? contentId,
+    String? language,
   }) async {
     final request = OtpVerifyRequest(
       userId: userId,
@@ -47,6 +70,7 @@ class AuthRepository {
       referralCode: referralCode,
       contentType: contentType,
       contentId: contentId,
+      language: language ?? _savedLanguage(),
     );
 
     final response = await _dataSource.verifyOtp(request);

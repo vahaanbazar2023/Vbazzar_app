@@ -1182,7 +1182,7 @@
   "aucYouAreWinning": "നിങ്ങൾ മുന്നിലാണ്",
   "aucYourFavoriteVehicles": "നിങ്ങളുടെ ഇഷ്ടപ്പെട്ട വാഹനങ്ങൾ",
   "aucSearchVehicles": "വാഹനങ്ങൾ തിരയുക",
-  "aucStartBiddingStartPrice": "ബിഡ്ഡിംഗ് ആരംഭിക്കുക — ആരംഭ വില ₹ {price}",
+  "aucStartBiddingStartPrice": "ആരംഭ വില ₹ {price}",
   "coreSearchEllipsis": "തിരയുക...",
   "coreNoOptionsAvailable": "ഓപ്ഷനുകളൊന്നും ലഭ്യമല്ല",
   "coreNoResultsFoundFor": "\"{query}\" എന്നതിന് ഫലങ്ങളൊന്നും കണ്ടെത്തിയില്ല",
@@ -1885,5 +1885,106 @@
   "profCustomer": "ഉപഭോക്താവ്",
   "profVendor": "വെണ്ടർ",
   "profMechanic": "മെക്കാനിക്",
-  "coreMechanics": "മെക്കാനിക്സ്"
+  "coreMechanics": "മെക്കാനിക്സ്",
+  "partnerWithUsTitle": "ഞങ്ങളുമായി പങ്കാളിയാകൂ",
+  "partnerWithUsSubtitle": "വാഹൻ ബസാറിനൊപ്പം നിങ്ങളുടെ ബിസിനസ് വളർത്തൂ",
+  "partnerProfileSubtitle": "വെണ്ടർ, മെക്കാനിക് അല്ലെങ്കിൽ ഷോപ്പായി ചേരൂ",
+  "partnerCtaSubtitle": "ഷോപ്പോ ഗ്യാരേജോ ഉണ്ടോ? വാഹൻ ബസാറിൽ ചേരൂ",
+  "partnerHeroTitle": "വാഹൻ ബസാർ പങ്കാളിയാകൂ",
+  "partnerHeroBody": "നിങ്ങളുടെ ബിസിനസിനെക്കുറിച്ച് പറയൂ. ഞങ്ങളുടെ ടീം അപേക്ഷ പരിശോധിച്ച് ബന്ധപ്പെടും.",
+  "partnerRoleLabel": "ഞാൻ ഇങ്ങനെ ചേരാൻ ആഗ്രഹിക്കുന്നു",
+  "partnerRoleHint": "റോൾ തിരഞ്ഞെടുക്കുക",
+  "partnerRoleVendor": "വെണ്ടർ",
+  "partnerRoleMechanic": "മെക്കാനിക്",
+  "partnerRoleSpareShop": "സ്പെയർ പാർട്ട് ഷോപ്പ്",
+  "partnerRole": "റോൾ",
+  "partnerYourDetails": "നിങ്ങളുടെ വിവരങ്ങൾ",
+  "partnerName": "പേര്",
+  "partnerMobile": "മൊബൈൽ നമ്പർ",
+  "partnerFromProfileNote": "നിങ്ങളുടെ പ്രൊഫൈലിൽ നിന്ന് എടുത്തത്",
+  "partnerBusinessName": "ബിസിനസ് പേര്",
+  "partnerBusinessNameHint": "ഉദാ. ശ്രീ ബാലാജി ഓട്ടോ സ്പെയേഴ്സ്",
+  "partnerAadhaar": "ആധാർ നമ്പർ (ഓപ്ഷണൽ)",
+  "partnerAadhaarHint": "12 അക്ക ആധാർ നമ്പർ",
+  "partnerLocationSection": "ബിസിനസ് സ്ഥലം",
+  "partnerUseCurrentLocation": "എന്റെ നിലവിലെ ലൊക്കേഷൻ ഉപയോഗിക്കുക",
+  "partnerLocationCaptured": "ലൊക്കേഷൻ ലഭിച്ചു",
+  "partnerLocationAutoNote": "നിങ്ങളുടെ ലൊക്കേഷനിൽ നിന്ന് നഗരവും സംസ്ഥാനവും ഞങ്ങൾ കണ്ടെത്തും.",
+  "partnerLocationFailed": "നിങ്ങളുടെ ലൊക്കേഷൻ ലഭിച്ചില്ല. GPS ഓൺ ചെയ്ത് അനുമതി നൽകൂ, അല്ലെങ്കിൽ താഴെ വിലാസം നൽകൂ.",
+  "partnerAddressLabel": "വിലാസം (ഓപ്ഷണൽ)",
+  "partnerAddressHint": "ഷോപ്പ് / ഗ്യാരേജ് വിലാസം",
+  "partnerSubmit": "അപേക്ഷ സമർപ്പിക്കുക",
+  "partnerSelectRole": "ദയവായി ഒരു റോൾ തിരഞ്ഞെടുക്കുക",
+  "partnerEnterBusinessName": "നിങ്ങളുടെ ബിസിനസ് പേര് നൽകൂ",
+  "partnerInvalidAadhaar": "സാധുവായ 12 അക്ക ആധാർ നമ്പർ നൽകൂ",
+  "partnerSubmittedTitle": "അപേക്ഷ ലഭിച്ചു",
+  "partnerSubmitFailed": "അപേക്ഷ സമർപ്പിക്കാനായില്ല. വീണ്ടും ശ്രമിക്കൂ.",
+  "partnerProfileLoadFailed": "നിങ്ങളുടെ പ്രൊഫൈൽ വിവരങ്ങൾ ലോഡ് ചെയ്യാനായില്ല.",
+  "partnerStatusPendingTitle": "അപേക്ഷ പരിശോധനയിലാണ്",
+  "partnerStatusPendingBody": "പരിശോധന കഴിഞ്ഞാൽ ഞങ്ങൾ {mobile} ൽ ബന്ധപ്പെടും.",
+  "@partnerStatusPendingBody": {
+    "placeholders": {
+      "mobile": {
+        "type": "String"
+      }
+    }
+  },
+  "partnerStatusApprovedTitle": "നിങ്ങൾ ഞങ്ങളുടെ പങ്കാളിയാണ്!",
+  "partnerStatusApprovedBody": "നിങ്ങളുടെ അക്കൗണ്ട് ഇപ്പോൾ {role} അക്കൗണ്ടാണ്. ഞങ്ങളുടെ ടീം പോർട്ടൽ ആക്സസ് പങ്കിടും.",
+  "@partnerStatusApprovedBody": {
+    "placeholders": {
+      "role": {
+        "type": "String"
+      }
+    }
+  },
+  "partnerStatusRejectedTitle": "അപേക്ഷ അംഗീകരിച്ചില്ല",
+  "partnerStatusRejectedReason": "കാരണം: {reason}",
+  "@partnerStatusRejectedReason": {
+    "placeholders": {
+      "reason": {
+        "type": "String"
+      }
+    }
+  },
+  "partnerApplyAgain": "വീണ്ടും അപേക്ഷിക്കുക",
+  "partnerRequestIdLabel": "അപേക്ഷ ഐഡി",
+  "partnerAlreadyPartnerTitle": "നിങ്ങൾ ഇതിനകം പങ്കാളിയാണ്",
+  "partnerAlreadyPartnerBody": "നിങ്ങളുടെ അക്കൗണ്ട് തരം {role} ആണ്.",
+  "@partnerAlreadyPartnerBody": {
+    "placeholders": {
+      "role": {
+        "type": "String"
+      }
+    }
+  },
+  "partnerCompleteProfileTitle": "ആദ്യം നിങ്ങളുടെ പ്രൊഫൈൽ പൂർത്തിയാക്കൂ",
+  "partnerCompleteProfileBody": "നിങ്ങളുടെ പ്രൊഫൈലിൽ നിന്നുള്ള പേരും മൊബൈൽ നമ്പറും ഞങ്ങൾ ഉപയോഗിക്കുന്നു. ഞങ്ങളുമായി പങ്കാളിയാകാൻ ദയവായി പ്രൊഫൈൽ പൂർത്തിയാക്കൂ.",
+  "partnerCompleteProfileButton": "പ്രൊഫൈൽ പൂർത്തിയാക്കൂ",
+  "revvotCardTitle": "ലോൺ യോഗ്യത പരിശോധിക്കുക",
+  "revvotCardTag": "ഫിനാൻസ്",
+  "revvotCardSubtitle": "നിങ്ങൾക്ക് എത്ര താങ്ങാനാകുമെന്ന് അറിയൂ — ഏതാനും മിനിറ്റുകൾക്കുള്ളിൽ ലോൺ യോഗ്യത പരിശോധിക്കുക",
+  "revvotCardChecking": "നിങ്ങളുടെ യോഗ്യത പരിശോധിക്കുന്നു…",
+  "revvotStartError": "ഫിനാൻസ് പരിശോധന ആരംഭിക്കാനായില്ല. ദയവായി വീണ്ടും ശ്രമിക്കുക.",
+  "revvotApprovedTitle": "മുൻകൂർ അംഗീകൃതം",
+  "revvotApprovedBody": "നിങ്ങൾക്ക് ₹{amount} വരെ ലോൺ ലഭിക്കും.",
+  "revvotInterestRate": "പലിശ നിരക്ക്: പ്രതിവർഷം {rate}%",
+  "revvotTenure": "കാലാവധി: {months} മാസം",
+  "revvotNotEligibleTitle": "യോഗ്യതയില്ല",
+  "revvotNotEligibleBody": "ഇപ്പോൾ നിങ്ങൾക്ക് ഫിനാൻസിന് യോഗ്യതയില്ല.",
+  "revvotUnderReviewTitle": "അവലോകനത്തിലാണ്",
+  "revvotUnderReviewBody": "നിങ്ങളുടെ തീരുമാനം തീർപ്പാക്കിയിട്ടില്ല. ദയവായി അൽപ്പം കഴിഞ്ഞ് വീണ്ടും പരിശോധിക്കുക.",
+  "revvotOk": "ശരി",
+  "referralChecking": "കോഡ് പരിശോധിക്കുന്നു…",
+  "referralInvitedBy": "{name} ക്ഷണിച്ചു",
+  "@referralInvitedBy": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "referralInvalidCode": "ഈ റഫറൽ കോഡ് സാധുവല്ല",
+  "referralDisabled": "റഫറൽ റിവാർഡുകൾ ഇപ്പോൾ ലഭ്യമല്ല",
+  "aucBankName": "ബാങ്കിന്റെ പേര്",
+  "buySellWishlistSubtitle": "നിങ്ങൾക്ക് താൽപ്പര്യമുള്ള വാഹനങ്ങൾ",
+  "buySellWishlistEmpty": "നിങ്ങൾ ഇതുവരെ വിഷ്‌ലിസ്റ്റിൽ വാഹനമൊന്നും ചേർത്തിട്ടില്ല"
 }
