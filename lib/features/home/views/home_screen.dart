@@ -1,3 +1,4 @@
+import '../../../core/utils/marquee_math.dart';
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -1868,16 +1869,18 @@ class _MechanicsMarquee extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final icons = AppAssets.mechanicIcons;
-    // Build a sufficiently long list by repeating to ensure seamless loop
+    // A whole number of icon cycles, so one cycle of scrolling then wrapping
+    // back looks identical (seamless loop).
+    final count = icons.length * 6;
     final row1 = List.generate(
-      24,
+      count,
       (i) => _MechanicCardData(
         svgPath: icons[i % icons.length],
         city: _kMechanicCities[i % _kMechanicCities.length],
       ),
     );
     final row2 = List.generate(
-      24,
+      count,
       (i) => _MechanicCardData(
         svgPath: icons[(i + 3) % icons.length],
         city: _kMechanicCities[(i + 2) % _kMechanicCities.length],
@@ -1887,10 +1890,10 @@ class _MechanicsMarquee extends StatelessWidget {
     return Column(
       children: [
         // Row 1 — scrolls left
-        _MarqueeRow(items: row1, reverse: false),
+        _MarqueeRow(items: row1, cycle: icons.length, reverse: false),
         SizedBox(height: 12.h),
         // Row 2 — scrolls right (opposite)
-        _MarqueeRow(items: row2, reverse: true),
+        _MarqueeRow(items: row2, cycle: icons.length, reverse: true),
       ],
     );
   }
@@ -1904,8 +1907,15 @@ class _MechanicCardData {
 
 class _MarqueeRow extends StatefulWidget {
   final List<_MechanicCardData> items;
+
+  /// How many items make one repeating pattern (the number of distinct icons).
+  final int cycle;
   final bool reverse;
-  const _MarqueeRow({required this.items, required this.reverse});
+  const _MarqueeRow({
+    required this.items,
+    required this.cycle,
+    required this.reverse,
+  });
 
   @override
   State<_MarqueeRow> createState() => _MarqueeRowState();
@@ -1919,20 +1929,28 @@ class _MarqueeRowState extends State<_MarqueeRow>
   static const double _cardW = 110;
   static const double _gap = 10;
   static const double _itemStride = _cardW + _gap;
+  static const double _pixelsPerSecond = 50;
 
-  double get _half => widget.items.length * _itemStride / 2;
+  /// One repeating pattern of cards, in pixels.
+  double get _period => widget.cycle * _itemStride;
+
+  /// Start two cycles in, so there is room to move one cycle either way.
+  double get _base => _period * 2;
 
   @override
   void initState() {
     super.initState();
-    // Start at the midpoint so we can scroll both ways
-    _ctrl = ScrollController(initialScrollOffset: _half);
+    _ctrl = ScrollController(initialScrollOffset: _base);
     // Drive the scroll with per-frame jumpTo, NOT animateTo: while a scroll
     // view runs an animateTo it ignores pointer events, which made the cards
     // untappable. jumpTo keeps the list idle, so taps reach the cards.
+    // The position comes from marqueeOffset(): constant speed, exactly one
+    // pattern per loop, independent of the list's (estimated) length.
     _anim = AnimationController(
       vsync: this,
-      duration: Duration(milliseconds: (_half * 18).round()),
+      duration: Duration(
+        milliseconds: (_period / _pixelsPerSecond * 1000).round(),
+      ),
     )..addListener(_tick);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) _anim.repeat();
@@ -1941,13 +1959,14 @@ class _MarqueeRowState extends State<_MarqueeRow>
 
   void _tick() {
     if (!_ctrl.hasClients) return;
-    final p = _ctrl.position;
-    final half = _half;
-    final target = (widget.reverse ? half - half : half + half)
-        .clamp(p.minScrollExtent, p.maxScrollExtent)
-        .toDouble();
-    final offset = half + (target - half) * _anim.value;
-    _ctrl.jumpTo(offset.clamp(p.minScrollExtent, p.maxScrollExtent));
+    _ctrl.jumpTo(
+      marqueeOffset(
+        base: _base,
+        period: _period,
+        progress: _anim.value,
+        reverse: widget.reverse,
+      ),
+    );
   }
 
   @override
