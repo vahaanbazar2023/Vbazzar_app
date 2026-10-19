@@ -46,7 +46,9 @@ class VehicleListingService {
   Future<({List<VehicleListing> vehicles, AuctionPagination pagination})>
   fetchWishlistedVehicles({
     required String userId,
-    String vehicleType = '2w', // Default to 2W, can be changed
+    // '' = all vehicle types. The API accepts an empty type ONLY together with
+    // `wishlisted_only`; normal listings must always send a real type.
+    String vehicleType = '',
     int page = 1,
     int limit = 20,
   }) {

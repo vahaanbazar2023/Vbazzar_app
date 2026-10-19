@@ -27,7 +27,7 @@ class AgentValuationFormView extends GetView<AgentInspectionController> {
         children: [
           Form(
             child: SingleChildScrollView(
-              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
+              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -42,7 +42,7 @@ class AgentValuationFormView extends GetView<AgentInspectionController> {
                     icon: Icons.directions_car,
                     required: true,
                   ),
-                  SizedBox(height: 24.h),
+                  SizedBox(height: 14.h),
 
                   // ── Body Photos ──────────────────────────────────
                   _buildSectionHeader(context.l10n.inspBodyPhotos),
@@ -50,37 +50,37 @@ class AgentValuationFormView extends GetView<AgentInspectionController> {
                     '${context.l10n.inspBodyFrontLabel} *',
                     controller.bodyFrontImages,
                   ),
-                  SizedBox(height: 12.h),
+                  SizedBox(height: 8.h),
                   _buildImageUpload(
                     '${context.l10n.inspBodyLeftSideLabel} *',
                     controller.bodyLeftImages,
                   ),
-                  SizedBox(height: 12.h),
+                  SizedBox(height: 8.h),
                   _buildImageUpload(
                     '${context.l10n.inspBodyBackLabel} *',
                     controller.bodyBackImages,
                   ),
-                  SizedBox(height: 12.h),
+                  SizedBox(height: 8.h),
                   _buildImageUpload(
                     '${context.l10n.inspBodyRightSideLabel} *',
                     controller.bodyRightImages,
                   ),
-                  SizedBox(height: 24.h),
+                  SizedBox(height: 14.h),
 
                   // ── Tyres ────────────────────────────────────────
                   _buildSectionHeader(context.l10n.tyres),
                   _buildTyresCard(),
-                  SizedBox(height: 24.h),
+                  SizedBox(height: 14.h),
 
                   // ── Engine ───────────────────────────────────────
                   _buildSectionHeader(context.l10n.engine),
                   _buildEngineCard(),
-                  SizedBox(height: 12.h),
+                  SizedBox(height: 8.h),
                   _buildImageUpload(
                     '${context.l10n.inspEnginePhotos} *',
                     controller.engineImages,
                   ),
-                  SizedBox(height: 24.h),
+                  SizedBox(height: 14.h),
 
                   // ── Chassis ──────────────────────────────────────
                   _buildSectionHeader(context.l10n.chassis),
@@ -88,7 +88,7 @@ class AgentValuationFormView extends GetView<AgentInspectionController> {
                     '${context.l10n.inspChassisPhotos} *',
                     controller.chasisImages,
                   ),
-                  SizedBox(height: 24.h),
+                  SizedBox(height: 14.h),
 
                   // ── Interior ─────────────────────────────────────
                   _buildSectionHeader(context.l10n.inspInterior),
@@ -96,7 +96,7 @@ class AgentValuationFormView extends GetView<AgentInspectionController> {
                     '${context.l10n.inspInteriorPhotos} *',
                     controller.cabinInteriorImages,
                   ),
-                  SizedBox(height: 24.h),
+                  SizedBox(height: 14.h),
 
                   // ── Cabin Interior ───────────────────────────────
                   _buildSectionHeader(context.l10n.inspCabinInteriorSection),
@@ -104,33 +104,37 @@ class AgentValuationFormView extends GetView<AgentInspectionController> {
                     '${context.l10n.inspCabinInteriorPhotos} *',
                     controller.cabinInteriorImages,
                   ),
-                  SizedBox(height: 24.h),
+                  SizedBox(height: 14.h),
 
                   // ── Odometer ─────────────────────────────────────
                   _buildSectionHeader(context.l10n.odometer),
                   _buildOdometerCard(),
-                  SizedBox(height: 12.h),
+                  SizedBox(height: 8.h),
                   _buildImageUpload(
                     '${context.l10n.inspOdometerPhotos} *',
                     controller.odometerImages,
                   ),
-                  SizedBox(height: 24.h),
+                  SizedBox(height: 14.h),
 
                   // ── Full Round Video (Optional) ──────────────────
                   _buildSectionHeader(context.l10n.inspFullRoundVideoOptional),
-                  Text(
-                    context.l10n.inspUploadVideoHint,
-                    style: AppFonts.bodySmall.copyWith(
-                      color: AppColors.textSecondary,
-                    ),
-                  ),
-                  SizedBox(height: 8.h),
-                  // TODO: Add video upload field here if needed
-                  SizedBox(height: 24.h),
+                  Obx(() {
+                    // ignore: unnecessary_statements
+                    controller.fullRoundVideo.length;
+                    return CustomFileUploadField(
+                      label: context.l10n.inspUploadVideoHint,
+                      subtitle: 'MP4 & MOV (up to 50 MB)',
+                      files: controller.fullRoundVideo,
+                      onTap: controller.pickVideo,
+                      onRemove: (i) =>
+                          controller.removeFile(controller.fullRoundVideo, i),
+                    );
+                  }),
+                  SizedBox(height: 14.h),
 
                   // ── Submit Button ────────────────────────────────
                   _buildSubmitButton(),
-                  SizedBox(height: 24.h),
+                  SizedBox(height: 14.h),
                 ],
               ),
             ),
@@ -151,7 +155,7 @@ class AgentValuationFormView extends GetView<AgentInspectionController> {
 
   Widget _buildSectionHeader(String title) {
     return Padding(
-      padding: EdgeInsets.only(bottom: 12.h),
+      padding: EdgeInsets.only(bottom: 8.h),
       child: Text(
         title,
         style: AppFonts.titleMedium.copyWith(
@@ -176,25 +180,6 @@ class AgentValuationFormView extends GetView<AgentInspectionController> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          children: [
-            Flexible(
-              child: Text(
-                label,
-                style: AppFonts.labelMedium.copyWith(
-                  color: AppColors.textSecondary,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ),
-            if (required)
-              Text(
-                ' *',
-                style: AppFonts.labelMedium.copyWith(color: AppColors.error),
-              ),
-          ],
-        ),
-        SizedBox(height: 6.h),
         TextFormField(
           controller: controller,
           keyboardType: keyboardType,
@@ -203,6 +188,17 @@ class AgentValuationFormView extends GetView<AgentInspectionController> {
           maxLines: maxLines,
           style: AppFonts.bodyMedium.copyWith(color: AppColors.textPrimary),
           decoration: InputDecoration(
+            // Floating label: inside while empty, on the border once focused/filled.
+            labelText: required ? '$label *' : label,
+            labelStyle: AppFonts.bodyMedium.copyWith(
+              color: AppColors.textSecondary,
+            ),
+            floatingLabelStyle: AppFonts.labelMedium.copyWith(
+              color: AppColors.primary,
+              fontWeight: FontWeight.w600,
+            ),
+            floatingLabelBehavior: FloatingLabelBehavior.auto,
+            alignLabelWithHint: true,
             hintText: hint,
             hintStyle: AppFonts.bodyMedium.copyWith(
               color: AppColors.textDisabled,
@@ -313,9 +309,9 @@ class AgentValuationFormView extends GetView<AgentInspectionController> {
             ],
           ),
 
-          SizedBox(height: 16.h),
+          SizedBox(height: 10.h),
           Container(height: 1, color: AppColors.grey200),
-          SizedBox(height: 16.h),
+          SizedBox(height: 10.h),
 
           // ── Condition rating chips ───────────────────────────
           Text(
@@ -440,9 +436,9 @@ class AgentValuationFormView extends GetView<AgentInspectionController> {
               ),
             ],
           ),
-          SizedBox(height: 16.h),
+          SizedBox(height: 10.h),
           Container(height: 1, color: AppColors.grey200),
-          SizedBox(height: 16.h),
+          SizedBox(height: 10.h),
           Obx(
             () => _buildTyreSlider(
               label: '${appL10n.inspFrontAxleTyres} *',
@@ -451,7 +447,7 @@ class AgentValuationFormView extends GetView<AgentInspectionController> {
                   controller.frontAxleTyresPercent.value = v.round(),
             ),
           ),
-          SizedBox(height: 12.h),
+          SizedBox(height: 8.h),
           Obx(
             () => _buildTyreSlider(
               label: '${appL10n.inspRearAxleTyres} *',
@@ -513,9 +509,9 @@ class AgentValuationFormView extends GetView<AgentInspectionController> {
               ),
             ],
           ),
-          SizedBox(height: 16.h),
+          SizedBox(height: 10.h),
           Container(height: 1, color: AppColors.grey200),
-          SizedBox(height: 16.h),
+          SizedBox(height: 10.h),
           _buildTextField(
             controller: controller.odometerController,
             label: appL10n.inspOdometerReadingKm,
@@ -654,15 +650,16 @@ class AgentValuationFormView extends GetView<AgentInspectionController> {
 
   Widget _buildSubmitButton() {
     return Obx(
-      () => GradientButton.filled(
-        text: appL10n.inspSubmitInspection,
-        onPressed: controller.isSubmitting.value
-            ? null
-            : () => controller.submitAgentForm(),
-        width: double.infinity,
-        height: 48.h,
-        fontSize: 15.sp,
-        isLoading: controller.isSubmitting.value,
+      () => Center(
+        child: GradientButton.filled(
+          text: appL10n.submit,
+          onPressed: controller.isSubmitting.value
+              ? null
+              : () => controller.submitAgentForm(),
+          width: 140.w,
+          height: 36.h,
+          isLoading: controller.isSubmitting.value,
+        ),
       ),
     );
   }

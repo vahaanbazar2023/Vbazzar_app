@@ -70,6 +70,10 @@ class CustomAutocompleteField<T extends Object> extends StatefulWidget {
   /// Custom height (default: 46.h)
   final double? height;
 
+  /// Floating label. Defaults to [placeholder]; when given, [placeholder] becomes
+  /// the hint shown once the label has floated.
+  final String? label;
+
   /// Whether user must select from list (clears invalid input on blur)
   final bool forceSelection;
 
@@ -93,6 +97,7 @@ class CustomAutocompleteField<T extends Object> extends StatefulWidget {
     this.emptyMessage,
     this.enabled = true,
     this.height,
+    this.label,
     this.forceSelection = true,
     this.searchHint = 'Search...',
     this.maxDropdownHeight = 200,
@@ -378,6 +383,12 @@ class _CustomAutocompleteFieldState<T extends Object>
     );
   }
 
+  OutlineInputBorder _outline(Color color, {double width = 1}) =>
+      OutlineInputBorder(
+        borderRadius: BorderRadius.circular(8.r),
+        borderSide: BorderSide(color: color, width: width),
+      );
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -387,17 +398,6 @@ class _CustomAutocompleteFieldState<T extends Object>
           link: _layerLink,
           child: Container(
             height: widget.height ?? 46.h,
-            decoration: BoxDecoration(
-              color: widget.enabled ? AppColors.white : AppColors.grey100,
-
-              boxShadow: [
-                BoxShadow(
-                  color: const Color(0xFFE4E5E7).withValues(alpha: 0.24),
-                  offset: const Offset(0, 1),
-                  blurRadius: 2,
-                ),
-              ],
-            ),
             child: TextField(
               controller: widget.controller,
               focusNode: _focusNode,
@@ -408,19 +408,41 @@ class _CustomAutocompleteFieldState<T extends Object>
                 fontWeight: FontWeight.w400,
               ),
               decoration: InputDecoration(
-                hintText: widget.placeholder,
+                // Floating label: sits inside while empty, floats onto the border.
+                labelText: widget.label ?? widget.placeholder,
+                labelStyle: AppTextStyles.bodyMedium.copyWith(
+                  color: AppColors.textSecondary,
+                  fontSize: 14.sp,
+                  fontWeight: FontWeight.w400,
+                ),
+                floatingLabelStyle: AppTextStyles.bodySmall.copyWith(
+                  fontSize: 12.sp,
+                  fontWeight: FontWeight.w600,
+                  color: _hasError
+                      ? AppColors.error
+                      : (_focusNode.hasFocus
+                            ? AppColors.primary
+                            : AppColors.grey650),
+                ),
+                floatingLabelBehavior: FloatingLabelBehavior.auto,
+                hintText: widget.label != null ? widget.placeholder : null,
                 hintStyle: AppTextStyles.bodyMedium.copyWith(
                   color: AppColors.textSecondary,
                   fontSize: 14.sp,
                   fontWeight: FontWeight.w400,
                 ),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(
-                    width: 1,
-                    color: AppColors.ctaGradientStart,
-                  ),
-                  borderRadius: BorderRadius.all(Radius.circular(12)),
+                isDense: true,
+                border: _outline(AppColors.grey300),
+                enabledBorder: _outline(
+                  _hasError ? AppColors.error : AppColors.grey300,
                 ),
+                disabledBorder: _outline(AppColors.grey300),
+                focusedBorder: _outline(
+                  _hasError ? AppColors.error : AppColors.primary,
+                  width: 1.5,
+                ),
+                errorBorder: _outline(AppColors.error),
+                focusedErrorBorder: _outline(AppColors.error, width: 1.5),
                 prefixIcon: widget.prefixIcon != null
                     ? Icon(
                         widget.prefixIcon,
@@ -467,10 +489,12 @@ class _CustomAutocompleteFieldState<T extends Object>
                             ? AppColors.textSecondary
                             : AppColors.textDisabled,
                       ),
-                border: InputBorder.none,
+                // Tighter text padding when a compact height is requested.
                 contentPadding: EdgeInsets.symmetric(
                   horizontal: 12.w,
-                  vertical: 12.h,
+                  vertical: (widget.height != null && widget.height! < 44.h)
+                      ? 8.h
+                      : 12.h,
                 ),
               ),
             ),

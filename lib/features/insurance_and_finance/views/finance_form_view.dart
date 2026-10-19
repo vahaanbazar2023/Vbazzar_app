@@ -1,3 +1,4 @@
+import '../../../core/utils/input_formatters.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -28,16 +29,16 @@ class FinanceFormView extends StatelessWidget {
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: SingleChildScrollView(
-        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // ── Vehicle Number ──────────────────────────────────
-            _buildLabel(context.l10n.insVehicleNumberLabel),
-            SizedBox(height: 6.h),
             Obx(
               () => CustomInputField(
+                height: 40.h,
                 controller: controller.vehicleNoFinanceController,
+                label: context.l10n.insVehicleNumberLabel,
                 placeholder: context.l10n.insEnterVehicleNo,
                 prefixIcon: Icons.local_shipping_outlined,
                 errorText: controller.financeVehicleNoError.value.isNotEmpty
@@ -57,15 +58,15 @@ class FinanceFormView extends StatelessWidget {
                 ],
               ),
             ),
-            SizedBox(height: 16.h),
+            SizedBox(height: 10.h),
 
             // ── State Autocomplete ──────────────────────────────
-            _buildLabel(context.l10n.insStateLabel),
-            SizedBox(height: 6.h),
             Obx(
               () => CustomAutocompleteField<StateModel>(
+                height: 40.h,
                 controller: controller.stateController,
                 options: controller.states.toList(),
+                label: context.l10n.insStateLabel,
                 placeholder: context.l10n.selectState,
                 prefixIcon: Icons.location_on_outlined,
                 isLoading: controller.isLoadingStates.value,
@@ -83,15 +84,15 @@ class FinanceFormView extends StatelessWidget {
                 },
               ),
             ),
-            SizedBox(height: 16.h),
+            SizedBox(height: 10.h),
 
             // ── City Autocomplete ───────────────────────────────
-            _buildLabel(context.l10n.insCityLabel),
-            SizedBox(height: 6.h),
             Obx(
               () => CustomAutocompleteField<CityModel>(
+                height: 40.h,
                 controller: controller.cityController,
                 options: controller.cities.toList(),
+                label: context.l10n.insCityLabel,
                 placeholder: context.l10n.selectCity,
                 prefixIcon: Icons.location_city_outlined,
                 isLoading: controller.isLoadingCities.value,
@@ -112,7 +113,7 @@ class FinanceFormView extends StatelessWidget {
                 },
               ),
             ),
-            SizedBox(height: 16.h),
+            SizedBox(height: 10.h),
 
             // ── RC Copy ─────────────────────────────────────────
             Obx(
@@ -134,7 +135,7 @@ class FinanceFormView extends StatelessWidget {
                     : null,
               ),
             ),
-            SizedBox(height: 16.h),
+            SizedBox(height: 10.h),
 
             // ── Insurance Copy ──────────────────────────────────
             Obx(
@@ -156,19 +157,19 @@ class FinanceFormView extends StatelessWidget {
                     : null,
               ),
             ),
-            SizedBox(height: 16.h),
+            SizedBox(height: 10.h),
 
             // ── Fleet Size (optional) ───────────────────────────
-            _buildLabel(context.l10n.insFleetSize),
-            SizedBox(height: 6.h),
             CustomInputField(
+              height: 40.h,
               controller: controller.fleetSizeController,
+              label: context.l10n.insFleetSize,
               placeholder: context.l10n.insEnterFleetSize,
               prefixIcon: Icons.local_shipping_outlined,
               keyboardType: TextInputType.number,
               inputFormatters: [FilteringTextInputFormatter.digitsOnly],
             ),
-            SizedBox(height: 16.h),
+            SizedBox(height: 10.h),
 
             // ── Company GST (optional) ──────────────────────────
             Obx(
@@ -184,14 +185,14 @@ class FinanceFormView extends StatelessWidget {
                 errorText: null,
               ),
             ),
-            SizedBox(height: 16.h),
+            SizedBox(height: 10.h),
 
             // ── Vehicle Location ────────────────────────────────
-            _buildLabel(context.l10n.insVehicleLocationLabel),
-            SizedBox(height: 6.h),
             Obx(
               () => CustomInputField(
+                height: 40.h,
                 controller: controller.vehicleLocationController,
+                label: context.l10n.insVehicleLocationLabel,
                 placeholder: context.l10n.enterVehicleLocation,
                 prefixIcon: Icons.location_on_outlined,
                 errorText: controller.vehicleLocationError.value.isNotEmpty
@@ -202,7 +203,7 @@ class FinanceFormView extends StatelessWidget {
                     : null,
               ),
             ),
-            SizedBox(height: 24.h),
+            SizedBox(height: 14.h),
 
             // ── Section Header: Applicant Details ───────────────
             Container(
@@ -222,7 +223,7 @@ class FinanceFormView extends StatelessWidget {
                 ),
               ),
             ),
-            SizedBox(height: 16.h),
+            SizedBox(height: 10.h),
 
             // ── Applicant Aadhar ────────────────────────────────
             Obx(
@@ -244,7 +245,7 @@ class FinanceFormView extends StatelessWidget {
                     : null,
               ),
             ),
-            SizedBox(height: 16.h),
+            SizedBox(height: 10.h),
 
             // ── Applicant PAN ───────────────────────────────────
             Obx(
@@ -265,14 +266,14 @@ class FinanceFormView extends StatelessWidget {
                     : null,
               ),
             ),
-            SizedBox(height: 16.h),
+            SizedBox(height: 10.h),
 
             // ── Applicant Mobile Number ─────────────────────────
-            _buildLabel(context.l10n.insMobileNumberLabel),
-            SizedBox(height: 6.h),
             Obx(
               () => CustomInputField(
+                height: 40.h,
                 controller: controller.mobileNumberController,
+                label: context.l10n.insMobileNumberLabel,
                 placeholder: context.l10n.insEnterMobileNumber,
                 prefixIcon: Icons.phone_outlined,
                 keyboardType: TextInputType.phone,
@@ -283,12 +284,11 @@ class FinanceFormView extends StatelessWidget {
                       )
                     : null,
                 inputFormatters: [
-                  FilteringTextInputFormatter.digitsOnly,
-                  LengthLimitingTextInputFormatter(10),
+                  const IndianMobileFormatter(),
                 ],
               ),
             ),
-            SizedBox(height: 24.h),
+            SizedBox(height: 14.h),
 
             // ── Co-Applicant Checkbox ───────────────────────────
             Obx(
@@ -329,7 +329,7 @@ class FinanceFormView extends StatelessWidget {
                 ),
               ),
             ),
-            SizedBox(height: 16.h),
+            SizedBox(height: 10.h),
 
             // ── Co-Applicant Section (conditional) ──────────────
             Obx(() {
@@ -357,7 +357,7 @@ class FinanceFormView extends StatelessWidget {
                       ),
                     ),
                   ),
-                  SizedBox(height: 16.h),
+                  SizedBox(height: 10.h),
 
                   // Co-Applicant Aadhar
                   Obx(
@@ -383,7 +383,7 @@ class FinanceFormView extends StatelessWidget {
                           : null,
                     ),
                   ),
-                  SizedBox(height: 16.h),
+                  SizedBox(height: 10.h),
 
                   // Co-Applicant PAN
                   Obx(
@@ -409,14 +409,14 @@ class FinanceFormView extends StatelessWidget {
                           : null,
                     ),
                   ),
-                  SizedBox(height: 16.h),
+                  SizedBox(height: 10.h),
 
                   // Co-Applicant Mobile Number
-                  _buildLabel(context.l10n.insMobileNumberLabel),
-                  SizedBox(height: 6.h),
                   Obx(
                     () => CustomInputField(
+                      height: 40.h,
                       controller: controller.mobileCoApplicantNumberController,
+                      label: context.l10n.insMobileNumberLabel,
                       placeholder: context.l10n.insEnterMobileNumber,
                       prefixIcon: Icons.phone_outlined,
                       keyboardType: TextInputType.phone,
@@ -428,12 +428,11 @@ class FinanceFormView extends StatelessWidget {
                             )
                           : null,
                       inputFormatters: [
-                        FilteringTextInputFormatter.digitsOnly,
-                        LengthLimitingTextInputFormatter(10),
+                        const IndianMobileFormatter(),
                       ],
                     ),
                   ),
-                  SizedBox(height: 24.h),
+                  SizedBox(height: 14.h),
                 ],
               );
             }),
@@ -451,7 +450,7 @@ class FinanceFormView extends StatelessWidget {
                 ),
               ),
             ),
-            SizedBox(height: 24.h),
+            SizedBox(height: 14.h),
           ],
         ),
       ),
@@ -459,17 +458,6 @@ class FinanceFormView extends StatelessWidget {
   }
 
   // ── Helper widgets ──────────────────────────────────────────────
-
-  Widget _buildLabel(String text) {
-    return Text(
-      text,
-      style: AppFonts.labelLarge.copyWith(
-        fontWeight: FontWeight.w600,
-        color: AppColors.textPrimary,
-        fontSize: 14.sp,
-      ),
-    );
-  }
 
   String _getErrorMessage(BuildContext context, String errorKey) {
     switch (errorKey) {

@@ -28,6 +28,7 @@ export 'molecules/gradient_button.dart';
 export 'molecules/app_textfield.dart';
 export 'molecules/custom_input_field.dart';
 export 'molecules/custom_dropdown_field.dart';
+export 'molecules/floating_label_box.dart';
 export 'molecules/custom_autocomplete_field.dart';
 export 'molecules/custom_phone_input_field.dart';
 export 'molecules/search_bar.dart';

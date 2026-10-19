@@ -1,3 +1,4 @@
+import '../../../core/utils/input_formatters.dart';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -15,7 +16,7 @@ import '../../../routes/app_routes.dart';
 import '../data/repositories/buy_sell_repository_impl.dart';
 
 // ─── All inputs share this height to stay visually consistent ────────────────
-const double _kFieldH = 46.0;
+const double _kFieldH = 40.0;
 
 class SellVehicleView extends StatelessWidget {
   const SellVehicleView({super.key});
@@ -43,6 +44,8 @@ class SellVehicleView extends StatelessWidget {
 
     return PopScope(
       onPopInvokedWithResult: (_, __) {
+        // Save whatever the user typed as a sell lead before leaving.
+        ctrl.flushLeadSave();
         // Leaving the edit form without saving must not leave the sell form
         // stuck in edit mode.
         if (ctrl.isEditMode.value) ctrl.resetForm();
@@ -59,7 +62,7 @@ class SellVehicleView extends StatelessWidget {
           if (ctrl.isLoadingEditData.value) return _FormLoadingState();
 
           return SingleChildScrollView(
-            padding: EdgeInsets.fromLTRB(16.w, 16.h, 16.w, 120.h),
+            padding: EdgeInsets.fromLTRB(14.w, 8.h, 14.w, 96.h),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -86,6 +89,7 @@ class SellVehicleView extends StatelessWidget {
                           searchHint: context.l10n.spareSearchCategory,
                           itemLabel: (cat) => cat.categoryName as String,
                           height: _kFieldH.h,
+                          label: '${context.l10n.vehicleCategory} *',
                           onChanged: (cat) {
                             if (cat != null)
                               ctrl.loadFormFields(cat.categoryCode as String);
@@ -94,7 +98,7 @@ class SellVehicleView extends StatelessWidget {
                       ),
                     ),
                   ),
-                  SizedBox(height: 16.h),
+                  SizedBox(height: 10.h),
                 ],
 
                 // ── Dynamic form ──────────────────────────────────────────────
@@ -439,16 +443,11 @@ class _DynamicFormBody extends StatelessWidget {
               preCode: preCode,
               preName: preName,
             ),
-            SizedBox(height: 16.h),
+            SizedBox(height: 10.h),
           ],
 
           // ── Regular fields ────────────────────────────────────────────────
           if (regularWithoutCategory.isNotEmpty) ...[
-            _SectionHeader(
-              label: context.l10n.vehicleDetailsTitle,
-              icon: Icons.directions_car_outlined,
-            ),
-            SizedBox(height: 10.h),
             _FormCard(
               children: regularWithoutCategory
                   .map(
@@ -465,26 +464,21 @@ class _DynamicFormBody extends StatelessWidget {
 
           // ── Condition toggles ─────────────────────────────────────────────
           if (toggles.isNotEmpty) ...[
-            SizedBox(height: 20.h),
+            SizedBox(height: 12.h),
             _SectionHeader(
               label: context.l10n.vehicleCondition,
               icon: Icons.verified_outlined,
             ),
-            SizedBox(height: 10.h),
+            SizedBox(height: 6.h),
             _ToggleCard(fields: toggles, ctrl: ctrl),
           ],
 
           // ── Photos & Documents ────────────────────────────────────────────
           if (files.isNotEmpty) ...[
-            SizedBox(height: 20.h),
-            _SectionHeader(
-              label: context.l10n.sparePhotosAndDocuments,
-              icon: Icons.photo_library_outlined,
-            ),
-            SizedBox(height: 10.h),
+            SizedBox(height: 4.h),
             ...files.map(
               (f) => Padding(
-                padding: EdgeInsets.only(bottom: 10.h),
+                padding: EdgeInsets.only(bottom: 6.h),
                 child: _FileField(
                   fieldName: f.fieldName,
                   isRequired: f.required,
@@ -494,7 +488,7 @@ class _DynamicFormBody extends StatelessWidget {
             ),
           ],
 
-          SizedBox(height: 28.h),
+          SizedBox(height: 16.h),
           Center(child: _SubmitButton(ctrl: ctrl)),
         ],
       );
@@ -517,17 +511,17 @@ class _SectionHeader extends StatelessWidget {
     return Row(
       children: [
         Container(
-          width: 30.w,
-          height: 30.w,
+          width: 26.w,
+          height: 26.w,
           decoration: BoxDecoration(
             gradient: const LinearGradient(
               colors: [AppColors.ctaGradientStart, AppColors.ctaGradientEnd],
             ),
             borderRadius: BorderRadius.circular(8.r),
           ),
-          child: Icon(icon, color: Colors.white, size: 15.sp),
+          child: Icon(icon, color: Colors.white, size: 14.sp),
         ),
-        SizedBox(width: 10.w),
+        SizedBox(width: 8.w),
         Flexible(
           child: Text(
             label,
@@ -535,13 +529,13 @@ class _SectionHeader extends StatelessWidget {
             overflow: TextOverflow.ellipsis,
             style: TextStyle(
               fontFamily: 'Montserrat',
-              fontSize: 14.sp,
+              fontSize: 13.sp,
               fontWeight: FontWeight.w600,
               color: AppColors.textPrimary,
             ),
           ),
         ),
-        SizedBox(width: 10.w),
+        SizedBox(width: 8.w),
         Expanded(child: Container(height: 1, color: AppColors.grey200)),
       ],
     );
@@ -558,31 +552,17 @@ class _FormCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.fromLTRB(14.w, 14.h, 14.w, 4.h),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(14.r),
-        border: Border.all(color: AppColors.grey200),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.03),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: children
-            .map(
-              (w) => Padding(
-                padding: EdgeInsets.only(bottom: 12.h),
-                child: w,
-              ),
-            )
-            .toList(),
-      ),
+    // Each field draws its own outline, so no extra card border around them.
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: children
+          .map(
+            (w) => Padding(
+              padding: EdgeInsets.only(bottom: 8.h),
+              child: w,
+            ),
+          )
+          .toList(),
     );
   }
 }
@@ -604,7 +584,7 @@ class _FieldError extends StatelessWidget {
       final msg = ctrl.formErrors[name];
       if (msg == null || msg.isEmpty) return const SizedBox.shrink();
       return Padding(
-        padding: EdgeInsets.only(top: 4.h, left: padded ? 14.w : 2.w),
+        padding: EdgeInsets.only(top: 2.h, left: padded ? 14.w : 2.w),
         child: Row(
           children: [
             Icon(
@@ -637,19 +617,10 @@ class _SellField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // The child draws its own outline + floating label; only the error goes below.
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          label,
-          style: TextStyle(
-            fontFamily: 'Montserrat',
-            fontSize: 12.sp,
-            fontWeight: FontWeight.w600,
-            color: AppColors.grey700,
-          ),
-        ),
-        SizedBox(height: 5.h),
         child,
         _FieldError(name: label.replaceAll(RegExp(r'\s*\*$'), '')),
       ],
@@ -663,6 +634,7 @@ class _SellField extends StatelessWidget {
 // ─────────────────────────────────────────────────────────────────────────────
 
 class _UniformInput extends StatelessWidget {
+  final String label;
   final String hint;
   final IconData? icon;
   final Widget? prefixWidget;
@@ -672,6 +644,7 @@ class _UniformInput extends StatelessWidget {
   final ValueChanged<String> onChanged;
 
   const _UniformInput({
+    required this.label,
     required this.hint,
     this.icon,
     this.prefixWidget,
@@ -681,20 +654,15 @@ class _UniformInput extends StatelessWidget {
     required this.onChanged,
   });
 
+  OutlineInputBorder _outline(Color c, {double w = 1}) => OutlineInputBorder(
+    borderRadius: BorderRadius.circular(8.r),
+    borderSide: BorderSide(color: c, width: w),
+  );
+
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       height: _kFieldH.h,
-      decoration: BoxDecoration(
-        color: AppColors.white,
-        boxShadow: [
-          BoxShadow(
-            color: const Color(0xFFE4E5E7).withValues(alpha: 0.24),
-            offset: const Offset(0, 1),
-            blurRadius: 2,
-          ),
-        ],
-      ),
       child: TextField(
         controller: initialValue != null
             ? TextEditingController(text: initialValue)
@@ -709,18 +677,36 @@ class _UniformInput extends StatelessWidget {
           fontWeight: FontWeight.w400,
         ),
         decoration: InputDecoration(
-          hintText: hint,
-          hintStyle: TextStyle(
+          // Floating label: inside while empty, on the border once focused/filled.
+          labelText: label,
+          labelStyle: TextStyle(
             fontFamily: 'Montserrat',
             fontSize: 14.sp,
             color: AppColors.textSecondary,
+          ),
+          floatingLabelStyle: TextStyle(
+            fontFamily: 'Montserrat',
+            fontSize: 12.sp,
+            fontWeight: FontWeight.w600,
+            color: AppColors.primary,
+          ),
+          floatingLabelBehavior: FloatingLabelBehavior.auto,
+          hintText: hint,
+          hintStyle: TextStyle(
+            fontFamily: 'Montserrat',
+            fontSize: 13.sp,
+            color: AppColors.grey500,
             fontWeight: FontWeight.w400,
           ),
-          focusedBorder: OutlineInputBorder(
-            borderSide: BorderSide(width: 1, color: AppColors.ctaGradientStart),
-            borderRadius: BorderRadius.all(Radius.circular(12)),
-          ),
-          // Prefix: icon OR custom widget, both at 20.sp, left-padded 12.w
+          filled: true,
+          fillColor: AppColors.white,
+          // Every state is set explicitly so the app theme can't add a 2nd border.
+          border: _outline(AppColors.grey300),
+          enabledBorder: _outline(AppColors.grey300),
+          disabledBorder: _outline(AppColors.grey300),
+          errorBorder: _outline(AppColors.error),
+          focusedBorder: _outline(AppColors.primary, w: 1.5),
+          focusedErrorBorder: _outline(AppColors.error, w: 1.5),
           prefixIcon: prefixWidget != null
               ? Padding(
                   padding: EdgeInsets.only(left: 12.w, right: 8.w),
@@ -740,15 +726,119 @@ class _UniformInput extends StatelessWidget {
             minWidth: 0,
             minHeight: 0,
           ),
-          border: InputBorder.none,
-          contentPadding: EdgeInsets.symmetric(
-            horizontal: 12.w,
-            vertical: 12.h,
-          ),
-          isCollapsed: true,
+          contentPadding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 9.h),
+          isDense: true,
         ),
       ),
     );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Year picker — tap to choose a year from a list (newest first)
+// ─────────────────────────────────────────────────────────────────────────────
+
+class _YearPickerField extends StatelessWidget {
+  final String label;
+  final SellVehicleController ctrl;
+  final String fieldName;
+  final String hint;
+  const _YearPickerField({
+    required this.label,
+    required this.ctrl,
+    required this.fieldName,
+    required this.hint,
+  });
+
+  static const int _firstYear = 1980;
+
+  Future<void> _pick(BuildContext context) async {
+    final now = DateTime.now().year;
+    final years = [for (var y = now; y >= _firstYear; y--) y];
+    final current = int.tryParse('${ctrl.formValues[fieldName] ?? ''}');
+    final picked = await showModalBottomSheet<int>(
+      context: context,
+      backgroundColor: AppColors.white,
+      isScrollControlled: true,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16.r)),
+      ),
+      builder: (ctx) => SafeArea(
+        child: SizedBox(
+          height: MediaQuery.of(ctx).size.height * 0.55,
+          child: ListView.builder(
+            padding: EdgeInsets.symmetric(vertical: 8.h),
+            itemCount: years.length,
+            itemBuilder: (_, i) {
+              final y = years[i];
+              final selected = y == current;
+              return ListTile(
+                dense: true,
+                title: Text(
+                  '$y',
+                  style: TextStyle(
+                    fontFamily: 'Montserrat',
+                    fontSize: 15.sp,
+                    fontWeight: selected ? FontWeight.w700 : FontWeight.w400,
+                    color: selected ? AppColors.primary : AppColors.textPrimary,
+                  ),
+                ),
+                trailing: selected
+                    ? Icon(Icons.check_rounded, color: AppColors.primary)
+                    : null,
+                onTap: () => Navigator.of(ctx).pop(y),
+              );
+            },
+          ),
+        ),
+      ),
+    );
+    if (picked != null) ctrl.updateFormValue(fieldName, '$picked');
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Obx(() {
+      final value = (ctrl.formValues[fieldName] ?? '').toString();
+      return GestureDetector(
+        onTap: () => _pick(context),
+        behavior: HitTestBehavior.opaque,
+        child: FloatingLabelBox(
+          label: label,
+          hasValue: value.isNotEmpty,
+          height: _kFieldH.h,
+          inlineLeft: 12.w + 20.sp + 8.w,
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 12.w),
+            child: Row(
+              children: [
+                Icon(
+                  Icons.calendar_today_outlined,
+                  size: 20.sp,
+                  color: AppColors.textSecondary,
+                ),
+                SizedBox(width: 8.w),
+                Expanded(
+                  child: Text(
+                    value,
+                    style: TextStyle(
+                      fontFamily: 'Montserrat',
+                      fontSize: 14.sp,
+                      color: AppColors.textPrimary,
+                    ),
+                  ),
+                ),
+                Icon(
+                  Icons.arrow_drop_down_rounded,
+                  size: 24.sp,
+                  color: AppColors.textSecondary,
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    });
   }
 }
 
@@ -788,15 +878,11 @@ class _FieldBuilder extends StatelessWidget {
                 '';
       return _SellField(
         label: label,
-        child: Container(
+        child: FloatingLabelBox(
+          label: label,
+          hasValue: true,
           height: _kFieldH.h,
-          decoration: BoxDecoration(
-            color: AppColors.primary.withValues(alpha: 0.06),
-            borderRadius: BorderRadius.circular(8.r),
-            border: Border.all(
-              color: AppColors.primary.withValues(alpha: 0.25),
-            ),
-          ),
+          fillColor: AppColors.primary.withValues(alpha: 0.06),
           child: Row(
             children: [
               SizedBox(width: 12.w),
@@ -846,20 +932,15 @@ class _FieldBuilder extends StatelessWidget {
     if (type == 'date')
       return _DatePickerField(label: label, fieldName: name, ctrl: ctrl);
 
-    // Year
+    // Year — pick from a list (newest first) instead of typing
     if (type == 'year')
       return _SellField(
         label: label,
-        child: _UniformInput(
+        child: _YearPickerField(
+          label: label,
+          ctrl: ctrl,
+          fieldName: name,
           hint: context.l10n.spareExampleHint('2021'),
-          icon: Icons.calendar_today_outlined,
-          keyboardType: TextInputType.number,
-          inputFormatters: [
-            FilteringTextInputFormatter.digitsOnly,
-            LengthLimitingTextInputFormatter(4),
-          ],
-          initialValue: ctrl.formValues[name]?.toString(),
-          onChanged: (v) => ctrl.updateFormValue(name, v),
         ),
       );
 
@@ -869,6 +950,7 @@ class _FieldBuilder extends StatelessWidget {
         label: label,
         child: Obx(
           () => CustomAutocompleteField<Map<String, String>>(
+            label: label,
             controller: TextEditingController(
               text: ctrl.formValues['brand_name']?.toString() ?? '',
             ),
@@ -897,14 +979,14 @@ class _FieldBuilder extends StatelessWidget {
     if (name == 'State')
       return _SellField(
         label: label,
-        child: _StateField(ctrl: ctrl),
+        child: _StateField(ctrl: ctrl, label: label),
       );
 
     // City autocomplete
     if (name == 'City')
       return _SellField(
         label: label,
-        child: _CityField(ctrl: ctrl),
+        child: _CityField(ctrl: ctrl, label: label),
       );
 
     // Dropdown with options
@@ -915,6 +997,7 @@ class _FieldBuilder extends StatelessWidget {
           () => SizedBox(
             height: _kFieldH.h,
             child: CustomDropdownField<String>(
+              label: label,
               value: ctrl.formValues[name]?.toString(),
               items: options,
               placeholder: context.l10n.spareSelectFilter(name),
@@ -933,6 +1016,7 @@ class _FieldBuilder extends StatelessWidget {
       return _SellField(
         label: label,
         child: _UniformInput(
+          label: label,
           hint: context.l10n.spareExampleHint('2500000'),
           prefixWidget: Text(
             '₹',
@@ -954,12 +1038,12 @@ class _FieldBuilder extends StatelessWidget {
       return _SellField(
         label: label,
         child: _UniformInput(
+          label: label,
           hint: context.l10n.spareTenDigitMobileNumber,
           icon: Icons.phone_outlined,
           keyboardType: TextInputType.phone,
           inputFormatters: [
-            FilteringTextInputFormatter.digitsOnly,
-            LengthLimitingTextInputFormatter(10),
+            const IndianMobileFormatter(),
           ],
           initialValue: ctrl.formValues[name]?.toString(),
           onChanged: (v) => ctrl.updateFormValue(name, v),
@@ -971,6 +1055,7 @@ class _FieldBuilder extends StatelessWidget {
       return _SellField(
         label: label,
         child: _UniformInput(
+          label: label,
           hint: context.l10n.spareExampleHint('MH12AB1234'),
           icon: Icons.badge_outlined,
           inputFormatters: [
@@ -986,6 +1071,7 @@ class _FieldBuilder extends StatelessWidget {
       return _SellField(
         label: label,
         child: _UniformInput(
+          label: label,
           hint: context.l10n.spareExampleHint('50000'),
           icon: Icons.speed_outlined,
           keyboardType: TextInputType.number,
@@ -999,6 +1085,7 @@ class _FieldBuilder extends StatelessWidget {
     return _SellField(
       label: label,
       child: _UniformInput(
+        label: label,
         hint: context.l10n.spareEnterFilter(name),
         initialValue: ctrl.formValues[name]?.toString(),
         onChanged: (v) => ctrl.updateFormValue(name, v),
@@ -1013,7 +1100,8 @@ class _FieldBuilder extends StatelessWidget {
 
 class _StateField extends StatefulWidget {
   final SellVehicleController ctrl;
-  const _StateField({required this.ctrl});
+  final String label;
+  const _StateField({required this.ctrl, required this.label});
   @override
   State<_StateField> createState() => _StateFieldState();
 }
@@ -1043,6 +1131,7 @@ class _StateFieldState extends State<_StateField> {
   Widget build(BuildContext context) {
     return Obx(
       () => CustomAutocompleteField<Map<String, String>>(
+        label: widget.label,
         controller: _textCtrl,
         options: widget.ctrl.states,
         placeholder: context.l10n.spareSearchState,
@@ -1066,7 +1155,8 @@ class _StateFieldState extends State<_StateField> {
 
 class _CityField extends StatefulWidget {
   final SellVehicleController ctrl;
-  const _CityField({required this.ctrl});
+  final String label;
+  const _CityField({required this.ctrl, required this.label});
   @override
   State<_CityField> createState() => _CityFieldState();
 }
@@ -1105,6 +1195,7 @@ class _CityFieldState extends State<_CityField> {
     return Obx(() {
       final stateSelected = widget.ctrl.selectedStateId.value.isNotEmpty;
       return CustomAutocompleteField<Map<String, String>>(
+        label: widget.label,
         controller: _textCtrl,
         options: widget.ctrl.cities,
         placeholder: stateSelected
@@ -1168,18 +1259,11 @@ class _DatePickerField extends StatelessWidget {
               );
             }
           },
-          child: Container(
+          child: FloatingLabelBox(
+            label: label,
+            hasValue: val.isNotEmpty,
             height: _kFieldH.h,
-            decoration: BoxDecoration(
-              color: AppColors.white,
-              boxShadow: [
-                BoxShadow(
-                  color: const Color(0xFFE4E5E7).withValues(alpha: 0.24),
-                  offset: const Offset(0, 1),
-                  blurRadius: 2,
-                ),
-              ],
-            ),
+            inlineLeft: 12.w + 20.sp + 8.w,
             child: Row(
               children: [
                 SizedBox(width: 12.w),
@@ -1191,16 +1275,14 @@ class _DatePickerField extends StatelessWidget {
                 SizedBox(width: 8.w),
                 Expanded(
                   child: Text(
-                    val.isEmpty ? context.l10n.selectDate : val,
+                    val,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
                       fontFamily: 'Montserrat',
                       fontSize: 14.sp,
                       fontWeight: FontWeight.w400,
-                      color: val.isEmpty
-                          ? AppColors.textSecondary
-                          : AppColors.textPrimary,
+                      color: AppColors.textPrimary,
                     ),
                   ),
                 ),
@@ -1265,8 +1347,8 @@ class _ToggleCard extends StatelessWidget {
                 return AnimatedContainer(
                   duration: const Duration(milliseconds: 180),
                   padding: EdgeInsets.symmetric(
-                    horizontal: 14.w,
-                    vertical: 12.h,
+                    horizontal: 12.w,
+                    vertical: 8.h,
                   ),
                   decoration: BoxDecoration(
                     color: on
@@ -1283,8 +1365,8 @@ class _ToggleCard extends StatelessWidget {
                     children: [
                       AnimatedContainer(
                         duration: const Duration(milliseconds: 180),
-                        width: 38.w,
-                        height: 38.w,
+                        width: 34.w,
+                        height: 34.w,
                         decoration: BoxDecoration(
                           color: on
                               ? AppColors.primary.withValues(alpha: 0.12)

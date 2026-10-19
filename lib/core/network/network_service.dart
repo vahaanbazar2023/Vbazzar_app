@@ -132,6 +132,7 @@ class NetworkService extends GetxService {
     '/api/v1/sell-buy/user-interest',
     '/api/v1/sell-buy/vehicle-access-status',
     '/api/v1/sell-buy/vehicle/',
+    '/api/v1/sell-buy/sell-lead',
 
     // Payment v2
     '/api/v2/payments/initiate',

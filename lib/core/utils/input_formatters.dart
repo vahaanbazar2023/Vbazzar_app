@@ -263,3 +263,31 @@ class InputFormatters {
   /// Capitalize first letter of each word
   static final capitalizeName = CapitalizeWordsFormatter();
 }
+
+/// 10-digit Indian mobile number. Keyboard / autofill suggestions arrive as
+/// "+91 98765 43210", "919876543210" or "098765 43210"; this keeps digits only
+/// and drops the country code / leading 0 so the suggestion fills the field
+/// correctly instead of being cut to the wrong 10 digits.
+class IndianMobileFormatter extends TextInputFormatter {
+  const IndianMobileFormatter();
+
+  @override
+  TextEditingValue formatEditUpdate(
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
+    var digits = newValue.text.replaceAll(RegExp(r'\D'), '');
+    if (digits.length > 10) {
+      if (digits.startsWith('91') && digits.length >= 12) {
+        digits = digits.substring(2);
+      } else if (digits.startsWith('0')) {
+        digits = digits.substring(1);
+      }
+    }
+    if (digits.length > 10) digits = digits.substring(0, 10);
+    return TextEditingValue(
+      text: digits,
+      selection: TextSelection.collapsed(offset: digits.length),
+    );
+  }
+}

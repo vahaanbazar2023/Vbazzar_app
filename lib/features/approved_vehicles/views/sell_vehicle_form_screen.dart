@@ -1,3 +1,4 @@
+import '../../../core/utils/input_formatters.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -185,8 +186,7 @@ class _SellVehicleFormScreenState extends State<SellVehicleFormScreen> {
                     icon: Icons.phone_outlined,
                     keyboardType: TextInputType.phone,
                     inputFormatters: [
-                      FilteringTextInputFormatter.digitsOnly,
-                      LengthLimitingTextInputFormatter(10),
+                      const IndianMobileFormatter(),
                     ],
                   ),
                 ),

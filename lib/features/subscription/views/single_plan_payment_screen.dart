@@ -155,10 +155,7 @@ class _SinglePlanPaymentScreenState extends State<SinglePlanPaymentScreen> {
           currentTab: shell != null
               ? BottomNavTab.values[shell.currentIndex.value]
               : BottomNavTab.categories,
-          onTabSelected: (tab) {
-            shell?.changePage(tab.index);
-            Get.until((route) => route.isFirst);
-          },
+          onTabSelected: (tab) => shell?.onTabTapped(tab.index),
         );
       }),
       appBar: AppBar(
@@ -370,33 +367,33 @@ class _SinglePlanPaymentScreenState extends State<SinglePlanPaymentScreen> {
                   ),
                 ),
                 if (widget.showWalletLink) ...[
-                const SizedBox(height: AppSizes.spaceSm),
-                // "or pay from My wallet" link
-                GestureDetector(
-                  onTap: _isProcessing ? null : _onPayFromWallet,
-                  child: RichText(
-                    text: TextSpan(
-                      style: TextStyle(
-                        fontFamily: 'Montserrat',
-                        fontWeight: FontWeight.w400,
-                        fontSize: 11.sp,
-                        color: AppColors.grey650,
-                      ),
-                      children: [
-                        TextSpan(text: context.l10n.orPayFromWallet),
-                        TextSpan(
-                          text: context.l10n.myWalletLink,
-                          style: TextStyle(
-                            fontWeight: FontWeight.w600,
-                            color: _isProcessing
-                                ? AppColors.grey650
-                                : AppColors.primaryLight,
-                          ),
+                  const SizedBox(height: AppSizes.spaceSm),
+                  // "or pay from My wallet" link
+                  GestureDetector(
+                    onTap: _isProcessing ? null : _onPayFromWallet,
+                    child: RichText(
+                      text: TextSpan(
+                        style: TextStyle(
+                          fontFamily: 'Montserrat',
+                          fontWeight: FontWeight.w400,
+                          fontSize: 11.sp,
+                          color: AppColors.grey650,
                         ),
-                      ],
+                        children: [
+                          TextSpan(text: context.l10n.orPayFromWallet),
+                          TextSpan(
+                            text: context.l10n.myWalletLink,
+                            style: TextStyle(
+                              fontWeight: FontWeight.w600,
+                              color: _isProcessing
+                                  ? AppColors.grey650
+                                  : AppColors.primaryLight,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                ),
                 ],
               ],
             ),

@@ -1,3 +1,4 @@
+import '../../../core/utils/input_formatters.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -30,21 +31,21 @@ class CustomerValuationFormView extends GetView<InspectionValuationController> {
           Form(
             key: controller.customerFormKey,
             child: SingleChildScrollView(
-              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
+              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   _buildSectionHeader(context.l10n.inspVehicleDetailsSection),
                   _buildVehicleFields(),
-                  SizedBox(height: 20.h),
+                  SizedBox(height: 8.h),
                   _buildSectionHeader(context.l10n.inspCompanyDetailsOptional),
                   _buildCompanyFields(),
-                  SizedBox(height: 20.h),
+                  SizedBox(height: 8.h),
                   _buildSectionHeader(context.l10n.inspUploadDocuments),
                   _buildDocumentUploads(),
-                  SizedBox(height: 24.h),
+                  SizedBox(height: 14.h),
                   _buildSubmitButton(),
-                  SizedBox(height: 24.h),
+                  SizedBox(height: 14.h),
                 ],
               ),
             ),
@@ -61,7 +62,7 @@ class CustomerValuationFormView extends GetView<InspectionValuationController> {
 
   Widget _buildSectionHeader(String title) {
     return Padding(
-      padding: EdgeInsets.only(bottom: 12.h),
+      padding: EdgeInsets.only(bottom: 8.h),
       child: Text(
         title,
         style: AppFonts.titleMedium.copyWith(
@@ -87,7 +88,7 @@ class CustomerValuationFormView extends GetView<InspectionValuationController> {
             return null;
           },
         ),
-        SizedBox(height: 12.h),
+        SizedBox(height: 8.h),
         _buildTextField(
           controller: controller.chasisNoController,
           label: appL10n.inspChassisNumber,
@@ -100,7 +101,7 @@ class CustomerValuationFormView extends GetView<InspectionValuationController> {
             return null;
           },
         ),
-        SizedBox(height: 12.h),
+        SizedBox(height: 8.h),
         Obx(
           () => InlineDropdownField<String>(
             value: controller.selectedVehicleType.value.isEmpty
@@ -133,7 +134,7 @@ class CustomerValuationFormView extends GetView<InspectionValuationController> {
             },
           ),
         ),
-        SizedBox(height: 12.h),
+        SizedBox(height: 8.h),
         Obx(
           () => InlineDropdownField<String>(
             value: controller.selectedVehicleBrand.value.isEmpty
@@ -152,7 +153,7 @@ class CustomerValuationFormView extends GetView<InspectionValuationController> {
             },
           ),
         ),
-        SizedBox(height: 12.h),
+        SizedBox(height: 8.h),
         Obx(
           () => InlineDropdownField<LocationOption>(
             value: controller.selectedState.value,
@@ -173,7 +174,7 @@ class CustomerValuationFormView extends GetView<InspectionValuationController> {
             },
           ),
         ),
-        SizedBox(height: 12.h),
+        SizedBox(height: 8.h),
         Obx(
           () => InlineDropdownField<LocationOption>(
             value: controller.selectedCity.value,
@@ -193,7 +194,7 @@ class CustomerValuationFormView extends GetView<InspectionValuationController> {
             },
           ),
         ),
-        SizedBox(height: 12.h),
+        SizedBox(height: 8.h),
         _buildTextField(
           controller: controller.ownerNumberController,
           label: appL10n.ownerMobileNumber,
@@ -202,8 +203,7 @@ class CustomerValuationFormView extends GetView<InspectionValuationController> {
           required: true,
           keyboardType: TextInputType.phone,
           inputFormatters: [
-            FilteringTextInputFormatter.digitsOnly,
-            LengthLimitingTextInputFormatter(10),
+            const IndianMobileFormatter(),
           ],
           validator: (v) {
             if (v == null || v.trim().isEmpty) return appL10n.inspRequired;
@@ -252,7 +252,7 @@ class CustomerValuationFormView extends GetView<InspectionValuationController> {
             errorText: rcErr.isNotEmpty ? rcErr : null,
           );
         }),
-        SizedBox(height: 12.h),
+        SizedBox(height: 8.h),
         Obx(() {
           final insCount = controller.insuranceFiles.length;
           final insErr = controller.insuranceFileError.value;
@@ -274,7 +274,7 @@ class CustomerValuationFormView extends GetView<InspectionValuationController> {
             errorText: insErr.isNotEmpty ? insErr : null,
           );
         }),
-        SizedBox(height: 12.h),
+        SizedBox(height: 8.h),
         Obx(() {
           final gstCount = controller.companyGstFiles.length;
           final gstErr = controller.companyGstFileError.value;
@@ -313,25 +313,6 @@ class CustomerValuationFormView extends GetView<InspectionValuationController> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          children: [
-            Flexible(
-              child: Text(
-                label,
-                style: AppFonts.labelMedium.copyWith(
-                  color: AppColors.textSecondary,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ),
-            if (required)
-              Text(
-                ' *',
-                style: AppFonts.labelMedium.copyWith(color: AppColors.error),
-              ),
-          ],
-        ),
-        SizedBox(height: 6.h),
         TextFormField(
           controller: controller,
           keyboardType: keyboardType,
@@ -339,6 +320,17 @@ class CustomerValuationFormView extends GetView<InspectionValuationController> {
           validator: validator,
           style: AppFonts.bodyMedium.copyWith(color: AppColors.textPrimary),
           decoration: InputDecoration(
+            // Floating label: inside while empty, on the border once focused/filled.
+            labelText: required ? '$label *' : label,
+            labelStyle: AppFonts.bodyMedium.copyWith(
+              color: AppColors.textSecondary,
+            ),
+            floatingLabelStyle: AppFonts.labelMedium.copyWith(
+              color: AppColors.primary,
+              fontWeight: FontWeight.w600,
+            ),
+            floatingLabelBehavior: FloatingLabelBehavior.auto,
+            alignLabelWithHint: true,
             hintText: hint,
             hintStyle: AppFonts.bodyMedium.copyWith(
               color: AppColors.textDisabled,

@@ -7,7 +7,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:open_filex/open_filex.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 import '../../../core/constants/app_colors.dart';
 import '../../../core/design_system/molecules/custom_snackbar.dart';
@@ -732,14 +731,8 @@ class InsuranceFinanceController extends GetxController
     try {
       isDownloadingQuote.value = true;
 
-      // Request storage permission
-      if (Platform.isAndroid) {
-        final status = await Permission.storage.request();
-        if (!status.isGranted) {
-          _showErrorSnackbar(appL10n.insStoragePermissionRequired);
-          return;
-        }
-      }
+      // No storage permission needed: the PDF is saved in the app's own
+      // external directory (and Permission.storage is always denied on Android 13+).
 
       // Determine save directory
       String savePath;

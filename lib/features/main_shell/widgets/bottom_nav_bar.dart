@@ -47,7 +47,7 @@ class BottomNavBar extends GetView<MainShellController> {
         iconPaths: _iconPaths,
         labels: labels,
         bottomPadding: bottomPadding,
-        onTap: controller.changePage,
+        onTap: controller.onTabTapped,
       ),
     );
   }

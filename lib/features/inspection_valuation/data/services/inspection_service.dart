@@ -154,6 +154,14 @@ class InspectionService {
       }
     }
 
+    final video = request.fullRoundVideo;
+    if (video != null) {
+      multipartFiles['full_round_video'] = await dio.MultipartFile.fromFile(
+        video.path,
+        filename: video.path.split('/').last,
+      );
+    }
+
     final formData = dio.FormData.fromMap({...fields, ...multipartFiles});
 
     debugPrint('══════════════════════════════════════════');

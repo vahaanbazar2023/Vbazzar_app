@@ -64,6 +64,7 @@ class ApiEndpoints {
   static const String vehicleListings = '$buySellPrefix/vehicle-listings';
   static const String vehicleTyres = '$buySellPrefix/tyres';
   static const String sellVehicle = '$buySellPrefix/sell-vehicle';
+  static const String sellLead = '$buySellPrefix/sell-lead';
   static const String listSellVehicles = '$buySellPrefix/list-sell-vehicles';
   static const String updateSellVehicles =
       '$buySellPrefix/update-sell-vehicles';

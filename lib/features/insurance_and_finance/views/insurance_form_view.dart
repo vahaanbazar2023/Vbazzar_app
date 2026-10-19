@@ -27,16 +27,16 @@ class InsuranceFormView extends StatelessWidget {
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: SingleChildScrollView(
-        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // ── Vehicle Number ──────────────────────────────────
-            _buildLabel(context.l10n.insVehicleNumberLabel),
-            SizedBox(height: 6.h),
             Obx(
               () => CustomInputField(
+                height: 40.h,
                 controller: controller.vehicleNoController,
+                label: context.l10n.insVehicleNumberLabel,
                 placeholder: context.l10n.insEnterVehicleNo,
                 prefixIcon: Icons.local_shipping_outlined,
                 errorText: controller.vehicleNoError.value.isNotEmpty
@@ -54,7 +54,7 @@ class InsuranceFormView extends StatelessWidget {
                 ],
               ),
             ),
-            SizedBox(height: 16.h),
+            SizedBox(height: 10.h),
 
             // ── RC Document ─────────────────────────────────────
             Obx(
@@ -72,7 +72,7 @@ class InsuranceFormView extends StatelessWidget {
                     : null,
               ),
             ),
-            SizedBox(height: 16.h),
+            SizedBox(height: 10.h),
 
             // ── Previous Year Policy ────────────────────────────
             Obx(
@@ -91,11 +91,12 @@ class InsuranceFormView extends StatelessWidget {
                 errorText: null,
               ),
             ),
-            SizedBox(height: 16.h),
+            SizedBox(height: 10.h),
 
             // ── Insurance Type ──────────────────────────────────
             Obx(
               () => InlineDropdownField<String>(
+                height: 40.h,
                 label: context.l10n.insInsuranceTypeLabel,
                 value: controller.selectedInsuranceType.value.isNotEmpty
                     ? controller.selectedInsuranceType.value
@@ -117,11 +118,12 @@ class InsuranceFormView extends StatelessWidget {
                 },
               ),
             ),
-            SizedBox(height: 16.h),
+            SizedBox(height: 10.h),
 
             // ── Claim Status ────────────────────────────────────
             Obx(
               () => InlineDropdownField<String>(
+                height: 40.h,
                 label: context.l10n.insClaimStatusLabel,
                 value: controller.selectedClaim.value.isNotEmpty
                     ? controller.selectedClaim.value
@@ -139,7 +141,7 @@ class InsuranceFormView extends StatelessWidget {
                 },
               ),
             ),
-            SizedBox(height: 16.h),
+            SizedBox(height: 10.h),
 
             // ── Aadhar Document ─────────────────────────────────
             Obx(
@@ -155,7 +157,7 @@ class InsuranceFormView extends StatelessWidget {
                 errorText: null,
               ),
             ),
-            SizedBox(height: 16.h),
+            SizedBox(height: 10.h),
 
             // ── PAN Document ────────────────────────────────────
             Obx(
@@ -171,7 +173,7 @@ class InsuranceFormView extends StatelessWidget {
                 errorText: null,
               ),
             ),
-            SizedBox(height: 16.h),
+            SizedBox(height: 10.h),
 
             // ── Terms & Conditions ──────────────────────────────
             Obx(
@@ -248,7 +250,7 @@ class InsuranceFormView extends StatelessWidget {
                 ],
               ),
             ),
-            SizedBox(height: 24.h),
+            SizedBox(height: 14.h),
 
             // ── Submit Button (Gradient Filled) ─────────────────
             Obx(
@@ -263,7 +265,7 @@ class InsuranceFormView extends StatelessWidget {
                 ),
               ),
             ),
-            SizedBox(height: 24.h),
+            SizedBox(height: 14.h),
           ],
         ),
       ),
@@ -271,17 +273,6 @@ class InsuranceFormView extends StatelessWidget {
   }
 
   // ── Helper widgets ──────────────────────────────────────────────
-
-  Widget _buildLabel(String text) {
-    return Text(
-      text,
-      style: AppFonts.labelLarge.copyWith(
-        fontWeight: FontWeight.w600,
-        color: AppColors.textPrimary,
-        fontSize: 14.sp,
-      ),
-    );
-  }
 
   String _getErrorMessage(BuildContext context, String errorKey) {
     switch (errorKey) {

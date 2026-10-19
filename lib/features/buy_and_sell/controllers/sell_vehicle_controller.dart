@@ -9,6 +9,7 @@ import '../../../core/network/endpoints/api_endpoints.dart';
 import '../../../core/storage/secure_storage_service.dart';
 import '../../../core/storage/storage_keys.dart';
 import '../../../routes/app_routes.dart';
+import '../../profile/repositories/profile_repository.dart';
 import '../domain/entities/sell_vehicle_entity.dart';
 import '../domain/entities/vehicle_category_entity.dart';
 import '../domain/repositories/buy_sell_repository.dart';
@@ -178,14 +179,21 @@ class SellVehicleController extends GetxController {
       final fields = await repository.getFormFieldsByCategory(
         categoryCode: categoryCode,
       );
-      dynamicFormFields.assignAll(fields);
-      for (final field in fields) {
+      // Creating a listing only asks for what the API marks mandatory; the
+      // edit form still shows every field so existing details stay editable.
+      final shown = isEditMode.value
+          ? fields
+          : fields.where((f) => f.required).toList();
+      dynamicFormFields.assignAll(shown);
+      for (final field in shown) {
         if (!formValues.containsKey(field.fieldName)) {
           formValues[field.fieldName] = field.defaultValue;
         }
       }
-      // Load brands for this category in parallel
-      fetchBrands(categoryCode);
+      // Load brands for this category in parallel (only if the form asks for one)
+      if (shown.any((f) => f.fieldName == 'Brand')) fetchBrands(categoryCode);
+      // Owner mobile / state / city come from the user's profile
+      if (!isEditMode.value) await _prefillFromProfile();
     } catch (e) {
       debugPrint('🔴 [FORM FIELDS ERROR] $e');
     } finally {
@@ -196,6 +204,123 @@ class SellVehicleController extends GetxController {
   void updateFormValue(String fieldName, dynamic value) {
     formValues[fieldName] = value;
     formErrors.remove(fieldName);
+    _scheduleLeadSave();
+  }
+
+  // ─── Prefill from profile ────────────────────────────────────
+
+  /// Fills Owner Mobile Number, State and City from the logged-in user's
+  /// profile. Never overwrites something the user already entered, and never
+  /// blocks the form if the profile can't be loaded.
+  Future<void> _prefillFromProfile() async {
+    try {
+      final res = await ProfileRepository().fetchProfile().timeout(
+        const Duration(seconds: 8),
+      );
+      final p = res.data;
+      if (!res.isSuccess || p == null) return;
+
+      final digits = p.phoneNumber.replaceAll(RegExp(r'\D'), '');
+      final mobile = digits.length > 10
+          ? digits.substring(digits.length - 10)
+          : digits;
+      if (mobile.isNotEmpty &&
+          (formValues['Owner Mobile Number'] ?? '').toString().isEmpty) {
+        formValues['Owner Mobile Number'] = mobile;
+      }
+
+      // Wait (briefly) for the state list that onInit started loading.
+      for (var i = 0; i < 30 && isLoadingStates.value; i++) {
+        await Future.delayed(const Duration(milliseconds: 100));
+      }
+      if (states.isEmpty) await fetchStates();
+
+      bool same(String? a, String b) =>
+          a != null &&
+          a.trim().isNotEmpty &&
+          a.trim().toLowerCase() == b.trim().toLowerCase();
+
+      final state = states.firstWhereOrNull(
+        (s) =>
+            same(p.state, s['state_name'] ?? '') ||
+            same(p.state, s['state_id'] ?? ''),
+      );
+      if (state == null || selectedStateId.value.isNotEmpty) return;
+      await fetchCities(state['state_id']!);
+
+      final city = cities.firstWhereOrNull(
+        (c) =>
+            same(p.city, c['city_name'] ?? '') ||
+            same(p.city, c['city_id'] ?? ''),
+      );
+      if (city != null) selectCity(city['city_id']!);
+    } catch (e) {
+      debugPrint('🟡 [Sell prefill] skipped: $e');
+    }
+  }
+
+  // ─── Sell lead (autosave of the partially filled form) ───────
+
+  Timer? _leadTimer;
+
+  /// Values the app fills in by itself — they alone don't make a lead.
+  static const Set<String> _prefilledKeys = {
+    'Owner Mobile Number',
+    'state_code',
+    'city_code',
+    'state_name',
+    'city_name',
+    'Category',
+    'category',
+  };
+
+  void _scheduleLeadSave() {
+    if (isEditMode.value || selectedCategoryCode.value.isEmpty) return;
+    _leadTimer?.cancel();
+    _leadTimer = Timer(const Duration(milliseconds: 1500), _saveLead);
+  }
+
+  /// Saves any pending lead now (call when the user leaves the form).
+  Future<void> flushLeadSave() async {
+    if (_leadTimer?.isActive ?? false) {
+      _leadTimer!.cancel();
+      await _saveLead();
+    }
+  }
+
+  Map<String, dynamic> _leadPayload() {
+    final data = <String, dynamic>{};
+    formValues.forEach((key, value) {
+      if (value is String) {
+        if (value.trim().isNotEmpty) data[key] = value.trim();
+      } else if (value is num || value is bool) {
+        data[key] = value;
+      }
+    });
+    return data;
+  }
+
+  Future<void> _saveLead() async {
+    if (isEditMode.value || selectedCategoryCode.value.isEmpty) return;
+    final data = _leadPayload();
+    final hasUserInput = data.entries.any(
+      (e) => !_prefilledKeys.contains(e.key) && e.value != false,
+    );
+    if (!hasUserInput) return;
+    try {
+      final uid = await _userId;
+      if (uid.isEmpty) return;
+      await NetworkService.to.post(
+        ApiEndpoints.sellLead,
+        data: {
+          'user_id': uid,
+          'category_code': selectedCategoryCode.value,
+          'form_data': data,
+        },
+      );
+    } catch (e) {
+      debugPrint('🟡 [Sell lead] not saved: $e'); // never bother the user
+    }
   }
 
   // ─── Validation ──────────────────────────────────────────────
@@ -249,8 +374,12 @@ class SellVehicleController extends GetxController {
       isValid = false;
     }
 
-    // Validate Brand via dedicated key
-    if ((formValues['brand_code'] ?? '').toString().isEmpty) {
+    bool apiRequires(String label) =>
+        dynamicFormFields.any((f) => f.fieldName == label && f.required);
+
+    // Validate Brand via dedicated key — only when the API marks it mandatory
+    if (apiRequires('Brand') &&
+        (formValues['brand_code'] ?? '').toString().isEmpty) {
       formErrors['Brand'] = appL10n.brandValidation;
       isValid = false;
     }
@@ -262,7 +391,9 @@ class SellVehicleController extends GetxController {
     }
 
     // Validate required images
-    if (vehicleImages.isEmpty && !isEditMode.value) {
+    if (apiRequires('Vehicle Images') &&
+        vehicleImages.isEmpty &&
+        !isEditMode.value) {
       isValid = false;
       Get.snackbar(
         appL10n.validation_error,
@@ -274,7 +405,9 @@ class SellVehicleController extends GetxController {
     }
 
     // Validate RC document
-    if (rcDocuments.isEmpty && !isEditMode.value) {
+    if (apiRequires('Upload Vehicle RC') &&
+        rcDocuments.isEmpty &&
+        !isEditMode.value) {
       isValid = false;
       Get.snackbar(
         appL10n.validation_error,
@@ -859,6 +992,7 @@ class SellVehicleController extends GetxController {
   }
 
   void resetForm() {
+    _leadTimer?.cancel();
     isEditMode.value = false;
     editingVehicleId.value = '';
     selectedCategoryCode.value = '';

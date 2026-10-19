@@ -8,6 +8,13 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     
+    <!-- Play policy: photos/videos go through the system photo picker (image_picker) and
+         the system document picker (file_picker), so broad media permissions are not
+         needed. open_filex declares them in its own manifest; strip them from the merge. -->
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" tools:node="remove"/>
+    <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" tools:node="remove"/>
+    <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" tools:node="remove"/>
+
     <application
         android:label="Vahaan Bazar"
         android:name="${applicationName}"

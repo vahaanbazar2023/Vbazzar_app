@@ -155,7 +155,13 @@ class _AppBottomNavBarState extends State<AppBottomNavBar>
                     left: cx - _kCircleSize / 2,
                     width: _kCircleSize,
                     height: _kCircleSize,
-                    child: _ActiveCircle(widget.currentTab),
+                    // The circle sits on top of the active icon, so it must
+                    // forward taps itself (re-tapping the active tab).
+                    child: GestureDetector(
+                      behavior: HitTestBehavior.opaque,
+                      onTap: () => widget.onTabSelected(widget.currentTab),
+                      child: _ActiveCircle(widget.currentTab),
+                    ),
                   ),
                 ],
               );

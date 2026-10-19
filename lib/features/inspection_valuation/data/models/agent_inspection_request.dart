@@ -68,6 +68,7 @@ class AgentInspectionRequest {
   final List<File> electricalImages;
   final List<File> chasisImages;
   final List<File> odometerImages;
+  final File? fullRoundVideo;
 
   const AgentInspectionRequest({
     this.ownerName,
@@ -114,6 +115,7 @@ class AgentInspectionRequest {
     this.assetMarketValue,
     this.otherRemarks,
     this.webUrl,
+    this.fullRoundVideo,
     this.engineImages = const [],
     this.transmissionImages = const [],
     this.suspensionImages = const [],

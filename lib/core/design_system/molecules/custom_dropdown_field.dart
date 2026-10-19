@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'floating_label_box.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../constants/app_colors.dart';
 import '../typography/app_text_styles.dart';
@@ -71,6 +72,10 @@ class CustomDropdownField<T> extends StatefulWidget {
   /// Search hint text
   final String? searchHint;
 
+  /// Floating label. Defaults to [placeholder]; when given, [placeholder] is the hint
+  /// shown once the label has floated.
+  final String? label;
+
   const CustomDropdownField({
     super.key,
     this.value,
@@ -86,6 +91,7 @@ class CustomDropdownField<T> extends StatefulWidget {
     this.height,
     this.searchable = true,
     this.searchHint,
+    this.label,
   });
 
   @override
@@ -98,13 +104,6 @@ class _CustomDropdownFieldState<T> extends State<CustomDropdownField<T>> {
 
   bool get _hasError =>
       widget.errorText != null && widget.errorText!.isNotEmpty;
-
-  Color get _borderColor {
-    if (!widget.enabled) return AppColors.border;
-    if (_hasError) return AppColors.error;
-    if (_isFocused) return AppColors.primary;
-    return AppColors.border;
-  }
 
   String _getItemLabel(T item) {
     if (widget.itemLabel != null) {
@@ -122,20 +121,15 @@ class _CustomDropdownFieldState<T> extends State<CustomDropdownField<T>> {
           key: _fieldKey,
           onTap: widget.enabled && !widget.isLoading ? _showDropdown : null,
           borderRadius: BorderRadius.circular(6.r),
-          child: Container(
+          child: FloatingLabelBox(
+            label: widget.label ?? widget.placeholder,
+            hasValue: widget.value != null || widget.isLoading,
+            isFocused: _isFocused,
+            hasError: _hasError,
+            enabled: widget.enabled,
             height: widget.height ?? 46.h,
-            decoration: BoxDecoration(
-              color: widget.enabled ? AppColors.white : AppColors.grey100,
-              border: Border.all(color: _borderColor, width: 1),
-              borderRadius: BorderRadius.circular(6.r),
-              boxShadow: [
-                BoxShadow(
-                  color: const Color(0xFFE4E5E7).withOpacity(0.24),
-                  offset: const Offset(0, 1),
-                  blurRadius: 2,
-                ),
-              ],
-            ),
+            // leave room for the prefix icon while the label sits inside
+            inlineLeft: widget.prefixIcon != null ? 12.w + 20.sp + 8.w : 12.w,
             child: Padding(
               padding: EdgeInsets.symmetric(horizontal: 12.w),
               child: Row(
@@ -154,7 +148,7 @@ class _CustomDropdownFieldState<T> extends State<CustomDropdownField<T>> {
                     SizedBox(width: 8.w),
                   ],
 
-                  // Display Text
+                  // Value (the label doubles as the placeholder while empty)
                   Expanded(
                     child: widget.isLoading
                         ? Row(
@@ -183,7 +177,9 @@ class _CustomDropdownFieldState<T> extends State<CustomDropdownField<T>> {
                         : Text(
                             widget.value != null
                                 ? _getItemLabel(widget.value as T)
-                                : widget.placeholder,
+                                : (widget.label != null && _isFocused
+                                      ? widget.placeholder
+                                      : ''),
                             style: AppTextStyles.bodyMedium.copyWith(
                               color: widget.value != null
                                   ? AppColors.textPrimary

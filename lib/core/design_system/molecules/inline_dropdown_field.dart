@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../constants/app_colors.dart';
+import 'floating_label_box.dart';
 import '../../extensions/context_extensions.dart';
 
 /// A dropdown that expands inline below the field.
@@ -118,15 +119,6 @@ class _InlineDropdownFieldState<T> extends State<InlineDropdownField<T>>
     final bool hasError =
         widget.errorText != null && widget.errorText!.trim().isNotEmpty;
 
-    Color borderColor = AppColors.border;
-    if (!widget.enabled) {
-      borderColor = AppColors.border;
-    } else if (hasError) {
-      borderColor = AppColors.error;
-    } else if (_isOpen) {
-      borderColor = AppColors.primary;
-    }
-
     final int itemCount = widget.items.isEmpty ? 1 : widget.items.length;
     final double estimatedItemHeight = 48.0;
     final double dividerHeight = 1.0;
@@ -140,34 +132,23 @@ class _InlineDropdownFieldState<T> extends State<InlineDropdownField<T>>
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        if (widget.label != null &&
-            widget.label!.trim().isNotEmpty) ...<Widget>[
-          Text(
-            widget.label!,
-            style: theme.textTheme.labelLarge?.copyWith(
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-          const SizedBox(height: 6),
-        ],
         GestureDetector(
           onTap: _toggleDropdown,
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 120),
+          behavior: HitTestBehavior.opaque,
+          // Floating label: [label] (or the placeholder) sits inside while the
+          // field is empty and floats onto the border once it has a value or
+          // the list is open.
+          child: FloatingLabelBox(
+            label: (widget.label != null && widget.label!.trim().isNotEmpty)
+                ? widget.label!
+                : widget.placeholder,
+            hasValue: widget.value != null || widget.isLoading,
+            isFocused: _isOpen,
+            hasError: hasError,
+            enabled: widget.enabled,
             height: widget.height ?? 52,
-            decoration: BoxDecoration(
-              color: widget.enabled ? AppColors.surface : AppColors.white,
-              border: Border.all(color: borderColor),
-              borderRadius: BorderRadius.circular(14),
-              boxShadow: <BoxShadow>[
-                if (_isOpen)
-                  BoxShadow(
-                    color: AppColors.primary.withValues(alpha: 0.12),
-                    blurRadius: 10,
-                    offset: const Offset(0, 2),
-                  ),
-              ],
-            ),
+            radius: 10,
+            inlineLeft: widget.prefixIcon != null ? 14 + 20 + 10 : 14,
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 14),
               child: Row(
@@ -207,7 +188,12 @@ class _InlineDropdownFieldState<T> extends State<InlineDropdownField<T>>
                         : Text(
                             widget.value != null
                                 ? _labelOf(widget.value as T)
-                                : widget.placeholder,
+                                // placeholder is the hint once the label floated
+                                : (_isOpen &&
+                                          widget.label != null &&
+                                          widget.label!.trim().isNotEmpty
+                                      ? widget.placeholder
+                                      : ''),
                             style: theme.textTheme.bodyMedium?.copyWith(
                               color: widget.value != null
                                   ? AppColors.textPrimary

@@ -92,6 +92,7 @@ class AgentInspectionController extends GetxController {
   final electricalImages = <PlatformFile>[].obs;
   final chasisImages = <PlatformFile>[].obs;
   final odometerImages = <PlatformFile>[].obs;
+  final fullRoundVideo = <PlatformFile>[].obs;
 
   // ── step 6: valuation ─────────────────────────────────────────────
   final assetMarketValueController = TextEditingController();
@@ -286,6 +287,31 @@ class AgentInspectionController extends GetxController {
     }
   }
 
+  static const maxVideoBytes = 50 * 1024 * 1024;
+
+  /// Picks the optional full-round video (MP4 / MOV, max 50 MB).
+  Future<void> pickVideo() async {
+    try {
+      final result = await FilePicker.platform.pickFiles(
+        type: FileType.custom,
+        allowedExtensions: ['mp4', 'mov'],
+        allowMultiple: false,
+        withData: false,
+        withReadStream: false,
+      );
+      if (result == null || result.files.isEmpty) return;
+      final file = result.files.first;
+      if (file.size > maxVideoBytes) {
+        _showValidationError('Video must be 50 MB or smaller');
+        return;
+      }
+      fullRoundVideo.assignAll([file]);
+    } catch (e) {
+      debugPrint('⚠️ AgentInspection: pickVideo error – $e');
+      _showValidationError(appL10n.inspFailedToPickFile);
+    }
+  }
+
   /// Removes a file at [index] from [targetList].
   void removeFile(RxList<PlatformFile> targetList, int index) {
     if (index >= 0 && index < targetList.length) {
@@ -441,6 +467,9 @@ class AgentInspectionController extends GetxController {
       electricalImages: electricalImages.map((f) => File(f.path!)).toList(),
       chasisImages: chasisImages.map((f) => File(f.path!)).toList(),
       odometerImages: odometerImages.map((f) => File(f.path!)).toList(),
+      fullRoundVideo: fullRoundVideo.isEmpty
+          ? null
+          : File(fullRoundVideo.first.path!),
     );
   }
 
@@ -512,6 +541,7 @@ class AgentInspectionController extends GetxController {
     electricalImages.clear();
     chasisImages.clear();
     odometerImages.clear();
+    fullRoundVideo.clear();
 
     // Step 6
     assetMarketValueController.clear();

@@ -34,8 +34,12 @@ class CustomInputField extends StatefulWidget {
   /// Text editing controller for the input field
   final TextEditingController? controller;
 
-  /// Placeholder/hint text displayed when field is empty
+  /// Placeholder text. Used as the floating label when [label] is not given.
   final String? placeholder;
+
+  /// Floating label. Sits inside the field while it is empty and floats onto the
+  /// border when focused or filled. Defaults to [placeholder].
+  final String? label;
 
   /// Error message to display below the field
   /// Pass null or empty string when there's no error
@@ -108,6 +112,7 @@ class CustomInputField extends StatefulWidget {
     super.key,
     this.controller,
     this.placeholder,
+    this.label,
     this.errorText,
     this.validator,
     this.showSuccessState = false,
@@ -258,7 +263,28 @@ class _CustomInputFieldState extends State<CustomInputField> {
                     fontFamily: 'Montserrat',
                   ),
               decoration: InputDecoration(
-                hintText: widget.placeholder,
+                // Floating label: [label] (or the placeholder) sits inside the
+                // empty field and floats onto the border on focus / input.
+                labelText: widget.label ?? widget.placeholder,
+                labelStyle: AppTextStyles.bodyMedium.copyWith(
+                  fontSize: 14.sp,
+                  color: AppColors.grey550,
+                  fontWeight: FontWeight.w400,
+                  fontFamily: 'Montserrat',
+                ),
+                floatingLabelStyle: AppTextStyles.bodySmall.copyWith(
+                  fontSize: 12.sp,
+                  fontWeight: FontWeight.w600,
+                  fontFamily: 'Montserrat',
+                  color: hasError
+                      ? AppColors.error
+                      : (_isFocused
+                            ? AppColors.ctaGradientStart
+                            : AppColors.grey650),
+                ),
+                floatingLabelBehavior: FloatingLabelBehavior.auto,
+                // The placeholder only shows as a hint when it is not the label.
+                hintText: widget.label != null ? widget.placeholder : null,
                 hintStyle:
                     widget.placeholderStyle ??
                     AppTextStyles.bodyMedium.copyWith(

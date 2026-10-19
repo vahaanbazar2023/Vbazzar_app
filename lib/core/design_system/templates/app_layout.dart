@@ -6,7 +6,6 @@ import '../molecules/collapsible_section.dart';
 import '../organisms/app_bottom_nav_bar.dart';
 import '../organisms/app_header.dart';
 import '../../../features/main_shell/controllers/main_shell_controller.dart';
-import '../../../routes/app_routes.dart';
 
 /// Main app layout: white body with [AppHeader] at the top.
 class AppLayout extends StatelessWidget {
@@ -71,20 +70,14 @@ class AppLayout extends StatelessWidget {
     final nav = GetBuilder<MainShellController>(
       builder: (ctrl) => AppBottomNavBar(
         currentTab: BottomNavTab.values[ctrl.currentIndex.value],
-        onTabSelected: (tab) {
-          ctrl.changePage(tab.index);
-          Get.until((route) => route.settings.name == AppRoutes.home);
-        },
+        onTabSelected: (tab) => ctrl.onTabTapped(tab.index),
       ),
     );
     final hide = hideBottomNav;
     if (hide == null) return nav;
     return Obx(
-      () => CollapsibleSection(
-        hidden: hide.value,
-        overflowTop: true,
-        child: nav,
-      ),
+      () =>
+          CollapsibleSection(hidden: hide.value, overflowTop: true, child: nav),
     );
   }
 }
