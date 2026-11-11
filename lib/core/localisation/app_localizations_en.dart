@@ -5362,6 +5362,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get profSubValidUntil => 'Valid Until';
 
   @override
+  String get profSubRenew => 'Renew';
+
+  @override
+  String profSubDaysLeftKept(int days) {
+    return '$days days left · renew now and keep them';
+  }
+
+  @override
+  String get profSubRenewUnavailable =>
+      'This plan can\'t be renewed right now. Please pick a plan from Explore.';
+
+  @override
   String get profSubNeedMoreBenefits => 'Need more benefits?';
 
   @override

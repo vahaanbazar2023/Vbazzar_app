@@ -10048,6 +10048,24 @@ abstract class AppLocalizations {
   /// **'Valid Until'**
   String get profSubValidUntil;
 
+  /// No description provided for @profSubRenew.
+  ///
+  /// In en, this message translates to:
+  /// **'Renew'**
+  String get profSubRenew;
+
+  /// No description provided for @profSubDaysLeftKept.
+  ///
+  /// In en, this message translates to:
+  /// **'{days} days left · renew now and keep them'**
+  String profSubDaysLeftKept(int days);
+
+  /// No description provided for @profSubRenewUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'This plan can\'t be renewed right now. Please pick a plan from Explore.'**
+  String get profSubRenewUnavailable;
+
   /// No description provided for @profSubNeedMoreBenefits.
   ///
   /// In en, this message translates to:

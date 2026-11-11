@@ -23,6 +23,13 @@ class UserSubscription {
   final String userSubCode;
   final String status;
 
+  /// Renew: the plan to buy again, its price today, whether this card shows Renew (the time plan of its type that ends last),
+  /// and the whole days left — kept when renewing early (the new period starts when this one ends).
+  final String? planCode;
+  final double? price;
+  final bool canRenew;
+  final int? daysLeft;
+
   const UserSubscription({
     required this.typeCode,
     required this.subscriptionType,
@@ -34,6 +41,10 @@ class UserSubscription {
     this.planAvailableBidAmount,
     required this.userSubCode,
     required this.status,
+    this.planCode,
+    this.price,
+    this.canRenew = false,
+    this.daysLeft,
   });
 
   factory UserSubscription.fromJson(Map<String, dynamic> json) {
@@ -49,6 +60,10 @@ class UserSubscription {
           ?.toDouble(),
       userSubCode: json['user_sub_code'] as String? ?? '',
       status: json['status'] as String? ?? '',
+      planCode: json['plan_code'] as String?,
+      price: (json['price'] as num?)?.toDouble(),
+      canRenew: json['can_renew'] as bool? ?? false,
+      daysLeft: (json['days_left'] as num?)?.toInt(),
     );
   }
 

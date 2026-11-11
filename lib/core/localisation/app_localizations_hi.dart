@@ -5370,6 +5370,18 @@ class AppLocalizationsHi extends AppLocalizations {
   String get profSubValidUntil => 'वैधता तक';
 
   @override
+  String get profSubRenew => 'रिन्यू करें';
+
+  @override
+  String profSubDaysLeftKept(int days) {
+    return '$days दिन बाकी · अभी रिन्यू करें, ये दिन बने रहेंगे';
+  }
+
+  @override
+  String get profSubRenewUnavailable =>
+      'यह प्लान अभी रिन्यू नहीं हो सकता। कृपया एक्सप्लोर से प्लान चुनें।';
+
+  @override
   String get profSubNeedMoreBenefits => 'और लाभ चाहिए?';
 
   @override

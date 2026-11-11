@@ -5,8 +5,14 @@ import 'package:get/get.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_assets.dart';
 import '../../../core/extensions/context_extensions.dart';
+import '../../../core/design_system/molecules/custom_snackbar.dart';
+import '../../../core/storage/secure_storage_service.dart';
+import '../../../core/storage/storage_keys.dart';
+import '../../../routes/app_routes.dart';
 import '../controllers/subscription_controller.dart';
+import '../models/subscription_plan.dart';
 import '../models/user_subscription.dart';
+import '../services/subscription_service.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Tab 1 — My Plans
@@ -252,9 +258,105 @@ class MyPlanCard extends StatelessWidget {
                   ],
                 ),
               ),
+              if (sub.canRenew) RenewPlanButton(sub: sub),
             ],
           ),
+          // ── Renew: the days left are kept (the new period starts when this one ends) ──
+          if (sub.canRenew && (sub.daysLeft ?? 0) > 0) ...[
+            SizedBox(height: 8.h),
+            Text(
+              context.l10n.profSubDaysLeftKept(sub.daysLeft!),
+              style: TextStyle(
+                fontFamily: 'Montserrat',
+                fontSize: 11.sp,
+                color: const Color(0xFF2E7D32),
+              ),
+            ),
+          ],
         ],
+      ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Renew — buys the same plan again. Renewing early keeps the days left: the server starts the new period when the running one ends.
+// ─────────────────────────────────────────────────────────────────────────────
+
+class RenewPlanButton extends StatefulWidget {
+  final UserSubscription sub;
+  const RenewPlanButton({super.key, required this.sub});
+
+  @override
+  State<RenewPlanButton> createState() => _RenewPlanButtonState();
+}
+
+class _RenewPlanButtonState extends State<RenewPlanButton> {
+  bool _busy = false;
+
+  Future<void> _renew() async {
+    final sub = widget.sub;
+    final unavailable = context.l10n.profSubRenewUnavailable;
+    setState(() => _busy = true);
+    try {
+      final userId =
+          await SecureStorageService.to.read(StorageKeys.userId) ?? '';
+      final result = await SubscriptionService().fetchPlans(
+        userId: userId,
+        subscriptionSource: sub.typeCode,
+      );
+      SubscriptionPlan? plan;
+      for (final p in result.plans) {
+        if (p.planCode == sub.planCode) plan = p;
+      }
+      if (plan == null) {
+        CustomSnackbar.show(message: unavailable, type: SnackbarType.warning);
+        return;
+      }
+      Get.toNamed(
+        AppRoutes.subscriptionConfirm,
+        arguments: {'plan': plan, 'source': sub.typeCode, 'renewal': true},
+      );
+    } catch (_) {
+      CustomSnackbar.show(message: unavailable, type: SnackbarType.error);
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 34.h,
+      child: ElevatedButton.icon(
+        onPressed: _busy ? null : _renew,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: AppColors.primary,
+          foregroundColor: Colors.white,
+          elevation: 0,
+          padding: EdgeInsets.symmetric(horizontal: 14.w),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20.r),
+          ),
+        ),
+        icon: _busy
+            ? SizedBox(
+                width: 14.r,
+                height: 14.r,
+                child: const CircularProgressIndicator(
+                  strokeWidth: 2,
+                  color: Colors.white,
+                ),
+              )
+            : Icon(Icons.autorenew_rounded, size: 16.r),
+        label: Text(
+          context.l10n.profSubRenew,
+          style: TextStyle(
+            fontFamily: 'Montserrat',
+            fontWeight: FontWeight.w600,
+            fontSize: 12.sp,
+          ),
+        ),
       ),
     );
   }

@@ -2249,6 +2249,16 @@
   "profSubActive": "Active",
   "profSubInactive": "Inactive",
   "profSubValidUntil": "Valid Until",
+  "profSubRenew": "Renew",
+  "profSubDaysLeftKept": "{days} days left · renew now and keep them",
+  "@profSubDaysLeftKept": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "profSubRenewUnavailable": "This plan can't be renewed right now. Please pick a plan from Explore.",
   "profSubNeedMoreBenefits": "Need more benefits?",
   "profSubExploreOtherPlans": "Explore our other plans and choose the one that fits your needs.",
   "profSubNoActivePlans": "No Active Plans",

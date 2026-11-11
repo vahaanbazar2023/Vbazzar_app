@@ -5432,6 +5432,18 @@ class AppLocalizationsTe extends AppLocalizations {
   String get profSubValidUntil => 'చెల్లుబాటు తేదీ';
 
   @override
+  String get profSubRenew => 'రెన్యూ చేయండి';
+
+  @override
+  String profSubDaysLeftKept(int days) {
+    return '$days రోజులు మిగిలాయి · ఇప్పుడు రెన్యూ చేస్తే ఈ రోజులు అలాగే ఉంటాయి';
+  }
+
+  @override
+  String get profSubRenewUnavailable =>
+      'ఈ ప్లాన్‌ను ఇప్పుడు రెన్యూ చేయలేము. దయచేసి ఎక్స్‌ప్లోర్ నుండి ప్లాన్ ఎంచుకోండి.';
+
+  @override
   String get profSubNeedMoreBenefits => 'మరిన్ని ప్రయోజనాలు కావాలా?';
 
   @override

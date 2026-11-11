@@ -5463,6 +5463,18 @@ class AppLocalizationsTa extends AppLocalizations {
   String get profSubValidUntil => 'செல்லுபடியாகும் தேதி';
 
   @override
+  String get profSubRenew => 'புதுப்பி';
+
+  @override
+  String profSubDaysLeftKept(int days) {
+    return '$days நாட்கள் மீதம் · இப்போது புதுப்பித்தால் இந்த நாட்கள் தொடரும்';
+  }
+
+  @override
+  String get profSubRenewUnavailable =>
+      'இந்த திட்டத்தை இப்போது புதுப்பிக்க முடியாது. எக்ஸ்ப்ளோரிலிருந்து ஒரு திட்டத்தைத் தேர்ந்தெடுக்கவும்.';
+
+  @override
   String get profSubNeedMoreBenefits => 'மேலும் பலன்கள் வேண்டுமா?';
 
   @override

@@ -5426,6 +5426,18 @@ class AppLocalizationsMl extends AppLocalizations {
   String get profSubValidUntil => 'കാലാവധി';
 
   @override
+  String get profSubRenew => 'പുതുക്കുക';
+
+  @override
+  String profSubDaysLeftKept(int days) {
+    return '$days ദിവസം ബാക്കി · ഇപ്പോൾ പുതുക്കിയാൽ ഈ ദിവസങ്ങൾ നഷ്ടമാകില്ല';
+  }
+
+  @override
+  String get profSubRenewUnavailable =>
+      'ഈ പ്ലാൻ ഇപ്പോൾ പുതുക്കാൻ കഴിയില്ല. എക്സ്പ്ലോറിൽ നിന്ന് ഒരു പ്ലാൻ തിരഞ്ഞെടുക്കുക.';
+
+  @override
   String get profSubNeedMoreBenefits => 'കൂടുതൽ ആനുകൂല്യങ്ങൾ വേണോ?';
 
   @override

@@ -5424,6 +5424,18 @@ class AppLocalizationsKn extends AppLocalizations {
   String get profSubValidUntil => 'ಮಾನ್ಯವಾಗಿರುವ ದಿನಾಂಕ';
 
   @override
+  String get profSubRenew => 'ನವೀಕರಿಸಿ';
+
+  @override
+  String profSubDaysLeftKept(int days) {
+    return '$days ದಿನಗಳು ಬಾಕಿ · ಈಗ ನವೀಕರಿಸಿದರೆ ಈ ದಿನಗಳು ಉಳಿಯುತ್ತವೆ';
+  }
+
+  @override
+  String get profSubRenewUnavailable =>
+      'ಈ ಪ್ಲಾನ್ ಅನ್ನು ಈಗ ನವೀಕರಿಸಲು ಸಾಧ್ಯವಿಲ್ಲ. ದಯವಿಟ್ಟು ಎಕ್ಸ್‌ಪ್ಲೋರ್‌ನಿಂದ ಪ್ಲಾನ್ ಆರಿಸಿ.';
+
+  @override
   String get profSubNeedMoreBenefits => 'ಹೆಚ್ಚಿನ ಪ್ರಯೋಜನಗಳು ಬೇಕೇ?';
 
   @override
