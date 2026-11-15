@@ -8,6 +8,7 @@ import '../config/payu_config.dart';
 import '../models/payment_models.dart';
 import '../services/hash_service.dart';
 import '../services/payment_service.dart';
+import '../../../core/constants/app_colors.dart';
 import '../../../core/extensions/context_extensions.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -207,6 +208,9 @@ class PaymentController extends GetxController
     return params;
   }
 
+  String _hex(Color c) =>
+      '#${(c.toARGB32() & 0xFFFFFF).toRadixString(16).padLeft(6, '0').toUpperCase()}';
+
   Map<String, dynamic> _buildPayUConfig() {
     final paymentModesOrder = [
       {"Wallets": "PHONEPE"},
@@ -214,12 +218,6 @@ class PaymentController extends GetxController
       {"Wallets": ""},
       {"EMI": ""},
       {"NetBanking": ""},
-    ];
-
-    final cartDetails = [
-      {"GST": "5%"},
-      {"Delivery Date": "25 Dec"},
-      {"Status": "In Progress"},
     ];
 
     final customNotes = [
@@ -237,9 +235,13 @@ class PaymentController extends GetxController
     ];
 
     return {
-      PayUCheckoutProConfigKeys.primaryColor: '#FF5C00',
+      // Brand colours from the app theme so the PayU screen matches the app
+      PayUCheckoutProConfigKeys.primaryColor: _hex(AppColors.primary),
+      PayUCheckoutProConfigKeys.baseTextColor: _hex(AppColors.textPrimary),
       PayUCheckoutProConfigKeys.secondaryColor: '#FFFFFF',
       PayUCheckoutProConfigKeys.merchantName: 'Vahaan Bazar',
+      // Android drawable res/drawable/vahaan_payu_logo.png (shown in the PayU header)
+      PayUCheckoutProConfigKeys.merchantLogo: 'vahaan_payu_logo',
       PayUCheckoutProConfigKeys.showMerchantLogo: true,
       PayUCheckoutProConfigKeys.showExitConfirmationOnCheckoutScreen: true,
       PayUCheckoutProConfigKeys.showExitConfirmationOnPaymentScreen: true,
@@ -249,7 +251,6 @@ class PaymentController extends GetxController
       PayUCheckoutProConfigKeys.showCbToolbar: true,
       PayUCheckoutProConfigKeys.merchantResponseTimeout: 30000,
       PayUCheckoutProConfigKeys.waitingTime: 30000,
-      PayUCheckoutProConfigKeys.cartDetails: cartDetails,
       PayUCheckoutProConfigKeys.paymentModesOrder: paymentModesOrder,
       PayUCheckoutProConfigKeys.customNotes: customNotes,
     };

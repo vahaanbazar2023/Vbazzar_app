@@ -6463,4 +6463,82 @@ class AppLocalizationsMl extends AppLocalizations {
   @override
   String get buySellWishlistEmpty =>
       'നിങ്ങൾ ഇതുവരെ വിഷ്‌ലിസ്റ്റിൽ വാഹനമൊന്നും ചേർത്തിട്ടില്ല';
+
+  @override
+  String get authLogInSignUp => 'ലോഗിൻ / സൈൻ അപ്പ്';
+
+  @override
+  String get authNewHereHint =>
+      'പുതിയ ആളാണോ? നിങ്ങളുടെ അക്കൗണ്ട് സ്വയമേവ സൃഷ്ടിക്കപ്പെടും.';
+
+  @override
+  String get authWithPassword => 'പാസ്‌വേഡ് ഉപയോഗിച്ച്';
+
+  @override
+  String get authUsernameOrMobile => 'യൂസർനെയിം അല്ലെങ്കിൽ മൊബൈൽ നമ്പർ';
+
+  @override
+  String get authNoPasswordHint =>
+      'ഇതുവരെ പാസ്‌വേഡ് ഇല്ലേ? സജ്ജമാക്കാൻ പാസ്‌വേഡ് മറന്നോ ടാപ്പ് ചെയ്യുക.';
+
+  @override
+  String get authIAgreeToThe => 'ഞാൻ അംഗീകരിക്കുന്നു: ';
+
+  @override
+  String get authOffersOptIn => 'എനിക്ക് ഓഫറുകളും ലേല അറിയിപ്പുകളും അയയ്ക്കുക';
+
+  @override
+  String get authAgreeRequired =>
+      'തുടരാൻ ദയവായി നിബന്ധനകളും സ്വകാര്യതാ നയവും അംഗീകരിക്കുക';
+
+  @override
+  String get authEnterUsernameAndPassword =>
+      'നിങ്ങളുടെ യൂസർനെയിം അല്ലെങ്കിൽ മൊബൈൽ നമ്പറും പാസ്‌വേഡും നൽകുക';
+
+  @override
+  String get authLoginFailed =>
+      'ലോഗിൻ പരാജയപ്പെട്ടു. വിവരങ്ങൾ പരിശോധിച്ച് വീണ്ടും ശ്രമിക്കുക.';
+
+  @override
+  String get authSetNewPassword => 'പുതിയ പാസ്‌വേഡ് സജ്ജമാക്കുക';
+
+  @override
+  String get authResetCodeHint =>
+      'നിങ്ങളുടെ അക്കൗണ്ടിലെ മൊബൈൽ നമ്പറിലേക്ക് ഞങ്ങൾ ഒരു കോഡ് അയയ്ക്കും.';
+
+  @override
+  String get authSendCode => 'കോഡ് അയയ്ക്കുക';
+
+  @override
+  String get authPasswordMinLength => 'കുറഞ്ഞത് 8 അക്ഷരങ്ങൾ';
+
+  @override
+  String get authPasswordChanged =>
+      'പാസ്‌വേഡ് മാറ്റി. പുതിയ പാസ്‌വേഡ് ഉപയോഗിച്ച് ലോഗിൻ ചെയ്യുക.';
+
+  @override
+  String get authTryAgain =>
+      'എന്തോ പിശക് സംഭവിച്ചു. ദയവായി വീണ്ടും ശ്രമിക്കുക.';
+
+  @override
+  String get cashOutSoonTitle => 'പിൻവലിക്കൽ ഉടൻ വരുന്നു';
+
+  @override
+  String get cashOutSoonBody =>
+      'ബാങ്ക് പിൻവലിക്കൽ നിങ്ങൾക്ക് ലഭ്യമാക്കാൻ ഞങ്ങൾ കഠിനമായി പ്രവർത്തിക്കുന്നു. അതുവരെ നിങ്ങളുടെ റിവാർഡുകൾ വാലറ്റിൽ സുരക്ഷിതമാണ്.';
+
+  @override
+  String get cashOutSoonPoint1 =>
+      'നിങ്ങളുടെ വാലറ്റ് ബാലൻസ് സുരക്ഷിതവും മാറ്റമില്ലാത്തതുമാണ്';
+
+  @override
+  String get cashOutSoonPoint2 =>
+      'സുഹൃത്തുക്കളെ റഫർ ചെയ്ത് സമ്പാദിക്കുന്നത് തുടരുക';
+
+  @override
+  String get cashOutSoonPoint3 =>
+      'പിൻവലിക്കൽ ആരംഭിക്കുമ്പോൾ ഉടൻ ഞങ്ങൾ അറിയിക്കും';
+
+  @override
+  String get cashOutSoonCta => 'റിവാർഡുകളിലേക്ക് മടങ്ങുക';
 }

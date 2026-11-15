@@ -11829,6 +11829,138 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'You have not added any vehicles to your wishlist yet'**
   String get buySellWishlistEmpty;
+
+  /// No description provided for @authLogInSignUp.
+  ///
+  /// In en, this message translates to:
+  /// **'Log In / Sign Up'**
+  String get authLogInSignUp;
+
+  /// No description provided for @authNewHereHint.
+  ///
+  /// In en, this message translates to:
+  /// **'New here? Your account is created automatically.'**
+  String get authNewHereHint;
+
+  /// No description provided for @authWithPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'with Password'**
+  String get authWithPassword;
+
+  /// No description provided for @authUsernameOrMobile.
+  ///
+  /// In en, this message translates to:
+  /// **'Username or mobile number'**
+  String get authUsernameOrMobile;
+
+  /// No description provided for @authNoPasswordHint.
+  ///
+  /// In en, this message translates to:
+  /// **'No password yet? Tap Forgot Password to set one.'**
+  String get authNoPasswordHint;
+
+  /// No description provided for @authIAgreeToThe.
+  ///
+  /// In en, this message translates to:
+  /// **'I agree to the '**
+  String get authIAgreeToThe;
+
+  /// No description provided for @authOffersOptIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Send me offers and auction alerts'**
+  String get authOffersOptIn;
+
+  /// No description provided for @authAgreeRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Please agree to the Terms and Conditions and Privacy Policy to continue'**
+  String get authAgreeRequired;
+
+  /// No description provided for @authEnterUsernameAndPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your username or mobile number and password'**
+  String get authEnterUsernameAndPassword;
+
+  /// No description provided for @authLoginFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Login failed. Check your details and try again.'**
+  String get authLoginFailed;
+
+  /// No description provided for @authSetNewPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Set a new password'**
+  String get authSetNewPassword;
+
+  /// No description provided for @authResetCodeHint.
+  ///
+  /// In en, this message translates to:
+  /// **'We will text a code to the mobile number on your account.'**
+  String get authResetCodeHint;
+
+  /// No description provided for @authSendCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Send Code'**
+  String get authSendCode;
+
+  /// No description provided for @authPasswordMinLength.
+  ///
+  /// In en, this message translates to:
+  /// **'At least 8 characters'**
+  String get authPasswordMinLength;
+
+  /// No description provided for @authPasswordChanged.
+  ///
+  /// In en, this message translates to:
+  /// **'Password changed. Log in with your new password.'**
+  String get authPasswordChanged;
+
+  /// No description provided for @authTryAgain.
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong. Please try again.'**
+  String get authTryAgain;
+
+  /// No description provided for @cashOutSoonTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Withdrawals are coming soon'**
+  String get cashOutSoonTitle;
+
+  /// No description provided for @cashOutSoonBody.
+  ///
+  /// In en, this message translates to:
+  /// **'We are working hard to bring bank withdrawals to you. Until then, your rewards stay safe in your wallet.'**
+  String get cashOutSoonBody;
+
+  /// No description provided for @cashOutSoonPoint1.
+  ///
+  /// In en, this message translates to:
+  /// **'Your wallet balance is safe and unchanged'**
+  String get cashOutSoonPoint1;
+
+  /// No description provided for @cashOutSoonPoint2.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep earning by referring friends'**
+  String get cashOutSoonPoint2;
+
+  /// No description provided for @cashOutSoonPoint3.
+  ///
+  /// In en, this message translates to:
+  /// **'We will let you know as soon as withdrawals open'**
+  String get cashOutSoonPoint3;
+
+  /// No description provided for @cashOutSoonCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Back to Rewards'**
+  String get cashOutSoonCta;
 }
 
 class _AppLocalizationsDelegate

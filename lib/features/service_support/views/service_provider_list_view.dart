@@ -452,21 +452,25 @@ class ServiceProviderListView extends GetView<ServiceSupportController> {
   }
 
   Widget _buildCallButton(Mechanic mechanic) {
-    return GradientButton.filled(
-      text: mechanic.mobileNumber,
-      onPressed: () => _makeDirectCall(mechanic),
-      width: double.infinity,
-      height: 48.h,
+    return Center(
+      child: GradientButton.filled(
+        text: mechanic.mobileNumber,
+        onPressed: () => _makeDirectCall(mechanic),
+        width: 180.w,
+        height: 38.h,
+      ),
     );
   }
 
   Widget _buildSubscribeButton(Mechanic mechanic) {
-    return GradientButton.filled(
-      text: appL10n.subscribeToCAll,
-      onPressed: () => controller.contactMechanic(mechanic),
-      width: double.infinity,
-      height: 48.h,
-      backgroundColor: AppColors.warning,
+    return Center(
+      child: GradientButton.filled(
+        text: appL10n.subscribeToCAll,
+        onPressed: () => controller.contactMechanic(mechanic),
+        width: 180.w,
+        height: 38.h,
+        backgroundColor: AppColors.warning,
+      ),
     );
   }
 

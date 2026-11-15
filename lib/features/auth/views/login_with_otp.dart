@@ -5,12 +5,11 @@ import 'package:get/get.dart';
 import 'package:intl_phone_field/countries.dart';
 
 import '../../../core/constants/app_colors.dart';
-import '../../../core/constants/app_strings.dart';
 import '../../../core/design_system/design_system.dart';
-import '../../../core/design_system/organisms/app_header.dart';
 import '../../../core/extensions/context_extensions.dart';
 import '../../../core/utils/input_formatters.dart';
 import '../controllers/auth_controller.dart';
+import 'login_widgets.dart';
 
 class LoginWithOtp extends StatefulWidget {
   const LoginWithOtp({super.key});
@@ -184,7 +183,19 @@ class _LoginWithOtpState extends State<LoginWithOtp> {
       body: Column(
         children: [
           // ── App Header ────────────────────────────────────────
-          SafeArea(bottom: false, child: AppHeader(title: '', showBack: false)),
+          SafeArea(
+            bottom: false,
+            child: SizedBox(
+              width: double.infinity,
+              height: 36.h,
+              child: Image.asset(
+                'assets/images/png/Top_header_bar.png',
+                fit: BoxFit.cover,
+                alignment: Alignment.centerRight,
+                excludeFromSemantics: true,
+              ),
+            ),
+          ),
 
           // ── Scrollable body ───────────────────────────────────
           Expanded(
@@ -194,7 +205,7 @@ class _LoginWithOtpState extends State<LoginWithOtp> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    SizedBox(height: 16.h),
+                    SizedBox(height: 8.h),
 
                     // ── White card ──────────────────────────────
                     Container(
@@ -218,90 +229,87 @@ class _LoginWithOtpState extends State<LoginWithOtp> {
                           Padding(
                             padding: EdgeInsets.fromLTRB(
                               20.w,
-                              20.h,
-                              20.w,
-                              20.h,
+                              14.h,
+                              16.w,
+                              12.h,
                             ),
                             child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
                                 Expanded(
                                   child: Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      Text(
-                                        '${context.l10n.welcomeBack} 👋',
-                                        style: TextStyle(
-                                          fontFamily: 'Plus Jakarta Sans',
-                                          fontSize: 13.sp,
-                                          color: AppColors.grey600,
-                                        ),
-                                      ),
-                                      SizedBox(height: 4.h),
-                                      Text(
-                                        context.l10n.inspLogIn,
-                                        style: TextStyle(
-                                          fontFamily: 'Plus Jakarta Sans',
-                                          fontSize: 26.sp,
-                                          fontWeight: FontWeight.w800,
-                                          color: AppColors.black,
-                                          height: 1.1,
-                                        ),
-                                      ),
-                                      Text(
-                                        context.l10n.inspWithOtp,
-                                        style: TextStyle(
-                                          fontFamily: 'Plus Jakarta Sans',
-                                          fontSize: 26.sp,
-                                          fontWeight: FontWeight.w800,
-                                          color: AppColors.primary,
-                                          height: 1.1,
-                                        ),
-                                      ),
-                                      SizedBox(height: 12.h),
-                                      Row(
-                                        children: [
-                                          Container(
-                                            width: 28.r,
-                                            height: 28.r,
-                                            decoration: BoxDecoration(
-                                              color: AppColors.primary
-                                                  .withValues(alpha: 0.08),
-                                              shape: BoxShape.circle,
+                                      // OTP both logs in and signs up; password only logs in.
+                                      Obx(() {
+                                        final passwordMode =
+                                            controller.isPasswordMode.value;
+                                        return Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            FittedBox(
+                                              fit: BoxFit.scaleDown,
+                                              alignment: Alignment.centerLeft,
+                                              child: Text(
+                                                passwordMode
+                                                    ? context.l10n.inspLogIn
+                                                    : context
+                                                          .l10n
+                                                          .authLogInSignUp,
+                                                style: TextStyle(
+                                                  fontFamily:
+                                                      'Plus Jakarta Sans',
+                                                  fontSize: 26.sp,
+                                                  fontWeight: FontWeight.w800,
+                                                  color: AppColors.black,
+                                                  height: 1.1,
+                                                ),
+                                              ),
                                             ),
-                                            child: Icon(
-                                              Icons.shield_outlined,
-                                              size: 14.r,
-                                              color: AppColors.primary,
+                                            FittedBox(
+                                              fit: BoxFit.scaleDown,
+                                              alignment: Alignment.centerLeft,
+                                              child: Text(
+                                                passwordMode
+                                                    ? context
+                                                          .l10n
+                                                          .authWithPassword
+                                                    : context.l10n.inspWithOtp,
+                                                style: TextStyle(
+                                                  fontFamily:
+                                                      'Plus Jakarta Sans',
+                                                  fontSize: 26.sp,
+                                                  fontWeight: FontWeight.w800,
+                                                  color: AppColors.primary,
+                                                  height: 1.1,
+                                                ),
+                                              ),
                                             ),
-                                          ),
-                                          SizedBox(width: 8.w),
-                                          Text(
-                                            context.l10n.inspSecureQuickAccess,
-                                            style: TextStyle(
-                                              fontFamily: 'Plus Jakarta Sans',
-                                              fontSize: 11.sp,
-                                              color: AppColors.grey600,
-                                              height: 1.4,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
+                                          ],
+                                        );
+                                      }),
                                     ],
                                   ),
                                 ),
                                 // Shield image
                                 Image.asset(
                                   'assets/images/png/login_shield.png',
-                                  width: 100.w,
-                                  height: 110.h,
+                                  width: 60.w,
+                                  height: 66.h,
                                   fit: BoxFit.contain,
                                   errorBuilder: (_, __, ___) =>
                                       const SizedBox(),
                                 ),
                               ],
                             ),
+                          ),
+
+                          // OTP | Password switch
+                          Padding(
+                            padding: EdgeInsets.fromLTRB(12.w, 0, 12.w, 12.h),
+                            child: const LoginModeToggle(),
                           ),
 
                           // Input card
@@ -316,215 +324,231 @@ class _LoginWithOtpState extends State<LoginWithOtp> {
                                 width: 1,
                               ),
                             ),
-                            child: Column(
-                              children: [
-                                // Phone icon
-                                Container(
-                                  width: 48.r,
-                                  height: 48.r,
-                                  decoration: BoxDecoration(
-                                    color: AppColors.primary.withValues(
-                                      alpha: 0.08,
-                                    ),
-                                    shape: BoxShape.circle,
-                                  ),
-                                  child: Icon(
-                                    Icons.phone_android_rounded,
-                                    size: 22.r,
-                                    color: AppColors.primary,
-                                  ),
-                                ),
-                                SizedBox(height: 12.h),
-                                Text(
-                                  context.l10n.enterYourMobileNumber,
-                                  style: TextStyle(
-                                    fontFamily: 'Plus Jakarta Sans',
-                                    fontSize: 16.sp,
-                                    fontWeight: FontWeight.w600,
-                                    color: AppColors.black,
-                                  ),
-                                  textAlign: TextAlign.center,
-                                ),
-                                SizedBox(height: 4.h),
-                                Text(
-                                  context.l10n.weWillSendYouOtp,
-                                  style: TextStyle(
-                                    fontFamily: 'Plus Jakarta Sans',
-                                    fontSize: 12.sp,
-                                    color: AppColors.grey600,
-                                  ),
-                                  textAlign: TextAlign.center,
-                                ),
-                                SizedBox(height: 20.h),
+                            child: Obx(
+                              () => controller.isPasswordMode.value
+                                  ? const PasswordLoginPanel()
+                                  : Column(
+                                      children: [
+                                        SizedBox(height: 6.h),
+                                        Text(
+                                          context.l10n.enterYourMobileNumber,
+                                          style: TextStyle(
+                                            fontFamily: 'Plus Jakarta Sans',
+                                            fontSize: 16.sp,
+                                            fontWeight: FontWeight.w600,
+                                            color: AppColors.black,
+                                          ),
+                                          textAlign: TextAlign.center,
+                                        ),
+                                        SizedBox(height: 4.h),
+                                        Text(
+                                          context.l10n.authNewHereHint,
+                                          style: TextStyle(
+                                            fontFamily: 'Plus Jakarta Sans',
+                                            fontSize: 12.sp,
+                                            color: AppColors.grey600,
+                                          ),
+                                          textAlign: TextAlign.center,
+                                        ),
+                                        SizedBox(height: 14.h),
 
-                                // Country picker + phone input
-                                Row(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    // Country picker
-                                    GestureDetector(
-                                      onTap: _openCountryPicker,
-                                      child: Container(
-                                        height: 46.r,
-                                        padding: EdgeInsets.symmetric(
-                                          horizontal: 10.w,
-                                        ),
-                                        decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          borderRadius: BorderRadius.circular(
-                                            10.r,
-                                          ),
-                                          border: Border.all(
-                                            color: AppColors.grey300,
-                                          ),
-                                        ),
-                                        child: Row(
-                                          mainAxisSize: MainAxisSize.min,
+                                        // Country picker + phone input
+                                        Row(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
                                           children: [
-                                            Container(
-                                              width: 32.r,
-                                              height: 32.r,
-                                              decoration: BoxDecoration(
-                                                shape: BoxShape.circle,
-                                                border: Border.all(
-                                                  color: AppColors.grey200,
-                                                  width: 1,
+                                            // Country picker
+                                            GestureDetector(
+                                              onTap: _openCountryPicker,
+                                              child: Container(
+                                                height: 46.r,
+                                                padding: EdgeInsets.symmetric(
+                                                  horizontal: 10.w,
                                                 ),
-                                              ),
-                                              alignment: Alignment.center,
-                                              child: Text(
-                                                _selectedCountry.flag ?? '🏳',
-                                                style: TextStyle(
-                                                  fontSize: 18.sp,
-                                                ),
-                                              ),
-                                            ),
-                                            SizedBox(width: 6.w),
-                                            Text(
-                                              '+${_selectedCountry.dialCode}',
-                                              style: TextStyle(
-                                                fontFamily: 'Plus Jakarta Sans',
-                                                fontSize: 13.sp,
-                                                fontWeight: FontWeight.w600,
-                                                color: AppColors.black,
-                                              ),
-                                            ),
-                                            SizedBox(width: 4.w),
-                                            Icon(
-                                              Icons.keyboard_arrow_down_rounded,
-                                              size: 16.r,
-                                              color: AppColors.grey500,
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                    SizedBox(width: 8.w),
-                                    // Phone number input
-                                    Expanded(
-                                      child: Obx(
-                                        () => CustomInputField(
-                                          controller:
-                                              controller.phoneController,
-                                          placeholder: context
-                                              .l10n
-                                              .phoneNumberPlaceholder,
-                                          prefixIcon: Icons.phone_outlined,
-                                          errorText: controller.errorText.value,
-                                          validator: (value) =>
-                                              controller.validatePhoneNumber(
-                                                context,
-                                                value,
-                                              ),
-                                          showSuccessState: true,
-                                          keyboardType: TextInputType.phone,
-                                          textInputAction: TextInputAction.done,
-                                          onChanged: controller.onPhoneChanged,
-                                          onSubmitted: (_) =>
-                                              controller.sendOtp(context),
-                                          inputFormatters: [
-                                            InputFormatters.phoneNumber,
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                SizedBox(height: 12.h),
-
-                                // Referral code — collapsed behind a link unless
-                                // a deep link already supplied one.
-                                if (!_showReferral)
-                                  Center(
-                                    child: GestureDetector(
-                                      onTap: () =>
-                                          setState(() => _showReferral = true),
-                                      child: GradientText(
-                                        'Have a referral code?',
-                                        style: TextStyle(
-                                          fontFamily: 'Plus Jakarta Sans',
-                                          fontSize: 12.sp,
-                                          fontWeight: FontWeight.w600,
-                                          decoration: TextDecoration.underline,
-                                        ),
-                                      ),
-                                    ),
-                                  )
-                                else
-                                  Center(
-                                    child: SizedBox(
-                                      width: 180.w,
-                                      child: CustomInputField(
-                                        controller:
-                                            controller.referralController,
-                                        placeholder: 'Referral code',
-                                        prefixIcon:
-                                            Icons.card_giftcard_outlined,
-                                        textInputAction: TextInputAction.done,
-                                        maxLength: 9,
-                                        inputFormatters: [
-                                          UpperCaseTextFormatter(),
-                                          FilteringTextInputFormatter.allow(
-                                            RegExp(r'[A-Za-z0-9]'),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                if (_showReferral) _buildReferralStatus(context),
-                                SizedBox(height: 20.h),
-
-                                // Send OTP button
-                                Obx(() {
-                                  final isValid = controller.isPhoneValid;
-                                  return Center(
-                                    child: isValid
-                                        ? GradientButton.filled(
-                                            text: context.l10n.sendOtp,
-                                            onPressed:
-                                                controller.isLoading.value
-                                                ? null
-                                                : () => controller.sendOtp(
-                                                    context,
+                                                decoration: BoxDecoration(
+                                                  color: Colors.white,
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                        10.r,
+                                                      ),
+                                                  border: Border.all(
+                                                    color: AppColors.grey300,
                                                   ),
-                                            isLoading:
-                                                controller.isLoading.value,
-                                            width: 140.w,
-                                            height: 36.h,
+                                                ),
+                                                child: Row(
+                                                  mainAxisSize:
+                                                      MainAxisSize.min,
+                                                  children: [
+                                                    Container(
+                                                      width: 32.r,
+                                                      height: 32.r,
+                                                      decoration: BoxDecoration(
+                                                        shape: BoxShape.circle,
+                                                        border: Border.all(
+                                                          color:
+                                                              AppColors.grey200,
+                                                          width: 1,
+                                                        ),
+                                                      ),
+                                                      alignment:
+                                                          Alignment.center,
+                                                      child: Text(
+                                                        _selectedCountry.flag ??
+                                                            '🏳',
+                                                        style: TextStyle(
+                                                          fontSize: 18.sp,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    SizedBox(width: 6.w),
+                                                    Text(
+                                                      '+${_selectedCountry.dialCode}',
+                                                      style: TextStyle(
+                                                        fontFamily:
+                                                            'Plus Jakarta Sans',
+                                                        fontSize: 13.sp,
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                        color: AppColors.black,
+                                                      ),
+                                                    ),
+                                                    SizedBox(width: 4.w),
+                                                    Icon(
+                                                      Icons
+                                                          .keyboard_arrow_down_rounded,
+                                                      size: 16.r,
+                                                      color: AppColors.grey500,
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                            SizedBox(width: 8.w),
+                                            // Phone number input
+                                            Expanded(
+                                              child: Obx(
+                                                () => CustomInputField(
+                                                  controller: controller
+                                                      .phoneController,
+                                                  placeholder: context
+                                                      .l10n
+                                                      .phoneNumberPlaceholder,
+                                                  prefixIcon:
+                                                      Icons.phone_outlined,
+                                                  errorText: controller
+                                                      .errorText
+                                                      .value,
+                                                  validator: (value) =>
+                                                      controller
+                                                          .validatePhoneNumber(
+                                                            context,
+                                                            value,
+                                                          ),
+                                                  showSuccessState: true,
+                                                  keyboardType:
+                                                      TextInputType.phone,
+                                                  textInputAction:
+                                                      TextInputAction.done,
+                                                  onChanged:
+                                                      controller.onPhoneChanged,
+                                                  onSubmitted: (_) => controller
+                                                      .sendOtp(context),
+                                                  inputFormatters: [
+                                                    InputFormatters.phoneNumber,
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        SizedBox(height: 12.h),
+
+                                        // Referral code — collapsed behind a link unless
+                                        // a deep link already supplied one.
+                                        if (!_showReferral)
+                                          Center(
+                                            child: GestureDetector(
+                                              onTap: () => setState(
+                                                () => _showReferral = true,
+                                              ),
+                                              child: GradientText(
+                                                'Have a referral code?',
+                                                style: TextStyle(
+                                                  fontFamily:
+                                                      'Plus Jakarta Sans',
+                                                  fontSize: 12.sp,
+                                                  fontWeight: FontWeight.w600,
+                                                  decoration:
+                                                      TextDecoration.underline,
+                                                ),
+                                              ),
+                                            ),
                                           )
-                                        : GradientButton.outlined(
-                                            text: context.l10n.sendOtp,
-                                            onPressed: null,
-                                            width: 140.w,
-                                            height: 36.h,
+                                        else
+                                          Center(
+                                            child: SizedBox(
+                                              width: 180.w,
+                                              child: CustomInputField(
+                                                controller: controller
+                                                    .referralController,
+                                                placeholder: 'Referral code',
+                                                prefixIcon: Icons
+                                                    .card_giftcard_outlined,
+                                                textInputAction:
+                                                    TextInputAction.done,
+                                                maxLength: 9,
+                                                inputFormatters: [
+                                                  UpperCaseTextFormatter(),
+                                                  FilteringTextInputFormatter.allow(
+                                                    RegExp(r'[A-Za-z0-9]'),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
                                           ),
-                                  );
-                                }),
-                              ],
+                                        if (_showReferral)
+                                          _buildReferralStatus(context),
+                                        SizedBox(height: 12.h),
+
+                                        const LoginConsentBoxes(),
+                                        SizedBox(height: 12.h),
+
+                                        // Send OTP button
+                                        Obx(() {
+                                          final isValid =
+                                              controller.isPhoneValid &&
+                                              controller.agreedToTerms.value;
+                                          return Center(
+                                            child: isValid
+                                                ? GradientButton.filled(
+                                                    text: context.l10n.sendOtp,
+                                                    onPressed:
+                                                        controller
+                                                            .isLoading
+                                                            .value
+                                                        ? null
+                                                        : () => controller
+                                                              .sendOtp(context),
+                                                    isLoading: controller
+                                                        .isLoading
+                                                        .value,
+                                                    width: 200.w,
+                                                    height: 44.h,
+                                                  )
+                                                : GradientButton.outlined(
+                                                    text: context.l10n.sendOtp,
+                                                    onPressed: null,
+                                                    width: 200.w,
+                                                    height: 44.h,
+                                                  ),
+                                          );
+                                        }),
+                                      ],
+                                    ),
                             ),
                           ),
 
-                          SizedBox(height: 16.h),
+                          SizedBox(height: 10.h),
 
                           // Privacy note
                           Container(
@@ -564,118 +588,7 @@ class _LoginWithOtpState extends State<LoginWithOtp> {
 
                     SizedBox(height: 20.h),
 
-                    // Divider
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Divider(
-                            color: AppColors.grey300,
-                            thickness: 1,
-                          ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 12.w),
-                          child: Text(
-                            context.l10n.inspNeedHelp,
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontFamily: 'Plus Jakarta Sans',
-                              fontSize: 12.sp,
-                              color: AppColors.grey500,
-                            ),
-                          ),
-                        ),
-                        Expanded(
-                          child: Divider(
-                            color: AppColors.grey300,
-                            thickness: 1,
-                          ),
-                        ),
-                      ],
-                    ),
-
-                    SizedBox(height: 14.h),
-
-                    // Support card
-                    Container(
-                      width: double.infinity,
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 16.w,
-                        vertical: 14.h,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(16.r),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.04),
-                            blurRadius: 8,
-                            offset: const Offset(0, 2),
-                          ),
-                        ],
-                      ),
-                      child: Row(
-                        children: [
-                          Container(
-                            width: 40.r,
-                            height: 40.r,
-                            decoration: BoxDecoration(
-                              color: AppColors.primary.withValues(alpha: 0.08),
-                              shape: BoxShape.circle,
-                            ),
-                            child: Icon(
-                              Icons.headset_mic_outlined,
-                              size: 20.r,
-                              color: AppColors.primary,
-                            ),
-                          ),
-                          SizedBox(width: 12.w),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  context.l10n.haveTroubleLoggingIn,
-                                  style: TextStyle(
-                                    fontFamily: 'Plus Jakarta Sans',
-                                    fontSize: 13.sp,
-                                    fontWeight: FontWeight.w600,
-                                    color: AppColors.black,
-                                  ),
-                                ),
-                                SizedBox(height: 2.h),
-                                Wrap(
-                                  crossAxisAlignment: WrapCrossAlignment.center,
-                                  children: [
-                                    Text(
-                                      '${context.l10n.contact}: ',
-                                      style: TextStyle(
-                                        fontFamily: 'Plus Jakarta Sans',
-                                        fontSize: 12.sp,
-                                        color: AppColors.grey600,
-                                      ),
-                                    ),
-                                    GradientText(
-                                      AppStrings.phoneNumber,
-                                      style: TextStyle(
-                                        fontFamily: 'Plus Jakarta Sans',
-                                        fontSize: 13.sp,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
-                          Icon(
-                            Icons.chevron_right_rounded,
-                            size: 20.r,
-                            color: AppColors.grey400,
-                          ),
-                        ],
-                      ),
-                    ),
+                    const LoginHelpSection(),
 
                     SizedBox(height: 24.h),
                   ],
@@ -751,7 +664,6 @@ extension _ReferralStatusView on _LoginWithOtpState {
     });
   }
 }
-
 
 class UpperCaseTextFormatter extends TextInputFormatter {
   @override

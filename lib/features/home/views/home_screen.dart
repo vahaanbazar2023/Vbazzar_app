@@ -1,3 +1,5 @@
+import '../../../core/design_system/organisms/app_bottom_nav_bar.dart';
+import '../../main_shell/controllers/main_shell_controller.dart';
 import '../../../core/utils/marquee_math.dart';
 import 'dart:async';
 
@@ -241,7 +243,17 @@ class _HomeHeader extends StatelessWidget {
                 children: [
                   // Profile avatar
                   GestureDetector(
-                    onTap: () => Get.toNamed(AppRoutes.profile),
+                    // The Profile tab, not a pushed copy of the screen: a pushed
+                    // route has no bottom bar.
+                    onTap: () {
+                      if (Get.isRegistered<MainShellController>()) {
+                        Get.find<MainShellController>().onTabTapped(
+                          BottomNavTab.settings.index,
+                        );
+                      } else {
+                        Get.toNamed(AppRoutes.profile);
+                      }
+                    },
                     child: Image.asset(
                       AppAssets.dashboardProfileAvatar,
                       width: 40.r,

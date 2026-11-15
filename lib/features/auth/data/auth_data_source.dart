@@ -7,6 +7,7 @@ import '../models/otp_response.dart';
 import '../models/otp_verify_models.dart';
 import '../models/referral_validation.dart';
 import '../models/complete_profile_models.dart';
+import '../models/forgot_password_models.dart';
 import '../../../core/extensions/context_extensions.dart';
 
 /// Auth data source — V2 API calls
@@ -62,6 +63,79 @@ class AuthDataSource {
       }
 
       return OtpVerifyResponse.fromJson(response.data as Map<String, dynamic>);
+    } on DioException catch (e) {
+      throw _handleError(e);
+    }
+  }
+
+  /// POST /api/v1/auth/login — sign in with username (or mobile number) + password.
+  /// Returns the response body; `data` carries `token`, `user_id` and `user_type`.
+  Future<Map<String, dynamic>> loginWithPassword({
+    required String usernamePhone,
+    required String password,
+    String? fcmToken,
+  }) async {
+    try {
+      LoggerService.to.info('Password login for: $usernamePhone');
+
+      final response = await networkService.post(
+        ApiEndpoints.passwordLogin,
+        data: <String, dynamic>{
+          'login_type': 'credentials',
+          'username_phone': usernamePhone,
+          'password': password,
+          if (fcmToken != null && fcmToken.isNotEmpty) 'fcm_token': fcmToken,
+        },
+      );
+
+      if (response.data is! Map<String, dynamic>) {
+        throw ApiException(appL10n.inspEmptyServerResponse, 500);
+      }
+      return response.data as Map<String, dynamic>;
+    } on DioException catch (e) {
+      throw _handleError(e);
+    }
+  }
+
+  /// POST /api/v1/auth/forgot-password/send-otp — text a reset code to the account's mobile number
+  Future<ForgotPasswordResponse> sendPasswordResetOtp(
+    String usernamePhone,
+  ) async {
+    try {
+      final response = await networkService.post(
+        ApiEndpoints.forgotPasswordSendOtp,
+        data: ForgotPasswordRequest(usernamePhone: usernamePhone).toJson(),
+      );
+      if (response.data is! Map<String, dynamic>) {
+        throw ApiException(appL10n.inspEmptyServerResponse, 500);
+      }
+      return ForgotPasswordResponse.fromJson(
+        response.data as Map<String, dynamic>,
+      );
+    } on DioException catch (e) {
+      throw _handleError(e);
+    }
+  }
+
+  /// POST /api/v1/auth/forgot-password/reset — set a new password with the reset code
+  Future<ResetPasswordResponse> resetPassword(
+    ResetPasswordRequest request,
+  ) async {
+    try {
+      final response = await networkService.post(
+        ApiEndpoints.forgotPasswordReset,
+        data: request.toJson(),
+      );
+      if (response.data is! Map<String, dynamic>) {
+        throw ApiException(appL10n.inspEmptyServerResponse, 500);
+      }
+      final body = response.data as Map<String, dynamic>;
+      // Only status / code / message matter here; `data` types vary, so it is not parsed.
+      return ResetPasswordResponse(
+        status: body['status'] as String? ?? '',
+        code: body['code'] as int? ?? 0,
+        message: body['message'] as String? ?? '',
+      );
     } on DioException catch (e) {
       throw _handleError(e);
     }

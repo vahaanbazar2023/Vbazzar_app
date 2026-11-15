@@ -16,6 +16,7 @@ import '../models/complete_profile_models.dart';
 import '../../../core/services/deep_link_service.dart';
 import '../../../routes/app_routes.dart';
 import '../../language/controllers/language_controller.dart';
+import '../../main_shell/controllers/main_shell_controller.dart';
 import '../../../core/extensions/context_extensions.dart';
 
 /// Where the referral code typed on the login screen stands.
@@ -33,6 +34,12 @@ class AuthController extends GetxController {
   final phoneController = TextEditingController();
   final otpController = TextEditingController();
   final referralController = TextEditingController();
+
+  // Password sign-in and password reset
+  final usernameController = TextEditingController();
+  final passwordController = TextEditingController();
+  final resetCodeController = TextEditingController();
+  final newPasswordController = TextEditingController();
 
   // Complete-profile form controllers
   final firstNameController = TextEditingController();
@@ -52,7 +59,8 @@ class AuthController extends GetxController {
   final referralStatus = ReferralStatus.idle.obs;
   final referrerName = Rxn<String>();
   Timer? _referralDebounce;
-  int _referralCheckSeq = 0; // ignore answers that arrive after the text changed
+  int _referralCheckSeq =
+      0; // ignore answers that arrive after the text changed
   static const int referralCodeLength = 9; // e.g. VB0000013
 
   // Complete-profile form state
@@ -70,6 +78,18 @@ class AuthController extends GetxController {
   final isLoadingStates = false.obs;
   final isLoadingCities = false.obs;
 
+  // Login screen: OTP (log in or sign up) or password
+  final isPasswordMode = false.obs;
+  final usernameText = ''.obs;
+  final passwordText = ''.obs;
+  final resetCodeText = ''.obs;
+  final newPasswordText = ''.obs;
+  final resetTransactionId = Rxn<String>();
+
+  // Consent tick-boxes on the OTP form
+  final agreedToTerms = false.obs;
+  final marketingOptIn = false.obs;
+
   // OTP timer
   final otpTimer = 120.obs;
   final canResendOtp = false.obs;
@@ -77,6 +97,13 @@ class AuthController extends GetxController {
 
   // ── Computed ──────────────────────────────────────────────────
   bool get isPhoneValid => phoneText.value.trim().length >= 10;
+
+  bool get isPasswordFormValid =>
+      usernameText.value.trim().length >= 3 && passwordText.value.isNotEmpty;
+
+  bool get isResetFormValid =>
+      resetCodeText.value.trim().length >= 4 &&
+      newPasswordText.value.length >= 8;
 
   bool get isCompleteProfileFormValid =>
       firstNameText.value.trim().length >= 3 &&
@@ -199,7 +226,17 @@ class AuthController extends GetxController {
     otpController.addListener(_otpListener);
     firstNameController.addListener(_firstNameListener);
     emailController.addListener(_emailListener);
+    usernameController.addListener(_usernameListener);
+    passwordController.addListener(_passwordListener);
+    resetCodeController.addListener(_resetCodeListener);
+    newPasswordController.addListener(_newPasswordListener);
   }
+
+  void _usernameListener() => usernameText.value = usernameController.text;
+  void _passwordListener() => passwordText.value = passwordController.text;
+  void _resetCodeListener() => resetCodeText.value = resetCodeController.text;
+  void _newPasswordListener() =>
+      newPasswordText.value = newPasswordController.text;
 
   @override
   void onClose() {
@@ -216,6 +253,10 @@ class AuthController extends GetxController {
     firstNameController.dispose();
     lastNameController.dispose();
     emailController.dispose();
+    usernameController.dispose();
+    passwordController.dispose();
+    resetCodeController.dispose();
+    newPasswordController.dispose();
     _timer?.cancel();
     super.onClose();
   }
@@ -284,6 +325,15 @@ class AuthController extends GetxController {
       errorText.value = validationError;
       isLoading.value = false;
       CustomSnackbar.show(message: validationError, type: SnackbarType.error);
+      return;
+    }
+
+    if (!agreedToTerms.value) {
+      isLoading.value = false;
+      CustomSnackbar.show(
+        message: appL10n.authAgreeRequired,
+        type: SnackbarType.error,
+      );
       return;
     }
 
@@ -439,6 +489,9 @@ class AuthController extends GetxController {
         referralCode: pendingRef,
         contentType: pendingContentType,
         contentId: pendingContentId,
+        // An unticked box means "not asked", never a withdrawal or an opt-out.
+        termsAccepted: agreedToTerms.value ? true : null,
+        marketingOptIn: marketingOptIn.value ? true : null,
       );
 
       if (response.isSuccess && response.data != null) {
@@ -457,7 +510,7 @@ class AuthController extends GetxController {
 
         // Profile is requested after the user's first payment (ProfileGate),
         // not at login.
-        Get.offAllNamed(AppRoutes.home);
+        _landOnHome();
       } else {
         errorText.value = response.message.isNotEmpty
             ? response.message
@@ -483,6 +536,132 @@ class AuthController extends GetxController {
         message: l10n.otpVerificationFailed,
         type: SnackbarType.error,
       );
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  // ── Password sign-in (/api/v1/auth/login) ─────────────────────
+  Future<void> loginWithPassword() async {
+    final username = usernameController.text.trim();
+    final password = passwordController.text;
+    if (username.length < 3 || password.isEmpty) {
+      CustomSnackbar.show(
+        message: appL10n.authEnterUsernameAndPassword,
+        type: SnackbarType.error,
+      );
+      return;
+    }
+
+    errorText.value = null;
+    isLoading.value = true;
+    try {
+      final failure = await authRepository.loginWithPassword(
+        usernamePhone: username,
+        password: password,
+        fcmToken: NotificationService.instance.fcmToken,
+      );
+      if (failure != null) {
+        errorText.value = failure;
+        CustomSnackbar.show(message: failure, type: SnackbarType.error);
+        return;
+      }
+      passwordController.clear();
+      _landOnHome();
+    } catch (e, stack) {
+      LoggerService.to.error('loginWithPassword error', e, stack);
+      final msg = _apiErrorMessage(e) ?? appL10n.authLoginFailed;
+      errorText.value = msg;
+      CustomSnackbar.show(message: msg, type: SnackbarType.error);
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  // ── Forgot / set password (/api/v1/auth/forgot-password/*) ────
+  /// Texts a reset code to the account's mobile number. True when it was sent.
+  Future<bool> sendPasswordResetCode() async {
+    final username = usernameController.text.trim();
+    if (username.length < 6) {
+      CustomSnackbar.show(
+        message: appL10n.authUsernameOrMobile,
+        type: SnackbarType.error,
+      );
+      return false;
+    }
+
+    isLoading.value = true;
+    try {
+      final response = await authRepository.sendPasswordResetOtp(username);
+      final tx = response.data?.transactionId ?? '';
+      if (!response.isSuccess || tx.isEmpty) {
+        CustomSnackbar.show(
+          message: response.message.isNotEmpty
+              ? response.message
+              : appL10n.authTryAgain,
+          type: SnackbarType.error,
+        );
+        return false;
+      }
+      resetTransactionId.value = tx;
+      resetCodeController.clear();
+      newPasswordController.clear();
+      _startOtpTimer(); // Resend stays locked for 120 seconds
+      CustomSnackbar.show(
+        message: response.message,
+        type: SnackbarType.success,
+      );
+      return true;
+    } catch (e, stack) {
+      LoggerService.to.error('sendPasswordResetCode error', e, stack);
+      CustomSnackbar.show(
+        message: _apiErrorMessage(e) ?? appL10n.authTryAgain,
+        type: SnackbarType.error,
+      );
+      return false;
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  /// Sets the new password with the reset code. True when it was changed.
+  Future<bool> resetPassword() async {
+    final tx = resetTransactionId.value ?? '';
+    if (!isResetFormValid || tx.isEmpty) return false;
+
+    isLoading.value = true;
+    try {
+      final response = await authRepository.resetPassword(
+        usernamePhone: usernameController.text.trim(),
+        otpCode: resetCodeController.text.trim(),
+        transactionId: tx,
+        newPassword: newPasswordController.text,
+      );
+      if (!response.isSuccess) {
+        CustomSnackbar.show(
+          message: response.message.isNotEmpty
+              ? response.message
+              : appL10n.authTryAgain,
+          type: SnackbarType.error,
+        );
+        return false;
+      }
+      resetTransactionId.value = null;
+      resetCodeController.clear();
+      newPasswordController.clear();
+      passwordController.clear();
+      CustomSnackbar.show(
+        message: appL10n.authPasswordChanged,
+        type: SnackbarType.success,
+      );
+      return true;
+    } catch (e, stack) {
+      LoggerService.to.error('resetPassword error', e, stack);
+      CustomSnackbar.show(
+        message: _apiErrorMessage(e) ?? appL10n.authTryAgain,
+        type: SnackbarType.error,
+      );
+      return false;
     } finally {
       isLoading.value = false;
     }
@@ -551,12 +730,22 @@ class AuthController extends GetxController {
       }
     } catch (e) {
       LoggerService.to.error('completeProfile error: $e');
-      final msg = _apiErrorMessage(e) ?? appL10n.inspFailedToSaveProfileTryAgain;
+      final msg =
+          _apiErrorMessage(e) ?? appL10n.inspFailedToSaveProfileTryAgain;
       if (msg.toLowerCase().contains('email')) emailErrorText.value = msg;
       CustomSnackbar.show(message: msg, type: SnackbarType.error);
     } finally {
       isLoading.value = false;
     }
+  }
+
+  /// After a login, open the app on the Home tab. The shell controller outlives
+  /// logout, so it must be reset or the app opens on the tab used last time.
+  void _landOnHome() {
+    if (Get.isRegistered<MainShellController>()) {
+      Get.find<MainShellController>().resetToHome();
+    }
+    Get.offAllNamed(AppRoutes.home);
   }
 
   /// Message carried by an API/validation/network exception, if any.

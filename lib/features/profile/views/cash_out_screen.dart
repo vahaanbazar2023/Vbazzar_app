@@ -10,9 +10,15 @@ import '../../../core/design_system/organisms/app_header.dart';
 import '../../../core/extensions/context_extensions.dart';
 import '../controllers/profile_controller.dart';
 import '../models/wallet_models.dart';
+import 'cash_out_coming_soon.dart';
 
 class CashOutScreen extends StatefulWidget {
   const CashOutScreen({super.key});
+
+  /// Bank withdrawals are not live yet. While this is false the screen shows
+  /// [CashOutComingSoonView] and makes no wallet calls. Set it to true to bring
+  /// back the full request / history screen below — nothing else needs changing.
+  static bool enabled = false;
 
   @override
   State<CashOutScreen> createState() => _CashOutScreenState();
@@ -26,8 +32,9 @@ class _CashOutScreenState extends State<CashOutScreen>
   @override
   void initState() {
     super.initState();
-    _ctrl = Get.find<ProfileController>();
     _tabController = TabController(length: 2, vsync: this);
+    if (!CashOutScreen.enabled) return;
+    _ctrl = Get.find<ProfileController>();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _ctrl.fetchCashOutEligibility();
       _ctrl.fetchCashOutHistory();
@@ -42,6 +49,7 @@ class _CashOutScreenState extends State<CashOutScreen>
 
   @override
   Widget build(BuildContext context) {
+    if (!CashOutScreen.enabled) return const CashOutComingSoonView();
     return Scaffold(
       backgroundColor: const Color(0xFFF5F5F5),
       body: Column(

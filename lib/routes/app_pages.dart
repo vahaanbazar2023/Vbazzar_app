@@ -41,6 +41,8 @@ import '../features/auction/vehicle_listing_binding.dart';
 import '../features/auction/controllers/my_bids_wins_controller.dart';
 import '../features/auction/controllers/wishlist_controller.dart';
 import 'app_routes.dart';
+import '../features/chatbot/chat_binding.dart';
+import '../features/chatbot/views/chat_screen.dart';
 import '../features/buy_and_sell/views/buy_sell_home_view.dart';
 import '../features/buy_and_sell/views/sell_view.dart';
 import '../features/buy_and_sell/views/buy_vehicle_listings_view.dart';
@@ -482,6 +484,13 @@ class AppPages {
         Get.lazyPut(() => sc.SearchController());
       }),
       transition: Transition.rightToLeft,
+    ),
+    // ── Vaani chatbot ──────────────────────────────────────────
+    GetPage(
+      name: AppRoutes.chatbot,
+      page: () => const ChatScreen(),
+      binding: ChatBinding(),
+      transition: Transition.downToUp,
     ),
     // ── Wallet Cash-Out ────────────────────────────────────────
     GetPage(

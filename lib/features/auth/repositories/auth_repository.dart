@@ -8,6 +8,7 @@ import '../models/login_request.dart';
 import '../models/otp_response.dart';
 import '../models/otp_verify_models.dart';
 import '../models/complete_profile_models.dart';
+import '../models/forgot_password_models.dart';
 
 /// Auth repository — V2 unified login+registration flow
 class AuthRepository {
@@ -60,6 +61,8 @@ class AuthRepository {
     String? contentType,
     String? contentId,
     String? language,
+    bool? termsAccepted,
+    bool? marketingOptIn,
   }) async {
     final request = OtpVerifyRequest(
       userId: userId,
@@ -71,6 +74,8 @@ class AuthRepository {
       contentType: contentType,
       contentId: contentId,
       language: language ?? _savedLanguage(),
+      termsAccepted: termsAccepted,
+      marketingOptIn: marketingOptIn,
     );
 
     final response = await _dataSource.verifyOtp(request);
@@ -81,6 +86,61 @@ class AuthRepository {
 
     return response;
   }
+
+  /// POST /api/v1/auth/login — sign in with username (or mobile number) + password.
+  /// Returns null on success, otherwise the message to show.
+  Future<String?> loginWithPassword({
+    required String usernamePhone,
+    required String password,
+    String? fcmToken,
+  }) async {
+    final body = await _dataSource.loginWithPassword(
+      usernamePhone: usernamePhone,
+      password: password,
+      fcmToken: fcmToken,
+    );
+    final data = body['data'];
+    final token = data is Map ? data['token']?.toString() ?? '' : '';
+    if (body['status'] != 'success' || token.isEmpty) {
+      final message = body['message']?.toString() ?? '';
+      return message.isNotEmpty ? message : 'Login failed';
+    }
+    final map = data as Map;
+    // profileCompleted is left as it is: this endpoint does not report it, and the
+    // profile is asked for after the first payment (ProfileGate) anyway.
+    await Future.wait([
+      _secureStorage.write(StorageKeys.authToken, token),
+      _secureStorage.write(
+        StorageKeys.userId,
+        map['user_id']?.toString() ?? '',
+      ),
+      _secureStorage.write(
+        StorageKeys.userType,
+        map['user_type']?.toString() ?? '',
+      ),
+    ]);
+    LoggerService.to.info('Auth data saved for user: ${map['user_id']}');
+    return null;
+  }
+
+  /// Text a password-reset code to the account's mobile number.
+  Future<ForgotPasswordResponse> sendPasswordResetOtp(String usernamePhone) =>
+      _dataSource.sendPasswordResetOtp(usernamePhone);
+
+  /// Set a new password with the reset code.
+  Future<ResetPasswordResponse> resetPassword({
+    required String usernamePhone,
+    required String otpCode,
+    required String transactionId,
+    required String newPassword,
+  }) => _dataSource.resetPassword(
+    ResetPasswordRequest(
+      usernamePhone: usernamePhone,
+      newPassword: newPassword,
+      transactionId: transactionId,
+      otpCode: otpCode,
+    ),
+  );
 
   /// POST /api/v2/auth/complete-profile — fill required fields after OTP
   Future<CompleteProfileResponse> completeProfile(

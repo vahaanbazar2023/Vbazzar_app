@@ -6456,4 +6456,81 @@ class AppLocalizationsKn extends AppLocalizations {
   @override
   String get buySellWishlistEmpty =>
       'ನೀವು ಇನ್ನೂ ವಿಶ್‌ಲಿಸ್ಟ್‌ಗೆ ಯಾವುದೇ ವಾಹನ ಸೇರಿಸಿಲ್ಲ';
+
+  @override
+  String get authLogInSignUp => 'ಲಾಗಿನ್ / ಸೈನ್ ಅಪ್';
+
+  @override
+  String get authNewHereHint =>
+      'ಹೊಸಬರೇ? ನಿಮ್ಮ ಖಾತೆ ಸ್ವಯಂಚಾಲಿತವಾಗಿ ರಚನೆಯಾಗುತ್ತದೆ.';
+
+  @override
+  String get authWithPassword => 'ಪಾಸ್‌ವರ್ಡ್‌ನೊಂದಿಗೆ';
+
+  @override
+  String get authUsernameOrMobile => 'ಬಳಕೆದಾರ ಹೆಸರು ಅಥವಾ ಮೊಬೈಲ್ ಸಂಖ್ಯೆ';
+
+  @override
+  String get authNoPasswordHint =>
+      'ಇನ್ನೂ ಪಾಸ್‌ವರ್ಡ್ ಇಲ್ಲವೇ? ಹೊಂದಿಸಲು ಪಾಸ್‌ವರ್ಡ್ ಮರೆತಿರಾ ಒತ್ತಿರಿ.';
+
+  @override
+  String get authIAgreeToThe => 'ನಾನು ಒಪ್ಪುತ್ತೇನೆ: ';
+
+  @override
+  String get authOffersOptIn =>
+      'ನನಗೆ ಆಫರ್‌ಗಳು ಮತ್ತು ಹರಾಜು ಎಚ್ಚರಿಕೆಗಳನ್ನು ಕಳುಹಿಸಿ';
+
+  @override
+  String get authAgreeRequired =>
+      'ಮುಂದುವರಿಯಲು ದಯವಿಟ್ಟು ನಿಯಮಗಳು ಮತ್ತು ಗೌಪ್ಯತಾ ನೀತಿಯನ್ನು ಒಪ್ಪಿಕೊಳ್ಳಿ';
+
+  @override
+  String get authEnterUsernameAndPassword =>
+      'ನಿಮ್ಮ ಬಳಕೆದಾರ ಹೆಸರು ಅಥವಾ ಮೊಬೈಲ್ ಸಂಖ್ಯೆ ಮತ್ತು ಪಾಸ್‌ವರ್ಡ್ ನಮೂದಿಸಿ';
+
+  @override
+  String get authLoginFailed =>
+      'ಲಾಗಿನ್ ವಿಫಲವಾಗಿದೆ. ನಿಮ್ಮ ವಿವರಗಳನ್ನು ಪರಿಶೀಲಿಸಿ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.';
+
+  @override
+  String get authSetNewPassword => 'ಹೊಸ ಪಾಸ್‌ವರ್ಡ್ ಹೊಂದಿಸಿ';
+
+  @override
+  String get authResetCodeHint =>
+      'ನಿಮ್ಮ ಖಾತೆಯ ಮೊಬೈಲ್ ಸಂಖ್ಯೆಗೆ ನಾವು ಕೋಡ್ ಕಳುಹಿಸುತ್ತೇವೆ.';
+
+  @override
+  String get authSendCode => 'ಕೋಡ್ ಕಳುಹಿಸಿ';
+
+  @override
+  String get authPasswordMinLength => 'ಕನಿಷ್ಠ 8 ಅಕ್ಷರಗಳು';
+
+  @override
+  String get authPasswordChanged =>
+      'ಪಾಸ್‌ವರ್ಡ್ ಬದಲಾಗಿದೆ. ನಿಮ್ಮ ಹೊಸ ಪಾಸ್‌ವರ್ಡ್‌ನೊಂದಿಗೆ ಲಾಗಿನ್ ಮಾಡಿ.';
+
+  @override
+  String get authTryAgain => 'ಏನೋ ತಪ್ಪಾಗಿದೆ. ದಯವಿಟ್ಟು ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.';
+
+  @override
+  String get cashOutSoonTitle => 'ಹಿಂಪಡೆಯುವಿಕೆ ಶೀಘ್ರದಲ್ಲೇ ಬರಲಿದೆ';
+
+  @override
+  String get cashOutSoonBody =>
+      'ಬ್ಯಾಂಕ್ ಹಿಂಪಡೆಯುವಿಕೆಯನ್ನು ನಿಮಗೆ ತರಲು ನಾವು ಶ್ರಮಿಸುತ್ತಿದ್ದೇವೆ. ಅಲ್ಲಿಯವರೆಗೆ ನಿಮ್ಮ ರಿವಾರ್ಡ್‌ಗಳು ನಿಮ್ಮ ವಾಲೆಟ್‌ನಲ್ಲಿ ಸುರಕ್ಷಿತವಾಗಿರುತ್ತವೆ.';
+
+  @override
+  String get cashOutSoonPoint1 =>
+      'ನಿಮ್ಮ ವಾಲೆಟ್ ಬ್ಯಾಲೆನ್ಸ್ ಸುರಕ್ಷಿತವಾಗಿದೆ ಮತ್ತು ಬದಲಾಗಿಲ್ಲ';
+
+  @override
+  String get cashOutSoonPoint2 => 'ಸ್ನೇಹಿತರನ್ನು ರೆಫರ್ ಮಾಡಿ ಗಳಿಸುತ್ತಿರಿ';
+
+  @override
+  String get cashOutSoonPoint3 =>
+      'ಹಿಂಪಡೆಯುವಿಕೆ ಆರಂಭವಾದ ತಕ್ಷಣ ನಿಮಗೆ ತಿಳಿಸುತ್ತೇವೆ';
+
+  @override
+  String get cashOutSoonCta => 'ರಿವಾರ್ಡ್‌ಗಳಿಗೆ ಹಿಂತಿರುಗಿ';
 }

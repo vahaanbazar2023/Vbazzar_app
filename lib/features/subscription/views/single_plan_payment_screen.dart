@@ -3,13 +3,12 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 import '../../../core/constants/app_colors.dart';
-import '../../../core/constants/app_sizes.dart';
 import '../../../core/design_system/molecules/custom_snackbar.dart';
-import '../../../core/design_system/organisms/app_bottom_nav_bar.dart';
+import '../../../core/design_system/molecules/gradient_button.dart';
+import '../../../core/design_system/templates/app_layout.dart';
 import '../../../core/extensions/context_extensions.dart';
 import '../../../core/storage/secure_storage_service.dart';
 import '../../../core/storage/storage_keys.dart';
-import '../../main_shell/controllers/main_shell_controller.dart';
 import '../../payment/controllers/payment_controller.dart';
 import '../models/subscription_plan.dart';
 import 'wallet_payment_screen.dart';
@@ -141,253 +140,370 @@ class _SinglePlanPaymentScreenState extends State<SinglePlanPaymentScreen> {
     );
   }
 
+  String get _price =>
+      widget.plan.price.toStringAsFixed(widget.plan.price % 1 == 0 ? 0 : 2);
+
+  Widget _summaryRow(String label, String value, {bool bold = false}) {
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 6.h),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            label,
+            style: TextStyle(
+              fontFamily: 'Montserrat',
+              fontSize: bold ? 14.sp : 13.sp,
+              fontWeight: bold ? FontWeight.w600 : FontWeight.w400,
+              color: bold ? AppColors.textPrimary : AppColors.grey650,
+            ),
+          ),
+          Flexible(
+            child: Text(
+              value,
+              textAlign: TextAlign.end,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                fontFamily: 'Montserrat',
+                fontSize: bold ? 16.sp : 13.sp,
+                fontWeight: bold ? FontWeight.w700 : FontWeight.w500,
+                color: bold ? AppColors.primary : AppColors.textPrimary,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _trustItem(IconData icon, String title, String sub) {
+    return Expanded(
+      child: Column(
+        children: [
+          Container(
+            width: 38.r,
+            height: 38.r,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: AppColors.primary.withValues(alpha: 0.08),
+            ),
+            child: Icon(icon, size: 18.r, color: AppColors.primary),
+          ),
+          SizedBox(height: 6.h),
+          Text(
+            title,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontFamily: 'Montserrat',
+              fontSize: 11.sp,
+              fontWeight: FontWeight.w600,
+              color: AppColors.textPrimary,
+            ),
+          ),
+          Text(
+            sub,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontFamily: 'Montserrat',
+              fontSize: 10.sp,
+              color: AppColors.grey650,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final plan = widget.plan;
+    final l10n = context.l10n;
+    final hasValidity =
+        plan.planMetric == 'days' && plan.planMetricValue.isNotEmpty;
 
-    return Scaffold(
-      backgroundColor: AppColors.white,
-      bottomNavigationBar: Obx(() {
-        final shell = Get.isRegistered<MainShellController>()
-            ? Get.find<MainShellController>()
-            : null;
-        return AppBottomNavBar(
-          currentTab: shell != null
-              ? BottomNavTab.values[shell.currentIndex.value]
-              : BottomNavTab.categories,
-          onTabSelected: (tab) => shell?.onTabTapped(tab.index),
-        );
-      }),
-      appBar: AppBar(
-        backgroundColor: AppColors.white,
-        elevation: AppSizes.elevationNone,
-        surfaceTintColor: Colors.transparent,
-        leading: GestureDetector(
-          onTap: () => Get.back(),
-          child: const Icon(
-            Icons.arrow_back,
-            color: AppColors.black,
-            size: AppSizes.iconMd,
-          ),
-        ),
-        title: Text(
-          widget.title ?? context.l10n.subscribe,
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-          style: const TextStyle(
-            fontFamily: 'Montserrat',
-            fontWeight: FontWeight.w600,
-            fontSize: 18,
-            color: AppColors.textPrimary,
-          ),
-        ),
-        centerTitle: false,
-      ),
+    return AppLayout(
+      title: widget.title ?? l10n.subscribe,
       body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // ── Scrollable content ────────────────────────────────────────────
           Expanded(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
+              padding: EdgeInsets.fromLTRB(16.w, 16.h, 16.w, 16.h),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  if (widget.subtitle.isNotEmpty)
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(4, 12, 12, 0),
-                      child: Text(
-                        widget.subtitle,
-                        style: TextStyle(
-                          fontFamily: 'Montserrat',
-                          fontWeight: FontWeight.w400,
-                          fontSize: 14.sp,
-                          color: AppColors.grey650,
-                          height: 1.4,
-                        ),
+                  if (widget.subtitle.isNotEmpty) ...[
+                    Text(
+                      widget.subtitle,
+                      style: TextStyle(
+                        fontFamily: 'Montserrat',
+                        fontSize: 13.sp,
+                        color: AppColors.grey650,
+                        height: 1.4,
                       ),
                     ),
-                  const SizedBox(height: 20),
+                    SizedBox(height: 14.h),
+                  ],
 
-                  // ── Plan card (matches SubscriptionScreen _PlanCard) ──────
+                  // ── Hero: plan on brand gradient ─────────────────────
                   Container(
+                    width: double.infinity,
+                    padding: EdgeInsets.fromLTRB(18.w, 18.h, 18.w, 16.h),
                     decoration: BoxDecoration(
-                      color: const Color(0xFFFFF0F0),
-                      borderRadius: BorderRadius.circular(AppSizes.radiusLg),
-                      border: Border.all(color: AppColors.primaryLight),
+                      borderRadius: BorderRadius.circular(20.r),
+                      gradient: const LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [
+                          AppColors.ctaGradientStart,
+                          AppColors.ctaGradientEnd,
+                        ],
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppColors.primary.withValues(alpha: 0.28),
+                          blurRadius: 16,
+                          offset: const Offset(0, 6),
+                        ),
+                      ],
                     ),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: AppSizes.spaceMd,
-                      vertical: 14,
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // Icon circle
-                        Container(
-                          width: 38,
-                          height: 38,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: AppColors.primaryLight.withValues(
-                              alpha: 0.12,
-                            ),
-                            border: Border.all(
-                              color: AppColors.primaryLight,
-                              width: 1.8,
-                            ),
-                          ),
-                          child: const Icon(
-                            Icons.build_rounded,
-                            size: 18,
-                            color: AppColors.primaryLight,
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        // Name
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text(
-                                plan.name,
-                                style: TextStyle(
-                                  fontFamily: 'Montserrat',
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 16.sp,
-                                  color: AppColors.textPrimary,
-                                ),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                              if (plan.featDescription.isNotEmpty)
-                                Text(
-                                  plan.featDescription,
-                                  style: TextStyle(
-                                    fontFamily: 'Montserrat',
-                                    fontWeight: FontWeight.w400,
-                                    fontSize: 12.sp,
-                                    color: AppColors.grey650,
-                                  ),
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                            ],
-                          ),
-                        ),
-                        // Price
                         Row(
                           children: [
-                            const Icon(
-                              Icons.currency_rupee,
-                              color: AppColors.grey800,
-                              size: 18,
-                            ),
-                            Text(
-                              plan.price.toStringAsFixed(
-                                plan.price % 1 == 0 ? 0 : 2,
+                            Container(
+                              width: 46.r,
+                              height: 46.r,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Colors.white.withValues(alpha: 0.18),
                               ),
-                              style: TextStyle(
-                                fontFamily: 'Montserrat',
-                                fontWeight: FontWeight.w600,
-                                fontSize: 18.sp,
-                                color: AppColors.grey800,
+                              child: Icon(
+                                Icons.build_rounded,
+                                size: 22.r,
+                                color: Colors.white,
+                              ),
+                            ),
+                            SizedBox(width: 12.w),
+                            Expanded(
+                              child: Text(
+                                plan.name,
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  fontFamily: 'Montserrat',
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 18.sp,
+                                  color: Colors.white,
+                                ),
                               ),
                             ),
                           ],
                         ),
+                        if (plan.featDescription.isNotEmpty) ...[
+                          SizedBox(height: 10.h),
+                          Text(
+                            plan.featDescription,
+                            maxLines: 3,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              fontFamily: 'Montserrat',
+                              fontSize: 12.sp,
+                              height: 1.4,
+                              color: Colors.white.withValues(alpha: 0.85),
+                            ),
+                          ),
+                        ],
+                        SizedBox(height: 14.h),
+                        Divider(
+                          height: 1,
+                          color: Colors.white.withValues(alpha: 0.22),
+                        ),
+                        SizedBox(height: 12.h),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            Text(
+                              '\u20B9$_price',
+                              style: TextStyle(
+                                fontFamily: 'Montserrat',
+                                fontWeight: FontWeight.w700,
+                                fontSize: 28.sp,
+                                height: 1,
+                                color: Colors.white,
+                              ),
+                            ),
+                            const Spacer(),
+                            if (hasValidity)
+                              Container(
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 10.w,
+                                  vertical: 5.h,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: Colors.white.withValues(alpha: 0.18),
+                                  borderRadius: BorderRadius.circular(20.r),
+                                ),
+                                child: Text(
+                                  plan.metricLabel,
+                                  style: TextStyle(
+                                    fontFamily: 'Montserrat',
+                                    fontSize: 11.sp,
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                          ],
+                        ),
                       ],
                     ),
+                  ),
+
+                  SizedBox(height: 16.h),
+
+                  // ── Order summary ────────────────────────────────────
+                  Container(
+                    width: double.infinity,
+                    padding: EdgeInsets.fromLTRB(16.w, 12.h, 16.w, 12.h),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(16.r),
+                      border: Border.all(color: const Color(0xFFEEEEEE)),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.05),
+                          blurRadius: 10,
+                          offset: const Offset(0, 3),
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          l10n.profSubOrderSummary,
+                          style: TextStyle(
+                            fontFamily: 'Montserrat',
+                            fontWeight: FontWeight.w600,
+                            fontSize: 14.sp,
+                            color: AppColors.textPrimary,
+                          ),
+                        ),
+                        SizedBox(height: 6.h),
+                        _summaryRow(l10n.profSubPlanLabel, plan.name),
+                        if (hasValidity)
+                          _summaryRow(
+                            l10n.profSubValidityLabel,
+                            plan.metricLabel,
+                          ),
+                        const Divider(height: 14, color: Color(0xFFF0F0F0)),
+                        _summaryRow(
+                          l10n.profSubTotalAmount,
+                          '\u20B9$_price',
+                          bold: true,
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  SizedBox(height: 20.h),
+
+                  // ── Trust row ────────────────────────────────────────
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _trustItem(
+                        Icons.lock_outline_rounded,
+                        l10n.profSubSecureTrusted,
+                        l10n.profSubHundredSafe,
+                      ),
+                      _trustItem(
+                        Icons.verified_user_outlined,
+                        'PayU',
+                        l10n.coreSecurePaymentPoweredByPayU,
+                      ),
+                    ],
                   ),
                 ],
               ),
             ),
           ),
 
-          // ── Fixed bottom: Proceed Payment + My Wallet ─────────────────────
+          // ── Sticky pay bar ───────────────────────────────────────────
           Container(
-            color: AppColors.white,
-            padding: const EdgeInsets.fromLTRB(
-              AppSizes.spaceMd,
-              0,
-              AppSizes.spaceMd,
-              AppSizes.space64,
+            padding: EdgeInsets.fromLTRB(16.w, 12.h, 16.w, 14.h),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.08),
+                  blurRadius: 12,
+                  offset: const Offset(0, -3),
+                ),
+              ],
             ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                // Proceed Payment button
-                GestureDetector(
-                  onTap: _isProcessing ? null : _onProceedPayment,
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 200),
-                    height: AppSizes.buttonHeightLg,
-                    decoration: BoxDecoration(
-                      gradient: _isProcessing
-                          ? null
-                          : const LinearGradient(
-                              colors: [
-                                AppColors.ctaGradientStart,
-                                AppColors.ctaGradientEnd,
-                              ],
-                              begin: Alignment.centerLeft,
-                              end: Alignment.centerRight,
-                            ),
-                      color: _isProcessing ? AppColors.grey200 : null,
-                      borderRadius: BorderRadius.circular(AppSizes.radiusFull),
+                Row(
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          l10n.profSubTotalAmount,
+                          style: TextStyle(
+                            fontFamily: 'Montserrat',
+                            fontSize: 11.sp,
+                            color: AppColors.grey650,
+                          ),
+                        ),
+                        Text(
+                          '\u20B9$_price',
+                          style: TextStyle(
+                            fontFamily: 'Montserrat',
+                            fontWeight: FontWeight.w700,
+                            fontSize: 20.sp,
+                            color: AppColors.textPrimary,
+                          ),
+                        ),
+                      ],
                     ),
-                    child: Center(
-                      child: _isProcessing
-                          ? const SizedBox(
-                              width: 22,
-                              height: 22,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2,
-                                color: Colors.white,
-                              ),
-                            )
-                          : FittedBox(
-                              fit: BoxFit.scaleDown,
-                              child: Text(
-                                context.l10n.proceedPayment,
-                                maxLines: 1,
-                                style: TextStyle(
-                                  fontFamily: 'Montserrat',
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 14.sp,
-                                  color: AppColors.white,
-                                  letterSpacing: 0.3,
-                                ),
-                              ),
-                            ),
+                    SizedBox(width: 16.w),
+                    Expanded(
+                      child: GradientButton.filled(
+                        text: l10n.proceedPayment,
+                        onPressed: _isProcessing ? null : _onProceedPayment,
+                        isLoading: _isProcessing,
+                        height: 46.h,
+                        fontSize: 15.sp,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
-                  ),
+                  ],
                 ),
                 if (widget.showWalletLink) ...[
-                  const SizedBox(height: AppSizes.spaceSm),
-                  // "or pay from My wallet" link
+                  SizedBox(height: 10.h),
                   GestureDetector(
                     onTap: _isProcessing ? null : _onPayFromWallet,
                     child: RichText(
                       text: TextSpan(
                         style: TextStyle(
                           fontFamily: 'Montserrat',
-                          fontWeight: FontWeight.w400,
-                          fontSize: 11.sp,
+                          fontSize: 12.sp,
                           color: AppColors.grey650,
                         ),
                         children: [
-                          TextSpan(text: context.l10n.orPayFromWallet),
+                          TextSpan(text: l10n.orPayFromWallet),
                           TextSpan(
-                            text: context.l10n.myWalletLink,
+                            text: l10n.myWalletLink,
                             style: TextStyle(
                               fontWeight: FontWeight.w600,
                               color: _isProcessing
                                   ? AppColors.grey650
-                                  : AppColors.primaryLight,
+                                  : AppColors.primary,
                             ),
                           ),
                         ],

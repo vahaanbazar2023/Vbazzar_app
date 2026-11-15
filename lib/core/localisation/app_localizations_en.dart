@@ -6377,4 +6377,79 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get buySellWishlistEmpty =>
       'You have not added any vehicles to your wishlist yet';
+
+  @override
+  String get authLogInSignUp => 'Log In / Sign Up';
+
+  @override
+  String get authNewHereHint =>
+      'New here? Your account is created automatically.';
+
+  @override
+  String get authWithPassword => 'with Password';
+
+  @override
+  String get authUsernameOrMobile => 'Username or mobile number';
+
+  @override
+  String get authNoPasswordHint =>
+      'No password yet? Tap Forgot Password to set one.';
+
+  @override
+  String get authIAgreeToThe => 'I agree to the ';
+
+  @override
+  String get authOffersOptIn => 'Send me offers and auction alerts';
+
+  @override
+  String get authAgreeRequired =>
+      'Please agree to the Terms and Conditions and Privacy Policy to continue';
+
+  @override
+  String get authEnterUsernameAndPassword =>
+      'Enter your username or mobile number and password';
+
+  @override
+  String get authLoginFailed =>
+      'Login failed. Check your details and try again.';
+
+  @override
+  String get authSetNewPassword => 'Set a new password';
+
+  @override
+  String get authResetCodeHint =>
+      'We will text a code to the mobile number on your account.';
+
+  @override
+  String get authSendCode => 'Send Code';
+
+  @override
+  String get authPasswordMinLength => 'At least 8 characters';
+
+  @override
+  String get authPasswordChanged =>
+      'Password changed. Log in with your new password.';
+
+  @override
+  String get authTryAgain => 'Something went wrong. Please try again.';
+
+  @override
+  String get cashOutSoonTitle => 'Withdrawals are coming soon';
+
+  @override
+  String get cashOutSoonBody =>
+      'We are working hard to bring bank withdrawals to you. Until then, your rewards stay safe in your wallet.';
+
+  @override
+  String get cashOutSoonPoint1 => 'Your wallet balance is safe and unchanged';
+
+  @override
+  String get cashOutSoonPoint2 => 'Keep earning by referring friends';
+
+  @override
+  String get cashOutSoonPoint3 =>
+      'We will let you know as soon as withdrawals open';
+
+  @override
+  String get cashOutSoonCta => 'Back to Rewards';
 }

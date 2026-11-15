@@ -6502,4 +6502,81 @@ class AppLocalizationsTa extends AppLocalizations {
   @override
   String get buySellWishlistEmpty =>
       'நீங்கள் இன்னும் விருப்பப்பட்டியலில் எந்த வாகனமும் சேர்க்கவில்லை';
+
+  @override
+  String get authLogInSignUp => 'உள்நுழை / பதிவு செய்';
+
+  @override
+  String get authNewHereHint =>
+      'புதியவரா? உங்கள் கணக்கு தானாக உருவாக்கப்படும்.';
+
+  @override
+  String get authWithPassword => 'கடவுச்சொல்லுடன்';
+
+  @override
+  String get authUsernameOrMobile => 'பயனர்பெயர் அல்லது மொபைல் எண்';
+
+  @override
+  String get authNoPasswordHint =>
+      'இன்னும் கடவுச்சொல் இல்லையா? அமைக்க கடவுச்சொல் மறந்துவிட்டதா என்பதைத் தட்டவும்.';
+
+  @override
+  String get authIAgreeToThe => 'நான் ஒப்புக்கொள்கிறேன்: ';
+
+  @override
+  String get authOffersOptIn => 'எனக்கு சலுகைகள், ஏல அறிவிப்புகளை அனுப்பவும்';
+
+  @override
+  String get authAgreeRequired =>
+      'தொடர, விதிமுறைகள் மற்றும் தனியுரிமைக் கொள்கையை ஒப்புக்கொள்ளவும்';
+
+  @override
+  String get authEnterUsernameAndPassword =>
+      'உங்கள் பயனர்பெயர் அல்லது மொபைல் எண் மற்றும் கடவுச்சொல்லை உள்ளிடவும்';
+
+  @override
+  String get authLoginFailed =>
+      'உள்நுழைவு தோல்வி. விவரங்களைச் சரிபார்த்து மீண்டும் முயலவும்.';
+
+  @override
+  String get authSetNewPassword => 'புதிய கடவுச்சொல்லை அமைக்கவும்';
+
+  @override
+  String get authResetCodeHint =>
+      'உங்கள் கணக்கின் மொபைல் எண்ணுக்கு ஒரு குறியீட்டை அனுப்புவோம்.';
+
+  @override
+  String get authSendCode => 'குறியீட்டை அனுப்பு';
+
+  @override
+  String get authPasswordMinLength => 'குறைந்தது 8 எழுத்துகள்';
+
+  @override
+  String get authPasswordChanged =>
+      'கடவுச்சொல் மாற்றப்பட்டது. புதிய கடவுச்சொல்லுடன் உள்நுழையவும்.';
+
+  @override
+  String get authTryAgain => 'ஏதோ தவறு நடந்தது. மீண்டும் முயலவும்.';
+
+  @override
+  String get cashOutSoonTitle => 'பணம் எடுக்கும் வசதி விரைவில் வருகிறது';
+
+  @override
+  String get cashOutSoonBody =>
+      'வங்கிக்கு பணம் எடுக்கும் வசதியை உங்களுக்குக் கொண்டுவர நாங்கள் கடுமையாக உழைக்கிறோம். அதுவரை உங்கள் வெகுமதிகள் உங்கள் வாலெட்டில் பாதுகாப்பாக இருக்கும்.';
+
+  @override
+  String get cashOutSoonPoint1 =>
+      'உங்கள் வாலெட் இருப்பு பாதுகாப்பாகவும் மாறாமலும் உள்ளது';
+
+  @override
+  String get cashOutSoonPoint2 =>
+      'நண்பர்களைப் பரிந்துரைத்து தொடர்ந்து சம்பாதியுங்கள்';
+
+  @override
+  String get cashOutSoonPoint3 =>
+      'வசதி தொடங்கியவுடன் உங்களுக்குத் தெரிவிப்போம்';
+
+  @override
+  String get cashOutSoonCta => 'வெகுமதிகளுக்குத் திரும்பு';
 }

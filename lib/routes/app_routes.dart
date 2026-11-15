@@ -61,6 +61,7 @@ class AppRoutes {
 
   // Search
   static const search = '/search';
+  static const chatbot = '/chatbot';
 
   // Notifications
   static const notifications = '/notifications';

@@ -7,6 +7,11 @@ class ApiEndpoints {
   static const String login = '/api/v2/auth/login';
   static const String verifyOtp = '/api/v2/auth/verify-otp';
   static const String completeProfile = '/api/v2/auth/complete-profile';
+  // Password sign-in (v1). An account created by OTP has no password until the
+  // user sets one through the forgot-password flow below.
+  static const String passwordLogin = '/api/v1/auth/login';
+  static const String forgotPasswordSendOtp = '/api/v1/auth/forgot-password/send-otp';
+  static const String forgotPasswordReset = '/api/v1/auth/forgot-password/reset';
   static const String logout = '/api/v1/auth/logout';
   static const String refreshToken = '/api/v1/auth/refresh-token';
   // GET/PUT — current / change the app language (Bearer). The language chosen before login is

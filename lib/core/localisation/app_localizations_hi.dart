@@ -6393,4 +6393,78 @@ class AppLocalizationsHi extends AppLocalizations {
   @override
   String get buySellWishlistEmpty =>
       'आपने अभी तक विशलिस्ट में कोई वाहन नहीं जोड़ा है';
+
+  @override
+  String get authLogInSignUp => 'लॉग इन / साइन अप';
+
+  @override
+  String get authNewHereHint => 'नए हैं? आपका खाता अपने आप बन जाएगा।';
+
+  @override
+  String get authWithPassword => 'पासवर्ड से';
+
+  @override
+  String get authUsernameOrMobile => 'यूज़रनेम या मोबाइल नंबर';
+
+  @override
+  String get authNoPasswordHint =>
+      'अभी पासवर्ड नहीं है? सेट करने के लिए पासवर्ड भूल गए पर टैप करें।';
+
+  @override
+  String get authIAgreeToThe => 'मैं सहमत हूँ: ';
+
+  @override
+  String get authOffersOptIn => 'मुझे ऑफ़र और नीलामी अलर्ट भेजें';
+
+  @override
+  String get authAgreeRequired =>
+      'जारी रखने के लिए कृपया नियम व शर्तों और गोपनीयता नीति से सहमत हों';
+
+  @override
+  String get authEnterUsernameAndPassword =>
+      'अपना यूज़रनेम या मोबाइल नंबर और पासवर्ड दर्ज करें';
+
+  @override
+  String get authLoginFailed =>
+      'लॉगिन विफल। अपनी जानकारी जाँचें और फिर कोशिश करें।';
+
+  @override
+  String get authSetNewPassword => 'नया पासवर्ड सेट करें';
+
+  @override
+  String get authResetCodeHint =>
+      'हम आपके खाते के मोबाइल नंबर पर एक कोड भेजेंगे।';
+
+  @override
+  String get authSendCode => 'कोड भेजें';
+
+  @override
+  String get authPasswordMinLength => 'कम से कम 8 अक्षर';
+
+  @override
+  String get authPasswordChanged =>
+      'पासवर्ड बदल गया। अपने नए पासवर्ड से लॉग इन करें।';
+
+  @override
+  String get authTryAgain => 'कुछ गलत हो गया। कृपया फिर कोशिश करें।';
+
+  @override
+  String get cashOutSoonTitle => 'निकासी जल्द आ रही है';
+
+  @override
+  String get cashOutSoonBody =>
+      'हम आपके लिए बैंक निकासी लाने पर कड़ी मेहनत कर रहे हैं। तब तक आपके रिवॉर्ड आपके वॉलेट में सुरक्षित हैं।';
+
+  @override
+  String get cashOutSoonPoint1 =>
+      'आपका वॉलेट बैलेंस सुरक्षित है और जैसा था वैसा ही है';
+
+  @override
+  String get cashOutSoonPoint2 => 'दोस्तों को रेफ़र करके कमाते रहें';
+
+  @override
+  String get cashOutSoonPoint3 => 'निकासी शुरू होते ही हम आपको बताएँगे';
+
+  @override
+  String get cashOutSoonCta => 'रिवॉर्ड पर वापस जाएँ';
 }

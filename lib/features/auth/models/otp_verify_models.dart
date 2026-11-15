@@ -13,6 +13,13 @@ class OtpVerifyRequest {
   /// App language the user picked (en, hi, te, kn, ml, ta) — lets the backend segment users.
   final String? language;
 
+  /// True when the user ticked "I agree to the Terms & Conditions and Privacy
+  /// Policy" on the login screen. The backend stores it as the consent record.
+  final bool? termsAccepted;
+
+  /// The user's answer to the optional "send me offers" tick-box.
+  final bool? marketingOptIn;
+
   const OtpVerifyRequest({
     required this.userId,
     required this.phoneNumber,
@@ -23,6 +30,8 @@ class OtpVerifyRequest {
     this.contentType,
     this.contentId,
     this.language,
+    this.termsAccepted,
+    this.marketingOptIn,
   });
 
   bool isValid() {
@@ -48,6 +57,11 @@ class OtpVerifyRequest {
       json['content_type'] = contentType!;
     if (contentId != null && contentId!.isNotEmpty)
       json['content_id'] = contentId!;
+    if (termsAccepted == true) json['terms_accepted'] = true;
+    if (marketingOptIn != null) json['marketing_opt_in'] = marketingOptIn;
+    if (termsAccepted == true || marketingOptIn != null) {
+      json['consent_source'] = 'app';
+    }
     if (language != null && language!.isNotEmpty) json['language'] = language!;
     return json;
   }

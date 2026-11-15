@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../../core/constants/app_colors.dart';
+import '../../../routes/app_routes.dart';
 import '../../../core/design_system/organisms/app_bottom_nav_bar.dart';
 import '../controllers/main_shell_controller.dart';
 import '../../home/views/home_screen.dart';
@@ -27,6 +29,14 @@ class MainShellScreen extends GetView<MainShellController> {
           index: controller.currentIndex.value,
           children: _tabs,
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        heroTag: 'vaani_chat_fab',
+        tooltip: 'Chat with Vahaan Vani',
+        backgroundColor: AppColors.primary,
+        foregroundColor: Colors.white,
+        onPressed: () => Get.toNamed(AppRoutes.chatbot),
+        child: const Icon(Icons.support_agent_rounded),
       ),
       bottomNavigationBar: Obx(
         () => AppBottomNavBar(

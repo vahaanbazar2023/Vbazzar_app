@@ -335,6 +335,7 @@ class NetworkService extends GetxService {
       '/login-username',
       '/register',
       '/verify-otp',
+      '/ForgotPasswordScreen', // opened with Get.to from the login screen
       '/splash',
     ];
 

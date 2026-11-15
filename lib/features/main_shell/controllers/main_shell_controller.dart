@@ -16,6 +16,15 @@ class MainShellController extends GetxController {
     update(); // refresh GetBuilder-based bottom bars on pushed screens
   }
 
+  /// Back to the Home tab. The controller is registered permanently, so without
+  /// this the next login would reopen whichever tab the previous session ended
+  /// on (e.g. Profile, after logging out from it).
+  void resetToHome() {
+    currentIndex.value = 0;
+    reselectedIndex.value = 0;
+    update();
+  }
+
   /// Bottom-bar tap (shell and pushed screens use this).
   ///
   /// Selects the tab and unwinds every screen pushed on top of the shell, so
