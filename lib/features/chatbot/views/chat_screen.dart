@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
+import '../../../core/constants/app_assets.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/design_system/organisms/app_header.dart';
 import '../controllers/chat_controller.dart';
@@ -59,6 +60,18 @@ class ChatScreen extends GetView<ChatController> {
                             controller: controller.scroll,
                             padding: EdgeInsets.fromLTRB(14.w, 14.h, 14.w, 8.h),
                             children: [
+                              // Vaani mascot above the greeting on a new chat.
+                              if (msgs.isEmpty)
+                                Padding(
+                                  padding: EdgeInsets.only(bottom: 8.h),
+                                  child: Center(
+                                    child: Image.asset(
+                                      AppAssets.vaaniAi,
+                                      height: 110.h,
+                                      fit: BoxFit.contain,
+                                    ),
+                                  ),
+                                ),
                               _Bubble(
                                 message: ChatMessage(
                                   isUser: false,

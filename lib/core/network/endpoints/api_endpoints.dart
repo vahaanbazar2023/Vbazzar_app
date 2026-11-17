@@ -25,6 +25,7 @@ class ApiEndpoints {
   // ─── User / Profile ──────────────────────────────────────────
   static const String profile = '/api/v1/dashboard/profile';
   static const String updateProfile = '/api/v1/dashboard/profile-update';
+  static const String activitySummary = '/api/v1/dashboard/activity-summary';
   static const String changePassword = '/api/v1/dashboard/change-password';
 
   // ─── Dashboard ───────────────────────────────────────────────

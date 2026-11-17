@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import '../../../core/network/network_service.dart';
 import '../../../core/network/endpoints/api_endpoints.dart';
 import '../../../core/services/logger_service.dart';
+import '../models/activity_summary.dart';
 import '../models/profile_models.dart';
 import '../models/wallet_models.dart';
 
@@ -37,6 +38,17 @@ class ProfileDataSource {
       LoggerService.to.error('fetchProfile DioException: $msg');
       throw Exception(msg);
     }
+  }
+
+  /// POST /api/v1/dashboard/activity-summary — the user's counts per module (Profile stats).
+  Future<ActivitySummary?> fetchActivitySummary(String userId) async {
+    final response = await networkService.post(
+      ApiEndpoints.activitySummary,
+      data: {'user_id': userId},
+    );
+    final body = response.data;
+    final data = body is Map ? body['data'] : null;
+    return data is Map<String, dynamic> ? ActivitySummary.fromJson(data) : null;
   }
 
   /// POST /api/v2/auth/complete-profile — update user profile

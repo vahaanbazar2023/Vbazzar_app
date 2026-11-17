@@ -1,6 +1,8 @@
 import 'package:get/get.dart';
 
+import '../../../core/design_system/organisms/app_bottom_nav_bar.dart';
 import '../../../routes/app_routes.dart';
+import '../../profile/controllers/profile_controller.dart';
 
 class MainShellController extends GetxController {
   final currentIndex = 0.obs;
@@ -37,6 +39,11 @@ class MainShellController extends GetxController {
     if (isReselect) {
       reselectedIndex.value = index;
       reselectTick.value++;
+    }
+    // Profile stats: reload when the tab is opened, so new bids, wins and listings show up.
+    if (index == BottomNavTab.settings.index &&
+        Get.isRegistered<ProfileController>()) {
+      Get.find<ProfileController>().fetchActivity();
     }
   }
 
