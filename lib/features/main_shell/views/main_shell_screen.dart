@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../../../core/constants/app_assets.dart';
-import '../../../core/constants/app_colors.dart';
-import '../../../routes/app_routes.dart';
+import '../../chatbot/widgets/vaani_floating_button.dart';
 import '../../../core/design_system/organisms/app_bottom_nav_bar.dart';
 import '../controllers/main_shell_controller.dart';
 import '../../home/views/home_screen.dart';
@@ -25,30 +23,19 @@ class MainShellScreen extends GetView<MainShellController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Obx(
-        () => _LazyIndexedStack(
-          index: controller.currentIndex.value,
-          children: _tabs,
-        ),
-      ),
-      // Vaani, the AI assistant: white round button with the mascot, opens the chat.
-      floatingActionButton: SizedBox(
-        width: 68,
-        height: 68,
-        child: FloatingActionButton(
-          heroTag: 'vaani_chat_fab',
-          tooltip: 'Chat with Vahaan Vani',
-          backgroundColor: Colors.white,
-          elevation: 6,
-          shape: const CircleBorder(
-            side: BorderSide(color: AppColors.primary, width: 1.5),
+      body: Stack(
+        children: [
+          Positioned.fill(
+            child: Obx(
+              () => _LazyIndexedStack(
+                index: controller.currentIndex.value,
+                children: _tabs,
+              ),
+            ),
           ),
-          onPressed: () => Get.toNamed(AppRoutes.chatbot),
-          child: Padding(
-            padding: const EdgeInsets.all(6),
-            child: Image.asset(AppAssets.vaaniAi, fit: BoxFit.contain),
-          ),
-        ),
+          // Vaani, the AI assistant: drag it anywhere, tap to chat, greeting popup once per launch.
+          const Positioned.fill(child: VaaniFloatingButton()),
+        ],
       ),
       bottomNavigationBar: Obx(
         () => AppBottomNavBar(
