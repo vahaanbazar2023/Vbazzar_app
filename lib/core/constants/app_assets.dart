@@ -18,6 +18,9 @@ class AppAssets {
   static const String homeCE = '${_images}excavators_img.png';
   static const String homeCV = '${_images}icv_img.png';
 
+  /// Vaani, the AI assistant (robot in a car), 3:2, transparent background.
+  static const String vaaniAi = '${_images}vaani-ai.png';
+
   // category Images
   static const String auction = '${_images}auction.png';
   static const String buySell = '${_images}buy_sell.png';

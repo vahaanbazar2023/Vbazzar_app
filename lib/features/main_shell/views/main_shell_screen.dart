@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../../core/constants/app_assets.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../routes/app_routes.dart';
 import '../../../core/design_system/organisms/app_bottom_nav_bar.dart';
@@ -30,13 +31,24 @@ class MainShellScreen extends GetView<MainShellController> {
           children: _tabs,
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        heroTag: 'vaani_chat_fab',
-        tooltip: 'Chat with Vahaan Vani',
-        backgroundColor: AppColors.primary,
-        foregroundColor: Colors.white,
-        onPressed: () => Get.toNamed(AppRoutes.chatbot),
-        child: const Icon(Icons.support_agent_rounded),
+      // Vaani, the AI assistant: white round button with the mascot, opens the chat.
+      floatingActionButton: SizedBox(
+        width: 68,
+        height: 68,
+        child: FloatingActionButton(
+          heroTag: 'vaani_chat_fab',
+          tooltip: 'Chat with Vahaan Vani',
+          backgroundColor: Colors.white,
+          elevation: 6,
+          shape: const CircleBorder(
+            side: BorderSide(color: AppColors.primary, width: 1.5),
+          ),
+          onPressed: () => Get.toNamed(AppRoutes.chatbot),
+          child: Padding(
+            padding: const EdgeInsets.all(6),
+            child: Image.asset(AppAssets.vaaniAi, fit: BoxFit.contain),
+          ),
+        ),
       ),
       bottomNavigationBar: Obx(
         () => AppBottomNavBar(
