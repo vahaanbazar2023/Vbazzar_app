@@ -348,39 +348,55 @@ class _BookingCard extends StatelessWidget {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Shimmer
-// ─────────────────────────────────────────────────────────────────────────────
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Shimmer
+// Skeleton — mirrors [_BookingCard]: 180h image, title, description, year /
+// location chips + price, Book now / Inspection buttons.
 // ─────────────────────────────────────────────────────────────────────────────
 
 class _ShimmerList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
+    // Real cards carry a 12h bottom margin, so no extra spacing here.
+    return SkeletonList(
+      count: 4,
       padding: EdgeInsets.all(AppSpacing.md),
-      physics: const NeverScrollableScrollPhysics(),
-      itemCount: 4,
-      itemBuilder: (_, __) => Container(
-        margin: EdgeInsets.only(bottom: 12.h),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(AppRadius.lg),
-          border: Border.all(color: AppColors.grey200),
-        ),
+      spacing: 0,
+      itemBuilder: (_, __) => const _BookingCardSkeleton(),
+    );
+  }
+}
+
+class _BookingCardSkeleton extends StatelessWidget {
+  const _BookingCardSkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: EdgeInsets.only(bottom: 12.h),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(AppRadius.lg),
+        border: Border.all(color: AppColors.grey200),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 3),
+          ),
+        ],
+      ),
+      child: AppShimmer(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Image placeholder
-            Container(
-              height: 180.h,
-              decoration: BoxDecoration(
-                color: AppColors.grey100,
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(AppRadius.lg),
-                  topRight: Radius.circular(AppRadius.lg),
-                ),
+            ClipRRect(
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(AppRadius.lg),
+                topRight: Radius.circular(AppRadius.lg),
+              ),
+              child: SkeletonBox(
+                width: double.infinity,
+                height: 180.h,
+                radius: 0,
               ),
             ),
             Padding(
@@ -388,48 +404,29 @@ class _ShimmerList extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Title bone
-                  Container(
-                    height: 14.h,
-                    width: 160.w,
-                    decoration: BoxDecoration(
-                      color: AppColors.grey100,
-                      borderRadius: BorderRadius.circular(4.r),
-                    ),
-                  ),
-                  SizedBox(height: 8.h),
-                  // Subtitle bone
-                  Container(
-                    height: 11.h,
-                    width: 220.w,
-                    decoration: BoxDecoration(
-                      color: AppColors.grey100,
-                      borderRadius: BorderRadius.circular(4.r),
-                    ),
-                  ),
-                  SizedBox(height: 10.h),
-                  // Button bones
+                  // Title
+                  SkeletonBox(width: 160.w, height: 16.h),
+                  SizedBox(height: AppSpacing.xs),
+                  // Description
+                  SkeletonBox(width: 220.w, height: 12.h),
+                  SizedBox(height: AppSpacing.xs),
+                  // Year + location chips … price
                   Row(
                     children: [
-                      Expanded(
-                        child: Container(
-                          height: 38.h,
-                          decoration: BoxDecoration(
-                            color: AppColors.grey100,
-                            borderRadius: BorderRadius.circular(30.r),
-                          ),
-                        ),
-                      ),
+                      SkeletonBox(width: 48.w, height: 12.h, radius: 4),
+                      SizedBox(width: AppSpacing.sm),
+                      SkeletonBox(width: 80.w, height: 12.h, radius: 4),
+                      const Spacer(),
+                      SkeletonBox(width: 72.w, height: 14.h),
+                    ],
+                  ),
+                  SizedBox(height: AppSpacing.sm),
+                  // Book now / Inspection buttons
+                  Row(
+                    children: [
+                      Expanded(child: SkeletonBox(height: 44.h, radius: 30)),
                       SizedBox(width: 12.w),
-                      Expanded(
-                        child: Container(
-                          height: 38.h,
-                          decoration: BoxDecoration(
-                            color: AppColors.grey100,
-                            borderRadius: BorderRadius.circular(30.r),
-                          ),
-                        ),
-                      ),
+                      Expanded(child: SkeletonBox(height: 44.h, radius: 30)),
                     ],
                   ),
                 ],

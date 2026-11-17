@@ -461,17 +461,91 @@ class _MyVehicleCard extends StatelessWidget {
 class _ShimmerList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      padding: EdgeInsets.all(AppSpacing.md),
-      itemCount: 4,
-      itemBuilder: (_, __) => Padding(
-        padding: EdgeInsets.only(bottom: AppSpacing.md),
-        child: Container(
-          height: 280.h,
-          decoration: BoxDecoration(
-            color: AppColors.grey100,
-            borderRadius: BorderRadius.circular(AppRadius.lg),
+    return SkeletonList(
+      count: 4,
+      padding: EdgeInsets.fromLTRB(
+        AppSpacing.md,
+        AppSpacing.sm,
+        AppSpacing.md,
+        100,
+      ),
+      spacing: AppSpacing.md,
+      itemBuilder: (_, __) => const _MyVehicleCardSkeleton(),
+    );
+  }
+}
+
+/// Mirrors [_MyVehicleCard]: 180h image, title, year/registration chips,
+/// price + Details / Edit / Mark sold pills.
+class _MyVehicleCardSkeleton extends StatelessWidget {
+  const _MyVehicleCardSkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(AppRadius.lg),
+        border: Border.all(color: AppColors.grey200),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 3),
           ),
+        ],
+      ),
+      child: AppShimmer(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(AppRadius.lg),
+                topRight: Radius.circular(AppRadius.lg),
+              ),
+              child: SkeletonBox(
+                width: double.infinity,
+                height: 180.h,
+                radius: 0,
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.all(AppSpacing.md),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Title
+                  SkeletonBox(width: 170.w, height: 16.h),
+                  SizedBox(height: AppSpacing.xs),
+                  // Year + registration chips
+                  Row(
+                    children: [
+                      SkeletonBox(width: 48.w, height: 12.h, radius: 4),
+                      SizedBox(width: AppSpacing.xs),
+                      SkeletonBox(width: 90.w, height: 12.h, radius: 4),
+                    ],
+                  ),
+                  SizedBox(height: AppSpacing.sm),
+                  // Price + action pills
+                  Row(
+                    children: [
+                      SkeletonBox(width: 80.w, height: 20.h),
+                      const Spacer(),
+                      SkeletonBox(width: 64.w, height: 30.h, radius: 20),
+                      SizedBox(width: 8.w),
+                      SkeletonBox(width: 52.w, height: 30.h, radius: 20),
+                    ],
+                  ),
+                  SizedBox(height: 6.h),
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: SkeletonBox(width: 88.w, height: 30.h, radius: 20),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
       ),
     );

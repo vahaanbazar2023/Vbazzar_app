@@ -568,119 +568,123 @@ class _PayNowButton extends StatelessWidget {
 // Shimmer skeleton
 // ─────────────────────────────────────────────────────────────────────────────
 
-class _ComboShimmer extends StatefulWidget {
-  @override
-  State<_ComboShimmer> createState() => _ComboShimmerState();
-}
-
-class _ComboShimmerState extends State<_ComboShimmer>
-    with SingleTickerProviderStateMixin {
-  late final AnimationController _ctrl;
-  late final Animation<double> _anim;
-
-  @override
-  void initState() {
-    super.initState();
-    _ctrl = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 1200),
-    )..repeat();
-    _anim = Tween<double>(
-      begin: -1.5,
-      end: 1.5,
-    ).animate(CurvedAnimation(parent: _ctrl, curve: Curves.easeInOut));
-  }
-
-  @override
-  void dispose() {
-    _ctrl.dispose();
-    super.dispose();
-  }
-
-  Widget _box({required double w, required double h, double r = 8}) {
-    return AnimatedBuilder(
-      animation: _anim,
-      builder: (_, __) => Container(
-        width: w,
-        height: h,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(r.r),
-          border: Border.all(width: 1, color: AppColors.grey400),
-          gradient: LinearGradient(
-            begin: Alignment(_anim.value - 1, 0),
-            end: Alignment(_anim.value + 1, 0),
-            colors: const [
-              Color(0xFFEEEEEE),
-              Color(0xFFE0E0E0),
-              Color(0xFFEEEEEE),
-            ],
-          ),
-        ),
+/// Mirrors the loaded screen: two combo cards (header, three plan chips with
+/// dividers, price row with the Pay Now button) and the owner-contact-pack
+/// section, in the same cards, padding and spacing.
+class _ComboShimmer extends StatelessWidget {
+  BoxDecoration _cardDecoration(Color border) => BoxDecoration(
+    color: Colors.white,
+    borderRadius: BorderRadius.circular(16.r),
+    border: Border.all(color: border),
+    boxShadow: [
+      BoxShadow(
+        color: Colors.black.withValues(alpha: 0.06),
+        blurRadius: 12,
+        offset: const Offset(0, 3),
       ),
-    );
-  }
+    ],
+  );
 
-  Widget _card() => Container(
-    margin: EdgeInsets.only(bottom: 14.h),
-    padding: EdgeInsets.all(16.r),
-    decoration: BoxDecoration(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(16.r),
-      border: Border.all(color: const Color(0xFFEEEEEE)),
-      boxShadow: [
-        BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 8),
+  Widget _chip() => Padding(
+    padding: EdgeInsets.symmetric(vertical: 8.h),
+    child: Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        SkeletonBox(width: 30.r, height: 30.r, radius: 8),
+        SizedBox(height: 6.h),
+        SkeletonBox(width: 60.w, height: 10.h),
+        SizedBox(height: 3.h),
+        SkeletonBox(width: 40.w, height: 10.h),
       ],
     ),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            _box(w: 52.r, h: 52.r, r: 14),
-            SizedBox(width: 12.w),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _box(w: 140.w, h: 15.h),
-                SizedBox(height: 6.h),
-                _box(w: 110.w, h: 11.h),
-              ],
-            ),
-          ],
-        ),
-        SizedBox(height: 14.h),
-        Row(
-          children: List.generate(
-            3,
-            (_) => Expanded(
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 4.w),
+  );
+
+  Widget _comboCard() => Container(
+    decoration: _cardDecoration(AppColors.grey300),
+    padding: EdgeInsets.all(16.r),
+    child: AppShimmer(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SkeletonBox(width: 52.r, height: 52.r, radius: 14),
+              SizedBox(width: 12.w),
+              Expanded(
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _box(w: 32.r, h: 32.r, r: 8),
-                    SizedBox(height: 5.h),
-                    _box(w: 55.w, h: 9.h),
+                    SkeletonBox(width: 150.w, height: 15.h),
+                    SizedBox(height: 6.h),
+                    SkeletonBox(height: 11.h),
+                    SizedBox(height: 4.h),
+                    SkeletonBox(width: 120.w, height: 11.h),
                   ],
                 ),
               ),
+            ],
+          ),
+          SizedBox(height: 14.h),
+          IntrinsicHeight(
+            child: Row(
+              children: [
+                Expanded(child: _chip()),
+                VerticalDivider(width: 1, thickness: 2, color: AppColors.grey200),
+                Expanded(child: _chip()),
+                VerticalDivider(width: 1, thickness: 2, color: AppColors.grey200),
+                Expanded(child: _chip()),
+              ],
             ),
           ),
-        ),
-        SizedBox(height: 14.h),
-        const Divider(height: 1, color: Color(0xFFF0F0F0)),
-        SizedBox(height: 12.h),
-        Row(
-          children: [
-            _box(w: 70.w, h: 20.h),
-            SizedBox(width: 8.w),
-            Container(width: 1, height: 20.h, color: AppColors.grey300),
-            SizedBox(width: 8.w),
-            _box(w: 50.w, h: 14.h),
-            const Spacer(),
-            _box(w: 100.w, h: 36.h, r: 24),
-          ],
-        ),
-      ],
+          SizedBox(height: 14.h),
+          const Divider(height: 1, color: Color(0xFFF0F0F0)),
+          SizedBox(height: 12.h),
+          Row(
+            children: [
+              SkeletonBox(width: 72.w, height: 20.h),
+              SizedBox(width: 8.w),
+              SkeletonBox(width: 1, height: 16.h, radius: 0),
+              SizedBox(width: 8.w),
+              SkeletonBox(width: 48.w, height: 13.h),
+              const Spacer(),
+              SkeletonBox(width: 100.w, height: 28.h, radius: 20),
+            ],
+          ),
+        ],
+      ),
+    ),
+  );
+
+  Widget _packCard() => Container(
+    decoration: _cardDecoration(const Color(0xFFEEEEEE)),
+    padding: EdgeInsets.all(16.r),
+    child: AppShimmer(
+      child: Row(
+        children: [
+          SkeletonBox(width: 52.r, height: 52.r, radius: 14),
+          SizedBox(width: 12.w),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SkeletonBox(width: 130.w, height: 14.h),
+                SizedBox(height: 5.h),
+                SkeletonBox(width: 90.w, height: 11.h),
+              ],
+            ),
+          ),
+          SizedBox(width: 10.w),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              SkeletonBox(width: 64.w, height: 18.h),
+              SizedBox(height: 8.h),
+              SkeletonBox(width: 100.w, height: 28.h, radius: 20),
+            ],
+          ),
+        ],
+      ),
     ),
   );
 
@@ -688,7 +692,18 @@ class _ComboShimmerState extends State<_ComboShimmer>
   Widget build(BuildContext context) => ListView(
     padding: EdgeInsets.fromLTRB(16.w, 16.h, 16.w, 32.h),
     physics: const NeverScrollableScrollPhysics(),
-    children: List.generate(3, (_) => _card()),
+    children: [
+      _comboCard(),
+      SizedBox(height: 14.h),
+      _comboCard(),
+      SizedBox(height: 18.h),
+      Align(
+        alignment: Alignment.centerLeft,
+        child: AppShimmer(child: SkeletonBox(width: 160.w, height: 14.h)),
+      ),
+      SizedBox(height: 10.h),
+      _packCard(),
+    ],
   );
 }
 

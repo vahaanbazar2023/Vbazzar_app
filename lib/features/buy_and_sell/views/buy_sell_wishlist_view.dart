@@ -7,7 +7,7 @@ import '../../../core/design_system/design_system.dart';
 import '../../../core/design_system/templates/app_layout.dart';
 import '../../../core/extensions/context_extensions.dart';
 import '../controllers/vehicle_detail_controller.dart';
-import 'buy_vehicle_listings_view.dart' show BuyVehicleCard;
+import 'buy_vehicle_listings_view.dart' show BuyVehicleCard, BuyVehicleCardSkeleton;
 
 /// Buy & Sell wishlist: the vehicles the user marked interested, across every category, shown with
 /// the same card (same details) as the Buy & Sell listing.
@@ -38,8 +38,16 @@ class _BuySellWishlistViewState extends State<BuySellWishlistView> {
       body: Obx(() {
         final vehicles = controller.wishlistVehicles;
         if (controller.isLoadingWishlist.value && vehicles.isEmpty) {
-          return const Center(
-            child: CircularProgressIndicator(color: AppColors.primary),
+          return SkeletonList(
+            count: 6,
+            padding: EdgeInsets.fromLTRB(
+              AppSpacing.md,
+              AppSpacing.sm,
+              AppSpacing.md,
+              24,
+            ),
+            spacing: AppSpacing.sm,
+            itemBuilder: (_, __) => const BuyVehicleCardSkeleton(),
           );
         }
         if (controller.hasErrorWishlist.value && vehicles.isEmpty) {

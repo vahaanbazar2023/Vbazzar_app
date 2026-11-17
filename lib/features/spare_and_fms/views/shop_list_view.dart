@@ -5,6 +5,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_sizes.dart';
+import '../../../core/design_system/loaders/app_shimmer.dart';
 import '../../../core/design_system/templates/app_layout.dart';
 import '../../../core/design_system/tokens/app_spacing.dart';
 import '../../../core/extensions/context_extensions.dart';
@@ -239,126 +240,99 @@ class _ShopAdBanner extends StatelessWidget {
 // Shimmer skeleton — mirrors ShopCard layout
 // ─────────────────────────────────────────────────────────────────────────────
 
-class _ShopListShimmer extends StatefulWidget {
+class _ShopListShimmer extends StatelessWidget {
   const _ShopListShimmer();
 
   @override
-  State<_ShopListShimmer> createState() => _ShopListShimmerState();
-}
-
-class _ShopListShimmerState extends State<_ShopListShimmer>
-    with SingleTickerProviderStateMixin {
-  late final AnimationController _ctrl;
-  late final Animation<double> _anim;
-
-  @override
-  void initState() {
-    super.initState();
-    _ctrl = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 1100),
-    )..repeat(reverse: true);
-    _anim = Tween<double>(
-      begin: 0.3,
-      end: 1.0,
-    ).animate(CurvedAnimation(parent: _ctrl, curve: Curves.easeInOut));
-  }
-
-  @override
-  void dispose() {
-    _ctrl.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: _anim,
-      builder: (_, __) => ListView.builder(
-        padding: EdgeInsets.all(AppSpacing.md),
-        itemCount: 6,
-        itemBuilder: (_, __) => _ShopCardSkeleton(opacity: _anim.value),
-      ),
+    return SkeletonList(
+      count: 5,
+      padding: EdgeInsets.all(AppSpacing.md),
+      spacing: 0,
+      itemBuilder: (_, __) => const _ShopCardSkeleton(),
     );
   }
 }
 
 class _ShopCardSkeleton extends StatelessWidget {
-  final double opacity;
-  const _ShopCardSkeleton({required this.opacity});
+  const _ShopCardSkeleton();
 
   @override
   Widget build(BuildContext context) {
-    return Opacity(
-      opacity: opacity,
-      child: Container(
-        margin: EdgeInsets.only(bottom: 12.h),
-        padding: EdgeInsets.all(16.r),
-        decoration: BoxDecoration(
-          color: AppColors.white,
-          borderRadius: BorderRadius.circular(AppSizes.radiusLg),
-          border: Border.all(color: AppColors.grey200),
-          boxShadow: [
-            BoxShadow(
-              color: AppColors.black.withValues(alpha: 0.04),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
-            ),
-          ],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _bone(w: 48.r, h: 48.r, r: AppSizes.radiusMd),
-                SizedBox(width: 12.w),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Expanded(
-                            child: _bone(w: double.infinity, h: 14.h, r: 4),
-                          ),
-                          SizedBox(width: 8.w),
-                          _bone(w: 36.w, h: 20.h, r: 20),
-                        ],
-                      ),
-                      SizedBox(height: 6.h),
-                      _bone(w: double.infinity, h: 11.h, r: 4),
-                      SizedBox(height: 4.h),
-                      _bone(w: 140.w, h: 11.h, r: 4),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(height: 12.h),
-            Row(
-              children: [
-                _bone(w: 80.w, h: 28.h, r: 20),
-                SizedBox(width: 12.w),
-                _bone(w: 90.w, h: 28.h, r: 20),
-              ],
-            ),
-            SizedBox(height: 14.h),
-            _bone(w: double.infinity, h: 42.h, r: 20),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _bone({required double w, required double h, required double r}) {
     return Container(
-      width: w,
-      height: h,
+      margin: EdgeInsets.only(bottom: 12.h),
       decoration: BoxDecoration(
-        color: AppColors.grey200,
-        borderRadius: BorderRadius.circular(r),
+        color: AppColors.white,
+        borderRadius: BorderRadius.circular(AppSizes.radiusLg),
+        border: Border.all(color: AppColors.grey200, width: 1),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.black.withValues(alpha: 0.10),
+            blurRadius: 14,
+            spreadRadius: 1,
+            offset: const Offset(0, 4),
+          ),
+          BoxShadow(
+            color: AppColors.primary.withValues(alpha: 0.06),
+            blurRadius: 6,
+            offset: const Offset(0, 1),
+          ),
+        ],
+      ),
+      child: Padding(
+        padding: EdgeInsets.all(16.r),
+        child: AppShimmer(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Shop icon + name/badge + address
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SkeletonBox(width: 48.r, height: 48.r, radius: 12),
+                  SizedBox(width: 12.w),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Align(
+                                alignment: Alignment.centerLeft,
+                                child: SkeletonBox(width: 150.w, height: 15.h),
+                              ),
+                            ),
+                            SizedBox(width: 8.w),
+                            SkeletonBox(width: 32.w, height: 18.h, radius: 20),
+                          ],
+                        ),
+                        SizedBox(height: 6.h),
+                        SkeletonBox(height: 11.h),
+                        SizedBox(height: 4.h),
+                        SkeletonBox(width: 140.w, height: 11.h),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 12.h),
+              // Distance chip + stars + call button
+              Row(
+                children: [
+                  SkeletonBox(width: 72.w, height: 28.h, radius: 20),
+                  SizedBox(width: 12.w),
+                  SkeletonBox(width: 110.w, height: 26.h, radius: 20),
+                  const Spacer(),
+                  SkeletonBox.circle(size: 36.r),
+                ],
+              ),
+              SizedBox(height: 14.h),
+              // Contact button
+              SkeletonBox(width: double.infinity, height: 42.h, radius: 21),
+            ],
+          ),
+        ),
       ),
     );
   }

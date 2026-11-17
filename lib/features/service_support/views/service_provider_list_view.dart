@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:shimmer/shimmer.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/constants/app_colors.dart';
 import '../../../core/design_system/atoms/custom_loader.dart';
+import '../../../core/design_system/loaders/app_shimmer.dart';
 import '../../../core/design_system/molecules/gradient_button.dart';
 import '../../../core/design_system/templates/app_layout.dart';
 import '../../../core/extensions/context_extensions.dart';
@@ -506,103 +506,11 @@ class ServiceProviderListView extends GetView<ServiceSupportController> {
   // ══════════════════════════════════════════════════════════════════
 
   Widget _buildShimmerList() {
-    return Shimmer.fromColors(
-      baseColor: Colors.grey.shade200,
-      highlightColor: Colors.grey.shade50,
-      child: ListView.builder(
-        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-        itemCount: 4,
-        itemBuilder: (_, __) => Container(
-          margin: EdgeInsets.only(bottom: 16.h),
-          padding: EdgeInsets.all(16.r),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(20.r),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Container(
-                    width: 56.w,
-                    height: 56.h,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(16.r),
-                    ),
-                  ),
-                  SizedBox(width: 14.w),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                          width: 160.w,
-                          height: 16.h,
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(4.r),
-                          ),
-                        ),
-                        SizedBox(height: 6.h),
-                        Container(
-                          width: 120.w,
-                          height: 14.h,
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(4.r),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(height: 16.h),
-              Container(
-                width: double.infinity,
-                height: 14.h,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(4.r),
-                ),
-              ),
-              SizedBox(height: 12.h),
-              Row(
-                children: [
-                  Container(
-                    width: 80.w,
-                    height: 28.h,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(8.r),
-                    ),
-                  ),
-                  SizedBox(width: 10.w),
-                  Container(
-                    width: 70.w,
-                    height: 28.h,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(8.r),
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(height: 16.h),
-              Container(
-                width: double.infinity,
-                height: 48.h,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(14.r),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
+    return SkeletonList(
+      count: 4,
+      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+      spacing: 0,
+      itemBuilder: (_, __) => const _MechanicCardSkeleton(),
     );
   }
 
@@ -719,6 +627,119 @@ dynamic _resolveMechItem(int flatIndex, ServiceSupportController ctrl) {
 // ─────────────────────────────────────────────────────────────────────────────
 // Mechanic Ad Banner
 // ─────────────────────────────────────────────────────────────────────────────
+
+/// Loading placeholder shaped like the mechanic card: tinted header with
+/// avatar + name/garage/description, address, rating/distance chips with a
+/// priority badge, divider and the centred call button.
+class _MechanicCardSkeleton extends StatelessWidget {
+  const _MechanicCardSkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: EdgeInsets.only(bottom: 16.h),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20.r),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.primary.withValues(alpha: 0.08),
+            blurRadius: 20,
+            offset: const Offset(0, 8),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          Container(
+            padding: EdgeInsets.all(16.r),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  AppColors.primary.withValues(alpha: 0.05),
+                  AppColors.primaryLight.withValues(alpha: 0.02),
+                ],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(20.r),
+                topRight: Radius.circular(20.r),
+              ),
+            ),
+            child: AppShimmer(
+              child: Row(
+                children: [
+                  SkeletonBox(width: 56.w, height: 56.h, radius: 16),
+                  SizedBox(width: 14.w),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SkeletonBox(width: 150.w, height: 16.h),
+                        SizedBox(height: 6.h),
+                        SkeletonBox(width: 120.w, height: 13.h),
+                        SizedBox(height: 6.h),
+                        SkeletonBox(width: 170.w, height: 11.h),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16.w),
+            child: AppShimmer(
+              child: Column(
+                children: [
+                  SizedBox(height: 12.h),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SkeletonBox(width: 18.r, height: 18.r, radius: 9),
+                      SizedBox(width: 8.w),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            SkeletonBox(height: 12.h),
+                            SizedBox(height: 6.h),
+                            SkeletonBox(width: 160.w, height: 12.h),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 10.h),
+                  Row(
+                    children: [
+                      SkeletonBox(width: 120.w, height: 28.h, radius: 8),
+                      SizedBox(width: 10.w),
+                      SkeletonBox(width: 70.w, height: 28.h, radius: 8),
+                      const Spacer(),
+                      SkeletonBox(width: 56.w, height: 22.h, radius: 8),
+                    ],
+                  ),
+                  SizedBox(height: 12.h),
+                ],
+              ),
+            ),
+          ),
+          Divider(height: 1, color: AppColors.divider.withValues(alpha: 0.3)),
+          Padding(
+            padding: EdgeInsets.all(12.r),
+            child: AppShimmer(
+              child: Center(
+                child: SkeletonBox(width: 180.w, height: 38.h, radius: 19),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
 
 class _MechanicAdBanner extends StatelessWidget {
   final ListingAd ad;

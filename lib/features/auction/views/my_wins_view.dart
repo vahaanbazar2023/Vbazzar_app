@@ -23,9 +23,7 @@ class MyWinsView extends GetView<MyWinsController> {
       showBack: true,
       body: Obx(() {
         if (controller.isLoading.value) {
-          return const Center(
-            child: CircularProgressIndicator(color: AppColors.primary),
-          );
+          return const _WinListSkeleton();
         }
         if (controller.errorMessage.value != null) {
           return _ErrorState(
@@ -70,6 +68,94 @@ class MyWinsView extends GetView<MyWinsController> {
           ),
         );
       }),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Loading skeleton — mirrors _WinCard (image, tinted content, chips, button)
+// ─────────────────────────────────────────────────────────────────────────────
+
+class _WinListSkeleton extends StatelessWidget {
+  const _WinListSkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    return SkeletonList(
+      count: 3,
+      spacing: AppSpacing.md,
+      padding: EdgeInsets.all(AppSpacing.md),
+      itemBuilder: (_, __) => const _WinCardSkeleton(),
+    );
+  }
+}
+
+class _WinCardSkeleton extends StatelessWidget {
+  const _WinCardSkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      clipBehavior: Clip.antiAlias,
+      decoration: BoxDecoration(
+        color: AppColors.white,
+        borderRadius: AppRadius.borderRadiusMd,
+        border: Border.all(color: AppColors.grey200),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0x0A000000),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          AppShimmer(
+            child: SkeletonBox(
+              width: double.infinity,
+              height: 200.h,
+              radius: 0,
+            ),
+          ),
+          Container(
+            color: AppColors.lightOrangeBackground.withValues(alpha: 0.5),
+            padding: EdgeInsets.fromLTRB(
+              AppSpacing.md,
+              AppSpacing.sm,
+              AppSpacing.md,
+              AppSpacing.md,
+            ),
+            child: AppShimmer(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SkeletonBox(width: 230.w, height: 16.h),
+                  SizedBox(height: AppSpacing.sm),
+                  Row(
+                    children: [
+                      SkeletonBox(width: 120.w, height: 14.h),
+                      SizedBox(width: AppSpacing.lg),
+                      SkeletonBox(width: 110.w, height: 14.h),
+                    ],
+                  ),
+                  SizedBox(height: AppSpacing.xs),
+                  Row(
+                    children: [
+                      SkeletonBox(width: 100.w, height: 15.h),
+                      SizedBox(width: AppSpacing.sm),
+                      SkeletonBox(width: 90.w, height: 18.h),
+                    ],
+                  ),
+                  SizedBox(height: AppSpacing.sm),
+                  SkeletonBox(height: 48.h, radius: 188),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

@@ -66,12 +66,12 @@ class LoadingOverlay extends StatelessWidget {
 }
 
 /// Inline shimmer-style skeleton loader
-class SkeletonBox extends StatefulWidget {
+class PulseSkeletonBox extends StatefulWidget {
   final double width;
   final double height;
   final double radius;
 
-  const SkeletonBox({
+  const PulseSkeletonBox({
     super.key,
     required this.width,
     required this.height,
@@ -79,10 +79,10 @@ class SkeletonBox extends StatefulWidget {
   });
 
   @override
-  State<SkeletonBox> createState() => _SkeletonBoxState();
+  State<PulseSkeletonBox> createState() => _PulseSkeletonBoxState();
 }
 
-class _SkeletonBoxState extends State<SkeletonBox>
+class _PulseSkeletonBoxState extends State<PulseSkeletonBox>
     with SingleTickerProviderStateMixin {
   late AnimationController _ctrl;
   late Animation<Color?> _anim;

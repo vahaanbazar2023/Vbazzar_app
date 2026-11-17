@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import '../../../core/constants/app_colors.dart';
+import '../../../core/design_system/loaders/app_shimmer.dart';
 import '../../../core/design_system/templates/app_layout.dart';
 import '../../../core/design_system/tokens/app_spacing.dart';
 import '../../../core/extensions/context_extensions.dart';
@@ -277,25 +278,77 @@ class _StatusBadge extends StatelessWidget {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Shimmer skeleton
+// Loading skeleton — mirrors _CategoryCard (alternating image side, title,
+// status badge + arrow) and the list padding/spacing
 // ─────────────────────────────────────────────────────────────────────────────
 
 class _ShimmerList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return ListView.separated(
+    return SkeletonList(
+      count: 6,
+      spacing: 8.h,
       padding: EdgeInsets.symmetric(
-        horizontal: AppSpacing.lg,
-        vertical: AppSpacing.lg,
+        horizontal: AppSpacing.md,
+        vertical: AppSpacing.md,
       ),
-      physics: const NeverScrollableScrollPhysics(),
-      itemCount: 6,
-      separatorBuilder: (_, __) => SizedBox(height: 14.h),
-      itemBuilder: (_, __) => Container(
-        height: 110.h,
-        decoration: BoxDecoration(
-          color: AppColors.grey100,
-          borderRadius: BorderRadius.circular(16.r),
+      itemBuilder: (_, index) =>
+          _CategoryCardSkeleton(imageOnLeft: index % 2 == 0),
+    );
+  }
+}
+
+class _CategoryCardSkeleton extends StatelessWidget {
+  final bool imageOnLeft;
+  const _CategoryCardSkeleton({required this.imageOnLeft});
+
+  @override
+  Widget build(BuildContext context) {
+    final image = Padding(
+      padding: EdgeInsets.symmetric(vertical: 12.h),
+      child: SkeletonBox(width: 130.w, height: 64.h, radius: 10),
+    );
+    final info = Padding(
+      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
+      child: Column(
+        crossAxisAlignment: imageOnLeft
+            ? CrossAxisAlignment.end
+            : CrossAxisAlignment.start,
+        children: [
+          SkeletonBox(width: 120.w, height: 16.h),
+          SizedBox(height: 10.h),
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              SkeletonBox(width: 74.w, height: 28.h, radius: 20),
+              SizedBox(width: 10.w),
+              SkeletonBox.circle(size: 28.r),
+            ],
+          ),
+        ],
+      ),
+    );
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16.r),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.07),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: Padding(
+        padding: const EdgeInsets.only(left: 12.0, right: 12),
+        child: AppShimmer(
+          child: Row(
+            children: imageOnLeft
+                ? [image, Expanded(child: info)]
+                : [Expanded(child: info), image],
+          ),
         ),
       ),
     );

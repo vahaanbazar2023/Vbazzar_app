@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 import '../../../core/constants/app_colors.dart';
+import '../../../core/design_system/loaders/app_shimmer.dart';
 import '../../../core/design_system/templates/app_layout.dart';
 import '../../../core/extensions/context_extensions.dart';
 import '../../../theme/app_fonts.dart';
@@ -48,23 +49,11 @@ class _MyQuotesViewState extends State<MyQuotesView> {
       // Loading state
       if (controller.isLoadingQuotes.value &&
           controller.vehicleQuotes.isEmpty) {
-        return Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary),
-              ),
-              SizedBox(height: 16.h),
-              Text(
-                context.l10n.insLoadingQuotes,
-                style: AppFonts.bodyMedium.copyWith(
-                  color: AppColors.textSecondary,
-                  fontSize: 14.sp,
-                ),
-              ),
-            ],
-          ),
+        return SkeletonList(
+          count: 6,
+          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+          spacing: 0,
+          itemBuilder: (_, __) => const _VehicleQuoteCardSkeleton(),
         );
       }
 
@@ -440,5 +429,56 @@ class _MyQuotesViewState extends State<MyQuotesView> {
       (Match m) => '${m[1]},',
     );
     return result;
+  }
+}
+
+/// Loading placeholder shaped like the collapsed vehicle quote card: service
+/// icon tile, vehicle number, service badge + quote count, chevron.
+class _VehicleQuoteCardSkeleton extends StatelessWidget {
+  const _VehicleQuoteCardSkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: EdgeInsets.only(bottom: 12.h),
+      padding: EdgeInsets.all(16.w),
+      decoration: BoxDecoration(
+        color: AppColors.white,
+        borderRadius: BorderRadius.circular(12.r),
+        border: Border.all(color: AppColors.grey200),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFFE4E5E7).withValues(alpha: 0.24),
+            offset: const Offset(0, 1),
+            blurRadius: 2,
+          ),
+        ],
+      ),
+      child: AppShimmer(
+        child: Row(
+          children: [
+            SkeletonBox(width: 44.w, height: 44.w, radius: 10),
+            SizedBox(width: 12.w),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SkeletonBox(width: 120.w, height: 15.h),
+                  SizedBox(height: 6.h),
+                  Row(
+                    children: [
+                      SkeletonBox(width: 70.w, height: 18.h, radius: 4),
+                      SizedBox(width: 8.w),
+                      SkeletonBox(width: 60.w, height: 12.h),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            SkeletonBox(width: 16.r, height: 10.r, radius: 2),
+          ],
+        ),
+      ),
+    );
   }
 }

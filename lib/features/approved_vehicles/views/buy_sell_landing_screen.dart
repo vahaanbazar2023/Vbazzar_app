@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import '../../../core/constants/app_colors.dart';
-import '../../../core/design_system/loaders/loading_widget.dart';
+import '../../../core/design_system/loaders/app_shimmer.dart';
 import '../../../core/design_system/templates/app_layout.dart';
 import '../../../core/design_system/tokens/app_radius.dart';
 import '../../../core/design_system/tokens/app_spacing.dart';
@@ -92,16 +92,11 @@ class _BuySellLandingScreenState extends State<BuySellLandingScreen> {
 
   // ── Shimmer list ────────────────────────────────────────────────────────
   Widget _buildShimmerList() {
-    return ListView.builder(
+    return SkeletonList(
+      count: 6,
       padding: EdgeInsets.all(AppSpacing.md),
-      physics: const NeverScrollableScrollPhysics(),
-      itemCount: 4,
-      itemBuilder: (context, index) {
-        return Padding(
-          padding: EdgeInsets.only(bottom: AppSpacing.md),
-          child: _ShimmerCategoryCard(),
-        );
-      },
+      spacing: AppSpacing.md,
+      itemBuilder: (_, __) => const _ShimmerCategoryCard(),
     );
   }
 
@@ -380,34 +375,48 @@ class _ShimmerCategoryCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(AppSpacing.md),
+      padding: EdgeInsets.fromLTRB(12.w, 12.h, 12.w, 12.h),
       decoration: BoxDecoration(
         color: AppColors.white,
         borderRadius: AppRadius.borderRadiusMd,
         border: Border.all(color: AppColors.grey200),
-      ),
-      child: Row(
-        children: [
-          SkeletonBox(width: 56.w, height: 56.w, radius: 14),
-          SizedBox(width: 14.w),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SkeletonBox(width: 120.w, height: 16.h, radius: 6),
-                SizedBox(height: 6.h),
-                SkeletonBox(width: 160.w, height: 12.h, radius: 6),
-              ],
-            ),
-          ),
-          Column(
-            children: [
-              SkeletonBox(width: 80.w, height: 34.h, radius: 8),
-              SizedBox(height: 6.h),
-              SkeletonBox(width: 80.w, height: 34.h, radius: 8),
-            ],
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x08000000),
+            blurRadius: 8,
+            offset: Offset(0, 2),
           ),
         ],
+      ),
+      child: AppShimmer(
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            // Vehicle image
+            SkeletonBox(width: 90.w, height: 80.h, radius: 10),
+            SizedBox(width: 14.w),
+            // Name + count + Buy / Sell buttons
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  SkeletonBox(width: 120.w, height: 16.h),
+                  SizedBox(height: 4.h),
+                  SkeletonBox(width: 90.w, height: 12.h),
+                  SizedBox(height: 10.h),
+                  Row(
+                    children: [
+                      Expanded(child: SkeletonBox(height: 34.h, radius: 20)),
+                      SizedBox(width: 8.w),
+                      Expanded(child: SkeletonBox(height: 34.h, radius: 20)),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

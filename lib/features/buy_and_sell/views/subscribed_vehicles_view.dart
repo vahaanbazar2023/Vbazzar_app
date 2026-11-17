@@ -377,17 +377,87 @@ class _SubscribedCard extends StatelessWidget {
 class _ShimmerList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      padding: EdgeInsets.all(AppSpacing.md),
-      itemCount: 4,
-      itemBuilder: (_, __) => Padding(
-        padding: EdgeInsets.only(bottom: AppSpacing.md),
-        child: Container(
-          height: 280.h,
-          decoration: BoxDecoration(
-            color: AppColors.grey100,
-            borderRadius: BorderRadius.circular(AppRadius.lg),
+    return SkeletonList(
+      count: 4,
+      padding: EdgeInsets.fromLTRB(
+        AppSpacing.md,
+        AppSpacing.sm,
+        AppSpacing.md,
+        100,
+      ),
+      spacing: AppSpacing.md,
+      itemBuilder: (_, __) => const _SubscribedCardSkeleton(),
+    );
+  }
+}
+
+/// Mirrors [_SubscribedCard]: 180h image, title, year/location chips, owner
+/// mobile box, price + "View details" pill.
+class _SubscribedCardSkeleton extends StatelessWidget {
+  const _SubscribedCardSkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(AppRadius.lg),
+        border: Border.all(color: AppColors.grey200),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 3),
           ),
+        ],
+      ),
+      child: AppShimmer(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(AppRadius.lg),
+                topRight: Radius.circular(AppRadius.lg),
+              ),
+              child: SkeletonBox(
+                width: double.infinity,
+                height: 180.h,
+                radius: 0,
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.all(AppSpacing.md),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Title
+                  SkeletonBox(width: 170.w, height: 16.h),
+                  SizedBox(height: AppSpacing.xs),
+                  // Year + location chips
+                  Row(
+                    children: [
+                      SkeletonBox(width: 48.w, height: 12.h, radius: 4),
+                      SizedBox(width: AppSpacing.xs),
+                      SkeletonBox(width: 100.w, height: 12.h, radius: 4),
+                    ],
+                  ),
+                  SizedBox(height: AppSpacing.sm),
+                  // Owner mobile box
+                  SkeletonBox(width: 130.w, height: 30.h, radius: 8),
+                  SizedBox(height: AppSpacing.sm),
+                  // Price + View details pill
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      SkeletonBox(width: 90.w, height: 20.h),
+                      SkeletonBox(width: 100.w, height: 30.h, radius: 20),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
       ),
     );

@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 import '../../../core/constants/app_colors.dart';
+import '../../../core/design_system/loaders/app_shimmer.dart';
 import '../../../core/design_system/molecules/gradient_button.dart';
 import '../../../core/design_system/templates/app_layout.dart';
 import '../../../core/extensions/context_extensions.dart';
@@ -61,20 +62,11 @@ class MyInspectionsView extends GetView<InspectionValuationController> {
   }
 
   Widget _buildShimmerList() {
-    return ListView.builder(
-      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
-      itemCount: 5,
-      itemBuilder: (_, __) => Padding(
-        padding: EdgeInsets.only(bottom: 12.h),
-        child: Container(
-          width: double.infinity,
-          height: 120.h,
-          decoration: BoxDecoration(
-            color: AppColors.grey100,
-            borderRadius: BorderRadius.circular(12.r),
-          ),
-        ),
-      ),
+    return SkeletonList(
+      count: 5,
+      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+      spacing: 12.h,
+      itemBuilder: (_, __) => const _InspectionCardSkeleton(),
     );
   }
 
@@ -233,6 +225,70 @@ class MyInspectionsView extends GetView<InspectionValuationController> {
             ),
           );
         },
+      ),
+    );
+  }
+}
+
+/// Loading placeholder shaped like [InspectionCard]: vehicle icon tile,
+/// vehicle number + status pill, brand/type, city, chassis and owner lines.
+class _InspectionCardSkeleton extends StatelessWidget {
+  const _InspectionCardSkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.all(14.r),
+      decoration: BoxDecoration(
+        color: AppColors.white,
+        borderRadius: BorderRadius.circular(12.r),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.black.withValues(alpha: 0.06),
+            blurRadius: 10,
+            offset: const Offset(0, 3),
+          ),
+        ],
+      ),
+      child: AppShimmer(
+        child: Row(
+          children: [
+            SkeletonBox(width: 44.r, height: 44.r, radius: 10),
+            SizedBox(width: 12.w),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: SkeletonBox(width: 110.w, height: 15.h),
+                        ),
+                      ),
+                      SkeletonBox(width: 64.w, height: 18.h, radius: 20),
+                    ],
+                  ),
+                  SizedBox(height: 6.h),
+                  SkeletonBox(width: 140.w, height: 12.h),
+                  SizedBox(height: 4.h),
+                  SkeletonBox(width: 110.w, height: 11.h),
+                  SizedBox(height: 4.h),
+                  SkeletonBox(width: 150.w, height: 10.h),
+                  SizedBox(height: 8.h),
+                  Row(
+                    children: [
+                      SkeletonBox(width: 90.w, height: 11.h),
+                      const Spacer(),
+                      SkeletonBox(width: 70.w, height: 11.h),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

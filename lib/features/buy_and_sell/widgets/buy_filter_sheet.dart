@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import '../../../core/extensions/context_extensions.dart';
 import '../../../core/constants/app_colors.dart';
+import '../../../core/design_system/loaders/app_shimmer.dart';
 import '../../../core/design_system/molecules/custom_autocomplete_field.dart';
 import '../../../core/design_system/molecules/inline_dropdown_field.dart';
 import '../controllers/vehicle_detail_controller.dart';
@@ -146,14 +147,7 @@ class _BuyFilterSheetState extends State<BuyFilterSheet> {
                   padding: EdgeInsets.fromLTRB(20, 14, 20, bottomPad + 8),
                   child: Obx(() {
                     if (widget.controller.isLoadingFilters.value) {
-                      return const Padding(
-                        padding: EdgeInsets.symmetric(vertical: 32),
-                        child: Center(
-                          child: CircularProgressIndicator(
-                            color: AppColors.primary,
-                          ),
-                        ),
-                      );
+                      return const _FilterFieldsSkeleton();
                     }
                     final opts = widget.controller.dynamicFilterOptions;
                     if (opts.isEmpty) {
@@ -235,6 +229,48 @@ class _BuyFilterSheetState extends State<BuyFilterSheet> {
         ),
       ), // Container
     ); // Padding
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Skeleton while the filter definitions load — mirrors [_FilterField] rows
+// (label + input box, 20 apart) and the Apply button.
+// ─────────────────────────────────────────────────────────────────────────────
+
+class _FilterFieldsSkeleton extends StatelessWidget {
+  const _FilterFieldsSkeleton();
+
+  static const _labelWidths = [70.0, 90.0, 60.0, 110.0];
+
+  @override
+  Widget build(BuildContext context) {
+    return AppShimmer(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          for (final w in _labelWidths)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 20),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SkeletonBox(width: w.w, height: 13.h, radius: 4),
+                  const SizedBox(height: 8),
+                  const SkeletonBox(
+                    width: double.infinity,
+                    height: 48,
+                    radius: 10,
+                  ),
+                ],
+              ),
+            ),
+          // Apply button
+          const SkeletonBox(width: double.infinity, height: 50, radius: 25),
+        ],
+      ),
+    );
   }
 }
 

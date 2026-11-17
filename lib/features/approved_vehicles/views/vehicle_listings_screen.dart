@@ -4,7 +4,6 @@ import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/design_system/design_system.dart';
-import '../../../core/design_system/loaders/loading_widget.dart';
 import '../../../core/design_system/organisms/network_image_carousel.dart';
 import '../../../core/design_system/templates/app_layout.dart';
 import '../../../core/design_system/tokens/app_radius.dart';
@@ -124,16 +123,11 @@ class _VehicleListingsScreenState extends State<VehicleListingsScreen> {
   }
 
   Widget _buildShimmerList() {
-    return ListView.builder(
+    return SkeletonList(
+      count: 4,
       padding: EdgeInsets.all(AppSpacing.md),
-      physics: const NeverScrollableScrollPhysics(),
-      itemCount: 3,
-      itemBuilder: (context, index) {
-        return Padding(
-          padding: EdgeInsets.only(bottom: AppSpacing.md),
-          child: _ShimmerCard(),
-        );
-      },
+      spacing: AppSpacing.md,
+      itemBuilder: (_, __) => const _ShimmerCard(),
     );
   }
 
@@ -430,52 +424,67 @@ class _ShimmerCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
-        color: AppColors.white,
-        borderRadius: AppRadius.borderRadiusMd,
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(AppRadius.lg),
         border: Border.all(color: AppColors.grey200),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // ── Image placeholder ──────────────────────────────────
-          SkeletonBox(width: double.infinity, height: 180.h, radius: 0),
-
-          // ── Info section ──────────────────────────────────────
-          Container(
-            color: AppColors.lightOrangeBackground.withOpacity(0.3),
-            padding: EdgeInsets.all(AppSpacing.md),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Registration + Year row
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    SkeletonBox(width: 140.w, height: 16.h, radius: 6),
-                    SkeletonBox(width: 48.w, height: 16.h, radius: 6),
-                  ],
-                ),
-                SizedBox(height: 8.h),
-                // Description line
-                SkeletonBox(width: 200.w, height: 14.h, radius: 6),
-                SizedBox(height: 12.h),
-                // Location + Price row
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    SkeletonBox(width: 120.w, height: 14.h, radius: 6),
-                    SkeletonBox(width: 80.w, height: 18.h, radius: 6),
-                  ],
-                ),
-                SizedBox(height: 16.h),
-                // Button placeholder
-                SkeletonBox(width: double.infinity, height: 40.h, radius: 8),
-              ],
-            ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 3),
           ),
         ],
+      ),
+      child: AppShimmer(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // ── Image ────────────────────────────────────────────
+            ClipRRect(
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(AppRadius.lg),
+                topRight: Radius.circular(AppRadius.lg),
+              ),
+              child: SkeletonBox(
+                width: double.infinity,
+                height: 180.h,
+                radius: 0,
+              ),
+            ),
+            // ── Details ──────────────────────────────────────────
+            Padding(
+              padding: EdgeInsets.all(AppSpacing.md),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Title (registration number)
+                  SkeletonBox(width: 140.w, height: 16.h),
+                  SizedBox(height: AppSpacing.xs),
+                  // Description subtitle
+                  SkeletonBox(width: 200.w, height: 12.h),
+                  SizedBox(height: AppSpacing.xs),
+                  // Year + location chips … price
+                  Row(
+                    children: [
+                      SkeletonBox(width: 48.w, height: 12.h, radius: 4),
+                      SizedBox(width: AppSpacing.sm),
+                      SkeletonBox(width: 80.w, height: 12.h, radius: 4),
+                      const Spacer(),
+                      SkeletonBox(width: 72.w, height: 14.h),
+                    ],
+                  ),
+                  SizedBox(height: AppSpacing.sm),
+                  // Know more button
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: SkeletonBox(width: 96.w, height: 30.h, radius: 20),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

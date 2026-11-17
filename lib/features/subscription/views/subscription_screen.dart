@@ -94,8 +94,14 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
       onBack: _onBack,
       body: Obx(() {
         if (controller.isLoading.value) {
-          return const Center(
-            child: CircularProgressIndicator(color: AppColors.primary),
+          if (widget.subscriptionSource == SubscriptionTypeCode.auction &&
+              widget.prebuiltPlan == null &&
+              widget.extraArgs['plans_only'] != true) {
+            return const _AuctionEntrySkeleton();
+          }
+          return _PlanListSkeleton(
+            deposit: widget.subscriptionSource ==
+                SubscriptionTypeCode.auctionDeposit,
           );
         }
         if (controller.errorMessage.value.isNotEmpty) {
@@ -994,9 +1000,7 @@ class _AuctionEntryBodyState extends State<AuctionEntryBody> with _PlanPayment<A
   Widget build(BuildContext context) {
     return Obx(() {
       if (_deposit.isLoading.value) {
-        return const Center(
-          child: CircularProgressIndicator(color: AppColors.primary),
-        );
+        return const _AuctionEntrySkeleton();
       }
       // No deposit plans (none set up, or the server doesn't offer them yet): straight to the access-pass plans.
       if (_deposit.errorMessage.value.isNotEmpty || _deposit.plans.isEmpty) {
@@ -1821,6 +1825,313 @@ class _DepositPlanCard extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Loading skeletons — mirror the plan cards and the Auction Zone choice step
+// ─────────────────────────────────────────────────────────────────────────────
+
+/// A [_Fact] tile placeholder: same outlined grey tile, shimmering content.
+class _FactSkeleton extends StatelessWidget {
+  const _FactSkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 9.w, vertical: 6.h),
+      decoration: BoxDecoration(
+        color: AppColors.grey50,
+        borderRadius: BorderRadius.circular(12.r),
+        border: Border.all(color: AppColors.grey200),
+      ),
+      child: AppShimmer(
+        child: Row(
+          children: [
+            SkeletonBox(width: 22.r, height: 22.r, radius: 6),
+            SizedBox(width: 8.w),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  SkeletonBox(width: 50.w, height: 9.h),
+                  SizedBox(height: 4.h),
+                  SkeletonBox(width: 70.w, height: 11.h),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Plan list loading state: placeholder plan cards (or deposit cards) plus the
+/// white Pay bar, laid out exactly like [SubscriptionPlanBody].
+class _PlanListSkeleton extends StatelessWidget {
+  final bool deposit;
+  const _PlanListSkeleton({required this.deposit});
+
+  BoxDecoration get _cardDecoration => BoxDecoration(
+    color: Colors.white,
+    borderRadius: BorderRadius.circular(16.r),
+    border: Border.all(
+      color: deposit ? AppColors.grey200 : const Color(0xFFEEEEEE),
+    ),
+    boxShadow: [
+      BoxShadow(
+        color: Colors.black.withValues(alpha: 0.06),
+        blurRadius: 10,
+        offset: const Offset(0, 3),
+      ),
+    ],
+  );
+
+  Widget _topRow({required double nameWidth, required double subWidth}) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SkeletonBox(width: 52.r, height: 52.r, radius: 14),
+        SizedBox(width: 12.w),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(height: 4.h),
+              SkeletonBox(width: nameWidth, height: 17.h),
+              SizedBox(height: 6.h),
+              SkeletonBox(width: subWidth, height: 11.h),
+            ],
+          ),
+        ),
+        SizedBox(width: 4.w),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            SkeletonBox.circle(size: 24.r),
+            SizedBox(height: 6.h),
+            SkeletonBox(width: 90.w, height: 20.h),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _chip() => Padding(
+    padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 4.h),
+    child: Row(
+      children: [
+        SkeletonBox(width: 18.r, height: 18.r, radius: 5),
+        SizedBox(width: 5.w),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SkeletonBox(width: 40.w, height: 9.h),
+              SizedBox(height: 3.h),
+              SkeletonBox(width: 50.w, height: 11.h),
+            ],
+          ),
+        ),
+      ],
+    ),
+  );
+
+  Widget _planCard() => Container(
+    decoration: _cardDecoration,
+    padding: EdgeInsets.fromLTRB(12.w, 12.h, 12.w, 10.h),
+    child: AppShimmer(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _topRow(nameWidth: 90.w, subWidth: 150.w),
+          SizedBox(height: 6.h),
+          Row(
+            children: [
+              SkeletonBox(width: 18.r, height: 18.r, radius: 5),
+              SizedBox(width: 6.w),
+              SkeletonBox(width: 120.w, height: 12.h),
+            ],
+          ),
+          SizedBox(height: 6.h),
+          const Divider(height: 1, color: Color(0xFFF0F0F0)),
+          SizedBox(height: 6.h),
+          IntrinsicHeight(
+            child: Row(
+              children: [
+                Expanded(child: _chip()),
+                const VerticalDivider(
+                  width: 1,
+                  thickness: 1,
+                  color: Color(0xFFF0F0F0),
+                ),
+                Expanded(child: _chip()),
+                const VerticalDivider(
+                  width: 1,
+                  thickness: 1,
+                  color: Color(0xFFF0F0F0),
+                ),
+                Expanded(child: _chip()),
+              ],
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
+
+  Widget _depositCard() => Container(
+    decoration: _cardDecoration,
+    padding: EdgeInsets.all(12.r),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        AppShimmer(
+          child: Column(
+            children: [
+              _topRow(nameWidth: 110.w, subWidth: 80.w),
+              SizedBox(height: 10.h),
+              SkeletonBox(width: double.infinity, height: 40.h, radius: 12),
+            ],
+          ),
+        ),
+        SizedBox(height: 10.h),
+        const IntrinsicHeight(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Expanded(child: _FactSkeleton()),
+              SizedBox(width: 8),
+              Expanded(child: _FactSkeleton()),
+            ],
+          ),
+        ),
+      ],
+    ),
+  );
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Expanded(
+          child: SkeletonList(
+            count: deposit ? 3 : 4,
+            padding: EdgeInsets.fromLTRB(16.w, 16.h, 16.w, 8.h),
+            spacing: 12.h,
+            itemBuilder: (_, __) => deposit ? _depositCard() : _planCard(),
+          ),
+        ),
+        Container(
+          width: double.infinity,
+          color: Colors.white,
+          padding: EdgeInsets.fromLTRB(16.w, 12.h, 16.w, 28.h),
+          child: Center(
+            child: AppShimmer(
+              child: SkeletonBox(width: 120, height: 36.h, radius: 18),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+/// Auction Zone choice step loading state: hero banner, the access-pass and
+/// deposit option cards (artwork, title/price, arrow, facts) and the terms.
+class _AuctionEntrySkeleton extends StatelessWidget {
+  const _AuctionEntrySkeleton();
+
+  Widget _optionCard({required bool withBand}) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20.r),
+        border: Border.all(color: _maroon.withValues(alpha: 0.35), width: 1.4),
+        boxShadow: [
+          BoxShadow(
+            color: _maroon.withValues(alpha: 0.10),
+            blurRadius: 16,
+            offset: const Offset(0, 6),
+          ),
+        ],
+      ),
+      padding: EdgeInsets.fromLTRB(12.w, withBand ? 20.h : 12.h, 12.w, 12.h),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          AppShimmer(
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    SkeletonBox(width: 54.r, height: 54.r, radius: 16),
+                    SizedBox(width: 12.w),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          SkeletonBox(width: 150.w, height: 17.h),
+                          SizedBox(height: 6.h),
+                          SkeletonBox(width: 90.w, height: 14.h),
+                        ],
+                      ),
+                    ),
+                    SizedBox(width: 8.w),
+                    const SkeletonBox.circle(size: 44),
+                  ],
+                ),
+                if (withBand) ...[
+                  SizedBox(height: 10.h),
+                  SkeletonBox(width: double.infinity, height: 38.h, radius: 12),
+                ],
+              ],
+            ),
+          ),
+          SizedBox(height: 10.h),
+          const IntrinsicHeight(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Expanded(child: _FactSkeleton()),
+                SizedBox(width: 8),
+                Expanded(child: _FactSkeleton()),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView(
+      physics: const NeverScrollableScrollPhysics(),
+      padding: EdgeInsets.fromLTRB(16.w, 16.h, 16.w, 120.h),
+      children: [
+        AppShimmer(
+          child: SkeletonBox(width: double.infinity, height: 104.h, radius: 18),
+        ),
+        SizedBox(height: 14.h),
+        _optionCard(withBand: false),
+        SizedBox(height: 12.h),
+        _optionCard(withBand: true),
+        SizedBox(height: 10.h),
+        AppShimmer(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SkeletonBox(height: 11.h),
+              SizedBox(height: 5.h),
+              SkeletonBox(width: 220.w, height: 11.h),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }

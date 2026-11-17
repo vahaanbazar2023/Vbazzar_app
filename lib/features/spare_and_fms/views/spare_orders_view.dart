@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_sizes.dart';
+import '../../../core/design_system/loaders/app_shimmer.dart';
 import '../../../core/design_system/templates/app_layout.dart';
 import '../../../core/design_system/tokens/app_spacing.dart';
 import '../../../core/extensions/context_extensions.dart';
@@ -24,7 +25,12 @@ class SpareOrdersView extends GetView<SpareAndFmsController> {
         // Loading state
         if (controller.isSpareOrdersLoading.value &&
             controller.spareOrdersList.isEmpty) {
-          return const Center(child: CircularProgressIndicator());
+          return SkeletonList(
+            count: 6,
+            padding: EdgeInsets.all(AppSpacing.md),
+            spacing: 0,
+            itemBuilder: (_, __) => const _OrderCardSkeleton(),
+          );
         }
 
         // Empty state
@@ -96,6 +102,74 @@ class SpareOrdersView extends GetView<SpareAndFmsController> {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+/// Loading placeholder shaped like [_OrderCard]: image on the left, name +
+/// status pill, order number and price on the right.
+class _OrderCardSkeleton extends StatelessWidget {
+  const _OrderCardSkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: EdgeInsets.only(bottom: AppSpacing.sm),
+      decoration: BoxDecoration(
+        color: AppColors.white,
+        borderRadius: BorderRadius.circular(AppSizes.radiusMd),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.black.withValues(alpha: 0.05),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: AppShimmer(
+        child: Row(
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(AppSizes.radiusMd),
+                bottomLeft: Radius.circular(AppSizes.radiusMd),
+              ),
+              child: SkeletonBox(width: 90.w, height: 90.w, radius: 0),
+            ),
+            Expanded(
+              child: Padding(
+                padding: EdgeInsets.all(AppSpacing.sm),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: SkeletonBox(width: 120.w, height: 14.h),
+                          ),
+                        ),
+                        SkeletonBox(width: 64.w, height: 18.h, radius: 20),
+                      ],
+                    ),
+                    SizedBox(height: 6.h),
+                    SkeletonBox(width: 90.w, height: 11.h),
+                    SizedBox(height: 8.h),
+                    Row(
+                      children: [
+                        SkeletonBox(width: 60.w, height: 15.h),
+                        const Spacer(),
+                        SkeletonBox(width: 10.r, height: 14.r, radius: 2),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 
 import '../../../core/constants/app_assets.dart';
 import '../../../core/constants/app_colors.dart';
+import '../../../core/design_system/loaders/app_shimmer.dart';
 import '../../../core/design_system/organisms/app_header.dart';
 import '../../../core/design_system/molecules/gradient_button.dart';
 import '../../../core/extensions/context_extensions.dart';
@@ -55,9 +56,7 @@ class ProfileScreen extends GetView<ProfileController> {
         backgroundColor: const Color(0xFFFFF6F5),
         body: Obx(() {
           if (controller.isLoading.value) {
-            return const Center(
-              child: CircularProgressIndicator(color: AppColors.primary),
-            );
+            return const _ProfileSkeleton();
           }
 
           final profile = controller.profileData.value;
@@ -65,6 +64,133 @@ class ProfileScreen extends GetView<ProfileController> {
           return _ProfilePage(profile: profile, controller: controller);
         }),
       ),
+    );
+  }
+}
+
+// ============================================================================
+// LOADING SKELETON — header, hero with floating stats, menu tiles
+// ============================================================================
+
+class _ProfileSkeleton extends StatelessWidget {
+  const _ProfileSkeleton();
+
+  Widget _statCell() => Expanded(
+    child: Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        SkeletonBox.circle(size: 30.r),
+        SizedBox(height: 6.h),
+        SkeletonBox(width: 28.w, height: 18.h),
+        SizedBox(height: 4.h),
+        SkeletonBox(width: 56.w, height: 10.h),
+      ],
+    ),
+  );
+
+  Widget _tile() => Container(
+    padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
+    decoration: BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(18.r),
+    ),
+    child: AppShimmer(
+      child: Row(
+        children: [
+          SkeletonBox(width: 40.r, height: 40.r, radius: 13),
+          SizedBox(width: 12.w),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SkeletonBox(width: 130.w, height: 14.h),
+                SizedBox(height: 5.h),
+                SkeletonBox(width: 180.w, height: 11.h),
+              ],
+            ),
+          ),
+          SizedBox(width: 8.w),
+          SkeletonBox.circle(size: 26.r),
+        ],
+      ),
+    ),
+  );
+
+  @override
+  Widget build(BuildContext context) {
+    final topPad = MediaQuery.of(context).padding.top;
+    return ListView(
+      padding: EdgeInsets.zero,
+      physics: const NeverScrollableScrollPhysics(),
+      children: [
+        SizedBox(height: topPad),
+        AppHeader(title: context.l10n.profile, showBack: false),
+        // Hero surface with the floating stats panel overlapping it
+        Stack(
+          clipBehavior: Clip.none,
+          children: [
+            Padding(
+              padding: EdgeInsets.fromLTRB(16.w, 8.h, 16.w, 0),
+              child: AppShimmer(
+                child: SkeletonBox(
+                  width: double.infinity,
+                  height: 140.h,
+                  radius: 26,
+                ),
+              ),
+            ),
+            Positioned(
+              left: 32.w,
+              right: 32.w,
+              bottom: -44.h,
+              child: Container(
+                padding: EdgeInsets.symmetric(vertical: 12.h),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(18.r),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.12),
+                      blurRadius: 20,
+                      offset: const Offset(0, 8),
+                    ),
+                  ],
+                ),
+                child: AppShimmer(
+                  child: Row(
+                    children: [_statCell(), _statCell(), _statCell()],
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+        SizedBox(height: 52.h),
+        Padding(
+          padding: EdgeInsets.fromLTRB(16.w, 0, 16.w, 24.h),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: EdgeInsets.only(left: 2.w, bottom: 8.h),
+                child: AppShimmer(
+                  child: Row(
+                    children: [
+                      SkeletonBox(width: 4.w, height: 16.h, radius: 2),
+                      SizedBox(width: 8.w),
+                      SkeletonBox(width: 110.w, height: 16.h),
+                    ],
+                  ),
+                ),
+              ),
+              for (var i = 0; i < 6; i++) ...[
+                _tile(),
+                if (i != 5) SizedBox(height: 8.h),
+              ],
+            ],
+          ),
+        ),
+      ],
     );
   }
 }

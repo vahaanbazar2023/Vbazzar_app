@@ -80,15 +80,14 @@ class _BuyVehicleDetailsViewState extends State<BuyVehicleDetailsView> {
     final ctrl = Get.find<BuyVehicleController>();
 
     return Obx(() {
-      // While loading show a spinner inside the layout
+      // While loading show a skeleton of the detail page inside the layout
       if (ctrl.isLoadingDetail.value) {
         return AppLayout(
           title: context.l10n.vehicleDetailsTitle,
           subtitle: '',
           showBack: true,
-          body: const Center(
-            child: CircularProgressIndicator(color: AppColors.primary),
-          ),
+          bodyColor: AppColors.cardBackground,
+          body: _VehicleDetailSkeleton(ownerMode: widget.ownerMode),
         );
       }
 
@@ -149,9 +148,8 @@ class _BuyVehicleDetailsViewState extends State<BuyVehicleDetailsView> {
           title: context.l10n.vehicleDetailsTitle,
           subtitle: '',
           showBack: true,
-          body: const Center(
-            child: CircularProgressIndicator(color: AppColors.primary),
-          ),
+          bodyColor: AppColors.cardBackground,
+          body: _VehicleDetailSkeleton(ownerMode: widget.ownerMode),
         );
       }
 
@@ -486,6 +484,158 @@ class _BuyVehicleDetailsViewState extends State<BuyVehicleDetailsView> {
       count++;
     }
     return '${buf.toString().split('').reversed.join()},$last3';
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Detail skeleton — mirrors [_buildDetail]: image carousel, price, info tiles
+// (2 per row + full-width location), details accordion header and, for buyers,
+// the Actions label + action cards + inspection button.
+// ─────────────────────────────────────────────────────────────────────────────
+
+class _VehicleDetailSkeleton extends StatelessWidget {
+  final bool ownerMode;
+  const _VehicleDetailSkeleton({this.ownerMode = false});
+
+  Widget _tile() => Container(
+    padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 6.h),
+    decoration: BoxDecoration(
+      color: AppColors.grey50,
+      borderRadius: BorderRadius.circular(10.r),
+      border: Border.all(color: AppColors.grey200),
+    ),
+    child: AppShimmer(
+      child: Row(
+        children: [
+          SkeletonBox(width: 18.r, height: 18.r, radius: 4),
+          SizedBox(width: 8.w),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                SkeletonBox(width: 50.w, height: 10.h, radius: 4),
+                SizedBox(height: 3.h),
+                SkeletonBox(width: 80.w, height: 13.h, radius: 4),
+              ],
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      physics: const NeverScrollableScrollPhysics(),
+      padding: EdgeInsets.fromLTRB(
+        AppSpacing.md,
+        AppSpacing.md,
+        AppSpacing.md,
+        AppSpacing.sm,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Image carousel + price
+          AppShimmer(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                ClipRRect(
+                  borderRadius: AppRadius.borderRadiusMd,
+                  child: SkeletonBox(
+                    width: double.infinity,
+                    height: 180.h,
+                    radius: 0,
+                  ),
+                ),
+                SizedBox(height: 8.h),
+                SkeletonBox(width: 130.w, height: 24.h),
+              ],
+            ),
+          ),
+          SizedBox(height: 6.h),
+          // Info tiles: Vehicle ID | Model year, then full-width location
+          Row(
+            children: [
+              Expanded(child: _tile()),
+              SizedBox(width: 6.w),
+              Expanded(child: _tile()),
+            ],
+          ),
+          SizedBox(height: 6.h),
+          _tile(),
+          SizedBox(height: 10.h),
+          // Vehicle details accordion (collapsed header)
+          Container(
+            padding: EdgeInsets.symmetric(
+              horizontal: AppSpacing.md,
+              vertical: 10.h,
+            ),
+            decoration: BoxDecoration(
+              color: AppColors.white,
+              borderRadius: AppRadius.borderRadiusMd,
+              border: Border.all(color: AppColors.grey200),
+              boxShadow: const [
+                BoxShadow(
+                  color: Color(0x0A000000),
+                  blurRadius: 8,
+                  offset: Offset(0, 2),
+                ),
+              ],
+            ),
+            child: AppShimmer(
+              child: Row(
+                children: [
+                  SkeletonBox(width: 18.r, height: 18.r, radius: 4),
+                  SizedBox(width: 8.w),
+                  SkeletonBox(width: 120.w, height: 14.h),
+                  const Spacer(),
+                  SkeletonBox(width: 22.r, height: 22.r, radius: 6),
+                ],
+              ),
+            ),
+          ),
+          if (!ownerMode) ...[
+            SizedBox(height: 8.h),
+            AppShimmer(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Actions label
+                  Row(
+                    children: [
+                      SkeletonBox(width: 3.w, height: 22.h, radius: 2),
+                      SizedBox(width: 10.w),
+                      SkeletonBox(width: 18.r, height: 18.r, radius: 4),
+                      SizedBox(width: 8.w),
+                      SkeletonBox(width: 80.w, height: 16.h),
+                    ],
+                  ),
+                  SizedBox(height: 8.h),
+                  // Interest / connect with owner / make offer cards
+                  for (var i = 0; i < 3; i++) ...[
+                    SkeletonBox(
+                      width: double.infinity,
+                      height: 68.h,
+                      radius: 16,
+                    ),
+                    SizedBox(height: 8.h),
+                  ],
+                  SizedBox(height: 8.h),
+                  // Inspection button
+                  Center(
+                    child: SkeletonBox(width: 140.w, height: 36.h, radius: 18),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
   }
 }
 

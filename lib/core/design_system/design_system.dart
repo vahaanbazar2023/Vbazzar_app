@@ -21,6 +21,7 @@ export 'atoms/app_divider.dart';
 export 'atoms/app_svg_icon.dart';
 export 'atoms/gradient_text.dart';
 export 'atoms/custom_loader.dart';
+export 'loaders/app_shimmer.dart';
 
 // ── Molecules ──────────────────────────────────────────────────
 export 'molecules/primary_button.dart';
