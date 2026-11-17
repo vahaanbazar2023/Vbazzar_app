@@ -20,5 +20,9 @@ class StorageKeys {
   static const String isDarkMode = 'is_dark_mode';
   static const String selectedLanguage = 'selected_language';
   static const String languageCode = 'language_code';
+
+  /// Set once the user picks a language on this app (2.0.0+). A new key on purpose: data left by the old
+  /// Vahaan Bazar app (same package, kept on update) never has it, so every user picks a language once.
+  static const String languageConfirmed = 'language_confirmed_v2';
   static const String isFirstLaunch = 'is_first_launch';
 }
