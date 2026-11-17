@@ -46,6 +46,8 @@ void main() {
   setUp(() {
     _store.clear();
     _mockSecureStorage();
+    // By default the server doesn't know the profile (as for a brand-new user).
+    ProfileGate.serverCheck = () async => false;
   });
 
   group('ProfileGate', () {
@@ -130,6 +132,23 @@ void main() {
 
       expect(find.text('start'), findsOneWidget);
       expect(find.text('complete-profile'), findsNothing);
+    });
+  
+    test('an existing customer whose profile is complete on the server is never sent there', () async {
+      // e.g. signed in with a password, or on a new phone: nothing saved here yet
+      ProfileGate.serverCheck = () async => true;
+      await ProfileGate.onPaymentSuccess();
+      expect(_store[StorageKeys.profileCompleted], 'true');
+      expect(_store.containsKey(StorageKeys.profileRequiredAfterPayment), isFalse);
+      expect(await ProfileGate.mustCompleteProfile(), isFalse);
+    });
+
+    test('a requirement saved earlier is dropped when the server says the profile is complete', () async {
+      _store[StorageKeys.profileRequiredAfterPayment] = 'true';
+      ProfileGate.serverCheck = () async => true;
+      expect(await ProfileGate.mustCompleteProfile(), isFalse);
+      expect(_store[StorageKeys.profileCompleted], 'true');
+      expect(_store.containsKey(StorageKeys.profileRequiredAfterPayment), isFalse);
     });
   });
 }

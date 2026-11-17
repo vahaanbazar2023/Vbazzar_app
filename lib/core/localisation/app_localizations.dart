@@ -11961,6 +11961,150 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Back to Rewards'**
   String get cashOutSoonCta;
+
+  /// No description provided for @auctionDepTabAccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Access pass'**
+  String get auctionDepTabAccess;
+
+  /// No description provided for @auctionDepTabDeposit.
+  ///
+  /// In en, this message translates to:
+  /// **'Refundable deposit'**
+  String get auctionDepTabDeposit;
+
+  /// No description provided for @auctionDepMoneyBack.
+  ///
+  /// In en, this message translates to:
+  /// **'Money back'**
+  String get auctionDepMoneyBack;
+
+  /// No description provided for @auctionDepAccessHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay once for a set number of days. Buy a bid limit when you\'re ready to bid.'**
+  String get auctionDepAccessHint;
+
+  /// No description provided for @auctionDepDepositHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay a refundable deposit and get auction access plus a bid limit right away.'**
+  String get auctionDepDepositHint;
+
+  /// No description provided for @auctionDepBidLimit.
+  ///
+  /// In en, this message translates to:
+  /// **'Bid limit'**
+  String get auctionDepBidLimit;
+
+  /// No description provided for @auctionDepRefundable.
+  ///
+  /// In en, this message translates to:
+  /// **'Refundable*'**
+  String get auctionDepRefundable;
+
+  /// No description provided for @auctionDepAccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Auction access'**
+  String get auctionDepAccess;
+
+  /// No description provided for @auctionDepUntilRefund.
+  ///
+  /// In en, this message translates to:
+  /// **'Until refunded'**
+  String get auctionDepUntilRefund;
+
+  /// No description provided for @auctionDepPay.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay deposit'**
+  String get auctionDepPay;
+
+  /// No description provided for @auctionDepActivated.
+  ///
+  /// In en, this message translates to:
+  /// **'Deposit received — auctions unlocked'**
+  String get auctionDepActivated;
+
+  /// No description provided for @auctionDepDepositLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Deposit'**
+  String get auctionDepDepositLabel;
+
+  /// No description provided for @auctionDepFootnote.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay the full deposit (wallet coins can\'t be used). Refund as per T&C.'**
+  String get auctionDepFootnote;
+
+  /// No description provided for @auctionDepChooseTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'How do you want to bid?'**
+  String get auctionDepChooseTitle;
+
+  /// No description provided for @auctionDepChooseSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick a way into live auctions. You can change it later.'**
+  String get auctionDepChooseSub;
+
+  /// No description provided for @auctionDepFrom.
+  ///
+  /// In en, this message translates to:
+  /// **'From ₹{amount}'**
+  String auctionDepFrom(String amount);
+
+  /// No description provided for @auctionDepUpTo.
+  ///
+  /// In en, this message translates to:
+  /// **'Bid limit up to ₹{amount}'**
+  String auctionDepUpTo(String amount);
+
+  /// No description provided for @auctionDepBidSeparate.
+  ///
+  /// In en, this message translates to:
+  /// **'Bid limit bought separately'**
+  String get auctionDepBidSeparate;
+
+  /// No description provided for @auctionDepSeePlans.
+  ///
+  /// In en, this message translates to:
+  /// **'See plans'**
+  String get auctionDepSeePlans;
+
+  /// No description provided for @auctionDepRefund.
+  ///
+  /// In en, this message translates to:
+  /// **'Refund'**
+  String get auctionDepRefund;
+
+  /// No description provided for @auctionDepRefundTerms.
+  ///
+  /// In en, this message translates to:
+  /// **'As per T&C'**
+  String get auctionDepRefundTerms;
+
+  /// No description provided for @auctionDepTerms.
+  ///
+  /// In en, this message translates to:
+  /// **'*Refund is subject to Vahaan Bazar\'s terms & conditions.'**
+  String get auctionDepTerms;
+
+  /// No description provided for @auctionDepBestFor.
+  ///
+  /// In en, this message translates to:
+  /// **'Most flexible'**
+  String get auctionDepBestFor;
+
+  /// No description provided for @auctionDepSeparately.
+  ///
+  /// In en, this message translates to:
+  /// **'Bought separately'**
+  String get auctionDepSeparately;
 }
 
 class _AppLocalizationsDelegate

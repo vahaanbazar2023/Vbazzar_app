@@ -9,6 +9,9 @@ abstract final class SubscriptionTypeCode {
   static const vehicleDetailsAccess = 'SUBT004';
   static const vehicleInspection = 'SUBT005'; // Request vehicle inspection
   static const mechanicContact = 'SUBT006';
+
+  /// Refundable auction deposit: auction access + a bid limit, no end date, until the deposit is refunded.
+  static const auctionDeposit = 'SUBT008';
 }
 
 class UserSubscription {

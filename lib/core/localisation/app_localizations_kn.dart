@@ -6533,4 +6533,85 @@ class AppLocalizationsKn extends AppLocalizations {
 
   @override
   String get cashOutSoonCta => 'ರಿವಾರ್ಡ್‌ಗಳಿಗೆ ಹಿಂತಿರುಗಿ';
+
+  @override
+  String get auctionDepTabAccess => 'ಆಕ್ಸೆಸ್ ಪಾಸ್';
+
+  @override
+  String get auctionDepTabDeposit => 'ಮರುಪಾವತಿಸಬಹುದಾದ ಠೇವಣಿ';
+
+  @override
+  String get auctionDepMoneyBack => 'ಹಣ ವಾಪಸ್';
+
+  @override
+  String get auctionDepAccessHint =>
+      'ನಿಗದಿತ ದಿನಗಳಿಗೆ ಒಮ್ಮೆ ಪಾವತಿಸಿ. ಬಿಡ್ ಮಾಡಲು ಸಿದ್ಧರಾದಾಗ ಬಿಡ್ ಮಿತಿ ಖರೀದಿಸಿ.';
+
+  @override
+  String get auctionDepDepositHint =>
+      'ಮರುಪಾವತಿಸಬಹುದಾದ ಠೇವಣಿ ಪಾವತಿಸಿ, ತಕ್ಷಣ ಹರಾಜು ಪ್ರವೇಶ ಮತ್ತು ಬಿಡ್ ಮಿತಿ ಪಡೆಯಿರಿ.';
+
+  @override
+  String get auctionDepBidLimit => 'ಬಿಡ್ ಮಿತಿ';
+
+  @override
+  String get auctionDepRefundable => 'ಮರುಪಾವತಿಸಬಹುದು*';
+
+  @override
+  String get auctionDepAccess => 'ಹರಾಜು ಪ್ರವೇಶ';
+
+  @override
+  String get auctionDepUntilRefund => 'ಮರುಪಾವತಿ ಆಗುವವರೆಗೆ';
+
+  @override
+  String get auctionDepPay => 'ಠೇವಣಿ ಪಾವತಿಸಿ';
+
+  @override
+  String get auctionDepActivated => 'ಠೇವಣಿ ಸಿಕ್ಕಿದೆ — ಹರಾಜುಗಳು ತೆರೆದಿವೆ';
+
+  @override
+  String get auctionDepDepositLabel => 'ಠೇವಣಿ';
+
+  @override
+  String get auctionDepFootnote =>
+      'ಪೂರ್ಣ ಠೇವಣಿ ಪಾವತಿಸಿ (ವಾಲೆಟ್ ನಾಣ್ಯಗಳನ್ನು ಬಳಸಲಾಗುವುದಿಲ್ಲ). ಮರುಪಾವತಿ ನಿಯಮಗಳ ಪ್ರಕಾರ.';
+
+  @override
+  String get auctionDepChooseTitle => 'ನೀವು ಹೇಗೆ ಬಿಡ್ ಮಾಡಲು ಬಯಸುತ್ತೀರಿ?';
+
+  @override
+  String get auctionDepChooseSub =>
+      'ಲೈವ್ ಹರಾಜುಗಳಿಗೆ ಪ್ರವೇಶದ ಮಾರ್ಗ ಆಯ್ಕೆಮಾಡಿ. ನಂತರ ಬದಲಾಯಿಸಬಹುದು.';
+
+  @override
+  String auctionDepFrom(String amount) {
+    return '₹$amount ರಿಂದ';
+  }
+
+  @override
+  String auctionDepUpTo(String amount) {
+    return '₹$amount ವರೆಗೆ ಬಿಡ್ ಮಿತಿ';
+  }
+
+  @override
+  String get auctionDepBidSeparate => 'ಬಿಡ್ ಮಿತಿಯನ್ನು ಪ್ರತ್ಯೇಕವಾಗಿ ಖರೀದಿಸಿ';
+
+  @override
+  String get auctionDepSeePlans => 'ಪ್ಲಾನ್‌ಗಳನ್ನು ನೋಡಿ';
+
+  @override
+  String get auctionDepRefund => 'ಮರುಪಾವತಿ';
+
+  @override
+  String get auctionDepRefundTerms => 'ನಿಯಮಗಳ ಪ್ರಕಾರ';
+
+  @override
+  String get auctionDepTerms =>
+      '*ಮರುಪಾವತಿ ವಾಹನ್ ಬಜಾರ್ ನಿಯಮ ಮತ್ತು ಷರತ್ತುಗಳಿಗೆ ಒಳಪಟ್ಟಿರುತ್ತದೆ.';
+
+  @override
+  String get auctionDepBestFor => 'ಅತ್ಯಂತ ಅನುಕೂಲಕರ';
+
+  @override
+  String get auctionDepSeparately => 'ಪ್ರತ್ಯೇಕವಾಗಿ ಖರೀದಿಸಿ';
 }
