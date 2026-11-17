@@ -27,7 +27,7 @@ class PartnerWithUsView extends GetView<PartnerController> {
       bodyColor: AppColors.grey100,
       body: Obx(() {
         if (controller.isLoading.value) {
-          return const Center(child: CustomLoader());
+          return const _PartnerFormSkeleton();
         }
         if (controller.registrationIncomplete.value) {
           return _InfoCard(
@@ -205,6 +205,93 @@ class _FormView extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+/// Loading placeholder shaped like [_FormView]: hero banner, role card, the
+/// details card with its labelled fields, location card and submit button.
+class _PartnerFormSkeleton extends StatelessWidget {
+  const _PartnerFormSkeleton();
+
+  Widget _sectionTitle() => Padding(
+    padding: EdgeInsets.only(bottom: 12.h),
+    child: Row(
+      children: [
+        SkeletonBox(width: 3.w, height: 16.h, radius: 2),
+        SizedBox(width: 8.w),
+        SkeletonBox(width: 120.w, height: 14.h),
+      ],
+    ),
+  );
+
+  Widget _field({bool label = true}) => Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      if (label) ...[
+        SkeletonBox(width: 90.w, height: 12.h),
+        SizedBox(height: 6.h),
+      ],
+      SkeletonBox(width: double.infinity, height: 46.h, radius: 7.5),
+    ],
+  );
+
+  Widget _card(List<Widget> children) => Container(
+    width: double.infinity,
+    padding: EdgeInsets.all(16.r),
+    decoration: BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(16.r),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withValues(alpha: 0.05),
+          blurRadius: 12,
+          offset: const Offset(0, 3),
+        ),
+      ],
+    ),
+    child: AppShimmer(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: children,
+      ),
+    ),
+  );
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView(
+      physics: const NeverScrollableScrollPhysics(),
+      padding: EdgeInsets.fromLTRB(16.w, 16.h, 16.w, 32.h),
+      children: [
+        AppShimmer(
+          child: SkeletonBox(width: double.infinity, height: 84.h, radius: 16),
+        ),
+        SizedBox(height: 14.h),
+        _card([_sectionTitle(), _field(label: false)]),
+        SizedBox(height: 12.h),
+        _card([
+          _sectionTitle(),
+          _field(),
+          SizedBox(height: 10.h),
+          _field(),
+          SizedBox(height: 6.h),
+          SkeletonBox(width: 200.w, height: 11.h),
+          SizedBox(height: 12.h),
+          _field(),
+          SizedBox(height: 10.h),
+          _field(),
+        ]),
+        SizedBox(height: 12.h),
+        _card([
+          _sectionTitle(),
+          SkeletonBox(width: double.infinity, height: 48.h, radius: 12),
+        ]),
+        SizedBox(height: 20.h),
+        AppShimmer(
+          child: SkeletonBox(width: double.infinity, height: 48.h, radius: 24),
+        ),
+      ],
     );
   }
 }

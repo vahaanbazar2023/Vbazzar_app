@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
 import '../../../core/constants/app_colors.dart';
+import '../../../core/design_system/loaders/app_shimmer.dart';
 import '../../../core/design_system/organisms/app_header.dart';
 import '../controllers/notification_controller.dart';
 import '../models/notification_model.dart';
@@ -75,9 +76,7 @@ class NotificationScreen extends GetView<NotificationController> {
           Expanded(
             child: Obx(() {
               if (controller.isLoading.value) {
-                return const Center(
-                  child: CircularProgressIndicator(color: AppColors.primary),
-                );
+                return const _NotificationListSkeleton();
               }
               if (controller.errorMessage.value.isNotEmpty &&
                   controller.notifications.isEmpty) {
@@ -419,6 +418,88 @@ class _NotificationTile extends StatelessWidget {
 
   Color _iconBg(AppNotification n) {
     return _iconColor(n).withValues(alpha: 0.1);
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+
+/// Loading placeholder for the notification list: a day header followed by
+/// tiles shaped like [_NotificationTile] (dot, round icon, type/title/time,
+/// body lines, chevron), with the same list padding and spacing.
+class _NotificationListSkeleton extends StatelessWidget {
+  const _NotificationListSkeleton();
+
+  Widget _tile() {
+    return Container(
+      margin: EdgeInsets.only(bottom: 8.h),
+      padding: EdgeInsets.all(12.r),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12.r),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 6,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: AppShimmer(
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(width: 8.r + 8.w),
+            SkeletonBox.circle(size: 40.r),
+            SizedBox(width: 12.w),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            SkeletonBox(width: 70.w, height: 9.h),
+                            SizedBox(height: 5.h),
+                            SkeletonBox(width: 150.w, height: 13.h),
+                          ],
+                        ),
+                      ),
+                      SizedBox(width: 8.w),
+                      SkeletonBox(width: 40.w, height: 9.h),
+                    ],
+                  ),
+                  SizedBox(height: 6.h),
+                  SkeletonBox(height: 11.h),
+                  SizedBox(height: 5.h),
+                  SkeletonBox(width: 160.w, height: 11.h),
+                ],
+              ),
+            ),
+            SizedBox(width: 8.w),
+            SkeletonBox(width: 10.r, height: 14.r, radius: 2),
+          ],
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView(
+      physics: const NeverScrollableScrollPhysics(),
+      padding: EdgeInsets.fromLTRB(16.w, 12.h, 16.w, 32.h),
+      children: [
+        Padding(
+          padding: EdgeInsets.only(top: 16.h, bottom: 8.h),
+          child: AppShimmer(child: SkeletonBox(width: 60.w, height: 13.h)),
+        ),
+        for (var i = 0; i < 6; i++) _tile(),
+      ],
+    );
   }
 }
 

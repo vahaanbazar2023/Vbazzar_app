@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../core/constants/app_colors.dart';
+import '../../../core/design_system/loaders/app_shimmer.dart';
 import '../../../core/design_system/molecules/custom_snackbar.dart';
 import '../../../core/design_system/templates/app_layout.dart';
 import '../../../core/design_system/tokens/app_spacing.dart';
@@ -125,16 +126,7 @@ class _MyGatePassesViewState extends State<MyGatePassesView> {
 
   Widget _body() {
     if (_loading) {
-      return ListView(
-        padding: EdgeInsets.all(AppSpacing.md),
-        children: [
-          GpSkeleton(height: 44.h),
-          SizedBox(height: 14.h),
-          GpSkeleton(height: 300.h),
-          SizedBox(height: 14.h),
-          GpSkeleton(height: 300.h),
-        ],
-      );
+      return const _GatePassListSkeleton(notchColor: _bg);
     }
     if (_error != null) {
       return Center(
@@ -312,6 +304,43 @@ class _MyGatePassesViewState extends State<MyGatePassesView> {
           ],
         ),
       ),
+    );
+  }
+}
+
+/// Loading placeholder for the page: the filter chip row followed by gate
+/// pass tickets, with the same list padding and item spacing.
+class _GatePassListSkeleton extends StatelessWidget {
+  final Color notchColor;
+  const _GatePassListSkeleton({required this.notchColor});
+
+  @override
+  Widget build(BuildContext context) {
+    Widget chip(double width) => Padding(
+      padding: EdgeInsets.only(right: 8.w),
+      child: SkeletonBox(width: width, height: 40.h, radius: 20),
+    );
+    return ListView(
+      physics: const NeverScrollableScrollPhysics(),
+      padding: EdgeInsets.fromLTRB(
+        AppSpacing.md,
+        AppSpacing.md,
+        AppSpacing.md,
+        AppSpacing.lg,
+      ),
+      children: [
+        Padding(
+          padding: EdgeInsets.only(bottom: 14.h),
+          child: AppShimmer(
+            child: Row(children: [chip(70.w), chip(84.w), chip(140.w)]),
+          ),
+        ),
+        for (var i = 0; i < 2; i++)
+          Padding(
+            padding: EdgeInsets.only(bottom: 18.h),
+            child: GatePassTicketSkeleton(notchColor: notchColor),
+          ),
+      ],
     );
   }
 }

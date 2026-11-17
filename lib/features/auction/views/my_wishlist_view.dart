@@ -4,7 +4,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 import '../../../core/constants/app_colors.dart';
-import '../../../core/design_system/atoms/custom_loader.dart';
 import '../../../core/design_system/design_system.dart';
 import '../../../core/design_system/molecules/custom_snackbar.dart';
 import '../../../core/design_system/organisms/network_image_carousel.dart';
@@ -37,7 +36,7 @@ class MyWishlistView extends GetView<WishlistController> {
       showBack: true,
       body: Obx(() {
         if (controller.isLoading.value) {
-          return const Center(child: CustomLoader());
+          return const _WishlistCardSkeletonList();
         }
         if (controller.errorMessage.value != null) {
           return _ErrorState(
@@ -82,6 +81,122 @@ class MyWishlistView extends GetView<WishlistController> {
           ),
         );
       }),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Loading skeleton — mirrors _WishlistCard (image + right panel, 2-col grid,
+// details divider, bid row, view-details button) and the list padding
+// ─────────────────────────────────────────────────────────────────────────────
+
+class _WishlistCardSkeletonList extends StatelessWidget {
+  const _WishlistCardSkeletonList();
+
+  @override
+  Widget build(BuildContext context) {
+    return SkeletonList(
+      count: 4,
+      spacing: AppSpacing.md,
+      padding: EdgeInsets.all(AppSpacing.md),
+      itemBuilder: (_, __) => const _WishlistCardSkeleton(),
+    );
+  }
+}
+
+class _WishlistCardSkeleton extends StatelessWidget {
+  const _WishlistCardSkeleton();
+
+  Widget _cellRow() => Row(
+    children: [
+      Expanded(child: SkeletonBox(height: 40.h, radius: 6)),
+      SizedBox(width: 6.w),
+      Expanded(child: SkeletonBox(height: 40.h, radius: 6)),
+    ],
+  );
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(14.r),
+        border: Border.all(color: AppColors.grey200),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.07),
+            blurRadius: 10,
+            offset: const Offset(0, 3),
+          ),
+        ],
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: AppShimmer(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SkeletonBox(width: 171.w, height: 99.h, radius: 0),
+                Expanded(
+                  child: Padding(
+                    padding: EdgeInsets.fromLTRB(12.w, 10.h, 12.w, 10.h),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SkeletonBox(width: 120.w, height: 14.h),
+                        SizedBox(height: 4.h),
+                        SkeletonBox(width: 95.w, height: 11.h),
+                        SizedBox(height: 6.h),
+                        SkeletonBox(width: 28.w, height: 20.h, radius: 4),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            Padding(
+              padding: EdgeInsets.fromLTRB(12.w, 10.h, 12.w, 0),
+              child: Column(
+                children: [
+                  _cellRow(),
+                  SizedBox(height: 6.h),
+                  _cellRow(),
+                  SizedBox(height: 6.h),
+                  _cellRow(),
+                ],
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
+              child: Row(
+                children: [
+                  Expanded(child: Divider(color: AppColors.grey300, thickness: 1)),
+                  SizedBox(width: 8.w),
+                  SkeletonBox(width: 64.w, height: 12.h),
+                  SizedBox(width: 8.w),
+                  Expanded(child: Divider(color: AppColors.grey300, thickness: 1)),
+                ],
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.fromLTRB(12.w, 0, 12.w, 12.h),
+              child: Row(
+                children: [
+                  Expanded(child: SkeletonBox(height: 42.h, radius: 8)),
+                  SizedBox(width: 10.w),
+                  SkeletonBox(width: 110.w, height: 32.h, radius: 8),
+                ],
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.only(left: 12.w, right: 12.w, bottom: 12.h),
+              child: SkeletonBox(height: 36.h, radius: 16),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

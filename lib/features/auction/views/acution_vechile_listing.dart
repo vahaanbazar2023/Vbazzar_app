@@ -154,9 +154,7 @@ class _TabContent extends StatelessWidget {
       // Show search results if search is active
       if (ctrl.isSearchActive) {
         if (ctrl.isSearching.value) {
-          return const Center(
-            child: CircularProgressIndicator(color: AppColors.primary),
-          );
+          return const _VehicleListSkeleton();
         }
         final searchError = ctrl.searchError.value;
         if (searchError.isNotEmpty) {
@@ -212,9 +210,7 @@ class _TabContent extends StatelessWidget {
 
       // Show normal tab content
       if (ctrl.tabLoading(tabIndex).value) {
-        return const Center(
-          child: CircularProgressIndicator(color: AppColors.primary),
-        );
+        return _VehicleListSkeleton(isUpcoming: tabIndex == 2);
       }
       final error = ctrl.tabError(tabIndex).value;
       if (error.isNotEmpty) {
@@ -288,6 +284,127 @@ class _TabContent extends StatelessWidget {
         },
       );
     });
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Loading skeleton — mirrors _VehicleCard and the list padding/spacing
+// ─────────────────────────────────────────────────────────────────────────────
+
+class _VehicleListSkeleton extends StatelessWidget {
+  final bool isUpcoming;
+  const _VehicleListSkeleton({this.isUpcoming = false});
+
+  @override
+  Widget build(BuildContext context) {
+    return SkeletonList(
+      count: 5,
+      spacing: AppSpacing.s,
+      padding: EdgeInsets.fromLTRB(
+        AppSpacing.md,
+        AppSpacing.s,
+        AppSpacing.md,
+        AppSpacing.sm,
+      ),
+      itemBuilder: (_, __) => _VehicleCardSkeleton(isUpcoming: isUpcoming),
+    );
+  }
+}
+
+class _VehicleCardSkeleton extends StatelessWidget {
+  final bool isUpcoming;
+  const _VehicleCardSkeleton({this.isUpcoming = false});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(14.r),
+        border: Border.all(
+          color: isUpcoming ? AppColors.grey300 : AppColors.grey200,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.08),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.2),
+            blurRadius: 4,
+            offset: const Offset(0, 1),
+          ),
+        ],
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: AppShimmer(
+        child: Stack(
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SkeletonBox(width: 135.w, height: 108.h, radius: 0),
+                    Expanded(
+                      child: Padding(
+                        padding: EdgeInsets.fromLTRB(10.w, 8.h, 50.w, 8.h),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            SkeletonBox(width: 110.w, height: 14.h),
+                            SizedBox(height: 4.h),
+                            SkeletonBox(width: 90.w, height: 11.h),
+                            Padding(
+                              padding: EdgeInsets.only(left: 30.w, top: 10.h),
+                              child: SkeletonBox(
+                                width: 84.w,
+                                height: 26.h,
+                                radius: 13,
+                              ),
+                            ),
+                            SizedBox(height: 12.h),
+                            SkeletonBox(width: 120.w, height: 9.h),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                if (isUpcoming)
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(10.w, 6.h, 10.w, 10.h),
+                    child: SkeletonBox(height: 32.h, radius: 8),
+                  )
+                else
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(10.w, 6.h, 10.w, 4.h),
+                    child: Row(
+                      children: [
+                        Expanded(child: SkeletonBox(height: 30.h, radius: 19)),
+                        SizedBox(width: 8.w),
+                        SkeletonBox(width: 110.w, height: 30.h, radius: 19),
+                      ],
+                    ),
+                  ),
+              ],
+            ),
+            Positioned(
+              top: 8.h,
+              right: 8.w,
+              child: SkeletonBox.circle(size: 32.r),
+            ),
+            Positioned(
+              top: 8.h + 32.r + 8.h,
+              right: 8.w,
+              child: SkeletonBox.circle(size: 32.r),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
 

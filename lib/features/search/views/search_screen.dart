@@ -7,6 +7,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/constants/app_assets.dart';
 import '../../../core/constants/app_colors.dart';
+import '../../../core/design_system/loaders/app_shimmer.dart';
 import '../../../core/design_system/molecules/custom_search_bar.dart';
 import '../../../routes/app_routes.dart';
 import '../../buy_and_sell/domain/entities/vehicle_category_entity.dart';
@@ -331,11 +332,7 @@ class _SearchScreenState extends State<SearchScreen> {
                   }
                   // Loading
                   if (_ctrl.isLoading.value) {
-                    return const Center(
-                      child: CircularProgressIndicator(
-                        color: AppColors.primary,
-                      ),
-                    );
+                    return const _SearchResultsSkeleton();
                   }
                   // Error
                   if (_ctrl.errorMessage.value.isNotEmpty) {
@@ -959,6 +956,75 @@ class _GlobalResultTile extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+/// Loading placeholder for the global search results: section headers with a
+/// count pill, followed by tiles shaped like [_GlobalResultTile].
+class _SearchResultsSkeleton extends StatelessWidget {
+  const _SearchResultsSkeleton();
+
+  Widget _header(bool first) => Padding(
+    padding: EdgeInsets.only(bottom: 8.h, top: first ? 0 : 16.h),
+    child: AppShimmer(
+      child: Row(
+        children: [
+          SkeletonBox(width: 90.w, height: 13.h),
+          SizedBox(width: 6.w),
+          SkeletonBox(width: 24.w, height: 16.h, radius: 10),
+        ],
+      ),
+    ),
+  );
+
+  Widget _tile() => Container(
+    margin: EdgeInsets.only(bottom: 8.h),
+    padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
+    decoration: BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(14.r),
+      border: Border.all(color: const Color(0xFFEEEEEE)),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withValues(alpha: 0.04),
+          blurRadius: 6,
+          offset: const Offset(0, 2),
+        ),
+      ],
+    ),
+    child: AppShimmer(
+      child: Row(
+        children: [
+          SkeletonBox.circle(size: 40.r),
+          SizedBox(width: 12.w),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SkeletonBox(width: 160.w, height: 13.h),
+                SizedBox(height: 5.h),
+                SkeletonBox(width: 110.w, height: 11.h),
+              ],
+            ),
+          ),
+          SkeletonBox(width: 10.r, height: 14.r, radius: 2),
+        ],
+      ),
+    ),
+  );
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView(
+      physics: const NeverScrollableScrollPhysics(),
+      padding: EdgeInsets.fromLTRB(16.w, 12.h, 16.w, 32.h),
+      children: [
+        _header(true),
+        for (var i = 0; i < 3; i++) _tile(),
+        _header(false),
+        for (var i = 0; i < 3; i++) _tile(),
+      ],
     );
   }
 }

@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import '../../../core/constants/app_assets.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_sizes.dart';
+import '../../../core/design_system/loaders/app_shimmer.dart';
 import '../../../core/design_system/templates/app_layout.dart';
 import '../../../core/extensions/context_extensions.dart';
 import '../../../features/subscription/controllers/subscription_confirm_controller.dart';
@@ -95,6 +96,142 @@ class _TermsBullet extends StatelessWidget {
   }
 }
 
+/// Loading placeholder for the wallet payment body — same balance bar, plan
+/// card, checkbox row, outlined proceed button and terms box as the real
+/// layout, with shimmering blocks where their content goes.
+class _WalletSkeleton extends StatelessWidget {
+  const _WalletSkeleton();
+
+  static const _ctaStart = Color(0xFFBB2625);
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        // Balance bar
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 24, 16, 0),
+          child: Container(
+            height: 46,
+            decoration: BoxDecoration(
+              color: const Color(0xFFECEAE9),
+              borderRadius: BorderRadius.circular(AppSizes.radiusMd),
+            ),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+            child: AppShimmer(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: const [
+                  SkeletonBox(width: 190, height: 14),
+                  SkeletonBox(width: 60, height: 20),
+                ],
+              ),
+            ),
+          ),
+        ),
+        // Plan card
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+          child: Container(
+            decoration: BoxDecoration(
+              color: const Color(0xFFFFF2F2),
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(width: 1.5, color: _ctaStart),
+              boxShadow: [
+                BoxShadow(
+                  color: _ctaStart.withValues(alpha: 0.34),
+                  offset: const Offset(2, 4),
+                  blurRadius: 11.4,
+                ),
+              ],
+            ),
+            padding: const EdgeInsets.all(16),
+            child: AppShimmer(
+              child: Row(
+                children: const [
+                  SkeletonBox(width: 37, height: 36, radius: 18),
+                  SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SkeletonBox(width: 90, height: 22),
+                        SizedBox(height: 8),
+                        SkeletonBox(width: 140, height: 18),
+                      ],
+                    ),
+                  ),
+                  SkeletonBox(width: 70, height: 22),
+                ],
+              ),
+            ),
+          ),
+        ),
+        // Pay-from-wallet checkbox row
+        Padding(
+          padding: const EdgeInsets.fromLTRB(21, 24, 16, 0),
+          child: AppShimmer(
+            child: Row(
+              children: const [
+                SkeletonBox(width: 18, height: 18, radius: 5),
+                SizedBox(width: 10),
+                SkeletonBox(width: 200, height: 14),
+              ],
+            ),
+          ),
+        ),
+        // Proceed button (outlined)
+        Padding(
+          padding: const EdgeInsets.fromLTRB(45, 24, 45, 0),
+          child: Container(
+            height: 56,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(188),
+              border: Border.all(width: 1, color: AppColors.grey300),
+            ),
+            child: const Center(
+              child: AppShimmer(child: SkeletonBox(width: 170, height: 16)),
+            ),
+          ),
+        ),
+        // Terms box
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(20, 20, 20, 16),
+            child: Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: const Color(0xFFFDF5F5),
+                borderRadius: BorderRadius.circular(AppSizes.radiusMd),
+                border: Border.all(
+                  color: const Color(0xFFA40301).withValues(alpha: 0.15),
+                  width: 1,
+                ),
+              ),
+              child: AppShimmer(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SkeletonBox(width: 140, height: 14),
+                    const SizedBox(height: 14),
+                    for (var i = 0; i < 3; i++) ...[
+                      const SkeletonBox(height: 11),
+                      const SizedBox(height: 5),
+                      const SkeletonBox(width: 180, height: 11),
+                      const SizedBox(height: 12),
+                    ],
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
 class _WalletBodyState extends State<_WalletBody> {
   bool _payFromWallet = false;
 
@@ -128,9 +265,7 @@ class _WalletBodyState extends State<_WalletBody> {
   Widget build(BuildContext context) {
     return Obx(() {
       if (widget.controller.isLoading.value) {
-        return const Center(
-          child: CircularProgressIndicator(color: AppColors.primaryLight),
-        );
+        return const _WalletSkeleton();
       }
 
       final eligibility = widget.controller.eligibility.value;

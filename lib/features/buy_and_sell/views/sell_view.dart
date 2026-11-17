@@ -59,7 +59,13 @@ class SellVehicleView extends StatelessWidget {
             : context.l10n.sparePostYourVehicleForSale,
         body: Obx(() {
           if (ctrl.isSubmittingForm.value) return _SubmittingOverlay();
-          if (ctrl.isLoadingEditData.value) return _FormLoadingState();
+          if (ctrl.isLoadingEditData.value) {
+            return SingleChildScrollView(
+              physics: const NeverScrollableScrollPhysics(),
+              padding: EdgeInsets.fromLTRB(14.w, 8.h, 14.w, 96.h),
+              child: _FormLoadingState(),
+            );
+          }
 
           return SingleChildScrollView(
             padding: EdgeInsets.fromLTRB(14.w, 8.h, 14.w, 96.h),
@@ -182,181 +188,121 @@ class _SubmittingOverlay extends StatelessWidget {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Form Loading Shimmer
+// Form Loading Skeleton — mirrors [_DynamicFormBody]: outlined 40h inputs
+// (8h apart), "Vehicle condition" header + toggle card, photo upload zone and
+// the centred Submit button.
 // ─────────────────────────────────────────────────────────────────────────────
 
-class _FormLoadingState extends StatefulWidget {
-  @override
-  State<_FormLoadingState> createState() => _FormLoadingStateState();
-}
+class _FormLoadingState extends StatelessWidget {
+  static const _toggleLabelWidths = [70.0, 110.0, 120.0, 120.0];
 
-class _FormLoadingStateState extends State<_FormLoadingState>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation<double> _animation;
+  Widget _input({double? bottom}) => Padding(
+    padding: EdgeInsets.only(bottom: bottom ?? 8.h),
+    child: SkeletonBox(width: double.infinity, height: _kFieldH.h, radius: 8),
+  );
 
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 1200),
-    )..repeat();
-    _animation = Tween<double>(begin: -1.5, end: 2.5).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeInOutSine),
-    );
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: _animation,
-      builder: (_, __) {
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Section header shimmer
-            _ShimmerBar(width: 160.w, height: 18.h, animation: _animation),
-            SizedBox(height: 12.h),
-            // Form card shimmer
-            Container(
-              padding: EdgeInsets.all(16.w),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(14.r),
-                border: Border.all(color: AppColors.grey100),
-              ),
-              child: Column(
-                children: List.generate(
-                  7,
-                  (i) => Padding(
-                    padding: EdgeInsets.only(bottom: 16.h),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        _ShimmerBar(
-                          width: 100.w + (i % 3) * 30.w,
-                          height: 11.h,
-                          animation: _animation,
-                        ),
-                        SizedBox(height: 6.h),
-                        _ShimmerBar(
-                          width: double.infinity,
-                          height: _kFieldH.h,
-                          animation: _animation,
-                          radius: 8.r,
-                        ),
-                      ],
-                    ),
-                  ),
+  Widget _toggleRow(double labelWidth, bool isLast) => Column(
+    children: [
+      Padding(
+        padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
+        child: AppShimmer(
+          child: Row(
+            children: [
+              SkeletonBox(width: 34.w, height: 34.w, radius: 10),
+              SizedBox(width: 12.w),
+              Expanded(
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: SkeletonBox(width: labelWidth.w, height: 14.h),
                 ),
               ),
-            ),
-            SizedBox(height: 20.h),
-            // Toggle section shimmer
-            _ShimmerBar(width: 140.w, height: 18.h, animation: _animation),
-            SizedBox(height: 12.h),
-            Container(
-              padding: EdgeInsets.all(16.w),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(14.r),
-                border: Border.all(color: AppColors.grey100),
-              ),
-              child: Column(
-                children: List.generate(
-                  3,
-                  (i) => Padding(
-                    padding: EdgeInsets.only(bottom: i < 2 ? 12.h : 0),
-                    child: Row(
-                      children: [
-                        _ShimmerBar(
-                          width: 40.w,
-                          height: 40.w,
-                          animation: _animation,
-                          radius: 10.r,
-                        ),
-                        SizedBox(width: 12.w),
-                        Expanded(
-                          child: _ShimmerBar(
-                            width: double.infinity,
-                            height: 14.h,
-                            animation: _animation,
-                          ),
-                        ),
-                        SizedBox(width: 12.w),
-                        _ShimmerBar(
-                          width: 48.w,
-                          height: 28.h,
-                          animation: _animation,
-                          radius: 14.r,
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ),
-            SizedBox(height: 28.h),
-            // Submit button shimmer
-            _ShimmerBar(
-              width: double.infinity,
-              height: 52.h,
-              animation: _animation,
-              radius: 26.r,
-            ),
-          ],
-        );
-      },
-    );
-  }
-}
-
-class _ShimmerBar extends StatelessWidget {
-  final double width;
-  final double height;
-  final Animation<double> animation;
-  final double radius;
-
-  const _ShimmerBar({
-    required this.width,
-    required this.height,
-    required this.animation,
-    this.radius = 6.0,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(radius),
-      child: SizedBox(
-        width: width,
-        height: height,
-        child: DecoratedBox(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.centerLeft,
-              end: Alignment.centerRight,
-              colors: const [
-                Color(0xFFEEEEEE),
-                Color(0xFFF8F8F8),
-                Color(0xFFEEEEEE),
-              ],
-              stops: [
-                (animation.value - 1).clamp(0.0, 1.0),
-                animation.value.clamp(0.0, 1.0),
-                (animation.value + 1).clamp(0.0, 1.0),
-              ],
-            ),
+              SkeletonBox(width: 44.w, height: 24.h, radius: 12),
+            ],
           ),
         ),
       ),
+      if (!isLast)
+        Divider(
+          height: 1,
+          color: AppColors.grey100,
+          indent: 14.w,
+          endIndent: 14.w,
+        ),
+    ],
+  );
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // ── Category + regular fields ────────────────────────────────────
+        AppShimmer(
+          child: Column(
+            children: [
+              // Category (first, 10h gap) then the regular fields (8h gap)
+              _input(bottom: 10.h),
+              for (var i = 0; i < 7; i++) _input(),
+            ],
+          ),
+        ),
+        // ── Vehicle condition header + toggle card ───────────────────────
+        SizedBox(height: 12.h),
+        AppShimmer(
+          child: Row(
+            children: [
+              SkeletonBox(width: 26.w, height: 26.w, radius: 8),
+              SizedBox(width: 8.w),
+              SkeletonBox(width: 120.w, height: 13.h),
+              SizedBox(width: 8.w),
+              const Expanded(child: SkeletonBox(height: 1, radius: 0)),
+            ],
+          ),
+        ),
+        SizedBox(height: 6.h),
+        Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(14.r),
+            border: Border.all(color: AppColors.grey200),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.03),
+                blurRadius: 8,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: Column(
+            children: [
+              for (var i = 0; i < _toggleLabelWidths.length; i++)
+                _toggleRow(
+                  _toggleLabelWidths[i],
+                  i == _toggleLabelWidths.length - 1,
+                ),
+            ],
+          ),
+        ),
+        // ── Photos upload zone ───────────────────────────────────────────
+        SizedBox(height: 4.h),
+        AppShimmer(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SkeletonBox(width: 110.w, height: 12.h, radius: 4),
+              SizedBox(height: 5.h),
+              SkeletonBox(width: double.infinity, height: 110.h, radius: 12),
+            ],
+          ),
+        ),
+        // ── Submit button ────────────────────────────────────────────────
+        SizedBox(height: 16.h),
+        Center(
+          child: AppShimmer(
+            child: SkeletonBox(width: 140.w, height: 36.h, radius: 18),
+          ),
+        ),
+      ],
     );
   }
 }

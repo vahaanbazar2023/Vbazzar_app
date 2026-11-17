@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import '../../../core/extensions/context_extensions.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_sizes.dart';
+import '../../../core/design_system/loaders/app_shimmer.dart';
 import '../../../core/design_system/tokens/app_spacing.dart';
 import '../../../theme/app_fonts.dart';
 import '../controllers/spare_and_fms_controller.dart';
@@ -18,7 +19,7 @@ class SparePartsTab extends GetView<SpareAndFmsController> {
   Widget build(BuildContext context) {
     return Obx(() {
       if (controller.isFmsLoading.value && controller.fmsList.isEmpty) {
-        return const Center(child: CircularProgressIndicator());
+        return const _SpareGridSkeleton();
       }
 
       if (controller.fmsList.isEmpty) {
@@ -69,6 +70,85 @@ class SparePartsTab extends GetView<SpareAndFmsController> {
             style: AppFonts.bodySmall.copyWith(color: AppColors.grey500),
           ),
         ],
+      ),
+    );
+  }
+}
+
+/// Loading skeleton for the spare grid — same grid metrics and card shell as
+/// [_SpareCard]: photo, name, suits-for line, price + rating, button.
+class _SpareGridSkeleton extends StatelessWidget {
+  const _SpareGridSkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    return GridView.builder(
+      padding: EdgeInsets.all(AppSpacing.md),
+      physics: const NeverScrollableScrollPhysics(),
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        childAspectRatio: 0.7,
+        crossAxisSpacing: AppSpacing.sm,
+        mainAxisSpacing: AppSpacing.sm,
+      ),
+      itemCount: 6,
+      itemBuilder: (_, __) => Container(
+        decoration: BoxDecoration(
+          color: AppColors.white,
+          borderRadius: BorderRadius.circular(AppSizes.radiusMd),
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.black.withValues(alpha: 0.05),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        clipBehavior: Clip.antiAlias,
+        child: AppShimmer(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const AspectRatio(
+                aspectRatio: 1.2,
+                child: SkeletonBox(
+                  width: double.infinity,
+                  height: double.infinity,
+                  radius: 0,
+                ),
+              ),
+              Expanded(
+                child: Padding(
+                  padding: EdgeInsets.all(AppSpacing.xs),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SkeletonBox(height: 11.h),
+                      SizedBox(height: 3.h),
+                      SkeletonBox(width: 80.w, height: 11.h),
+                      SizedBox(height: 4.h),
+                      SkeletonBox(width: 100.w, height: 9.h),
+                      SizedBox(height: 4.h),
+                      Row(
+                        children: [
+                          SkeletonBox(width: 50.w, height: 13.h),
+                          const Spacer(),
+                          SkeletonBox(width: 30.w, height: 11.h),
+                        ],
+                      ),
+                      const Spacer(),
+                      SkeletonBox(
+                        width: double.infinity,
+                        height: 26.h,
+                        radius: 8,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

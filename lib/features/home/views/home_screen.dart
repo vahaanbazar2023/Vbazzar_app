@@ -2049,266 +2049,228 @@ class _MechanicCard extends StatelessWidget {
 // Dashboard Shimmer — mirrors the real dashboard layout
 // ─────────────────────────────────────────────────────────────────────────────
 
-class _DashboardShimmer extends StatefulWidget {
+class _DashboardShimmer extends StatelessWidget {
   const _DashboardShimmer();
 
-  @override
-  State<_DashboardShimmer> createState() => _DashboardShimmerState();
-}
+  Widget _sectionHeader(double titleWidth) => Padding(
+    padding: EdgeInsets.symmetric(horizontal: 16.w),
+    child: AppShimmer(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          SkeletonBox(width: titleWidth, height: 16.h),
+          SkeletonBox(width: 56.w, height: 13.h),
+        ],
+      ),
+    ),
+  );
 
-class _DashboardShimmerState extends State<_DashboardShimmer>
-    with SingleTickerProviderStateMixin {
-  late final AnimationController _ctrl;
-  late final Animation<double> _anim;
-
-  @override
-  void initState() {
-    super.initState();
-    _ctrl = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 1200),
-    )..repeat(reverse: true);
-    _anim = Tween<double>(
-      begin: 0.3,
-      end: 1.0,
-    ).animate(CurvedAnimation(parent: _ctrl, curve: Curves.easeInOut));
-  }
-
-  @override
-  void dispose() {
-    _ctrl.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: _anim,
-      builder: (_, __) => SingleChildScrollView(
-        physics: const NeverScrollableScrollPhysics(),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // ── Header shimmer ───────────────────────────────────
-            Container(
-              padding: EdgeInsets.fromLTRB(16.w, 12.h, 16.w, 12.h),
-              color: AppColors.white,
-              child: Row(
-                children: [
-                  _Bone(width: 40.w, height: 40.w, radius: 20, anim: _anim),
-                  SizedBox(width: 10.w),
-                  Expanded(
-                    child: _Bone(
-                      width: double.infinity,
-                      height: 40.h,
-                      radius: 20,
-                      anim: _anim,
-                    ),
-                  ),
-                  SizedBox(width: 10.w),
-                  _Bone(width: 26.r, height: 26.r, radius: 4, anim: _anim),
-                  SizedBox(width: 12.w),
-                  _Bone(width: 36.w, height: 36.w, radius: 18, anim: _anim),
-                ],
-              ),
-            ),
-            SizedBox(height: 16.h),
-
-            // ── Auction banner shimmer ───────────────────────────
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16.w),
-              child: _Bone(
+  /// Mirrors [_HomeCategoryCard]: maroon-outlined tile, artwork, pill label.
+  Widget _homeCategoryCard() => Container(
+    decoration: BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(16.r),
+      border: Border.all(color: const Color(0xFF9A0800), width: 1.2),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withValues(alpha: 0.06),
+          blurRadius: 8,
+          offset: const Offset(0, 3),
+        ),
+      ],
+    ),
+    child: AppShimmer(
+      child: Column(
+        children: [
+          Expanded(
+            child: Padding(
+              padding: EdgeInsets.fromLTRB(14.w, 12.h, 14.w, 6.h),
+              child: const SkeletonBox(
                 width: double.infinity,
-                height: 180.h,
-                radius: 18,
-                anim: _anim,
+                height: double.infinity,
+                radius: 10,
               ),
             ),
-            SizedBox(height: 8.h),
-            // Dot indicators
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: List.generate(
-                3,
-                (i) => Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 3.w),
-                  child: _Bone(
-                    width: i == 0 ? 16.w : 6.w,
-                    height: 6.h,
-                    radius: 3,
-                    anim: _anim,
-                  ),
-                ),
-              ),
-            ),
-            SizedBox(height: 24.h),
+          ),
+          Padding(
+            padding: EdgeInsets.fromLTRB(8.w, 0, 8.w, 8.h),
+            child: SkeletonBox(width: double.infinity, height: 24.h, radius: 12),
+          ),
+        ],
+      ),
+    ),
+  );
 
-            // ── Section header shimmer ───────────────────────────
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16.w),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  _Bone(width: 160.w, height: 18.h, radius: 4, anim: _anim),
-                  _Bone(width: 60.w, height: 14.h, radius: 4, anim: _anim),
-                ],
+  /// Mirrors [_CategoryCard]: image area, name, "available" count, Buy pill.
+  Widget _mostBoughtCard() => Container(
+    decoration: BoxDecoration(
+      color: AppColors.white,
+      borderRadius: BorderRadius.circular(16.r),
+      border: Border.all(color: AppColors.grey200),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withValues(alpha: 0.08),
+          blurRadius: 10,
+          spreadRadius: 1,
+          offset: const Offset(0, 3),
+        ),
+      ],
+    ),
+    child: AppShimmer(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            child: ClipRRect(
+              borderRadius: BorderRadius.vertical(top: Radius.circular(16.r)),
+              child: const SkeletonBox(
+                width: double.infinity,
+                height: double.infinity,
+                radius: 0,
               ),
             ),
-            SizedBox(height: 12.h),
-
-            // ── Most Bought Vehicles shimmer (2 cards) ───────────
-            ...List.generate(
-              2,
-              (_) => Padding(
-                padding: EdgeInsets.fromLTRB(16.w, 0, 16.w, 12.h),
-                child: Column(
+          ),
+          Padding(
+            padding: EdgeInsets.fromLTRB(12.w, 7.h, 8.w, 12.h),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SkeletonBox(width: 100.w, height: 11.h),
+                SizedBox(height: 8.h),
+                Row(
                   children: [
-                    _Bone(
-                      width: double.infinity,
-                      height: 180.h,
-                      radius: 16,
-                      anim: _anim,
-                    ),
-                    SizedBox(height: 1.h),
-                    Container(
-                      padding: EdgeInsets.fromLTRB(12.w, 10.h, 12.w, 10.h),
-                      decoration: BoxDecoration(
-                        color: AppColors.white,
-                        borderRadius: BorderRadius.vertical(
-                          bottom: Radius.circular(16.r),
-                        ),
-                        border: Border.all(color: AppColors.grey200),
-                      ),
-                      child: Row(
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                _Bone(
-                                  width: 80.w,
-                                  height: 10.h,
-                                  radius: 4,
-                                  anim: _anim,
-                                ),
-                                SizedBox(height: 4.h),
-                                _Bone(
-                                  width: 120.w,
-                                  height: 14.h,
-                                  radius: 4,
-                                  anim: _anim,
-                                ),
-                              ],
-                            ),
-                          ),
-                          SizedBox(width: 8.w),
-                          _Bone(
-                            width: 60.w,
-                            height: 32.h,
-                            radius: 16,
-                            anim: _anim,
-                          ),
+                          SkeletonBox(width: 44.w, height: 9.h),
+                          SizedBox(height: 3.h),
+                          SkeletonBox(width: 24.w, height: 11.h),
                         ],
                       ),
                     ),
+                    SkeletonBox(width: 62.w, height: 22.h, radius: 20),
                   ],
                 ),
-              ),
+              ],
             ),
-            SizedBox(height: 12.h),
-
-            // ── Inspection banner shimmer ────────────────────────
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16.w),
-              child: _Bone(
-                width: double.infinity,
-                height: 220.h,
-                radius: 18,
-                anim: _anim,
-              ),
-            ),
-            SizedBox(height: 24.h),
-
-            // ── FMS section header shimmer ───────────────────────
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16.w),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  _Bone(width: 100.w, height: 18.h, radius: 4, anim: _anim),
-                  _Bone(width: 60.w, height: 14.h, radius: 4, anim: _anim),
-                ],
-              ),
-            ),
-            SizedBox(height: 12.h),
-
-            // ── FMS items grid shimmer (2×2) ─────────────────────
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16.w),
-              child: GridView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  mainAxisSpacing: 12.h,
-                  crossAxisSpacing: 12.w,
-                  childAspectRatio: 1.1,
-                ),
-                itemCount: 4,
-                itemBuilder: (_, __) => _Bone(
-                  width: double.infinity,
-                  height: double.infinity,
-                  radius: 12,
-                  anim: _anim,
-                ),
-              ),
-            ),
-            SizedBox(height: 24.h),
-
-            // ── Insurance banner shimmer ─────────────────────────
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16.w),
-              child: _Bone(
-                width: double.infinity,
-                height: 220.h,
-                radius: 18,
-                anim: _anim,
-              ),
-            ),
-            SizedBox(height: 32.h),
-          ],
-        ),
+          ),
+        ],
       ),
-    );
-  }
-}
+    ),
+  );
 
-// ── Single shimmer bone ────────────────────────────────────────────────────
-
-class _Bone extends StatelessWidget {
-  final double width;
-  final double height;
-  final double radius;
-  final Animation<double> anim;
-
-  const _Bone({
-    required this.width,
-    required this.height,
-    required this.radius,
-    required this.anim,
-  });
+  Widget _grid({
+    required int crossAxisCount,
+    required int count,
+    required double aspectRatio,
+    required Widget Function() item,
+  }) => Padding(
+    padding: EdgeInsets.symmetric(horizontal: 16.w),
+    child: GridView.builder(
+      shrinkWrap: true,
+      padding: EdgeInsets.zero,
+      physics: const NeverScrollableScrollPhysics(),
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: crossAxisCount,
+        mainAxisSpacing: 12.h,
+        crossAxisSpacing: 12.w,
+        childAspectRatio: aspectRatio,
+      ),
+      itemCount: count,
+      itemBuilder: (_, __) => item(),
+    ),
+  );
 
   @override
   Widget build(BuildContext context) {
-    return Opacity(
-      opacity: anim.value,
-      child: Container(
-        width: width,
-        height: height,
-        decoration: BoxDecoration(
-          color: AppColors.grey200,
-          borderRadius: BorderRadius.circular(radius),
-        ),
+    return SingleChildScrollView(
+      physics: const NeverScrollableScrollPhysics(),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // ── Header: location row, then avatar + search + icons ──
+          Container(
+            padding: EdgeInsets.fromLTRB(16.w, 12.h, 16.w, 12.h),
+            color: AppColors.white,
+            child: AppShimmer(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(left: 8),
+                    child: Row(
+                      children: [
+                        SkeletonBox.circle(size: 18.r),
+                        SizedBox(width: 4.w),
+                        SkeletonBox(width: 140.w, height: 13.h),
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: 10.h),
+                  Row(
+                    children: [
+                      SkeletonBox.circle(size: 40.r),
+                      SizedBox(width: 10.w),
+                      const Expanded(child: SkeletonBox(height: 40, radius: 12)),
+                      SizedBox(width: 10.w),
+                      SkeletonBox(width: 26.r, height: 26.r, radius: 6),
+                      SizedBox(width: 10.w),
+                      SkeletonBox.circle(size: 28.r),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+          SizedBox(height: 16.h),
+
+          // ── Live auction carousel ───────────────────────────────
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16.w),
+            child: AppShimmer(
+              child: SkeletonBox(
+                width: double.infinity,
+                height: 160.h,
+                radius: 16,
+              ),
+            ),
+          ),
+          SizedBox(height: 24.h),
+
+          // ── Service categories (3-col) ──────────────────────────
+          _grid(
+            crossAxisCount: 3,
+            count: 6,
+            aspectRatio: 1,
+            item: _homeCategoryCard,
+          ),
+          SizedBox(height: 24.h),
+
+          // ── Most bought vehicles (2×2) ──────────────────────────
+          _sectionHeader(160.w),
+          SizedBox(height: 12.h),
+          _grid(
+            crossAxisCount: 2,
+            count: 4,
+            aspectRatio: 0.9,
+            item: _mostBoughtCard,
+          ),
+          SizedBox(height: 24.h),
+
+          // ── Inspection banner ───────────────────────────────────
+          Padding(
+            padding: EdgeInsets.fromLTRB(16.w, 0, 16.w, 28.h),
+            child: AppShimmer(
+              child: SkeletonBox(
+                width: double.infinity,
+                height: 200.h,
+                radius: 18,
+              ),
+            ),
+          ),
+          SizedBox(height: 12.h),
+        ],
       ),
     );
   }

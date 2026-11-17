@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 
 import '../../../core/extensions/context_extensions.dart';
 import '../../../core/constants/app_colors.dart';
+import '../../../core/design_system/loaders/app_shimmer.dart';
 import '../../../theme/app_fonts.dart';
 import '../controllers/spare_and_fms_controller.dart';
 import '../domain/entities/spare_part_entity.dart';
@@ -53,7 +54,7 @@ class _FmsTabState extends State<FmsTab> with AutomaticKeepAliveClientMixin {
 
     return Obx(() {
       if (controller.isFmsLoading.value && controller.fmsList.isEmpty) {
-        return const Center(child: CircularProgressIndicator());
+        return const _FmsGridSkeleton();
       }
 
       if (controller.fmsList.isEmpty) {
@@ -288,6 +289,78 @@ class _SpareGridCard extends StatelessWidget {
         );
       },
       errorBuilder: (_, __, ___) => placeholder(Icons.broken_image_outlined),
+    );
+  }
+}
+
+/// Loading skeleton for the FMS grid — same grid metrics and card shell as
+/// [_SpareGridCard], with blocks where the photo, name and arrow go.
+class _FmsGridSkeleton extends StatelessWidget {
+  const _FmsGridSkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    return GridView.builder(
+      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
+      physics: const NeverScrollableScrollPhysics(),
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        crossAxisSpacing: 10.w,
+        mainAxisSpacing: 10.h,
+        childAspectRatio: 0.8,
+      ),
+      itemCount: 6,
+      itemBuilder: (_, __) => Container(
+        padding: EdgeInsets.all(6.r),
+        decoration: BoxDecoration(
+          color: AppColors.white,
+          borderRadius: BorderRadius.circular(22.r),
+          border: Border.all(
+            color: AppColors.primary.withValues(alpha: 0.08),
+            width: 1,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.primary.withValues(alpha: 0.10),
+              blurRadius: 18,
+              offset: const Offset(0, 8),
+            ),
+          ],
+        ),
+        child: AppShimmer(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Expanded(
+                child: SkeletonBox(
+                  width: double.infinity,
+                  height: double.infinity,
+                  radius: 17,
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.fromLTRB(6.w, 8.h, 2.w, 4.h),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          SkeletonBox(height: 11.h),
+                          SizedBox(height: 4.h),
+                          SkeletonBox(width: 60.w, height: 11.h),
+                        ],
+                      ),
+                    ),
+                    SizedBox(width: 6.w),
+                    SkeletonBox.circle(size: 28.r),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

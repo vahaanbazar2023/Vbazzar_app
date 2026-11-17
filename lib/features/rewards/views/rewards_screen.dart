@@ -5,7 +5,7 @@ import 'package:get/get.dart';
 
 import '../../../core/constants/app_assets.dart';
 import '../../../core/constants/app_colors.dart';
-import '../../../core/design_system/atoms/custom_loader.dart';
+import '../../../core/design_system/loaders/app_shimmer.dart';
 import '../../../core/design_system/templates/shell_layout.dart';
 import '../../../core/extensions/context_extensions.dart';
 import '../../../core/services/share_service.dart';
@@ -48,7 +48,7 @@ class _RewardsScreenState extends State<RewardsScreen>
       bodyColor: const Color(0xFFF5F5F5),
       body: Obx(() {
         if (_ctrl.isLoadingWallet.value) {
-          return const Center(child: CustomLoader());
+          return const _RewardsSkeleton();
         }
         final wallet = _ctrl.walletData.value;
         if (wallet == null) {
@@ -95,6 +95,182 @@ class _RewardsScreenState extends State<RewardsScreen>
           ),
         );
       }),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Loading skeleton — wallet card, referral banner, recent transactions
+// ─────────────────────────────────────────────────────────────────────────────
+
+class _RewardsSkeleton extends StatelessWidget {
+  const _RewardsSkeleton();
+
+  Widget _balanceChip() => Row(
+    children: [
+      SkeletonBox(width: 28.r, height: 28.r, radius: 8),
+      SizedBox(width: 8.w),
+      Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SkeletonBox(width: 70.w, height: 10.h),
+          SizedBox(height: 5.h),
+          SkeletonBox(width: 60.w, height: 16.h),
+        ],
+      ),
+    ],
+  );
+
+  Widget _walletCard() => Container(
+    padding: EdgeInsets.all(16.r),
+    decoration: BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(16.r),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withValues(alpha: 0.05),
+          blurRadius: 10,
+          offset: const Offset(0, 3),
+        ),
+      ],
+    ),
+    child: AppShimmer(
+      child: Column(
+        children: [
+          Row(
+            children: [
+              SkeletonBox(width: 64.r, height: 64.r, radius: 14),
+              SizedBox(width: 14.w),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SkeletonBox(width: 110.w, height: 10.h),
+                    SizedBox(height: 6.h),
+                    SkeletonBox(width: 120.w, height: 20.h),
+                    SizedBox(height: 6.h),
+                    SkeletonBox(width: 100.w, height: 11.h),
+                  ],
+                ),
+              ),
+              SkeletonBox(width: 90.w, height: 30.h, radius: 8),
+            ],
+          ),
+          SizedBox(height: 24.h),
+          const Divider(height: 1, thickness: 1, color: AppColors.grey300),
+          SizedBox(height: 14.h),
+          IntrinsicHeight(
+            child: Row(
+              children: [
+                Expanded(child: _balanceChip()),
+                const VerticalDivider(
+                  width: 1,
+                  thickness: 1,
+                  color: AppColors.grey300,
+                ),
+                SizedBox(width: 8.w),
+                Expanded(child: _balanceChip()),
+              ],
+            ),
+          ),
+          SizedBox(height: 14.h),
+        ],
+      ),
+    ),
+  );
+
+  Widget _referralBanner() => Container(
+    padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
+    decoration: BoxDecoration(
+      color: AppColors.lightOrange.withValues(alpha: 0.15),
+      borderRadius: BorderRadius.circular(14.r),
+    ),
+    child: AppShimmer(
+      child: Row(
+        children: [
+          SkeletonBox(width: 40.r, height: 40.r, radius: 10),
+          SizedBox(width: 12.w),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SkeletonBox(width: 140.w, height: 12.h),
+                SizedBox(height: 5.h),
+                SkeletonBox(width: 110.w, height: 11.h),
+              ],
+            ),
+          ),
+          SkeletonBox(width: 96.w, height: 32.h, radius: 8),
+        ],
+      ),
+    ),
+  );
+
+  Widget _transaction() => Container(
+    margin: EdgeInsets.only(bottom: 10.h),
+    padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
+    decoration: BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(14.r),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withValues(alpha: 0.04),
+          blurRadius: 6,
+          offset: const Offset(0, 2),
+        ),
+      ],
+    ),
+    child: AppShimmer(
+      child: Row(
+        children: [
+          SkeletonBox.circle(size: 40.r),
+          SizedBox(width: 12.w),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SkeletonBox(width: 130.w, height: 13.h),
+                SizedBox(height: 5.h),
+                SkeletonBox(width: 90.w, height: 11.h),
+              ],
+            ),
+          ),
+          SizedBox(width: 8.w),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              SkeletonBox(width: 50.w, height: 13.h),
+              SizedBox(height: 5.h),
+              SkeletonBox(width: 70.w, height: 9.h),
+            ],
+          ),
+        ],
+      ),
+    ),
+  );
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView(
+      physics: const NeverScrollableScrollPhysics(),
+      padding: EdgeInsets.fromLTRB(16.w, 16.h, 16.w, 32.h),
+      children: [
+        _walletCard(),
+        SizedBox(height: 14.h),
+        _referralBanner(),
+        SizedBox(height: 20.h),
+        AppShimmer(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              SkeletonBox(width: 160.w, height: 15.h),
+              SkeletonBox(width: 60.w, height: 12.h),
+            ],
+          ),
+        ),
+        SizedBox(height: 10.h),
+        for (var i = 0; i < 4; i++) _transaction(),
+      ],
     );
   }
 }

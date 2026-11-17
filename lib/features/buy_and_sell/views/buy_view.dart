@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import '../../../core/design_system/design_system.dart';
 import '../../../core/extensions/context_extensions.dart';
-import '../../../core/design_system/organisms/network_image_carousel.dart';
 import '../../../routes/app_routes.dart';
 import '../controllers/vehicle_detail_controller.dart';
 import '../domain/entities/buy_vehicle_entity.dart';
@@ -24,8 +24,11 @@ class BuyView extends StatelessWidget {
     return Obx(() {
       // ── Loading state ────────────────────────────────────
       if (_ctrl.isLoadingBuyVehicles.value && _ctrl.buyVehicles.isEmpty) {
-        return const Center(
-          child: CircularProgressIndicator(color: _redAccent),
+        return SkeletonList(
+          count: 4,
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 100),
+          spacing: 14,
+          itemBuilder: (_, __) => const _VehicleCardSkeleton(),
         );
       }
 
@@ -359,5 +362,69 @@ class _VehicleCard extends StatelessWidget {
       parts.add(vehicle.state!);
     }
     return parts.join(' | ');
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// Vehicle Card Skeleton — mirrors [_VehicleCard] while loading
+// ═══════════════════════════════════════════════════════════════
+
+class _VehicleCardSkeleton extends StatelessWidget {
+  const _VehicleCardSkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.06),
+            blurRadius: 14,
+            offset: const Offset(0, 5),
+          ),
+        ],
+        border: Border.all(color: Colors.grey.withValues(alpha: 0.08)),
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: AppShimmer(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Image carousel
+            SkeletonBox(width: double.infinity, height: 160.h, radius: 0),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Title line
+                  SkeletonBox(width: 190.w, height: 15),
+                  const SizedBox(height: 8),
+                  // Location row
+                  Row(
+                    children: [
+                      const SkeletonBox(width: 15, height: 15, radius: 4),
+                      const SizedBox(width: 4),
+                      SkeletonBox(width: 140.w, height: 13),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  // Price
+                  SkeletonBox(width: 100.w, height: 17),
+                  const SizedBox(height: 12),
+                  // View Details button
+                  const Align(
+                    alignment: Alignment.centerRight,
+                    child: SkeletonBox(width: 112, height: 32, radius: 20),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }

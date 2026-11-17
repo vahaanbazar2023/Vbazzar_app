@@ -4,7 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 import '../../../core/constants/app_colors.dart';
-import '../../../core/design_system/atoms/custom_loader.dart';
+import '../../../core/design_system/loaders/app_shimmer.dart';
 import '../../../core/design_system/molecules/gradient_button.dart';
 import '../../../core/design_system/organisms/app_header.dart';
 import '../../../core/extensions/context_extensions.dart';
@@ -344,7 +344,7 @@ class _CashOutRequestTabState extends State<_CashOutRequestTab>
     super.build(context);
     return Obx(() {
       if (widget.ctrl.isLoadingCashOutEligibility.value) {
-        return const Center(child: CustomLoader());
+        return const _CashOutFormSkeleton();
       }
       final eligibility = widget.ctrl.cashOutEligibility.value;
       final canCashOut = eligibility?.isEligible ?? true;
@@ -564,6 +564,100 @@ class _CashOutRequestTabState extends State<_CashOutRequestTab>
   }
 }
 
+/// Loading placeholder for the cash-out request tab: the withdraw-range banner
+/// and the bank-details form card (labelled fields, button, footnote).
+class _CashOutFormSkeleton extends StatelessWidget {
+  const _CashOutFormSkeleton();
+
+  Widget _field() => Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      SkeletonBox(width: 90.w, height: 11.h),
+      SizedBox(height: 5.h),
+      SkeletonBox(width: double.infinity, height: 44.h, radius: 10),
+    ],
+  );
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView(
+      physics: const NeverScrollableScrollPhysics(),
+      padding: EdgeInsets.fromLTRB(16.w, 16.h, 16.w, 40.h),
+      children: [
+        Container(
+          margin: EdgeInsets.only(bottom: 10.h),
+          padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
+          decoration: BoxDecoration(
+            color: AppColors.successBackground,
+            borderRadius: BorderRadius.circular(10.r),
+            border: Border.all(
+              color: AppColors.success.withValues(alpha: 0.25),
+            ),
+          ),
+          child: AppShimmer(
+            child: Row(
+              children: [
+                const SkeletonBox.circle(size: 16),
+                SizedBox(width: 8.w),
+                SkeletonBox(width: 200.w, height: 11.h),
+              ],
+            ),
+          ),
+        ),
+        SizedBox(height: 14.h),
+        Container(
+          padding: EdgeInsets.all(16.r),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16.r),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.05),
+                blurRadius: 12,
+                offset: const Offset(0, 3),
+              ),
+            ],
+          ),
+          child: AppShimmer(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    SkeletonBox(width: 3.w, height: 16.h, radius: 2),
+                    SizedBox(width: 8.w),
+                    SkeletonBox(width: 150.w, height: 14.h),
+                  ],
+                ),
+                SizedBox(height: 16.h),
+                _field(),
+                SizedBox(height: 12.h),
+                _field(),
+                SizedBox(height: 12.h),
+                Row(
+                  children: [
+                    Expanded(child: _field()),
+                    SizedBox(width: 10.w),
+                    Expanded(child: _field()),
+                  ],
+                ),
+                SizedBox(height: 12.h),
+                _field(),
+                SizedBox(height: 12.h),
+                _field(),
+                SizedBox(height: 20.h),
+                SkeletonBox(width: double.infinity, height: 48.h, radius: 24),
+                SizedBox(height: 8.h),
+                Center(child: SkeletonBox(width: 180.w, height: 10.h)),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
 // ─────────────────────────────────────────────────────────────────────────────
 // Reusable info/warning banner
 // ─────────────────────────────────────────────────────────────────────────────
@@ -630,7 +724,12 @@ class _CashOutHistoryTab extends StatelessWidget {
   Widget build(BuildContext context) {
     return Obx(() {
       if (ctrl.isLoadingCashOutHistory.value) {
-        return const Center(child: CustomLoader());
+        return SkeletonList(
+          count: 4,
+          padding: EdgeInsets.fromLTRB(16.w, 16.h, 16.w, 40.h),
+          spacing: 10.h,
+          itemBuilder: (_, __) => const _HistoryCardSkeleton(),
+        );
       }
       final history = ctrl.cashOutHistory;
       if (history.isEmpty) {
@@ -647,6 +746,86 @@ class _CashOutHistoryTab extends StatelessWidget {
         ),
       );
     });
+  }
+}
+
+/// Loading placeholder shaped like [_HistoryCard]: amount + date, status
+/// chip, divider and the 2×2 bank-details grid.
+class _HistoryCardSkeleton extends StatelessWidget {
+  const _HistoryCardSkeleton();
+
+  Widget _detail() => Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      SkeletonBox(width: 60.w, height: 9.h),
+      SizedBox(height: 4.h),
+      SkeletonBox(width: 90.w, height: 12.h),
+    ],
+  );
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(14.r),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          Padding(
+            padding: EdgeInsets.fromLTRB(14.w, 14.h, 14.w, 10.h),
+            child: AppShimmer(
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SkeletonBox(width: 100.w, height: 20.h),
+                        SizedBox(height: 4.h),
+                        SkeletonBox(width: 120.w, height: 10.h),
+                      ],
+                    ),
+                  ),
+                  SkeletonBox(width: 80.w, height: 24.h, radius: 20),
+                ],
+              ),
+            ),
+          ),
+          const Divider(height: 1, thickness: 1, color: AppColors.grey100),
+          Padding(
+            padding: EdgeInsets.fromLTRB(14.w, 10.h, 14.w, 14.h),
+            child: AppShimmer(
+              child: Column(
+                children: [
+                  Row(
+                    children: [
+                      Expanded(child: _detail()),
+                      Expanded(child: _detail()),
+                    ],
+                  ),
+                  SizedBox(height: 8.h),
+                  Row(
+                    children: [
+                      Expanded(child: _detail()),
+                      Expanded(child: _detail()),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
 

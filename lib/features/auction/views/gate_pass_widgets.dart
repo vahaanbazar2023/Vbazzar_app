@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
 import '../../../core/constants/app_colors.dart';
+import '../../../core/design_system/loaders/app_shimmer.dart';
 import '../../../core/design_system/molecules/custom_snackbar.dart';
 
 // ── Brand surfaces shared with the bottom nav / auction cards ────────────────
@@ -237,49 +238,8 @@ class GatePassTicket extends StatelessWidget {
     );
   }
 
-  Widget _tearLine(double notch) {
-    return SizedBox(
-      height: notch * 2,
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          Positioned.fill(child: ColoredBox(color: Colors.white)),
-          // dashed line
-          LayoutBuilder(
-            builder: (_, c) {
-              final dashes = (c.maxWidth / 12).floor();
-              return Padding(
-                padding: EdgeInsets.symmetric(horizontal: notch + 6),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: List.generate(
-                    dashes,
-                    (_) => Container(width: 5, height: 1.5, color: AppColors.grey300),
-                  ),
-                ),
-              );
-            },
-          ),
-          Positioned(
-            left: -notch,
-            child: Container(
-              width: notch * 2,
-              height: notch * 2,
-              decoration: BoxDecoration(color: notchColor, shape: BoxShape.circle),
-            ),
-          ),
-          Positioned(
-            right: -notch,
-            child: Container(
-              width: notch * 2,
-              height: notch * 2,
-              decoration: BoxDecoration(color: notchColor, shape: BoxShape.circle),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+  Widget _tearLine(double notch) =>
+      _GpTearLine(notch: notch, notchColor: notchColor);
 
   Widget _body(BuildContext context) {
     return Container(
@@ -669,40 +629,183 @@ class GpTimeline extends StatelessWidget {
   return (steps: steps, current: idx, failed: failed);
 }
 
+/// Perforated tear line between the ticket header and body, with side notches
+/// cut out in [notchColor].
+class _GpTearLine extends StatelessWidget {
+  final double notch;
+  final Color notchColor;
+  const _GpTearLine({required this.notch, required this.notchColor});
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: notch * 2,
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          Positioned.fill(child: ColoredBox(color: Colors.white)),
+          // dashed line
+          LayoutBuilder(
+            builder: (_, c) {
+              final dashes = (c.maxWidth / 12).floor();
+              return Padding(
+                padding: EdgeInsets.symmetric(horizontal: notch + 6),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: List.generate(
+                    dashes,
+                    (_) => Container(width: 5, height: 1.5, color: AppColors.grey300),
+                  ),
+                ),
+              );
+            },
+          ),
+          Positioned(
+            left: -notch,
+            child: Container(
+              width: notch * 2,
+              height: notch * 2,
+              decoration: BoxDecoration(color: notchColor, shape: BoxShape.circle),
+            ),
+          ),
+          Positioned(
+            right: -notch,
+            child: Container(
+              width: notch * 2,
+              height: notch * 2,
+              decoration: BoxDecoration(color: notchColor, shape: BoxShape.circle),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 // ── Skeleton ──────────────────────────────────────────────────────────────────
 
-/// Pulsing placeholder shown while data loads (reserves space, avoids a bare
-/// spinner and layout jump).
-class GpSkeleton extends StatefulWidget {
+/// Shimmering placeholder block shown while data loads (reserves space, avoids
+/// a bare spinner and layout jump).
+class GpSkeleton extends StatelessWidget {
   final double height;
   const GpSkeleton({super.key, required this.height});
 
   @override
-  State<GpSkeleton> createState() => _GpSkeletonState();
+  Widget build(BuildContext context) {
+    return AppShimmer(child: SkeletonBox(height: height, radius: 16));
+  }
 }
 
-class _GpSkeletonState extends State<GpSkeleton>
-    with SingleTickerProviderStateMixin {
-  late final AnimationController _c = AnimationController(
-    vsync: this,
-    duration: const Duration(milliseconds: 1100),
-  )..repeat(reverse: true);
+/// Loading placeholder that mirrors [GatePassTicket]: dark header (badge,
+/// status pill, title, reg plate), tear line, then details + QR, the code row
+/// and the download button.
+class GatePassTicketSkeleton extends StatelessWidget {
+  final Color notchColor;
+  final bool showDownload;
+  const GatePassTicketSkeleton({
+    super.key,
+    this.notchColor = Colors.white,
+    this.showDownload = true,
+  });
 
-  @override
-  void dispose() {
-    _c.dispose();
-    super.dispose();
-  }
+  Widget _kv(double valueWidth) => Padding(
+    padding: EdgeInsets.only(bottom: 8.h),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SkeletonBox(width: 56.w, height: 11.h),
+        SizedBox(height: 3.h),
+        SkeletonBox(width: valueWidth, height: 14.h),
+      ],
+    ),
+  );
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: _c,
-      builder: (_, __) => Container(
-        height: widget.height,
-        decoration: BoxDecoration(
-          color: Color.lerp(AppColors.grey100, AppColors.grey200, _c.value),
-          borderRadius: BorderRadius.circular(16.r),
+    final notch = 12.r;
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(20.r),
+        boxShadow: const [
+          BoxShadow(color: Color(0x1F000000), blurRadius: 16, offset: Offset(0, 6)),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(20.r),
+        child: Column(
+          children: [
+            // Header — same dark gradient; light blocks kept faint on it.
+            Container(
+              width: double.infinity,
+              padding: EdgeInsets.fromLTRB(16.w, 14.h, 16.w, 18.h),
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [kGpInk, kGpInkSoft],
+                ),
+              ),
+              child: Opacity(
+                opacity: 0.18,
+                child: AppShimmer(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          SkeletonBox(width: 26.r, height: 26.r, radius: 8),
+                          SizedBox(width: 8.w),
+                          SkeletonBox(width: 72.w, height: 11.h),
+                          const Spacer(),
+                          SkeletonBox(width: 68.w, height: 22.h, radius: 20),
+                        ],
+                      ),
+                      SizedBox(height: 14.h),
+                      SkeletonBox(width: 210.w, height: 20.h),
+                      SizedBox(height: 8.h),
+                      SkeletonBox(width: 104.w, height: 24.h),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            _GpTearLine(notch: notch, notchColor: notchColor),
+            Container(
+              width: double.infinity,
+              color: Colors.white,
+              padding: EdgeInsets.fromLTRB(16.w, 4.h, 16.w, 16.h),
+              child: AppShimmer(
+                child: Column(
+                  children: [
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              _kv(130.w),
+                              _kv(90.w),
+                              _kv(110.w),
+                              _kv(110.w),
+                            ],
+                          ),
+                        ),
+                        SizedBox(width: 12.w),
+                        SkeletonBox(width: 108.r, height: 108.r, radius: 12),
+                      ],
+                    ),
+                    SizedBox(height: 12.h),
+                    SkeletonBox(height: 44.h, radius: 10),
+                    if (showDownload) ...[
+                      SizedBox(height: 12.h),
+                      SkeletonBox(height: 48.h, radius: 12),
+                    ],
+                  ],
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );

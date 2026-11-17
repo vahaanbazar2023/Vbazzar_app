@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import '../../../core/constants/app_colors.dart';
+import '../../../core/design_system/loaders/app_shimmer.dart';
 import '../../../core/design_system/templates/app_layout.dart';
 import '../../../core/design_system/tokens/app_spacing.dart';
 import '../../../routes/app_routes.dart';
@@ -64,19 +65,12 @@ class CategorySelectionScreen extends StatelessWidget {
       physics: const NeverScrollableScrollPhysics(),
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
-        mainAxisSpacing: 14.h,
-        crossAxisSpacing: 14.w,
-        childAspectRatio: 0.8,
+        mainAxisSpacing: 16.h,
+        crossAxisSpacing: 16.w,
+        childAspectRatio: 1,
       ),
       itemCount: 6,
-      itemBuilder: (context, index) {
-        return Container(
-          decoration: BoxDecoration(
-            color: AppColors.grey100,
-            borderRadius: BorderRadius.circular(16.r),
-          ),
-        );
-      },
+      itemBuilder: (_, __) => const _CategoryCardSkeleton(),
     );
   }
 
@@ -149,6 +143,49 @@ class CategorySelectionScreen extends StatelessWidget {
             Text(
               context.l10n.pullDownToRefresh,
               style: AppFonts.bodySmall.copyWith(color: AppColors.textDisabled),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Mirrors [_CategoryCard]: centred icon, category name and the
+/// "• N vehicles" count line.
+class _CategoryCardSkeleton extends StatelessWidget {
+  const _CategoryCardSkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16.r),
+        border: Border.all(color: AppColors.border, width: 1),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.blackTransparent,
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: AppShimmer(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            SkeletonBox(width: 64.w, height: 48.h, radius: 8),
+            SizedBox(height: 12.h),
+            SkeletonBox(width: 90.w, height: 14.h),
+            SizedBox(height: 6.h),
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                SkeletonBox.circle(size: 6.w),
+                SizedBox(width: 5.w),
+                SkeletonBox(width: 60.w, height: 10.h, radius: 4),
+              ],
             ),
           ],
         ),

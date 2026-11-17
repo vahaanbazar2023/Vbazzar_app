@@ -793,58 +793,28 @@ class BuyVehicleCard extends StatelessWidget {
 // States
 // ─────────────────────────────────────────────────────────────────────────────
 
-class _ShimmerList extends StatefulWidget {
-  @override
-  State<_ShimmerList> createState() => _ShimmerListState();
-}
-
-class _ShimmerListState extends State<_ShimmerList>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation<double> _anim;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 1200),
-    )..repeat();
-    _anim = Tween<double>(begin: -1.5, end: 2.5).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeInOutSine),
-    );
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
+class _ShimmerList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: _anim,
-      builder: (_, __) => ListView.builder(
-        padding: EdgeInsets.fromLTRB(
-          AppSpacing.md,
-          AppSpacing.sm,
-          AppSpacing.md,
-          100,
-        ),
-        itemCount: 4,
-        itemBuilder: (_, __) => Padding(
-          padding: EdgeInsets.only(bottom: AppSpacing.md),
-          child: _ShimmerCard(anim: _anim),
-        ),
+    return SkeletonList(
+      count: 6,
+      padding: EdgeInsets.fromLTRB(
+        AppSpacing.md,
+        AppSpacing.sm,
+        AppSpacing.md,
+        100,
       ),
+      spacing: AppSpacing.sm,
+      itemBuilder: (_, __) => const BuyVehicleCardSkeleton(),
     );
   }
 }
 
-class _ShimmerCard extends StatelessWidget {
-  final Animation<double> anim;
-  const _ShimmerCard({required this.anim});
+/// Loading placeholder that mirrors [BuyVehicleCard] (same card decoration,
+/// 140x100 image on the left, title / year-location / spec chips / price +
+/// "View more" button on the right). Also used by the Buy & Sell wishlist.
+class BuyVehicleCardSkeleton extends StatelessWidget {
+  const BuyVehicleCardSkeleton({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -855,108 +825,83 @@ class _ShimmerCard extends StatelessWidget {
         border: Border.all(color: AppColors.grey200, width: 1),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.06),
+            color: Colors.black.withValues(alpha: 0.2),
             blurRadius: 12,
             spreadRadius: 0,
             offset: const Offset(0, 3),
           ),
         ],
       ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // ── Left: Image shimmer ──────────────────────────────────────────
-          ClipRRect(
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(16.r),
-              bottomLeft: Radius.circular(16.r),
+      child: AppShimmer(
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // ── Left: image ─────────────────────────────────────────────────
+            ClipRRect(
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(16.r),
+                bottomLeft: Radius.circular(16.r),
+              ),
+              child: SkeletonBox(width: 140.w, height: 100.h, radius: 0),
             ),
-            child: _shimmerBox(140.w, 100.h),
-          ),
-          // ── Right: Details shimmer ───────────────────────────────────────
-          Expanded(
-            child: Padding(
-              padding: EdgeInsets.all(12.w),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  // Title lines (2 lines)
-                  _shimmerBox(double.infinity, 14.h, radius: 4),
-                  SizedBox(height: 6.h),
-                  _shimmerBox(120.w, 14.h, radius: 4),
-                  SizedBox(height: 8.h),
-                  // Year + Location row
-                  Row(
-                    children: [
-                      _shimmerBox(45.w, 10.h, radius: 4),
-                      SizedBox(width: 6.w),
-                      _shimmerBox(60.w, 10.h, radius: 4),
-                    ],
-                  ),
-                  SizedBox(height: 8.h),
-                  // Specs row (3 chips)
-                  Row(
-                    children: [
-                      _shimmerBox(40.w, 10.h, radius: 4),
-                      SizedBox(width: 4.w),
-                      _shimmerBox(40.w, 10.h, radius: 4),
-                      SizedBox(width: 4.w),
-                      _shimmerBox(45.w, 10.h, radius: 4),
-                    ],
-                  ),
-                  SizedBox(height: 10.h),
-                  // Price + Button row - using Flexible to prevent overflow
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Flexible(
-                        child: Container(
-                          height: 16.h,
-                          constraints: BoxConstraints(maxWidth: 65.w),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(4),
-                            color: Colors.white,
+            // ── Right: details ──────────────────────────────────────────────
+            Expanded(
+              child: Padding(
+                padding: EdgeInsets.fromLTRB(12.w, 4.h, 0, 0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Title
+                    SkeletonBox(width: 130.w, height: 15.h, radius: 4),
+                    SizedBox(height: 6.h),
+                    // Year · Location
+                    Row(
+                      children: [
+                        SkeletonBox(width: 13.r, height: 13.r, radius: 3),
+                        SizedBox(width: 3.w),
+                        SkeletonBox(width: 32.w, height: 11.h, radius: 4),
+                        SizedBox(width: 15.w),
+                        SkeletonBox(width: 13.r, height: 13.r, radius: 3),
+                        SizedBox(width: 3.w),
+                        SkeletonBox(width: 60.w, height: 11.h, radius: 4),
+                      ],
+                    ),
+                    SizedBox(height: 6.h),
+                    // Spec chips (fuel, transmission)
+                    Row(
+                      children: [
+                        SkeletonBox(width: 50.w, height: 11.h, radius: 4),
+                        SizedBox(width: 6.w),
+                        SkeletonBox(width: 50.w, height: 11.h, radius: 4),
+                      ],
+                    ),
+                    SizedBox(height: 10.h),
+                    // Price + View more button
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Flexible(
+                          child: SkeletonBox(
+                            width: 60.w,
+                            height: 13.h,
+                            radius: 4,
                           ),
-                          child: _shimmerBox(65.w, 16.h, radius: 4),
                         ),
-                      ),
-                      SizedBox(width: 8.w),
-                      _shimmerBox(80.w, 28.h, radius: 14),
-                    ],
-                  ),
-                ],
+                        Padding(
+                          padding: const EdgeInsets.only(right: 4.0, bottom: 4),
+                          child: SkeletonBox(
+                            width: 80.w,
+                            height: 24.h,
+                            radius: 12,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _shimmerBox(double width, double height, {double radius = 0}) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(radius),
-      child: SizedBox(
-        width: width,
-        height: height,
-        child: DecoratedBox(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.centerLeft,
-              end: Alignment.centerRight,
-              colors: const [
-                Color(0xFFEEEEEE),
-                Color(0xFFF8F8F8),
-                Color(0xFFEEEEEE),
-              ],
-              stops: [
-                (anim.value - 1).clamp(0.0, 1.0),
-                anim.value.clamp(0.0, 1.0),
-                (anim.value + 1).clamp(0.0, 1.0),
-              ],
-            ),
-          ),
+          ],
         ),
       ),
     );

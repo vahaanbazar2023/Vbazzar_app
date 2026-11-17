@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import '../../../core/constants/app_colors.dart';
-import '../../../core/design_system/atoms/custom_loader.dart';
+import '../../../core/design_system/loaders/app_shimmer.dart';
 import '../../../core/extensions/context_extensions.dart';
 import '../controllers/profile_controller.dart';
 import '../models/wallet_models.dart';
@@ -50,7 +50,7 @@ class _WalletDashboardViewState extends State<WalletDashboardView> {
       ),
       body: Obx(() {
         if (controller.isLoadingWallet.value) {
-          return const Center(child: CustomLoader());
+          return const _WalletDashboardSkeleton();
         }
 
         final wallet = controller.walletData.value;
@@ -648,6 +648,129 @@ class _CopyButton extends StatelessWidget {
 }
 
 // ── Transaction Card Widget ───────────────────────────────────
+/// Loading placeholder for the wallet dashboard: the two balance tiles, the
+/// referral card, the "Transactions" header and transaction cards.
+class _WalletDashboardSkeleton extends StatelessWidget {
+  const _WalletDashboardSkeleton();
+
+  static BoxDecoration get _tileDecoration => BoxDecoration(
+    color: Colors.white,
+    borderRadius: BorderRadius.circular(14),
+    border: Border.all(color: AppColors.grey200, width: 1),
+    boxShadow: [
+      BoxShadow(
+        color: Colors.black.withValues(alpha: 0.05),
+        blurRadius: 8,
+        offset: const Offset(0, 2),
+      ),
+    ],
+  );
+
+  Widget _balanceTile() => Expanded(
+    child: Container(
+      padding: const EdgeInsets.all(16),
+      decoration: _tileDecoration,
+      child: const AppShimmer(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                SkeletonBox.circle(size: 26),
+                SizedBox(width: 8),
+                SkeletonBox(width: 70, height: 11),
+              ],
+            ),
+            SizedBox(height: 8),
+            SkeletonBox(width: 90, height: 22),
+          ],
+        ),
+      ),
+    ),
+  );
+
+  Widget _transaction() => Container(
+    margin: const EdgeInsets.only(bottom: 10),
+    padding: const EdgeInsets.all(16),
+    decoration: BoxDecoration(
+      color: AppColors.white,
+      borderRadius: BorderRadius.circular(14),
+      border: Border.all(color: AppColors.grey200, width: 1),
+      boxShadow: [
+        BoxShadow(
+          color: AppColors.black.withValues(alpha: 0.03),
+          blurRadius: 8,
+          offset: const Offset(0, 2),
+        ),
+      ],
+    ),
+    child: const AppShimmer(
+      child: Row(
+        children: [
+          SkeletonBox(width: 44, height: 44, radius: 12),
+          SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SkeletonBox(width: 140, height: 14),
+                SizedBox(height: 6),
+                SkeletonBox(width: 100, height: 12),
+                SizedBox(height: 6),
+                SkeletonBox(width: 130, height: 11),
+              ],
+            ),
+          ),
+          SizedBox(width: 10),
+          SkeletonBox(width: 70, height: 30, radius: 8),
+        ],
+      ),
+    ),
+  );
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView(
+      physics: const NeverScrollableScrollPhysics(),
+      padding: EdgeInsets.zero,
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
+          child: Row(
+            children: [_balanceTile(), const SizedBox(width: 12), _balanceTile()],
+          ),
+        ),
+        const Padding(
+          padding: EdgeInsets.fromLTRB(16, 16, 16, 0),
+          child: AppShimmer(
+            child: SkeletonBox(width: double.infinity, height: 250, radius: 20),
+          ),
+        ),
+        const Padding(
+          padding: EdgeInsets.fromLTRB(20, 24, 20, 12),
+          child: AppShimmer(
+            child: Row(
+              children: [
+                SkeletonBox(width: 4, height: 20, radius: 2),
+                SizedBox(width: 10),
+                SkeletonBox(width: 110, height: 16),
+                Spacer(),
+                SkeletonBox(width: 32, height: 22, radius: 12),
+              ],
+            ),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Column(
+            children: [for (var i = 0; i < 4; i++) _transaction()],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
 class _TransactionCard extends StatelessWidget {
   final WalletTransaction transaction;
 

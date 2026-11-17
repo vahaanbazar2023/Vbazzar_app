@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import '../../../core/extensions/context_extensions.dart';
 import '../../../core/constants/app_colors.dart';
+import '../../../core/design_system/loaders/app_shimmer.dart';
 import '../../../core/design_system/templates/app_layout.dart';
 import '../../../core/design_system/tokens/app_spacing.dart';
 import '../../../routes/app_routes.dart';
@@ -26,8 +27,17 @@ class BuySellHomeView extends GetView<BuySellHomeController> {
   Widget _buildCategoryGrid(BuildContext context) {
     return Obx(() {
       if (controller.isLoadingCategories.value) {
-        return const Center(
-          child: CircularProgressIndicator(color: AppColors.primary),
+        return GridView.builder(
+          padding: EdgeInsets.all(AppSpacing.sm),
+          physics: const NeverScrollableScrollPhysics(),
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            crossAxisSpacing: AppSpacing.sm,
+            mainAxisSpacing: AppSpacing.sm,
+            childAspectRatio: 1.25,
+          ),
+          itemCount: 8,
+          itemBuilder: (_, __) => const _CategoryCardSkeleton(),
         );
       }
       if (controller.categories.isEmpty) {
@@ -324,6 +334,79 @@ class _CategoryCard extends StatelessWidget {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+// Category Card Skeleton — mirrors [_CategoryCard] while categories load
+// ─────────────────────────────────────────────────────────────────────────────
+
+class _CategoryCardSkeleton extends StatelessWidget {
+  const _CategoryCardSkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: AppColors.white,
+        borderRadius: BorderRadius.circular(12.r),
+        border: Border.all(color: AppColors.grey200, width: 1),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.2),
+            blurRadius: 8,
+            spreadRadius: 0,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: AppShimmer(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Category image + count badge
+            SizedBox(
+              height: 70.h,
+              child: Stack(
+                children: [
+                  Center(
+                    child: SkeletonBox(width: 84.w, height: 54.h, radius: 8),
+                  ),
+                  Positioned(
+                    top: 6.h,
+                    right: 6.w,
+                    child: SkeletonBox.circle(size: 32.w),
+                  ),
+                ],
+              ),
+            ),
+            // Name + Buy / Sell buttons
+            Padding(
+              padding: EdgeInsets.fromLTRB(8.w, 6.h, 8.w, 8.h),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(left: 8.0),
+                    child: SkeletonBox(width: 80.w, height: 13.h, radius: 4),
+                  ),
+                  SizedBox(height: 5.h),
+                  Row(
+                    children: [
+                      Expanded(child: SkeletonBox(height: 26.h, radius: 13)),
+                      SizedBox(width: 6.w),
+                      Expanded(child: SkeletonBox(height: 26.h, radius: 13)),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 // Filter Bottom Sheet
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -402,8 +485,27 @@ class _FilterBottomSheetState extends State<_FilterBottomSheet> {
           Expanded(
             child: Obx(() {
               if (widget.controller.isLoadingFilters.value) {
-                return const Center(
-                  child: CircularProgressIndicator(color: AppColors.primary),
+                return AppShimmer(
+                  child: SkeletonList(
+                    count: 5,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 20,
+                      vertical: 12,
+                    ),
+                    spacing: 16,
+                    itemBuilder: (_, __) => Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SkeletonBox(width: 110.w, height: 14.h),
+                        const SizedBox(height: 8),
+                        const SkeletonBox(
+                          width: double.infinity,
+                          height: 48,
+                          radius: 12,
+                        ),
+                      ],
+                    ),
+                  ),
                 );
               }
               if (widget.controller.filterConfigs.isEmpty) {

@@ -104,9 +104,7 @@ class _TabContent extends StatelessWidget {
     final ctrl = Get.find<AuctionController>();
     return Obx(() {
       if (ctrl.isLoading(tabIndex).value) {
-        return const Center(
-          child: CircularProgressIndicator(color: AppColors.primary),
-        );
+        return _AuctionListSkeleton(isUpcoming: tabIndex == 2);
       }
       final error = ctrl.errorMessage(tabIndex).value;
       if (error.isNotEmpty) {
@@ -158,6 +156,119 @@ class _TabContent extends StatelessWidget {
         },
       );
     });
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Loading skeleton — mirrors _AuctionCard (banner, title, info rows)
+// ─────────────────────────────────────────────────────────────────────────────
+
+class _AuctionListSkeleton extends StatelessWidget {
+  final bool isUpcoming;
+  const _AuctionListSkeleton({this.isUpcoming = false});
+
+  @override
+  Widget build(BuildContext context) {
+    return SkeletonList(
+      count: 5,
+      spacing: 0,
+      padding: EdgeInsets.fromLTRB(16.w, 12.h, 16.w, 16.h),
+      itemBuilder: (_, __) => _AuctionCardSkeleton(isUpcoming: isUpcoming),
+    );
+  }
+}
+
+class _AuctionCardSkeleton extends StatelessWidget {
+  final bool isUpcoming;
+  const _AuctionCardSkeleton({this.isUpcoming = false});
+
+  Widget _infoRow(double valueWidth) => Row(
+    mainAxisSize: MainAxisSize.min,
+    children: [
+      SkeletonBox(width: 13.r, height: 13.r, radius: 3),
+      SizedBox(width: 5.w),
+      SkeletonBox(width: 62.w, height: 12.h),
+      SizedBox(width: 6.w),
+      SkeletonBox(width: valueWidth, height: 12.h),
+    ],
+  );
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: EdgeInsets.only(bottom: 4.h),
+      decoration: BoxDecoration(
+        color: AppColors.white,
+        borderRadius: BorderRadius.circular(12.r),
+        border: Border.all(color: const Color(0xFFE0E0E0)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Top banner: timer ribbon + CTA pill
+          Padding(
+            padding: const EdgeInsets.only(top: 4.0),
+            child: Container(
+              constraints: BoxConstraints(minHeight: 38.h),
+              decoration: const BoxDecoration(
+                border: Border(bottom: BorderSide(color: Color(0xFFEEEEEE))),
+              ),
+              child: AppShimmer(
+                child: Row(
+                  children: [
+                    SkeletonBox(width: 110.w, height: 20.h, radius: 0),
+                    const Spacer(),
+                    Padding(
+                      padding: EdgeInsets.only(right: 10.w),
+                      child: SkeletonBox(
+                        width: isUpcoming ? 100.w : 110.w,
+                        height: 26.h,
+                        radius: 20,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          // Body: title + info rows
+          Padding(
+            padding: EdgeInsets.fromLTRB(14.w, 10.h, 14.w, 14.h),
+            child: AppShimmer(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SkeletonBox(width: 220.w, height: 16.h),
+                  SizedBox(height: 8.h),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: _infoRow(60.w),
+                        ),
+                      ),
+                      SizedBox(width: 8.w),
+                      _infoRow(18.w),
+                    ],
+                  ),
+                  SizedBox(height: 6.h),
+                  _infoRow(130.w),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
 

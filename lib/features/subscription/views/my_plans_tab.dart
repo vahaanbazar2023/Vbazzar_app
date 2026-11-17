@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_assets.dart';
+import '../../../core/design_system/loaders/app_shimmer.dart';
 import '../../../core/extensions/context_extensions.dart';
 import '../controllers/subscription_controller.dart';
 import '../models/user_subscription.dart';
@@ -21,8 +22,11 @@ class MyPlansTab extends StatelessWidget {
   Widget build(BuildContext context) {
     return Obx(() {
       if (ctrl.isLoading.value) {
-        return const Center(
-          child: CircularProgressIndicator(color: AppColors.primary),
+        return SkeletonList(
+          count: 4,
+          padding: EdgeInsets.fromLTRB(16.w, 16.h, 16.w, 32.h),
+          spacing: 12.h,
+          itemBuilder: (_, __) => const _MyPlanCardSkeleton(),
         );
       }
       if (ctrl.errorMessage.value != null) {
@@ -255,6 +259,76 @@ class MyPlanCard extends StatelessWidget {
             ],
           ),
         ],
+      ),
+    );
+  }
+}
+
+/// Loading placeholder shaped like [MyPlanCard]: icon, name + type, status
+/// pill, divider, calendar circle with the "valid until" lines.
+class _MyPlanCardSkeleton extends StatelessWidget {
+  const _MyPlanCardSkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16.r),
+        border: Border.all(color: AppColors.grey300),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 3),
+          ),
+        ],
+      ),
+      padding: EdgeInsets.all(16.r),
+      child: AppShimmer(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SkeletonBox(width: 52.r, height: 52.r, radius: 12),
+                SizedBox(width: 14.w),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SkeletonBox(width: 120.w, height: 15.h),
+                      SizedBox(height: 6.h),
+                      SkeletonBox(height: 12.h),
+                      SizedBox(height: 4.h),
+                      SkeletonBox(width: 90.w, height: 12.h),
+                    ],
+                  ),
+                ),
+                SizedBox(width: 8.w),
+                SkeletonBox(width: 64.w, height: 24.h, radius: 20),
+              ],
+            ),
+            SizedBox(height: 14.h),
+            const Divider(height: 1, color: AppColors.grey300),
+            SizedBox(height: 12.h),
+            Row(
+              children: [
+                SkeletonBox.circle(size: 36.r),
+                SizedBox(width: 10.w),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SkeletonBox(width: 70.w, height: 11.h),
+                    SizedBox(height: 4.h),
+                    SkeletonBox(width: 100.w, height: 13.h),
+                  ],
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
