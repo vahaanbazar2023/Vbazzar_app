@@ -13,7 +13,10 @@ import '../../../routes/app_routes.dart';
 import '../../../core/design_system/organisms/app_bottom_nav_bar.dart';
 import '../../main_shell/controllers/main_shell_controller.dart';
 import '../controllers/profile_controller.dart';
+import '../models/activity_summary.dart';
 import '../models/profile_models.dart';
+import '../../../core/storage/local_storage_service.dart';
+import '../../../core/storage/storage_keys.dart';
 import '../../buy_and_sell/views/my_vehicles_view.dart';
 import '../../buy_and_sell/views/subscribed_vehicles_view.dart';
 import '../../buy_and_sell/controllers/sell_vehicle_controller.dart';
@@ -157,9 +160,7 @@ class _ProfileSkeleton extends StatelessWidget {
                   ],
                 ),
                 child: AppShimmer(
-                  child: Row(
-                    children: [_statCell(), _statCell(), _statCell()],
-                  ),
+                  child: Row(children: [_statCell(), _statCell(), _statCell()]),
                 ),
               ),
             ),
@@ -225,6 +226,8 @@ class _ProfilePage extends StatelessWidget {
         SliverToBoxAdapter(
           child: _ProfileHero(profile: profile, controller: controller),
         ),
+        // ── Explore more: a module this user hasn't tried yet ─────────
+        SliverToBoxAdapter(child: _ExploreCard(controller: controller)),
         SliverToBoxAdapter(
           child: Padding(
             padding: EdgeInsets.fromLTRB(16.w, 0, 16.w, 24.h),
@@ -629,7 +632,7 @@ class _ProfileHero extends StatelessWidget {
               left: 32.w,
               right: 32.w,
               bottom: -44.h,
-              child: _StatsCard(),
+              child: _StatsCard(controller: controller),
             ),
           ],
         ),
@@ -901,6 +904,9 @@ class _Badge extends StatelessWidget {
 // ============================================================================
 
 class _StatsCard extends StatelessWidget {
+  final ProfileController controller;
+  const _StatsCard({required this.controller});
+
   @override
   Widget build(BuildContext context) {
     Widget divider() =>
@@ -920,35 +926,171 @@ class _StatsCard extends StatelessWidget {
           ),
         ],
       ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Expanded(
-            child: _StatCell(
-              iconAsset: AppAssets.subIconStar,
-              value: '12',
-              label: context.l10n.profTotalWins,
+      // Live counts from /dashboard/activity-summary; "–" until they load. Each stat opens its list.
+      child: Obx(() {
+        final a = controller.activity.value;
+        String v(int Function(ActivitySummary s) pick) =>
+            a == null ? '–' : '${pick(a)}';
+        return Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Expanded(
+              child: _StatCell(
+                iconAsset: AppAssets.subIconStar,
+                value: v((s) => s.wins),
+                label: context.l10n.profTotalWins,
+                onTap: () => Get.toNamed(AppRoutes.myWins),
+              ),
             ),
-          ),
-          divider(),
-          Expanded(
-            child: _StatCell(
-              iconAsset: AppAssets.subIconVehicle,
-              value: '3',
-              label: context.l10n.profVehicles,
+            divider(),
+            Expanded(
+              child: _StatCell(
+                iconAsset: AppAssets.subIconVehicle,
+                value: v((s) => s.vehiclesListed),
+                label: context.l10n.profVehicles,
+                onTap: () => Get.to(
+                  () => const MyVehiclesView(),
+                  binding: BindingsBuilder(() {
+                    if (!Get.isRegistered<SellVehicleController>()) {
+                      Get.put(
+                        SellVehicleController(
+                          repository: BuySellRepositoryImpl(),
+                        ),
+                      );
+                    }
+                  }),
+                ),
+              ),
             ),
-          ),
-          divider(),
-          Expanded(
-            child: _StatCell(
-              iconAsset: AppAssets.subIconBidLimit,
-              value: '5',
-              label: context.l10n.profActiveBids,
+            divider(),
+            Expanded(
+              child: _StatCell(
+                iconAsset: AppAssets.subIconBidLimit,
+                value: v((s) => s.activeBids),
+                label: context.l10n.profActiveBids,
+                onTap: () => Get.toNamed(AppRoutes.myBids),
+              ),
             ),
-          ),
-        ],
-      ),
+          ],
+        );
+      }),
     );
+  }
+}
+
+/// Points the user at a module they haven't used yet, picked from what they already do
+/// (auction customers see Buy & Sell, sellers see auctions, ...). Hidden until the stats load,
+/// and when every module has been tried.
+class _ExploreCard extends StatelessWidget {
+  final ProfileController controller;
+  const _ExploreCard({required this.controller});
+
+  @override
+  Widget build(BuildContext context) {
+    return Obx(() {
+      final module = controller.activity.value?.suggestedModule;
+      final target = module == null ? null : kExploreModules[module];
+      if (module == null || target == null) return const SizedBox.shrink();
+      final code = LocalStorageService.to.getString(
+        StorageKeys.languageCode,
+        defaultValue: 'en',
+      );
+      final copy = kExploreCopy[code] ?? kExploreCopy['en']!;
+      String t(String key) => copy[key] ?? kExploreCopy['en']![key] ?? '';
+
+      return Padding(
+        padding: EdgeInsets.fromLTRB(16.w, 0, 16.w, 16.h),
+        child: Material(
+          color: AppColors.primary.withValues(alpha: 0.06),
+          borderRadius: BorderRadius.circular(16.r),
+          child: InkWell(
+            borderRadius: BorderRadius.circular(16.r),
+            onTap: () => Get.toNamed(target.route),
+            child: Container(
+              padding: EdgeInsets.all(14.r),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(16.r),
+                border: Border.all(
+                  color: AppColors.primary.withValues(alpha: 0.25),
+                ),
+              ),
+              child: Row(
+                children: [
+                  Container(
+                    width: 52.r,
+                    height: 52.r,
+                    padding: EdgeInsets.all(8.r),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12.r),
+                    ),
+                    child: Image.asset(target.image, fit: BoxFit.contain),
+                  ),
+                  SizedBox(width: 12.w),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          t('eyebrow').toUpperCase(),
+                          style: TextStyle(
+                            fontFamily: 'Montserrat',
+                            fontSize: 9.5.sp,
+                            fontWeight: FontWeight.w700,
+                            letterSpacing: 0.6,
+                            color: AppColors.primary,
+                          ),
+                        ),
+                        SizedBox(height: 2.h),
+                        Text(
+                          t('$module.title'),
+                          style: TextStyle(
+                            fontFamily: 'Montserrat',
+                            fontSize: 13.5.sp,
+                            fontWeight: FontWeight.w700,
+                            color: AppColors.textPrimary,
+                          ),
+                        ),
+                        SizedBox(height: 2.h),
+                        Text(
+                          t('$module.body'),
+                          style: TextStyle(
+                            fontFamily: 'Montserrat',
+                            fontSize: 11.sp,
+                            height: 1.35,
+                            color: AppColors.grey500,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(width: 8.w),
+                  Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 12.w,
+                      vertical: 7.h,
+                    ),
+                    decoration: BoxDecoration(
+                      color: AppColors.primary,
+                      borderRadius: BorderRadius.circular(20.r),
+                    ),
+                    child: Text(
+                      t('cta'),
+                      style: TextStyle(
+                        fontFamily: 'Montserrat',
+                        fontSize: 11.sp,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+    });
   }
 }
 
@@ -958,54 +1100,61 @@ class _StatCell extends StatelessWidget {
   final String value;
   final String label;
 
+  final VoidCallback? onTap;
+
   const _StatCell({
     required this.iconAsset,
     required this.value,
     required this.label,
+    this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 4.w),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            width: 30.r,
-            height: 30.r,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: AppColors.primary.withValues(alpha: 0.09),
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(12.r),
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 4.w),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 30.r,
+              height: 30.r,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: AppColors.primary.withValues(alpha: 0.09),
+              ),
+              padding: EdgeInsets.all(6.r),
+              child: Image.asset(iconAsset, fit: BoxFit.contain),
             ),
-            padding: EdgeInsets.all(6.r),
-            child: Image.asset(iconAsset, fit: BoxFit.contain),
-          ),
-          SizedBox(height: 6.h),
-          Text(
-            value,
-            maxLines: 1,
-            style: TextStyle(
-              fontFamily: 'Montserrat',
-              fontWeight: FontWeight.w800,
-              fontSize: 18.sp,
-              height: 1.1,
-              color: AppColors.textPrimary,
+            SizedBox(height: 6.h),
+            Text(
+              value,
+              maxLines: 1,
+              style: TextStyle(
+                fontFamily: 'Montserrat',
+                fontWeight: FontWeight.w800,
+                fontSize: 18.sp,
+                height: 1.1,
+                color: AppColors.textPrimary,
+              ),
             ),
-          ),
-          SizedBox(height: 2.h),
-          Text(
-            label,
-            maxLines: 1,
-            textAlign: TextAlign.center,
-            overflow: TextOverflow.ellipsis,
-            style: TextStyle(
-              fontFamily: 'Montserrat',
-              fontSize: 10.5.sp,
-              color: AppColors.grey500,
+            SizedBox(height: 2.h),
+            Text(
+              label,
+              maxLines: 1,
+              textAlign: TextAlign.center,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                fontFamily: 'Montserrat',
+                fontSize: 10.5.sp,
+                color: AppColors.grey500,
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

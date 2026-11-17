@@ -90,6 +90,9 @@ class _ExploreCard extends StatelessWidget {
         'subscription_source': item.typeCode,
         'title': item.routeTitle,
         'subtitle': item.description,
+        // Auction Access opens its own SUBT001 plans, without the access-pass / deposit choice
+        // (the deposit has its own card here).
+        if (item.typeCode == SubscriptionTypeCode.auction) 'plans_only': true,
       },
     );
   }

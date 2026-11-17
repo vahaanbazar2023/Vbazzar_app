@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../core/extensions/context_extensions.dart';
 import '../../../core/storage/local_storage_service.dart';
+import '../../../core/storage/secure_storage_service.dart';
+import '../../auth/services/profile_gate.dart';
 import '../../../core/storage/storage_keys.dart';
 import '../../../routes/app_routes.dart';
 import '../data/language_sync_service.dart';
@@ -98,9 +100,29 @@ class LanguageController extends GetxController {
       StorageKeys.languageCode,
       selectedLanguage.value!.code,
     );
+    LocalStorageService.to.setBool(StorageKeys.languageConfirmed, true);
+
+    // Already logged in (e.g. updated from the old app): save it on the server too and go into the app.
+    if (Get.arguments?['loggedIn'] == true) {
+      LanguageSyncService.push(selectedLanguage.value!.code);
+      _enterApp();
+      return;
+    }
 
     // Navigate to login with OTP (keep navigation stack for back button)
     Get.toNamed(AppRoutes.loginWithOtp);
+  }
+
+  /// Same destination the splash screen picks for a logged-in user.
+  Future<void> _enterApp() async {
+    final profileCompleted = await SecureStorageService.to.read(
+      StorageKeys.profileCompleted,
+    );
+    if (profileCompleted != 'true' && await ProfileGate.mustCompleteProfile()) {
+      Get.offAllNamed(AppRoutes.completeProfile);
+    } else {
+      Get.offAllNamed(AppRoutes.home);
+    }
   }
 
   /// Switch language from profile/settings and go back
@@ -119,6 +141,7 @@ class LanguageController extends GetxController {
       StorageKeys.languageCode,
       selectedLanguage.value!.code,
     );
+    LocalStorageService.to.setBool(StorageKeys.languageConfirmed, true);
 
     // Let the backend know (fire-and-forget; never blocks or fails the switch).
     LanguageSyncService.push(selectedLanguage.value!.code);
