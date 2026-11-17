@@ -240,7 +240,9 @@ class PaymentController extends GetxController
       PayUCheckoutProConfigKeys.baseTextColor: _hex(AppColors.textPrimary),
       PayUCheckoutProConfigKeys.secondaryColor: '#FFFFFF',
       PayUCheckoutProConfigKeys.merchantName: 'Vahaan Bazar',
-      // Android drawable res/drawable/vahaan_payu_logo.png (shown in the PayU header)
+      // Android drawable res/drawable/vahaan_payu_logo.png (shown in the PayU header).
+      // Looked up by name, so it must stay listed in android/app/src/main/res/raw/keep.xml:
+      // a release build strips it otherwise and PayU crashes the app on open.
       PayUCheckoutProConfigKeys.merchantLogo: 'vahaan_payu_logo',
       PayUCheckoutProConfigKeys.showMerchantLogo: true,
       PayUCheckoutProConfigKeys.showExitConfirmationOnCheckoutScreen: true,

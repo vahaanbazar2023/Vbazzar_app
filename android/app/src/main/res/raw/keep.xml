@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Resources looked up only by name at runtime, which the release resource shrinker
+  (isShrinkResources = true) cannot see and would otherwise strip.
+
+  vahaan_payu_logo: passed to PayU CheckoutPro as merchantLogo from Dart
+  (payment_controller.dart). The SDK resolves it with getIdentifier() and then calls
+  AppCompatResources.getDrawable(id) with no zero check. If the drawable is stripped,
+  the id is 0 and opening the PayU checkout throws Resources.NotFoundException,
+  which kills the app (it restarts at the splash screen).
+-->
+<resources xmlns:tools="http://schemas.android.com/tools"
+    tools:keep="@drawable/vahaan_payu_logo" />
