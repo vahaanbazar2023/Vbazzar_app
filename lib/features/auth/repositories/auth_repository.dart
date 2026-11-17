@@ -9,6 +9,8 @@ import '../models/otp_response.dart';
 import '../models/otp_verify_models.dart';
 import '../models/complete_profile_models.dart';
 import '../models/forgot_password_models.dart';
+import 'dart:async';
+import '../services/profile_gate.dart';
 
 /// Auth repository — V2 unified login+registration flow
 class AuthRepository {
@@ -106,8 +108,9 @@ class AuthRepository {
       return message.isNotEmpty ? message : 'Login failed';
     }
     final map = data as Map;
-    // profileCompleted is left as it is: this endpoint does not report it, and the
-    // profile is asked for after the first payment (ProfileGate) anyway.
+    // Same "profile completed" flag as OTP sign-in. The server sends it as `profile_completed`;
+    // an older server doesn't, so then we ask for the profile once and remember the answer.
+    final completed = map['profile_completed'];
     await Future.wait([
       _secureStorage.write(StorageKeys.authToken, token),
       _secureStorage.write(
@@ -118,7 +121,15 @@ class AuthRepository {
         StorageKeys.userType,
         map['user_type']?.toString() ?? '',
       ),
+      if (completed is bool)
+        _secureStorage.write(
+          StorageKeys.profileCompleted,
+          completed.toString(),
+        ),
     ]);
+    if (completed is! bool) {
+      unawaited(ProfileGate.rememberServerStatus());
+    }
     LoggerService.to.info('Auth data saved for user: ${map['user_id']}');
     return null;
   }
