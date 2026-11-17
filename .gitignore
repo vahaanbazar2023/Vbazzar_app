@@ -71,3 +71,6 @@ figma-mcp-server/
 android/key.properties
 android/app/*.jks
 android/app/*.keystore
+
+# backups of local signing settings
+android/key.properties.*
