@@ -7,6 +7,7 @@ import '../../../core/models/location_models.dart';
 import '../../../core/design_system/design_system.dart';
 import '../../../core/extensions/context_extensions.dart';
 import '../../../routes/app_routes.dart';
+import '../models/activity_summary.dart';
 import '../models/profile_models.dart';
 import '../models/wallet_models.dart';
 import '../repositories/profile_repository.dart';
@@ -21,6 +22,10 @@ class ProfileController extends GetxController {
   final profileData = Rxn<ProfileData>();
   final isLoading = false.obs;
   final isRefreshing = false.obs;
+
+  // ── Activity per module (stats card + explore card) ─────────────
+  final activity = Rxn<ActivitySummary>();
+  final isLoadingActivity = false.obs;
 
   // ── Wallet data ──────────────────────────────────────────────
   final walletData = Rxn<WalletDashboardData>();
@@ -71,6 +76,7 @@ class ProfileController extends GetxController {
     firstNameController.addListener(_firstNameListener);
     emailController.addListener(_emailListener);
     fetchProfile();
+    fetchActivity();
   }
 
   @override
@@ -160,8 +166,22 @@ class ProfileController extends GetxController {
     }
   }
 
+  /// Loads the stats; on failure the card keeps its last numbers (or shows dashes).
+  Future<void> fetchActivity() async {
+    isLoadingActivity.value = true;
+    try {
+      final summary = await _repository.fetchActivitySummary();
+      if (summary != null) activity.value = summary;
+    } catch (e) {
+      LoggerService.to.error('fetchActivity error: $e');
+    } finally {
+      isLoadingActivity.value = false;
+    }
+  }
+
   Future<void> refreshProfile() async {
     isRefreshing.value = true;
+    fetchActivity();
     try {
       final response = await _repository.fetchProfile();
       if (response.isSuccess && response.data != null) {

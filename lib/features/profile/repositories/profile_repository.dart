@@ -2,6 +2,7 @@ import '../../../core/storage/secure_storage_service.dart';
 import '../../../core/storage/local_storage_service.dart';
 import '../../../core/storage/storage_keys.dart';
 import '../data/profile_data_source.dart';
+import '../models/activity_summary.dart';
 import '../models/profile_models.dart';
 import '../models/wallet_models.dart';
 
@@ -18,6 +19,11 @@ class ProfileRepository {
   Future<ProfileResponse> fetchProfile() async {
     final userId = await _secureStorage.read(StorageKeys.userId) ?? '';
     return _dataSource.fetchProfile(userId);
+  }
+
+  Future<ActivitySummary?> fetchActivitySummary() async {
+    final userId = await _secureStorage.read(StorageKeys.userId) ?? '';
+    return _dataSource.fetchActivitySummary(userId);
   }
 
   Future<ProfileResponse> updateProfile({
