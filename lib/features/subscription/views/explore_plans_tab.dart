@@ -24,19 +24,13 @@ class ExplorePlansTab extends StatelessWidget {
       iconAsset: AppAssets.subIconKing,
       routeTitle: context.l10n.profSubAuctionAccessPlan,
     ),
+    // Refundable auction deposit: auction access plus a bid limit in one payment.
     _ExplorePlanItem(
-      typeCode: SubscriptionTypeCode.auctionBidLimit,
-      title: context.l10n.profSubAuctionBidLimit,
-      description: context.l10n.profSubBidLimitDesc,
-      iconAsset: AppAssets.subIconShield,
-      routeTitle: context.l10n.profSubBidLimitPlan,
-    ),
-    _ExplorePlanItem(
-      typeCode: SubscriptionTypeCode.ownerContact,
-      title: context.l10n.profSubOwnerContactPlan,
-      description: context.l10n.profSubOwnerContactDesc,
-      iconAsset: AppAssets.subIconOwnerPack,
-      routeTitle: context.l10n.profSubOwnerContactPlan,
+      typeCode: SubscriptionTypeCode.auctionDeposit,
+      title: context.l10n.auctionDepTabDeposit,
+      description: context.l10n.auctionDepDepositHint,
+      iconAsset: AppAssets.subIconWallet,
+      routeTitle: context.l10n.auctionDepTabDeposit,
     ),
     _ExplorePlanItem(
       typeCode: SubscriptionTypeCode.vehicleDetailsAccess,
@@ -45,20 +39,8 @@ class ExplorePlansTab extends StatelessWidget {
       iconAsset: AppAssets.subIconVehicle,
       routeTitle: context.l10n.profSubVehicleDetailsPlan,
     ),
-    _ExplorePlanItem(
-      typeCode: SubscriptionTypeCode.vehicleInspection,
-      title: context.l10n.profSubInspectionPlan,
-      description: context.l10n.profSubInspectionDesc,
-      iconAsset: AppAssets.subIconInspection,
-      routeTitle: context.l10n.profSubInspectionPlan,
-    ),
-    _ExplorePlanItem(
-      typeCode: SubscriptionTypeCode.mechanicContact,
-      title: context.l10n.profSubMechanicContactPlan,
-      description: context.l10n.profSubMechanicContactDesc,
-      iconAsset: AppAssets.subIconMechanic,
-      routeTitle: context.l10n.profSubMechanicContactPlan,
-    ),
+    // Not listed here: auction bid limit (SUBT002), owner contact (SUBT003),
+    // vehicle inspection (SUBT005) and mechanic contact (SUBT006).
   ];
 
   @override
