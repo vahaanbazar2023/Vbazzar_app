@@ -6579,4 +6579,87 @@ class AppLocalizationsTa extends AppLocalizations {
 
   @override
   String get cashOutSoonCta => 'வெகுமதிகளுக்குத் திரும்பு';
+
+  @override
+  String get auctionDepTabAccess => 'அணுகல் பாஸ்';
+
+  @override
+  String get auctionDepTabDeposit => 'திரும்பப்பெறக்கூடிய டெபாசிட்';
+
+  @override
+  String get auctionDepMoneyBack => 'பணம் திரும்ப';
+
+  @override
+  String get auctionDepAccessHint =>
+      'குறிப்பிட்ட நாட்களுக்கு ஒருமுறை செலுத்துங்கள். ஏலம் கேட்கத் தயாரானதும் ஏல வரம்பை வாங்குங்கள்.';
+
+  @override
+  String get auctionDepDepositHint =>
+      'திரும்பப்பெறக்கூடிய டெபாசிட் செலுத்தி உடனே ஏல அணுகலும் ஏல வரம்பும் பெறுங்கள்.';
+
+  @override
+  String get auctionDepBidLimit => 'ஏல வரம்பு';
+
+  @override
+  String get auctionDepRefundable => 'திரும்பப்பெறலாம்*';
+
+  @override
+  String get auctionDepAccess => 'ஏல அணுகல்';
+
+  @override
+  String get auctionDepUntilRefund => 'திரும்பப் பெறும் வரை';
+
+  @override
+  String get auctionDepPay => 'டெபாசிட் செலுத்து';
+
+  @override
+  String get auctionDepActivated =>
+      'டெபாசிட் கிடைத்தது — ஏலங்கள் திறக்கப்பட்டன';
+
+  @override
+  String get auctionDepDepositLabel => 'டெபாசிட்';
+
+  @override
+  String get auctionDepFootnote =>
+      'முழு டெபாசிட்டையும் செலுத்துங்கள் (வாலட் நாணயங்களைப் பயன்படுத்த முடியாது). திரும்பப்பெறுதல் விதிமுறைகளின்படி.';
+
+  @override
+  String get auctionDepChooseTitle =>
+      'நீங்கள் எப்படி ஏலம் கேட்க விரும்புகிறீர்கள்?';
+
+  @override
+  String get auctionDepChooseSub =>
+      'நேரலை ஏலங்களுக்குள் நுழையும் வழியைத் தேர்வுசெய்யுங்கள். பின்னர் மாற்றலாம்.';
+
+  @override
+  String auctionDepFrom(String amount) {
+    return '₹$amount முதல்';
+  }
+
+  @override
+  String auctionDepUpTo(String amount) {
+    return '₹$amount வரை ஏல வரம்பு';
+  }
+
+  @override
+  String get auctionDepBidSeparate => 'ஏல வரம்பைத் தனியாக வாங்க வேண்டும்';
+
+  @override
+  String get auctionDepSeePlans => 'திட்டங்களைப் பார்';
+
+  @override
+  String get auctionDepRefund => 'திரும்பப்பெறுதல்';
+
+  @override
+  String get auctionDepRefundTerms => 'விதிமுறைகளின்படி';
+
+  @override
+  String get auctionDepTerms =>
+      '*திரும்பப்பெறுதல் வாகன் பஜார் விதிமுறைகள் & நிபந்தனைகளுக்கு உட்பட்டது.';
+
+  @override
+  String get auctionDepBestFor => 'மிகவும் வசதியானது';
+
+  @override
+  String get auctionDepSeparately => 'தனியாக வாங்க வேண்டும்';
 }

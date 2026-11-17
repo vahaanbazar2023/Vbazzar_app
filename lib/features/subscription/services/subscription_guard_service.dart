@@ -57,16 +57,29 @@ class SubscriptionGuardService extends GetxService {
   /// Handles duplicates: if the user renewed the same plan multiple times,
   /// ANY currently-valid entry counts.
   bool hasActiveSubscription(String typeCode) {
-    final subs = _byTypeCode[typeCode];
-    if (subs == null || subs.isEmpty) return false;
+    final subs = _subsFor(typeCode);
+    if (subs.isEmpty) return false;
     return subs.any((s) => s.isCurrentlyValid);
+  }
+
+  /// A held refundable auction deposit (SUBT008) counts as auction access (SUBT001) and as a bid limit (SUBT002),
+  /// so every existing access / bid-limit check accepts it without change.
+  List<UserSubscription> _subsFor(String typeCode) {
+    final own = _byTypeCode[typeCode] ?? const <UserSubscription>[];
+    if (typeCode == SubscriptionTypeCode.auction ||
+        typeCode == SubscriptionTypeCode.auctionBidLimit) {
+      final deposits =
+          _byTypeCode[SubscriptionTypeCode.auctionDeposit] ??
+          const <UserSubscription>[];
+      if (deposits.isNotEmpty) return [...own, ...deposits];
+    }
+    return own;
   }
 
   /// Returns ALL currently-valid subscriptions for [typeCode].
   /// Useful for summing available balances across multiple active plans.
   List<UserSubscription> allActiveSubscriptions(String typeCode) {
-    return _byTypeCode[typeCode]?.where((s) => s.isCurrentlyValid).toList() ??
-        [];
+    return _subsFor(typeCode).where((s) => s.isCurrentlyValid).toList();
   }
 
   /// Returns the best active subscription for [typeCode].
@@ -78,10 +91,8 @@ class SubscriptionGuardService extends GetxService {
   /// For all other types we pick the one with the latest end date.
   /// Returns null if no valid subscription exists.
   UserSubscription? bestSubscription(String typeCode) {
-    final subs = _byTypeCode[typeCode]
-        ?.where((s) => s.isCurrentlyValid)
-        .toList();
-    if (subs == null || subs.isEmpty) return null;
+    final subs = _subsFor(typeCode).where((s) => s.isCurrentlyValid).toList();
+    if (subs.isEmpty) return null;
 
     subs.sort((a, b) {
       // For amount-based bid-limit plans: prefer highest available balance.

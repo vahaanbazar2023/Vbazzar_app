@@ -6467,4 +6467,85 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get cashOutSoonCta => 'रिवॉर्ड पर वापस जाएँ';
+
+  @override
+  String get auctionDepTabAccess => 'एक्सेस पास';
+
+  @override
+  String get auctionDepTabDeposit => 'रिफंडेबल डिपॉज़िट';
+
+  @override
+  String get auctionDepMoneyBack => 'पैसे वापस';
+
+  @override
+  String get auctionDepAccessHint =>
+      'तय दिनों के लिए एक बार भुगतान करें। बोली लगाने के लिए बिड लिमिट अलग से लें।';
+
+  @override
+  String get auctionDepDepositHint =>
+      'रिफंडेबल डिपॉज़िट जमा करें और तुरंत ऑक्शन एक्सेस और बिड लिमिट पाएं।';
+
+  @override
+  String get auctionDepBidLimit => 'बिड लिमिट';
+
+  @override
+  String get auctionDepRefundable => 'रिफंडेबल*';
+
+  @override
+  String get auctionDepAccess => 'ऑक्शन एक्सेस';
+
+  @override
+  String get auctionDepUntilRefund => 'रिफंड होने तक';
+
+  @override
+  String get auctionDepPay => 'डिपॉज़िट जमा करें';
+
+  @override
+  String get auctionDepActivated => 'डिपॉज़िट मिल गया — ऑक्शन खुल गए';
+
+  @override
+  String get auctionDepDepositLabel => 'डिपॉज़िट';
+
+  @override
+  String get auctionDepFootnote =>
+      'पूरा डिपॉज़िट जमा करें (वॉलेट कॉइन इस्तेमाल नहीं होंगे)। रिफंड नियम व शर्तों के अनुसार।';
+
+  @override
+  String get auctionDepChooseTitle => 'आप कैसे बोली लगाना चाहते हैं?';
+
+  @override
+  String get auctionDepChooseSub =>
+      'लाइव ऑक्शन में आने का तरीका चुनें। बाद में बदल सकते हैं।';
+
+  @override
+  String auctionDepFrom(String amount) {
+    return '₹$amount से';
+  }
+
+  @override
+  String auctionDepUpTo(String amount) {
+    return '₹$amount तक बिड लिमिट';
+  }
+
+  @override
+  String get auctionDepBidSeparate => 'बिड लिमिट अलग से खरीदें';
+
+  @override
+  String get auctionDepSeePlans => 'प्लान देखें';
+
+  @override
+  String get auctionDepRefund => 'रिफंड';
+
+  @override
+  String get auctionDepRefundTerms => 'नियम व शर्तों के अनुसार';
+
+  @override
+  String get auctionDepTerms =>
+      '*रिफंड वाहन बाज़ार के नियम और शर्तों के अधीन है।';
+
+  @override
+  String get auctionDepBestFor => 'सबसे लचीला';
+
+  @override
+  String get auctionDepSeparately => 'अलग से खरीदें';
 }

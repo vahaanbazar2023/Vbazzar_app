@@ -6452,4 +6452,85 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get cashOutSoonCta => 'Back to Rewards';
+
+  @override
+  String get auctionDepTabAccess => 'Access pass';
+
+  @override
+  String get auctionDepTabDeposit => 'Refundable deposit';
+
+  @override
+  String get auctionDepMoneyBack => 'Money back';
+
+  @override
+  String get auctionDepAccessHint =>
+      'Pay once for a set number of days. Buy a bid limit when you\'re ready to bid.';
+
+  @override
+  String get auctionDepDepositHint =>
+      'Pay a refundable deposit and get auction access plus a bid limit right away.';
+
+  @override
+  String get auctionDepBidLimit => 'Bid limit';
+
+  @override
+  String get auctionDepRefundable => 'Refundable*';
+
+  @override
+  String get auctionDepAccess => 'Auction access';
+
+  @override
+  String get auctionDepUntilRefund => 'Until refunded';
+
+  @override
+  String get auctionDepPay => 'Pay deposit';
+
+  @override
+  String get auctionDepActivated => 'Deposit received — auctions unlocked';
+
+  @override
+  String get auctionDepDepositLabel => 'Deposit';
+
+  @override
+  String get auctionDepFootnote =>
+      'Pay the full deposit (wallet coins can\'t be used). Refund as per T&C.';
+
+  @override
+  String get auctionDepChooseTitle => 'How do you want to bid?';
+
+  @override
+  String get auctionDepChooseSub =>
+      'Pick a way into live auctions. You can change it later.';
+
+  @override
+  String auctionDepFrom(String amount) {
+    return 'From ₹$amount';
+  }
+
+  @override
+  String auctionDepUpTo(String amount) {
+    return 'Bid limit up to ₹$amount';
+  }
+
+  @override
+  String get auctionDepBidSeparate => 'Bid limit bought separately';
+
+  @override
+  String get auctionDepSeePlans => 'See plans';
+
+  @override
+  String get auctionDepRefund => 'Refund';
+
+  @override
+  String get auctionDepRefundTerms => 'As per T&C';
+
+  @override
+  String get auctionDepTerms =>
+      '*Refund is subject to Vahaan Bazar\'s terms & conditions.';
+
+  @override
+  String get auctionDepBestFor => 'Most flexible';
+
+  @override
+  String get auctionDepSeparately => 'Bought separately';
 }

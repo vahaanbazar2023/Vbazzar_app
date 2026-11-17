@@ -6540,4 +6540,86 @@ class AppLocalizationsTe extends AppLocalizations {
 
   @override
   String get cashOutSoonCta => 'రివార్డ్‌లకు తిరిగి వెళ్ళండి';
+
+  @override
+  String get auctionDepTabAccess => 'యాక్సెస్ పాస్';
+
+  @override
+  String get auctionDepTabDeposit => 'రిఫండబుల్ డిపాజిట్';
+
+  @override
+  String get auctionDepMoneyBack => 'డబ్బు వాపస్';
+
+  @override
+  String get auctionDepAccessHint =>
+      'నిర్ణీత రోజులకు ఒకసారి చెల్లించండి. బిడ్ వేయాలనుకున్నప్పుడు బిడ్ లిమిట్ తీసుకోండి.';
+
+  @override
+  String get auctionDepDepositHint =>
+      'రిఫండబుల్ డిపాజిట్ చెల్లించి వెంటనే ఆక్షన్ యాక్సెస్, బిడ్ లిమిట్ పొందండి.';
+
+  @override
+  String get auctionDepBidLimit => 'బిడ్ లిమిట్';
+
+  @override
+  String get auctionDepRefundable => 'రిఫండబుల్*';
+
+  @override
+  String get auctionDepAccess => 'ఆక్షన్ యాక్సెస్';
+
+  @override
+  String get auctionDepUntilRefund => 'రిఫండ్ అయ్యే వరకు';
+
+  @override
+  String get auctionDepPay => 'డిపాజిట్ చెల్లించండి';
+
+  @override
+  String get auctionDepActivated =>
+      'డిపాజిట్ అందింది — ఆక్షన్లు అన్‌లాక్ అయ్యాయి';
+
+  @override
+  String get auctionDepDepositLabel => 'డిపాజిట్';
+
+  @override
+  String get auctionDepFootnote =>
+      'పూర్తి డిపాజిట్ చెల్లించండి (వాలెట్ కాయిన్లు వాడలేరు). రిఫండ్ నిబంధనల ప్రకారం.';
+
+  @override
+  String get auctionDepChooseTitle => 'మీరు ఎలా బిడ్ వేయాలనుకుంటున్నారు?';
+
+  @override
+  String get auctionDepChooseSub =>
+      'లైవ్ ఆక్షన్లలోకి వెళ్లే మార్గాన్ని ఎంచుకోండి. తర్వాత మార్చుకోవచ్చు.';
+
+  @override
+  String auctionDepFrom(String amount) {
+    return '₹$amount నుండి';
+  }
+
+  @override
+  String auctionDepUpTo(String amount) {
+    return '₹$amount వరకు బిడ్ లిమిట్';
+  }
+
+  @override
+  String get auctionDepBidSeparate => 'బిడ్ లిమిట్ విడిగా కొనాలి';
+
+  @override
+  String get auctionDepSeePlans => 'ప్లాన్లు చూడండి';
+
+  @override
+  String get auctionDepRefund => 'రిఫండ్';
+
+  @override
+  String get auctionDepRefundTerms => 'నిబంధనల ప్రకారం';
+
+  @override
+  String get auctionDepTerms =>
+      '*రిఫండ్ వాహన్ బజార్ నిబంధనలు & షరతులకు లోబడి ఉంటుంది.';
+
+  @override
+  String get auctionDepBestFor => 'అత్యంత సౌకర్యవంతం';
+
+  @override
+  String get auctionDepSeparately => 'విడిగా కొనాలి';
 }

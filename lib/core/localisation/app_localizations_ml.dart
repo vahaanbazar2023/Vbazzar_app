@@ -6541,4 +6541,86 @@ class AppLocalizationsMl extends AppLocalizations {
 
   @override
   String get cashOutSoonCta => 'റിവാർഡുകളിലേക്ക് മടങ്ങുക';
+
+  @override
+  String get auctionDepTabAccess => 'ആക്സസ് പാസ്';
+
+  @override
+  String get auctionDepTabDeposit => 'റീഫണ്ട് ചെയ്യാവുന്ന ഡെപ്പോസിറ്റ്';
+
+  @override
+  String get auctionDepMoneyBack => 'പണം തിരികെ';
+
+  @override
+  String get auctionDepAccessHint =>
+      'നിശ്ചിത ദിവസങ്ങൾക്കായി ഒരിക്കൽ അടയ്ക്കുക. ബിഡ് ചെയ്യാൻ തയ്യാറാകുമ്പോൾ ബിഡ് ലിമിറ്റ് വാങ്ങുക.';
+
+  @override
+  String get auctionDepDepositHint =>
+      'റീഫണ്ട് ചെയ്യാവുന്ന ഡെപ്പോസിറ്റ് അടച്ച് ഉടൻ ലേല ആക്സസും ബിഡ് ലിമിറ്റും നേടുക.';
+
+  @override
+  String get auctionDepBidLimit => 'ബിഡ് ലിമിറ്റ്';
+
+  @override
+  String get auctionDepRefundable => 'റീഫണ്ട് ചെയ്യാം*';
+
+  @override
+  String get auctionDepAccess => 'ലേല ആക്സസ്';
+
+  @override
+  String get auctionDepUntilRefund => 'റീഫണ്ട് ആകുന്നതുവരെ';
+
+  @override
+  String get auctionDepPay => 'ഡെപ്പോസിറ്റ് അടയ്ക്കുക';
+
+  @override
+  String get auctionDepActivated => 'ഡെപ്പോസിറ്റ് ലഭിച്ചു — ലേലങ്ങൾ തുറന്നു';
+
+  @override
+  String get auctionDepDepositLabel => 'ഡെപ്പോസിറ്റ്';
+
+  @override
+  String get auctionDepFootnote =>
+      'മുഴുവൻ ഡെപ്പോസിറ്റും അടയ്ക്കുക (വാലറ്റ് കോയിനുകൾ ഉപയോഗിക്കാനാവില്ല). റീഫണ്ട് നിബന്ധനകൾ പ്രകാരം.';
+
+  @override
+  String get auctionDepChooseTitle =>
+      'നിങ്ങൾ എങ്ങനെ ബിഡ് ചെയ്യാൻ ആഗ്രഹിക്കുന്നു?';
+
+  @override
+  String get auctionDepChooseSub =>
+      'ലൈവ് ലേലങ്ങളിലേക്കുള്ള വഴി തിരഞ്ഞെടുക്കുക. പിന്നീട് മാറ്റാം.';
+
+  @override
+  String auctionDepFrom(String amount) {
+    return '₹$amount മുതൽ';
+  }
+
+  @override
+  String auctionDepUpTo(String amount) {
+    return '₹$amount വരെ ബിഡ് ലിമിറ്റ്';
+  }
+
+  @override
+  String get auctionDepBidSeparate => 'ബിഡ് ലിമിറ്റ് പ്രത്യേകം വാങ്ങണം';
+
+  @override
+  String get auctionDepSeePlans => 'പ്ലാനുകൾ കാണുക';
+
+  @override
+  String get auctionDepRefund => 'റീഫണ്ട്';
+
+  @override
+  String get auctionDepRefundTerms => 'നിബന്ധനകൾ പ്രകാരം';
+
+  @override
+  String get auctionDepTerms =>
+      '*റീഫണ്ട് വാഹൻ ബസാർ നിബന്ധനകൾക്കും വ്യവസ്ഥകൾക്കും വിധേയമാണ്.';
+
+  @override
+  String get auctionDepBestFor => 'ഏറ്റവും സൗകര്യപ്രദം';
+
+  @override
+  String get auctionDepSeparately => 'പ്രത്യേകം വാങ്ങണം';
 }
