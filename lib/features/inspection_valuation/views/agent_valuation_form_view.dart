@@ -32,9 +32,8 @@ class AgentValuationFormView extends GetView<AgentInspectionController> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // ── Vehicle Registration Number ──────────────────
-                  _buildSectionHeader(
-                    context.l10n.inspVehicleRegistrationNumber,
-                  ),
+                  // The floating label is the only label (no heading above it).
+                  SizedBox(height: 6.h),
                   _buildTextField(
                     controller: controller.vehicleRegNoController,
                     label: context.l10n.inspVehicleRegistrationNumber,
@@ -463,66 +462,17 @@ class AgentValuationFormView extends GetView<AgentInspectionController> {
 
   // ── Odometer card ─────────────────────────────────────────────
 
+  /// Odometer reading: just the field, whose floating label names it
+  /// (no separate "Odometer reading" title above it).
   Widget _buildOdometerCard() {
-    return Container(
-      width: double.infinity,
-      padding: EdgeInsets.all(16.w),
-      decoration: BoxDecoration(
-        color: AppColors.white,
-        borderRadius: BorderRadius.circular(14.r),
-        border: Border.all(color: AppColors.grey200),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.black.withOpacity(0.04),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Container(
-                width: 40.w,
-                height: 40.w,
-                decoration: BoxDecoration(
-                  color: const Color(0xFF00695C).withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(10.r),
-                ),
-                child: Icon(
-                  Icons.speed_outlined,
-                  color: const Color(0xFF00695C),
-                  size: 22.r,
-                ),
-              ),
-              SizedBox(width: 12.w),
-              Expanded(
-                child: Text(
-                  appL10n.inspOdometerReading,
-                  style: AppFonts.titleSmall.copyWith(
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.textPrimary,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: 10.h),
-          Container(height: 1, color: AppColors.grey200),
-          SizedBox(height: 10.h),
-          _buildTextField(
-            controller: controller.odometerController,
-            label: appL10n.inspOdometerReadingKm,
-            hint: appL10n.inspEnterOdometerReading,
-            icon: Icons.speed_outlined,
-            required: true,
-            keyboardType: TextInputType.number,
-            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-          ),
-        ],
-      ),
+    return _buildTextField(
+      controller: controller.odometerController,
+      label: appL10n.inspOdometerReadingKm,
+      hint: appL10n.inspEnterOdometerReading,
+      icon: Icons.speed_outlined,
+      required: true,
+      keyboardType: TextInputType.number,
+      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
     );
   }
 
