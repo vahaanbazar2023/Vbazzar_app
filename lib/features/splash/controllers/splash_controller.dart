@@ -235,8 +235,22 @@ class SplashController extends GetxController with GetTickerProviderStateMixin {
     final profileCompleted = await SecureStorageService.to.read(
       StorageKeys.profileCompleted,
     );
+    final languageConfirmed = LocalStorageService.to.getBool(
+      StorageKeys.languageConfirmed,
+    );
+    final loggedIn = token != null && token.isNotEmpty;
 
-    if (token != null && token.isNotEmpty) {
+    // Every user picks a language once on this app, including users updating from the old app
+    // and users who are already logged in. New users still see the intro first.
+    if (!languageConfirmed && (loggedIn || hasSeenIntro)) {
+      Get.offAllNamed(
+        AppRoutes.languageSelection,
+        arguments: {'loggedIn': loggedIn},
+      );
+      return;
+    }
+
+    if (loggedIn) {
       // Backfill the server with this device's language (fire-and-forget, never blocks startup).
       LanguageSyncService.syncSavedLanguageOnce();
       // Profile is only forced after a payment (see ProfileGate).
