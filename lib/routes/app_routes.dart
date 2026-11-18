@@ -23,6 +23,7 @@ class AppRoutes {
   static const myBids = '/auction/my-bids';
   static const myWins = '/auction/my-wins';
   static const myWishlist = '/auction/my-wishlist';
+  static const myWatchlist = '/auction/my-watchlist';
   static const myGatePasses = '/auction/my-gate-passes';
   static const walletPayment = '/subscription/wallet-payment';
 

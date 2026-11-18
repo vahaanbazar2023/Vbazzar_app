@@ -6533,4 +6533,78 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get auctionDepSeparately => 'Bought separately';
+
+  @override
+  String get aucWatchlist => 'Watchlist';
+
+  @override
+  String get aucMyWatchlist => 'My Watchlist';
+
+  @override
+  String get aucWatchlistSubtitle => 'Vehicles you are bidding on';
+
+  @override
+  String get aucWatching => 'Watching';
+
+  @override
+  String get aucNoWatchlistItems =>
+      'No vehicles in your watchlist yet. Tap the eye icon on a vehicle to watch it.';
+
+  @override
+  String get aucAddedToWatchlist => 'Added to watchlist';
+
+  @override
+  String get aucRemovedFromWatchlist => 'Removed from watchlist';
+
+  @override
+  String get aucFailedUpdateWatchlist => 'Couldn\'t update your watchlist';
+
+  @override
+  String get aucFailedLoadWatchlist => 'Couldn\'t load your watchlist';
+
+  @override
+  String get aucAutoBid => 'Auto-bid';
+
+  @override
+  String get aucAutoBidHint =>
+      'When someone outbids you, we place your next bid automatically.';
+
+  @override
+  String aucAutoBidOnStatus(String count, String max) {
+    return 'On · bid $count of $max';
+  }
+
+  @override
+  String get aucAutoBidSwitchedOn => 'Auto-bid switched on';
+
+  @override
+  String get aucAutoBidSwitchedOff => 'Auto-bid switched off';
+
+  @override
+  String aucAutoBidPlacedNow(String amount) {
+    return 'Auto-bid placed ₹$amount for you';
+  }
+
+  @override
+  String aucAutoBidStoppedMaxBids(String max) {
+    return 'Auto-bid stopped: all $max bids used';
+  }
+
+  @override
+  String get aucAutoBidStoppedLimit =>
+      'Auto-bid stopped: your bid limit is too low';
+
+  @override
+  String get aucAutoBidFailed => 'Couldn\'t update auto-bid';
+
+  @override
+  String get aucAutoBidConfirmTitle => 'Switch on auto-bid?';
+
+  @override
+  String aucAutoBidConfirmBody(String step, String max) {
+    return 'Each time someone outbids you, we place your next bid (current highest + ₹$step) from your bid limit, until you have used $max bids or your limit runs out. If you are not the highest bidder now, we bid right away. You get a notification for every auto-bid.';
+  }
+
+  @override
+  String get aucAutoBidConfirmCta => 'Switch on';
 }

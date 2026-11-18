@@ -40,6 +40,7 @@ import '../features/auction/controllers/auction_category_controller.dart';
 import '../features/auction/vehicle_listing_binding.dart';
 import '../features/auction/controllers/my_bids_wins_controller.dart';
 import '../features/auction/controllers/wishlist_controller.dart';
+import '../features/auction/controllers/watchlist_controller.dart';
 import 'app_routes.dart';
 import '../features/chatbot/chat_binding.dart';
 import '../features/chatbot/views/chat_screen.dart';
@@ -275,6 +276,17 @@ class AppPages {
           Get.lazyPut<VehicleListingService>(() => VehicleListingService());
         }
         Get.lazyPut(() => WishlistController());
+      }),
+      transition: Transition.rightToLeft,
+    ),
+    GetPage(
+      name: AppRoutes.myWatchlist,
+      page: () => const MyWatchlistView(),
+      binding: BindingsBuilder(() {
+        if (!Get.isRegistered<VehicleListingService>()) {
+          Get.lazyPut<VehicleListingService>(() => VehicleListingService());
+        }
+        Get.lazyPut(() => WatchlistController());
       }),
       transition: Transition.rightToLeft,
     ),

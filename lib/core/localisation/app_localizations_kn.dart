@@ -6614,4 +6614,78 @@ class AppLocalizationsKn extends AppLocalizations {
 
   @override
   String get auctionDepSeparately => 'ಪ್ರತ್ಯೇಕವಾಗಿ ಖರೀದಿಸಿ';
+
+  @override
+  String get aucWatchlist => 'ವಾಚ್‌ಲಿಸ್ಟ್';
+
+  @override
+  String get aucMyWatchlist => 'ನನ್ನ ವಾಚ್‌ಲಿಸ್ಟ್';
+
+  @override
+  String get aucWatchlistSubtitle => 'ನೀವು ಬಿಡ್ ಮಾಡುತ್ತಿರುವ ವಾಹನಗಳು';
+
+  @override
+  String get aucWatching => 'ವಾಚ್‌ಲಿಸ್ಟ್‌ನಲ್ಲಿದೆ';
+
+  @override
+  String get aucNoWatchlistItems =>
+      'ನಿಮ್ಮ ವಾಚ್‌ಲಿಸ್ಟ್‌ನಲ್ಲಿ ಇನ್ನೂ ವಾಹನಗಳಿಲ್ಲ. ವಾಹನದ ಮೇಲಿನ ಕಣ್ಣಿನ ಐಕಾನ್ ಟ್ಯಾಪ್ ಮಾಡಿ.';
+
+  @override
+  String get aucAddedToWatchlist => 'ವಾಚ್‌ಲಿಸ್ಟ್‌ಗೆ ಸೇರಿಸಲಾಗಿದೆ';
+
+  @override
+  String get aucRemovedFromWatchlist => 'ವಾಚ್‌ಲಿಸ್ಟ್‌ನಿಂದ ತೆಗೆದುಹಾಕಲಾಗಿದೆ';
+
+  @override
+  String get aucFailedUpdateWatchlist => 'ವಾಚ್‌ಲಿಸ್ಟ್ ಅಪ್‌ಡೇಟ್ ಮಾಡಲಾಗಲಿಲ್ಲ';
+
+  @override
+  String get aucFailedLoadWatchlist => 'ವಾಚ್‌ಲಿಸ್ಟ್ ಲೋಡ್ ಮಾಡಲಾಗಲಿಲ್ಲ';
+
+  @override
+  String get aucAutoBid => 'ಆಟೋ-ಬಿಡ್';
+
+  @override
+  String get aucAutoBidHint =>
+      'ಯಾರಾದರೂ ನಿಮಗಿಂತ ಹೆಚ್ಚು ಬಿಡ್ ಮಾಡಿದರೆ, ನಿಮ್ಮ ಮುಂದಿನ ಬಿಡ್ ಅನ್ನು ನಾವೇ ಮಾಡುತ್ತೇವೆ.';
+
+  @override
+  String aucAutoBidOnStatus(String count, String max) {
+    return 'ಆನ್ · $maxರಲ್ಲಿ $count ಬಿಡ್';
+  }
+
+  @override
+  String get aucAutoBidSwitchedOn => 'ಆಟೋ-ಬಿಡ್ ಆನ್ ಮಾಡಲಾಗಿದೆ';
+
+  @override
+  String get aucAutoBidSwitchedOff => 'ಆಟೋ-ಬಿಡ್ ಆಫ್ ಮಾಡಲಾಗಿದೆ';
+
+  @override
+  String aucAutoBidPlacedNow(String amount) {
+    return 'ನಿಮಗಾಗಿ ₹$amount ಆಟೋ-ಬಿಡ್ ಮಾಡಲಾಗಿದೆ';
+  }
+
+  @override
+  String aucAutoBidStoppedMaxBids(String max) {
+    return 'ಆಟೋ-ಬಿಡ್ ನಿಂತಿದೆ: ಎಲ್ಲಾ $max ಬಿಡ್‌ಗಳು ಬಳಸಲಾಗಿದೆ';
+  }
+
+  @override
+  String get aucAutoBidStoppedLimit =>
+      'ಆಟೋ-ಬಿಡ್ ನಿಂತಿದೆ: ನಿಮ್ಮ ಬಿಡ್ ಮಿತಿ ಸಾಲದು';
+
+  @override
+  String get aucAutoBidFailed => 'ಆಟೋ-ಬಿಡ್ ಅಪ್‌ಡೇಟ್ ಮಾಡಲಾಗಲಿಲ್ಲ';
+
+  @override
+  String get aucAutoBidConfirmTitle => 'ಆಟೋ-ಬಿಡ್ ಆನ್ ಮಾಡಬೇಕೇ?';
+
+  @override
+  String aucAutoBidConfirmBody(String step, String max) {
+    return 'ಯಾರಾದರೂ ನಿಮಗಿಂತ ಹೆಚ್ಚು ಬಿಡ್ ಮಾಡಿದಾಗಲೆಲ್ಲಾ, ನಿಮ್ಮ ಬಿಡ್ ಮಿತಿಯಿಂದ ನಿಮ್ಮ ಮುಂದಿನ ಬಿಡ್ (ಪ್ರಸ್ತುತ ಅತಿ ಹೆಚ್ಚು + ₹$step) ಅನ್ನು ನಾವೇ ಮಾಡುತ್ತೇವೆ, $max ಬಿಡ್‌ಗಳು ಮುಗಿಯುವವರೆಗೆ ಅಥವಾ ಮಿತಿ ಮುಗಿಯುವವರೆಗೆ. ಈಗ ನೀವು ಅತಿ ಹೆಚ್ಚು ಬಿಡ್ದಾರರಲ್ಲದಿದ್ದರೆ, ತಕ್ಷಣ ಬಿಡ್ ಮಾಡುತ್ತೇವೆ. ಪ್ರತಿ ಆಟೋ-ಬಿಡ್‌ಗೆ ನಿಮಗೆ ಅಧಿಸೂಚನೆ ಬರುತ್ತದೆ.';
+  }
+
+  @override
+  String get aucAutoBidConfirmCta => 'ಆನ್ ಮಾಡಿ';
 }
