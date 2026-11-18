@@ -65,6 +65,26 @@ class VehicleListingService {
     );
   }
 
+  /// Vehicles on the user's auction watchlist (all types, any auction state — ended ones show as closed).
+  Future<({List<VehicleListing> vehicles, AuctionPagination pagination})>
+  fetchWatchlistedVehicles({
+    required String userId,
+    int page = 1,
+    int limit = 20,
+  }) {
+    return _fetch(
+      label: 'WATCHLIST REQUEST',
+      body: buildRequestBody(
+        userId: userId,
+        auctionType: '',
+        vehicleType: '', // '' = all types; allowed together with watchlisted_only
+        page: page,
+        limit: limit,
+        watchlistedOnly: true,
+      ),
+    );
+  }
+
   /// The JSON body the API expects (see the request example in the API docs).
   @visibleForTesting
   static Map<String, dynamic> buildRequestBody({
@@ -78,6 +98,7 @@ class VehicleListingService {
     int page = 1,
     int limit = 20,
     bool wishlistedOnly = false,
+    bool watchlistedOnly = false,
   }) => <String, dynamic>{
     'user_id': userId,
     'auction_type': auctionType,
@@ -87,6 +108,8 @@ class VehicleListingService {
     'state_id': stateId,
     'bank_name': bankName.trim(), // '' = no filter; the API rejects null
     'wishlisted_only': wishlistedOnly,
+    // Sent only for the watchlist, so every other listing request stays exactly the documented body.
+    if (watchlistedOnly) 'watchlisted_only': true,
     'page': page,
     'limit': limit,
   };

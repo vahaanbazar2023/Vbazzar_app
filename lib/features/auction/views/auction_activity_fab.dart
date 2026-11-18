@@ -14,7 +14,7 @@ import '../../../core/extensions/context_extensions.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Expandable auction activity FAB
-// Tap the red circle to expand → My Wins / My Bids / Wishlist / Initiate Refund
+// Tap the red circle to expand → My Wins / My Bids / Watchlist / Wishlist / Initiate Refund
 // ─────────────────────────────────────────────────────────────────────────────
 
 class AuctionActivityFab extends StatefulWidget {
@@ -131,6 +131,12 @@ class _AuctionActivityFabState extends State<AuctionActivityFab>
       iconAsset: AppAssets.subIconBidLimit,
       iconData: null,
       route: AppRoutes.myBids,
+    ),
+    (
+      label: context.l10n.aucWatchlist,
+      iconAsset: null,
+      iconData: Icons.visibility_rounded,
+      route: AppRoutes.myWatchlist,
     ),
     (
       label: context.l10n.aucWishlist,

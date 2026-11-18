@@ -16,6 +16,8 @@ import '../domain/repositories/auction_repository.dart';
 import '../models/auction_pagination.dart';
 import '../models/pending_bid.dart';
 import '../models/vehicle_listing.dart';
+import '../services/auto_bid_service.dart';
+import '../services/bid_flow.dart';
 import '../services/vehicle_listing_service.dart';
 import '../../../core/extensions/context_extensions.dart';
 
@@ -122,6 +124,9 @@ class VehicleListingController extends GetxController
 
   // ─── Wishlist ─────────────────────────────────────────────────
   final isTogglingWishlist = <String>{}.obs;
+
+  // ─── Watchlist (separate from wishlist) ───────────────────────
+  final isTogglingWatchlist = <String>{}.obs;
 
   // Legacy fields kept for compat with detail screen
   final vehicles = <VehicleListing>[].obs;
@@ -556,128 +561,25 @@ class VehicleListingController extends GetxController
 
   // ─── Bid placement ────────────────────────────────────────────
 
-  /// Full bid flow with all validations.
+  /// Full bid flow with all validations (see [BidFlow.placeBid]).
   /// Returns an error string on failure, null on success.
   Future<String?> placeBid({
     required VehicleListing vehicle,
     required int bidAmount,
   }) async {
-    debugPrint(
-      '🔵 [placeBid] START amount=$bidAmount minPrice=${vehicle.minimumPrice} availableBalance=${vehicle.availableBalance}',
+    final error = await BidFlow.placeBid(
+      vehicle: vehicle,
+      bidAmount: bidAmount,
+      repository: _repository,
+      onPendingBid: (bid) => pendingBid.value = bid,
+      isPlacing: isPlacingBid,
     );
-    // 1. Validate >= minimum price
-    if (bidAmount < vehicle.minimumPrice) {
-      return appL10n.aucMinimumBid(_fmt(vehicle.minimumPrice));
-    }
-    // 2. Validate > current highest bid
-    final highest = vehicle.currentHighestBid ?? vehicle.yourBid;
-    if (highest > 0 && bidAmount <= highest) {
-      return appL10n.aucMustBeHigherThanCurrentBid;
-    }
-
-    // 3. Check SUBT002 (bid limit subscription)
-    final guard = SubscriptionGuardService.to;
-    debugPrint('🔵 [placeBid] Step 3: checking SUBT002...');
-    await guard.ensureLoaded();
-    final hasBidLimit = guard.hasActiveSubscription(
-      SubscriptionTypeCode.auctionBidLimit,
-    );
-    debugPrint('🔵 [placeBid] Step 3: hasBidLimit=$hasBidLimit');
-    if (!hasBidLimit) {
-      debugPrint('🔵 [placeBid] Navigating to SUBT002 subscription (no plan)');
-      pendingBid.value = PendingBid(
-        vehicleId: vehicle.vehicleId,
-        auctionId: vehicle.auctionId,
-        bidAmount: bidAmount,
-      );
-      Get.back(); // close the bid sheet first
-      await Future.delayed(const Duration(milliseconds: 300));
-      CustomSnackbar.show(
-        message: appL10n.aucBidLimitSubscriptionRequired,
-        type: SnackbarType.error,
-      );
-      Get.toNamed(
-        AppRoutes.subscription,
-        arguments: {
-          'subscription_source': SubscriptionTypeCode.auctionBidLimit,
-          'title': appL10n.aucBidLimitPlanRequired,
-          'subtitle': appL10n.aucBidLimitPlanRequiredSubtitle,
-        },
-      );
-      return '__navigated__';
-    }
-
-    // 4. Check available balance (bid limit from subscription)
-    debugPrint(
-      '🔵 [placeBid] Step 4: availableBalance=${vehicle.availableBalance}',
-    );
-    if (vehicle.availableBalance <= 0 || bidAmount > vehicle.availableBalance) {
-      debugPrint(
-        '🔵 [placeBid] Navigating to SUBT002 subscription (limit exceeded/zero)',
-      );
-      pendingBid.value = PendingBid(
-        vehicleId: vehicle.vehicleId,
-        auctionId: vehicle.auctionId,
-        bidAmount: bidAmount,
-      );
-      Get.back(); // close the bid sheet first
-      await Future.delayed(const Duration(milliseconds: 300));
-      CustomSnackbar.show(
-        message: vehicle.availableBalance <= 0
-            ? appL10n.aucBuyingLimitZeroUpgrade
-            : appL10n.aucBidExceedsLimitUpgradeHigher(
-                _fmt(bidAmount),
-                _fmt(vehicle.availableBalance),
-              ),
-        type: SnackbarType.error,
-      );
-      Get.toNamed(
-        AppRoutes.subscription,
-        arguments: {
-          'subscription_source': SubscriptionTypeCode.auctionBidLimit,
-          'title': appL10n.aucBidLimitExceeded,
-          'subtitle': vehicle.availableBalance <= 0
-              ? appL10n.aucNoBuyingLimitUpgrade
-              : appL10n.aucBuyingLimitUpgradeHigher(
-                  _fmt(vehicle.availableBalance),
-                ),
-        },
-      );
-      return '__navigated__';
-    }
-
-    // 5. Place bid via repository
-    isPlacingBid.value = true;
-    debugPrint(
-      '🔵 [placeBid] Calling API: vehicleId=${vehicle.vehicleId} auctionId=${vehicle.auctionId} amount=$bidAmount',
-    );
-    try {
-      final uid = await SecureStorageService.to.read(StorageKeys.userId) ?? '';
-      debugPrint('🔵 [placeBid] userId=$uid');
-      await _repository.placeBid(
-        userId: uid,
-        vehicleId: vehicle.vehicleId,
-        auctionId: vehicle.auctionId,
-        bidAmount: bidAmount,
-      );
-      debugPrint('✅ [placeBid] Success');
+    if (error == null) {
       // Silent background refresh — keeps the current list visible while
       // fetching fresh values (bids_left, bids_received, available_balance).
       _silentRefresh();
-      return null;
-    } on BidException catch (e) {
-      debugPrint('❌ [placeBid] BidException: ${e.message} (${e.code})');
-      if (e.message.toLowerCase().contains('higher') ||
-          e.code == 'BID_TOO_LOW') {
-        return appL10n.aucBidMustBeHigherThanHighest;
-      }
-      return e.message;
-    } catch (e) {
-      debugPrint('❌ [placeBid] Error: $e');
-      return appL10n.somethingWentWrong;
-    } finally {
-      isPlacingBid.value = false;
     }
+    return error;
   }
 
   static String _fmt(int n) {
@@ -733,56 +635,8 @@ class VehicleListingController extends GetxController
           (v) => v.vehicleId == vehicle.vehicleId,
         );
         if (index != -1) {
-          final updatedVehicle = VehicleListing(
-            id: vehicle.id,
-            vehicleId: vehicle.vehicleId,
-            auctionId: vehicle.auctionId,
-            sellerReference: vehicle.sellerReference,
-            repoDate: vehicle.repoDate,
-            make: vehicle.make,
-            model: vehicle.model,
-            year: vehicle.year,
-            registrationNo: vehicle.registrationNo,
-            chassisNo: vehicle.chassisNo,
-            engineNo: vehicle.engineNo,
-            registeredRto: vehicle.registeredRto,
-            variant: vehicle.variant,
-            transmission: vehicle.transmission,
-            vehicleType: vehicle.vehicleType,
-            fuelType: vehicle.fuelType,
-            kilometers: vehicle.kilometers,
-            colour: vehicle.colour,
-            marketValue: vehicle.marketValue,
-            maxBids: vehicle.maxBids,
-            images: vehicle.images,
-            minimumPrice: vehicle.minimumPrice,
-            reservePrice: vehicle.reservePrice,
-            owner: vehicle.owner,
-            remarks: vehicle.remarks,
-            category: vehicle.category,
-            yardName: vehicle.yardName,
-            bankName: vehicle.bankName,
-            yardLocation: vehicle.yardLocation,
-            contactPersonName: vehicle.contactPersonName,
-            contactPersonNumber: vehicle.contactPersonNumber,
-            rcAvailability: vehicle.rcAvailability,
-            transactionFees: vehicle.transactionFees,
-            parkingCharges: vehicle.parkingCharges,
-            yourBid: vehicle.yourBid,
-            bidsLeft: vehicle.bidsLeft,
-            bidsReceived: vehicle.bidsReceived,
-            currentHighestBid: vehicle.currentHighestBid,
-            currentBid: vehicle.currentBid,
-            minimumNextBid: vehicle.minimumNextBid,
-            bidIncrementAmount: vehicle.bidIncrementAmount,
-            auctionEndDate: vehicle.auctionEndDate,
-            availableBalance: vehicle.availableBalance,
-            maxUserVehiclesBidLimit: vehicle.maxUserVehiclesBidLimit,
-            userVehicleBidCount: vehicle.userVehicleBidCount,
+          final updatedVehicle = _tabVehicles[i][index].copyWith(
             isWishlisted: newWishlistState,
-            status: vehicle.status,
-            insertedAt: vehicle.insertedAt,
-            updatedAt: vehicle.updatedAt,
           );
           _tabVehicles[i][index] = updatedVehicle;
         }
@@ -803,6 +657,54 @@ class VehicleListingController extends GetxController
       );
     } finally {
       isTogglingWishlist.remove(vehicle.vehicleId);
+    }
+  }
+
+  // ─── Watchlist Toggle ─────────────────────────────────────────
+
+  /// Adds the vehicle to the auction watchlist, or removes it (which also switches its auto-bid off).
+  Future<void> toggleWatchlist(VehicleListing vehicle) async {
+    if (isTogglingWatchlist.contains(vehicle.vehicleId)) return;
+    isTogglingWatchlist.add(vehicle.vehicleId);
+    try {
+      final userId =
+          await SecureStorageService.to.read(StorageKeys.userId) ?? '';
+      final r = await AutoBidService().toggleWatchlist(
+        userId: userId,
+        vehicleId: vehicle.vehicleId,
+      );
+      for (int i = 0; i < 3; i++) {
+        final index = _tabVehicles[i].indexWhere(
+          (v) => v.vehicleId == vehicle.vehicleId,
+        );
+        if (index != -1) {
+          _tabVehicles[i][index] = _tabVehicles[i][index].copyWith(
+            isWatchlisted: r.isWatchlisted,
+            isAutoBidEnabled: r.isAutoBidEnabled,
+          );
+        }
+      }
+      final si = searchResults.indexWhere((v) => v.vehicleId == vehicle.vehicleId);
+      if (si != -1) {
+        searchResults[si] = searchResults[si].copyWith(
+          isWatchlisted: r.isWatchlisted,
+          isAutoBidEnabled: r.isAutoBidEnabled,
+        );
+      }
+      CustomSnackbar.show(
+        message: r.isWatchlisted
+            ? appL10n.aucAddedToWatchlist
+            : appL10n.aucRemovedFromWatchlist,
+        type: SnackbarType.success,
+      );
+    } catch (e) {
+      debugPrint('❌ [toggleWatchlist] Error: $e');
+      CustomSnackbar.show(
+        message: appL10n.aucFailedUpdateWatchlist,
+        type: SnackbarType.error,
+      );
+    } finally {
+      isTogglingWatchlist.remove(vehicle.vehicleId);
     }
   }
 
