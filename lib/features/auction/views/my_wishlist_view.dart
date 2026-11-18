@@ -10,6 +10,7 @@ import '../../../core/design_system/organisms/network_image_carousel.dart';
 import '../../../core/design_system/templates/app_layout.dart';
 import '../../../core/design_system/tokens/app_spacing.dart';
 import '../../../core/extensions/context_extensions.dart';
+import '../controllers/watchlist_controller.dart';
 import '../controllers/wishlist_controller.dart';
 import '../controllers/vehicle_listing_controller.dart';
 import '../models/vehicle_listing.dart';
@@ -81,6 +82,179 @@ class MyWishlistView extends GetView<WishlistController> {
           ),
         );
       }),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Auction watchlist — same cards as the wishlist, plus an auto-bid switch
+// ─────────────────────────────────────────────────────────────────────────────
+
+class MyWatchlistView extends GetView<WatchlistController> {
+  const MyWatchlistView({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return AppLayout(
+      title: context.l10n.aucMyWatchlist,
+      subtitle: context.l10n.aucWatchlistSubtitle,
+      showBack: true,
+      body: Obx(() {
+        if (controller.isLoading.value) {
+          return const _WishlistCardSkeletonList();
+        }
+        if (controller.errorMessage.value != null) {
+          return _ErrorState(
+            message: controller.errorMessage.value!,
+            onRetry: controller.refresh,
+          );
+        }
+        if (controller.vehicles.isEmpty) {
+          return _EmptyState(
+            icon: Icons.visibility_outlined,
+            message: context.l10n.aucNoWatchlistItems,
+          );
+        }
+        return RefreshIndicator(
+          color: AppColors.primary,
+          onRefresh: controller.refresh,
+          child: ListView.builder(
+            controller: controller.scrollController,
+            padding: EdgeInsets.all(AppSpacing.md),
+            itemCount:
+                controller.vehicles.length +
+                (controller.isLoadingMore.value ? 1 : 0),
+            itemBuilder: (_, i) {
+              if (i >= controller.vehicles.length) {
+                return Padding(
+                  padding: EdgeInsets.symmetric(vertical: 16.h),
+                  child: const Center(
+                    child: CircularProgressIndicator(color: AppColors.primary),
+                  ),
+                );
+              }
+              final v = controller.vehicles[i];
+              return Padding(
+                padding: EdgeInsets.only(bottom: AppSpacing.md),
+                child: _WishlistCard(
+                  key: ValueKey('watch-${v.vehicleId}'),
+                  vehicle: v,
+                  watchlist: controller,
+                ),
+              );
+            },
+          ),
+        );
+      }),
+    );
+  }
+}
+
+/// Auto-bid switch shown on watchlist cards while the auction is open.
+class _AutoBidRow extends StatelessWidget {
+  final VehicleListing vehicle;
+  final WatchlistController controller;
+  const _AutoBidRow({required this.vehicle, required this.controller});
+
+  Future<void> _onChanged(BuildContext context, bool on) async {
+    if (on) {
+      final step = (vehicle.bidIncrementAmount ?? 0) > 0
+          ? vehicle.bidIncrementAmount!
+          : 1;
+      final ok = await showDialog<bool>(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: Text(ctx.l10n.aucAutoBidConfirmTitle),
+          content: Text(
+            ctx.l10n.aucAutoBidConfirmBody(
+              WatchlistController.formatAmount(step),
+              '${vehicle.maxUserVehiclesBidLimit}',
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(ctx).pop(false),
+              child: Text(ctx.l10n.cancel),
+            ),
+            FilledButton(
+              style: FilledButton.styleFrom(backgroundColor: AppColors.primary),
+              onPressed: () => Navigator.of(ctx).pop(true),
+              child: Text(ctx.l10n.aucAutoBidConfirmCta),
+            ),
+          ],
+        ),
+      );
+      if (ok != true) return;
+    }
+    await controller.setAutoBid(vehicle, on);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final on = vehicle.isAutoBidEnabled;
+    return Container(
+      margin: EdgeInsets.fromLTRB(12.w, 0, 12.w, 10.h),
+      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 6.h),
+      decoration: BoxDecoration(
+        color: on
+            ? AppColors.primary.withValues(alpha: 0.08)
+            : const Color(0xFFF7F7F7),
+        borderRadius: BorderRadius.circular(10.r),
+        border: Border.all(
+          color: on ? AppColors.primary.withValues(alpha: 0.35) : AppColors.grey200,
+        ),
+      ),
+      child: Row(
+        children: [
+          Icon(
+            Icons.bolt_rounded,
+            size: 20.r,
+            color: on ? AppColors.primary : AppColors.grey500,
+          ),
+          SizedBox(width: 8.w),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  context.l10n.aucAutoBid,
+                  style: TextStyle(
+                    fontFamily: 'Montserrat',
+                    fontSize: 12.sp,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.textPrimary,
+                  ),
+                ),
+                SizedBox(height: 2.h),
+                Text(
+                  on
+                      ? context.l10n.aucAutoBidOnStatus(
+                          '${vehicle.userVehicleBidCount}',
+                          '${vehicle.maxUserVehiclesBidLimit}',
+                        )
+                      : context.l10n.aucAutoBidHint,
+                  style: TextStyle(
+                    fontFamily: 'Montserrat',
+                    fontSize: 10.sp,
+                    color: AppColors.textSecondary,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Obx(() {
+            final busy = controller.busy.contains(vehicle.vehicleId);
+            return Semantics(
+              label: context.l10n.aucAutoBid,
+              child: Switch.adaptive(
+                value: on,
+                activeTrackColor: AppColors.primary,
+                onChanged: busy ? null : (v) => _onChanged(context, v),
+              ),
+            );
+          }),
+        ],
+      ),
     );
   }
 }
@@ -207,7 +381,9 @@ class _WishlistCardSkeleton extends StatelessWidget {
 
 class _WishlistCard extends StatefulWidget {
   final VehicleListing vehicle;
-  const _WishlistCard({required this.vehicle});
+  /// Set on the watchlist screen: bids go through it and the card shows the auto-bid switch.
+  final WatchlistController? watchlist;
+  const _WishlistCard({super.key, required this.vehicle, this.watchlist});
 
   @override
   State<_WishlistCard> createState() => _WishlistCardState();
@@ -225,6 +401,18 @@ class _WishlistCardState extends State<_WishlistCard> {
     final v = widget.vehicle;
     _bidAmount = v.minimumNextBid ?? v.minimumPrice;
     _bidCtrl = TextEditingController(text: _fmt(_bidAmount));
+  }
+
+  @override
+  void didUpdateWidget(covariant _WishlistCard old) {
+    super.didUpdateWidget(old);
+    // A refresh (e.g. after an auto-bid) moves the minimum next bid — keep the stepper valid.
+    final min = widget.vehicle.minimumNextBid ?? widget.vehicle.minimumPrice;
+    if (min != (old.vehicle.minimumNextBid ?? old.vehicle.minimumPrice) &&
+        _bidAmount < min) {
+      _bidAmount = min;
+      _bidCtrl.text = _fmt(_bidAmount);
+    }
   }
 
   @override
@@ -260,11 +448,13 @@ class _WishlistCardState extends State<_WishlistCard> {
 
   Future<void> _placeBid() async {
     setState(() => _isPlacing = true);
-    final ctrl = Get.find<VehicleListingController>();
-    final error = await ctrl.placeBid(
-      vehicle: widget.vehicle,
-      bidAmount: _bidAmount,
-    );
+    final watchlist = widget.watchlist;
+    final error = watchlist != null
+        ? await watchlist.placeBid(vehicle: widget.vehicle, bidAmount: _bidAmount)
+        : await Get.find<VehicleListingController>().placeBid(
+            vehicle: widget.vehicle,
+            bidAmount: _bidAmount,
+          );
     if (mounted) setState(() => _isPlacing = false);
     if (error != null && error != '__navigated__') {
       CustomSnackbar.show(message: error, type: SnackbarType.error);
@@ -278,7 +468,9 @@ class _WishlistCardState extends State<_WishlistCard> {
 
   Color get _statusColor => AppColors.error;
 
-  String get _statusLabel => context.l10n.aucWishlisted;
+  String get _statusLabel => widget.watchlist != null
+      ? context.l10n.aucWatching
+      : context.l10n.aucWishlisted;
 
   static String _fmt(int n) {
     if (n == 0) return '0';
@@ -515,6 +707,58 @@ class _WishlistCardState extends State<_WishlistCard> {
                           ),
                         ),
                       SizedBox(height: 6.h),
+                      // Watchlist: eye badge — tap to remove from the watchlist
+                      if (widget.watchlist != null)
+                        Obx(() {
+                          final busy = widget.watchlist!.busy.contains(v.vehicleId);
+                          return Semantics(
+                            button: true,
+                            label: context.l10n.aucWatching,
+                            child: InkWell(
+                              onTap: busy
+                                  ? null
+                                  : () => widget.watchlist!.removeFromWatchlist(v),
+                              borderRadius: BorderRadius.circular(4.r),
+                              child: Container(
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 8.w,
+                                  vertical: 4.h,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: AppColors.primary.withValues(alpha: 0.12),
+                                  borderRadius: BorderRadius.circular(4.r),
+                                ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(
+                                      Icons.visibility_rounded,
+                                      size: 12.r,
+                                      color: AppColors.primary,
+                                    ),
+                                    SizedBox(width: 4.w),
+                                    Text(
+                                      context.l10n.aucWatching,
+                                      style: TextStyle(
+                                        fontFamily: 'Montserrat',
+                                        fontSize: 9.sp,
+                                        fontWeight: FontWeight.w600,
+                                        color: AppColors.primary,
+                                      ),
+                                    ),
+                                    SizedBox(width: 2.w),
+                                    Icon(
+                                      Icons.close_rounded,
+                                      size: 11.r,
+                                      color: AppColors.primary,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          );
+                        })
+                      else
                       // Wishlist heart icon badge
                       Container(
                         padding: EdgeInsets.symmetric(
@@ -759,6 +1003,10 @@ class _WishlistCardState extends State<_WishlistCard> {
               ),
             ),
           ),
+
+          // Auto-bid switch (watchlist only, while the auction is open)
+          if (widget.watchlist != null && !isClosed)
+            _AutoBidRow(vehicle: v, controller: widget.watchlist!),
 
           // ════════════════════════════════════════════════
           // BID ROW (active) or CLOSED bar

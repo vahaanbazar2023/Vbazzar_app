@@ -6662,4 +6662,79 @@ class AppLocalizationsTa extends AppLocalizations {
 
   @override
   String get auctionDepSeparately => 'தனியாக வாங்க வேண்டும்';
+
+  @override
+  String get aucWatchlist => 'வாட்ச்லிஸ்ட்';
+
+  @override
+  String get aucMyWatchlist => 'எனது வாட்ச்லிஸ்ட்';
+
+  @override
+  String get aucWatchlistSubtitle => 'நீங்கள் ஏலம் கேட்கும் வாகனங்கள்';
+
+  @override
+  String get aucWatching => 'வாட்ச்லிஸ்டில்';
+
+  @override
+  String get aucNoWatchlistItems =>
+      'உங்கள் வாட்ச்லிஸ்டில் இன்னும் வாகனங்கள் இல்லை. வாகனத்தில் உள்ள கண் ஐகானைத் தட்டவும்.';
+
+  @override
+  String get aucAddedToWatchlist => 'வாட்ச்லிஸ்டில் சேர்க்கப்பட்டது';
+
+  @override
+  String get aucRemovedFromWatchlist => 'வாட்ச்லிஸ்டிலிருந்து நீக்கப்பட்டது';
+
+  @override
+  String get aucFailedUpdateWatchlist =>
+      'வாட்ச்லிஸ்டைப் புதுப்பிக்க முடியவில்லை';
+
+  @override
+  String get aucFailedLoadWatchlist => 'வாட்ச்லிஸ்டை ஏற்ற முடியவில்லை';
+
+  @override
+  String get aucAutoBid => 'ஆட்டோ-பிட்';
+
+  @override
+  String get aucAutoBidHint =>
+      'யாராவது உங்களை விட அதிகமாக ஏலம் கேட்டால், உங்கள் அடுத்த ஏலத்தை நாங்களே வைப்போம்.';
+
+  @override
+  String aucAutoBidOnStatus(String count, String max) {
+    return 'இயக்கத்தில் · $max-இல் $count ஏலம்';
+  }
+
+  @override
+  String get aucAutoBidSwitchedOn => 'ஆட்டோ-பிட் இயக்கப்பட்டது';
+
+  @override
+  String get aucAutoBidSwitchedOff => 'ஆட்டோ-பிட் நிறுத்தப்பட்டது';
+
+  @override
+  String aucAutoBidPlacedNow(String amount) {
+    return 'உங்களுக்காக ₹$amount ஆட்டோ-பிட் வைக்கப்பட்டது';
+  }
+
+  @override
+  String aucAutoBidStoppedMaxBids(String max) {
+    return 'ஆட்டோ-பிட் நின்றது: அனைத்து $max ஏலங்களும் பயன்படுத்தப்பட்டன';
+  }
+
+  @override
+  String get aucAutoBidStoppedLimit =>
+      'ஆட்டோ-பிட் நின்றது: உங்கள் ஏல வரம்பு போதாது';
+
+  @override
+  String get aucAutoBidFailed => 'ஆட்டோ-பிட்டைப் புதுப்பிக்க முடியவில்லை';
+
+  @override
+  String get aucAutoBidConfirmTitle => 'ஆட்டோ-பிட்டை இயக்கவா?';
+
+  @override
+  String aucAutoBidConfirmBody(String step, String max) {
+    return 'யாராவது உங்களை விட அதிகமாக ஏலம் கேட்கும் ஒவ்வொரு முறையும், உங்கள் ஏல வரம்பிலிருந்து அடுத்த ஏலத்தை (தற்போதைய அதிகபட்சம் + ₹$step) நாங்களே வைப்போம், $max ஏலங்கள் முடியும் வரை அல்லது வரம்பு தீரும் வரை. இப்போது நீங்கள் அதிகபட்ச ஏலதாரர் இல்லையெனில், உடனே ஏலம் வைப்போம். ஒவ்வொரு ஆட்டோ-பிட்டுக்கும் உங்களுக்கு அறிவிப்பு வரும்.';
+  }
+
+  @override
+  String get aucAutoBidConfirmCta => 'இயக்கு';
 }

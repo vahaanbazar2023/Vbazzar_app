@@ -12105,6 +12105,132 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Bought separately'**
   String get auctionDepSeparately;
+
+  /// No description provided for @aucWatchlist.
+  ///
+  /// In en, this message translates to:
+  /// **'Watchlist'**
+  String get aucWatchlist;
+
+  /// No description provided for @aucMyWatchlist.
+  ///
+  /// In en, this message translates to:
+  /// **'My Watchlist'**
+  String get aucMyWatchlist;
+
+  /// No description provided for @aucWatchlistSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Vehicles you are bidding on'**
+  String get aucWatchlistSubtitle;
+
+  /// No description provided for @aucWatching.
+  ///
+  /// In en, this message translates to:
+  /// **'Watching'**
+  String get aucWatching;
+
+  /// No description provided for @aucNoWatchlistItems.
+  ///
+  /// In en, this message translates to:
+  /// **'No vehicles in your watchlist yet. Tap the eye icon on a vehicle to watch it.'**
+  String get aucNoWatchlistItems;
+
+  /// No description provided for @aucAddedToWatchlist.
+  ///
+  /// In en, this message translates to:
+  /// **'Added to watchlist'**
+  String get aucAddedToWatchlist;
+
+  /// No description provided for @aucRemovedFromWatchlist.
+  ///
+  /// In en, this message translates to:
+  /// **'Removed from watchlist'**
+  String get aucRemovedFromWatchlist;
+
+  /// No description provided for @aucFailedUpdateWatchlist.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t update your watchlist'**
+  String get aucFailedUpdateWatchlist;
+
+  /// No description provided for @aucFailedLoadWatchlist.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load your watchlist'**
+  String get aucFailedLoadWatchlist;
+
+  /// No description provided for @aucAutoBid.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto-bid'**
+  String get aucAutoBid;
+
+  /// No description provided for @aucAutoBidHint.
+  ///
+  /// In en, this message translates to:
+  /// **'When someone outbids you, we place your next bid automatically.'**
+  String get aucAutoBidHint;
+
+  /// No description provided for @aucAutoBidOnStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'On · bid {count} of {max}'**
+  String aucAutoBidOnStatus(String count, String max);
+
+  /// No description provided for @aucAutoBidSwitchedOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto-bid switched on'**
+  String get aucAutoBidSwitchedOn;
+
+  /// No description provided for @aucAutoBidSwitchedOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto-bid switched off'**
+  String get aucAutoBidSwitchedOff;
+
+  /// No description provided for @aucAutoBidPlacedNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto-bid placed ₹{amount} for you'**
+  String aucAutoBidPlacedNow(String amount);
+
+  /// No description provided for @aucAutoBidStoppedMaxBids.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto-bid stopped: all {max} bids used'**
+  String aucAutoBidStoppedMaxBids(String max);
+
+  /// No description provided for @aucAutoBidStoppedLimit.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto-bid stopped: your bid limit is too low'**
+  String get aucAutoBidStoppedLimit;
+
+  /// No description provided for @aucAutoBidFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t update auto-bid'**
+  String get aucAutoBidFailed;
+
+  /// No description provided for @aucAutoBidConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Switch on auto-bid?'**
+  String get aucAutoBidConfirmTitle;
+
+  /// No description provided for @aucAutoBidConfirmBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Each time someone outbids you, we place your next bid (current highest + ₹{step}) from your bid limit, until you have used {max} bids or your limit runs out. If you are not the highest bidder now, we bid right away. You get a notification for every auto-bid.'**
+  String aucAutoBidConfirmBody(String step, String max);
+
+  /// No description provided for @aucAutoBidConfirmCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Switch on'**
+  String get aucAutoBidConfirmCta;
 }
 
 class _AppLocalizationsDelegate

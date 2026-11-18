@@ -46,6 +46,10 @@ class VehicleListing {
   final int maxUserVehiclesBidLimit;
   final int userVehicleBidCount;
   final bool isWishlisted;
+  /// On the user's auction watchlist (separate from the wishlist).
+  final bool isWatchlisted;
+  /// Auto-bid is switched on: the server re-bids for the user whenever they are outbid.
+  final bool isAutoBidEnabled;
   final String status;
   final String insertedAt;
   final String updatedAt;
@@ -97,6 +101,8 @@ class VehicleListing {
     required this.maxUserVehiclesBidLimit,
     required this.userVehicleBidCount,
     this.isWishlisted = false,
+    this.isWatchlisted = false,
+    this.isAutoBidEnabled = false,
     required this.status,
     required this.insertedAt,
     required this.updatedAt,
@@ -169,6 +175,8 @@ class VehicleListing {
       userVehicleBidCount:
           (json['user_vehicle_bid_count'] as num?)?.toInt() ?? 0,
       isWishlisted: json['is_wishlisted'] == true,
+      isWatchlisted: json['is_watchlisted'] == true,
+      isAutoBidEnabled: json['is_auto_bid_enabled'] == true,
       status: json['status']?.toString() ?? '',
       insertedAt: json['inserted_at']?.toString() ?? '',
       updatedAt: json['updated_at']?.toString() ?? '',
@@ -176,6 +184,69 @@ class VehicleListing {
   }
 
   String get displayTitle => '$make $model'.trim();
+
+  /// Copy with the fields that change on the client after an action (wishlist / watchlist / auto-bid / bid).
+  VehicleListing copyWith({
+    bool? isWishlisted,
+    bool? isWatchlisted,
+    bool? isAutoBidEnabled,
+    int? yourBid,
+    int? userVehicleBidCount,
+    int? currentHighestBid,
+    int? availableBalance,
+  }) => VehicleListing(
+    id: id,
+    vehicleId: vehicleId,
+    auctionId: auctionId,
+    sellerReference: sellerReference,
+    repoDate: repoDate,
+    make: make,
+    model: model,
+    year: year,
+    registrationNo: registrationNo,
+    chassisNo: chassisNo,
+    engineNo: engineNo,
+    registeredRto: registeredRto,
+    variant: variant,
+    transmission: transmission,
+    vehicleType: vehicleType,
+    fuelType: fuelType,
+    kilometers: kilometers,
+    colour: colour,
+    marketValue: marketValue,
+    maxBids: maxBids,
+    images: images,
+    minimumPrice: minimumPrice,
+    reservePrice: reservePrice,
+    owner: owner,
+    remarks: remarks,
+    category: category,
+    yardName: yardName,
+    bankName: bankName,
+    yardLocation: yardLocation,
+    contactPersonName: contactPersonName,
+    contactPersonNumber: contactPersonNumber,
+    rcAvailability: rcAvailability,
+    transactionFees: transactionFees,
+    parkingCharges: parkingCharges,
+    yourBid: yourBid ?? this.yourBid,
+    bidsLeft: bidsLeft,
+    bidsReceived: bidsReceived,
+    currentHighestBid: currentHighestBid ?? this.currentHighestBid,
+    currentBid: currentBid,
+    minimumNextBid: minimumNextBid,
+    bidIncrementAmount: bidIncrementAmount,
+    auctionEndDate: auctionEndDate,
+    availableBalance: availableBalance ?? this.availableBalance,
+    maxUserVehiclesBidLimit: maxUserVehiclesBidLimit,
+    userVehicleBidCount: userVehicleBidCount ?? this.userVehicleBidCount,
+    isWishlisted: isWishlisted ?? this.isWishlisted,
+    isWatchlisted: isWatchlisted ?? this.isWatchlisted,
+    isAutoBidEnabled: isAutoBidEnabled ?? this.isAutoBidEnabled,
+    status: status,
+    insertedAt: insertedAt,
+    updatedAt: updatedAt,
+  );
 
   /// Bank to show in the UI: empty when there is none (the API sends "NIL" for "not applicable").
   String get displayBankName {

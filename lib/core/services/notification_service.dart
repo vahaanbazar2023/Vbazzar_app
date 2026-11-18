@@ -1,8 +1,10 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'logger_service.dart';
 import '../extensions/context_extensions.dart';
+import '../../features/auction/services/auction_push.dart';
 
 /// Background message handler - must be a top-level function
 @pragma('vm:entry-point')
@@ -39,6 +41,8 @@ class NotificationService {
       onDidReceiveNotificationResponse: (NotificationResponse response) {
         // Handle notification tap
         instance._logger.info('Notification tapped: ${response.payload}');
+        final data = decodePayload(response.payload);
+        if (data != null) AuctionPush.onOpened(data);
       },
     );
 
@@ -105,6 +109,7 @@ class NotificationService {
     _logger.info('Foreground message received: ${message.messageId}');
 
     final notification = message.notification;
+    AuctionPush.onReceived(message.data); // refresh open auction screens (auto-bid / outbid)
 
     if (notification != null) {
       // Show local notification when app is in foreground
@@ -112,7 +117,7 @@ class NotificationService {
         id: message.hashCode,
         title: notification.title ?? appL10n.coreNotification,
         body: notification.body ?? '',
-        payload: message.data.toString(),
+        payload: jsonEncode(message.data),
       );
     }
   }
@@ -120,7 +125,19 @@ class NotificationService {
   /// Handle notification opened from background
   void _handleMessageOpenedApp(RemoteMessage message) {
     _logger.info('Notification opened: ${message.messageId}');
-    // TODO: Navigate to specific screen based on message data
+    // Auction pushes (auto-bid / outbid) open their screen; others: TODO
+    AuctionPush.onOpened(message.data);
+  }
+
+  /// Local-notification payloads are the FCM `data` map as JSON.
+  static Map<String, dynamic>? decodePayload(String? payload) {
+    if (payload == null || payload.isEmpty) return null;
+    try {
+      final decoded = jsonDecode(payload);
+      return decoded is Map<String, dynamic> ? decoded : null;
+    } catch (_) {
+      return null;
+    }
   }
 
   /// Create Android notification channel

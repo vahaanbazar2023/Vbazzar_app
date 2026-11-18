@@ -6622,4 +6622,78 @@ class AppLocalizationsTe extends AppLocalizations {
 
   @override
   String get auctionDepSeparately => 'విడిగా కొనాలి';
+
+  @override
+  String get aucWatchlist => 'వాచ్‌లిస్ట్';
+
+  @override
+  String get aucMyWatchlist => 'నా వాచ్‌లిస్ట్';
+
+  @override
+  String get aucWatchlistSubtitle => 'మీరు బిడ్ వేస్తున్న వాహనాలు';
+
+  @override
+  String get aucWatching => 'వాచ్‌లిస్ట్‌లో';
+
+  @override
+  String get aucNoWatchlistItems =>
+      'మీ వాచ్‌లిస్ట్‌లో ఇంకా వాహనాలు లేవు. వాహనంపై కంటి ఐకాన్‌ను నొక్కండి.';
+
+  @override
+  String get aucAddedToWatchlist => 'వాచ్‌లిస్ట్‌కు జోడించబడింది';
+
+  @override
+  String get aucRemovedFromWatchlist => 'వాచ్‌లిస్ట్ నుండి తీసివేయబడింది';
+
+  @override
+  String get aucFailedUpdateWatchlist => 'వాచ్‌లిస్ట్‌ను అప్‌డేట్ చేయలేకపోయాం';
+
+  @override
+  String get aucFailedLoadWatchlist => 'వాచ్‌లిస్ట్‌ను లోడ్ చేయలేకపోయాం';
+
+  @override
+  String get aucAutoBid => 'ఆటో-బిడ్';
+
+  @override
+  String get aucAutoBidHint =>
+      'ఎవరైనా మీ కంటే ఎక్కువ బిడ్ వేస్తే, మీ తదుపరి బిడ్‌ను మేమే వేస్తాం.';
+
+  @override
+  String aucAutoBidOnStatus(String count, String max) {
+    return 'ఆన్ · $maxలో $count బిడ్';
+  }
+
+  @override
+  String get aucAutoBidSwitchedOn => 'ఆటో-బిడ్ ఆన్ చేయబడింది';
+
+  @override
+  String get aucAutoBidSwitchedOff => 'ఆటో-బిడ్ ఆఫ్ చేయబడింది';
+
+  @override
+  String aucAutoBidPlacedNow(String amount) {
+    return 'మీ కోసం ₹$amount ఆటో-బిడ్ వేయబడింది';
+  }
+
+  @override
+  String aucAutoBidStoppedMaxBids(String max) {
+    return 'ఆటో-బిడ్ ఆగింది: అన్ని $max బిడ్‌లు వాడేశారు';
+  }
+
+  @override
+  String get aucAutoBidStoppedLimit =>
+      'ఆటో-బిడ్ ఆగింది: మీ బిడ్ లిమిట్ సరిపోదు';
+
+  @override
+  String get aucAutoBidFailed => 'ఆటో-బిడ్‌ను అప్‌డేట్ చేయలేకపోయాం';
+
+  @override
+  String get aucAutoBidConfirmTitle => 'ఆటో-బిడ్ ఆన్ చేయాలా?';
+
+  @override
+  String aucAutoBidConfirmBody(String step, String max) {
+    return 'ఎవరైనా మీ కంటే ఎక్కువ బిడ్ వేసిన ప్రతిసారీ, మీ బిడ్ లిమిట్ నుండి మీ తదుపరి బిడ్ (ప్రస్తుత అత్యధికం + ₹$step) మేమే వేస్తాం, $max బిడ్‌లు పూర్తయ్యే వరకు లేదా లిమిట్ అయిపోయే వరకు. ఇప్పుడు మీరు అత్యధిక బిడ్డర్ కాకపోతే, వెంటనే బిడ్ వేస్తాం. ప్రతి ఆటో-బిడ్‌కు మీకు నోటిఫికేషన్ వస్తుంది.';
+  }
+
+  @override
+  String get aucAutoBidConfirmCta => 'ఆన్ చేయండి';
 }

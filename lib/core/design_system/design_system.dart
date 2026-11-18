@@ -39,6 +39,7 @@ export 'molecules/custom_file_upload_field.dart';
 export 'molecules/inline_dropdown_field.dart';
 export 'molecules/timer_badge.dart';
 export 'molecules/wishlist_button.dart';
+export 'molecules/watchlist_button.dart';
 
 // ── Organisms ──────────────────────────────────────────────────
 export 'organisms/login_form.dart';
