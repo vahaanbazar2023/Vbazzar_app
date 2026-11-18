@@ -16,21 +16,21 @@ class IntroController extends GetxController {
 
   final List<IntroModel> slides = const [
     IntroModel(
-      title: 'Welcome to\nVAHAAN BAZAR',
+      title: 'Your Vehicle Marketplace',
       description:
           'Buy and sell vehicles in one place Across trucks, equipment, and more',
       imagePath: AppAssets.introSlide1,
       index: 0,
     ),
     IntroModel(
-      title: 'Welcome to\nVAHAAN BAZAR',
+      title: 'List. Connect. Sell.',
       description:
           'Create listings in minutes and connect with thousands of buyers instantly.',
       imagePath: AppAssets.introSlide2,
       index: 1,
     ),
     IntroModel(
-      title: 'Welcome to\nVAHAAN BAZAR',
+      title: 'Bid Smart. Buy Better.',
       description:
           'Join live auctions and secure vehicles at competitive prices.',
       imagePath: AppAssets.introSlide3,
