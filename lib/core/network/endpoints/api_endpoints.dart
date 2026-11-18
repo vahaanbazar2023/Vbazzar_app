@@ -129,6 +129,9 @@ class ApiEndpoints {
   static const String myWinsPaginated =
       '$auctionPrefix/auction-my-wins-pagination';
   static const String wishlistToggle = '$auctionPrefix/wishlist/toggle';
+  /// Auction watchlist — separate from the wishlist; auto-bid lives on watchlisted vehicles.
+  static const String watchlistToggle = '$auctionPrefix/watchlist/toggle';
+  static const String autoBidToggle = '$auctionPrefix/auto-bid/toggle';
   static const String winningLetter = '$auctionPrefix/winning-letter';
   static const String updateInsuranceInterest =
       '$auctionPrefix/update-insurance-interest';

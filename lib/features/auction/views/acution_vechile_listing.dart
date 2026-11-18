@@ -1046,6 +1046,17 @@ class _VehicleCardState extends State<_VehicleCard> {
               size: 32.r,
             ),
           ),
+          // Watchlist (eye) button — below the share button
+          Positioned(
+            top: 8.h + 2 * (32.r + 8.h),
+            right: 8.w,
+            child: WatchlistButton(
+              isWatchlisted: v.isWatchlisted,
+              onTap: () => widget.controller.toggleWatchlist(v),
+              size: 32.r,
+              tooltip: context.l10n.aucWatchlist,
+            ),
+          ),
           // Share button — directly below the heart
           Positioned(
             top: 8.h + 32.r + 8.h,

@@ -6548,4 +6548,77 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get auctionDepSeparately => 'अलग से खरीदें';
+
+  @override
+  String get aucWatchlist => 'वॉचलिस्ट';
+
+  @override
+  String get aucMyWatchlist => 'मेरी वॉचलिस्ट';
+
+  @override
+  String get aucWatchlistSubtitle => 'जिन वाहनों पर आप बोली लगा रहे हैं';
+
+  @override
+  String get aucWatching => 'वॉचलिस्ट में';
+
+  @override
+  String get aucNoWatchlistItems =>
+      'अभी वॉचलिस्ट में कोई वाहन नहीं है। किसी वाहन पर आँख वाले आइकन पर टैप करें।';
+
+  @override
+  String get aucAddedToWatchlist => 'वॉचलिस्ट में जोड़ा गया';
+
+  @override
+  String get aucRemovedFromWatchlist => 'वॉचलिस्ट से हटाया गया';
+
+  @override
+  String get aucFailedUpdateWatchlist => 'वॉचलिस्ट अपडेट नहीं हो सकी';
+
+  @override
+  String get aucFailedLoadWatchlist => 'वॉचलिस्ट लोड नहीं हो सकी';
+
+  @override
+  String get aucAutoBid => 'ऑटो-बिड';
+
+  @override
+  String get aucAutoBidHint =>
+      'जब कोई आपसे ऊँची बोली लगाए, हम आपकी अगली बोली अपने-आप लगा देंगे।';
+
+  @override
+  String aucAutoBidOnStatus(String count, String max) {
+    return 'चालू · $max में से $count बोली';
+  }
+
+  @override
+  String get aucAutoBidSwitchedOn => 'ऑटो-बिड चालू किया गया';
+
+  @override
+  String get aucAutoBidSwitchedOff => 'ऑटो-बिड बंद किया गया';
+
+  @override
+  String aucAutoBidPlacedNow(String amount) {
+    return 'आपके लिए ₹$amount की ऑटो-बिड लगाई गई';
+  }
+
+  @override
+  String aucAutoBidStoppedMaxBids(String max) {
+    return 'ऑटो-बिड रुकी: सभी $max बोलियाँ इस्तेमाल हो गईं';
+  }
+
+  @override
+  String get aucAutoBidStoppedLimit => 'ऑटो-बिड रुकी: आपकी बिड लिमिट कम है';
+
+  @override
+  String get aucAutoBidFailed => 'ऑटो-बिड अपडेट नहीं हो सकी';
+
+  @override
+  String get aucAutoBidConfirmTitle => 'ऑटो-बिड चालू करें?';
+
+  @override
+  String aucAutoBidConfirmBody(String step, String max) {
+    return 'जब भी कोई आपसे ऊँची बोली लगाएगा, हम आपकी बिड लिमिट से आपकी अगली बोली (सबसे ऊँची बोली + ₹$step) लगाएँगे, जब तक $max बोलियाँ पूरी न हों या लिमिट खत्म न हो। अगर अभी आप सबसे ऊँचे बोलीदाता नहीं हैं, तो हम तुरंत बोली लगाएँगे। हर ऑटो-बिड पर आपको सूचना मिलेगी।';
+  }
+
+  @override
+  String get aucAutoBidConfirmCta => 'चालू करें';
 }

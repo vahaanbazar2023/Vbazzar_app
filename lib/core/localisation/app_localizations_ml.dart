@@ -6623,4 +6623,79 @@ class AppLocalizationsMl extends AppLocalizations {
 
   @override
   String get auctionDepSeparately => 'പ്രത്യേകം വാങ്ങണം';
+
+  @override
+  String get aucWatchlist => 'വാച്ച്‌ലിസ്റ്റ്';
+
+  @override
+  String get aucMyWatchlist => 'എന്റെ വാച്ച്‌ലിസ്റ്റ്';
+
+  @override
+  String get aucWatchlistSubtitle => 'നിങ്ങൾ ബിഡ് ചെയ്യുന്ന വാഹനങ്ങൾ';
+
+  @override
+  String get aucWatching => 'വാച്ച്‌ലിസ്റ്റിൽ';
+
+  @override
+  String get aucNoWatchlistItems =>
+      'നിങ്ങളുടെ വാച്ച്‌ലിസ്റ്റിൽ ഇതുവരെ വാഹനങ്ങളില്ല. വാഹനത്തിലെ കണ്ണ് ഐക്കൺ ടാപ്പ് ചെയ്യുക.';
+
+  @override
+  String get aucAddedToWatchlist => 'വാച്ച്‌ലിസ്റ്റിൽ ചേർത്തു';
+
+  @override
+  String get aucRemovedFromWatchlist => 'വാച്ച്‌ലിസ്റ്റിൽ നിന്ന് നീക്കം ചെയ്തു';
+
+  @override
+  String get aucFailedUpdateWatchlist =>
+      'വാച്ച്‌ലിസ്റ്റ് അപ്‌ഡേറ്റ് ചെയ്യാനായില്ല';
+
+  @override
+  String get aucFailedLoadWatchlist => 'വാച്ച്‌ലിസ്റ്റ് ലോഡ് ചെയ്യാനായില്ല';
+
+  @override
+  String get aucAutoBid => 'ഓട്ടോ-ബിഡ്';
+
+  @override
+  String get aucAutoBidHint =>
+      'ആരെങ്കിലും നിങ്ങളെക്കാൾ ഉയർന്ന ബിഡ് ചെയ്താൽ, നിങ്ങളുടെ അടുത്ത ബിഡ് ഞങ്ങൾ സ്വയം ചെയ്യും.';
+
+  @override
+  String aucAutoBidOnStatus(String count, String max) {
+    return 'ഓൺ · $max-ൽ $count ബിഡ്';
+  }
+
+  @override
+  String get aucAutoBidSwitchedOn => 'ഓട്ടോ-ബിഡ് ഓൺ ചെയ്തു';
+
+  @override
+  String get aucAutoBidSwitchedOff => 'ഓട്ടോ-ബിഡ് ഓഫ് ചെയ്തു';
+
+  @override
+  String aucAutoBidPlacedNow(String amount) {
+    return 'നിങ്ങൾക്കായി ₹$amount ഓട്ടോ-ബിഡ് ചെയ്തു';
+  }
+
+  @override
+  String aucAutoBidStoppedMaxBids(String max) {
+    return 'ഓട്ടോ-ബിഡ് നിർത്തി: എല്ലാ $max ബിഡുകളും ഉപയോഗിച്ചു';
+  }
+
+  @override
+  String get aucAutoBidStoppedLimit =>
+      'ഓട്ടോ-ബിഡ് നിർത്തി: നിങ്ങളുടെ ബിഡ് ലിമിറ്റ് കുറവാണ്';
+
+  @override
+  String get aucAutoBidFailed => 'ഓട്ടോ-ബിഡ് അപ്‌ഡേറ്റ് ചെയ്യാനായില്ല';
+
+  @override
+  String get aucAutoBidConfirmTitle => 'ഓട്ടോ-ബിഡ് ഓൺ ചെയ്യണോ?';
+
+  @override
+  String aucAutoBidConfirmBody(String step, String max) {
+    return 'ആരെങ്കിലും നിങ്ങളെക്കാൾ ഉയർന്ന ബിഡ് ചെയ്യുമ്പോഴെല്ലാം, നിങ്ങളുടെ ബിഡ് ലിമിറ്റിൽ നിന്ന് അടുത്ത ബിഡ് (നിലവിലെ ഉയർന്നത് + ₹$step) ഞങ്ങൾ ചെയ്യും, $max ബിഡുകൾ തീരുന്നത് വരെ അല്ലെങ്കിൽ ലിമിറ്റ് തീരുന്നത് വരെ. ഇപ്പോൾ നിങ്ങളല്ല ഉയർന്ന ബിഡ്ഡറെങ്കിൽ, ഉടനെ ബിഡ് ചെയ്യും. ഓരോ ഓട്ടോ-ബിഡിനും നിങ്ങൾക്ക് അറിയിപ്പ് ലഭിക്കും.';
+  }
+
+  @override
+  String get aucAutoBidConfirmCta => 'ഓൺ ചെയ്യുക';
 }
