@@ -7702,6 +7702,24 @@ abstract class AppLocalizations {
   /// **'Welcome to\nVAHAAN BAZAR'**
   String get coreIntroWelcomeTitle;
 
+  /// Intro screen, slide 1 heading
+  ///
+  /// In en, this message translates to:
+  /// **'Your Vehicle Marketplace'**
+  String get coreIntroSlide1Title;
+
+  /// Intro screen, slide 2 heading
+  ///
+  /// In en, this message translates to:
+  /// **'List. Connect. Sell.'**
+  String get coreIntroSlide2Title;
+
+  /// Intro screen, slide 3 heading
+  ///
+  /// In en, this message translates to:
+  /// **'Bid Smart. Buy Better.'**
+  String get coreIntroSlide3Title;
+
   /// No description provided for @coreIntroSlide1Desc.
   ///
   /// In en, this message translates to:

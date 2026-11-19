@@ -17,8 +17,19 @@ class IntroModel {
   });
 
   /// Localized slide title (falls back to [title]).
-  String localizedTitle(BuildContext context) =>
-      context.l10n.coreIntroWelcomeTitle;
+  String localizedTitle(BuildContext context) {
+    final l10n = context.l10n;
+    switch (index) {
+      case 0:
+        return l10n.coreIntroSlide1Title;
+      case 1:
+        return l10n.coreIntroSlide2Title;
+      case 2:
+        return l10n.coreIntroSlide3Title;
+      default:
+        return title;
+    }
+  }
 
   /// Localized slide description (falls back to [description]).
   String localizedDescription(BuildContext context) {

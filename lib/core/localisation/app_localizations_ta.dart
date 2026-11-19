@@ -4136,6 +4136,17 @@ class AppLocalizationsTa extends AppLocalizations {
   String get coreIntroWelcomeTitle => 'வரவேற்கிறோம்\nவாஹன் பசார்';
 
   @override
+  String get coreIntroSlide1Title => 'உங்கள் வாகனச் சந்தை';
+
+  @override
+  String get coreIntroSlide2Title =>
+      'பட்டியலிடுங்கள். இணையுங்கள். விற்பனை செய்யுங்கள்.';
+
+  @override
+  String get coreIntroSlide3Title =>
+      'சாமர்த்தியமாக ஏலம் கேளுங்கள். சிறப்பாக வாங்குங்கள்.';
+
+  @override
   String get coreIntroSlide1Desc =>
       'லாரிகள், உபகரணங்கள் மற்றும் பலவற்றில் வாகனங்களை ஒரே இடத்தில் வாங்கவும் விற்கவும்';
 

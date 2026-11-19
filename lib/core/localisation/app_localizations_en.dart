@@ -4075,6 +4075,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get coreIntroWelcomeTitle => 'Welcome to\nVAHAAN BAZAR';
 
   @override
+  String get coreIntroSlide1Title => 'Your Vehicle Marketplace';
+
+  @override
+  String get coreIntroSlide2Title => 'List. Connect. Sell.';
+
+  @override
+  String get coreIntroSlide3Title => 'Bid Smart. Buy Better.';
+
+  @override
   String get coreIntroSlide1Desc =>
       'Buy and sell vehicles in one place Across trucks, equipment, and more';
 

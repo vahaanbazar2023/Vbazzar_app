@@ -4107,6 +4107,15 @@ class AppLocalizationsKn extends AppLocalizations {
   String get coreIntroWelcomeTitle => 'ಸ್ವಾಗತ\nವಾಹನ್ ಬಜಾರ್‌ಗೆ';
 
   @override
+  String get coreIntroSlide1Title => 'ನಿಮ್ಮ ವಾಹನ ಮಾರುಕಟ್ಟೆ';
+
+  @override
+  String get coreIntroSlide2Title => 'ಪಟ್ಟಿ ಮಾಡಿ. ಸಂಪರ್ಕಿಸಿ. ಮಾರಾಟ ಮಾಡಿ.';
+
+  @override
+  String get coreIntroSlide3Title => 'ಜಾಣತನದಿಂದ ಬಿಡ್ ಮಾಡಿ. ಉತ್ತಮವಾಗಿ ಖರೀದಿಸಿ.';
+
+  @override
   String get coreIntroSlide1Desc =>
       'ಟ್ರಕ್‌ಗಳು, ಉಪಕರಣಗಳು ಮತ್ತು ಇನ್ನಷ್ಟು ವಾಹನಗಳನ್ನು ಒಂದೇ ಸ್ಥಳದಲ್ಲಿ ಖರೀದಿಸಿ ಮತ್ತು ಮಾರಾಟ ಮಾಡಿ';
 
