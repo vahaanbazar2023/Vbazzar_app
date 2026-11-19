@@ -4082,6 +4082,15 @@ class AppLocalizationsHi extends AppLocalizations {
   String get coreIntroWelcomeTitle => 'स्वागत है\nवाहन बाज़ार में';
 
   @override
+  String get coreIntroSlide1Title => 'आपका वाहन बाज़ार';
+
+  @override
+  String get coreIntroSlide2Title => 'लिस्ट करें। जुड़ें। बेचें।';
+
+  @override
+  String get coreIntroSlide3Title => 'समझदारी से बोली लगाएं। बेहतर खरीदें।';
+
+  @override
   String get coreIntroSlide1Desc =>
       'एक ही जगह वाहन खरीदें और बेचें — ट्रक, उपकरण और बहुत कुछ';
 

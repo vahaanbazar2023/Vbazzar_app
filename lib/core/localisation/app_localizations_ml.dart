@@ -4106,6 +4106,16 @@ class AppLocalizationsMl extends AppLocalizations {
   String get coreIntroWelcomeTitle => 'സ്വാഗതം\nവാഹൻ ബസാറിലേക്ക്';
 
   @override
+  String get coreIntroSlide1Title => 'നിങ്ങളുടെ വാഹന വിപണി';
+
+  @override
+  String get coreIntroSlide2Title => 'ലിസ്റ്റ് ചെയ്യൂ. ബന്ധപ്പെടൂ. വിൽക്കൂ.';
+
+  @override
+  String get coreIntroSlide3Title =>
+      'ബുദ്ധിപൂർവ്വം ലേലം വിളിക്കൂ. മികച്ചത് വാങ്ങൂ.';
+
+  @override
   String get coreIntroSlide1Desc =>
       'ട്രക്കുകൾ, ഉപകരണങ്ങൾ എന്നിവയും മറ്റും ഒരേ സ്ഥലത്ത് വാങ്ങുകയും വിൽക്കുകയും ചെയ്യുക';
 
