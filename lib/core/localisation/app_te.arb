@@ -1881,5 +1881,14 @@
   "aucAutoBidFailed": "ఆటో-బిడ్‌ను అప్‌డేట్ చేయలేకపోయాం",
   "aucAutoBidConfirmTitle": "ఆటో-బిడ్ ఆన్ చేయాలా?",
   "aucAutoBidConfirmBody": "ఎవరైనా మీ కంటే ఎక్కువ బిడ్ వేసిన ప్రతిసారీ, మీ బిడ్ లిమిట్ నుండి మీ తదుపరి బిడ్ (ప్రస్తుత అత్యధికం + ₹{step}) మేమే వేస్తాం, {max} బిడ్‌లు పూర్తయ్యే వరకు లేదా లిమిట్ అయిపోయే వరకు. ఇప్పుడు మీరు అత్యధిక బిడ్డర్ కాకపోతే, వెంటనే బిడ్ వేస్తాం. ప్రతి ఆటో-బిడ్‌కు మీకు నోటిఫికేషన్ వస్తుంది.",
-  "aucAutoBidConfirmCta": "ఆన్ చేయండి"
+  "aucAutoBidConfirmCta": "ఆన్ చేయండి",
+  "aucAutoBidLimitLabel": "ఈ వాహనానికి ఆటో-బిడ్ లిమిట్",
+  "aucAutoBidNoLimit": "లిమిట్ లేదు",
+  "aucAutoBidLimitHelper": "ఖాళీగా ఉంచితే మీ మొత్తం కొనుగోలు లిమిట్ (₹{amount}) వాడబడుతుంది.",
+  "aucAutoBidLimitMin": "కనీసం ₹{amount} ఉండాలి",
+  "aucAutoBidOnStatusCapped": "ఆన్ · {max}లో {count} బిడ్ · ₹{amount} వరకు",
+  "aucAutoBidEditLimit": "లిమిట్ మార్చండి",
+  "aucAutoBidEditLimitTitle": "ఆటో-బిడ్ లిమిట్",
+  "aucAutoBidLimitUpdated": "ఆటో-బిడ్ లిమిట్ అప్‌డేట్ అయింది",
+  "aucAutoBidStoppedMaxAmount": "ఆటో-బిడ్ ఆగింది: తదుపరి బిడ్ ఈ వాహనానికి మీ లిమిట్ కంటే ఎక్కువ"
 }

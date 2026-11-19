@@ -6696,4 +6696,38 @@ class AppLocalizationsTe extends AppLocalizations {
 
   @override
   String get aucAutoBidConfirmCta => 'ఆన్ చేయండి';
+
+  @override
+  String get aucAutoBidLimitLabel => 'ఈ వాహనానికి ఆటో-బిడ్ లిమిట్';
+
+  @override
+  String get aucAutoBidNoLimit => 'లిమిట్ లేదు';
+
+  @override
+  String aucAutoBidLimitHelper(String amount) {
+    return 'ఖాళీగా ఉంచితే మీ మొత్తం కొనుగోలు లిమిట్ (₹$amount) వాడబడుతుంది.';
+  }
+
+  @override
+  String aucAutoBidLimitMin(String amount) {
+    return 'కనీసం ₹$amount ఉండాలి';
+  }
+
+  @override
+  String aucAutoBidOnStatusCapped(String count, String max, String amount) {
+    return 'ఆన్ · $maxలో $count బిడ్ · ₹$amount వరకు';
+  }
+
+  @override
+  String get aucAutoBidEditLimit => 'లిమిట్ మార్చండి';
+
+  @override
+  String get aucAutoBidEditLimitTitle => 'ఆటో-బిడ్ లిమిట్';
+
+  @override
+  String get aucAutoBidLimitUpdated => 'ఆటో-బిడ్ లిమిట్ అప్‌డేట్ అయింది';
+
+  @override
+  String get aucAutoBidStoppedMaxAmount =>
+      'ఆటో-బిడ్ ఆగింది: తదుపరి బిడ్ ఈ వాహనానికి మీ లిమిట్ కంటే ఎక్కువ';
 }

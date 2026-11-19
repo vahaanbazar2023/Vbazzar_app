@@ -26,6 +26,7 @@ class VehicleListing {
   final String remarks;
   final String category;
   final String yardName;
+
   /// Bank the vehicle belongs to; the API sends "NIL" when not applicable.
   final String bankName;
   final String yardLocation;
@@ -46,10 +47,15 @@ class VehicleListing {
   final int maxUserVehiclesBidLimit;
   final int userVehicleBidCount;
   final bool isWishlisted;
+
   /// On the user's auction watchlist (separate from the wishlist).
   final bool isWatchlisted;
+
   /// Auto-bid is switched on: the server re-bids for the user whenever they are outbid.
   final bool isAutoBidEnabled;
+
+  /// The user's auto-bid limit for this vehicle while auto-bid is on; null = up to the whole buying limit.
+  final int? autoBidMaxAmount;
   final String status;
   final String insertedAt;
   final String updatedAt;
@@ -103,6 +109,7 @@ class VehicleListing {
     this.isWishlisted = false,
     this.isWatchlisted = false,
     this.isAutoBidEnabled = false,
+    this.autoBidMaxAmount,
     required this.status,
     required this.insertedAt,
     required this.updatedAt,
@@ -177,6 +184,7 @@ class VehicleListing {
       isWishlisted: json['is_wishlisted'] == true,
       isWatchlisted: json['is_watchlisted'] == true,
       isAutoBidEnabled: json['is_auto_bid_enabled'] == true,
+      autoBidMaxAmount: _parseInt(json['auto_bid_max_amount']),
       status: json['status']?.toString() ?? '',
       insertedAt: json['inserted_at']?.toString() ?? '',
       updatedAt: json['updated_at']?.toString() ?? '',
@@ -184,6 +192,22 @@ class VehicleListing {
   }
 
   String get displayTitle => '$make $model'.trim();
+
+  static const Object _keep = Object();
+
+  /// What the user can spend on this vehicle: free buying limit plus the bid already held on it.
+  int get buyingLimitForVehicle => availableBalance + yourBid;
+
+  /// Lowest auto-bid limit worth setting: the next bid if losing, one step above own bid if on top.
+  int get minimumAutoBidLimit {
+    final step = (bidIncrementAmount ?? 0) > 0 ? bidIncrementAmount! : 1;
+    final onTop = yourBid > 0 && yourBid >= (currentHighestBid ?? 0);
+    if (onTop) return yourBid + step;
+    return minimumNextBid ??
+        ((currentHighestBid ?? 0) > 0
+            ? currentHighestBid! + step
+            : minimumPrice);
+  }
 
   /// Copy with the fields that change on the client after an action (wishlist / watchlist / auto-bid / bid).
   VehicleListing copyWith({
@@ -194,6 +218,8 @@ class VehicleListing {
     int? userVehicleBidCount,
     int? currentHighestBid,
     int? availableBalance,
+    // Nullable field: pass a value (or null to clear); leave out to keep the current one.
+    Object? autoBidMaxAmount = _keep,
   }) => VehicleListing(
     id: id,
     vehicleId: vehicleId,
@@ -243,6 +269,9 @@ class VehicleListing {
     isWishlisted: isWishlisted ?? this.isWishlisted,
     isWatchlisted: isWatchlisted ?? this.isWatchlisted,
     isAutoBidEnabled: isAutoBidEnabled ?? this.isAutoBidEnabled,
+    autoBidMaxAmount: identical(autoBidMaxAmount, _keep)
+        ? this.autoBidMaxAmount
+        : autoBidMaxAmount as int?,
     status: status,
     insertedAt: insertedAt,
     updatedAt: updatedAt,

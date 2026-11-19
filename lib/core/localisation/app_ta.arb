@@ -2053,5 +2053,14 @@
   "aucAutoBidFailed": "ஆட்டோ-பிட்டைப் புதுப்பிக்க முடியவில்லை",
   "aucAutoBidConfirmTitle": "ஆட்டோ-பிட்டை இயக்கவா?",
   "aucAutoBidConfirmBody": "யாராவது உங்களை விட அதிகமாக ஏலம் கேட்கும் ஒவ்வொரு முறையும், உங்கள் ஏல வரம்பிலிருந்து அடுத்த ஏலத்தை (தற்போதைய அதிகபட்சம் + ₹{step}) நாங்களே வைப்போம், {max} ஏலங்கள் முடியும் வரை அல்லது வரம்பு தீரும் வரை. இப்போது நீங்கள் அதிகபட்ச ஏலதாரர் இல்லையெனில், உடனே ஏலம் வைப்போம். ஒவ்வொரு ஆட்டோ-பிட்டுக்கும் உங்களுக்கு அறிவிப்பு வரும்.",
-  "aucAutoBidConfirmCta": "இயக்கு"
+  "aucAutoBidConfirmCta": "இயக்கு",
+  "aucAutoBidLimitLabel": "இந்த வாகனத்திற்கான ஆட்டோ-பிட் வரம்பு",
+  "aucAutoBidNoLimit": "வரம்பு இல்லை",
+  "aucAutoBidLimitHelper": "காலியாக விட்டால் உங்கள் முழு வாங்கும் வரம்பும் (₹{amount}) பயன்படுத்தப்படும்.",
+  "aucAutoBidLimitMin": "குறைந்தது ₹{amount} இருக்க வேண்டும்",
+  "aucAutoBidOnStatusCapped": "இயக்கத்தில் · {max}-இல் {count} ஏலம் · ₹{amount} வரை",
+  "aucAutoBidEditLimit": "வரம்பை மாற்று",
+  "aucAutoBidEditLimitTitle": "ஆட்டோ-பிட் வரம்பு",
+  "aucAutoBidLimitUpdated": "ஆட்டோ-பிட் வரம்பு புதுப்பிக்கப்பட்டது",
+  "aucAutoBidStoppedMaxAmount": "ஆட்டோ-பிட் நின்றது: அடுத்த ஏலம் இந்த வாகனத்திற்கான உங்கள் வரம்பை விட அதிகம்"
 }

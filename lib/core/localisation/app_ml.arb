@@ -2053,5 +2053,14 @@
   "aucAutoBidFailed": "ഓട്ടോ-ബിഡ് അപ്‌ഡേറ്റ് ചെയ്യാനായില്ല",
   "aucAutoBidConfirmTitle": "ഓട്ടോ-ബിഡ് ഓൺ ചെയ്യണോ?",
   "aucAutoBidConfirmBody": "ആരെങ്കിലും നിങ്ങളെക്കാൾ ഉയർന്ന ബിഡ് ചെയ്യുമ്പോഴെല്ലാം, നിങ്ങളുടെ ബിഡ് ലിമിറ്റിൽ നിന്ന് അടുത്ത ബിഡ് (നിലവിലെ ഉയർന്നത് + ₹{step}) ഞങ്ങൾ ചെയ്യും, {max} ബിഡുകൾ തീരുന്നത് വരെ അല്ലെങ്കിൽ ലിമിറ്റ് തീരുന്നത് വരെ. ഇപ്പോൾ നിങ്ങളല്ല ഉയർന്ന ബിഡ്ഡറെങ്കിൽ, ഉടനെ ബിഡ് ചെയ്യും. ഓരോ ഓട്ടോ-ബിഡിനും നിങ്ങൾക്ക് അറിയിപ്പ് ലഭിക്കും.",
-  "aucAutoBidConfirmCta": "ഓൺ ചെയ്യുക"
+  "aucAutoBidConfirmCta": "ഓൺ ചെയ്യുക",
+  "aucAutoBidLimitLabel": "ഈ വാഹനത്തിനുള്ള ഓട്ടോ-ബിഡ് ലിമിറ്റ്",
+  "aucAutoBidNoLimit": "ലിമിറ്റ് ഇല്ല",
+  "aucAutoBidLimitHelper": "ശൂന്യമാക്കിയാൽ നിങ്ങളുടെ മുഴുവൻ ബൈയിംഗ് ലിമിറ്റും (₹{amount}) ഉപയോഗിക്കും.",
+  "aucAutoBidLimitMin": "കുറഞ്ഞത് ₹{amount} ആയിരിക്കണം",
+  "aucAutoBidOnStatusCapped": "ഓൺ · {max}-ൽ {count} ബിഡ് · ₹{amount} വരെ",
+  "aucAutoBidEditLimit": "ലിമിറ്റ് മാറ്റുക",
+  "aucAutoBidEditLimitTitle": "ഓട്ടോ-ബിഡ് ലിമിറ്റ്",
+  "aucAutoBidLimitUpdated": "ഓട്ടോ-ബിഡ് ലിമിറ്റ് അപ്‌ഡേറ്റ് ചെയ്തു",
+  "aucAutoBidStoppedMaxAmount": "ഓട്ടോ-ബിഡ് നിർത്തി: അടുത്ത ബിഡ് ഈ വാഹനത്തിനുള്ള നിങ്ങളുടെ ലിമിറ്റിനേക്കാൾ കൂടുതലാണ്"
 }

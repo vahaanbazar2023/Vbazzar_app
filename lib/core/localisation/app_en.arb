@@ -2862,5 +2862,17 @@
   "aucAutoBidConfirmTitle": "Switch on auto-bid?",
   "aucAutoBidConfirmBody": "Each time someone outbids you, we place your next bid (current highest + ₹{step}) from your bid limit, until you have used {max} bids or your limit runs out. If you are not the highest bidder now, we bid right away. You get a notification for every auto-bid.",
   "@aucAutoBidConfirmBody": {"placeholders": {"step": {"type": "String"}, "max": {"type": "String"}}},
-  "aucAutoBidConfirmCta": "Switch on"
+  "aucAutoBidConfirmCta": "Switch on",
+  "aucAutoBidLimitLabel": "Auto-bid limit for this vehicle",
+  "aucAutoBidNoLimit": "No limit",
+  "aucAutoBidLimitHelper": "Leave empty to use your whole buying limit (₹{amount}).",
+  "@aucAutoBidLimitHelper": {"placeholders": {"amount": {"type": "String"}}},
+  "aucAutoBidLimitMin": "Must be at least ₹{amount}",
+  "@aucAutoBidLimitMin": {"placeholders": {"amount": {"type": "String"}}},
+  "aucAutoBidOnStatusCapped": "On · bid {count} of {max} · up to ₹{amount}",
+  "@aucAutoBidOnStatusCapped": {"placeholders": {"count": {"type": "String"}, "max": {"type": "String"}, "amount": {"type": "String"}}},
+  "aucAutoBidEditLimit": "Edit limit",
+  "aucAutoBidEditLimitTitle": "Auto-bid limit",
+  "aucAutoBidLimitUpdated": "Auto-bid limit updated",
+  "aucAutoBidStoppedMaxAmount": "Auto-bid stopped: the next bid is above your limit for this vehicle"
 }

@@ -140,10 +140,17 @@ class WatchlistController extends GetxController {
     return error;
   }
 
-  /// Switch auto-bid on/off for [vehicle]. Returns true when the server accepted it.
-  Future<bool> setAutoBid(VehicleListing vehicle, bool enabled) async {
+  /// Switch auto-bid on/off for [vehicle], or (on, while already on) change its limit.
+  /// [maxAmount] = most auto-bid may bid on this vehicle; null = whole buying limit.
+  /// Returns true when the server accepted it.
+  Future<bool> setAutoBid(
+    VehicleListing vehicle,
+    bool enabled, {
+    int? maxAmount,
+  }) async {
     if (busy.contains(vehicle.vehicleId)) return false;
     busy.add(vehicle.vehicleId);
+    final wasOn = vehicle.isAutoBidEnabled;
     _replace(
       vehicle.vehicleId,
       (v) => v.copyWith(isAutoBidEnabled: enabled),
@@ -153,6 +160,7 @@ class WatchlistController extends GetxController {
         userId: await _userId(),
         vehicleId: vehicle.vehicleId,
         enabled: enabled,
+        maxAmount: maxAmount,
       );
       _replace(
         vehicle.vehicleId,
@@ -163,10 +171,11 @@ class WatchlistController extends GetxController {
           userVehicleBidCount: state.bidCount,
           currentHighestBid: state.currentHighestBid,
           availableBalance: state.remainingBidLimit,
+          autoBidMaxAmount: state.isEnabled ? state.maxAmount : null,
         ),
       );
       CustomSnackbar.show(
-        message: autoBidMessage(state, requested: enabled),
+        message: autoBidMessage(state, requested: enabled, wasOn: wasOn),
         type: state.isEnabled == enabled
             ? SnackbarType.success
             : SnackbarType.error,
@@ -174,18 +183,12 @@ class WatchlistController extends GetxController {
       if (state.bidsPlaced > 0) refresh(silent: true);
       return state.isEnabled == enabled;
     } on AutoBidException catch (e) {
-      _replace(
-        vehicle.vehicleId,
-        (v) => v.copyWith(isAutoBidEnabled: !enabled),
-      );
+      _replace(vehicle.vehicleId, (v) => v.copyWith(isAutoBidEnabled: wasOn));
       _showAutoBidError(e);
       return false;
     } catch (e) {
       debugPrint('❌ [Watchlist.setAutoBid] $e');
-      _replace(
-        vehicle.vehicleId,
-        (v) => v.copyWith(isAutoBidEnabled: !enabled),
-      );
+      _replace(vehicle.vehicleId, (v) => v.copyWith(isAutoBidEnabled: wasOn));
       CustomSnackbar.show(
         message: appL10n.aucAutoBidFailed,
         type: SnackbarType.error,
@@ -228,17 +231,28 @@ class WatchlistController extends GetxController {
   }
 
   /// Snackbar text after a successful auto-bid call.
-  static String autoBidMessage(AutoBidState s, {required bool requested}) {
+  static String autoBidMessage(
+    AutoBidState s, {
+    required bool requested,
+    bool wasOn = false,
+  }) {
     if (!requested) return appL10n.aucAutoBidSwitchedOff;
     if (!s.isEnabled) {
-      return s.stopReason == 'max_bids'
-          ? appL10n.aucAutoBidStoppedMaxBids('${s.maxBids}')
-          : appL10n.aucAutoBidStoppedLimit;
+      switch (s.stopReason) {
+        case 'max_bids':
+          return appL10n.aucAutoBidStoppedMaxBids('${s.maxBids}');
+        case 'max_amount':
+          return appL10n.aucAutoBidStoppedMaxAmount;
+        default:
+          return appL10n.aucAutoBidStoppedLimit;
+      }
     }
     if (s.bidsPlaced > 0 && s.yourBid != null) {
       return appL10n.aucAutoBidPlacedNow(formatAmount(s.yourBid!));
     }
-    return appL10n.aucAutoBidSwitchedOn;
+    return wasOn
+        ? appL10n.aucAutoBidLimitUpdated
+        : appL10n.aucAutoBidSwitchedOn;
   }
 
   static void _showAutoBidError(AutoBidException e) {

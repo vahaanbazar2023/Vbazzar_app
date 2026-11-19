@@ -38,6 +38,49 @@ void main() {
       expect(v.isAutoBidEnabled, isFalse);
     });
 
+    test('auto-bid limit is parsed and can be cleared with copyWith', () {
+      final v = VehicleListing.fromJson(
+        _vehicle({
+          'is_auto_bid_enabled': true,
+          'auto_bid_max_amount': 250000.0,
+        }),
+      );
+      expect(v.autoBidMaxAmount, 250000);
+      expect(
+        v.copyWith(isWishlisted: false).autoBidMaxAmount,
+        250000,
+      ); // kept when not passed
+      expect(
+        v.copyWith(autoBidMaxAmount: null).autoBidMaxAmount,
+        isNull,
+      ); // cleared
+      expect(VehicleListing.fromJson(_vehicle()).autoBidMaxAmount, isNull);
+    });
+
+    test(
+      'limit bounds: next bid when losing, a step above own bid when on top',
+      () {
+        final losing = VehicleListing.fromJson(
+          _vehicle({'minimum_next_bid': 1300, 'bid_increment_amount': 100}),
+        );
+        expect(losing.minimumAutoBidLimit, 1300);
+        final onTop = VehicleListing.fromJson(
+          _vehicle({
+            'your_bid': 1200,
+            'current_highest_bid': 1200,
+            'bid_increment_amount': 100,
+          }),
+        );
+        expect(onTop.minimumAutoBidLimit, 1300);
+        expect(
+          VehicleListing.fromJson(
+            _vehicle({'available_balance': 5000}),
+          ).buyingLimitForVehicle,
+          6000,
+        );
+      },
+    );
+
     test('copyWith changes only what it is given', () {
       final v = VehicleListing.fromJson(_vehicle({'is_watchlisted': true}));
       final c = v.copyWith(
