@@ -4122,6 +4122,15 @@ class AppLocalizationsTe extends AppLocalizations {
   String get coreIntroWelcomeTitle => 'స్వాగతం\nవాహన్ బజార్';
 
   @override
+  String get coreIntroSlide1Title => 'మీ వాహన మార్కెట్‌ప్లేస్';
+
+  @override
+  String get coreIntroSlide2Title => 'లిస్ట్ చేయండి. కనెక్ట్ అవ్వండి. అమ్మండి.';
+
+  @override
+  String get coreIntroSlide3Title => 'తెలివిగా బిడ్ చేయండి. మెరుగ్గా కొనండి.';
+
+  @override
   String get coreIntroSlide1Desc =>
       'ట్రక్కులు, పరికరాలు మరియు మరిన్నింటిలో వాహనాలను ఒకే చోట కొనండి మరియు అమ్మండి';
 
