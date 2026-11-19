@@ -48,4 +48,28 @@ void main() {
       expect(secured(ApiEndpoints.validateReferralCode), isFalse);
     },
   );
+
+  test('every auction route the app calls sends the Bearer token', () {
+    // watchlist/toggle and auto-bid/toggle were missing: the 401 that came back
+    // was treated as an expired session and logged the user out.
+    for (final p in [
+      ApiEndpoints.liveAuctionCategoryCounts,
+      ApiEndpoints.auctionListings,
+      ApiEndpoints.auctionVehicleListings,
+      ApiEndpoints.myBidsPaginated,
+      ApiEndpoints.myWinsPaginated,
+      ApiEndpoints.updateInsuranceInterest,
+      ApiEndpoints.vehicleExcelDownload,
+      ApiEndpoints.placeBid,
+      ApiEndpoints.myBids,
+      ApiEndpoints.myWins,
+      ApiEndpoints.wishlistToggle,
+      ApiEndpoints.watchlistToggle,
+      ApiEndpoints.autoBidToggle,
+      ApiEndpoints.winningLetter,
+      ApiEndpoints.vehicleSearch,
+    ]) {
+      expect(secured(p), isTrue, reason: p);
+    }
+  });
 }
