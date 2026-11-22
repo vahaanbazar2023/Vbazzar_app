@@ -1819,7 +1819,7 @@ abstract class AppLocalizations {
   /// No description provided for @contact_phone.
   ///
   /// In en, this message translates to:
-  /// **'+91 88866 30456'**
+  /// **'+91 88866 30455'**
   String get contact_phone;
 
   /// No description provided for @contact_address.

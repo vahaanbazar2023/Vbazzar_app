@@ -11,6 +11,7 @@ import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../core/constants/app_assets.dart';
 import '../../../core/constants/app_colors.dart';
+import '../../../core/constants/app_strings.dart';
 import '../../../core/design_system/design_system.dart';
 import '../../../core/design_system/molecules/custom_search_bar.dart';
 import '../../../core/extensions/context_extensions.dart';
@@ -330,7 +331,7 @@ class _HomeHeader extends StatelessWidget {
                   // Customer care / support icon
                   GestureDetector(
                     onTap: () async {
-                      final uri = Uri(scheme: 'tel', path: '+918008801806');
+                      final uri = Uri(scheme: 'tel', path: '+91${AppStrings.phoneNumber}');
                       if (await canLaunchUrl(uri)) launchUrl(uri);
                     },
                     child: Image.asset(

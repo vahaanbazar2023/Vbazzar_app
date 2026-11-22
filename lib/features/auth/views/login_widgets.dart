@@ -315,7 +315,7 @@ class LoginHelpSection extends StatelessWidget {
         SizedBox(height: 14.h),
         GestureDetector(
           behavior: HitTestBehavior.opaque,
-          onTap: () => launchUrl(Uri.parse('tel:${AppStrings.phoneNumber}')),
+          onTap: () => launchUrl(Uri.parse('tel:+91${AppStrings.phoneNumber}')),
           child: Container(
             width: double.infinity,
             padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),

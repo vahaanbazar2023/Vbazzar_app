@@ -1026,7 +1026,7 @@ class AppLocalizationsMl extends AppLocalizations {
   String get contact_website => 'www.vahaanbazar.com';
 
   @override
-  String get contact_phone => '+91 88866 30456';
+  String get contact_phone => '+91 88866 30455';
 
   @override
   String get contact_address => 'വാഹൻ ബസാർ പ്രൈവറ്റ് ലിമിറ്റഡ്';
