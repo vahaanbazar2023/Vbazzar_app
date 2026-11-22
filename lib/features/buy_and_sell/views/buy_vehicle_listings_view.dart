@@ -697,14 +697,26 @@ class BuyVehicleCard extends StatelessWidget {
                       ],
                     ),
                     SizedBox(height: 6.h),
-                    // Specs row (fuel, transmission, km)
-                    Wrap(
-                      spacing: 6.w,
-                      runSpacing: 4.h,
-                      children: [
-                        _specChip(Icons.local_gas_station, context.l10n.diesel),
-                        _specChip(Icons.settings, context.l10n.manual),
-                      ],
+                    // Specs row: the listing's own specs (up to 2, one line), never placeholders.
+                    // Sellers fill different fields per category (fuel/odometer for
+                    // vehicles, tonnage/KV/body for equipment), so take what exists.
+                    Builder(
+                      builder: (context) {
+                        final specs = _cardSpecs(context, vehicle);
+                        if (specs.isEmpty) return const SizedBox.shrink();
+                        // Always a single line: chips share the width and
+                        // long values end in "…" instead of wrapping.
+                        return Row(
+                          children: [
+                            for (var i = 0; i < specs.length; i++) ...[
+                              if (i > 0) SizedBox(width: 8.w),
+                              Flexible(
+                                child: _specChip(specs[i].$1, specs[i].$2),
+                              ),
+                            ],
+                          ],
+                        );
+                      },
                     ),
                     SizedBox(height: 10.h),
                     // Price and View More button
@@ -765,6 +777,26 @@ class BuyVehicleCard extends StatelessWidget {
     if (brand.isNotEmpty) return brand;
     if (model.isNotEmpty) return model;
     return vehicle.categoryName;
+  }
+
+  static bool _hasText(String? v) => v != null && v.trim().isNotEmpty;
+
+  /// Up to two real specs for the card (one line), most useful first.
+  static List<(IconData, String)> _cardSpecs(
+    BuildContext context,
+    BuyVehicleEntity v,
+  ) {
+    final l10n = context.l10n;
+    final specs = <(IconData, String)>[
+      if (_hasText(v.fuelType)) (Icons.local_gas_station, v.fuelType!.trim()),
+      if (_hasText(v.odometer)) (Icons.speed_outlined, v.odometer!.trim()),
+      if (_hasText(v.bodyType)) (Icons.view_in_ar_outlined, v.bodyType!.trim()),
+      if (_hasText(v.tonnage))
+        (Icons.fitness_center_outlined, '${l10n.tonnage}: ${v.tonnage!.trim()}'),
+      if (_hasText(v.kv))
+        (Icons.electrical_services_outlined, '${l10n.kvRating}: ${v.kv!.trim()}'),
+    ];
+    return specs.take(2).toList();
   }
 
   Widget _specChip(IconData icon, String text) => Row(
