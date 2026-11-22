@@ -6748,4 +6748,14 @@ class AppLocalizationsTa extends AppLocalizations {
 
   @override
   String get aucAutoBidConfirmCta => 'இயக்கு';
+
+  @override
+  String get coreForceUpdateTitle => 'புதுப்பிப்பு தேவை';
+
+  @override
+  String get coreForceUpdateMessage =>
+      'வாகன் பஜாரின் புதிய பதிப்பு கிடைக்கிறது. ஆப்பைத் தொடர்ந்து பயன்படுத்த தயவுசெய்து புதுப்பிக்கவும்.';
+
+  @override
+  String get coreForceUpdateButton => 'இப்போது புதுப்பிக்கவும்';
 }

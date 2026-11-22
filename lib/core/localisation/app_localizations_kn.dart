@@ -6697,4 +6697,14 @@ class AppLocalizationsKn extends AppLocalizations {
 
   @override
   String get aucAutoBidConfirmCta => 'ಆನ್ ಮಾಡಿ';
+
+  @override
+  String get coreForceUpdateTitle => 'ಅಪ್‌ಡೇಟ್ ಅಗತ್ಯವಿದೆ';
+
+  @override
+  String get coreForceUpdateMessage =>
+      'ವಾಹನ್ ಬಜಾರ್‌ನ ಹೊಸ ಆವೃತ್ತಿ ಲಭ್ಯವಿದೆ. ಆ್ಯಪ್ ಬಳಸುವುದನ್ನು ಮುಂದುವರಿಸಲು ದಯವಿಟ್ಟು ಅಪ್‌ಡೇಟ್ ಮಾಡಿ.';
+
+  @override
+  String get coreForceUpdateButton => 'ಈಗ ಅಪ್‌ಡೇಟ್ ಮಾಡಿ';
 }

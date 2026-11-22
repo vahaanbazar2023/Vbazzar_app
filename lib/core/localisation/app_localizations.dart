@@ -12249,6 +12249,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Switch on'**
   String get aucAutoBidConfirmCta;
+
+  /// No description provided for @coreForceUpdateTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Update required'**
+  String get coreForceUpdateTitle;
+
+  /// No description provided for @coreForceUpdateMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'A new version of Vahaan Bazar is available. Please update to keep using the app.'**
+  String get coreForceUpdateMessage;
+
+  /// No description provided for @coreForceUpdateButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Update now'**
+  String get coreForceUpdateButton;
 }
 
 class _AppLocalizationsDelegate

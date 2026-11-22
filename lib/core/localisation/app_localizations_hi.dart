@@ -6630,4 +6630,14 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get aucAutoBidConfirmCta => 'चालू करें';
+
+  @override
+  String get coreForceUpdateTitle => 'अपडेट ज़रूरी है';
+
+  @override
+  String get coreForceUpdateMessage =>
+      'वाहन बाज़ार का नया वर्ज़न उपलब्ध है। ऐप का इस्तेमाल जारी रखने के लिए कृपया अपडेट करें।';
+
+  @override
+  String get coreForceUpdateButton => 'अभी अपडेट करें';
 }

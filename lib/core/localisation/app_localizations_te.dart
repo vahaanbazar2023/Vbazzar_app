@@ -6705,4 +6705,14 @@ class AppLocalizationsTe extends AppLocalizations {
 
   @override
   String get aucAutoBidConfirmCta => 'ఆన్ చేయండి';
+
+  @override
+  String get coreForceUpdateTitle => 'అప్‌డేట్ అవసరం';
+
+  @override
+  String get coreForceUpdateMessage =>
+      'వాహన్ బజార్ కొత్త వెర్షన్ అందుబాటులో ఉంది. యాప్‌ను ఉపయోగించడం కొనసాగించడానికి దయచేసి అప్‌డేట్ చేయండి.';
+
+  @override
+  String get coreForceUpdateButton => 'ఇప్పుడే అప్‌డేట్ చేయండి';
 }
