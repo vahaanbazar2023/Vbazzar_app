@@ -105,5 +105,28 @@
             <action android:name="android.intent.action.PROCESS_TEXT"/>
             <data android:mimeType="text/plain"/>
         </intent>
+        <!-- canLaunchUrl() on Android 11+ only sees apps declared here: call buttons (tel:),
+             browser links (https:) and UPI apps for PayU intent payments, as the 1.x app did. -->
+        <intent>
+            <action android:name="android.intent.action.DIAL"/>
+            <data android:scheme="tel"/>
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.VIEW"/>
+            <data android:scheme="tel"/>
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.VIEW"/>
+            <data android:scheme="https"/>
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.VIEW"/>
+            <data android:scheme="upi"/>
+        </intent>
+        <package android:name="com.phonepe.app"/>
+        <package android:name="com.google.android.apps.nbu.paisa.user"/>
+        <package android:name="net.one97.paytm"/>
+        <package android:name="in.org.npci.upiapp"/>
+        <package android:name="com.dreamplug.androidapp"/>
     </queries>
 </manifest>
