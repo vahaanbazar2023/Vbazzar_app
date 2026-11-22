@@ -5,7 +5,7 @@ class AppStrings {
   static const appName = 'Vahaan Bazar';
   static const appTagLine = 'Drive smarter';
   static const tagline = 'Buy & sell vehicles in one place';
-  static const phoneNumber = '90192846955';
+  static const phoneNumber = '8886630455'; // customer support (shown and dialled everywhere)
 
   // General
   static const ok = 'OK';

@@ -7,6 +7,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/constants/app_assets.dart';
 import '../../../core/constants/app_colors.dart';
+import '../../../core/constants/app_strings.dart';
 import '../../../core/design_system/loaders/app_shimmer.dart';
 import '../../../core/design_system/molecules/custom_search_bar.dart';
 import '../../../routes/app_routes.dart';
@@ -465,7 +466,7 @@ class _SearchHeader extends StatelessWidget {
                   SizedBox(width: 14.w),
                   GestureDetector(
                     onTap: () async {
-                      final uri = Uri(scheme: 'tel', path: '+918008801806');
+                      final uri = Uri(scheme: 'tel', path: '+91${AppStrings.phoneNumber}');
                       if (await canLaunchUrl(uri)) launchUrl(uri);
                     },
                     child: Image.asset(

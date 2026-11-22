@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../language/data/language_sync_service.dart';
+import '../../../core/services/app_update_service.dart';
 import '../../../core/services/logger_service.dart';
 import '../../../core/storage/local_storage_service.dart';
 import '../../../core/storage/secure_storage_service.dart';
@@ -227,6 +228,11 @@ class SplashController extends GetxController with GetTickerProviderStateMixin {
 
   Future<void> _navigate() async {
     _logger.info('Starting navigation');
+
+    // Force the latest Play release before anything else (Android only; skips
+    // quietly for non-Play installs and never waits more than a few seconds).
+    await AppUpdateService.enforceLatestVersion();
+    if (_isDisposed) return;
 
     final hasSeenIntro = LocalStorageService.to.getBool(
       StorageKeys.hasSeenIntro,
