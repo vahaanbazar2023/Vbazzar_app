@@ -5474,6 +5474,18 @@ class AppLocalizationsTa extends AppLocalizations {
   String get profSubValidUntil => 'செல்லுபடியாகும் தேதி';
 
   @override
+  String get profSubRenew => 'புதுப்பி';
+
+  @override
+  String profSubDaysLeftKept(int days) {
+    return '$days நாட்கள் மீதம் · இப்போது புதுப்பித்தால் இந்த நாட்கள் தொடரும்';
+  }
+
+  @override
+  String get profSubRenewUnavailable =>
+      'இந்த திட்டத்தை இப்போது புதுப்பிக்க முடியாது. எக்ஸ்ப்ளோரிலிருந்து ஒரு திட்டத்தைத் தேர்ந்தெடுக்கவும்.';
+
+  @override
   String get profSubNeedMoreBenefits => 'மேலும் பலன்கள் வேண்டுமா?';
 
   @override
@@ -6758,4 +6770,38 @@ class AppLocalizationsTa extends AppLocalizations {
 
   @override
   String get coreForceUpdateButton => 'இப்போது புதுப்பிக்கவும்';
+
+  @override
+  String get aucAutoBidLimitLabel => 'இந்த வாகனத்திற்கான ஆட்டோ-பிட் வரம்பு';
+
+  @override
+  String get aucAutoBidNoLimit => 'வரம்பு இல்லை';
+
+  @override
+  String aucAutoBidLimitHelper(String amount) {
+    return 'காலியாக விட்டால் உங்கள் முழு வாங்கும் வரம்பும் (₹$amount) பயன்படுத்தப்படும்.';
+  }
+
+  @override
+  String aucAutoBidLimitMin(String amount) {
+    return 'குறைந்தது ₹$amount இருக்க வேண்டும்';
+  }
+
+  @override
+  String aucAutoBidOnStatusCapped(String count, String max, String amount) {
+    return 'இயக்கத்தில் · $max-இல் $count ஏலம் · ₹$amount வரை';
+  }
+
+  @override
+  String get aucAutoBidEditLimit => 'வரம்பை மாற்று';
+
+  @override
+  String get aucAutoBidEditLimitTitle => 'ஆட்டோ-பிட் வரம்பு';
+
+  @override
+  String get aucAutoBidLimitUpdated => 'ஆட்டோ-பிட் வரம்பு புதுப்பிக்கப்பட்டது';
+
+  @override
+  String get aucAutoBidStoppedMaxAmount =>
+      'ஆட்டோ-பிட் நின்றது: அடுத்த ஏலம் இந்த வாகனத்திற்கான உங்கள் வரம்பை விட அதிகம்';
 }

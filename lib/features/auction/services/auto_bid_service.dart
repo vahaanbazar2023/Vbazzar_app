@@ -46,6 +46,9 @@ class AutoBidState {
   /// Why auto-bid last stopped when it is off: `user_disabled`, `watchlist_removed`, `max_bids`, `insufficient_limit`.
   final String? stopReason;
 
+  /// Per-vehicle auto-bid limit; null = up to the whole buying limit.
+  final int? maxAmount;
+
   /// Bids auto-bid placed during this call (switching on while losing bids at once).
   final int bidsPlaced;
   final int? yourBid;
@@ -59,6 +62,7 @@ class AutoBidState {
     required this.vehicleId,
     required this.isEnabled,
     this.stopReason,
+    this.maxAmount,
     this.bidsPlaced = 0,
     this.yourBid,
     this.bidCount = 0,
@@ -75,6 +79,7 @@ class AutoBidState {
     vehicleId: j['vehicle_id']?.toString() ?? '',
     isEnabled: j['is_auto_bid_enabled'] == true,
     stopReason: j['auto_bid_stop_reason']?.toString(),
+    maxAmount: _int(j['auto_bid_max_amount']),
     bidsPlaced: _int(j['auto_bids_placed']) ?? 0,
     yourBid: _int(j['your_bid']),
     bidCount: _int(j['user_vehicle_bid_count']) ?? 0,
@@ -103,16 +108,19 @@ class AutoBidService {
   }
 
   /// Switch auto-bid on or off. Switching on also watchlists the vehicle and, if the user is losing,
-  /// bids for them straight away.
+  /// bids for them straight away. [maxAmount] caps what auto-bid may bid on this vehicle (null = whole
+  /// buying limit); calling again with enabled=true while on just changes it.
   Future<AutoBidState> setAutoBid({
     required String userId,
     required String vehicleId,
     required bool enabled,
+    int? maxAmount,
   }) async {
     final body = await _post(ApiEndpoints.autoBidToggle, {
       'user_id': userId,
       'vehicle_id': vehicleId,
       'enabled': enabled,
+      if (enabled) 'max_amount': maxAmount,
     });
     return AutoBidState.fromJson(dataOf(body));
   }

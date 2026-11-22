@@ -1660,6 +1660,9 @@
   "profSubActive": "ಸಕ್ರಿಯ",
   "profSubInactive": "ನಿಷ್ಕ್ರಿಯ",
   "profSubValidUntil": "ಮಾನ್ಯವಾಗಿರುವ ದಿನಾಂಕ",
+  "profSubRenew": "ನವೀಕರಿಸಿ",
+  "profSubDaysLeftKept": "{days} ದಿನಗಳು ಬಾಕಿ · ಈಗ ನವೀಕರಿಸಿದರೆ ಈ ದಿನಗಳು ಉಳಿಯುತ್ತವೆ",
+  "profSubRenewUnavailable": "ಈ ಪ್ಲಾನ್ ಅನ್ನು ಈಗ ನವೀಕರಿಸಲು ಸಾಧ್ಯವಿಲ್ಲ. ದಯವಿಟ್ಟು ಎಕ್ಸ್‌ಪ್ಲೋರ್‌ನಿಂದ ಪ್ಲಾನ್ ಆರಿಸಿ.",
   "profSubNeedMoreBenefits": "ಹೆಚ್ಚಿನ ಪ್ರಯೋಜನಗಳು ಬೇಕೇ?",
   "profSubExploreOtherPlans": "ನಮ್ಮ ಇತರ ಯೋಜನೆಗಳನ್ನು ಅನ್ವೇಷಿಸಿ ಮತ್ತು ನಿಮ್ಮ ಅಗತ್ಯಕ್ಕೆ ಹೊಂದುವುದನ್ನು ಆಯ್ಕೆಮಾಡಿ.",
   "profSubNoActivePlans": "ಸಕ್ರಿಯ ಯೋಜನೆಗಳಿಲ್ಲ",
@@ -2059,5 +2062,14 @@
   "aucAutoBidConfirmCta": "ಆನ್ ಮಾಡಿ",
   "coreForceUpdateTitle": "ಅಪ್‌ಡೇಟ್ ಅಗತ್ಯವಿದೆ",
   "coreForceUpdateMessage": "ವಾಹನ್ ಬಜಾರ್‌ನ ಹೊಸ ಆವೃತ್ತಿ ಲಭ್ಯವಿದೆ. ಆ್ಯಪ್ ಬಳಸುವುದನ್ನು ಮುಂದುವರಿಸಲು ದಯವಿಟ್ಟು ಅಪ್‌ಡೇಟ್ ಮಾಡಿ.",
-  "coreForceUpdateButton": "ಈಗ ಅಪ್‌ಡೇಟ್ ಮಾಡಿ"
+  "coreForceUpdateButton": "ಈಗ ಅಪ್‌ಡೇಟ್ ಮಾಡಿ",
+  "aucAutoBidLimitLabel": "ಈ ವಾಹನಕ್ಕೆ ಆಟೋ-ಬಿಡ್ ಮಿತಿ",
+  "aucAutoBidNoLimit": "ಮಿತಿ ಇಲ್ಲ",
+  "aucAutoBidLimitHelper": "ಖಾಲಿ ಬಿಟ್ಟರೆ ನಿಮ್ಮ ಸಂಪೂರ್ಣ ಖರೀದಿ ಮಿತಿ (₹{amount}) ಬಳಸಲಾಗುತ್ತದೆ.",
+  "aucAutoBidLimitMin": "ಕನಿಷ್ಠ ₹{amount} ಇರಬೇಕು",
+  "aucAutoBidOnStatusCapped": "ಆನ್ · {max}ರಲ್ಲಿ {count} ಬಿಡ್ · ₹{amount} ವರೆಗೆ",
+  "aucAutoBidEditLimit": "ಮಿತಿ ಬದಲಿಸಿ",
+  "aucAutoBidEditLimitTitle": "ಆಟೋ-ಬಿಡ್ ಮಿತಿ",
+  "aucAutoBidLimitUpdated": "ಆಟೋ-ಬಿಡ್ ಮಿತಿ ಅಪ್‌ಡೇಟ್ ಆಗಿದೆ",
+  "aucAutoBidStoppedMaxAmount": "ಆಟೋ-ಬಿಡ್ ನಿಂತಿದೆ: ಮುಂದಿನ ಬಿಡ್ ಈ ವಾಹನಕ್ಕೆ ನಿಮ್ಮ ಮಿತಿಗಿಂತ ಹೆಚ್ಚು"
 }

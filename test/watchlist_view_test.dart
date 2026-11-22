@@ -11,7 +11,7 @@ import 'package:vahaan_mobile_2_0/features/auction/services/vehicle_listing_serv
 import 'package:vahaan_mobile_2_0/features/auction/views/my_wishlist_view.dart';
 import 'package:vahaan_mobile_2_0/features/main_shell/controllers/main_shell_controller.dart';
 
-VehicleListing _v({bool auto = false, int count = 2}) =>
+VehicleListing _v({bool auto = false, int count = 2, int? cap}) =>
     VehicleListing.fromJson({
       'id': 1,
       'vehicle_id': 'VEH1',
@@ -28,6 +28,7 @@ VehicleListing _v({bool auto = false, int count = 2}) =>
       'available_balance': 500000,
       'is_watchlisted': true,
       'is_auto_bid_enabled': auto,
+      'auto_bid_max_amount': cap,
       'auction_end_date': '', // no running timer in tests
     });
 
@@ -50,14 +51,17 @@ class _FakeListing extends VehicleListingService {
 class _FakeAutoBid extends AutoBidService {
   _FakeAutoBid() : super(network: null);
   final calls = <bool>[];
+  final limits = <int?>[];
   AutoBidException? fail;
   @override
   Future<AutoBidState> setAutoBid({
     required String userId,
     required String vehicleId,
     required bool enabled,
+    int? maxAmount,
   }) async {
     calls.add(enabled);
+    limits.add(maxAmount);
     if (fail != null) throw fail!;
     return AutoBidState(
       vehicleId: vehicleId,
@@ -68,6 +72,7 @@ class _FakeAutoBid extends AutoBidService {
       currentHighestBid: enabled ? 115000 : 110000,
       isHighestBidder: enabled,
       remainingBidLimit: 385000,
+      maxAmount: enabled ? maxAmount : null,
     );
   }
 }
@@ -187,5 +192,74 @@ void main() {
       await _pump(tester, locale: Locale(lang), items: [_v(auto: true)]);
       expect(tester.takeException(), isNull, reason: lang);
     }
+  });
+
+  testWidgets('a per-vehicle limit can be set when switching on', (
+    tester,
+  ) async {
+    final (c, listing, auto) = await _pump(tester);
+    listing.items = [_v(auto: true, count: 3, cap: 250000)];
+    await tester.tap(find.byType(Switch));
+    await tester.pumpAndSettle();
+    expect(find.text('Auto-bid limit for this vehicle'), findsOneWidget);
+    expect(
+      find.textContaining('whole buying limit (₹600,000)'),
+      findsOneWidget,
+    ); // 500,000 free + 100,000 held
+
+    await tester.enterText(
+      find.byKey(const ValueKey('auto-bid-limit-field')),
+      '100000',
+    ); // below next bid 115,000
+    await tester.tap(find.text('Switch on'));
+    await tester.pumpAndSettle();
+    expect(find.text('Must be at least ₹115,000'), findsOneWidget);
+    expect(auto.calls, isEmpty);
+
+    await tester.enterText(
+      find.byKey(const ValueKey('auto-bid-limit-field')),
+      '250000',
+    );
+    await tester.tap(find.text('Switch on'));
+    await tester.pumpAndSettle(const Duration(seconds: 5));
+    expect(auto.calls, [true]);
+    expect(auto.limits, [250000]);
+    expect(c.vehicles.single.autoBidMaxAmount, 250000);
+    expect(find.text('On · bid 3 of 10 · up to ₹250,000'), findsOneWidget);
+  });
+
+  testWidgets('leaving the limit empty uses the whole buying limit', (
+    tester,
+  ) async {
+    final (_, listing, auto) = await _pump(tester);
+    listing.items = [_v(auto: true, count: 3)];
+    await tester.tap(find.byType(Switch));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Switch on'));
+    await tester.pumpAndSettle(const Duration(seconds: 5));
+    expect(auto.limits, [null]);
+    expect(find.text('On · bid 3 of 10'), findsOneWidget);
+  });
+
+  testWidgets('the limit can be edited while auto-bid is on', (tester) async {
+    final (c, listing, auto) = await _pump(
+      tester,
+      items: [_v(auto: true, cap: 200000)],
+    );
+    await tester.tap(find.text('Edit limit'));
+    await tester.pumpAndSettle();
+    expect(find.text('Auto-bid limit'), findsOneWidget);
+    expect(find.text('200000'), findsOneWidget); // current limit prefilled
+    listing.items = [_v(auto: true, cap: 300000)]; // what the server lists after the change
+    await tester.enterText(
+      find.byKey(const ValueKey('auto-bid-limit-field')),
+      '300000',
+    );
+    await tester.tap(find.text('Save'));
+    await tester.pumpAndSettle(const Duration(seconds: 5));
+    expect(auto.calls, [true]);
+    expect(auto.limits, [300000]);
+    expect(c.vehicles.single.autoBidMaxAmount, 300000);
+    expect(c.vehicles.single.isAutoBidEnabled, isTrue);
   });
 }

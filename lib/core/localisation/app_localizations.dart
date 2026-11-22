@@ -10066,6 +10066,24 @@ abstract class AppLocalizations {
   /// **'Valid Until'**
   String get profSubValidUntil;
 
+  /// No description provided for @profSubRenew.
+  ///
+  /// In en, this message translates to:
+  /// **'Renew'**
+  String get profSubRenew;
+
+  /// No description provided for @profSubDaysLeftKept.
+  ///
+  /// In en, this message translates to:
+  /// **'{days} days left · renew now and keep them'**
+  String profSubDaysLeftKept(int days);
+
+  /// No description provided for @profSubRenewUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'This plan can\'t be renewed right now. Please pick a plan from Explore.'**
+  String get profSubRenewUnavailable;
+
   /// No description provided for @profSubNeedMoreBenefits.
   ///
   /// In en, this message translates to:
@@ -12267,6 +12285,60 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Update now'**
   String get coreForceUpdateButton;
+
+  /// No description provided for @aucAutoBidLimitLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto-bid limit for this vehicle'**
+  String get aucAutoBidLimitLabel;
+
+  /// No description provided for @aucAutoBidNoLimit.
+  ///
+  /// In en, this message translates to:
+  /// **'No limit'**
+  String get aucAutoBidNoLimit;
+
+  /// No description provided for @aucAutoBidLimitHelper.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave empty to use your whole buying limit (₹{amount}).'**
+  String aucAutoBidLimitHelper(String amount);
+
+  /// No description provided for @aucAutoBidLimitMin.
+  ///
+  /// In en, this message translates to:
+  /// **'Must be at least ₹{amount}'**
+  String aucAutoBidLimitMin(String amount);
+
+  /// No description provided for @aucAutoBidOnStatusCapped.
+  ///
+  /// In en, this message translates to:
+  /// **'On · bid {count} of {max} · up to ₹{amount}'**
+  String aucAutoBidOnStatusCapped(String count, String max, String amount);
+
+  /// No description provided for @aucAutoBidEditLimit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit limit'**
+  String get aucAutoBidEditLimit;
+
+  /// No description provided for @aucAutoBidEditLimitTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto-bid limit'**
+  String get aucAutoBidEditLimitTitle;
+
+  /// No description provided for @aucAutoBidLimitUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto-bid limit updated'**
+  String get aucAutoBidLimitUpdated;
+
+  /// No description provided for @aucAutoBidStoppedMaxAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto-bid stopped: the next bid is above your limit for this vehicle'**
+  String get aucAutoBidStoppedMaxAmount;
 }
 
 class _AppLocalizationsDelegate
