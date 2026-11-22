@@ -6616,4 +6616,14 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get aucAutoBidConfirmCta => 'Switch on';
+
+  @override
+  String get coreForceUpdateTitle => 'Update required';
+
+  @override
+  String get coreForceUpdateMessage =>
+      'A new version of Vahaan Bazar is available. Please update to keep using the app.';
+
+  @override
+  String get coreForceUpdateButton => 'Update now';
 }

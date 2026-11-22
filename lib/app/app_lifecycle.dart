@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../core/services/analytics_service.dart';
+import '../core/services/app_update_service.dart';
 import '../core/services/deep_link_service.dart';
 import '../core/services/logger_service.dart';
 
@@ -33,6 +34,8 @@ class AppLifecycle extends GetxController with WidgetsBindingObserver {
       case AppLifecycleState.resumed:
         LoggerService.to.info('App resumed');
         AnalyticsService.to.logEvent('app_resumed');
+        // Users who keep the app in the background must update too.
+        AppUpdateService.recheckOnResume();
         break;
       case AppLifecycleState.paused:
         LoggerService.to.info('App paused');

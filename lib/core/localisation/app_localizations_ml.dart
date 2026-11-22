@@ -6708,4 +6708,14 @@ class AppLocalizationsMl extends AppLocalizations {
 
   @override
   String get aucAutoBidConfirmCta => 'ഓൺ ചെയ്യുക';
+
+  @override
+  String get coreForceUpdateTitle => 'അപ്‌ഡേറ്റ് ആവശ്യമാണ്';
+
+  @override
+  String get coreForceUpdateMessage =>
+      'വാഹൻ ബസാറിന്റെ പുതിയ പതിപ്പ് ലഭ്യമാണ്. ആപ്പ് തുടർന്നും ഉപയോഗിക്കാൻ ദയവായി അപ്‌ഡേറ്റ് ചെയ്യുക.';
+
+  @override
+  String get coreForceUpdateButton => 'ഇപ്പോൾ അപ്‌ഡേറ്റ് ചെയ്യുക';
 }
