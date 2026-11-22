@@ -15,6 +15,7 @@ import '../controllers/wishlist_controller.dart';
 import '../controllers/vehicle_listing_controller.dart';
 import '../models/vehicle_listing.dart';
 import '../../../core/design_system/molecules/timer_badge.dart';
+import 'bid_status_style.dart';
 import 'my_wishlist_detail_view.dart';
 
 class MyWishlistView extends GetView<WishlistController> {
@@ -151,47 +152,52 @@ class MyWatchlistView extends GetView<WatchlistController> {
 }
 
 /// Auto-bid switch shown on watchlist cards while the auction is open.
+/// When on, it shows the per-vehicle limit and lets the user change it.
 class _AutoBidRow extends StatelessWidget {
   final VehicleListing vehicle;
   final WatchlistController controller;
   const _AutoBidRow({required this.vehicle, required this.controller});
 
   Future<void> _onChanged(BuildContext context, bool on) async {
-    if (on) {
-      final step = (vehicle.bidIncrementAmount ?? 0) > 0
-          ? vehicle.bidIncrementAmount!
-          : 1;
-      final ok = await showDialog<bool>(
-        context: context,
-        builder: (ctx) => AlertDialog(
-          title: Text(ctx.l10n.aucAutoBidConfirmTitle),
-          content: Text(
-            ctx.l10n.aucAutoBidConfirmBody(
-              WatchlistController.formatAmount(step),
-              '${vehicle.maxUserVehiclesBidLimit}',
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(ctx).pop(false),
-              child: Text(ctx.l10n.cancel),
-            ),
-            FilledButton(
-              style: FilledButton.styleFrom(backgroundColor: AppColors.primary),
-              onPressed: () => Navigator.of(ctx).pop(true),
-              child: Text(ctx.l10n.aucAutoBidConfirmCta),
-            ),
-          ],
-        ),
-      );
-      if (ok != true) return;
+    if (!on) {
+      await controller.setAutoBid(vehicle, false);
+      return;
     }
-    await controller.setAutoBid(vehicle, on);
+    final choice = await AutoBidLimitDialog.show(
+      context,
+      vehicle: vehicle,
+      editing: false,
+    );
+    if (choice == null) return;
+    await controller.setAutoBid(vehicle, true, maxAmount: choice.limit);
+  }
+
+  Future<void> _editLimit(BuildContext context) async {
+    final choice = await AutoBidLimitDialog.show(
+      context,
+      vehicle: vehicle,
+      editing: true,
+    );
+    if (choice == null) return;
+    await controller.setAutoBid(vehicle, true, maxAmount: choice.limit);
   }
 
   @override
   Widget build(BuildContext context) {
     final on = vehicle.isAutoBidEnabled;
+    final cap = vehicle.autoBidMaxAmount;
+    final status = !on
+        ? context.l10n.aucAutoBidHint
+        : cap != null
+        ? context.l10n.aucAutoBidOnStatusCapped(
+            '${vehicle.userVehicleBidCount}',
+            '${vehicle.maxUserVehiclesBidLimit}',
+            WatchlistController.formatAmount(cap),
+          )
+        : context.l10n.aucAutoBidOnStatus(
+            '${vehicle.userVehicleBidCount}',
+            '${vehicle.maxUserVehiclesBidLimit}',
+          );
     return Container(
       margin: EdgeInsets.fromLTRB(12.w, 0, 12.w, 10.h),
       padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 6.h),
@@ -201,7 +207,9 @@ class _AutoBidRow extends StatelessWidget {
             : const Color(0xFFF7F7F7),
         borderRadius: BorderRadius.circular(10.r),
         border: Border.all(
-          color: on ? AppColors.primary.withValues(alpha: 0.35) : AppColors.grey200,
+          color: on
+              ? AppColors.primary.withValues(alpha: 0.35)
+              : AppColors.grey200,
         ),
       ),
       child: Row(
@@ -227,18 +235,34 @@ class _AutoBidRow extends StatelessWidget {
                 ),
                 SizedBox(height: 2.h),
                 Text(
-                  on
-                      ? context.l10n.aucAutoBidOnStatus(
-                          '${vehicle.userVehicleBidCount}',
-                          '${vehicle.maxUserVehiclesBidLimit}',
-                        )
-                      : context.l10n.aucAutoBidHint,
+                  status,
                   style: TextStyle(
                     fontFamily: 'Montserrat',
                     fontSize: 10.sp,
                     color: AppColors.textSecondary,
                   ),
                 ),
+                if (on)
+                  Obx(() {
+                    final busy = controller.busy.contains(vehicle.vehicleId);
+                    return InkWell(
+                      onTap: busy ? null : () => _editLimit(context),
+                      child: Padding(
+                        padding: EdgeInsets.only(top: 4.h, bottom: 2.h),
+                        child: Text(
+                          context.l10n.aucAutoBidEditLimit,
+                          style: TextStyle(
+                            fontFamily: 'Montserrat',
+                            fontSize: 11.sp,
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.primary,
+                            decoration: TextDecoration.underline,
+                            decorationColor: AppColors.primary,
+                          ),
+                        ),
+                      ),
+                    );
+                  }),
               ],
             ),
           ),
@@ -255,6 +279,141 @@ class _AutoBidRow extends StatelessWidget {
           }),
         ],
       ),
+    );
+  }
+}
+
+/// Result of [AutoBidLimitDialog]: [limit] null = no per-vehicle limit (whole buying limit).
+class AutoBidLimitChoice {
+  final int? limit;
+  const AutoBidLimitChoice(this.limit);
+}
+
+/// Asks for the per-vehicle auto-bid limit — when switching auto-bid on (with the explanation)
+/// or when editing it. Empty = no limit. Returns null when cancelled.
+class AutoBidLimitDialog extends StatefulWidget {
+  final VehicleListing vehicle;
+  final bool editing;
+  const AutoBidLimitDialog({
+    super.key,
+    required this.vehicle,
+    required this.editing,
+  });
+
+  static Future<AutoBidLimitChoice?> show(
+    BuildContext context, {
+    required VehicleListing vehicle,
+    required bool editing,
+  }) => showDialog<AutoBidLimitChoice>(
+    context: context,
+    builder: (_) => AutoBidLimitDialog(vehicle: vehicle, editing: editing),
+  );
+
+  @override
+  State<AutoBidLimitDialog> createState() => _AutoBidLimitDialogState();
+}
+
+class _AutoBidLimitDialogState extends State<AutoBidLimitDialog> {
+  late final TextEditingController _ctrl;
+  String? _error;
+
+  @override
+  void initState() {
+    super.initState();
+    final cap = widget.vehicle.autoBidMaxAmount;
+    _ctrl = TextEditingController(text: cap != null ? '$cap' : '');
+  }
+
+  @override
+  void dispose() {
+    _ctrl.dispose();
+    super.dispose();
+  }
+
+  void _submit() {
+    final raw = _ctrl.text.replaceAll(RegExp(r'[^0-9]'), '');
+    if (raw.isEmpty) {
+      Navigator.of(context).pop(const AutoBidLimitChoice(null));
+      return;
+    }
+    final value = int.parse(raw);
+    final min = widget.vehicle.minimumAutoBidLimit;
+    if (value < min) {
+      setState(
+        () => _error = context.l10n.aucAutoBidLimitMin(
+          WatchlistController.formatAmount(min),
+        ),
+      );
+      return;
+    }
+    Navigator.of(context).pop(AutoBidLimitChoice(value));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final v = widget.vehicle;
+    final step = (v.bidIncrementAmount ?? 0) > 0 ? v.bidIncrementAmount! : 1;
+    return AlertDialog(
+      title: Text(
+        widget.editing
+            ? context.l10n.aucAutoBidEditLimitTitle
+            : context.l10n.aucAutoBidConfirmTitle,
+      ),
+      content: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (!widget.editing) ...[
+              Text(
+                context.l10n.aucAutoBidConfirmBody(
+                  WatchlistController.formatAmount(step),
+                  '${v.maxUserVehiclesBidLimit}',
+                ),
+              ),
+              const SizedBox(height: 16),
+            ],
+            TextField(
+              key: const ValueKey('auto-bid-limit-field'),
+              controller: _ctrl,
+              autofocus: widget.editing,
+              keyboardType: TextInputType.number,
+              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+              onChanged: (_) {
+                if (_error != null) setState(() => _error = null);
+              },
+              onSubmitted: (_) => _submit(),
+              decoration: InputDecoration(
+                labelText: context.l10n.aucAutoBidLimitLabel,
+                hintText: context.l10n.aucAutoBidNoLimit,
+                prefixText: '₹ ',
+                errorText: _error,
+                helperText: context.l10n.aucAutoBidLimitHelper(
+                  WatchlistController.formatAmount(v.buyingLimitForVehicle),
+                ),
+                helperMaxLines: 3,
+                errorMaxLines: 2,
+                border: const OutlineInputBorder(),
+              ),
+            ),
+          ],
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: Text(context.l10n.cancel),
+        ),
+        FilledButton(
+          style: FilledButton.styleFrom(backgroundColor: AppColors.primary),
+          onPressed: _submit,
+          child: Text(
+            widget.editing
+                ? context.l10n.save
+                : context.l10n.aucAutoBidConfirmCta,
+          ),
+        ),
+      ],
     );
   }
 }
@@ -346,11 +505,15 @@ class _WishlistCardSkeleton extends StatelessWidget {
               padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
               child: Row(
                 children: [
-                  Expanded(child: Divider(color: AppColors.grey300, thickness: 1)),
+                  Expanded(
+                    child: Divider(color: AppColors.grey300, thickness: 1),
+                  ),
                   SizedBox(width: 8.w),
                   SkeletonBox(width: 64.w, height: 12.h),
                   SizedBox(width: 8.w),
-                  Expanded(child: Divider(color: AppColors.grey300, thickness: 1)),
+                  Expanded(
+                    child: Divider(color: AppColors.grey300, thickness: 1),
+                  ),
                 ],
               ),
             ),
@@ -381,6 +544,7 @@ class _WishlistCardSkeleton extends StatelessWidget {
 
 class _WishlistCard extends StatefulWidget {
   final VehicleListing vehicle;
+
   /// Set on the watchlist screen: bids go through it and the card shows the auto-bid switch.
   final WatchlistController? watchlist;
   const _WishlistCard({super.key, required this.vehicle, this.watchlist});
@@ -450,7 +614,10 @@ class _WishlistCardState extends State<_WishlistCard> {
     setState(() => _isPlacing = true);
     final watchlist = widget.watchlist;
     final error = watchlist != null
-        ? await watchlist.placeBid(vehicle: widget.vehicle, bidAmount: _bidAmount)
+        ? await watchlist.placeBid(
+            vehicle: widget.vehicle,
+            bidAmount: _bidAmount,
+          )
         : await Get.find<VehicleListingController>().placeBid(
             vehicle: widget.vehicle,
             bidAmount: _bidAmount,
@@ -518,14 +685,15 @@ class _WishlistCardState extends State<_WishlistCard> {
     final bool showBidChip = hasBid && (isWinning || isLosing);
 
     final cardBorderColor = isWinning
-        ? const Color(0xFF2E7D32)
+        ? BidStatusStyle.win
         : isLosing
-        ? const Color(0xFFC62828)
+        ? BidStatusStyle.lose
         : AppColors.grey200;
 
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        // Whole card tinted green while winning, red while losing.
+        color: BidStatusStyle.cardBackground(isWinning: isWinning, isLosing: isLosing),
         borderRadius: BorderRadius.circular(14.r),
         border: Border.all(
           color: cardBorderColor,
@@ -710,14 +878,18 @@ class _WishlistCardState extends State<_WishlistCard> {
                       // Watchlist: eye badge — tap to remove from the watchlist
                       if (widget.watchlist != null)
                         Obx(() {
-                          final busy = widget.watchlist!.busy.contains(v.vehicleId);
+                          final busy = widget.watchlist!.busy.contains(
+                            v.vehicleId,
+                          );
                           return Semantics(
                             button: true,
                             label: context.l10n.aucWatching,
                             child: InkWell(
                               onTap: busy
                                   ? null
-                                  : () => widget.watchlist!.removeFromWatchlist(v),
+                                  : () => widget.watchlist!.removeFromWatchlist(
+                                      v,
+                                    ),
                               borderRadius: BorderRadius.circular(4.r),
                               child: Container(
                                 padding: EdgeInsets.symmetric(
@@ -725,7 +897,9 @@ class _WishlistCardState extends State<_WishlistCard> {
                                   vertical: 4.h,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: AppColors.primary.withValues(alpha: 0.12),
+                                  color: AppColors.primary.withValues(
+                                    alpha: 0.12,
+                                  ),
                                   borderRadius: BorderRadius.circular(4.r),
                                 ),
                                 child: Row(
@@ -759,27 +933,27 @@ class _WishlistCardState extends State<_WishlistCard> {
                           );
                         })
                       else
-                      // Wishlist heart icon badge
-                      Container(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 8.w,
-                          vertical: 4.h,
+                        // Wishlist heart icon badge
+                        Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 8.w,
+                            vertical: 4.h,
+                          ),
+                          decoration: BoxDecoration(
+                            color: AppColors.error.withValues(alpha: 0.12),
+                            borderRadius: BorderRadius.circular(4.r),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                Icons.favorite,
+                                size: 12.r,
+                                color: AppColors.error,
+                              ),
+                            ],
+                          ),
                         ),
-                        decoration: BoxDecoration(
-                          color: AppColors.error.withValues(alpha: 0.12),
-                          borderRadius: BorderRadius.circular(4.r),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              Icons.favorite,
-                              size: 12.r,
-                              color: AppColors.error,
-                            ),
-                          ],
-                        ),
-                      ),
                     ],
                   ),
                 ),
@@ -882,12 +1056,7 @@ class _WishlistCardState extends State<_WishlistCard> {
                     context.l10n.transaction_fees,
                     v.transactionFees,
                   ),
-                  _OptRow(
-                    context.l10n.aucBankName,
-                    v.displayBankName,
-                    '',
-                    '',
-                  ),
+                  _OptRow(context.l10n.aucBankName, v.displayBankName, '', ''),
                   _OptRow(
                     context.l10n.yard_name,
                     v.yardName,

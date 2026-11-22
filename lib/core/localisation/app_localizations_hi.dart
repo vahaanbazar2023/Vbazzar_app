@@ -6652,4 +6652,38 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get coreForceUpdateButton => 'अभी अपडेट करें';
+
+  @override
+  String get aucAutoBidLimitLabel => 'इस वाहन के लिए ऑटो-बिड लिमिट';
+
+  @override
+  String get aucAutoBidNoLimit => 'कोई लिमिट नहीं';
+
+  @override
+  String aucAutoBidLimitHelper(String amount) {
+    return 'खाली छोड़ें तो आपकी पूरी बाइंग लिमिट (₹$amount) इस्तेमाल होगी।';
+  }
+
+  @override
+  String aucAutoBidLimitMin(String amount) {
+    return 'कम से कम ₹$amount होना चाहिए';
+  }
+
+  @override
+  String aucAutoBidOnStatusCapped(String count, String max, String amount) {
+    return 'चालू · $max में से $count बोली · ₹$amount तक';
+  }
+
+  @override
+  String get aucAutoBidEditLimit => 'लिमिट बदलें';
+
+  @override
+  String get aucAutoBidEditLimitTitle => 'ऑटो-बिड लिमिट';
+
+  @override
+  String get aucAutoBidLimitUpdated => 'ऑटो-बिड लिमिट अपडेट हुई';
+
+  @override
+  String get aucAutoBidStoppedMaxAmount =>
+      'ऑटो-बिड रुकी: अगली बोली इस वाहन की आपकी लिमिट से ज़्यादा है';
 }

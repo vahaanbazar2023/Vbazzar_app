@@ -1890,5 +1890,14 @@
   "aucAutoBidConfirmCta": "ఆన్ చేయండి",
   "coreForceUpdateTitle": "అప్‌డేట్ అవసరం",
   "coreForceUpdateMessage": "వాహన్ బజార్ కొత్త వెర్షన్ అందుబాటులో ఉంది. యాప్‌ను ఉపయోగించడం కొనసాగించడానికి దయచేసి అప్‌డేట్ చేయండి.",
-  "coreForceUpdateButton": "ఇప్పుడే అప్‌డేట్ చేయండి"
+  "coreForceUpdateButton": "ఇప్పుడే అప్‌డేట్ చేయండి",
+  "aucAutoBidLimitLabel": "ఈ వాహనానికి ఆటో-బిడ్ లిమిట్",
+  "aucAutoBidNoLimit": "లిమిట్ లేదు",
+  "aucAutoBidLimitHelper": "ఖాళీగా ఉంచితే మీ మొత్తం కొనుగోలు లిమిట్ (₹{amount}) వాడబడుతుంది.",
+  "aucAutoBidLimitMin": "కనీసం ₹{amount} ఉండాలి",
+  "aucAutoBidOnStatusCapped": "ఆన్ · {max}లో {count} బిడ్ · ₹{amount} వరకు",
+  "aucAutoBidEditLimit": "లిమిట్ మార్చండి",
+  "aucAutoBidEditLimitTitle": "ఆటో-బిడ్ లిమిట్",
+  "aucAutoBidLimitUpdated": "ఆటో-బిడ్ లిమిట్ అప్‌డేట్ అయింది",
+  "aucAutoBidStoppedMaxAmount": "ఆటో-బిడ్ ఆగింది: తదుపరి బిడ్ ఈ వాహనానికి మీ లిమిట్ కంటే ఎక్కువ"
 }

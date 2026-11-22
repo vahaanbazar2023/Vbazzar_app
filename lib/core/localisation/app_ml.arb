@@ -2062,5 +2062,14 @@
   "aucAutoBidConfirmCta": "ഓൺ ചെയ്യുക",
   "coreForceUpdateTitle": "അപ്‌ഡേറ്റ് ആവശ്യമാണ്",
   "coreForceUpdateMessage": "വാഹൻ ബസാറിന്റെ പുതിയ പതിപ്പ് ലഭ്യമാണ്. ആപ്പ് തുടർന്നും ഉപയോഗിക്കാൻ ദയവായി അപ്‌ഡേറ്റ് ചെയ്യുക.",
-  "coreForceUpdateButton": "ഇപ്പോൾ അപ്‌ഡേറ്റ് ചെയ്യുക"
+  "coreForceUpdateButton": "ഇപ്പോൾ അപ്‌ഡേറ്റ് ചെയ്യുക",
+  "aucAutoBidLimitLabel": "ഈ വാഹനത്തിനുള്ള ഓട്ടോ-ബിഡ് ലിമിറ്റ്",
+  "aucAutoBidNoLimit": "ലിമിറ്റ് ഇല്ല",
+  "aucAutoBidLimitHelper": "ശൂന്യമാക്കിയാൽ നിങ്ങളുടെ മുഴുവൻ ബൈയിംഗ് ലിമിറ്റും (₹{amount}) ഉപയോഗിക്കും.",
+  "aucAutoBidLimitMin": "കുറഞ്ഞത് ₹{amount} ആയിരിക്കണം",
+  "aucAutoBidOnStatusCapped": "ഓൺ · {max}-ൽ {count} ബിഡ് · ₹{amount} വരെ",
+  "aucAutoBidEditLimit": "ലിമിറ്റ് മാറ്റുക",
+  "aucAutoBidEditLimitTitle": "ഓട്ടോ-ബിഡ് ലിമിറ്റ്",
+  "aucAutoBidLimitUpdated": "ഓട്ടോ-ബിഡ് ലിമിറ്റ് അപ്‌ഡേറ്റ് ചെയ്തു",
+  "aucAutoBidStoppedMaxAmount": "ഓട്ടോ-ബിഡ് നിർത്തി: അടുത്ത ബിഡ് ഈ വാഹനത്തിനുള്ള നിങ്ങളുടെ ലിമിറ്റിനേക്കാൾ കൂടുതലാണ്"
 }

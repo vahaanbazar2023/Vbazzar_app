@@ -2124,5 +2124,14 @@
   "aucAutoBidConfirmCta": "चालू करें",
   "coreForceUpdateTitle": "अपडेट ज़रूरी है",
   "coreForceUpdateMessage": "वाहन बाज़ार का नया वर्ज़न उपलब्ध है। ऐप का इस्तेमाल जारी रखने के लिए कृपया अपडेट करें।",
-  "coreForceUpdateButton": "अभी अपडेट करें"
+  "coreForceUpdateButton": "अभी अपडेट करें",
+  "aucAutoBidLimitLabel": "इस वाहन के लिए ऑटो-बिड लिमिट",
+  "aucAutoBidNoLimit": "कोई लिमिट नहीं",
+  "aucAutoBidLimitHelper": "खाली छोड़ें तो आपकी पूरी बाइंग लिमिट (₹{amount}) इस्तेमाल होगी।",
+  "aucAutoBidLimitMin": "कम से कम ₹{amount} होना चाहिए",
+  "aucAutoBidOnStatusCapped": "चालू · {max} में से {count} बोली · ₹{amount} तक",
+  "aucAutoBidEditLimit": "लिमिट बदलें",
+  "aucAutoBidEditLimitTitle": "ऑटो-बिड लिमिट",
+  "aucAutoBidLimitUpdated": "ऑटो-बिड लिमिट अपडेट हुई",
+  "aucAutoBidStoppedMaxAmount": "ऑटो-बिड रुकी: अगली बोली इस वाहन की आपकी लिमिट से ज़्यादा है"
 }

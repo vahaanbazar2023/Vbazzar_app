@@ -2062,5 +2062,14 @@
   "aucAutoBidConfirmCta": "இயக்கு",
   "coreForceUpdateTitle": "புதுப்பிப்பு தேவை",
   "coreForceUpdateMessage": "வாகன் பஜாரின் புதிய பதிப்பு கிடைக்கிறது. ஆப்பைத் தொடர்ந்து பயன்படுத்த தயவுசெய்து புதுப்பிக்கவும்.",
-  "coreForceUpdateButton": "இப்போது புதுப்பிக்கவும்"
+  "coreForceUpdateButton": "இப்போது புதுப்பிக்கவும்",
+  "aucAutoBidLimitLabel": "இந்த வாகனத்திற்கான ஆட்டோ-பிட் வரம்பு",
+  "aucAutoBidNoLimit": "வரம்பு இல்லை",
+  "aucAutoBidLimitHelper": "காலியாக விட்டால் உங்கள் முழு வாங்கும் வரம்பும் (₹{amount}) பயன்படுத்தப்படும்.",
+  "aucAutoBidLimitMin": "குறைந்தது ₹{amount} இருக்க வேண்டும்",
+  "aucAutoBidOnStatusCapped": "இயக்கத்தில் · {max}-இல் {count} ஏலம் · ₹{amount} வரை",
+  "aucAutoBidEditLimit": "வரம்பை மாற்று",
+  "aucAutoBidEditLimitTitle": "ஆட்டோ-பிட் வரம்பு",
+  "aucAutoBidLimitUpdated": "ஆட்டோ-பிட் வரம்பு புதுப்பிக்கப்பட்டது",
+  "aucAutoBidStoppedMaxAmount": "ஆட்டோ-பிட் நின்றது: அடுத்த ஏலம் இந்த வாகனத்திற்கான உங்கள் வரம்பை விட அதிகம்"
 }
