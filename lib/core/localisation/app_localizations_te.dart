@@ -5441,6 +5441,18 @@ class AppLocalizationsTe extends AppLocalizations {
   String get profSubValidUntil => 'చెల్లుబాటు తేదీ';
 
   @override
+  String get profSubRenew => 'రెన్యూ చేయండి';
+
+  @override
+  String profSubDaysLeftKept(int days) {
+    return '$days రోజులు మిగిలాయి · ఇప్పుడు రెన్యూ చేస్తే ఈ రోజులు అలాగే ఉంటాయి';
+  }
+
+  @override
+  String get profSubRenewUnavailable =>
+      'ఈ ప్లాన్‌ను ఇప్పుడు రెన్యూ చేయలేము. దయచేసి ఎక్స్‌ప్లోర్ నుండి ప్లాన్ ఎంచుకోండి.';
+
+  @override
   String get profSubNeedMoreBenefits => 'మరిన్ని ప్రయోజనాలు కావాలా?';
 
   @override
@@ -6715,4 +6727,38 @@ class AppLocalizationsTe extends AppLocalizations {
 
   @override
   String get coreForceUpdateButton => 'ఇప్పుడే అప్‌డేట్ చేయండి';
+
+  @override
+  String get aucAutoBidLimitLabel => 'ఈ వాహనానికి ఆటో-బిడ్ లిమిట్';
+
+  @override
+  String get aucAutoBidNoLimit => 'లిమిట్ లేదు';
+
+  @override
+  String aucAutoBidLimitHelper(String amount) {
+    return 'ఖాళీగా ఉంచితే మీ మొత్తం కొనుగోలు లిమిట్ (₹$amount) వాడబడుతుంది.';
+  }
+
+  @override
+  String aucAutoBidLimitMin(String amount) {
+    return 'కనీసం ₹$amount ఉండాలి';
+  }
+
+  @override
+  String aucAutoBidOnStatusCapped(String count, String max, String amount) {
+    return 'ఆన్ · $maxలో $count బిడ్ · ₹$amount వరకు';
+  }
+
+  @override
+  String get aucAutoBidEditLimit => 'లిమిట్ మార్చండి';
+
+  @override
+  String get aucAutoBidEditLimitTitle => 'ఆటో-బిడ్ లిమిట్';
+
+  @override
+  String get aucAutoBidLimitUpdated => 'ఆటో-బిడ్ లిమిట్ అప్‌డేట్ అయింది';
+
+  @override
+  String get aucAutoBidStoppedMaxAmount =>
+      'ఆటో-బిడ్ ఆగింది: తదుపరి బిడ్ ఈ వాహనానికి మీ లిమిట్ కంటే ఎక్కువ';
 }

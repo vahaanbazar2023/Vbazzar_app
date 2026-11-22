@@ -1722,6 +1722,9 @@
   "profSubActive": "सक्रिय",
   "profSubInactive": "निष्क्रिय",
   "profSubValidUntil": "वैधता तक",
+  "profSubRenew": "रिन्यू करें",
+  "profSubDaysLeftKept": "{days} दिन बाकी · अभी रिन्यू करें, ये दिन बने रहेंगे",
+  "profSubRenewUnavailable": "यह प्लान अभी रिन्यू नहीं हो सकता। कृपया एक्सप्लोर से प्लान चुनें।",
   "profSubNeedMoreBenefits": "और लाभ चाहिए?",
   "profSubExploreOtherPlans": "हमारे अन्य प्लान देखें और अपनी जरूरत के अनुसार चुनें।",
   "profSubNoActivePlans": "कोई सक्रिय प्लान नहीं",
@@ -2121,5 +2124,14 @@
   "aucAutoBidConfirmCta": "चालू करें",
   "coreForceUpdateTitle": "अपडेट ज़रूरी है",
   "coreForceUpdateMessage": "वाहन बाज़ार का नया वर्ज़न उपलब्ध है। ऐप का इस्तेमाल जारी रखने के लिए कृपया अपडेट करें।",
-  "coreForceUpdateButton": "अभी अपडेट करें"
+  "coreForceUpdateButton": "अभी अपडेट करें",
+  "aucAutoBidLimitLabel": "इस वाहन के लिए ऑटो-बिड लिमिट",
+  "aucAutoBidNoLimit": "कोई लिमिट नहीं",
+  "aucAutoBidLimitHelper": "खाली छोड़ें तो आपकी पूरी बाइंग लिमिट (₹{amount}) इस्तेमाल होगी।",
+  "aucAutoBidLimitMin": "कम से कम ₹{amount} होना चाहिए",
+  "aucAutoBidOnStatusCapped": "चालू · {max} में से {count} बोली · ₹{amount} तक",
+  "aucAutoBidEditLimit": "लिमिट बदलें",
+  "aucAutoBidEditLimitTitle": "ऑटो-बिड लिमिट",
+  "aucAutoBidLimitUpdated": "ऑटो-बिड लिमिट अपडेट हुई",
+  "aucAutoBidStoppedMaxAmount": "ऑटो-बिड रुकी: अगली बोली इस वाहन की आपकी लिमिट से ज़्यादा है"
 }

@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../constants/app_colors.dart';
 
-/// Round "watch" (eye) button for the auction watchlist — same look as [WishlistButton].
+/// Round "watch" (eye) button for the auction watchlist — same look as [WishlistButton]:
+/// white circle, red outline eye when not watching, filled eye when watching.
 class WatchlistButton extends StatelessWidget {
   final bool isWatchlisted;
   final VoidCallback? onTap;
@@ -26,7 +27,7 @@ class WatchlistButton extends StatelessWidget {
         width: s,
         height: s,
         decoration: BoxDecoration(
-          color: isWatchlisted ? AppColors.primary : Colors.white,
+          color: Colors.white,
           shape: BoxShape.circle,
           boxShadow: [
             BoxShadow(
@@ -38,7 +39,7 @@ class WatchlistButton extends StatelessWidget {
         ),
         child: Icon(
           isWatchlisted ? Icons.visibility_rounded : Icons.visibility_outlined,
-          color: isWatchlisted ? Colors.white : AppColors.primary,
+          color: AppColors.primary,
           size: s * 0.50,
         ),
       ),

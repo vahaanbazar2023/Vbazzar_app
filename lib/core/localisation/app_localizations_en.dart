@@ -5371,6 +5371,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get profSubValidUntil => 'Valid Until';
 
   @override
+  String get profSubRenew => 'Renew';
+
+  @override
+  String profSubDaysLeftKept(int days) {
+    return '$days days left · renew now and keep them';
+  }
+
+  @override
+  String get profSubRenewUnavailable =>
+      'This plan can\'t be renewed right now. Please pick a plan from Explore.';
+
+  @override
   String get profSubNeedMoreBenefits => 'Need more benefits?';
 
   @override
@@ -6626,4 +6638,38 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get coreForceUpdateButton => 'Update now';
+
+  @override
+  String get aucAutoBidLimitLabel => 'Auto-bid limit for this vehicle';
+
+  @override
+  String get aucAutoBidNoLimit => 'No limit';
+
+  @override
+  String aucAutoBidLimitHelper(String amount) {
+    return 'Leave empty to use your whole buying limit (₹$amount).';
+  }
+
+  @override
+  String aucAutoBidLimitMin(String amount) {
+    return 'Must be at least ₹$amount';
+  }
+
+  @override
+  String aucAutoBidOnStatusCapped(String count, String max, String amount) {
+    return 'On · bid $count of $max · up to ₹$amount';
+  }
+
+  @override
+  String get aucAutoBidEditLimit => 'Edit limit';
+
+  @override
+  String get aucAutoBidEditLimitTitle => 'Auto-bid limit';
+
+  @override
+  String get aucAutoBidLimitUpdated => 'Auto-bid limit updated';
+
+  @override
+  String get aucAutoBidStoppedMaxAmount =>
+      'Auto-bid stopped: the next bid is above your limit for this vehicle';
 }

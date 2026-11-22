@@ -21,6 +21,7 @@ import '../controllers/vehicle_listing_controller.dart';
 import '../domain/entities/auction_entity.dart';
 import '../models/vehicle_listing.dart';
 import 'auction_activity_fab.dart';
+import 'bid_status_style.dart';
 import '../../../core/design_system/molecules/collapsible_section.dart';
 import 'auction_filter_bottom_sheet.dart';
 import 'gate_pass_sheet.dart';
@@ -495,14 +496,17 @@ class _VehicleCardState extends State<_VehicleCard> {
     final cardBorderColor = isUpcoming
         ? AppColors.grey300
         : isWinning
-        ? const Color(0xFF2E7D32)
+        ? BidStatusStyle.win
         : isLosing
-        ? const Color(0xFFC62828)
+        ? BidStatusStyle.lose
         : AppColors.grey200;
 
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        // Whole card tinted green while winning, red while losing.
+        color: isUpcoming
+            ? Colors.white
+            : BidStatusStyle.cardBackground(isWinning: isWinning, isLosing: isLosing),
         borderRadius: BorderRadius.circular(14.r),
         border: Border.all(color: cardBorderColor, width: hasBid ? 1.5 : 1.0),
         boxShadow: [
@@ -639,7 +643,18 @@ class _VehicleCardState extends State<_VehicleCard> {
 
                           SizedBox(height: 12.h),
 
-                          // Remarks row — always visible
+                          // Remarks row — always visible: a highlighted
+                          // winning / losing pill once the user has bid.
+                          if (hasBid && !isUpcoming)
+                            Center(
+                              child: BidStatusPill(
+                                isWinning: isWinning,
+                                label: isWinning
+                                    ? context.l10n.aucYouAreWinning
+                                    : context.l10n.aucYouAreLosing,
+                              ),
+                            )
+                          else
                           Center(
                             child: RichText(
                               text: TextSpan(
@@ -1036,41 +1051,39 @@ class _VehicleCardState extends State<_VehicleCard> {
               ], // end else (upcoming guard)
             ],
           ),
-          // Wishlist heart button — top right of card
+          // Heart / share / watch — one evenly spaced column at the top right of the card.
+          // Size and gaps use the same unit (.r) so the spacing stays equal on every screen.
           Positioned(
-            top: 8.h,
-            right: 8.w,
-            child: WishlistButton(
-              isWishlisted: v.isWishlisted,
-              onTap: () => widget.controller.toggleWishlist(v),
-              size: 32.r,
-            ),
-          ),
-          // Watchlist (eye) button — below the share button
-          Positioned(
-            top: 8.h + 2 * (32.r + 8.h),
-            right: 8.w,
-            child: WatchlistButton(
-              isWatchlisted: v.isWatchlisted,
-              onTap: () => widget.controller.toggleWatchlist(v),
-              size: 32.r,
-              tooltip: context.l10n.aucWatchlist,
-            ),
-          ),
-          // Share button — directly below the heart
-          Positioned(
-            top: 8.h + 32.r + 8.h,
-            right: 8.w,
-            child: ShareCircleButton(
-              size: 32.r,
-              onShare: () async {
-                if (!Get.isRegistered<ShareService>()) return;
-                await ShareService.to.shareAuctionVehicle(
-                  vehicleId: v.vehicleId,
-                  name: '${v.make} ${v.model}'.trim(),
-                  auctionId: v.auctionId,
-                );
-              },
+            top: 8.r,
+            right: 8.r,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                WishlistButton(
+                  isWishlisted: v.isWishlisted,
+                  onTap: () => widget.controller.toggleWishlist(v),
+                  size: 30.r,
+                ),
+                SizedBox(height: 6.r),
+                ShareCircleButton(
+                  size: 30.r,
+                  onShare: () async {
+                    if (!Get.isRegistered<ShareService>()) return;
+                    await ShareService.to.shareAuctionVehicle(
+                      vehicleId: v.vehicleId,
+                      name: '${v.make} ${v.model}'.trim(),
+                      auctionId: v.auctionId,
+                    );
+                  },
+                ),
+                SizedBox(height: 6.r),
+                WatchlistButton(
+                  isWatchlisted: v.isWatchlisted,
+                  onTap: () => widget.controller.toggleWatchlist(v),
+                  size: 30.r,
+                  tooltip: context.l10n.aucWatchlist,
+                ),
+              ],
             ),
           ),
         ],

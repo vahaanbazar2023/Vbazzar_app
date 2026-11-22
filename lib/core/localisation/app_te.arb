@@ -1488,6 +1488,9 @@
   "profSubActive": "క్రియాశీలం",
   "profSubInactive": "క్రియాశీలం కాదు",
   "profSubValidUntil": "చెల్లుబాటు తేదీ",
+  "profSubRenew": "రెన్యూ చేయండి",
+  "profSubDaysLeftKept": "{days} రోజులు మిగిలాయి · ఇప్పుడు రెన్యూ చేస్తే ఈ రోజులు అలాగే ఉంటాయి",
+  "profSubRenewUnavailable": "ఈ ప్లాన్‌ను ఇప్పుడు రెన్యూ చేయలేము. దయచేసి ఎక్స్‌ప్లోర్ నుండి ప్లాన్ ఎంచుకోండి.",
   "profSubNeedMoreBenefits": "మరిన్ని ప్రయోజనాలు కావాలా?",
   "profSubExploreOtherPlans": "మా ఇతర ప్లాన్‌లను అన్వేషించి మీ అవసరాలకు సరిపోయేదాన్ని ఎంచుకోండి.",
   "profSubNoActivePlans": "క్రియాశీల ప్లాన్‌లు లేవు",
@@ -1887,5 +1890,14 @@
   "aucAutoBidConfirmCta": "ఆన్ చేయండి",
   "coreForceUpdateTitle": "అప్‌డేట్ అవసరం",
   "coreForceUpdateMessage": "వాహన్ బజార్ కొత్త వెర్షన్ అందుబాటులో ఉంది. యాప్‌ను ఉపయోగించడం కొనసాగించడానికి దయచేసి అప్‌డేట్ చేయండి.",
-  "coreForceUpdateButton": "ఇప్పుడే అప్‌డేట్ చేయండి"
+  "coreForceUpdateButton": "ఇప్పుడే అప్‌డేట్ చేయండి",
+  "aucAutoBidLimitLabel": "ఈ వాహనానికి ఆటో-బిడ్ లిమిట్",
+  "aucAutoBidNoLimit": "లిమిట్ లేదు",
+  "aucAutoBidLimitHelper": "ఖాళీగా ఉంచితే మీ మొత్తం కొనుగోలు లిమిట్ (₹{amount}) వాడబడుతుంది.",
+  "aucAutoBidLimitMin": "కనీసం ₹{amount} ఉండాలి",
+  "aucAutoBidOnStatusCapped": "ఆన్ · {max}లో {count} బిడ్ · ₹{amount} వరకు",
+  "aucAutoBidEditLimit": "లిమిట్ మార్చండి",
+  "aucAutoBidEditLimitTitle": "ఆటో-బిడ్ లిమిట్",
+  "aucAutoBidLimitUpdated": "ఆటో-బిడ్ లిమిట్ అప్‌డేట్ అయింది",
+  "aucAutoBidStoppedMaxAmount": "ఆటో-బిడ్ ఆగింది: తదుపరి బిడ్ ఈ వాహనానికి మీ లిమిట్ కంటే ఎక్కువ"
 }
