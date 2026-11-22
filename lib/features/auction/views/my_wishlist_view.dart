@@ -315,6 +315,7 @@ class AutoBidLimitDialog extends StatefulWidget {
 
 class _AutoBidLimitDialogState extends State<AutoBidLimitDialog> {
   late final TextEditingController _ctrl;
+  final _focus = FocusNode();
   String? _error;
 
   @override
@@ -322,11 +323,17 @@ class _AutoBidLimitDialogState extends State<AutoBidLimitDialog> {
     super.initState();
     final cap = widget.vehicle.autoBidMaxAmount;
     _ctrl = TextEditingController(text: cap != null ? '$cap' : '');
+    if (widget.editing) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) _focus.requestFocus();
+      });
+    }
   }
 
   @override
   void dispose() {
     _ctrl.dispose();
+    _focus.dispose();
     super.dispose();
   }
 
@@ -352,68 +359,305 @@ class _AutoBidLimitDialogState extends State<AutoBidLimitDialog> {
   @override
   Widget build(BuildContext context) {
     final v = widget.vehicle;
+    final l10n = context.l10n;
     final step = (v.bidIncrementAmount ?? 0) > 0 ? v.bidIncrementAmount! : 1;
-    return AlertDialog(
-      title: Text(
-        widget.editing
-            ? context.l10n.aucAutoBidEditLimitTitle
-            : context.l10n.aucAutoBidConfirmTitle,
-      ),
-      content: SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            if (!widget.editing) ...[
-              Text(
-                context.l10n.aucAutoBidConfirmBody(
-                  WatchlistController.formatAmount(step),
-                  '${v.maxUserVehiclesBidLimit}',
+    return Dialog(
+      backgroundColor: Colors.white,
+      surfaceTintColor: Colors.transparent,
+      insetPadding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 24.h),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.r)),
+      clipBehavior: Clip.antiAlias,
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 440),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              _AutoBidDialogHeader(
+                title: widget.editing
+                    ? l10n.aucAutoBidEditLimitTitle
+                    : l10n.aucAutoBidConfirmTitle,
+                vehicleTitle: v.displayTitle,
+                registrationNo: v.registrationNo,
+                editing: widget.editing,
+              ),
+              Padding(
+                padding: EdgeInsets.fromLTRB(20.w, 18.h, 20.w, 20.h),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    if (!widget.editing) ...[
+                      _AutoBidHowItWorks(
+                        text: l10n.aucAutoBidConfirmBody(
+                          WatchlistController.formatAmount(step),
+                          '${v.maxUserVehiclesBidLimit}',
+                        ),
+                      ),
+                      SizedBox(height: 18.h),
+                    ],
+                    Theme(
+                      // Brand-red cursor, selection and handle (not the default purple).
+                      data: Theme.of(context).copyWith(
+                        textSelectionTheme: TextSelectionThemeData(
+                          cursorColor: AppColors.primary,
+                          selectionColor: AppColors.primary.withValues(
+                            alpha: 0.25,
+                          ),
+                          selectionHandleColor: AppColors.primary,
+                        ),
+                      ),
+                      child: CustomInputField(
+                        key: const ValueKey('auto-bid-limit-field'),
+                        controller: _ctrl,
+                        focusNode: _focus,
+                        label: l10n.aucAutoBidLimitLabel,
+                        placeholder: l10n.aucAutoBidNoLimit,
+                        errorText: _error,
+                        height: 52.h,
+                        keyboardType: TextInputType.number,
+                        textInputAction: TextInputAction.done,
+                        inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly,
+                        ],
+                        onChanged: (_) {
+                          if (_error != null) setState(() => _error = null);
+                        },
+                        onSubmitted: (_) => _submit(),
+                        textStyle: TextStyle(
+                          fontFamily: 'Montserrat',
+                          fontSize: 17.sp,
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.textPrimary,
+                        ),
+                        prefixIcon: Icons.currency_rupee_rounded,
+                      ),
+                    ),
+                    if (_error == null) ...[
+                      SizedBox(height: 6.h),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Icon(
+                            Icons.info_outline_rounded,
+                            size: 14.r,
+                            color: AppColors.grey600,
+                          ),
+                          SizedBox(width: 4.w),
+                          Expanded(
+                            child: Text(
+                              l10n.aucAutoBidLimitHelper(
+                                WatchlistController.formatAmount(
+                                  v.buyingLimitForVehicle,
+                                ),
+                              ),
+                              style: TextStyle(
+                                fontFamily: 'Montserrat',
+                                fontSize: 11.5.sp,
+                                height: 1.35,
+                                color: AppColors.grey650,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                    SizedBox(height: 22.h),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: GradientButton.outlined(
+                            text: l10n.cancel,
+                            width: double.infinity,
+                            height: 38.h,
+                            fontSize: 14.sp,
+                            fontWeight: FontWeight.w600,
+                            onPressed: () => Navigator.of(context).pop(),
+                          ),
+                        ),
+                        SizedBox(width: 12.w),
+                        Expanded(
+                          child: GradientButton.filled(
+                            text: widget.editing
+                                ? l10n.save
+                                : l10n.aucAutoBidConfirmCta,
+                            width: double.infinity,
+                            height: 38.h,
+                            fontSize: 14.sp,
+                            fontWeight: FontWeight.w700,
+                            onPressed: _submit,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
               ),
-              const SizedBox(height: 16),
             ],
-            TextField(
-              key: const ValueKey('auto-bid-limit-field'),
-              controller: _ctrl,
-              autofocus: widget.editing,
-              keyboardType: TextInputType.number,
-              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-              onChanged: (_) {
-                if (_error != null) setState(() => _error = null);
-              },
-              onSubmitted: (_) => _submit(),
-              decoration: InputDecoration(
-                labelText: context.l10n.aucAutoBidLimitLabel,
-                hintText: context.l10n.aucAutoBidNoLimit,
-                prefixText: '₹ ',
-                errorText: _error,
-                helperText: context.l10n.aucAutoBidLimitHelper(
-                  WatchlistController.formatAmount(v.buyingLimitForVehicle),
-                ),
-                helperMaxLines: 3,
-                errorMaxLines: 2,
-                border: const OutlineInputBorder(),
-              ),
-            ),
-          ],
-        ),
-      ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.of(context).pop(),
-          child: Text(context.l10n.cancel),
-        ),
-        FilledButton(
-          style: FilledButton.styleFrom(backgroundColor: AppColors.primary),
-          onPressed: _submit,
-          child: Text(
-            widget.editing
-                ? context.l10n.save
-                : context.l10n.aucAutoBidConfirmCta,
           ),
         ),
-      ],
+      ),
+    );
+  }
+}
+
+/// Brand-red gradient header of [AutoBidLimitDialog]: auto-bid badge, title and
+/// the vehicle it applies to, with a large faded gavel as a watermark.
+class _AutoBidDialogHeader extends StatelessWidget {
+  final String title;
+  final String vehicleTitle;
+  final String registrationNo;
+  final bool editing;
+  const _AutoBidDialogHeader({
+    required this.title,
+    required this.vehicleTitle,
+    required this.registrationNo,
+    required this.editing,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [AppColors.ctaGradientStart, AppColors.ctaGradientEnd],
+        ),
+      ),
+      child: Stack(
+        clipBehavior: Clip.hardEdge,
+        children: [
+          Positioned(
+            right: -18.w,
+            bottom: -22.h,
+            child: ExcludeSemantics(
+              child: Icon(
+                Icons.gavel_rounded,
+                size: 118.r,
+                color: Colors.white.withValues(alpha: 0.10),
+              ),
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.fromLTRB(20.w, 20.h, 20.w, 18.h),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  width: 46.r,
+                  height: 46.r,
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.16),
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: Colors.white.withValues(alpha: 0.35),
+                    ),
+                  ),
+                  child: Icon(
+                    editing ? Icons.tune_rounded : Icons.bolt_rounded,
+                    color: Colors.white,
+                    size: 26.r,
+                  ),
+                ),
+                SizedBox(width: 14.w),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        title,
+                        style: TextStyle(
+                          fontFamily: 'Montserrat',
+                          fontSize: 17.sp,
+                          fontWeight: FontWeight.w800,
+                          color: Colors.white,
+                          height: 1.25,
+                        ),
+                      ),
+                      if (vehicleTitle.isNotEmpty) ...[
+                        SizedBox(height: 4.h),
+                        Text(
+                          vehicleTitle,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontFamily: 'Montserrat',
+                            fontSize: 12.5.sp,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.white.withValues(alpha: 0.88),
+                          ),
+                        ),
+                      ],
+                      if (registrationNo.isNotEmpty) ...[
+                        SizedBox(height: 8.h),
+                        Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 8.w,
+                            vertical: 3.h,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withValues(alpha: 0.16),
+                            borderRadius: BorderRadius.circular(6.r),
+                          ),
+                          child: Text(
+                            registrationNo,
+                            style: TextStyle(
+                              fontFamily: 'Montserrat',
+                              fontSize: 11.sp,
+                              fontWeight: FontWeight.w700,
+                              letterSpacing: 0.8,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// The "how auto-bid works" explanation, as a tinted card with a brand accent.
+class _AutoBidHowItWorks extends StatelessWidget {
+  final String text;
+  const _AutoBidHowItWorks({required this.text});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.fromLTRB(12.w, 12.h, 14.w, 12.h),
+      decoration: BoxDecoration(
+        color: AppColors.lightOrangeBackground,
+        borderRadius: BorderRadius.circular(12.r),
+        border: Border(
+          left: BorderSide(color: AppColors.primary, width: 3.w),
+        ),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(Icons.autorenew_rounded, size: 18.r, color: AppColors.primary),
+          SizedBox(width: 10.w),
+          Expanded(
+            child: Text(
+              text,
+              style: TextStyle(
+                fontFamily: 'Montserrat',
+                fontSize: 12.5.sp,
+                height: 1.45,
+                color: AppColors.grey700,
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -693,7 +937,10 @@ class _WishlistCardState extends State<_WishlistCard> {
     return Container(
       decoration: BoxDecoration(
         // Whole card tinted green while winning, red while losing.
-        color: BidStatusStyle.cardBackground(isWinning: isWinning, isLosing: isLosing),
+        color: BidStatusStyle.cardBackground(
+          isWinning: isWinning,
+          isLosing: isLosing,
+        ),
         borderRadius: BorderRadius.circular(14.r),
         border: Border.all(
           color: cardBorderColor,
