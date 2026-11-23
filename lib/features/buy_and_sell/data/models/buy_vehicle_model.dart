@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 
 import '../../domain/entities/buy_vehicle_entity.dart';
+import '../../domain/entities/vehicle_files.dart';
 
 class BuyVehicleModel extends BuyVehicleEntity {
   const BuyVehicleModel({
@@ -23,6 +24,7 @@ class BuyVehicleModel extends BuyVehicleEntity {
     super.city,
     super.imageUrls,
     super.vehicleFileUrls,
+    super.documents,
     super.sellerPhone,
     super.ownerDetailsAccess,
     super.vehicleDetailsAccess,
@@ -40,18 +42,9 @@ class BuyVehicleModel extends BuyVehicleEntity {
   });
 
   factory BuyVehicleModel.fromJson(Map<String, dynamic> json) {
-    // Parse image URLs from vehicle_files array
-    final vehicleFiles = <String>[];
-    if (json['vehicle_files'] is List) {
-      for (final file in json['vehicle_files'] as List) {
-        if (file is Map<String, dynamic>) {
-          final url = file['file_url']?.toString();
-          if (url != null && url.isNotEmpty) {
-            vehicleFiles.add(url);
-          }
-        }
-      }
-    }
+    // vehicle_files: photos go to the gallery; RC / insurance are documents.
+    final files = VehicleFiles.fromJson(json['vehicle_files']);
+    final vehicleFiles = files.photoUrls;
 
     // Parse additional image URLs
     final images = <String>[];
@@ -90,6 +83,7 @@ class BuyVehicleModel extends BuyVehicleEntity {
       price: json['price'] is num ? (json['price'] as num).toDouble() : null,
       imageUrls: images,
       vehicleFileUrls: vehicleFiles,
+      documents: files.documents,
       // Owner phone from user_info.mobile — only meaningful when
       // owner_details_access == "yes"
       sellerPhone:

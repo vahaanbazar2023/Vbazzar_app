@@ -1,4 +1,5 @@
 import '../../../../core/extensions/context_extensions.dart';
+import 'vehicle_files.dart';
 
 class BuyVehicleEntity {
   final String id;
@@ -19,7 +20,13 @@ class BuyVehicleEntity {
   final double? price;
   final String? city;
   final List<String> imageUrls;
+
+  /// Vehicle photos from `vehicle_files` (file_type `image`) — the gallery.
   final List<String> vehicleFileUrls;
+
+  /// RC / insurance files. Never shown in the photo gallery. The backend only
+  /// sends them to users with the Vehicle Details Access plan (or the seller).
+  final List<VehicleDocument> documents;
 
   /// Owner's mobile number from `user_info.mobile`.
   /// Only non-null when [ownerDetailsAccess] == "yes".
@@ -79,6 +86,7 @@ class BuyVehicleEntity {
     this.city,
     this.imageUrls = const [],
     this.vehicleFileUrls = const [],
+    this.documents = const [],
     this.sellerPhone,
     this.ownerDetailsAccess,
     this.vehicleDetailsAccess,
@@ -113,7 +121,7 @@ class BuyVehicleEntity {
 
   /// All image URLs merged (vehicle files first, then additional imageUrls).
   List<String> get allImageUrls {
-    final all = <String>[...vehicleFileUrls, ...imageUrls];
+    final all = <String>{...vehicleFileUrls, ...imageUrls}.toList();
     if (all.isEmpty && imageUrl != null && imageUrl!.isNotEmpty) {
       all.add(imageUrl!);
     }
@@ -164,12 +172,7 @@ class BuyVehicleEntity {
   /// Build a BuyVehicleEntity from the GET /sell-buy/vehicle/{id} response.
   /// Used for deep-link navigation where only the vehicle ID is known.
   factory BuyVehicleEntity.fromSingleVehicleJson(Map<String, dynamic> j) {
-    final filesList = (j['vehicle_files'] as List? ?? []);
-    final imageUrls = filesList
-        .where((f) => (f as Map)['file_type'] == 'image')
-        .map<String>((f) => (f['file_url'] as String?) ?? '')
-        .where((u) => u.isNotEmpty)
-        .toList();
+    final files = VehicleFiles.fromJson(j['vehicle_files']);
 
     return BuyVehicleEntity(
       id: (j['sb_vehicle_id'] as String?) ?? '',
@@ -186,8 +189,8 @@ class BuyVehicleEntity {
       city: j['city_name'] as String?,
       price: (j['price'] as num?)?.toDouble(),
       status: j['status'] as String?,
-      imageUrls: imageUrls,
-      vehicleFileUrls: imageUrls,
+      vehicleFileUrls: files.photoUrls,
+      documents: files.documents,
       inspectionRequested: 'no',
       odometer: j['odometer']?.toString(),
       fitness: parseFlag(j['fitness']),
