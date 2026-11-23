@@ -17,6 +17,7 @@ import '../../revvot/revvot_buying_power_button.dart';
 import '../../revvot/revvot_service.dart';
 import '../controllers/vehicle_detail_controller.dart';
 import '../domain/entities/buy_vehicle_entity.dart';
+import '../domain/entities/vehicle_files.dart';
 
 class BuyVehicleDetailsView extends StatefulWidget {
   /// When true the screen is opened by the vehicle's owner (from My Vehicles):
@@ -312,6 +313,15 @@ class _BuyVehicleDetailsViewState extends State<BuyVehicleDetailsView> {
                     ],
                   ),
                   SizedBox(height: 10.h),
+
+                  // ── RC / insurance (kept out of the photo gallery) ───────
+                  // The backend sends these only with the Vehicle Details
+                  // Access plan or to the seller, so the row stays hidden
+                  // for everyone else.
+                  if (vehicle.documents.isNotEmpty) ...[
+                    _DocumentsRow(documents: vehicle.documents),
+                    SizedBox(height: 10.h),
+                  ],
 
                   // ── Vehicle details accordion ────────────────────────────
                   _VehicleDetailsAccordion(vehicle: vehicle),
@@ -1358,6 +1368,84 @@ class _SectionLabel extends StatelessWidget {
             ),
           ),
         ),
+      ],
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// RC / insurance buttons — documents open outside the photo gallery
+// ─────────────────────────────────────────────────────────────────────────────
+
+class _DocumentsRow extends StatelessWidget {
+  final List<VehicleDocument> documents;
+  const _DocumentsRow({required this.documents});
+
+  /// "RC Copy", "Insurance Copy" — numbered ("RC Copy 2") when there are
+  /// several of the same kind.
+  static List<String> labels(
+    List<VehicleDocument> documents, {
+    required String rc,
+    required String insurance,
+  }) {
+    final totals = <String, int>{};
+    for (final d in documents) {
+      totals[d.type] = (totals[d.type] ?? 0) + 1;
+    }
+    final seen = <String, int>{};
+    return [
+      for (final d in documents)
+        () {
+          final n = seen[d.type] = (seen[d.type] ?? 0) + 1;
+          final base = d.isRc
+              ? rc
+              : d.isInsurance
+              ? insurance
+              : d.type.toUpperCase();
+          return (totals[d.type] ?? 1) > 1 ? '$base $n' : base;
+        }(),
+    ];
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final names = labels(
+      documents,
+      rc: context.l10n.rcCopy,
+      insurance: context.l10n.insuranceCopy,
+    );
+    return Wrap(
+      spacing: 8.w,
+      runSpacing: 8.h,
+      children: [
+        for (var i = 0; i < documents.length; i++)
+          OutlinedButton.icon(
+            onPressed: () => launchUrl(
+              Uri.parse(documents[i].url),
+              mode: LaunchMode.externalApplication,
+            ),
+            icon: Icon(
+              Icons.description_outlined,
+              size: 16.r,
+              color: AppColors.primary,
+            ),
+            label: Text(
+              names[i],
+              style: TextStyle(
+                fontFamily: 'Montserrat',
+                fontSize: 12.sp,
+                fontWeight: FontWeight.w700,
+                color: AppColors.primary,
+              ),
+            ),
+            style: OutlinedButton.styleFrom(
+              side: const BorderSide(color: AppColors.primary),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20.r),
+              ),
+              padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
+            ),
+          ),
       ],
     );
   }

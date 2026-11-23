@@ -1,4 +1,5 @@
 import '../../domain/entities/subscribed_vehicle_entity.dart';
+import '../../domain/entities/vehicle_files.dart';
 
 class SubscribedVehicleModel extends SubscribedVehicleEntity {
   const SubscribedVehicleModel({
@@ -24,15 +25,11 @@ class SubscribedVehicleModel extends SubscribedVehicleEntity {
   });
 
   factory SubscribedVehicleModel.fromJson(Map<String, dynamic> json) {
-    // Build image URLs from vehicle_files + image_urls + image_url
-    final List<String> imageUrls = [];
-    final vehicleFiles = json['vehicle_files'];
-    if (vehicleFiles is List) {
-      for (final f in vehicleFiles) {
-        final url = f['file_url']?.toString() ?? f['url']?.toString() ?? '';
-        if (url.isNotEmpty) imageUrls.add(url);
-      }
-    }
+    // Build image URLs from vehicle_files (photos only — never RC /
+    // insurance) + image_urls + image_url
+    final List<String> imageUrls = [
+      ...VehicleFiles.fromJson(json['vehicle_files']).photoUrls,
+    ];
     final rawImageUrls = json['image_urls'];
     if (rawImageUrls is List) {
       for (final u in rawImageUrls) {

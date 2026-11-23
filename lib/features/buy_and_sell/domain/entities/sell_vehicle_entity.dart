@@ -42,12 +42,9 @@ class SellVehicleEntity {
 
   /// Primary image URL for display - uses first vehicle file image if available.
   String get primaryImageUrl {
-    if (vehicleFiles != null && vehicleFiles!.isNotEmpty) {
-      final imageFile = vehicleFiles!.firstWhere(
-        (f) => f.fileType == 'image',
-        orElse: () => vehicleFiles!.first,
-      );
-      return imageFile.fileUrl;
+    // Photos only: never fall back to an RC / insurance file as the thumbnail.
+    for (final f in vehicleFiles ?? const <VehicleFile>[]) {
+      if (f.fileType == 'image' && f.fileUrl.isNotEmpty) return f.fileUrl;
     }
     return imageUrl ?? '';
   }
