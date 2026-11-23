@@ -3183,6 +3183,45 @@ class AppLocalizationsEn extends AppLocalizations {
       'File picker integration pending. Add file_picker package to enable uploads.';
 
   @override
+  String get apprYardName => 'Yard Name';
+
+  @override
+  String get apprYardNameHint => 'e.g. Medchal Yard';
+
+  @override
+  String get apprYardLocation => 'Yard Location';
+
+  @override
+  String get apprYardLocationHint => 'Address or area of the yard';
+
+  @override
+  String get apprAuctionCheck => 'Check';
+
+  @override
+  String get apprAuctionChecking => 'Checking our auction listings…';
+
+  @override
+  String get apprAuctionFound =>
+      'Found in our auction listings. Details are filled in: check them and add the rest.';
+
+  @override
+  String get apprAuctionPhotosAdding =>
+      'Adding photos from the auction listing…';
+
+  @override
+  String apprAuctionPhotosMissing(int count) {
+    return '$count photo(s) from the auction listing couldn\'t be added. Please add photos below.';
+  }
+
+  @override
+  String get apprAuctionNotFound =>
+      'Not in our auction listings. Please enter the vehicle details.';
+
+  @override
+  String get apprAuctionCheckFailed =>
+      'Couldn\'t check our auction listings. Please enter the vehicle details.';
+
+  @override
   String get apprSellYourVehicle => 'Sell Your Vehicle';
 
   @override
@@ -5387,6 +5426,14 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get profSubRenewUnavailable =>
       'This plan can\'t be renewed right now. Please pick a plan from Explore.';
+
+  @override
+  String get profSubRenewPlan => 'Renew Plan';
+
+  @override
+  String profSubRenewStartsAfter(String date) {
+    return 'Starts when your current plan ends on $date';
+  }
 
   @override
   String get profSubNeedMoreBenefits => 'Need more benefits?';

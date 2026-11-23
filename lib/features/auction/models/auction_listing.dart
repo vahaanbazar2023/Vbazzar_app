@@ -87,6 +87,16 @@ class AuctionListing {
           .trim()
           .toLowerCase();
 
+  /// When the auction ends (local time), or null if [endAt] can't be read.
+  DateTime? get endDateTime => parseAuctionEnd(endAt);
+
+  /// True once [now] is at or past the end time. An unreadable end time
+  /// counts as not ended, so a card is never hidden by a parsing problem.
+  bool hasEndedAt(DateTime now) {
+    final end = endDateTime;
+    return end != null && !now.isBefore(end);
+  }
+
   /// Arguments for [AppRoutes.vehicleListings]: this auction's vehicles only,
   /// on the same screen a category tap opens.
   Map<String, dynamic> vehicleListArguments() => {
@@ -97,4 +107,38 @@ class AuctionListing {
     'auctionTitle': auctionTitle,
     if (bidIncrementAmount != null) 'bidIncrementAmount': bidIncrementAmount,
   };
+}
+
+const _months = {
+  'Jan': 1, 'Feb': 2, 'Mar': 3, 'Apr': 4, 'May': 5, 'Jun': 6,
+  'Jul': 7, 'Aug': 8, 'Sep': 9, 'Oct': 10, 'Nov': 11, 'Dec': 12,
+};
+
+/// Reads an auction end time in either format the API sends:
+/// ISO ("2026-11-23T17:30:00+05:30") or IST text ("29 Jun 2029 - 06:00PM").
+/// Returns local time, or null when it can't be read.
+DateTime? parseAuctionEnd(String endAt) {
+  final text = endAt.trim();
+  if (text.isEmpty) return null;
+  try {
+    if (text.contains('T')) return DateTime.parse(text).toLocal();
+    final parts = text.split(' - ');
+    final dp = parts[0].trim().split(' ');
+    final day = int.parse(dp[0]);
+    final month = _months[dp[1]] ?? 1;
+    final year = int.parse(dp[2]);
+    int h = 0, min = 0;
+    if (parts.length > 1) {
+      final t = parts[1].trim().toUpperCase();
+      final isPm = t.endsWith('PM');
+      final nums = t.replaceAll('AM', '').replaceAll('PM', '').trim().split(':');
+      h = int.parse(nums[0]);
+      min = int.parse(nums[1]);
+      if (isPm && h != 12) h += 12;
+      if (!isPm && h == 12) h = 0;
+    }
+    return DateTime(year, month, day, h, min);
+  } catch (_) {
+    return null;
+  }
 }

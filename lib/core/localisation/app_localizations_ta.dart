@@ -3223,6 +3223,46 @@ class AppLocalizationsTa extends AppLocalizations {
       'கோப்பு தேர்வி ஒருங்கிணைப்பு நிலுவையில் உள்ளது. பதிவேற்றங்களை இயக்க file_picker தொகுப்பைச் சேர்க்கவும்.';
 
   @override
+  String get apprYardName => 'யார்டு பெயர்';
+
+  @override
+  String get apprYardNameHint => 'எ.கா. மேட்சல் யார்டு';
+
+  @override
+  String get apprYardLocation => 'யார்டு இடம்';
+
+  @override
+  String get apprYardLocationHint => 'யார்டின் முகவரி அல்லது பகுதி';
+
+  @override
+  String get apprAuctionCheck => 'சரிபார்';
+
+  @override
+  String get apprAuctionChecking =>
+      'எங்கள் ஏலப் பட்டியலில் சரிபார்க்கப்படுகிறது…';
+
+  @override
+  String get apprAuctionFound =>
+      'எங்கள் ஏலப் பட்டியலில் உள்ளது. விவரங்கள் நிரப்பப்பட்டன: சரிபார்த்து மீதியைச் சேர்க்கவும்.';
+
+  @override
+  String get apprAuctionPhotosAdding =>
+      'ஏலப் பட்டியலிலிருந்து புகைப்படங்கள் சேர்க்கப்படுகின்றன…';
+
+  @override
+  String apprAuctionPhotosMissing(int count) {
+    return 'ஏலப் பட்டியலின் $count புகைப்படம்(கள்) சேர்க்க முடியவில்லை. கீழே புகைப்படங்களைச் சேர்க்கவும்.';
+  }
+
+  @override
+  String get apprAuctionNotFound =>
+      'எங்கள் ஏலப் பட்டியலில் இல்லை. வாகன விவரங்களை உள்ளிடவும்.';
+
+  @override
+  String get apprAuctionCheckFailed =>
+      'ஏலப் பட்டியலைச் சரிபார்க்க முடியவில்லை. வாகன விவரங்களை உள்ளிடவும்.';
+
+  @override
   String get apprSellYourVehicle => 'உங்கள் வாகனத்தை விற்கவும்';
 
   @override
@@ -5490,6 +5530,14 @@ class AppLocalizationsTa extends AppLocalizations {
   @override
   String get profSubRenewUnavailable =>
       'இந்த திட்டத்தை இப்போது புதுப்பிக்க முடியாது. எக்ஸ்ப்ளோரிலிருந்து ஒரு திட்டத்தைத் தேர்ந்தெடுக்கவும்.';
+
+  @override
+  String get profSubRenewPlan => 'திட்டத்தைப் புதுப்பிக்கவும்';
+
+  @override
+  String profSubRenewStartsAfter(String date) {
+    return 'உங்கள் தற்போதைய திட்டம் $date அன்று முடிந்ததும் தொடங்கும்';
+  }
 
   @override
   String get profSubNeedMoreBenefits => 'மேலும் பலன்கள் வேண்டுமா?';

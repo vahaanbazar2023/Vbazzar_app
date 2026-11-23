@@ -3198,6 +3198,45 @@ class AppLocalizationsMl extends AppLocalizations {
       'ഫയൽ പിക്കർ സംയോജനം ബാക്കിയാണ്. അപ്‌ലോഡ് ചെയ്യാൻ file_picker പാക്കേജ് ചേർക്കുക.';
 
   @override
+  String get apprYardName => 'യാർഡിന്റെ പേര്';
+
+  @override
+  String get apprYardNameHint => 'ഉദാ. മേഡ്ചൽ യാർഡ്';
+
+  @override
+  String get apprYardLocation => 'യാർഡിന്റെ സ്ഥലം';
+
+  @override
+  String get apprYardLocationHint => 'യാർഡിന്റെ വിലാസം അല്ലെങ്കിൽ പ്രദേശം';
+
+  @override
+  String get apprAuctionCheck => 'പരിശോധിക്കുക';
+
+  @override
+  String get apprAuctionChecking => 'ഞങ്ങളുടെ ലേല ലിസ്റ്റിൽ പരിശോധിക്കുന്നു…';
+
+  @override
+  String get apprAuctionFound =>
+      'ഞങ്ങളുടെ ലേല ലിസ്റ്റിൽ കണ്ടെത്തി. വിവരങ്ങൾ പൂരിപ്പിച്ചു: അവ പരിശോധിച്ച് ബാക്കി ചേർക്കുക.';
+
+  @override
+  String get apprAuctionPhotosAdding =>
+      'ലേല ലിസ്റ്റിൽ നിന്ന് ഫോട്ടോകൾ ചേർക്കുന്നു…';
+
+  @override
+  String apprAuctionPhotosMissing(int count) {
+    return 'ലേല ലിസ്റ്റിലെ $count ഫോട്ടോ(കൾ) ചേർക്കാനായില്ല. ദയവായി താഴെ ഫോട്ടോകൾ ചേർക്കുക.';
+  }
+
+  @override
+  String get apprAuctionNotFound =>
+      'ഞങ്ങളുടെ ലേല ലിസ്റ്റിൽ ഇല്ല. ദയവായി വാഹന വിവരങ്ങൾ നൽകുക.';
+
+  @override
+  String get apprAuctionCheckFailed =>
+      'ലേല ലിസ്റ്റ് പരിശോധിക്കാനായില്ല. ദയവായി വാഹന വിവരങ്ങൾ നൽകുക.';
+
+  @override
   String get apprSellYourVehicle => 'നിങ്ങളുടെ വാഹനം വിൽക്കുക';
 
   @override
@@ -5452,6 +5491,14 @@ class AppLocalizationsMl extends AppLocalizations {
   @override
   String get profSubRenewUnavailable =>
       'ഈ പ്ലാൻ ഇപ്പോൾ പുതുക്കാൻ കഴിയില്ല. എക്സ്പ്ലോറിൽ നിന്ന് ഒരു പ്ലാൻ തിരഞ്ഞെടുക്കുക.';
+
+  @override
+  String get profSubRenewPlan => 'പ്ലാൻ പുതുക്കുക';
+
+  @override
+  String profSubRenewStartsAfter(String date) {
+    return 'നിലവിലെ പ്ലാൻ $date-ന് അവസാനിക്കുമ്പോൾ ആരംഭിക്കും';
+  }
 
   @override
   String get profSubNeedMoreBenefits => 'കൂടുതൽ ആനുകൂല്യങ്ങൾ വേണോ?';

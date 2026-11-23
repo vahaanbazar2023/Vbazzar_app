@@ -3198,6 +3198,45 @@ class AppLocalizationsKn extends AppLocalizations {
       'ಫೈಲ್ ಪಿಕ್ಕರ್ ಏಕೀಕರಣ ಬಾಕಿ ಇದೆ. ಅಪ್‌ಲೋಡ್‌ಗಳನ್ನು ಸಕ್ರಿಯಗೊಳಿಸಲು file_picker ಪ್ಯಾಕೇಜ್ ಸೇರಿಸಿ.';
 
   @override
+  String get apprYardName => 'ಯಾರ್ಡ್ ಹೆಸರು';
+
+  @override
+  String get apprYardNameHint => 'ಉದಾ. ಮೇಡ್ಚಲ್ ಯಾರ್ಡ್';
+
+  @override
+  String get apprYardLocation => 'ಯಾರ್ಡ್ ಸ್ಥಳ';
+
+  @override
+  String get apprYardLocationHint => 'ಯಾರ್ಡ್‌ನ ವಿಳಾಸ ಅಥವಾ ಪ್ರದೇಶ';
+
+  @override
+  String get apprAuctionCheck => 'ಪರಿಶೀಲಿಸಿ';
+
+  @override
+  String get apprAuctionChecking => 'ನಮ್ಮ ಹರಾಜು ಪಟ್ಟಿಯಲ್ಲಿ ಪರಿಶೀಲಿಸಲಾಗುತ್ತಿದೆ…';
+
+  @override
+  String get apprAuctionFound =>
+      'ನಮ್ಮ ಹರಾಜು ಪಟ್ಟಿಯಲ್ಲಿ ಸಿಕ್ಕಿದೆ. ವಿವರಗಳನ್ನು ತುಂಬಲಾಗಿದೆ: ಪರಿಶೀಲಿಸಿ ಮತ್ತು ಉಳಿದವನ್ನು ಸೇರಿಸಿ.';
+
+  @override
+  String get apprAuctionPhotosAdding =>
+      'ಹರಾಜು ಪಟ್ಟಿಯಿಂದ ಫೋಟೋಗಳನ್ನು ಸೇರಿಸಲಾಗುತ್ತಿದೆ…';
+
+  @override
+  String apprAuctionPhotosMissing(int count) {
+    return 'ಹರಾಜು ಪಟ್ಟಿಯ $count ಫೋಟೋ(ಗಳನ್ನು) ಸೇರಿಸಲಾಗಲಿಲ್ಲ. ದಯವಿಟ್ಟು ಕೆಳಗೆ ಫೋಟೋಗಳನ್ನು ಸೇರಿಸಿ.';
+  }
+
+  @override
+  String get apprAuctionNotFound =>
+      'ನಮ್ಮ ಹರಾಜು ಪಟ್ಟಿಯಲ್ಲಿ ಇಲ್ಲ. ದಯವಿಟ್ಟು ವಾಹನದ ವಿವರಗಳನ್ನು ನಮೂದಿಸಿ.';
+
+  @override
+  String get apprAuctionCheckFailed =>
+      'ಹರಾಜು ಪಟ್ಟಿಯನ್ನು ಪರಿಶೀಲಿಸಲು ಆಗಲಿಲ್ಲ. ದಯವಿಟ್ಟು ವಾಹನದ ವಿವರಗಳನ್ನು ನಮೂದಿಸಿ.';
+
+  @override
   String get apprSellYourVehicle => 'ನಿಮ್ಮ ವಾಹನವನ್ನು ಮಾರಾಟ ಮಾಡಿ';
 
   @override
@@ -5449,6 +5488,14 @@ class AppLocalizationsKn extends AppLocalizations {
   @override
   String get profSubRenewUnavailable =>
       'ಈ ಪ್ಲಾನ್ ಅನ್ನು ಈಗ ನವೀಕರಿಸಲು ಸಾಧ್ಯವಿಲ್ಲ. ದಯವಿಟ್ಟು ಎಕ್ಸ್‌ಪ್ಲೋರ್‌ನಿಂದ ಪ್ಲಾನ್ ಆರಿಸಿ.';
+
+  @override
+  String get profSubRenewPlan => 'ಪ್ಲಾನ್ ನವೀಕರಿಸಿ';
+
+  @override
+  String profSubRenewStartsAfter(String date) {
+    return 'ನಿಮ್ಮ ಈಗಿನ ಪ್ಲಾನ್ $date ರಂದು ಮುಗಿದಾಗ ಆರಂಭವಾಗುತ್ತದೆ';
+  }
 
   @override
   String get profSubNeedMoreBenefits => 'ಹೆಚ್ಚಿನ ಪ್ರಯೋಜನಗಳು ಬೇಕೇ?';

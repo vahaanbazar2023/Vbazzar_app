@@ -3208,6 +3208,44 @@ class AppLocalizationsTe extends AppLocalizations {
       'ఫైల్ పికర్ ఇంటిగ్రేషన్ పెండింగ్‌లో ఉంది. అప్‌లోడ్‌లను ప్రారంభించడానికి file_picker ప్యాకేజీని జోడించండి.';
 
   @override
+  String get apprYardName => 'యార్డ్ పేరు';
+
+  @override
+  String get apprYardNameHint => 'ఉదా. మేడ్చల్ యార్డ్';
+
+  @override
+  String get apprYardLocation => 'యార్డ్ స్థానం';
+
+  @override
+  String get apprYardLocationHint => 'యార్డ్ చిరునామా లేదా ప్రాంతం';
+
+  @override
+  String get apprAuctionCheck => 'తనిఖీ చేయండి';
+
+  @override
+  String get apprAuctionChecking => 'మా వేలం జాబితాలో తనిఖీ చేస్తోంది…';
+
+  @override
+  String get apprAuctionFound =>
+      'మా వేలం జాబితాలో దొరికింది. వివరాలు నింపబడ్డాయి: వాటిని తనిఖీ చేసి మిగతావి జోడించండి.';
+
+  @override
+  String get apprAuctionPhotosAdding => 'వేలం జాబితా నుండి ఫోటోలు జోడిస్తోంది…';
+
+  @override
+  String apprAuctionPhotosMissing(int count) {
+    return 'వేలం జాబితాలోని $count ఫోటో(లు) జోడించలేకపోయాం. దయచేసి కింద ఫోటోలు జోడించండి.';
+  }
+
+  @override
+  String get apprAuctionNotFound =>
+      'మా వేలం జాబితాలో లేదు. దయచేసి వాహన వివరాలు నమోదు చేయండి.';
+
+  @override
+  String get apprAuctionCheckFailed =>
+      'వేలం జాబితాను తనిఖీ చేయలేకపోయాం. దయచేసి వాహన వివరాలు నమోదు చేయండి.';
+
+  @override
   String get apprSellYourVehicle => 'మీ వాహనాన్ని అమ్మండి';
 
   @override
@@ -5457,6 +5495,14 @@ class AppLocalizationsTe extends AppLocalizations {
   @override
   String get profSubRenewUnavailable =>
       'ఈ ప్లాన్‌ను ఇప్పుడు రెన్యూ చేయలేము. దయచేసి ఎక్స్‌ప్లోర్ నుండి ప్లాన్ ఎంచుకోండి.';
+
+  @override
+  String get profSubRenewPlan => 'ప్లాన్ రెన్యూ చేయండి';
+
+  @override
+  String profSubRenewStartsAfter(String date) {
+    return 'మీ ప్రస్తుత ప్లాన్ $dateన ముగిసినప్పుడు ప్రారంభమవుతుంది';
+  }
 
   @override
   String get profSubNeedMoreBenefits => 'మరిన్ని ప్రయోజనాలు కావాలా?';

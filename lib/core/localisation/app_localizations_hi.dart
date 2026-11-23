@@ -3182,6 +3182,45 @@ class AppLocalizationsHi extends AppLocalizations {
       'फाइल पिकर इंटीग्रेशन बाकी है। अपलोड सक्षम करने के लिए file_picker पैकेज जोड़ें।';
 
   @override
+  String get apprYardName => 'यार्ड का नाम';
+
+  @override
+  String get apprYardNameHint => 'जैसे मेडचल यार्ड';
+
+  @override
+  String get apprYardLocation => 'यार्ड का स्थान';
+
+  @override
+  String get apprYardLocationHint => 'यार्ड का पता या क्षेत्र';
+
+  @override
+  String get apprAuctionCheck => 'जांचें';
+
+  @override
+  String get apprAuctionChecking => 'हमारी नीलामी सूची में जांच हो रही है…';
+
+  @override
+  String get apprAuctionFound =>
+      'हमारी नीलामी सूची में मिला। विवरण भर दिए गए हैं: इन्हें जांचें और बाकी जोड़ें।';
+
+  @override
+  String get apprAuctionPhotosAdding =>
+      'नीलामी सूची से फ़ोटो जोड़ी जा रही हैं…';
+
+  @override
+  String apprAuctionPhotosMissing(int count) {
+    return 'नीलामी सूची की $count फ़ोटो नहीं जोड़ी जा सकीं। कृपया नीचे फ़ोटो जोड़ें।';
+  }
+
+  @override
+  String get apprAuctionNotFound =>
+      'हमारी नीलामी सूची में नहीं है। कृपया वाहन का विवरण दर्ज करें।';
+
+  @override
+  String get apprAuctionCheckFailed =>
+      'नीलामी सूची की जांच नहीं हो सकी। कृपया वाहन का विवरण दर्ज करें।';
+
+  @override
   String get apprSellYourVehicle => 'अपना वाहन बेचें';
 
   @override
@@ -5395,6 +5434,14 @@ class AppLocalizationsHi extends AppLocalizations {
   @override
   String get profSubRenewUnavailable =>
       'यह प्लान अभी रिन्यू नहीं हो सकता। कृपया एक्सप्लोर से प्लान चुनें।';
+
+  @override
+  String get profSubRenewPlan => 'प्लान रिन्यू करें';
+
+  @override
+  String profSubRenewStartsAfter(String date) {
+    return 'आपका मौजूदा प्लान $date को खत्म होने पर शुरू होगा';
+  }
 
   @override
   String get profSubNeedMoreBenefits => 'और लाभ चाहिए?';

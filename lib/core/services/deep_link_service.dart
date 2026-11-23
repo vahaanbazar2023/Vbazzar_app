@@ -168,6 +168,11 @@ class DeepLinkService extends GetxService {
     }
   }
 
+  /// Opens a buy/approved vehicle by id, or the auction module (plan check
+  /// included), from inside the app — e.g. a link in a Vaani chat reply.
+  Future<void> openContent(String contentType, String contentId) =>
+      _openContent(contentType, contentId);
+
   Future<void> _openContent(String contentType, String contentId) async {
     switch (contentType) {
       case 'buy_vehicle':

@@ -1,9 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+
+import '../../../core/constants/app_colors.dart';
+import '../../../core/design_system/molecules/gradient_button.dart';
+import '../../../core/design_system/organisms/app_bottom_nav_bar.dart';
+import '../../../core/design_system/templates/app_layout.dart';
 import '../../../core/extensions/context_extensions.dart';
 import '../controllers/subscription_confirm_controller.dart';
 import '../models/subscription_plan.dart';
+import 'subscription_ui.dart';
 
+/// Confirm (or renew) a plan before paying. Uses the app's [AppLayout] (Vahaan
+/// Bazar header + bottom navigation) with cards styled like My Plans.
+///
+/// Arguments: `plan`, `source` (type code); for a renewal also `renewal: true`,
+/// `days_left` and `current_end_date` (the running plan's end, API format).
 class SubscriptionConfirmScreen extends StatelessWidget {
   const SubscriptionConfirmScreen({super.key});
 
@@ -12,188 +24,259 @@ class SubscriptionConfirmScreen extends StatelessWidget {
     final args = Get.arguments as Map<String, dynamic>? ?? {};
     final plan = args['plan'] as SubscriptionPlan?;
     final source = args['source'] as String? ?? '';
+    final renewal = args['renewal'] == true;
+    final daysLeft = args['days_left'] as int?;
+    final currentEnd = args['current_end_date'] as String?;
+    final l = context.l10n;
 
-    if (plan == null) {
-      return Scaffold(
-        backgroundColor: const Color(0xFF121212),
-        appBar: AppBar(
-          backgroundColor: const Color(0xFF121212),
-          leading: GestureDetector(
-            onTap: () => Get.back(),
-            child: const Icon(
-              Icons.arrow_back_ios_new_rounded,
-              color: Colors.white,
-              size: 20,
-            ),
-          ),
-        ),
-        body: Center(
-          child: Text(
-            context.l10n.profSubNoPlanSelectedDot,
-            style: const TextStyle(color: Colors.white),
-          ),
-        ),
-      );
-    }
-
-    return Scaffold(
-      appBar: AppBar(
-        elevation: 0,
-        leading: GestureDetector(
-          onTap: () => Get.back(),
-          child: const Icon(
-            Icons.arrow_back_ios_new_rounded,
-            color: Colors.white,
-            size: 20,
-          ),
-        ),
-        title: Text(
-          context.l10n.profSubConfirmSubscription,
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-          style: const TextStyle(
-            fontFamily: 'Montserrat',
-            fontWeight: FontWeight.w600,
-            fontSize: 18,
-            color: Colors.white,
-          ),
-        ),
-        centerTitle: true,
-      ),
-      body: Column(
-        children: [
-          Expanded(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(height: 8),
-                  // Plan summary card
-                  _PlanSummaryCard(plan: plan),
-                  const SizedBox(height: 24),
-                  // What you get section
-                  _WhatYouGet(plan: plan, source: source),
-                  const SizedBox(height: 24),
-                  // Order summary
-                  _OrderSummary(plan: plan),
-                  const SizedBox(height: 24),
-                ],
+    return AppLayout(
+      title: renewal ? l.profSubRenewPlan : l.profSubConfirmSubscription,
+      showBack: true,
+      body: plan == null
+          ? Center(
+              child: Text(
+                l.profSubNoPlanSelectedDot,
+                style: _text(14, color: AppColors.textSecondary),
               ),
+            )
+          : Column(
+              children: [
+                Expanded(
+                  child: ListView(
+                    padding: EdgeInsets.fromLTRB(16.w, 16.h, 16.w, 24.h),
+                    children: [
+                      _PlanCard(plan: plan, source: source),
+                      if (renewal && currentEnd != null) ...[
+                        SizedBox(height: 12.h),
+                        _RenewalNote(endDate: currentEnd, daysLeft: daysLeft),
+                      ],
+                      SizedBox(height: 20.h),
+                      _SectionTitle(l.profSubWhatsIncluded),
+                      _Card(
+                        child: _WhatYouGet(plan: plan, source: source),
+                      ),
+                      SizedBox(height: 20.h),
+                      _SectionTitle(l.profSubOrderSummary),
+                      _Card(
+                        child: _OrderSummary(plan: plan, renewal: renewal),
+                      ),
+                    ],
+                  ),
+                ),
+                const _PayBar(),
+              ],
             ),
-          ),
-          // Pay button
-          _PayButton(plan: plan),
-        ],
-      ),
     );
   }
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Plan summary card at the top
-// ─────────────────────────────────────────────────────────────────────────────
-class _PlanSummaryCard extends StatelessWidget {
-  final SubscriptionPlan plan;
+TextStyle _text(
+  double size, {
+  FontWeight weight = FontWeight.w400,
+  Color color = AppColors.textPrimary,
+  double? height,
+}) => TextStyle(
+  fontFamily: 'Montserrat',
+  fontSize: size.sp,
+  fontWeight: weight,
+  color: color,
+  height: height,
+);
 
-  const _PlanSummaryCard({required this.plan});
+String _price(double v) => '₹${v.toStringAsFixed(v % 1 == 0 ? 0 : 2)}';
 
-  Color get _tierColor {
-    switch (plan.name.toLowerCase()) {
-      case 'gold':
-        return const Color(0xFFFFCC00);
-      case 'silver':
-        return const Color(0xFFB0B0B0);
-      case 'bronze':
-        return const Color(0xFFCD7F32);
-      default:
-        return const Color(0xFFD41F1F);
-    }
-  }
+// ─────────────────────────────────────────────────────────────────────────────
+// Building blocks
+// ─────────────────────────────────────────────────────────────────────────────
+
+class _Card extends StatelessWidget {
+  final Widget child;
+  const _Card({required this.child});
 
   @override
   Widget build(BuildContext context) {
     return Container(
+      width: double.infinity,
+      padding: EdgeInsets.all(16.r),
       decoration: BoxDecoration(
-        gradient: RadialGradient(
-          center: const Alignment(1.09, -1.0),
-          radius: 1.12,
-          colors: [
-            const Color(0xFF9A0800).withOpacity(0.9),
-            const Color(0xFF1F0301),
-          ],
-        ),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: const Color(0xFF3A0A0A), width: 1),
-        boxShadow: const [
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16.r),
+        border: Border.all(color: AppColors.grey300),
+        boxShadow: [
           BoxShadow(
-            color: Color(0x33000000),
-            blurRadius: 20,
-            offset: Offset(0, 8),
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 3),
           ),
         ],
       ),
-      padding: const EdgeInsets.all(24),
+      child: child,
+    );
+  }
+}
+
+class _SectionTitle extends StatelessWidget {
+  final String text;
+  const _SectionTitle(this.text);
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.only(left: 2.w, bottom: 10.h),
+      child: Text(text, style: _text(15, weight: FontWeight.w600)),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Plan card — icon, name, validity pill, description
+// ─────────────────────────────────────────────────────────────────────────────
+
+class _PlanCard extends StatelessWidget {
+  final SubscriptionPlan plan;
+  final String source;
+  const _PlanCard({required this.plan, required this.source});
+
+  @override
+  Widget build(BuildContext context) {
+    final desc = plan.featDescription.trim();
+    return _Card(
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Tier badge
-          Container(
-            width: 72,
-            height: 72,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: _tierColor.withOpacity(0.15),
-              border: Border.all(color: _tierColor, width: 2.5),
-            ),
-            child: Center(
-              child: Text(
-                plan.name[0].toUpperCase(),
-                style: TextStyle(
-                  fontFamily: 'Montserrat',
-                  fontWeight: FontWeight.w800,
-                  fontSize: 30,
-                  color: _tierColor,
+          Row(
+            children: [
+              Container(
+                width: 56.r,
+                height: 56.r,
+                padding: EdgeInsets.all(11.r),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFFFF0F0),
+                  borderRadius: BorderRadius.circular(14.r),
+                ),
+                child: Image.asset(
+                  subscriptionIconAsset(
+                    source.isNotEmpty ? source : plan.typeCode,
+                  ),
+                  fit: BoxFit.contain,
+                  errorBuilder: (_, __, ___) => Icon(
+                    Icons.workspace_premium_rounded,
+                    color: AppColors.primary,
+                    size: 28.r,
+                  ),
                 ),
               ),
-            ),
-          ),
-          const SizedBox(height: 14),
-          Text(
-            context.l10n.profSubPlanName(plan.name),
-            style: const TextStyle(
-              fontFamily: 'Montserrat',
-              fontWeight: FontWeight.w800,
-              fontSize: 22,
-              color: Colors.white,
-            ),
-          ),
-          const SizedBox(height: 6),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 5),
-            decoration: BoxDecoration(
-              color: _tierColor.withOpacity(0.15),
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Text(
-              plan.metricLabel,
-              style: TextStyle(
-                fontFamily: 'Plus Jakarta Sans',
-                fontWeight: FontWeight.w600,
-                fontSize: 13,
-                color: _tierColor,
+              SizedBox(width: 14.w),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      context.l10n.profSubPlanName(plan.name),
+                      style: _text(17, weight: FontWeight.w700),
+                    ),
+                    SizedBox(height: 6.h),
+                    Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 10.w,
+                        vertical: 4.h,
+                      ),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFFFF0F0),
+                        borderRadius: BorderRadius.circular(20.r),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            plan.planMetric == 'days'
+                                ? Icons.calendar_month_rounded
+                                : Icons.account_balance_wallet_outlined,
+                            size: 13.r,
+                            color: AppColors.primary,
+                          ),
+                          SizedBox(width: 5.w),
+                          Flexible(
+                            child: Text(
+                              plan.metricLabel,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: _text(
+                                12,
+                                weight: FontWeight.w600,
+                                color: AppColors.primary,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
+            ],
           ),
-          const SizedBox(height: 16),
-          Text(
-            plan.featDescription,
-            textAlign: TextAlign.center,
-            style: const TextStyle(
-              fontFamily: 'Plus Jakarta Sans',
-              fontWeight: FontWeight.w400,
-              fontSize: 13,
-              color: Color(0xFFBBBBBB),
-              height: 1.5,
+          if (desc.isNotEmpty) ...[
+            SizedBox(height: 14.h),
+            const Divider(height: 1, color: AppColors.grey200),
+            SizedBox(height: 12.h),
+            Text(
+              desc,
+              style: _text(13, color: AppColors.textSecondary, height: 1.5),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Renewal note — when the new period starts, days kept
+// ─────────────────────────────────────────────────────────────────────────────
+
+class _RenewalNote extends StatelessWidget {
+  final String endDate;
+  final int? daysLeft;
+  const _RenewalNote({required this.endDate, this.daysLeft});
+
+  @override
+  Widget build(BuildContext context) {
+    const green = Color(0xFF2E7D32);
+    final l = context.l10n;
+    return Container(
+      padding: EdgeInsets.all(14.r),
+      decoration: BoxDecoration(
+        color: const Color(0xFFE8F5E9),
+        borderRadius: BorderRadius.circular(14.r),
+        border: Border.all(color: const Color(0xFFC8E6C9)),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(Icons.event_repeat_rounded, size: 20.r, color: green),
+          SizedBox(width: 10.w),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  l.profSubRenewStartsAfter(formatPlanDate(context, endDate)),
+                  style: _text(
+                    13,
+                    weight: FontWeight.w600,
+                    color: green,
+                    height: 1.4,
+                  ),
+                ),
+                if ((daysLeft ?? 0) > 0) ...[
+                  SizedBox(height: 4.h),
+                  Text(
+                    l.profSubDaysLeftKept(daysLeft!),
+                    style: _text(12, color: green, height: 1.4),
+                  ),
+                ],
+              ],
             ),
           ),
         ],
@@ -203,12 +286,12 @@ class _PlanSummaryCard extends StatelessWidget {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// What you get section
+// What's included
 // ─────────────────────────────────────────────────────────────────────────────
+
 class _WhatYouGet extends StatelessWidget {
   final SubscriptionPlan plan;
   final String source;
-
   const _WhatYouGet({required this.plan, required this.source});
 
   List<String> _features(BuildContext context) {
@@ -264,65 +347,40 @@ class _WhatYouGet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final features = _features(context);
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          context.l10n.profSubWhatsIncluded,
-          style: const TextStyle(
-            fontFamily: 'Montserrat',
-            fontWeight: FontWeight.w600,
-            fontSize: 16,
-            color: Colors.white,
-          ),
-        ),
-        const SizedBox(height: 14),
-        Container(
-          decoration: BoxDecoration(
-            color: const Color(0xFF1E1E1E),
-            borderRadius: BorderRadius.circular(16),
-          ),
-          padding: const EdgeInsets.all(18),
-          child: Column(
-            children: _features(context)
-                .map(
-                  (f) => Padding(
-                    padding: const EdgeInsets.only(bottom: 12),
-                    child: Row(
-                      children: [
-                        Container(
-                          width: 22,
-                          height: 22,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: const Color(0xFFD41F1F).withOpacity(0.15),
-                          ),
-                          child: const Icon(
-                            Icons.check_rounded,
-                            color: Color(0xFFD41F1F),
-                            size: 13,
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Text(
-                            f,
-                            style: const TextStyle(
-                              fontFamily: 'Plus Jakarta Sans',
-                              fontWeight: FontWeight.w500,
-                              fontSize: 13,
-                              color: Color(0xFFDDDDDD),
-                              height: 1.4,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
+        for (var i = 0; i < features.length; i++)
+          Padding(
+            padding: EdgeInsets.only(
+              bottom: i == features.length - 1 ? 0 : 12.h,
+            ),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  width: 22.r,
+                  height: 22.r,
+                  decoration: const BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Color(0xFFFFF0F0),
                   ),
-                )
-                .toList(),
+                  child: Icon(
+                    Icons.check_rounded,
+                    size: 14.r,
+                    color: AppColors.primary,
+                  ),
+                ),
+                SizedBox(width: 12.w),
+                Expanded(
+                  child: Padding(
+                    padding: EdgeInsets.only(top: 2.h),
+                    child: Text(features[i], style: _text(13, height: 1.4)),
+                  ),
+                ),
+              ],
+            ),
           ),
-        ),
       ],
     );
   }
@@ -331,62 +389,38 @@ class _WhatYouGet extends StatelessWidget {
 // ─────────────────────────────────────────────────────────────────────────────
 // Order summary
 // ─────────────────────────────────────────────────────────────────────────────
+
 class _OrderSummary extends StatelessWidget {
   final SubscriptionPlan plan;
 
-  const _OrderSummary({required this.plan});
+  /// Renewing the plan the user already has: the plan code means nothing to
+  /// them, so it is left out.
+  final bool renewal;
+  const _OrderSummary({required this.plan, this.renewal = false});
 
   @override
   Widget build(BuildContext context) {
-    final priceStr =
-        '₹${plan.price.toStringAsFixed(plan.price % 1 == 0 ? 0 : 2)}';
-
+    final l = context.l10n;
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          context.l10n.profSubOrderSummary,
-          style: const TextStyle(
-            fontFamily: 'Montserrat',
-            fontWeight: FontWeight.w600,
-            fontSize: 16,
-            color: Colors.white,
-          ),
+        _SummaryRow(
+          label: l.profSubPlanLabel,
+          value: l.profSubPlanName(plan.name),
         ),
-        const SizedBox(height: 14),
-        Container(
-          decoration: BoxDecoration(
-            color: const Color(0xFF1E1E1E),
-            borderRadius: BorderRadius.circular(16),
-          ),
-          padding: const EdgeInsets.all(18),
-          child: Column(
-            children: [
-              _SummaryRow(
-                label: context.l10n.profSubPlanLabel,
-                value: context.l10n.profSubPlanName(plan.name),
-              ),
-              const SizedBox(height: 12),
-              _SummaryRow(
-                label: context.l10n.profSubValidityLabel,
-                value: plan.metricLabel,
-              ),
-              const SizedBox(height: 12),
-              _SummaryRow(
-                label: context.l10n.profSubPlanCode,
-                value: plan.planCode,
-              ),
-              const Padding(
-                padding: EdgeInsets.symmetric(vertical: 14),
-                child: Divider(color: Color(0xFF2E2E2E), height: 1),
-              ),
-              _SummaryRow(
-                label: context.l10n.profSubTotalAmount,
-                value: priceStr,
-                highlight: true,
-              ),
-            ],
-          ),
+        SizedBox(height: 12.h),
+        _SummaryRow(label: l.profSubValidityLabel, value: plan.metricLabel),
+        if (!renewal) ...[
+          SizedBox(height: 12.h),
+          _SummaryRow(label: l.profSubPlanCode, value: plan.planCode),
+        ],
+        Padding(
+          padding: EdgeInsets.symmetric(vertical: 14.h),
+          child: const Divider(height: 1, color: AppColors.grey200),
+        ),
+        _SummaryRow(
+          label: l.profSubTotalAmount,
+          value: _price(plan.price),
+          highlight: true,
         ),
       ],
     );
@@ -397,7 +431,6 @@ class _SummaryRow extends StatelessWidget {
   final String label;
   final String value;
   final bool highlight;
-
   const _SummaryRow({
     required this.label,
     required this.value,
@@ -407,29 +440,25 @@ class _SummaryRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Expanded(
           child: Text(
             label,
-            style: const TextStyle(
-              fontFamily: 'Plus Jakarta Sans',
-              fontWeight: FontWeight.w400,
-              fontSize: 13,
-              color: Color(0xFF9E9E9E),
-            ),
+            style: highlight
+                ? _text(14, weight: FontWeight.w600)
+                : _text(13, color: AppColors.textSecondary),
           ),
         ),
-        const SizedBox(width: 8),
+        SizedBox(width: 8.w),
         Flexible(
-          child: Text(
-            value,
-            textAlign: TextAlign.end,
-            style: TextStyle(
-              fontFamily: 'Montserrat',
-              fontWeight: highlight ? FontWeight.w800 : FontWeight.w600,
-              fontSize: highlight ? 18 : 13,
-              color: highlight ? const Color(0xFFD41F1F) : Colors.white,
+          child: Align(
+            alignment: Alignment.centerRight,
+            child: Text(
+              value,
+              textAlign: TextAlign.end,
+              style: highlight
+                  ? _text(18, weight: FontWeight.w700, color: AppColors.primary)
+                  : _text(13, weight: FontWeight.w600),
             ),
           ),
         ),
@@ -439,69 +468,48 @@ class _SummaryRow extends StatelessWidget {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Pay button
+// Pay bar — pinned at the bottom
 // ─────────────────────────────────────────────────────────────────────────────
-class _PayButton extends StatelessWidget {
-  final SubscriptionPlan plan;
 
-  const _PayButton({required this.plan});
+class _PayBar extends StatelessWidget {
+  const _PayBar();
 
   @override
   Widget build(BuildContext context) {
-    final bottomPad = MediaQuery.of(context).padding.bottom;
     final ctrl = Get.find<SubscriptionConfirmController>();
-
     return Container(
-      color: const Color(0xFF121212),
-      padding: EdgeInsets.fromLTRB(16, 12, 16, 12 + bottomPad),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        border: const Border(top: BorderSide(color: AppColors.grey200)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 8,
+            offset: const Offset(0, -2),
+          ),
+        ],
+      ),
+      // Bottom: clear the bottom nav's raised wave.
+      padding: EdgeInsets.fromLTRB(
+        16.w,
+        12.h,
+        16.w,
+        8.h + kBottomNavWaveHeight,
+      ),
       child: Obx(() {
-        final priceStr = ctrl.priceDisplay;
         final inProgress = ctrl.isPaymentInProgress.value;
-
-        return GestureDetector(
-          onTap: inProgress ? null : () => ctrl.onProceedPayment(),
-          child: Container(
-            height: 54,
-            decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                colors: [Color(0xFFD41F1F), Color(0xFF9A0800)],
-                begin: Alignment.centerLeft,
-                end: Alignment.centerRight,
-              ),
-              borderRadius: BorderRadius.circular(14),
-              boxShadow: [
-                BoxShadow(
-                  color: const Color(0xFFD41F1F).withOpacity(0.4),
-                  blurRadius: 16,
-                  offset: const Offset(0, 6),
-                ),
-              ],
-            ),
-            child: Center(
-              child: inProgress
-                  ? const SizedBox(
-                      width: 22,
-                      height: 22,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        color: Colors.white,
-                      ),
-                    )
-                  : FittedBox(
-                      fit: BoxFit.scaleDown,
-                      child: Text(
-                        context.l10n.profSubPay(priceStr.value),
-                        maxLines: 1,
-                        style: const TextStyle(
-                          fontFamily: 'Montserrat',
-                          fontWeight: FontWeight.w600,
-                          fontSize: 16,
-                          color: Colors.white,
-                          letterSpacing: 0.5,
-                        ),
-                      ),
-                    ),
-            ),
+        final price = ctrl.priceDisplay.value;
+        // The app's standard rounded gradient CTA.
+        // Compact and centred; 44 keeps a comfortable tap height.
+        return Center(
+          child: GradientButton.filled(
+            text: context.l10n.profSubPay(price),
+            onPressed: ctrl.onProceedPayment,
+            isLoading: inProgress,
+            width: 240.w,
+            height: 44.h,
+            fontSize: 15.sp,
+            fontWeight: FontWeight.w600,
           ),
         );
       }),
