@@ -1445,6 +1445,26 @@ class AuctionFilterBottomSheetV2 extends StatelessWidget {
                       maxDropdownHeight: 220,
                     );
                   }),
+                  SizedBox(height: 20.h),
+
+                  // Client Name (bank / NBFC)
+                  _FilterLabel(
+                    label: context.l10n.aucClientName,
+                    icon: Icons.account_balance_outlined,
+                  ),
+                  SizedBox(height: 8.h),
+                  Obx(() {
+                    return InlineDropdownField<String>(
+                      value: ctrl.selectedBank.value,
+                      items: ctrl.banks.toList(),
+                      placeholder: context.l10n.aucAllClients,
+                      prefixIcon: Icons.account_balance_outlined,
+                      isLoading: ctrl.isLoadingBanks.value,
+                      itemLabel: (v) => v,
+                      onChanged: (val) => ctrl.selectedBank.value = val,
+                      maxDropdownHeight: 220,
+                    );
+                  }),
                 ],
               ),
             ),

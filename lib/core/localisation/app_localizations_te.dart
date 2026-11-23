@@ -3775,6 +3775,12 @@ class AppLocalizationsTe extends AppLocalizations {
   String get aucAllStates => 'అన్ని రాష్ట్రాలు';
 
   @override
+  String get aucClientName => 'క్లయింట్ పేరు';
+
+  @override
+  String get aucAllClients => 'అన్ని క్లయింట్లు';
+
+  @override
   String get aucApply => 'వర్తింపజేయండి';
 
   @override

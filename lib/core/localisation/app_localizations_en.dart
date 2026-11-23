@@ -3735,6 +3735,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get aucAllStates => 'All States';
 
   @override
+  String get aucClientName => 'Client Name';
+
+  @override
+  String get aucAllClients => 'All Clients';
+
+  @override
   String get aucApply => 'Apply';
 
   @override

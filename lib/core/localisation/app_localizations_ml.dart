@@ -3762,6 +3762,12 @@ class AppLocalizationsMl extends AppLocalizations {
   String get aucAllStates => 'എല്ലാ സംസ്ഥാനങ്ങളും';
 
   @override
+  String get aucClientName => 'ക്ലയന്റിന്റെ പേര്';
+
+  @override
+  String get aucAllClients => 'എല്ലാ ക്ലയന്റുകളും';
+
+  @override
   String get aucApply => 'പ്രയോഗിക്കുക';
 
   @override

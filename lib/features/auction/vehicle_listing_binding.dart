@@ -14,6 +14,8 @@ class VehicleListingBinding extends Bindings {
         auctionTitle: args['auctionTitle'] as String? ?? '',
         bidIncrementAmount:
             (args['bidIncrementAmount'] as num?)?.toInt() ?? 5000,
+        auctionId: args['auctionId'] as String? ?? '',
+        initialTab: (args['initialTab'] as num?)?.toInt() ?? 0,
         service: Get.find<VehicleListingService>(),
       );
     });
