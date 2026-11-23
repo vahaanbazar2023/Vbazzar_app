@@ -7120,6 +7120,18 @@ abstract class AppLocalizations {
   /// **'All States'**
   String get aucAllStates;
 
+  /// No description provided for @aucClientName.
+  ///
+  /// In en, this message translates to:
+  /// **'Client Name'**
+  String get aucClientName;
+
+  /// No description provided for @aucAllClients.
+  ///
+  /// In en, this message translates to:
+  /// **'All Clients'**
+  String get aucAllClients;
+
   /// No description provided for @aucApply.
   ///
   /// In en, this message translates to:

@@ -3790,6 +3790,12 @@ class AppLocalizationsTa extends AppLocalizations {
   String get aucAllStates => 'அனைத்து மாநிலங்கள்';
 
   @override
+  String get aucClientName => 'கிளையன்ட் பெயர்';
+
+  @override
+  String get aucAllClients => 'அனைத்து கிளையன்ட்கள்';
+
+  @override
   String get aucApply => 'பயன்படுத்து';
 
   @override

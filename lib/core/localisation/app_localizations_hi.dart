@@ -3740,6 +3740,12 @@ class AppLocalizationsHi extends AppLocalizations {
   String get aucAllStates => 'सभी राज्य';
 
   @override
+  String get aucClientName => 'क्लाइंट का नाम';
+
+  @override
+  String get aucAllClients => 'सभी क्लाइंट';
+
+  @override
   String get aucApply => 'लागू करें';
 
   @override

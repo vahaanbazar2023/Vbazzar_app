@@ -1382,6 +1382,8 @@
   "aucStatusWon": "Won",
   "aucAllCategories": "All Categories",
   "aucAllStates": "All States",
+  "aucClientName": "Client Name",
+  "aucAllClients": "All Clients",
   "aucApply": "Apply",
   "aucBids": "Bids",
   "aucMyWishlist": "My Wishlist",

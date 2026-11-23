@@ -561,7 +561,15 @@ class _AuctionBannerCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => _openAuction(arguments: {'auction': auction}),
+      // Open this auction's vehicles directly (same screen as a category
+      // tap), not the All-bank auction list.
+      // The vehicle list needs a vehicle type; without one keep the old screen.
+      onTap: () => auction.listVehicleType.isEmpty
+          ? _openAuction(arguments: {'auction': auction})
+          : _openAuction(
+              route: AppRoutes.vehicleListings,
+              arguments: auction.vehicleListArguments(),
+            ),
       child: Container(
         margin: EdgeInsets.symmetric(horizontal: 16.w),
         decoration: BoxDecoration(

@@ -3761,6 +3761,12 @@ class AppLocalizationsKn extends AppLocalizations {
   String get aucAllStates => 'ಎಲ್ಲಾ ರಾಜ್ಯಗಳು';
 
   @override
+  String get aucClientName => 'ಕ್ಲೈಂಟ್ ಹೆಸರು';
+
+  @override
+  String get aucAllClients => 'ಎಲ್ಲಾ ಕ್ಲೈಂಟ್‌ಗಳು';
+
+  @override
   String get aucApply => 'ಅನ್ವಯಿಸಿ';
 
   @override
