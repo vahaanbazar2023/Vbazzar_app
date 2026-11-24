@@ -11,18 +11,18 @@ import '../extensions/context_extensions.dart';
 /// ShareService — calls the backend generate-link API and opens the
 /// native share sheet with the returned share_url.
 ///
-/// API: POST /api/v1/share/generate-link
+/// API: POST /api/v1/share/generate-link (platform: app)
 /// Response: { data: { share_url, short_url, referral_code, ... } }
+///
+/// Links shared from the app are `https://www.vahaanbazar.com/open/{type}/{id}?ref=…`.
+/// Only /open/* is claimed by the app (App Links / Universal Links), so they open
+/// the app; without the app the website sends Android to the Play Store, iOS to the
+/// App Store and desktop to the web page. Links shared from the website have no
+/// /open prefix and stay in the browser.
 class ShareService extends GetxService {
   static ShareService get to => Get.find();
 
-  // Smart redirect base — the API server detects the user agent and redirects:
-  //   Android (no app) → Play Store
-  //   iOS (no app) → App Store
-  //   App installed → opened directly by App Links / Universal Links
-  //   Desktop → web listing page
-  static const _shareBase = 'https://q7imfgydpj.ap-south-1.awsapprunner.com';
-  static const _fallbackBase = 'https://vahaanbazar.in';
+  static const _appLinkBase = 'https://www.vahaanbazar.com/open';
 
   // ── Share buy vehicle ──────────────────────────────────────────
 
@@ -50,6 +50,7 @@ class ShareService extends GetxService {
         data: {
           'content_type': 'buy_vehicle',
           'content_id': sbVehicleId,
+          'platform': 'app',
           if (displayName.isNotEmpty) 'title': displayName,
           if (imageUrl != null && imageUrl.isNotEmpty) 'image_url': imageUrl,
         },
@@ -59,13 +60,10 @@ class ShareService extends GetxService {
       LoggerService.to.info('[ShareService] Vehicle link generated: $shareUrl');
     } catch (e) {
       LoggerService.to.error('[ShareService] generate-link failed: $e');
-      // Fallback — build smart redirect URL via API server
-      final userId =
-          await SecureStorageService.to.read(StorageKeys.userId) ?? '';
-      shareUrl =
-          '$_shareBase/v/$sbVehicleId'
-          '${userId.isNotEmpty ? '?ref=$userId' : ''}';
+      // Fallback — build the same app link locally
+      shareUrl = await _localLink('vehicle', sbVehicleId);
     }
+    if (shareUrl.isEmpty) shareUrl = await _localLink('vehicle', sbVehicleId);
 
     final text = _buildVehicleShareText(
       name: displayName,
@@ -83,7 +81,7 @@ class ShareService extends GetxService {
 
   // ── Share approved vehicle / auction / auction vehicle ─────────
 
-  /// Public site path per content type (mirrors the backend link builder).
+  /// Site path per content type (mirrors the backend link builder).
   static const _sitePaths = <String, String>{
     'approved_vehicle': 'approved-vehicle',
     'live_auction': 'auction',
@@ -91,7 +89,6 @@ class ShareService extends GetxService {
     'closed_auction': 'auction',
     'auction_vehicle': 'auction-vehicle',
   };
-  static const _siteBase = 'https://www.vahaanbazar.com';
 
   /// Asks the backend for a link carrying the sharer's referral code. If the
   /// API is unreachable, builds the same URL locally so sharing still works.
@@ -99,16 +96,26 @@ class ShareService extends GetxService {
     try {
       final resp = await NetworkService.to.post(
         ApiEndpoints.generateShareLink,
-        data: {'content_type': contentType, 'content_id': contentId},
+        data: {
+          'content_type': contentType,
+          'content_id': contentId,
+          'platform': 'app',
+        },
       );
       final url = _extractUrl(resp.data);
       if (url.isNotEmpty) return url;
     } catch (e) {
       LoggerService.to.error('[ShareService] generate-link($contentType) failed: $e');
     }
-    final userId = await SecureStorageService.to.read(StorageKeys.userId) ?? '';
-    final path = _sitePaths[contentType] ?? 'vehicle';
-    return '$_siteBase/$path/$contentId${userId.isNotEmpty ? '?ref=$userId' : ''}';
+    return _localLink(_sitePaths[contentType] ?? 'vehicle', contentId);
+  }
+
+  /// App link built on the device when the API can't be reached.
+  Future<String> _localLink(String path, String? contentId, {String? ref}) async {
+    final userId =
+        ref ?? await SecureStorageService.to.read(StorageKeys.userId) ?? '';
+    final id = (contentId ?? '').isNotEmpty ? '/$contentId' : '';
+    return '$_appLinkBase/$path$id${userId.isNotEmpty ? '?ref=$userId' : ''}';
   }
 
   Future<void> shareApprovedVehicle({
@@ -168,6 +175,7 @@ class ShareService extends GetxService {
         ApiEndpoints.referralLink,
         data: {
           'content_type': 'referral',
+          'platform': 'app',
           if (referralCode != null && referralCode.isNotEmpty)
             'referral_code': referralCode,
         },
@@ -176,12 +184,10 @@ class ShareService extends GetxService {
       LoggerService.to.info('[ShareService] Referral link: $shareUrl');
     } catch (e) {
       LoggerService.to.error('[ShareService] referral-link failed: $e');
-      final userId =
-          referralCode ??
-          await SecureStorageService.to.read(StorageKeys.userId) ??
-          '';
-      shareUrl =
-          '$_fallbackBase/referral${userId.isNotEmpty ? '?ref=$userId' : ''}';
+      shareUrl = await _localLink('referral', null, ref: referralCode);
+    }
+    if (shareUrl.isEmpty) {
+      shareUrl = await _localLink('referral', null, ref: referralCode);
     }
 
     await Share.share(
