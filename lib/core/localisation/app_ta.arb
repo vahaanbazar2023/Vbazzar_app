@@ -2087,5 +2087,11 @@
   "aucAutoBidEditLimit": "வரம்பை மாற்று",
   "aucAutoBidEditLimitTitle": "ஆட்டோ-பிட் வரம்பு",
   "aucAutoBidLimitUpdated": "ஆட்டோ-பிட் வரம்பு புதுப்பிக்கப்பட்டது",
-  "aucAutoBidStoppedMaxAmount": "ஆட்டோ-பிட் நின்றது: அடுத்த ஏலம் இந்த வாகனத்திற்கான உங்கள் வரம்பை விட அதிகம்"
+  "aucAutoBidStoppedMaxAmount": "ஆட்டோ-பிட் நின்றது: அடுத்த ஏலம் இந்த வாகனத்திற்கான உங்கள் வரம்பை விட அதிகம்",
+  "bidConfirmTitle": "உங்கள் ஏலத்தை உறுதிப்படுத்தவும்",
+  "bidConfirmAmountLabel": "நீங்கள் இந்தத் தொகைக்கு ஏலம் கோருகிறீர்கள்",
+  "bidConfirmInWords": "எழுத்தில்",
+  "bidConfirmButton": "உறுதிப்படுத்து",
+  "profSubNamedBenefits": "{name} பலன்கள்",
+  "profSubNamedSupport": "{name} ஆதரவு"
 }

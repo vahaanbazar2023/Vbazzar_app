@@ -6822,4 +6822,26 @@ class AppLocalizationsMl extends AppLocalizations {
   @override
   String get aucAutoBidStoppedMaxAmount =>
       'ഓട്ടോ-ബിഡ് നിർത്തി: അടുത്ത ബിഡ് ഈ വാഹനത്തിനുള്ള നിങ്ങളുടെ ലിമിറ്റിനേക്കാൾ കൂടുതലാണ്';
+
+  @override
+  String get bidConfirmTitle => 'നിങ്ങളുടെ ബിഡ് സ്ഥിരീകരിക്കുക';
+
+  @override
+  String get bidConfirmAmountLabel => 'നിങ്ങൾ ഈ തുകയ്ക്ക് ബിഡ് ചെയ്യുന്നു';
+
+  @override
+  String get bidConfirmInWords => 'അക്ഷരത്തിൽ';
+
+  @override
+  String get bidConfirmButton => 'സ്ഥിരീകരിക്കുക';
+
+  @override
+  String profSubNamedBenefits(String name) {
+    return '$name ആനുകൂല്യങ്ങൾ';
+  }
+
+  @override
+  String profSubNamedSupport(String name) {
+    return '$name സപ്പോർട്ട്';
+  }
 }

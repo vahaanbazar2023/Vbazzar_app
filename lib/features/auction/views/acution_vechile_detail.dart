@@ -12,6 +12,7 @@ import '../controllers/vehicle_listing_controller.dart';
 import '../models/auction_listing.dart';
 import '../models/vehicle_listing.dart';
 import 'gate_pass_sheet.dart';
+import '../services/bid_flow.dart';
 
 class AuctionVehicleDetailScreen extends StatelessWidget {
   const AuctionVehicleDetailScreen({super.key});
@@ -375,6 +376,7 @@ class _BidSheetState extends State<_BidSheet> {
     if (!mounted) return;
     setState(() => _isSubmitting = false);
 
+    if (error == BidFlow.cancelled) return;
     if (error == '__navigated__') {
       // Already navigated to subscription screen — just close sheet silently
       if (Navigator.of(context).canPop()) Navigator.of(context).pop();

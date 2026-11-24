@@ -6818,4 +6818,26 @@ class AppLocalizationsTe extends AppLocalizations {
   @override
   String get aucAutoBidStoppedMaxAmount =>
       'ఆటో-బిడ్ ఆగింది: తదుపరి బిడ్ ఈ వాహనానికి మీ లిమిట్ కంటే ఎక్కువ';
+
+  @override
+  String get bidConfirmTitle => 'మీ బిడ్‌ను నిర్ధారించండి';
+
+  @override
+  String get bidConfirmAmountLabel => 'మీరు ఈ మొత్తానికి బిడ్ వేస్తున్నారు';
+
+  @override
+  String get bidConfirmInWords => 'అక్షరాలలో';
+
+  @override
+  String get bidConfirmButton => 'నిర్ధారించండి';
+
+  @override
+  String profSubNamedBenefits(String name) {
+    return '$name ప్రయోజనాలు';
+  }
+
+  @override
+  String profSubNamedSupport(String name) {
+    return '$name సపోర్ట్';
+  }
 }

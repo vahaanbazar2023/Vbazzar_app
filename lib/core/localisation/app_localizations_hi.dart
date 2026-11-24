@@ -6744,4 +6744,26 @@ class AppLocalizationsHi extends AppLocalizations {
   @override
   String get aucAutoBidStoppedMaxAmount =>
       'ऑटो-बिड रुकी: अगली बोली इस वाहन की आपकी लिमिट से ज़्यादा है';
+
+  @override
+  String get bidConfirmTitle => 'अपनी बोली की पुष्टि करें';
+
+  @override
+  String get bidConfirmAmountLabel => 'आप इतनी राशि की बोली लगा रहे हैं';
+
+  @override
+  String get bidConfirmInWords => 'शब्दों में';
+
+  @override
+  String get bidConfirmButton => 'पुष्टि करें';
+
+  @override
+  String profSubNamedBenefits(String name) {
+    return '$name लाभ';
+  }
+
+  @override
+  String profSubNamedSupport(String name) {
+    return '$name सपोर्ट';
+  }
 }

@@ -2933,5 +2933,25 @@
   "aucAutoBidEditLimit": "Edit limit",
   "aucAutoBidEditLimitTitle": "Auto-bid limit",
   "aucAutoBidLimitUpdated": "Auto-bid limit updated",
-  "aucAutoBidStoppedMaxAmount": "Auto-bid stopped: the next bid is above your limit for this vehicle"
+  "aucAutoBidStoppedMaxAmount": "Auto-bid stopped: the next bid is above your limit for this vehicle",
+  "bidConfirmTitle": "Confirm your bid",
+  "bidConfirmAmountLabel": "You are placing a bid of",
+  "bidConfirmInWords": "In words",
+  "bidConfirmButton": "Confirm",
+  "profSubNamedBenefits": "{name} Benefits",
+  "@profSubNamedBenefits": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "profSubNamedSupport": "{name} Support",
+  "@profSubNamedSupport": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  }
 }

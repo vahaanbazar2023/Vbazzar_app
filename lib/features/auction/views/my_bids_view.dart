@@ -14,6 +14,7 @@ import '../controllers/my_bids_wins_controller.dart';
 import '../models/my_bids_wins_models.dart';
 import '../../../core/design_system/molecules/timer_badge.dart';
 import 'my_bid_detail_view.dart';
+import '../services/bid_flow.dart';
 
 class MyBidsView extends GetView<MyBidsController> {
   const MyBidsView({super.key});
@@ -258,6 +259,7 @@ class _BidCardState extends State<_BidCard> {
       bidAmount: _bidAmount,
     );
     if (mounted) setState(() => _isPlacing = false);
+    if (error == BidFlow.cancelled) return;
     if (error != null && error != '__navigated__') {
       CustomSnackbar.show(message: error, type: SnackbarType.error);
     } else if (error == null) {

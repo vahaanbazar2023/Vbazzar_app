@@ -1915,5 +1915,11 @@
   "aucAutoBidEditLimit": "లిమిట్ మార్చండి",
   "aucAutoBidEditLimitTitle": "ఆటో-బిడ్ లిమిట్",
   "aucAutoBidLimitUpdated": "ఆటో-బిడ్ లిమిట్ అప్‌డేట్ అయింది",
-  "aucAutoBidStoppedMaxAmount": "ఆటో-బిడ్ ఆగింది: తదుపరి బిడ్ ఈ వాహనానికి మీ లిమిట్ కంటే ఎక్కువ"
+  "aucAutoBidStoppedMaxAmount": "ఆటో-బిడ్ ఆగింది: తదుపరి బిడ్ ఈ వాహనానికి మీ లిమిట్ కంటే ఎక్కువ",
+  "bidConfirmTitle": "మీ బిడ్‌ను నిర్ధారించండి",
+  "bidConfirmAmountLabel": "మీరు ఈ మొత్తానికి బిడ్ వేస్తున్నారు",
+  "bidConfirmInWords": "అక్షరాలలో",
+  "bidConfirmButton": "నిర్ధారించండి",
+  "profSubNamedBenefits": "{name} ప్రయోజనాలు",
+  "profSubNamedSupport": "{name} సపోర్ట్"
 }

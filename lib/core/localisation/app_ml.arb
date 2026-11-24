@@ -2087,5 +2087,11 @@
   "aucAutoBidEditLimit": "ലിമിറ്റ് മാറ്റുക",
   "aucAutoBidEditLimitTitle": "ഓട്ടോ-ബിഡ് ലിമിറ്റ്",
   "aucAutoBidLimitUpdated": "ഓട്ടോ-ബിഡ് ലിമിറ്റ് അപ്‌ഡേറ്റ് ചെയ്തു",
-  "aucAutoBidStoppedMaxAmount": "ഓട്ടോ-ബിഡ് നിർത്തി: അടുത്ത ബിഡ് ഈ വാഹനത്തിനുള്ള നിങ്ങളുടെ ലിമിറ്റിനേക്കാൾ കൂടുതലാണ്"
+  "aucAutoBidStoppedMaxAmount": "ഓട്ടോ-ബിഡ് നിർത്തി: അടുത്ത ബിഡ് ഈ വാഹനത്തിനുള്ള നിങ്ങളുടെ ലിമിറ്റിനേക്കാൾ കൂടുതലാണ്",
+  "bidConfirmTitle": "നിങ്ങളുടെ ബിഡ് സ്ഥിരീകരിക്കുക",
+  "bidConfirmAmountLabel": "നിങ്ങൾ ഈ തുകയ്ക്ക് ബിഡ് ചെയ്യുന്നു",
+  "bidConfirmInWords": "അക്ഷരത്തിൽ",
+  "bidConfirmButton": "സ്ഥിരീകരിക്കുക",
+  "profSubNamedBenefits": "{name} ആനുകൂല്യങ്ങൾ",
+  "profSubNamedSupport": "{name} സപ്പോർട്ട്"
 }

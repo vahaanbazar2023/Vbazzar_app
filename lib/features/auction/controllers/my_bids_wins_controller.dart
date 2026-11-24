@@ -15,6 +15,8 @@ import '../domain/entities/bid_entity.dart';
 import '../data/repositories/auction_repository_impl.dart';
 import '../domain/repositories/auction_repository.dart';
 import '../../../core/extensions/context_extensions.dart';
+import '../services/bid_flow.dart';
+import '../widgets/bid_confirm_dialog.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // My Bids Controller
@@ -114,10 +116,12 @@ class MyBidsController extends GetxController {
 
   /// Full bid flow with all validations.
   /// Returns '__navigated__' if navigated to subscription screen.
+  /// Returns [BidFlow.cancelled] if the user did not confirm.
   /// Returns null on success, error string on failure.
   Future<String?> placeBid({
     required MyBidItem bidItem,
     required int bidAmount,
+    Future<bool> Function(int amount)? confirm,
   }) async {
     debugPrint(
       '🔵 [MyBidsController.placeBid] START amount=$bidAmount '
@@ -133,6 +137,11 @@ class MyBidsController extends GetxController {
     final highest = bidItem.currentHighestBid ?? bidItem.yourBid;
     if (highest > 0 && bidAmount <= highest) {
       return appL10n.aucMustBeHigherThanCurrentBid;
+    }
+
+    // 2b. Ask the user to confirm the amount (figures + words)
+    if (!await (confirm ?? showBidConfirmDialog)(bidAmount)) {
+      return BidFlow.cancelled;
     }
 
     // 3. Check SUBT002 (bid limit subscription)
