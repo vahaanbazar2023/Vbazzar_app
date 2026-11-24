@@ -13,6 +13,7 @@ import '../../../core/design_system/tokens/app_spacing.dart';
 import '../../../core/extensions/context_extensions.dart';
 import '../controllers/my_bids_wins_controller.dart';
 import '../models/my_bids_wins_models.dart';
+import '../services/bid_flow.dart';
 
 class MyBidDetailView extends StatefulWidget {
   final MyBidItem item;
@@ -533,6 +534,7 @@ class _MyBidDetailViewState extends State<MyBidDetailView> {
       bidAmount: _bidAmount,
     );
     if (!mounted) return;
+    if (error == BidFlow.cancelled) return;
     if (error == '__navigated__') {
       // navigated away
     } else if (error != null) {

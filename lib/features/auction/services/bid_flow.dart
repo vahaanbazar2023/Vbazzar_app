@@ -12,6 +12,7 @@ import '../domain/entities/bid_entity.dart';
 import '../domain/repositories/auction_repository.dart';
 import '../models/pending_bid.dart';
 import '../models/vehicle_listing.dart';
+import '../widgets/bid_confirm_dialog.dart';
 
 /// The manual bid flow shared by the auction listing and the watchlist:
 /// minimum / highest checks → SUBT002 plan check → bid-limit check → API.
@@ -19,13 +20,19 @@ import '../models/vehicle_listing.dart';
 class BidFlow {
   BidFlow._();
 
-  /// Returns an error message, `'__navigated__'` when the user was sent to buy a plan, or null on success.
+  /// Returned when the user backs out of the confirm dialog. Callers stay quiet.
+  static const String cancelled = '__cancelled__';
+
+  /// Returns an error message, `'__navigated__'` when the user was sent to buy a plan,
+  /// [cancelled] when the user did not confirm, or null on success.
+  /// [confirm] asks the user to confirm the amount; defaults to [showBidConfirmDialog].
   static Future<String?> placeBid({
     required VehicleListing vehicle,
     required int bidAmount,
     required AuctionRepository repository,
     void Function(PendingBid bid)? onPendingBid,
     RxBool? isPlacing,
+    Future<bool> Function(int amount)? confirm,
   }) async {
     debugPrint(
       '🔵 [placeBid] START amount=$bidAmount minPrice=${vehicle.minimumPrice} availableBalance=${vehicle.availableBalance}',
@@ -39,6 +46,9 @@ class BidFlow {
     if (highest > 0 && bidAmount <= highest) {
       return appL10n.aucMustBeHigherThanCurrentBid;
     }
+
+    // 2b. Ask the user to confirm the amount (figures + words)
+    if (!await (confirm ?? showBidConfirmDialog)(bidAmount)) return cancelled;
 
     // 3. Check SUBT002 (bid limit subscription)
     final guard = SubscriptionGuardService.to;

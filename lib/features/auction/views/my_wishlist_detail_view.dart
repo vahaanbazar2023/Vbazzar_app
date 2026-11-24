@@ -13,6 +13,7 @@ import '../../../core/design_system/tokens/app_spacing.dart';
 import '../../../core/extensions/context_extensions.dart';
 import '../controllers/vehicle_listing_controller.dart';
 import '../models/vehicle_listing.dart';
+import '../services/bid_flow.dart';
 
 class MyWishlistDetailView extends StatefulWidget {
   final VehicleListing vehicle;
@@ -557,6 +558,7 @@ class _MyWishlistDetailViewState extends State<MyWishlistDetailView> {
       bidAmount: _bidAmount,
     );
     if (!mounted) return;
+    if (error == BidFlow.cancelled) return;
     if (error == '__navigated__') {
       // navigated away
     } else if (error != null) {

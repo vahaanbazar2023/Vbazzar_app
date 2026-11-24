@@ -2149,5 +2149,9 @@
   "aucAutoBidEditLimit": "लिमिट बदलें",
   "aucAutoBidEditLimitTitle": "ऑटो-बिड लिमिट",
   "aucAutoBidLimitUpdated": "ऑटो-बिड लिमिट अपडेट हुई",
-  "aucAutoBidStoppedMaxAmount": "ऑटो-बिड रुकी: अगली बोली इस वाहन की आपकी लिमिट से ज़्यादा है"
+  "aucAutoBidStoppedMaxAmount": "ऑटो-बिड रुकी: अगली बोली इस वाहन की आपकी लिमिट से ज़्यादा है",
+  "bidConfirmTitle": "अपनी बोली की पुष्टि करें",
+  "bidConfirmAmountLabel": "आप इतनी राशि की बोली लगा रहे हैं",
+  "bidConfirmInWords": "शब्दों में",
+  "bidConfirmButton": "पुष्टि करें"
 }

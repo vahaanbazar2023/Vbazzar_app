@@ -6863,4 +6863,17 @@ class AppLocalizationsTa extends AppLocalizations {
   @override
   String get aucAutoBidStoppedMaxAmount =>
       'ஆட்டோ-பிட் நின்றது: அடுத்த ஏலம் இந்த வாகனத்திற்கான உங்கள் வரம்பை விட அதிகம்';
+
+  @override
+  String get bidConfirmTitle => 'உங்கள் ஏலத்தை உறுதிப்படுத்தவும்';
+
+  @override
+  String get bidConfirmAmountLabel =>
+      'நீங்கள் இந்தத் தொகைக்கு ஏலம் கோருகிறீர்கள்';
+
+  @override
+  String get bidConfirmInWords => 'எழுத்தில்';
+
+  @override
+  String get bidConfirmButton => 'உறுதிப்படுத்து';
 }

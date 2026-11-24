@@ -6811,4 +6811,16 @@ class AppLocalizationsKn extends AppLocalizations {
   @override
   String get aucAutoBidStoppedMaxAmount =>
       'ಆಟೋ-ಬಿಡ್ ನಿಂತಿದೆ: ಮುಂದಿನ ಬಿಡ್ ಈ ವಾಹನಕ್ಕೆ ನಿಮ್ಮ ಮಿತಿಗಿಂತ ಹೆಚ್ಚು';
+
+  @override
+  String get bidConfirmTitle => 'ನಿಮ್ಮ ಬಿಡ್ ಅನ್ನು ದೃಢೀಕರಿಸಿ';
+
+  @override
+  String get bidConfirmAmountLabel => 'ನೀವು ಈ ಮೊತ್ತಕ್ಕೆ ಬಿಡ್ ಮಾಡುತ್ತಿದ್ದೀರಿ';
+
+  @override
+  String get bidConfirmInWords => 'ಅಕ್ಷರಗಳಲ್ಲಿ';
+
+  @override
+  String get bidConfirmButton => 'ದೃಢೀಕರಿಸಿ';
 }
