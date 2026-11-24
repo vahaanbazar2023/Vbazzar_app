@@ -204,9 +204,13 @@ class DeepLinkService extends GetxService {
   }
 
   /// Loads the shared approved vehicle by id and opens its detail screen.
+  /// Approved vehicles sit inside the auction module (Home -> Auction ->
+  /// Approved), so a shared link keeps the same rule: no auction plan (SUBT001)
+  /// -> choose a plan first.
   Future<void> _navigateToApprovedVehicle(String approvedVehicleId) async {
     final userId = await SecureStorageService.to.read(StorageKeys.userId);
     if (userId == null || userId.isEmpty) return; // pending is kept for login
+    if (!await _hasAuctionPlanOrShowPlans()) return;
     try {
       final listing = await ApprovedVehicleRepositoryImpl()
           .getListingByVehicleId(
@@ -236,20 +240,24 @@ class DeepLinkService extends GetxService {
   Future<void> _navigateToAuctionModule() async {
     final userId = await SecureStorageService.to.read(StorageKeys.userId);
     if (userId == null || userId.isEmpty) return; // pending is kept for login
+    if (await _hasAuctionPlanOrShowPlans()) Get.toNamed(AppRoutes.auctionType);
+  }
+
+  /// The home screen's auction gate (SUBT001): true when the plan is active,
+  /// otherwise opens the plan screen and returns false.
+  Future<bool> _hasAuctionPlanOrShowPlans() async {
     final guard = SubscriptionGuardService.to;
     await guard.ensureLoaded(forceRefresh: false);
-    if (guard.hasActiveSubscription(SubscriptionTypeCode.auction)) {
-      Get.toNamed(AppRoutes.auctionType);
-    } else {
-      Get.toNamed(
-        AppRoutes.subscription,
-        arguments: {
-          'subscription_source': SubscriptionTypeCode.auction,
-          'title': appL10n.coreChooseSubscriptionPlan,
-          'subtitle': appL10n.coreChooseSubscriptionPlanAuctionSubtitle,
-        },
-      );
-    }
+    if (guard.hasActiveSubscription(SubscriptionTypeCode.auction)) return true;
+    Get.toNamed(
+      AppRoutes.subscription,
+      arguments: {
+        'subscription_source': SubscriptionTypeCode.auction,
+        'title': appL10n.coreChooseSubscriptionPlan,
+        'subtitle': appL10n.coreChooseSubscriptionPlanAuctionSubtitle,
+      },
+    );
+    return false;
   }
 
   /// Call from HomeController / MainShellController after login to
