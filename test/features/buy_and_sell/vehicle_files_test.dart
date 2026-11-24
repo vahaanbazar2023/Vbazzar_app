@@ -36,7 +36,10 @@ void main() {
       'vehicle_files': _files,
     });
     expect(v.allImageUrls, ['https://s3/p1.jpg', 'https://s3/p2.jpg']);
-    expect(v.documents.map((d) => d.url), ['https://s3/rc.pdf', 'https://s3/ins.pdf']);
+    expect(v.documents.map((d) => d.url), [
+      'https://s3/rc.pdf',
+      'https://s3/ins.pdf',
+    ]);
   });
 
   test('deep-link vehicle shows each photo once, without documents', () {
@@ -57,5 +60,53 @@ void main() {
       'vehicle_files': _files,
     });
     expect(v.imageUrls, ['https://s3/p1.jpg', 'https://s3/p2.jpg']);
+  });
+
+  group('documents in the detail gallery (Vehicle Details Access plan)', () {
+    BuyVehicleEntity vehicle(List<Map<String, String>> files) =>
+        BuyVehicleEntity.fromSingleVehicleJson({
+          'sb_vehicle_id': 'BSVEH1',
+          'category_code': 'TRUCK',
+          'category_name': 'Truck',
+          'vehicle_files': files,
+        });
+
+    test('image RC / insurance go to the gallery, PDFs stay buttons', () {
+      final v = vehicle([
+        {'file_type': 'image', 'file_url': 'https://s3/p1.jpg'},
+        {'file_type': 'rc', 'file_url': 'https://s3/rc1.jpg'},
+        {'file_type': 'rc', 'file_url': 'https://s3/rc2.PNG?sig=1'},
+        {'file_type': 'insurance', 'file_url': 'https://s3/ins.pdf?x=1'},
+      ]);
+      expect(v.galleryDocuments.map((d) => d.url), [
+        'https://s3/rc1.jpg',
+        'https://s3/rc2.PNG?sig=1',
+      ]);
+      expect(v.pdfDocuments.map((d) => d.url), ['https://s3/ins.pdf?x=1']);
+      // List thumbnails still use photos only.
+      expect(v.allImageUrls, ['https://s3/p1.jpg']);
+    });
+
+    test(
+      'without the plan the backend sends photos only: gallery = photos',
+      () {
+        final v = vehicle([
+          {'file_type': 'image', 'file_url': 'https://s3/p1.jpg'},
+        ]);
+        expect(v.galleryDocuments, isEmpty);
+        expect(v.pdfDocuments, isEmpty);
+      },
+    );
+  });
+
+  test('isPdf ignores case and query strings', () {
+    expect(
+      const VehicleDocument(type: 'rc', url: 'https://s3/a.PDF?s=1').isPdf,
+      isTrue,
+    );
+    expect(
+      const VehicleDocument(type: 'rc', url: 'https://s3/a.jpg').isPdf,
+      isFalse,
+    );
   });
 }

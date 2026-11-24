@@ -38,6 +38,10 @@ class NetworkImageCarousel extends StatefulWidget {
   /// Inactive dot color (defaults to white 70%).
   final Color? inactiveDotColor;
 
+  /// Optional label per image (same order as [imageUrls]), shown as a small
+  /// chip on the slide, e.g. "RC Copy". Null or empty entries show nothing.
+  final List<String?>? captions;
+
   const NetworkImageCarousel({
     super.key,
     required this.imageUrls,
@@ -46,6 +50,7 @@ class NetworkImageCarousel extends StatefulWidget {
     this.placeholderIcon = Icons.directions_car_outlined,
     this.activeDotColor,
     this.inactiveDotColor,
+    this.captions,
   });
 
   @override
@@ -64,7 +69,14 @@ class _NetworkImageCarouselState extends State<NetworkImageCarousel> {
 
   @override
   Widget build(BuildContext context) {
-    final urls = widget.imageUrls.where((u) => u.isNotEmpty).toList();
+    final urls = <String>[];
+    final captions = <String?>[];
+    for (var i = 0; i < widget.imageUrls.length; i++) {
+      if (widget.imageUrls[i].isEmpty) continue;
+      urls.add(widget.imageUrls[i]);
+      final c = widget.captions;
+      captions.add(c != null && i < c.length ? c[i] : null);
+    }
     final activeDot = widget.activeDotColor ?? AppColors.primary;
     final inactiveDot =
         widget.inactiveDotColor ?? AppColors.white.withOpacity(0.7);
@@ -87,9 +99,20 @@ class _NetworkImageCarouselState extends State<NetworkImageCarousel> {
                       ZoomableImageViewer(imageUrls: urls, initialIndex: i),
                 ),
               ),
-              child: _CarouselImage(
-                url: urls[i],
-                placeholderIcon: widget.placeholderIcon,
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  _CarouselImage(
+                    url: urls[i],
+                    placeholderIcon: widget.placeholderIcon,
+                  ),
+                  if ((captions[i] ?? '').isNotEmpty)
+                    Positioned(
+                      left: 10.w,
+                      bottom: 8.h,
+                      child: _CaptionChip(text: captions[i]!),
+                    ),
+                ],
               ),
             ),
           ),
@@ -244,6 +267,39 @@ class _DotIndicator extends StatelessWidget {
           ),
         );
       }).toList(),
+    );
+  }
+}
+
+class _CaptionChip extends StatelessWidget {
+  final String text;
+
+  const _CaptionChip({required this.text});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+      decoration: BoxDecoration(
+        color: Colors.black.withValues(alpha: 0.6),
+        borderRadius: BorderRadius.circular(12.r),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.description_outlined, size: 12.r, color: Colors.white),
+          SizedBox(width: 4.w),
+          Text(
+            text,
+            style: TextStyle(
+              fontFamily: 'Montserrat',
+              fontSize: 10.sp,
+              fontWeight: FontWeight.w700,
+              color: Colors.white,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

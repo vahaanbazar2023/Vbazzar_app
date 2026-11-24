@@ -189,8 +189,21 @@ class _BuyVehicleDetailsViewState extends State<BuyVehicleDetailsView> {
                     borderRadius: AppRadius.borderRadiusMd,
                     child: Stack(
                       children: [
+                        // Photos, then (with the Vehicle Details Access
+                        // plan) RC / insurance images, each labelled.
                         NetworkImageCarousel(
-                          imageUrls: vehicle.allImageUrls,
+                          imageUrls: [
+                            ...vehicle.allImageUrls,
+                            for (final d in vehicle.galleryDocuments) d.url,
+                          ],
+                          captions: [
+                            for (final _ in vehicle.allImageUrls) null,
+                            ..._DocumentsRow.labels(
+                              vehicle.galleryDocuments,
+                              rc: context.l10n.rcCopy,
+                              insurance: context.l10n.insuranceCopy,
+                            ),
+                          ],
                           height: 180.h,
                         ),
                         // Category badge top-left
@@ -314,12 +327,13 @@ class _BuyVehicleDetailsViewState extends State<BuyVehicleDetailsView> {
                   ),
                   SizedBox(height: 10.h),
 
-                  // ── RC / insurance (kept out of the photo gallery) ───────
-                  // The backend sends these only with the Vehicle Details
-                  // Access plan or to the seller, so the row stays hidden
-                  // for everyone else.
-                  if (vehicle.documents.isNotEmpty) ...[
-                    _DocumentsRow(documents: vehicle.documents),
+                  // ── RC / insurance PDFs ──────────────────────────────────
+                  // Image documents are in the gallery above; PDFs can't be
+                  // shown there, so they open from these buttons. The backend
+                  // sends documents only with the Vehicle Details Access plan
+                  // or to the seller, so nothing shows for everyone else.
+                  if (vehicle.pdfDocuments.isNotEmpty) ...[
+                    _DocumentsRow(documents: vehicle.pdfDocuments),
                     SizedBox(height: 10.h),
                   ],
 
@@ -1374,7 +1388,7 @@ class _SectionLabel extends StatelessWidget {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// RC / insurance buttons — documents open outside the photo gallery
+// RC / insurance PDF buttons — image documents are in the gallery instead
 // ─────────────────────────────────────────────────────────────────────────────
 
 class _DocumentsRow extends StatelessWidget {

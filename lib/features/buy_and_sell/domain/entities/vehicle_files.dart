@@ -1,9 +1,9 @@
 /// Buy & Sell `vehicle_files` split into the photo gallery and documents.
 ///
-/// The gallery (carousel / full-screen viewer) must show vehicle photos only.
 /// RC and insurance files are documents: the backend sends them only to users
-/// with the Vehicle Details Access plan (and to the seller), and the detail
-/// screen lists them as separate buttons.
+/// with the Vehicle Details Access plan (and to the seller). The detail screen
+/// adds image documents to the end of its photo gallery; PDFs (which cannot be
+/// shown as an image) stay as buttons. List thumbnails use photos only.
 class VehicleDocument {
   /// Backend `file_type`: `rc` or `insurance`.
   final String type;
@@ -13,6 +13,12 @@ class VehicleDocument {
 
   bool get isRc => type == 'rc';
   bool get isInsurance => type == 'insurance';
+
+  /// True for PDF files, which the image gallery cannot show.
+  bool get isPdf {
+    final path = Uri.tryParse(url)?.path ?? url;
+    return path.toLowerCase().endsWith('.pdf');
+  }
 }
 
 class VehicleFiles {
