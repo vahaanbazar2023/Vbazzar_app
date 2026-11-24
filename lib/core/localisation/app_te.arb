@@ -878,6 +878,7 @@
   "apprPriceRequired": "ధర అవసరం",
   "apprEnterValidPrice": "చెల్లుబాటు అయ్యే ధరను నమోదు చేయండి",
   "apprMfgYearRequired": "తయారీ సంవత్సరం అవసరం",
+  "apprMfgYearRange": "సంవత్సరం {min} మరియు {max} మధ్య ఉండాలి",
   "apprInsuranceRequired": "భీమా అవసరం",
   "apprGstApplicabilityRequired": "GST వర్తింపు అవసరం",
   "apprVehicleImagesRequired": "వాహన చిత్రాలు అవసరం",

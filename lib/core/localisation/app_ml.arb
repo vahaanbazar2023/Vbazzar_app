@@ -1050,6 +1050,7 @@
   "apprPriceRequired": "വില ആവശ്യമാണ്",
   "apprEnterValidPrice": "സാധുവായ വില നൽകുക",
   "apprMfgYearRequired": "നിർമ്മാണ വർഷം ആവശ്യമാണ്",
+  "apprMfgYearRange": "വർഷം {min} നും {max} നും ഇടയിലായിരിക്കണം",
   "apprInsuranceRequired": "ഇൻഷുറൻസ് ആവശ്യമാണ്",
   "apprGstApplicabilityRequired": "GST ബാധകത ആവശ്യമാണ്",
   "apprVehicleImagesRequired": "വാഹന ചിത്രങ്ങൾ ആവശ്യമാണ്",

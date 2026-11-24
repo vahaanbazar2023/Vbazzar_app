@@ -1050,6 +1050,7 @@
   "apprPriceRequired": "விலை அவசியம்",
   "apprEnterValidPrice": "சரியான விலையை உள்ளிடவும்",
   "apprMfgYearRequired": "தயாரிப்பு ஆண்டு அவசியம்",
+  "apprMfgYearRange": "ஆண்டு {min} முதல் {max} வரை இருக்க வேண்டும்",
   "apprInsuranceRequired": "காப்பீடு அவசியம்",
   "apprGstApplicabilityRequired": "GST பொருந்துமா என்பது அவசியம்",
   "apprVehicleImagesRequired": "வாகனப் படங்கள் அவசியம்",

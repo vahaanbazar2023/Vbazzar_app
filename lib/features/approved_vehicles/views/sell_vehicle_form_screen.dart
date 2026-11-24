@@ -10,6 +10,7 @@ import '../../../core/design_system/molecules/floating_label_box.dart';
 import '../../../core/design_system/molecules/gradient_button.dart';
 import '../../../core/design_system/templates/app_layout.dart';
 import '../controllers/approved_vehicle_controller.dart';
+import '../utils/sell_form_inputs.dart';
 import '../domain/entities/auction_vehicle_match.dart';
 import '../../../core/extensions/context_extensions.dart';
 
@@ -273,6 +274,8 @@ class _SellVehicleFormScreenState extends State<SellVehicleFormScreen> {
                   inputFormatters: [
                     FilteringTextInputFormatter.allow(RegExp(r'[A-Za-z0-9]')),
                   ],
+                  autocorrect: false,
+                  textCapitalization: TextCapitalization.characters,
                   focusNode: _regFocus,
                   textInputAction: TextInputAction.search,
                   onSubmitted: (_) => _checkAuction(),
@@ -317,6 +320,8 @@ class _SellVehicleFormScreenState extends State<SellVehicleFormScreen> {
                   controller: _chassisController,
                   hint: context.l10n.apprEnterChassisNumber,
                   icon: Icons.pin_outlined,
+                  autocorrect: false,
+                  textCapitalization: TextCapitalization.characters,
                 ),
                 _BrandField(
                   ctrl: _ctrl,
@@ -346,8 +351,10 @@ class _SellVehicleFormScreenState extends State<SellVehicleFormScreen> {
                       color: AppColors.textSecondary,
                     ),
                   ),
-                  keyboardType: TextInputType.number,
-                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                  keyboardType: const TextInputType.numberWithOptions(
+                    decimal: true,
+                  ),
+                  inputFormatters: [PriceInputFormatter()],
                 ),
                 _UniformInput(
                   label: '${context.l10n.apprAssetDescription} *',
@@ -594,6 +601,11 @@ class _UniformInput extends StatelessWidget {
   final TextInputAction? textInputAction;
   final Widget? suffix;
 
+  /// Off for codes (registration, chassis): iOS autocorrect otherwise
+  /// rewrites e.g. "ts" to "ya".
+  final bool autocorrect;
+  final TextCapitalization textCapitalization;
+
   const _UniformInput({
     required this.controller,
     required this.label,
@@ -608,6 +620,8 @@ class _UniformInput extends StatelessWidget {
     this.focusNode,
     this.textInputAction,
     this.suffix,
+    this.autocorrect = true,
+    this.textCapitalization = TextCapitalization.none,
   });
 
   static OutlineInputBorder _outline(Color color, {double width = 1}) =>
@@ -639,6 +653,9 @@ class _UniformInput extends StatelessWidget {
         onSubmitted: onSubmitted,
         focusNode: focusNode,
         textInputAction: textInputAction,
+        autocorrect: autocorrect,
+        enableSuggestions: autocorrect,
+        textCapitalization: textCapitalization,
         style: TextStyle(
           fontFamily: 'Montserrat',
           fontSize: 14.sp,

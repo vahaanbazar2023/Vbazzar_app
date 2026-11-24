@@ -3343,6 +3343,11 @@ class AppLocalizationsHi extends AppLocalizations {
   String get apprMfgYearRequired => 'निर्माण वर्ष आवश्यक है';
 
   @override
+  String apprMfgYearRange(int min, int max) {
+    return 'वर्ष $min और $max के बीच होना चाहिए';
+  }
+
+  @override
   String get apprInsuranceRequired => 'बीमा आवश्यक है';
 
   @override

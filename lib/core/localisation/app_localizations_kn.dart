@@ -3360,6 +3360,11 @@ class AppLocalizationsKn extends AppLocalizations {
   String get apprMfgYearRequired => 'ತಯಾರಿಕಾ ವರ್ಷ ಅಗತ್ಯವಿದೆ';
 
   @override
+  String apprMfgYearRange(int min, int max) {
+    return 'ವರ್ಷ $min ಮತ್ತು $max ರ ನಡುವೆ ಇರಬೇಕು';
+  }
+
+  @override
   String get apprInsuranceRequired => 'ವಿಮೆ ಅಗತ್ಯವಿದೆ';
 
   @override

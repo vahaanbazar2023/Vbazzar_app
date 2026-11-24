@@ -13,6 +13,7 @@ import '../domain/entities/approved_vehicle_category_entity.dart';
 import '../domain/entities/approved_vehicle_listing_entity.dart';
 import '../domain/entities/auction_vehicle_match.dart';
 import '../domain/repositories/approved_vehicle_repository.dart';
+import '../utils/sell_form_inputs.dart';
 import '../../../core/extensions/context_extensions.dart';
 
 class ApprovedVehicleController extends GetxController {
@@ -417,7 +418,7 @@ class ApprovedVehicleController extends GetxController {
     final price = sellPriceC.text.trim();
     if (price.isEmpty) {
       sellPriceError.value = appL10n.apprPriceRequired;
-    } else if (double.tryParse(price) == null) {
+    } else if (!SellFormInputs.isValidPrice(price)) {
       sellPriceError.value = appL10n.apprEnterValidPrice;
     } else {
       sellPriceError.value = '';
@@ -425,9 +426,17 @@ class ApprovedVehicleController extends GetxController {
   }
 
   void validateSellMfgYear() {
-    sellMfgYearError.value = sellMfgYear.value.isEmpty
-        ? appL10n.apprMfgYearRequired
-        : '';
+    final year = sellMfgYear.value.trim();
+    if (year.isEmpty) {
+      sellMfgYearError.value = appL10n.apprMfgYearRequired;
+    } else if (!SellFormInputs.isValidYear(year)) {
+      sellMfgYearError.value = appL10n.apprMfgYearRange(
+        SellFormInputs.minYear,
+        SellFormInputs.maxYear(),
+      );
+    } else {
+      sellMfgYearError.value = '';
+    }
   }
 
   void validateSellInsurance() {
