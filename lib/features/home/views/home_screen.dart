@@ -414,16 +414,51 @@ class _LiveAuctionCarouselState extends State<_LiveAuctionCarousel> {
   final PageController _pageCtrl = PageController();
   int _currentPage = 0;
   Timer? _autoSlideTimer;
+  Timer? _endCheckTimer;
 
-  // When auctions is empty we fall back to the promo poster images.
-  bool get _showPosters => widget.auctions.isEmpty;
+  /// Auctions still running. An auction's card disappears as soon as its end
+  /// time passes (checked every 30 s, like the countdown), without waiting
+  /// for Home to reload.
+  late List<AuctionListing> _live = _stillRunning();
+
+  List<AuctionListing> _stillRunning() {
+    final now = DateTime.now();
+    return widget.auctions.where((a) => !a.hasEndedAt(now)).toList();
+  }
+
+  // When no auction is running we fall back to the promo poster images.
+  bool get _showPosters => _live.isEmpty;
   List<String> get _posterPaths => AppAssets.promoPosterImages;
-  int get _itemCount =>
-      _showPosters ? _posterPaths.length : widget.auctions.length;
+  int get _itemCount => _showPosters ? _posterPaths.length : _live.length;
 
   @override
   void initState() {
     super.initState();
+    _startAutoSlide();
+    _endCheckTimer = Timer.periodic(
+      const Duration(seconds: 30),
+      (_) => _refreshLive(),
+    );
+  }
+
+  @override
+  void didUpdateWidget(_LiveAuctionCarousel oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.auctions != widget.auctions) _refreshLive();
+  }
+
+  void _refreshLive() {
+    if (!mounted) return;
+    final live = _stillRunning();
+    final changed =
+        live.length != _live.length ||
+        !live.every((a) => _live.any((b) => b.auctionId == a.auctionId));
+    if (!changed) return;
+    setState(() {
+      _live = live;
+      _currentPage = 0;
+    });
+    if (_pageCtrl.hasClients) _pageCtrl.jumpToPage(0);
     _startAutoSlide();
   }
 
@@ -444,6 +479,7 @@ class _LiveAuctionCarouselState extends State<_LiveAuctionCarousel> {
   @override
   void dispose() {
     _autoSlideTimer?.cancel();
+    _endCheckTimer?.cancel();
     _pageCtrl.dispose();
     super.dispose();
   }
@@ -490,7 +526,7 @@ class _LiveAuctionCarouselState extends State<_LiveAuctionCarousel> {
             itemCount: _itemCount,
             itemBuilder: (_, i) => _showPosters
                 ? _PromoPostCard(imagePath: _posterPaths[i])
-                : _AuctionBannerCard(auction: widget.auctions[i]),
+                : _AuctionBannerCard(auction: _live[i]),
           ),
           _buildDots(),
         ],
@@ -561,7 +597,15 @@ class _AuctionBannerCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => _openAuction(arguments: {'auction': auction}),
+      // Open this auction's vehicles directly (same screen as a category
+      // tap), not the All-bank auction list.
+      // The vehicle list needs a vehicle type; without one keep the old screen.
+      onTap: () => auction.listVehicleType.isEmpty
+          ? _openAuction(arguments: {'auction': auction})
+          : _openAuction(
+              route: AppRoutes.vehicleListings,
+              arguments: auction.vehicleListArguments(),
+            ),
       child: Container(
         margin: EdgeInsets.symmetric(horizontal: 16.w),
         decoration: BoxDecoration(
@@ -756,59 +800,17 @@ class _AuctionTimerState extends State<_AuctionTimer> {
   }
 
   static String _remaining(String endAt) {
-    try {
-      DateTime end;
-      if (endAt.contains('T')) {
-        end = DateTime.parse(endAt).toLocal();
-      } else {
-        // "29 Jun 2029 - 06:00PM"
-        final parts = endAt.split(' - ');
-        final dp = parts[0].trim().split(' ');
-        const m = {
-          'Jan': 1,
-          'Feb': 2,
-          'Mar': 3,
-          'Apr': 4,
-          'May': 5,
-          'Jun': 6,
-          'Jul': 7,
-          'Aug': 8,
-          'Sep': 9,
-          'Oct': 10,
-          'Nov': 11,
-          'Dec': 12,
-        };
-        final day = int.parse(dp[0]);
-        final month = m[dp[1]] ?? 1;
-        final year = int.parse(dp[2]);
-        int h = 0, min = 0;
-        if (parts.length > 1) {
-          final t = parts[1].trim().toUpperCase();
-          final isPm = t.endsWith('PM');
-          final nums = t
-              .replaceAll('AM', '')
-              .replaceAll('PM', '')
-              .trim()
-              .split(':');
-          h = int.parse(nums[0]);
-          min = int.parse(nums[1]);
-          if (isPm && h != 12) h += 12;
-          if (!isPm && h == 12) h = 0;
-        }
-        end = DateTime(year, month, day, h, min);
-      }
-      final diff = end.difference(DateTime.now());
-      if (diff.isNegative) return appL10n.coreEnded;
-      final totalH = diff.inHours;
-      final mins = diff.inMinutes % 60;
-      if (totalH >= 24) {
-        final days = totalH ~/ 24;
-        return appL10n.coreTimeLeftDh(days, totalH % 24);
-      }
-      return appL10n.coreTimeLeftHm(totalH, mins);
-    } catch (_) {
-      return endAt;
+    final end = parseAuctionEnd(endAt);
+    if (end == null) return endAt;
+    final diff = end.difference(DateTime.now());
+    if (diff.isNegative) return appL10n.coreEnded;
+    final totalH = diff.inHours;
+    final mins = diff.inMinutes % 60;
+    if (totalH >= 24) {
+      final days = totalH ~/ 24;
+      return appL10n.coreTimeLeftDh(days, totalH % 24);
     }
+    return appL10n.coreTimeLeftHm(totalH, mins);
   }
 
   @override
@@ -1449,8 +1451,8 @@ class _AdBanner extends StatelessWidget {
         if (ad.isInternal) {
           // Internal route — map redirect_value string to route
           final route = _resolveRoute(ad.redirectValue);
-          if (route == AppRoutes.auctionType ||
-              route == AppRoutes.auctionListings) {
+          if (route == AppRoutes.auctionCategory ||
+              route == AppRoutes.auctionCategory) {
             // Auction banners need the SUBT001 subscription: active ->
             // auction module, otherwise -> choose-a-plan screen.
             await _openAuction(route: route!);

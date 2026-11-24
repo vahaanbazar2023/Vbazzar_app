@@ -120,6 +120,9 @@ class ApiEndpoints {
       '$auctionPrefix/auction-listings-pagination';
   static const String auctionVehicleListings =
       '$auctionPrefix/vehicle-listings-pagination';
+
+  /// Banks / NBFCs for the auction "Client Name" filter (auction_bank_master).
+  static const String auctionBanks = '$auctionPrefix/auction-banks';
   static const String placeBid = '$auctionPrefix/auction-vehicle-bid';
 
   static const String myBids = '$auctionPrefix/my-bids';

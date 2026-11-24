@@ -1131,6 +1131,24 @@
   "apprNotAvailable": "Not available",
   "apprInfo": "Info",
   "apprFilePickerPending": "File picker integration pending. Add file_picker package to enable uploads.",
+  "apprYardName": "Yard Name",
+  "apprYardNameHint": "e.g. Medchal Yard",
+  "apprYardLocation": "Yard Location",
+  "apprYardLocationHint": "Address or area of the yard",
+  "apprAuctionCheck": "Check",
+  "apprAuctionChecking": "Checking our auction listings…",
+  "apprAuctionFound": "Found in our auction listings. Details are filled in: check them and add the rest.",
+  "apprAuctionPhotosAdding": "Adding photos from the auction listing…",
+  "apprAuctionPhotosMissing": "{count} photo(s) from the auction listing couldn't be added. Please add photos below.",
+  "@apprAuctionPhotosMissing": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "apprAuctionNotFound": "Not in our auction listings. Please enter the vehicle details.",
+  "apprAuctionCheckFailed": "Couldn't check our auction listings. Please enter the vehicle details.",
   "apprSellYourVehicle": "Sell Your Vehicle",
   "apprSubmitVehicleForApproval": "Submit your vehicle for approval",
   "apprRegNoHint": "e.g. MH12AB1234",
@@ -1170,6 +1188,17 @@
   "apprPriceRequired": "Price is required",
   "apprEnterValidPrice": "Enter valid price",
   "apprMfgYearRequired": "Manufacturing year is required",
+  "apprMfgYearRange": "Year must be between {min} and {max}",
+  "@apprMfgYearRange": {
+    "placeholders": {
+      "min": {
+        "type": "int"
+      },
+      "max": {
+        "type": "int"
+      }
+    }
+  },
   "apprInsuranceRequired": "Insurance is required",
   "apprGstApplicabilityRequired": "GST applicability is required",
   "apprVehicleImagesRequired": "Vehicle images are required",
@@ -1382,6 +1411,8 @@
   "aucStatusWon": "Won",
   "aucAllCategories": "All Categories",
   "aucAllStates": "All States",
+  "aucClientName": "Client Name",
+  "aucAllClients": "All Clients",
   "aucApply": "Apply",
   "aucBids": "Bids",
   "aucMyWishlist": "My Wishlist",
@@ -2265,6 +2296,15 @@
     }
   },
   "profSubRenewUnavailable": "This plan can't be renewed right now. Please pick a plan from Explore.",
+  "profSubRenewPlan": "Renew Plan",
+  "profSubRenewStartsAfter": "Starts when your current plan ends on {date}",
+  "@profSubRenewStartsAfter": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
   "profSubNeedMoreBenefits": "Need more benefits?",
   "profSubExploreOtherPlans": "Explore our other plans and choose the one that fits your needs.",
   "profSubNoActivePlans": "No Active Plans",
@@ -2893,5 +2933,25 @@
   "aucAutoBidEditLimit": "Edit limit",
   "aucAutoBidEditLimitTitle": "Auto-bid limit",
   "aucAutoBidLimitUpdated": "Auto-bid limit updated",
-  "aucAutoBidStoppedMaxAmount": "Auto-bid stopped: the next bid is above your limit for this vehicle"
+  "aucAutoBidStoppedMaxAmount": "Auto-bid stopped: the next bid is above your limit for this vehicle",
+  "bidConfirmTitle": "Confirm your bid",
+  "bidConfirmAmountLabel": "You are placing a bid of",
+  "bidConfirmInWords": "In words",
+  "bidConfirmButton": "Confirm",
+  "profSubNamedBenefits": "{name} Benefits",
+  "@profSubNamedBenefits": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "profSubNamedSupport": "{name} Support",
+  "@profSubNamedSupport": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  }
 }

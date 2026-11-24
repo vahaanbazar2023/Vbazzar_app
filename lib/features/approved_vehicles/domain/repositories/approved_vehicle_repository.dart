@@ -2,6 +2,7 @@ import 'package:dio/dio.dart' as dio;
 import '../../../buy_and_sell/domain/entities/paginated_buy_vehicles_response.dart';
 import '../entities/approved_vehicle_category_entity.dart';
 import '../entities/approved_vehicle_listing_entity.dart';
+import '../entities/auction_vehicle_match.dart';
 
 /// Contract for the Approved Vehicles data layer.
 ///
@@ -60,9 +61,29 @@ abstract class ApprovedVehicleRepository {
     int limit = 20,
   });
 
+  // ── Auction lookup (sell form prefill) ─────────────────────
+
+  /// The vehicle with this registration number in our auction listings, or
+  /// null when there is none.
+  Future<AuctionVehicleMatch?> findAuctionVehicle({
+    required String userId,
+    required String registrationNumber,
+  });
+
   // ── Submit Vehicle ──────────────────────────────────────────
 
-  Future<bool> submitVehicle(dio.FormData formData);
+  /// Submits the sell form. Throws [SubmitVehicleRejected] with the server's
+  /// own message when it refuses (validation, wrong file, not a vendor…).
+  Future<void> submitVehicle(dio.FormData formData);
+}
+
+/// The server refused a sell form; [message] is its exact reason.
+class SubmitVehicleRejected implements Exception {
+  final String message;
+  const SubmitVehicleRejected(this.message);
+
+  @override
+  String toString() => message;
 }
 
 /// Typed result for paginated categories.

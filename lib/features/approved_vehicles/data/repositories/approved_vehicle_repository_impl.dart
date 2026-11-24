@@ -2,6 +2,7 @@ import 'package:dio/dio.dart' as dio;
 import '../../../../core/network/network_service.dart';
 import '../../../buy_and_sell/domain/entities/paginated_buy_vehicles_response.dart';
 import '../../domain/entities/approved_vehicle_listing_entity.dart';
+import '../../domain/entities/auction_vehicle_match.dart';
 import '../../domain/repositories/approved_vehicle_repository.dart';
 import '../models/approved_vehicle_category_model.dart';
 import '../models/approved_vehicle_listing_model.dart';
@@ -19,6 +20,8 @@ class ApprovedVehicleRepositoryImpl implements ApprovedVehicleRepository {
       '/api/v1/approved-veh/appr-veh-user-interest';
   static const String _userBookedPath =
       '/api/v1/approved-veh/appr-veh-user-booked';
+  static const String _auctionLookupPath =
+      '/api/v1/approved-veh/appr-veh-auction-lookup';
 
   final NetworkService _network;
 
@@ -157,7 +160,6 @@ class ApprovedVehicleRepositoryImpl implements ApprovedVehicleRepository {
 
   // ── User Interest (Book / Inspection) ───────────────────────
 
-
   @override
   Future<UserInterestResult> updateUserInterest({
     required String userId,
@@ -235,12 +237,70 @@ class ApprovedVehicleRepositoryImpl implements ApprovedVehicleRepository {
   // ── Submit Vehicle (Sell Form) ──────────────────────────────
 
   @override
-  Future<bool> submitVehicle(dio.FormData formData) async {
-    final response = await _network.upload<Map<String, dynamic>>(
-      _submitPath,
-      formData,
+  Future<AuctionVehicleMatch?> findAuctionVehicle({
+    required String userId,
+    required String registrationNumber,
+  }) async {
+    final response = await _network.post<Map<String, dynamic>>(
+      _auctionLookupPath,
+      data: {'user_id': userId, 'registration_number': registrationNumber},
     );
-    return response.data?['success'] == true;
+    final body = response.data;
+    // Not found comes back as HTTP 200 with status "error" and code 404.
+    if (body == null || body['status'] != 'success') return null;
+    final data = body['data'];
+    if (data is! Map<String, dynamic>) return null;
+    return AuctionVehicleMatch.fromJson(data);
+  }
+
+  @override
+  Future<void> submitVehicle(dio.FormData formData) async {
+    Map<String, dynamic>? body;
+    try {
+      final response = await _network.upload<Map<String, dynamic>>(
+        _submitPath,
+        formData,
+      );
+      body = response.data;
+    } on dio.DioException catch (e) {
+      // 403 / 422 / 503 come back as HTTP errors with a JSON body.
+      final data = e.response?.data;
+      final message = submitErrorMessage(data is Map ? data : null);
+      if (message != null) throw SubmitVehicleRejected(message);
+      rethrow;
+    }
+    // Success is `status: "success"`; refusals are HTTP 200 with
+    // `status: "error"` and the reason in `message`.
+    if (body?['status'] == 'success') return;
+    throw SubmitVehicleRejected(
+      submitErrorMessage(body) ?? 'Failed to submit the vehicle.',
+    );
+  }
+
+  /// The exact reason in an appr-veh-submit error body: its `message`, or for
+  /// a 422 the `detail` list joined ("price: Input should be greater than 0").
+  static String? submitErrorMessage(Map? body) {
+    if (body == null) return null;
+    final detail = body['detail'];
+    if (detail is List && detail.isNotEmpty) {
+      final lines = [
+        for (final d in detail)
+          if (d is Map)
+            [
+              if (d['loc'] is List && (d['loc'] as List).isNotEmpty)
+                '${(d['loc'] as List).last}',
+              '${d['msg'] ?? ''}',
+            ].where((x) => x.isNotEmpty).join(': '),
+      ].where((x) => x.isNotEmpty).toList();
+      if (lines.isNotEmpty) return lines.join('\n');
+    }
+    final message = body['message']?.toString().trim() ?? '';
+    if (message.isNotEmpty) return message;
+    if (detail is Map && '${detail['message'] ?? ''}'.trim().isNotEmpty) {
+      return '${detail['message']}'.trim();
+    }
+    if (detail is String && detail.trim().isNotEmpty) return detail.trim();
+    return null;
   }
 
   // ── Helpers ─────────────────────────────────────────────────

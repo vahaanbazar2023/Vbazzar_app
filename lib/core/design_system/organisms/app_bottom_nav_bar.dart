@@ -10,6 +10,10 @@ const double _kOverlap = 2.0; // vertical space reserved above bar for wave
 const double _kCircleSize = 40.0; // active red circle diameter
 const double _kWaveW = 100.0; // total horizontal span of the wave arch
 const double _kWaveH = 28.0; // wave arch height above bar top edge
+
+/// How far the active tab's wave rises above the bar. Content pinned just
+/// above the bottom nav (e.g. a Pay button) needs this much clearance.
+const double kBottomNavWaveHeight = _kWaveH;
 const double _kCircleLift =
     -4.0; // negative = centre is 4 px inside bar → ~40 % protrusion (≈20 px)
 const double _kPadH = 0.0; // no left/right padding — full screen width

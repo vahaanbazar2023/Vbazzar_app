@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 
 import '../controllers/subscription_controller.dart';
 import '../models/subscription_plan.dart';
+import '../utils/plan_card_labels.dart';
 import '../models/user_subscription.dart';
 import '../services/subscription_guard_service.dart';
 import '../../../core/constants/app_assets.dart';
@@ -434,22 +435,8 @@ class _PlanCard extends StatelessWidget {
     }
   }
 
-  String _supportLabel(BuildContext context) {
-    // Use label from API if available, otherwise fallback to tier-based
-    if (plan.supportLabel != null && plan.supportLabel!.isNotEmpty) {
-      return plan.supportLabel!;
-    }
-    switch (plan.name.toLowerCase()) {
-      case 'gold':
-      case 'elite':
-        return context.l10n.profSubEliteSupport;
-      case 'silver':
-      case 'premium':
-        return context.l10n.profSubPremiumSupport;
-      default:
-        return context.l10n.profSubBasicSupport;
-    }
-  }
+  String _supportLabel(BuildContext context) =>
+      PlanCardLabels.support(context.l10n, plan);
 
   String? get _supportIconUrl {
     // Use icon URL from API if available
@@ -469,21 +456,14 @@ class _PlanCard extends StatelessWidget {
     }
   }
 
-  String _badgeLabel(BuildContext context) {
-    switch (plan.name.toLowerCase()) {
-      case 'gold':
-      case 'elite':
-        return context.l10n.profSubElitePlan;
-      case 'silver':
-      case 'premium':
-        return context.l10n.profSubPremiumPlan;
-      default:
-        return context.l10n.profSubBasicPlan;
-    }
-  }
+  String _badgeLabel(BuildContext context) =>
+      PlanCardLabels.badge(context.l10n, plan);
 
   String get _originalPrice {
-    final orig = (plan.price * 1.20).round();
+    final actual = plan.actualPrice;
+    final orig = actual != null && actual > plan.price
+        ? actual.round()
+        : (plan.price * 1.20).round();
     final s = orig.toString();
     if (s.length <= 3) return s;
     return '${s.substring(0, s.length - 3)},${s.substring(s.length - 3)}';
@@ -728,10 +708,11 @@ class _PlanCard extends StatelessWidget {
                                 child: _FeatureChip(
                                   icon: AppAssets.subIconStar,
                                   iconUrl: plan.iconUrlBenefit,
-                                  label: isMostPopular
-                                      ? (plan.benefitLabel ??
-                                            context.l10n.profSubEliteBenefits)
-                                      : '',
+                                  label: PlanCardLabels.benefit(
+                                    context.l10n,
+                                    plan,
+                                    mostPopular: isMostPopular,
+                                  ),
                                   value: _badgeLabel(context),
                                 ),
                               ),

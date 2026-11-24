@@ -17,6 +17,7 @@ import '../../revvot/revvot_buying_power_button.dart';
 import '../../revvot/revvot_service.dart';
 import '../controllers/vehicle_detail_controller.dart';
 import '../domain/entities/buy_vehicle_entity.dart';
+import '../domain/entities/vehicle_files.dart';
 
 class BuyVehicleDetailsView extends StatefulWidget {
   /// When true the screen is opened by the vehicle's owner (from My Vehicles):
@@ -188,8 +189,21 @@ class _BuyVehicleDetailsViewState extends State<BuyVehicleDetailsView> {
                     borderRadius: AppRadius.borderRadiusMd,
                     child: Stack(
                       children: [
+                        // Photos, then (with the Vehicle Details Access
+                        // plan) RC / insurance images, each labelled.
                         NetworkImageCarousel(
-                          imageUrls: vehicle.allImageUrls,
+                          imageUrls: [
+                            ...vehicle.allImageUrls,
+                            for (final d in vehicle.galleryDocuments) d.url,
+                          ],
+                          captions: [
+                            for (final _ in vehicle.allImageUrls) null,
+                            ..._DocumentsRow.labels(
+                              vehicle.galleryDocuments,
+                              rc: context.l10n.rcCopy,
+                              insurance: context.l10n.insuranceCopy,
+                            ),
+                          ],
                           height: 180.h,
                         ),
                         // Category badge top-left
@@ -312,6 +326,16 @@ class _BuyVehicleDetailsViewState extends State<BuyVehicleDetailsView> {
                     ],
                   ),
                   SizedBox(height: 10.h),
+
+                  // ── RC / insurance PDFs ──────────────────────────────────
+                  // Image documents are in the gallery above; PDFs can't be
+                  // shown there, so they open from these buttons. The backend
+                  // sends documents only with the Vehicle Details Access plan
+                  // or to the seller, so nothing shows for everyone else.
+                  if (vehicle.pdfDocuments.isNotEmpty) ...[
+                    _DocumentsRow(documents: vehicle.pdfDocuments),
+                    SizedBox(height: 10.h),
+                  ],
 
                   // ── Vehicle details accordion ────────────────────────────
                   _VehicleDetailsAccordion(vehicle: vehicle),
@@ -1364,6 +1388,84 @@ class _SectionLabel extends StatelessWidget {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+// RC / insurance PDF buttons — image documents are in the gallery instead
+// ─────────────────────────────────────────────────────────────────────────────
+
+class _DocumentsRow extends StatelessWidget {
+  final List<VehicleDocument> documents;
+  const _DocumentsRow({required this.documents});
+
+  /// "RC Copy", "Insurance Copy" — numbered ("RC Copy 2") when there are
+  /// several of the same kind.
+  static List<String> labels(
+    List<VehicleDocument> documents, {
+    required String rc,
+    required String insurance,
+  }) {
+    final totals = <String, int>{};
+    for (final d in documents) {
+      totals[d.type] = (totals[d.type] ?? 0) + 1;
+    }
+    final seen = <String, int>{};
+    return [
+      for (final d in documents)
+        () {
+          final n = seen[d.type] = (seen[d.type] ?? 0) + 1;
+          final base = d.isRc
+              ? rc
+              : d.isInsurance
+              ? insurance
+              : d.type.toUpperCase();
+          return (totals[d.type] ?? 1) > 1 ? '$base $n' : base;
+        }(),
+    ];
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final names = labels(
+      documents,
+      rc: context.l10n.rcCopy,
+      insurance: context.l10n.insuranceCopy,
+    );
+    return Wrap(
+      spacing: 8.w,
+      runSpacing: 8.h,
+      children: [
+        for (var i = 0; i < documents.length; i++)
+          OutlinedButton.icon(
+            onPressed: () => launchUrl(
+              Uri.parse(documents[i].url),
+              mode: LaunchMode.externalApplication,
+            ),
+            icon: Icon(
+              Icons.description_outlined,
+              size: 16.r,
+              color: AppColors.primary,
+            ),
+            label: Text(
+              names[i],
+              style: TextStyle(
+                fontFamily: 'Montserrat',
+                fontSize: 12.sp,
+                fontWeight: FontWeight.w700,
+                color: AppColors.primary,
+              ),
+            ),
+            style: OutlinedButton.styleFrom(
+              side: const BorderSide(color: AppColors.primary),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20.r),
+              ),
+              padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
+            ),
+          ),
+      ],
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 // Action card — preserved exactly (gradient colored cards)
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -1920,12 +2022,13 @@ class _ConnectWithOwnerCardState extends State<_ConnectWithOwnerCard> {
                 ),
               )
             else
-              // Not yet subscribed / no credits — use requestOwnerContact
-              // which handles both credit deduction and paywall
+              // Not yet revealed — requestOwnerContact uses a credit when the
+              // user has one, otherwise opens the right purchase: the owner
+              // number (SUBT004 holders) or the Vehicle Details plan first.
               GestureDetector(
                 onTap: () {
                   final ctrl = Get.find<BuyVehicleController>();
-                  ctrl.showOwnerContactPaywall(widget.vehicle);
+                  ctrl.requestOwnerContact(widget.vehicle);
                 },
                 child: Container(
                   padding: EdgeInsets.symmetric(
@@ -1936,21 +2039,74 @@ class _ConnectWithOwnerCardState extends State<_ConnectWithOwnerCard> {
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(20.r),
                   ),
-                  child: Builder(
-                    builder: (context) => Text(
-                      context.l10n.subscribe,
-                      style: TextStyle(
-                        fontFamily: 'Montserrat',
-                        fontSize: 12.sp,
-                        fontWeight: FontWeight.w600,
-                        color: const Color(0xFF7209B7),
-                      ),
-                    ),
+                  child: _OwnerContactPriceLabel(
+                    ctrl: Get.find<BuyVehicleController>(),
                   ),
                 ),
               ),
           ],
         ),
+      );
+    });
+  }
+}
+
+
+/// "Subscribe" or, for a user who can buy an owner number, ~~₹99~~ ₹9.
+class _OwnerContactPriceLabel extends StatelessWidget {
+  final BuyVehicleController ctrl;
+  const _OwnerContactPriceLabel({required this.ctrl});
+
+  static String _rupees(double value) => value == value.roundToDouble()
+      ? '₹${value.toInt()}'
+      : '₹${value.toStringAsFixed(2)}';
+
+  @override
+  Widget build(BuildContext context) {
+    const purple = Color(0xFF7209B7);
+    return Obx(() {
+      final price = ctrl.ownerContactPrice.value;
+      final actual = ctrl.ownerContactActualPrice.value;
+      final hasCredit = ctrl.ownerContactCredits.value > 0;
+      if (hasCredit || !ctrl.canBuyOwnerContact.value || price <= 0) {
+        return Text(
+          context.l10n.subscribe,
+          style: TextStyle(
+            fontFamily: 'Montserrat',
+            fontSize: 12.sp,
+            fontWeight: FontWeight.w600,
+            color: purple,
+          ),
+        );
+      }
+      return Row(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          if (actual > price) ...[
+            Text(
+              _rupees(actual),
+              style: TextStyle(
+                fontFamily: 'Montserrat',
+                fontSize: 11.sp,
+                fontWeight: FontWeight.w500,
+                color: Colors.grey.shade500,
+                decoration: TextDecoration.lineThrough,
+                decorationColor: Colors.grey.shade500,
+              ),
+            ),
+            SizedBox(width: 4.w),
+          ],
+          Text(
+            _rupees(price),
+            style: TextStyle(
+              fontFamily: 'Montserrat',
+              fontSize: 13.sp,
+              fontWeight: FontWeight.w700,
+              color: purple,
+            ),
+          ),
+        ],
       );
     });
   }

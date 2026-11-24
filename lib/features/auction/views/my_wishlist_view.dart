@@ -17,6 +17,7 @@ import '../models/vehicle_listing.dart';
 import '../../../core/design_system/molecules/timer_badge.dart';
 import 'bid_status_style.dart';
 import 'my_wishlist_detail_view.dart';
+import '../services/bid_flow.dart';
 
 class MyWishlistView extends GetView<WishlistController> {
   const MyWishlistView({super.key});
@@ -867,6 +868,7 @@ class _WishlistCardState extends State<_WishlistCard> {
             bidAmount: _bidAmount,
           );
     if (mounted) setState(() => _isPlacing = false);
+    if (error == BidFlow.cancelled) return;
     if (error != null && error != '__navigated__') {
       CustomSnackbar.show(message: error, type: SnackbarType.error);
     } else if (error == null) {

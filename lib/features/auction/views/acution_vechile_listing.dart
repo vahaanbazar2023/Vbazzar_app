@@ -9,7 +9,6 @@ import 'package:get/get.dart';
 import '../../../core/constants/app_assets.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/design_system/design_system.dart';
-import '../../../core/design_system/molecules/inline_dropdown_field.dart';
 import '../../../core/design_system/molecules/timer_badge.dart';
 import '../../../core/design_system/organisms/network_image_carousel.dart';
 import '../../../core/design_system/templates/app_layout.dart';
@@ -25,6 +24,7 @@ import 'bid_status_style.dart';
 import '../../../core/design_system/molecules/collapsible_section.dart';
 import 'auction_filter_bottom_sheet.dart';
 import 'gate_pass_sheet.dart';
+import '../services/bid_flow.dart';
 
 class AuctionVehicleListingScreen extends GetView<VehicleListingController> {
   const AuctionVehicleListingScreen({super.key});
@@ -1098,6 +1098,7 @@ class _VehicleCardState extends State<_VehicleCard> {
       bidAmount: _bidAmount,
     );
     if (mounted) setState(() => _isPlacingBid = false);
+    if (error == BidFlow.cancelled) return;
     if (error != null && error != '__navigated__') {
       CustomSnackbar.show(message: error, type: SnackbarType.error);
     } else if (error == null) {
@@ -1305,11 +1306,11 @@ class _CircleBidButton extends StatelessWidget {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Filter bottom sheet: Vehicle Type, Category, State (no Region)
-// Using custom InlineDropdownField for better UX
+// Filter bottom sheet: Category, State, Client Name (bank)
+// One searchable box per filter (CustomAutocompleteField): type to search, pick a match
 // ─────────────────────────────────────────────────────────────────────────────
 
-class AuctionFilterBottomSheetV2 extends StatelessWidget {
+class AuctionFilterBottomSheetV2 extends StatefulWidget {
   final VehicleListingController ctrl;
   const AuctionFilterBottomSheetV2({super.key, required this.ctrl});
 
@@ -1327,8 +1328,58 @@ class AuctionFilterBottomSheetV2 extends StatelessWidget {
   }
 
   @override
+  State<AuctionFilterBottomSheetV2> createState() =>
+      _AuctionFilterBottomSheetV2State();
+}
+
+class _AuctionFilterBottomSheetV2State
+    extends State<AuctionFilterBottomSheetV2> {
+  VehicleListingController get ctrl => widget.ctrl;
+
+  // One text box per filter: type to search, pick from the matches.
+  late final TextEditingController _categoryText;
+  late final TextEditingController _stateText;
+  late final TextEditingController _bankText;
+
+  @override
+  void initState() {
+    super.initState();
+    _categoryText = TextEditingController(
+      text: _categoryLabel(ctrl.selectedCategory.value),
+    );
+    _stateText = TextEditingController(
+      text: ctrl.selectedState.value?.stateName ?? '',
+    );
+    _bankText = TextEditingController(text: ctrl.selectedBank.value ?? '');
+  }
+
+  @override
+  void dispose() {
+    _categoryText.dispose();
+    _stateText.dispose();
+    _bankText.dispose();
+    super.dispose();
+  }
+
+  String _categoryLabel(String? value) {
+    if (value == null || value.isEmpty) return '';
+    for (final c in ctrl.categories) {
+      if (c['value'] == value) return _categoryName(c);
+    }
+    return value;
+  }
+
+  static String _categoryName(Map<String, String> c) {
+    final label = c['label'] ?? '';
+    return label.isNotEmpty ? label : (c['value'] ?? '');
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Container(
+    // Lift the sheet above the keyboard while typing in a filter box.
+    return Padding(
+      padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+      child: Container(
       height: MediaQuery.of(context).size.height * 0.55,
       decoration: BoxDecoration(
         color: Colors.white,
@@ -1395,63 +1446,67 @@ class AuctionFilterBottomSheetV2 extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // Category
-                  _FilterLabel(
-                    label: context.l10n.category,
-                    icon: Icons.category_outlined,
-                  ),
-                  SizedBox(height: 8.h),
-                  Obx(() {
-                    final categories = ctrl.categories;
-                    final isLoading = ctrl.isLoadingCategories.value;
-                    return InlineDropdownField<String>(
-                      value: ctrl.selectedCategory.value,
-                      items: categories
-                          .map((cat) => cat['value'] ?? '')
-                          .where((v) => v.isNotEmpty)
+                  Obx(
+                    () => CustomAutocompleteField<Map<String, String>>(
+                      controller: _categoryText,
+                      options: ctrl.categories
+                          .where((c) => (c['value'] ?? '').isNotEmpty)
                           .toList(),
+                      label: context.l10n.category,
                       placeholder: context.l10n.aucAllCategories,
                       prefixIcon: Icons.category_outlined,
-                      isLoading: isLoading,
-                      itemLabel: (v) {
-                        final cat = categories.firstWhere(
-                          (c) => c['value'] == v,
-                          orElse: () => {'label': v},
-                        );
-                        return cat['label'] ?? v;
-                      },
-                      onChanged: (val) => ctrl.selectedCategory.value = val,
-                      maxDropdownHeight: 200,
-                    );
-                  }),
+                      isLoading: ctrl.isLoadingCategories.value,
+                      displayStringForOption: _categoryName,
+                      onSelected: (c) =>
+                          ctrl.selectedCategory.value = c?['value'],
+                      searchHint: context.l10n.coreSearchEllipsis,
+                    ),
+                  ),
                   SizedBox(height: 20.h),
 
                   // State
-                  _FilterLabel(
-                    label: context.l10n.state,
-                    icon: Icons.location_city_outlined,
-                  ),
-                  SizedBox(height: 8.h),
-                  Obx(() {
-                    final states = ctrl.statesByRegion;
-                    final isLoading = ctrl.isLoadingStatesByRegion.value;
-                    return InlineDropdownField<StateByRegionEntity>(
-                      value: ctrl.selectedState.value,
-                      items: states,
+                  Obx(
+                    () => CustomAutocompleteField<StateByRegionEntity>(
+                      controller: _stateText,
+                      options: ctrl.statesByRegion.toList(),
+                      label: context.l10n.state,
                       placeholder: context.l10n.aucAllStates,
                       prefixIcon: Icons.location_city_outlined,
-                      isLoading: isLoading,
-                      itemLabel: (s) => s.stateName,
-                      onChanged: (val) => ctrl.selectedState.value = val,
-                      maxDropdownHeight: 220,
-                    );
-                  }),
+                      isLoading: ctrl.isLoadingStatesByRegion.value,
+                      displayStringForOption: (s) => s.stateName,
+                      onSelected: (s) => ctrl.selectedState.value = s,
+                      searchHint: context.l10n.coreSearchEllipsis,
+                    ),
+                  ),
+                  SizedBox(height: 20.h),
+
+                  // Client Name (bank / NBFC)
+                  Obx(
+                    () => CustomAutocompleteField<String>(
+                      controller: _bankText,
+                      options: ctrl.banks.toList(),
+                      label: context.l10n.aucClientName,
+                      placeholder: context.l10n.aucAllClients,
+                      prefixIcon: Icons.account_balance_outlined,
+                      isLoading: ctrl.isLoadingBanks.value,
+                      displayStringForOption: (b) => b,
+                      onSelected: (b) => ctrl.selectedBank.value = b,
+                      searchHint: context.l10n.coreSearchEllipsis,
+                    ),
+                  ),
                 ],
               ),
             ),
           ),
-          // Apply / Cancel buttons
+          // Apply / Cancel buttons — lifted above the Android navigation bar
+          // (3-button / gesture bar) so they are never hidden behind it.
           Padding(
-            padding: EdgeInsets.fromLTRB(16.w, 8.h, 16.w, 24.h),
+            padding: EdgeInsets.fromLTRB(
+              16.w,
+              8.h,
+              16.w,
+              16.h + MediaQuery.of(context).viewPadding.bottom,
+            ),
             child: Row(
               children: [
                 Expanded(
@@ -1480,35 +1535,7 @@ class AuctionFilterBottomSheetV2 extends StatelessWidget {
           ),
         ],
       ),
-    );
-  }
-}
-
-// ─── Filter Label Helper ─────────────────────────────────────────────────────
-
-class _FilterLabel extends StatelessWidget {
-  final String label;
-  final IconData icon;
-  const _FilterLabel({required this.label, required this.icon});
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Icon(icon, size: 16.r, color: AppColors.primary),
-        SizedBox(width: 6.w),
-        Expanded(
-          child: Text(
-            label,
-            style: TextStyle(
-              fontFamily: 'Montserrat',
-              fontSize: 14.sp,
-              fontWeight: FontWeight.w600,
-              color: AppColors.grey900,
-            ),
-          ),
-        ),
-      ],
+    ),
     );
   }
 }

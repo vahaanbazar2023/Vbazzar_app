@@ -35,6 +35,13 @@ class VehicleListingController extends GetxController
   /// Bid increment amount for this vehicle category
   final int bidIncrementAmount;
 
+  /// When set, only this auction's vehicles are listed (opened from the
+  /// home live-auction banner). Empty = every auction of [vehicleType].
+  final String auctionId;
+
+  /// Tab to open on: 0 live, 1 closing today, 2 upcoming.
+  final int initialTab;
+
   static const _tabTypes = [
     'live_auctions',
     'closing_today',
@@ -47,6 +54,8 @@ class VehicleListingController extends GetxController
     required this.vehicleType,
     this.auctionTitle = '',
     this.bidIncrementAmount = 5000,
+    this.auctionId = '',
+    this.initialTab = 0,
     VehicleListingService? service,
     AuctionRepository? repository,
   }) : _service = service ?? VehicleListingService(),
@@ -85,6 +94,12 @@ class VehicleListingController extends GetxController
   final selectedCategory = RxnString();
   final selectedVehicleTypeFilter = RxnString(); // For filter dropdown
 
+  /// "Client Name" filter: a bank from GET /auctions/auction-banks, sent as
+  /// `bank_name` (matched on each vehicle's bank). null = all clients.
+  final selectedBank = RxnString();
+  final banks = <String>[].obs;
+  final isLoadingBanks = false.obs;
+
   final regions = <RegionEntity>[].obs;
   final statesByRegion = <StateByRegionEntity>[].obs;
   final vehicleTypes =
@@ -101,11 +116,13 @@ class VehicleListingController extends GetxController
   StateByRegionEntity? _backupState;
   String? _backupCategory;
   String? _backupVehicleTypeFilter;
+  String? _backupBank;
 
   bool get hasActiveFilters =>
       selectedRegion.value != null ||
       selectedState.value != null ||
       selectedCategory.value != null ||
+      selectedBank.value != null ||
       selectedVehicleTypeFilter.value != null;
 
   // ─── Search ───────────────────────────────────────────────────
@@ -142,7 +159,13 @@ class VehicleListingController extends GetxController
   @override
   void onInit() {
     super.onInit();
-    tabController = TabController(length: 3, vsync: this);
+    final startTab = initialTab.clamp(0, 2);
+    tabController = TabController(
+      length: 3,
+      vsync: this,
+      initialIndex: startTab,
+    );
+    currentTabIndex.value = startTab;
     scrollController = ScrollController(); // Legacy, kept for compatibility
 
     // Debounced search - wait 500ms after user stops typing
@@ -167,10 +190,11 @@ class VehicleListingController extends GetxController
       }
     });
 
-    _loadTab(0); // load live tab immediately
+    _loadTab(startTab); // load the opening tab immediately
     _fetchRegions();
     fetchVehicleTypes();
     fetchCategories();
+    fetchBanks();
     loadAllStates(); // Load all states upfront for filter
   }
 
@@ -218,11 +242,13 @@ class VehicleListingController extends GetxController
       final result = await _service.fetchVehicles(
         userId: userId,
         auctionType: _tabTypes[i],
+        auctionId: auctionId,
         vehicleType:
             vehicleType, // Always use the category's vehicle type, not filter
         category: selectedCategory.value ?? '',
         regionId: '', // Region removed
         stateId: selectedState.value?.stateId ?? '',
+        bankName: selectedBank.value ?? '',
         page: 1,
       );
       _tabVehicles[i].assignAll(result.vehicles);
@@ -252,10 +278,12 @@ class VehicleListingController extends GetxController
       final result = await _service.fetchVehicles(
         userId: userId,
         auctionType: _tabTypes[i],
+        auctionId: auctionId,
         vehicleType: vehicleType, // Always use the category's vehicle type
         category: selectedCategory.value ?? '',
         regionId: '', // Region removed
         stateId: selectedState.value?.stateId ?? '',
+        bankName: selectedBank.value ?? '',
         page: nextPage,
       );
       _tabVehicles[i].addAll(result.vehicles);
@@ -287,6 +315,7 @@ class VehicleListingController extends GetxController
     _backupState = selectedState.value;
     _backupCategory = selectedCategory.value;
     _backupVehicleTypeFilter = selectedVehicleTypeFilter.value;
+    _backupBank = selectedBank.value;
   }
 
   void restoreFilters() {
@@ -294,6 +323,7 @@ class VehicleListingController extends GetxController
     selectedState.value = _backupState;
     selectedCategory.value = _backupCategory;
     selectedVehicleTypeFilter.value = _backupVehicleTypeFilter;
+    selectedBank.value = _backupBank;
   }
 
   void applyFilters() {
@@ -306,6 +336,7 @@ class VehicleListingController extends GetxController
     selectedState.value = null;
     selectedCategory.value = null;
     selectedVehicleTypeFilter.value = null;
+    selectedBank.value = null;
   }
 
   void resetFilters() {
@@ -484,6 +515,36 @@ class VehicleListingController extends GetxController
     } finally {
       isLoadingCategories.value = false;
     }
+  }
+
+  /// Bank names for the "Client Name" dropdown, in the server's order.
+  Future<void> fetchBanks() async {
+    isLoadingBanks.value = true;
+    try {
+      final response = await Get.find<NetworkService>().get(
+        ApiEndpoints.auctionBanks,
+      );
+      banks.assignAll(parseBankNames(response.data));
+    } catch (e) {
+      debugPrint('❌ [VehicleListingController] fetchBanks error: $e');
+    } finally {
+      isLoadingBanks.value = false;
+    }
+  }
+
+  /// `{"data": {"banks": [{"bank_name": ...}]}}` -> names (blank / NIL dropped).
+  @visibleForTesting
+  static List<String> parseBankNames(Object? body) {
+    final data = body is Map ? (body['data'] ?? body) : null;
+    final list = data is Map ? data['banks'] : (body is List ? body : null);
+    if (list is! List) return const [];
+    final names = <String>[];
+    for (final item in list) {
+      final name = (item is Map ? item['bank_name'] : item)?.toString().trim() ?? '';
+      if (name.isEmpty || name.toUpperCase() == 'NIL' || names.contains(name)) continue;
+      names.add(name);
+    }
+    return names;
   }
 
   // ─── Search / filter ─────────────────────────────────────────
