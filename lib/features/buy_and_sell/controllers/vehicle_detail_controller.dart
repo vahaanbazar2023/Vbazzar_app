@@ -231,6 +231,15 @@ class BuyVehicleController extends GetxController {
   final ownerContactAccessesPerPlan = 0.obs;
   final isLoadingAccessStatus = false.obs;
 
+  /// Price of the user's next owner number (₹9, then ₹49, then ₹99; set by admin).
+  final ownerContactPrice = 0.0.obs;
+
+  /// "Actual" price shown struck through next to [ownerContactPrice] (₹99).
+  final ownerContactActualPrice = 0.0.obs;
+
+  /// Only users with an active SUBT004 plan can buy an owner number.
+  final canBuyOwnerContact = false.obs;
+
   /// Vehicles for which this user has already unlocked details this session
   /// (avoids double-counting free views on repeat opens).
   final unlockedDetailVehicleIds = <String>{};
@@ -905,12 +914,12 @@ class BuyVehicleController extends GetxController {
       // Continue to fetch anyway — might already be unlocked
     }
 
-    // Step 2: silent refresh — keeps existing UI visible while fetching
-    await fetchVehicleDetail(
-      sbVehicleId,
-      categoryCode: categoryCode,
-      silent: true,
-    );
+    // Step 2: silent refresh — keeps existing UI visible while fetching.
+    // Access status too: the next owner number now costs more (₹9 → ₹49 → ₹99).
+    await Future.wait([
+      fetchVehicleDetail(sbVehicleId, categoryCode: categoryCode, silent: true),
+      fetchAccessStatus(),
+    ]);
   }
 
   static String _formatNum(dynamic val) {
@@ -956,6 +965,14 @@ class BuyVehicleController extends GetxController {
           (response['owner_contact_credits_remaining'] as num?)?.toInt() ?? 0;
       ownerContactAccessesPerPlan.value =
           (response['owner_contact_accesses_per_plan'] as num?)?.toInt() ?? 0;
+      ownerContactPrice.value =
+          (response['owner_contact_price'] as num?)?.toDouble() ?? 0;
+      ownerContactActualPrice.value =
+          (response['owner_contact_actual_price'] as num?)?.toDouble() ?? 0;
+      final canBuy = response['can_buy_owner_contact'];
+      canBuyOwnerContact.value = canBuy == null
+          ? hasVehicleDetailsPlan.value
+          : (canBuy == true || canBuy == 'true');
     } catch (e) {
       debugPrint('⚠️ fetchAccessStatus error: $e');
     } finally {
@@ -1042,9 +1059,14 @@ class BuyVehicleController extends GetxController {
       return true;
     }
 
-    // No credits — show paywall
-    if (ownerContactCredits.value <= 0 && !hasVehicleDetailsPlan.value) {
-      _showOwnerContactPaywall(vehicle);
+    // No credits left: owner numbers are bought one at a time, and only by
+    // users with the Vehicle Details plan (SUBT004).
+    if (ownerContactCredits.value <= 0) {
+      if (!hasVehicleDetailsPlan.value) {
+        _showVehicleDetailsPlanPaywall(vehicle);
+      } else {
+        _showOwnerContactPaywall(vehicle);
+      }
       return false;
     }
 
@@ -1091,10 +1113,13 @@ class BuyVehicleController extends GetxController {
         );
 
         return true;
-        return true;
-      } else if (_is402(result) ||
-          code == 'OWNER_CONTACT_PACK_REQUIRED' ||
-          code == 'VEHICLE_DETAILS_PLAN_REQUIRED') {
+      } else if (code == 'VEHICLE_DETAILS_PLAN_REQUIRED') {
+        hasVehicleDetailsPlan.value = false;
+        canBuyOwnerContact.value = false;
+        _showVehicleDetailsPlanPaywall(vehicle);
+        return false;
+      } else if (_is402(result) || code == 'OWNER_CONTACT_PACK_REQUIRED') {
+        ownerContactCredits.value = 0;
         _showOwnerContactPaywall(vehicle);
         return false;
       } else {

@@ -3223,6 +3223,46 @@ class AppLocalizationsTa extends AppLocalizations {
       'கோப்பு தேர்வி ஒருங்கிணைப்பு நிலுவையில் உள்ளது. பதிவேற்றங்களை இயக்க file_picker தொகுப்பைச் சேர்க்கவும்.';
 
   @override
+  String get apprYardName => 'யார்டு பெயர்';
+
+  @override
+  String get apprYardNameHint => 'எ.கா. மேட்சல் யார்டு';
+
+  @override
+  String get apprYardLocation => 'யார்டு இடம்';
+
+  @override
+  String get apprYardLocationHint => 'யார்டின் முகவரி அல்லது பகுதி';
+
+  @override
+  String get apprAuctionCheck => 'சரிபார்';
+
+  @override
+  String get apprAuctionChecking =>
+      'எங்கள் ஏலப் பட்டியலில் சரிபார்க்கப்படுகிறது…';
+
+  @override
+  String get apprAuctionFound =>
+      'எங்கள் ஏலப் பட்டியலில் உள்ளது. விவரங்கள் நிரப்பப்பட்டன: சரிபார்த்து மீதியைச் சேர்க்கவும்.';
+
+  @override
+  String get apprAuctionPhotosAdding =>
+      'ஏலப் பட்டியலிலிருந்து புகைப்படங்கள் சேர்க்கப்படுகின்றன…';
+
+  @override
+  String apprAuctionPhotosMissing(int count) {
+    return 'ஏலப் பட்டியலின் $count புகைப்படம்(கள்) சேர்க்க முடியவில்லை. கீழே புகைப்படங்களைச் சேர்க்கவும்.';
+  }
+
+  @override
+  String get apprAuctionNotFound =>
+      'எங்கள் ஏலப் பட்டியலில் இல்லை. வாகன விவரங்களை உள்ளிடவும்.';
+
+  @override
+  String get apprAuctionCheckFailed =>
+      'ஏலப் பட்டியலைச் சரிபார்க்க முடியவில்லை. வாகன விவரங்களை உள்ளிடவும்.';
+
+  @override
   String get apprSellYourVehicle => 'உங்கள் வாகனத்தை விற்கவும்';
 
   @override
@@ -3343,6 +3383,11 @@ class AppLocalizationsTa extends AppLocalizations {
 
   @override
   String get apprMfgYearRequired => 'தயாரிப்பு ஆண்டு அவசியம்';
+
+  @override
+  String apprMfgYearRange(int min, int max) {
+    return 'ஆண்டு $min முதல் $max வரை இருக்க வேண்டும்';
+  }
 
   @override
   String get apprInsuranceRequired => 'காப்பீடு அவசியம்';
@@ -3788,6 +3833,12 @@ class AppLocalizationsTa extends AppLocalizations {
 
   @override
   String get aucAllStates => 'அனைத்து மாநிலங்கள்';
+
+  @override
+  String get aucClientName => 'கிளையன்ட் பெயர்';
+
+  @override
+  String get aucAllClients => 'அனைத்து கிளையன்ட்கள்';
 
   @override
   String get aucApply => 'பயன்படுத்து';
@@ -5486,6 +5537,14 @@ class AppLocalizationsTa extends AppLocalizations {
       'இந்த திட்டத்தை இப்போது புதுப்பிக்க முடியாது. எக்ஸ்ப்ளோரிலிருந்து ஒரு திட்டத்தைத் தேர்ந்தெடுக்கவும்.';
 
   @override
+  String get profSubRenewPlan => 'திட்டத்தைப் புதுப்பிக்கவும்';
+
+  @override
+  String profSubRenewStartsAfter(String date) {
+    return 'உங்கள் தற்போதைய திட்டம் $date அன்று முடிந்ததும் தொடங்கும்';
+  }
+
+  @override
   String get profSubNeedMoreBenefits => 'மேலும் பலன்கள் வேண்டுமா?';
 
   @override
@@ -6804,4 +6863,27 @@ class AppLocalizationsTa extends AppLocalizations {
   @override
   String get aucAutoBidStoppedMaxAmount =>
       'ஆட்டோ-பிட் நின்றது: அடுத்த ஏலம் இந்த வாகனத்திற்கான உங்கள் வரம்பை விட அதிகம்';
+
+  @override
+  String get bidConfirmTitle => 'உங்கள் ஏலத்தை உறுதிப்படுத்தவும்';
+
+  @override
+  String get bidConfirmAmountLabel =>
+      'நீங்கள் இந்தத் தொகைக்கு ஏலம் கோருகிறீர்கள்';
+
+  @override
+  String get bidConfirmInWords => 'எழுத்தில்';
+
+  @override
+  String get bidConfirmButton => 'உறுதிப்படுத்து';
+
+  @override
+  String profSubNamedBenefits(String name) {
+    return '$name பலன்கள்';
+  }
+
+  @override
+  String profSubNamedSupport(String name) {
+    return '$name ஆதரவு';
+  }
 }

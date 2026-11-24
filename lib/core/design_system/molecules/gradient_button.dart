@@ -19,6 +19,11 @@ class GradientButton extends StatelessWidget {
   final bool isLoading;
   final Color? backgroundColor;
 
+  /// Optional text tweaks (defaults keep the existing look): e.g. the compact
+  /// "PLACE BID" style is Montserrat 12sp w600 with 0.8 letter spacing.
+  final double? letterSpacing;
+  final String? fontFamily;
+
   const GradientButton({
     super.key,
     required this.text,
@@ -30,6 +35,8 @@ class GradientButton extends StatelessWidget {
     this.fontWeight,
     this.isLoading = false,
     this.backgroundColor,
+    this.letterSpacing,
+    this.fontFamily,
   });
 
   /// Factory constructor for filled/active state button
@@ -42,6 +49,8 @@ class GradientButton extends StatelessWidget {
     FontWeight? fontWeight,
     bool isLoading = false,
     Color? backgroundColor,
+    double? letterSpacing,
+    String? fontFamily,
   }) {
     return GradientButton(
       text: text,
@@ -53,6 +62,8 @@ class GradientButton extends StatelessWidget {
       fontWeight: fontWeight,
       isLoading: isLoading,
       backgroundColor: backgroundColor,
+      letterSpacing: letterSpacing,
+      fontFamily: fontFamily,
     );
   }
 
@@ -66,6 +77,8 @@ class GradientButton extends StatelessWidget {
     FontWeight? fontWeight,
     bool isLoading = false,
     Color? backgroundColor,
+    double? letterSpacing,
+    String? fontFamily,
   }) {
     return GradientButton(
       text: text,
@@ -77,6 +90,8 @@ class GradientButton extends StatelessWidget {
       fontWeight: fontWeight,
       isLoading: isLoading,
       backgroundColor: backgroundColor,
+      letterSpacing: letterSpacing,
+      fontFamily: fontFamily,
     );
   }
 
@@ -149,7 +164,8 @@ class GradientButton extends StatelessWidget {
                         fontSize: textSize,
                         fontWeight: textWeight,
                         color: Colors.white,
-                        fontFamily: 'montserrat',
+                        fontFamily: fontFamily ?? 'montserrat',
+                        letterSpacing: letterSpacing,
                       ),
                     ),
                   )
@@ -160,7 +176,8 @@ class GradientButton extends StatelessWidget {
                       style: TextStyle(
                         fontSize: textSize,
                         fontWeight: textWeight,
-                        fontFamily: 'PlusJakartaSans',
+                        fontFamily: fontFamily ?? 'PlusJakartaSans',
+                        letterSpacing: letterSpacing,
                       ),
                     ),
                   ),

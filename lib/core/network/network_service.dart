@@ -89,10 +89,14 @@ class NetworkService extends GetxService {
     '/api/v1/approved-veh/appr-veh-submit',
     '/api/v1/approved-veh/appr-veh-user-interest',
     '/api/v1/approved-veh/appr-veh-user-booked',
+    '/api/v1/approved-veh/appr-veh-auction-lookup',
     '/api/v1/auctions/live-auction-category-counts',
     '/api/v1/auctions/wishlist/toggle',
     '/api/v1/auctions/watchlist/toggle',
     '/api/v1/auctions/auto-bid/toggle',
+    // Bank list for the auction "Client Name" filter. Without the token the
+    // 401 is treated as an expired session and logs the user out.
+    '/api/v1/auctions/auction-banks',
 
     // Subscription endpoints
     '/api/v1/subscription/subscription-listing',

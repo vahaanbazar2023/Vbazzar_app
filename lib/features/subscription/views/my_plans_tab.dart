@@ -3,7 +3,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 import '../../../core/constants/app_colors.dart';
-import '../../../core/constants/app_assets.dart';
 import '../../../core/design_system/loaders/app_shimmer.dart';
 import '../../../core/extensions/context_extensions.dart';
 import '../../../core/design_system/molecules/custom_snackbar.dart';
@@ -14,6 +13,7 @@ import '../controllers/subscription_controller.dart';
 import '../models/subscription_plan.dart';
 import '../models/user_subscription.dart';
 import '../services/subscription_service.dart';
+import 'subscription_ui.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Tab 1 — My Plans
@@ -73,47 +73,6 @@ class MyPlanCard extends StatelessWidget {
   final UserSubscription sub;
   const MyPlanCard({super.key, required this.sub});
 
-  String get _iconAsset {
-    switch (sub.typeCode) {
-      case 'SUBT001':
-        return AppAssets.subIconKing2;
-      case 'SUBT002':
-        return AppAssets.subIconKing2;
-      case 'SUBT003':
-        return AppAssets.subIconStep1;
-      case 'SUBT004':
-        return AppAssets.subIconShield2;
-      case 'SUBT005':
-        return AppAssets.subIconInspection;
-      case 'SUBT006':
-        return AppAssets.subIconMechanic;
-      default:
-        return AppAssets.subIconAuction;
-    }
-  }
-
-  String _fmtDate(BuildContext context, String? raw) {
-    if (raw == null || raw.isEmpty) return '—';
-    final dt = UserSubscription.parseApiDate(raw);
-    if (dt == null) return raw;
-    final l = context.l10n;
-    final m = [
-      l.profSubMonthJan,
-      l.profSubMonthFeb,
-      l.profSubMonthMar,
-      l.profSubMonthApr,
-      l.profSubMonthMay,
-      l.profSubMonthJun,
-      l.profSubMonthJul,
-      l.profSubMonthAug,
-      l.profSubMonthSep,
-      l.profSubMonthOct,
-      l.profSubMonthNov,
-      l.profSubMonthDec,
-    ];
-    return '${dt.day.toString().padLeft(2, '0')} ${m[dt.month - 1]} ${dt.year}';
-  }
-
   @override
   Widget build(BuildContext context) {
     final active = sub.isActive;
@@ -147,7 +106,7 @@ class MyPlanCard extends StatelessWidget {
                   borderRadius: BorderRadius.circular(12.r),
                 ),
                 padding: EdgeInsets.all(10.r),
-                child: Image.asset(_iconAsset, fit: BoxFit.contain),
+                child: Image.asset(subscriptionIconAsset(sub.typeCode), fit: BoxFit.contain),
               ),
               SizedBox(width: 14.w),
               // Name + description
@@ -251,7 +210,7 @@ class MyPlanCard extends StatelessWidget {
                     ),
                     SizedBox(height: 2.h),
                     Text(
-                      _fmtDate(context, sub.endDate),
+                      formatPlanDate(context, sub.endDate),
                       style: TextStyle(
                         fontFamily: 'Montserrat',
                         fontWeight: FontWeight.w600,
@@ -389,7 +348,13 @@ class _RenewPlanButtonState extends State<RenewPlanButton> {
       }
       Get.toNamed(
         AppRoutes.subscriptionConfirm,
-        arguments: {'plan': plan, 'source': sub.typeCode, 'renewal': true},
+        arguments: {
+          'plan': plan,
+          'source': sub.typeCode,
+          'renewal': true,
+          'days_left': sub.daysLeft,
+          'current_end_date': sub.endDate,
+        },
       );
     } catch (_) {
       CustomSnackbar.show(message: unavailable, type: SnackbarType.error);
@@ -408,6 +373,9 @@ class _RenewPlanButtonState extends State<RenewPlanButton> {
           backgroundColor: AppColors.primary,
           foregroundColor: Colors.white,
           elevation: 0,
+          // The app theme makes buttons full width (Size.fromHeight); this one
+          // sits in a Row, so it must size to its label instead.
+          minimumSize: Size(0, 34.h),
           padding: EdgeInsets.symmetric(horizontal: 14.w),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20.r),

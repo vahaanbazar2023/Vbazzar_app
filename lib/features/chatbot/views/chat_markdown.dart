@@ -1,39 +1,12 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/constants/app_colors.dart';
-import '../../../core/network/api_constants.dart';
-import '../../../routes/app_routes.dart';
+import '../services/vaani_link_router.dart';
 
-/// Website screens the bot links to, mapped to the matching app screens.
-const Map<String, String> _appRoutes = {
-  '/app/buy-sell': AppRoutes.buySellHome,
-  '/app/buy-sell/sell': AppRoutes.sellVehicle,
-  '/app/approved': AppRoutes.approvedVehicleBuySell,
-  '/app/inspection': AppRoutes.inspectionHome,
-  '/app/insurance-finance': AppRoutes.insuranceFinance,
-  '/app/spares': AppRoutes.spareFms,
-  '/app/notifications': AppRoutes.notifications,
-  '/app/partner': AppRoutes.partnerWithUs,
-};
-
-Future<void> openChatLink(String href) async {
-  final path = href.split('?').first.replaceAll(RegExp(r'/+$'), '');
-  final route = _appRoutes[path];
-  if (route != null) {
-    Get.toNamed(route);
-    return;
-  }
-  final uri = href.startsWith('/')
-      ? Uri.parse('${ApiConstants.chatBaseUrl}$href')
-      : Uri.tryParse(href);
-  if (uri != null && (uri.scheme == 'http' || uri.scheme == 'https')) {
-    await launchUrl(uri, mode: LaunchMode.externalApplication);
-  }
-}
+/// Links in a reply open the matching app screen (see [VaaniLinkRouter]).
+Future<void> openChatLink(String href) => VaaniLinkRouter.open(href);
 
 /// Small renderer for the markdown the bot writes: **bold**, `code`,
 /// [links](url), bullet and numbered lists, headings and plain tables.

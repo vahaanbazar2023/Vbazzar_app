@@ -1282,6 +1282,9 @@ class _ItemTile extends StatelessWidget {
 // LOGOUT
 // ============================================================================
 
+/// Height of the auction card's PLACE BID button (its min height).
+const double _kCompactButtonH = 28;
+
 class _LogoutButton extends StatelessWidget {
   final ProfileController controller;
 
@@ -1310,24 +1313,33 @@ class _LogoutButton extends StatelessWidget {
           actions: [
             Row(
               children: [
+                // Same size and text style as the auction card's PLACE BID button.
                 Expanded(
                   child: GradientButton.outlined(
-                    text: context.l10n.cancel,
+                    text: context.l10n.cancel.toUpperCase(),
                     onPressed: () => Get.back(),
                     width: double.infinity,
-                    height: 36.h,
+                    height: _kCompactButtonH.h,
+                    fontSize: 12.sp,
+                    fontWeight: FontWeight.w600,
+                    fontFamily: 'Montserrat',
+                    letterSpacing: 0.8,
                   ),
                 ),
-                SizedBox(width: 12.w),
+                SizedBox(width: 8.w),
                 Expanded(
                   child: GradientButton.filled(
-                    text: context.l10n.logout,
+                    text: context.l10n.logout.toUpperCase(),
                     onPressed: () {
                       Get.back();
                       controller.logout();
                     },
                     width: double.infinity,
-                    height: 36.h,
+                    height: _kCompactButtonH.h,
+                    fontSize: 12.sp,
+                    fontWeight: FontWeight.w600,
+                    fontFamily: 'Montserrat',
+                    letterSpacing: 0.8,
                   ),
                 ),
               ],

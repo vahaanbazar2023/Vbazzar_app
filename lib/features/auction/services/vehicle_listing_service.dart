@@ -19,6 +19,7 @@ class VehicleListingService {
     required String userId,
     required String auctionType,
     required String vehicleType,
+    String auctionId = '',
     String category = '',
     String regionId = '',
     String stateId = '',
@@ -32,6 +33,7 @@ class VehicleListingService {
         userId: userId,
         auctionType: auctionType,
         vehicleType: vehicleType,
+        auctionId: auctionId,
         category: category,
         regionId: regionId,
         stateId: stateId,
@@ -91,6 +93,7 @@ class VehicleListingService {
     required String userId,
     required String auctionType,
     required String vehicleType,
+    String auctionId = '',
     String category = '',
     String regionId = '',
     String stateId = '',
@@ -103,6 +106,9 @@ class VehicleListingService {
     'user_id': userId,
     'auction_type': auctionType,
     'vehicle_type': vehicleType,
+    // Only one auction's vehicles (home live-auction banner). Sent only when
+    // set, so every other request keeps the same body as before.
+    if (auctionId.trim().isNotEmpty) 'auction_id': auctionId.trim(),
     'category': category,
     'region_id': regionId,
     'state_id': stateId,

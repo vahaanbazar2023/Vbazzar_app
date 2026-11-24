@@ -3182,6 +3182,45 @@ class AppLocalizationsHi extends AppLocalizations {
       'फाइल पिकर इंटीग्रेशन बाकी है। अपलोड सक्षम करने के लिए file_picker पैकेज जोड़ें।';
 
   @override
+  String get apprYardName => 'यार्ड का नाम';
+
+  @override
+  String get apprYardNameHint => 'जैसे मेडचल यार्ड';
+
+  @override
+  String get apprYardLocation => 'यार्ड का स्थान';
+
+  @override
+  String get apprYardLocationHint => 'यार्ड का पता या क्षेत्र';
+
+  @override
+  String get apprAuctionCheck => 'जांचें';
+
+  @override
+  String get apprAuctionChecking => 'हमारी नीलामी सूची में जांच हो रही है…';
+
+  @override
+  String get apprAuctionFound =>
+      'हमारी नीलामी सूची में मिला। विवरण भर दिए गए हैं: इन्हें जांचें और बाकी जोड़ें।';
+
+  @override
+  String get apprAuctionPhotosAdding =>
+      'नीलामी सूची से फ़ोटो जोड़ी जा रही हैं…';
+
+  @override
+  String apprAuctionPhotosMissing(int count) {
+    return 'नीलामी सूची की $count फ़ोटो नहीं जोड़ी जा सकीं। कृपया नीचे फ़ोटो जोड़ें।';
+  }
+
+  @override
+  String get apprAuctionNotFound =>
+      'हमारी नीलामी सूची में नहीं है। कृपया वाहन का विवरण दर्ज करें।';
+
+  @override
+  String get apprAuctionCheckFailed =>
+      'नीलामी सूची की जांच नहीं हो सकी। कृपया वाहन का विवरण दर्ज करें।';
+
+  @override
   String get apprSellYourVehicle => 'अपना वाहन बेचें';
 
   @override
@@ -3302,6 +3341,11 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get apprMfgYearRequired => 'निर्माण वर्ष आवश्यक है';
+
+  @override
+  String apprMfgYearRange(int min, int max) {
+    return 'वर्ष $min और $max के बीच होना चाहिए';
+  }
 
   @override
   String get apprInsuranceRequired => 'बीमा आवश्यक है';
@@ -3738,6 +3782,12 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get aucAllStates => 'सभी राज्य';
+
+  @override
+  String get aucClientName => 'क्लाइंट का नाम';
+
+  @override
+  String get aucAllClients => 'सभी क्लाइंट';
 
   @override
   String get aucApply => 'लागू करें';
@@ -5391,6 +5441,14 @@ class AppLocalizationsHi extends AppLocalizations {
       'यह प्लान अभी रिन्यू नहीं हो सकता। कृपया एक्सप्लोर से प्लान चुनें।';
 
   @override
+  String get profSubRenewPlan => 'प्लान रिन्यू करें';
+
+  @override
+  String profSubRenewStartsAfter(String date) {
+    return 'आपका मौजूदा प्लान $date को खत्म होने पर शुरू होगा';
+  }
+
+  @override
   String get profSubNeedMoreBenefits => 'और लाभ चाहिए?';
 
   @override
@@ -6686,4 +6744,26 @@ class AppLocalizationsHi extends AppLocalizations {
   @override
   String get aucAutoBidStoppedMaxAmount =>
       'ऑटो-बिड रुकी: अगली बोली इस वाहन की आपकी लिमिट से ज़्यादा है';
+
+  @override
+  String get bidConfirmTitle => 'अपनी बोली की पुष्टि करें';
+
+  @override
+  String get bidConfirmAmountLabel => 'आप इतनी राशि की बोली लगा रहे हैं';
+
+  @override
+  String get bidConfirmInWords => 'शब्दों में';
+
+  @override
+  String get bidConfirmButton => 'पुष्टि करें';
+
+  @override
+  String profSubNamedBenefits(String name) {
+    return '$name लाभ';
+  }
+
+  @override
+  String profSubNamedSupport(String name) {
+    return '$name सपोर्ट';
+  }
 }

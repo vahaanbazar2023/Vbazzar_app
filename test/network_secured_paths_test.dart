@@ -68,6 +68,7 @@ void main() {
       ApiEndpoints.autoBidToggle,
       ApiEndpoints.winningLetter,
       ApiEndpoints.vehicleSearch,
+      ApiEndpoints.auctionBanks,
     ]) {
       expect(secured(p), isTrue, reason: p);
     }

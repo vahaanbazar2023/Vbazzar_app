@@ -6106,6 +6106,72 @@ abstract class AppLocalizations {
   /// **'File picker integration pending. Add file_picker package to enable uploads.'**
   String get apprFilePickerPending;
 
+  /// No description provided for @apprYardName.
+  ///
+  /// In en, this message translates to:
+  /// **'Yard Name'**
+  String get apprYardName;
+
+  /// No description provided for @apprYardNameHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. Medchal Yard'**
+  String get apprYardNameHint;
+
+  /// No description provided for @apprYardLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Yard Location'**
+  String get apprYardLocation;
+
+  /// No description provided for @apprYardLocationHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Address or area of the yard'**
+  String get apprYardLocationHint;
+
+  /// No description provided for @apprAuctionCheck.
+  ///
+  /// In en, this message translates to:
+  /// **'Check'**
+  String get apprAuctionCheck;
+
+  /// No description provided for @apprAuctionChecking.
+  ///
+  /// In en, this message translates to:
+  /// **'Checking our auction listings…'**
+  String get apprAuctionChecking;
+
+  /// No description provided for @apprAuctionFound.
+  ///
+  /// In en, this message translates to:
+  /// **'Found in our auction listings. Details are filled in: check them and add the rest.'**
+  String get apprAuctionFound;
+
+  /// No description provided for @apprAuctionPhotosAdding.
+  ///
+  /// In en, this message translates to:
+  /// **'Adding photos from the auction listing…'**
+  String get apprAuctionPhotosAdding;
+
+  /// No description provided for @apprAuctionPhotosMissing.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} photo(s) from the auction listing couldn\'t be added. Please add photos below.'**
+  String apprAuctionPhotosMissing(int count);
+
+  /// No description provided for @apprAuctionNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'Not in our auction listings. Please enter the vehicle details.'**
+  String get apprAuctionNotFound;
+
+  /// No description provided for @apprAuctionCheckFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t check our auction listings. Please enter the vehicle details.'**
+  String get apprAuctionCheckFailed;
+
   /// No description provided for @apprSellYourVehicle.
   ///
   /// In en, this message translates to:
@@ -6339,6 +6405,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Manufacturing year is required'**
   String get apprMfgYearRequired;
+
+  /// No description provided for @apprMfgYearRange.
+  ///
+  /// In en, this message translates to:
+  /// **'Year must be between {min} and {max}'**
+  String apprMfgYearRange(int min, int max);
 
   /// No description provided for @apprInsuranceRequired.
   ///
@@ -7119,6 +7191,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'All States'**
   String get aucAllStates;
+
+  /// No description provided for @aucClientName.
+  ///
+  /// In en, this message translates to:
+  /// **'Client Name'**
+  String get aucClientName;
+
+  /// No description provided for @aucAllClients.
+  ///
+  /// In en, this message translates to:
+  /// **'All Clients'**
+  String get aucAllClients;
 
   /// No description provided for @aucApply.
   ///
@@ -10084,6 +10168,18 @@ abstract class AppLocalizations {
   /// **'This plan can\'t be renewed right now. Please pick a plan from Explore.'**
   String get profSubRenewUnavailable;
 
+  /// No description provided for @profSubRenewPlan.
+  ///
+  /// In en, this message translates to:
+  /// **'Renew Plan'**
+  String get profSubRenewPlan;
+
+  /// No description provided for @profSubRenewStartsAfter.
+  ///
+  /// In en, this message translates to:
+  /// **'Starts when your current plan ends on {date}'**
+  String profSubRenewStartsAfter(String date);
+
   /// No description provided for @profSubNeedMoreBenefits.
   ///
   /// In en, this message translates to:
@@ -12339,6 +12435,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Auto-bid stopped: the next bid is above your limit for this vehicle'**
   String get aucAutoBidStoppedMaxAmount;
+
+  /// No description provided for @bidConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm your bid'**
+  String get bidConfirmTitle;
+
+  /// No description provided for @bidConfirmAmountLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'You are placing a bid of'**
+  String get bidConfirmAmountLabel;
+
+  /// No description provided for @bidConfirmInWords.
+  ///
+  /// In en, this message translates to:
+  /// **'In words'**
+  String get bidConfirmInWords;
+
+  /// No description provided for @bidConfirmButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm'**
+  String get bidConfirmButton;
+
+  /// No description provided for @profSubNamedBenefits.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} Benefits'**
+  String profSubNamedBenefits(String name);
+
+  /// No description provided for @profSubNamedSupport.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} Support'**
+  String profSubNamedSupport(String name);
 }
 
 class _AppLocalizationsDelegate
