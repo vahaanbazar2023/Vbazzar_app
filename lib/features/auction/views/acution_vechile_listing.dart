@@ -24,6 +24,7 @@ import 'bid_status_style.dart';
 import '../../../core/design_system/molecules/collapsible_section.dart';
 import 'auction_filter_bottom_sheet.dart';
 import 'gate_pass_sheet.dart';
+import '../services/bid_flow.dart';
 
 class AuctionVehicleListingScreen extends GetView<VehicleListingController> {
   const AuctionVehicleListingScreen({super.key});
@@ -1097,6 +1098,7 @@ class _VehicleCardState extends State<_VehicleCard> {
       bidAmount: _bidAmount,
     );
     if (mounted) setState(() => _isPlacingBid = false);
+    if (error == BidFlow.cancelled) return;
     if (error != null && error != '__navigated__') {
       CustomSnackbar.show(message: error, type: SnackbarType.error);
     } else if (error == null) {

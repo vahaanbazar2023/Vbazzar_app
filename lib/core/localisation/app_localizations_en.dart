@@ -6730,4 +6730,16 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get aucAutoBidStoppedMaxAmount =>
       'Auto-bid stopped: the next bid is above your limit for this vehicle';
+
+  @override
+  String get bidConfirmTitle => 'Confirm your bid';
+
+  @override
+  String get bidConfirmAmountLabel => 'You are placing a bid of';
+
+  @override
+  String get bidConfirmInWords => 'In words';
+
+  @override
+  String get bidConfirmButton => 'Confirm';
 }

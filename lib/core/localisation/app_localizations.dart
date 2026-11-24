@@ -12435,6 +12435,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Auto-bid stopped: the next bid is above your limit for this vehicle'**
   String get aucAutoBidStoppedMaxAmount;
+
+  /// No description provided for @bidConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm your bid'**
+  String get bidConfirmTitle;
+
+  /// No description provided for @bidConfirmAmountLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'You are placing a bid of'**
+  String get bidConfirmAmountLabel;
+
+  /// No description provided for @bidConfirmInWords.
+  ///
+  /// In en, this message translates to:
+  /// **'In words'**
+  String get bidConfirmInWords;
+
+  /// No description provided for @bidConfirmButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm'**
+  String get bidConfirmButton;
 }
 
 class _AppLocalizationsDelegate
