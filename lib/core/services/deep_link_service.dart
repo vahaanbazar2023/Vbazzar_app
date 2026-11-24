@@ -126,6 +126,9 @@ class DeepLinkService extends GetxService {
 
   void _handleUri(Uri uri, {required bool isColdStart}) {
     final segments = uri.pathSegments.where((s) => s.isNotEmpty).toList();
+    // App shares are https://www.vahaanbazar.com/open/<type>/<id>?ref=… — drop the
+    // "open" prefix; the rest is the same as the older un-prefixed links.
+    if (segments.isNotEmpty && segments.first == 'open') segments.removeAt(0);
     final ref = uri.queryParameters['ref']; // referral code
 
     LoggerService.to.info(
