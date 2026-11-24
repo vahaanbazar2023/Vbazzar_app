@@ -12459,6 +12459,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Confirm'**
   String get bidConfirmButton;
+
+  /// No description provided for @profSubNamedBenefits.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} Benefits'**
+  String profSubNamedBenefits(String name);
+
+  /// No description provided for @profSubNamedSupport.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} Support'**
+  String profSubNamedSupport(String name);
 }
 
 class _AppLocalizationsDelegate

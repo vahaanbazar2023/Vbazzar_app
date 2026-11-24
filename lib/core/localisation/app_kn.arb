@@ -2091,5 +2091,7 @@
   "bidConfirmTitle": "ನಿಮ್ಮ ಬಿಡ್ ಅನ್ನು ದೃಢೀಕರಿಸಿ",
   "bidConfirmAmountLabel": "ನೀವು ಈ ಮೊತ್ತಕ್ಕೆ ಬಿಡ್ ಮಾಡುತ್ತಿದ್ದೀರಿ",
   "bidConfirmInWords": "ಅಕ್ಷರಗಳಲ್ಲಿ",
-  "bidConfirmButton": "ದೃಢೀಕರಿಸಿ"
+  "bidConfirmButton": "ದೃಢೀಕರಿಸಿ",
+  "profSubNamedBenefits": "{name} ಪ್ರಯೋಜನಗಳು",
+  "profSubNamedSupport": "{name} ಬೆಂಬಲ"
 }

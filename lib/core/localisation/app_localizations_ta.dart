@@ -6876,4 +6876,14 @@ class AppLocalizationsTa extends AppLocalizations {
 
   @override
   String get bidConfirmButton => 'உறுதிப்படுத்து';
+
+  @override
+  String profSubNamedBenefits(String name) {
+    return '$name பலன்கள்';
+  }
+
+  @override
+  String profSubNamedSupport(String name) {
+    return '$name ஆதரவு';
+  }
 }

@@ -6756,4 +6756,14 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get bidConfirmButton => 'पुष्टि करें';
+
+  @override
+  String profSubNamedBenefits(String name) {
+    return '$name लाभ';
+  }
+
+  @override
+  String profSubNamedSupport(String name) {
+    return '$name सपोर्ट';
+  }
 }

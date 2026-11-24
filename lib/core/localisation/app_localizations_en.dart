@@ -6742,4 +6742,14 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get bidConfirmButton => 'Confirm';
+
+  @override
+  String profSubNamedBenefits(String name) {
+    return '$name Benefits';
+  }
+
+  @override
+  String profSubNamedSupport(String name) {
+    return '$name Support';
+  }
 }

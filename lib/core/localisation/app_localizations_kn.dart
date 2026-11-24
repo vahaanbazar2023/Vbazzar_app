@@ -6823,4 +6823,14 @@ class AppLocalizationsKn extends AppLocalizations {
 
   @override
   String get bidConfirmButton => 'ದೃಢೀಕರಿಸಿ';
+
+  @override
+  String profSubNamedBenefits(String name) {
+    return '$name ಪ್ರಯೋಜನಗಳು';
+  }
+
+  @override
+  String profSubNamedSupport(String name) {
+    return '$name ಬೆಂಬಲ';
+  }
 }

@@ -6830,4 +6830,14 @@ class AppLocalizationsTe extends AppLocalizations {
 
   @override
   String get bidConfirmButton => 'నిర్ధారించండి';
+
+  @override
+  String profSubNamedBenefits(String name) {
+    return '$name ప్రయోజనాలు';
+  }
+
+  @override
+  String profSubNamedSupport(String name) {
+    return '$name సపోర్ట్';
+  }
 }

@@ -2153,5 +2153,7 @@
   "bidConfirmTitle": "अपनी बोली की पुष्टि करें",
   "bidConfirmAmountLabel": "आप इतनी राशि की बोली लगा रहे हैं",
   "bidConfirmInWords": "शब्दों में",
-  "bidConfirmButton": "पुष्टि करें"
+  "bidConfirmButton": "पुष्टि करें",
+  "profSubNamedBenefits": "{name} लाभ",
+  "profSubNamedSupport": "{name} सपोर्ट"
 }
