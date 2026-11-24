@@ -2091,5 +2091,7 @@
   "bidConfirmTitle": "உங்கள் ஏலத்தை உறுதிப்படுத்தவும்",
   "bidConfirmAmountLabel": "நீங்கள் இந்தத் தொகைக்கு ஏலம் கோருகிறீர்கள்",
   "bidConfirmInWords": "எழுத்தில்",
-  "bidConfirmButton": "உறுதிப்படுத்து"
+  "bidConfirmButton": "உறுதிப்படுத்து",
+  "profSubNamedBenefits": "{name} பலன்கள்",
+  "profSubNamedSupport": "{name} ஆதரவு"
 }

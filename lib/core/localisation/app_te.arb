@@ -1919,5 +1919,7 @@
   "bidConfirmTitle": "మీ బిడ్‌ను నిర్ధారించండి",
   "bidConfirmAmountLabel": "మీరు ఈ మొత్తానికి బిడ్ వేస్తున్నారు",
   "bidConfirmInWords": "అక్షరాలలో",
-  "bidConfirmButton": "నిర్ధారించండి"
+  "bidConfirmButton": "నిర్ధారించండి",
+  "profSubNamedBenefits": "{name} ప్రయోజనాలు",
+  "profSubNamedSupport": "{name} సపోర్ట్"
 }

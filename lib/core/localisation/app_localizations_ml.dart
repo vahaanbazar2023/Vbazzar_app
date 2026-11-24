@@ -6834,4 +6834,14 @@ class AppLocalizationsMl extends AppLocalizations {
 
   @override
   String get bidConfirmButton => 'സ്ഥിരീകരിക്കുക';
+
+  @override
+  String profSubNamedBenefits(String name) {
+    return '$name ആനുകൂല്യങ്ങൾ';
+  }
+
+  @override
+  String profSubNamedSupport(String name) {
+    return '$name സപ്പോർട്ട്';
+  }
 }
