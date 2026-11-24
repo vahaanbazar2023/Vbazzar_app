@@ -1188,6 +1188,17 @@
   "apprPriceRequired": "Price is required",
   "apprEnterValidPrice": "Enter valid price",
   "apprMfgYearRequired": "Manufacturing year is required",
+  "apprMfgYearRange": "Year must be between {min} and {max}",
+  "@apprMfgYearRange": {
+    "placeholders": {
+      "min": {
+        "type": "int"
+      },
+      "max": {
+        "type": "int"
+      }
+    }
+  },
   "apprInsuranceRequired": "Insurance is required",
   "apprGstApplicabilityRequired": "GST applicability is required",
   "apprVehicleImagesRequired": "Vehicle images are required",

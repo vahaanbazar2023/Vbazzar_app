@@ -1112,6 +1112,7 @@
   "apprPriceRequired": "मूल्य आवश्यक है",
   "apprEnterValidPrice": "मान्य मूल्य दर्ज करें",
   "apprMfgYearRequired": "निर्माण वर्ष आवश्यक है",
+  "apprMfgYearRange": "वर्ष {min} और {max} के बीच होना चाहिए",
   "apprInsuranceRequired": "बीमा आवश्यक है",
   "apprGstApplicabilityRequired": "GST की प्रयोज्यता आवश्यक है",
   "apprVehicleImagesRequired": "वाहन की तस्वीरें आवश्यक हैं",

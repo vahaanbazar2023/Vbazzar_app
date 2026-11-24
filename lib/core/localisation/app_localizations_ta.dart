@@ -3385,6 +3385,11 @@ class AppLocalizationsTa extends AppLocalizations {
   String get apprMfgYearRequired => 'தயாரிப்பு ஆண்டு அவசியம்';
 
   @override
+  String apprMfgYearRange(int min, int max) {
+    return 'ஆண்டு $min முதல் $max வரை இருக்க வேண்டும்';
+  }
+
+  @override
   String get apprInsuranceRequired => 'காப்பீடு அவசியம்';
 
   @override

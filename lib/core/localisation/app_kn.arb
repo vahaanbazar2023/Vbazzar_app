@@ -1050,6 +1050,7 @@
   "apprPriceRequired": "ಬೆಲೆ ಅಗತ್ಯವಿದೆ",
   "apprEnterValidPrice": "ಮಾನ್ಯವಾದ ಬೆಲೆಯನ್ನು ನಮೂದಿಸಿ",
   "apprMfgYearRequired": "ತಯಾರಿಕಾ ವರ್ಷ ಅಗತ್ಯವಿದೆ",
+  "apprMfgYearRange": "ವರ್ಷ {min} ಮತ್ತು {max} ರ ನಡುವೆ ಇರಬೇಕು",
   "apprInsuranceRequired": "ವಿಮೆ ಅಗತ್ಯವಿದೆ",
   "apprGstApplicabilityRequired": "GST ಅನ್ವಯಿಸುವಿಕೆ ಅಗತ್ಯವಿದೆ",
   "apprVehicleImagesRequired": "ವಾಹನದ ಚಿತ್ರಗಳು ಅಗತ್ಯವಿದೆ",

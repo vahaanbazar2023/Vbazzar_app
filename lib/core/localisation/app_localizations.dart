@@ -6406,6 +6406,12 @@ abstract class AppLocalizations {
   /// **'Manufacturing year is required'**
   String get apprMfgYearRequired;
 
+  /// No description provided for @apprMfgYearRange.
+  ///
+  /// In en, this message translates to:
+  /// **'Year must be between {min} and {max}'**
+  String apprMfgYearRange(int min, int max);
+
   /// No description provided for @apprInsuranceRequired.
   ///
   /// In en, this message translates to:

@@ -371,6 +371,39 @@ void main() {
     await closePopups(tester);
   });
 
+  TextField fieldLabelled(WidgetTester tester, String label) => tester
+      .widgetList<TextField>(find.byType(TextField))
+      .firstWhere((f) => (f.decoration?.labelText ?? '').startsWith(label));
+
+  testWidgets('registration and chassis are not autocorrected', (tester) async {
+    await open(tester);
+    for (final label in ['Registration Number', 'Chassis Number']) {
+      final f = fieldLabelled(tester, label);
+      expect(f.autocorrect, isFalse, reason: label);
+      expect(f.enableSuggestions, isFalse, reason: label);
+      expect(f.textCapitalization, TextCapitalization.characters, reason: label);
+    }
+  });
+
+  testWidgets('a decimal price keeps its point', (tester) async {
+    await open(tester);
+    final price = find.byWidget(fieldLabelled(tester, 'Expected Price'));
+    await tester.enterText(price, '181000.50');
+    await tester.pump();
+    expect(fieldLabelled(tester, 'Expected Price').controller!.text, '181000.50');
+  });
+
+  testWidgets('a year outside 1900..next year is refused in the app', (tester) async {
+    await open(tester);
+    final year = find.byWidget(fieldLabelled(tester, 'Year of Manufacturing'));
+    await tester.enterText(year, '2099');
+    await submit(tester);
+    expect(ctrl.repo.sent, isNull);
+    final next = DateTime.now().year + 1;
+    expect(find.textContaining('Year must be between 1900 and $next'), findsOneWidget);
+    await closePopups(tester);
+  });
+
   testWidgets('photos that could not be added are reported', (tester) async {
     ctrl.failingPhotos.add('back.jpg');
     await fillAndFind(tester);
