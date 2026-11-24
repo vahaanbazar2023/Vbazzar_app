@@ -483,7 +483,10 @@ class _PlanCard extends StatelessWidget {
   }
 
   String get _originalPrice {
-    final orig = (plan.price * 1.20).round();
+    final actual = plan.actualPrice;
+    final orig = actual != null && actual > plan.price
+        ? actual.round()
+        : (plan.price * 1.20).round();
     final s = orig.toString();
     if (s.length <= 3) return s;
     return '${s.substring(0, s.length - 3)},${s.substring(s.length - 3)}';

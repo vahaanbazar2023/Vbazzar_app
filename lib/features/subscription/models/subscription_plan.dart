@@ -5,6 +5,10 @@ class SubscriptionPlan {
   final String planCode;
   final String name;
   final double price;
+
+  /// Price before discount sent by the server (e.g. ₹99 for an owner number
+  /// sold at ₹9). Null for plans without one.
+  final double? actualPrice;
   final int displayOrder;
   final String status;
   final String featDescription;
@@ -24,6 +28,7 @@ class SubscriptionPlan {
     required this.planCode,
     required this.name,
     required this.price,
+    this.actualPrice,
     required this.displayOrder,
     required this.status,
     required this.featDescription,
@@ -45,6 +50,7 @@ class SubscriptionPlan {
       planCode: json['plan_code'] as String? ?? '',
       name: json['name'] as String? ?? '',
       price: (json['price'] as num?)?.toDouble() ?? 0.0,
+      actualPrice: (json['actual_price'] as num?)?.toDouble(),
       displayOrder: json['display_order'] as int? ?? 0,
       status: json['status'] as String? ?? '',
       featDescription: json['feat_description'] as String? ?? '',
