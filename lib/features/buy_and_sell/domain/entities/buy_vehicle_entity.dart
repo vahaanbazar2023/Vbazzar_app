@@ -24,8 +24,8 @@ class BuyVehicleEntity {
   /// Vehicle photos from `vehicle_files` (file_type `image`) — the gallery.
   final List<String> vehicleFileUrls;
 
-  /// RC / insurance files. Never shown in the photo gallery. The backend only
-  /// sends them to users with the Vehicle Details Access plan (or the seller).
+  /// RC / insurance files. The backend only sends them to users with the
+  /// Vehicle Details Access plan (or the seller); see [galleryDocuments].
   final List<VehicleDocument> documents;
 
   /// Owner's mobile number from `user_info.mobile`.
@@ -118,6 +118,22 @@ class BuyVehicleEntity {
 
   /// Backward-compatible alias for year as int.
   int get manufacturingYear => int.tryParse(year ?? '') ?? 0;
+
+  /// RC / insurance files that are images — shown after the photos in the
+  /// detail screen gallery. Empty without the Vehicle Details Access plan.
+  List<VehicleDocument> get galleryDocuments {
+    final photos = allImageUrls.toSet();
+    return [
+      for (final d in documents)
+        if (!d.isPdf && !photos.contains(d.url)) d,
+    ];
+  }
+
+  /// RC / insurance PDFs — shown as buttons, since the gallery shows images.
+  List<VehicleDocument> get pdfDocuments => [
+    for (final d in documents)
+      if (d.isPdf) d,
+  ];
 
   /// All image URLs merged (vehicle files first, then additional imageUrls).
   List<String> get allImageUrls {
