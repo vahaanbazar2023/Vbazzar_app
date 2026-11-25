@@ -100,7 +100,6 @@ class PaymentData {
   final PayuFormData payuFormData;
   final String paymentUrl;
   final String merchantKey;
-  final String saltKey;
 
   const PaymentData({
     required this.paymentId,
@@ -108,7 +107,6 @@ class PaymentData {
     required this.payuFormData,
     required this.paymentUrl,
     required this.merchantKey,
-    required this.saltKey,
   });
 
   /// Safely converts any dynamic map to Map<String, dynamic>.
@@ -137,7 +135,6 @@ class PaymentData {
       payuFormData: PayuFormData.fromJson(_safeMap(json['payu_form_data'])),
       paymentUrl: _safeString(json['payment_url']),
       merchantKey: _safeString(json['merchant_key']),
-      saltKey: _safeString(json['salt_key']),
     );
   }
 }

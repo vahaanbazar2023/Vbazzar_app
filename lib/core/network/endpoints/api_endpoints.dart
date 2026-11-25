@@ -59,6 +59,7 @@ class ApiEndpoints {
   static const String paymentInitiate = '$paymentPrefix/initiate';
   static const String paymentSuccess = '$paymentPrefix/success';
   static const String paymentFailure = '$paymentPrefix/failure';
+  static const String paymentPayuHash = '$paymentPrefix/payu-hash';
 
   // ─── Notifications ───────────────────────────────────────────
   static const String notifications = '/notifications';

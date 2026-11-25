@@ -5,17 +5,12 @@ import '../../../core/extensions/context_extensions.dart';
 /// PayU Configuration for Vahaan Bazar PayU SDK Payment Module
 /// Contains all PayU SDK configuration and test data
 class PayUConfig {
-  // Static variables to hold merchantKey and saltKey, set from controller
+  // Merchant key, set from the initiate-payment response. The merchant salt
+  // never comes to the app: SDK hashes are signed by the backend.
   static String merchantKey = '';
-  static String saltKey = '';
 
-  // Setters for controller to assign values
   static void setMerchantKey(String key) {
     merchantKey = key;
-  }
-
-  static void setSaltKey(String salt) {
-    saltKey = salt;
   }
 
   // Environment Configuration
