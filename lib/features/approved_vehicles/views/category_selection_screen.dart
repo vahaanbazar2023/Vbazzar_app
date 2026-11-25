@@ -220,23 +220,30 @@ class _CategoryCard extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // Icon — direct, no background
-            category.iconName.isNotEmpty
-                ? Image.network(
-                    category.iconName,
-
-                    fit: BoxFit.contain,
-                    errorBuilder: (_, __, ___) => Icon(
-                      Icons.local_shipping_outlined,
-                      size: 36.w,
-                      color: AppColors.primary,
-                    ),
-                  )
-                : Icon(
-                    Icons.local_shipping_outlined,
-                    size: 36.w,
-                    color: AppColors.primary,
-                  ),
+            // Icon — direct, no background. Boxed to the skeleton's size so a
+            // large source image can't push the name and count out of the
+            // fixed-size card; Flexible lets it shrink on small screens.
+            Flexible(
+              child: SizedBox(
+                width: 64.w,
+                height: 48.h,
+                child: category.iconName.isNotEmpty
+                    ? Image.network(
+                        category.iconName,
+                        fit: BoxFit.contain,
+                        errorBuilder: (_, __, ___) => Icon(
+                          Icons.local_shipping_outlined,
+                          size: 36.w,
+                          color: AppColors.primary,
+                        ),
+                      )
+                    : Icon(
+                        Icons.local_shipping_outlined,
+                        size: 36.w,
+                        color: AppColors.primary,
+                      ),
+              ),
+            ),
             SizedBox(height: 12.h),
             // Category name
             Padding(
