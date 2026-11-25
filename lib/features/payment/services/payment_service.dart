@@ -121,7 +121,6 @@ class PaymentService {
         data: req.toJson(),
       );
 
-      debugPrint('📦 /payments/initiate raw response: ${response.data}');
       debugPrint('📦 response.data type: ${response.data.runtimeType}');
       return InitiatePaymentRes.fromJson(_safeMap(response.data));
     } on DioException catch (e) {
@@ -144,6 +143,39 @@ class PaymentService {
         message: appL10n.coreUnexpectedError(e.toString()),
       );
     }
+  }
+
+  // ── Sign a PayU SDK hash on the backend ───────────────────────────────────
+  /// Forwards PayU Checkout Pro's `generateHash` request to the backend and
+  /// returns the signed hash, or null when the backend refuses or is unreachable.
+  Future<String?> signPayuHash({
+    required String hashName,
+    required String hashString,
+    String? hashType,
+    String? postSalt,
+  }) async {
+    try {
+      final response = await _paymentDio.post(
+        ApiEndpoints.paymentPayuHash,
+        data: {
+          'hashName': hashName,
+          'hashString': hashString,
+          if (hashType != null) 'hashType': hashType,
+          if (postSalt != null) 'postSalt': postSalt,
+        },
+      );
+      final body = _safeMap(response.data);
+      final data = body['data'];
+      if (data is Map &&
+          data['hash'] is String &&
+          (data['hash'] as String).isNotEmpty) {
+        return data['hash'] as String;
+      }
+      debugPrint('❌ /payments/payu-hash refused $hashName: ${body['message']}');
+    } catch (e) {
+      debugPrint('❌ /payments/payu-hash failed for $hashName: $e');
+    }
+    return null;
   }
 
   // ── Report payment success to backend ─────────────────────────────────────
