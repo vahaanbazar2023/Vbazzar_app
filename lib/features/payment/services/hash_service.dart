@@ -2,57 +2,40 @@ import 'dart:convert';
 import 'package:crypto/crypto.dart';
 import 'package:payu_checkoutpro_flutter/PayUConstantKeys.dart';
 
+import 'payment_service.dart';
+
+/// Answers PayU Checkout Pro's `generateHash` callback.
+///
+/// Hashes that need the merchant salt are signed by the backend
+/// (`POST /api/v1/payments/payu-hash`). The salt must never be on the device:
+/// anyone holding it can forge PayU hashes.
 class HashService {
-  // Salt will be set dynamically from controller
-  static String merchantSalt = '';
-  static const merchantSecretKey = ""; // Add Merchant Secrete Key - Optional
+  static const merchantSecretKey = ""; // Add Merchant Secret Key - Optional
 
-  static Map generateHash(Map response) {
-    var hashName = response[PayUHashConstantsKeys.hashName];
-    var hashStringWithoutSalt = response[PayUHashConstantsKeys.hashString];
-    var hashType = response[PayUHashConstantsKeys.hashType];
-    var postSalt = response[PayUHashConstantsKeys.postSalt];
+  static Future<Map> generateHash(Map response, PaymentService service) async {
+    final hashName = response[PayUHashConstantsKeys.hashName]?.toString() ?? '';
+    final hashString =
+        response[PayUHashConstantsKeys.hashString]?.toString() ?? '';
+    final hashType = response[PayUHashConstantsKeys.hashType]?.toString();
+    final postSalt = response[PayUHashConstantsKeys.postSalt]?.toString();
 
-    var hash = "";
-
-    if (hashType == PayUHashConstantsKeys.hashVersionV2) {
-      hash = getHmacSHA256Hash(hashStringWithoutSalt, merchantSalt);
-    } else if (hashName == PayUHashConstantsKeys.mcpLookup) {
-      hash = getHmacSHA1Hash(hashStringWithoutSalt, merchantSecretKey);
-    } else {
-      var hashDataWithSalt = hashStringWithoutSalt + merchantSalt;
-      if (postSalt != null) {
-        hashDataWithSalt = hashDataWithSalt + postSalt;
-      }
-      hash = getSHA512Hash(hashDataWithSalt);
+    // MCP lookup is keyed with the merchant secret key, not the salt.
+    if (hashName == PayUHashConstantsKeys.mcpLookup) {
+      return {hashName: getHmacSHA1Hash(hashString, merchantSecretKey)};
     }
-    //Don't use this method, get the hash from your backend.
 
-    var finalHash = {hashName: hash};
-    return finalHash;
+    final hash = await service.signPayuHash(
+      hashName: hashName,
+      hashString: hashString,
+      hashType: hashType,
+      postSalt: postSalt,
+    );
+    // An empty hash makes PayU fail that step instead of hanging the checkout.
+    return {hashName: hash ?? ''};
   }
 
-  //Don't use this method get the hash from your backend.
-  static String getSHA512Hash(String hashData) {
-    var bytes = utf8.encode(hashData); // data being hashed
-    var hash = sha512.convert(bytes);
-    return hash.toString();
-  }
-
-  //Don't use this method get the hash from your backend.
-  static String getHmacSHA256Hash(String hashData, String salt) {
-    var key = utf8.encode(salt);
-    var bytes = utf8.encode(hashData);
-    final hmacSha256 = Hmac(sha256, key).convert(bytes).bytes;
-    final hmacBase64 = base64Encode(hmacSha256);
-    return hmacBase64;
-  }
-
-  static String getHmacSHA1Hash(String hashData, String salt) {
-    var key = utf8.encode(salt);
-    var bytes = utf8.encode(hashData);
-    var hmacSha1 = Hmac(sha1, key);
-    var hash = hmacSha1.convert(bytes);
-    return hash.toString();
+  static String getHmacSHA1Hash(String hashData, String key) {
+    final hmacSha1 = Hmac(sha1, utf8.encode(key));
+    return hmacSha1.convert(utf8.encode(hashData)).toString();
   }
 }
