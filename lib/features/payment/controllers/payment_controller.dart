@@ -81,7 +81,6 @@ class PaymentController extends GetxController
       if (res.data != null) {
         debugPrint('  TxnId: ${res.data!.txnId}');
         debugPrint('  Merchant Key: ${res.data!.merchantKey}');
-        debugPrint('  Salt Key: ${res.data!.saltKey}');
         final formData = res.data!.payuFormData;
         debugPrint('  ── PayU Form Data ──');
         debugPrint('    key: ${formData.key}');
@@ -114,8 +113,6 @@ class PaymentController extends GetxController
 
       // Configure PayUConfig with API-returned credentials
       PayUConfig.setMerchantKey(res.data!.merchantKey);
-      PayUConfig.setSaltKey(res.data!.saltKey);
-      HashService.merchantSalt = res.data!.saltKey;
 
       status.value = PaymentStatus.processing;
 
@@ -203,7 +200,6 @@ class PaymentController extends GetxController
       '🔧 PayU Environment: $environment (${PayUConfig.isProduction ? "PRODUCTION" : "TEST"})',
     );
     debugPrint('🔧 Merchant Key: ${formData.key}');
-    debugPrint('🔧 Active Salt: ${PayUConfig.saltKey}');
 
     return params;
   }
@@ -264,9 +260,11 @@ class PaymentController extends GetxController
 
   @override
   void generateHash(Map response) {
-    // Use HashService to compute hash (matching working code pattern)
-    Map hashResponse = HashService.generateHash(response);
-    _checkoutPro.hashGenerated(hash: hashResponse);
+    // The backend signs it (POST /payments/payu-hash): the salt stays on the server.
+    HashService.generateHash(
+      response,
+      _service,
+    ).then((hashResponse) => _checkoutPro.hashGenerated(hash: hashResponse));
   }
 
   @override
