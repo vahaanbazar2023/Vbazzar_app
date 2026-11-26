@@ -12579,6 +12579,630 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Not charged now. It is added to the full payment for this vehicle.'**
   String get apprPayCommissionNote;
+
+  /// No description provided for @tourSearchTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Search anything'**
+  String get tourSearchTitle;
+
+  /// No description provided for @tourSearchBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Find trucks, buses, equipment, spares or services by name.'**
+  String get tourSearchBody;
+
+  /// No description provided for @tourAuctionsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Live auctions'**
+  String get tourAuctionsTitle;
+
+  /// No description provided for @tourAuctionsBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Auctions running right now. Tap a card to see the vehicle and place your bid.'**
+  String get tourAuctionsBody;
+
+  /// No description provided for @tourServicesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'All our services'**
+  String get tourServicesTitle;
+
+  /// No description provided for @tourServicesBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Auctions, Buy & Sell, FMS, Insurance & Finance, Inspection and Service Support, all one tap away.'**
+  String get tourServicesBody;
+
+  /// No description provided for @tourNotificationsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications'**
+  String get tourNotificationsTitle;
+
+  /// No description provided for @tourNotificationsBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Bid updates, auction results and offers show up here.'**
+  String get tourNotificationsBody;
+
+  /// No description provided for @tourSubscriptionsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Subscriptions'**
+  String get tourSubscriptionsTitle;
+
+  /// No description provided for @tourSubscriptionsBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick a plan to unlock auctions and premium listings.'**
+  String get tourSubscriptionsBody;
+
+  /// No description provided for @tourCategoriesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Categories'**
+  String get tourCategoriesTitle;
+
+  /// No description provided for @tourCategoriesBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Browse every vehicle and service category in one place.'**
+  String get tourCategoriesBody;
+
+  /// No description provided for @tourRewardsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Rewards'**
+  String get tourRewardsTitle;
+
+  /// No description provided for @tourRewardsBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Earn rewards as you use Vahaan Bazar.'**
+  String get tourRewardsBody;
+
+  /// No description provided for @tourProfileTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile & settings'**
+  String get tourProfileTitle;
+
+  /// No description provided for @tourProfileBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Your bids, listings, wishlist and language. You can replay this tour from here.'**
+  String get tourProfileBody;
+
+  /// No description provided for @tourNext.
+  ///
+  /// In en, this message translates to:
+  /// **'Next'**
+  String get tourNext;
+
+  /// No description provided for @tourSkip.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip'**
+  String get tourSkip;
+
+  /// No description provided for @tourDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Got it'**
+  String get tourDone;
+
+  /// Home tour progress, e.g. 2 of 8
+  ///
+  /// In en, this message translates to:
+  /// **'{current} of {total}'**
+  String tourStepOf(int current, int total);
+
+  /// No description provided for @tourReplayTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'App tour'**
+  String get tourReplayTitle;
+
+  /// No description provided for @tourReplaySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'See the quick walkthrough again'**
+  String get tourReplaySubtitle;
+
+  /// No description provided for @tourAucTypeLiveTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Live auctions'**
+  String get tourAucTypeLiveTitle;
+
+  /// No description provided for @tourAucTypeLiveBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Bid on vehicles in real time. Tap to pick a category.'**
+  String get tourAucTypeLiveBody;
+
+  /// No description provided for @tourAucTypeApprovedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Approved vehicles'**
+  String get tourAucTypeApprovedTitle;
+
+  /// No description provided for @tourAucTypeApprovedBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Verified vehicles you can inspect and book.'**
+  String get tourAucTypeApprovedBody;
+
+  /// No description provided for @tourAucCatCardTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick a category'**
+  String get tourAucCatCardTitle;
+
+  /// No description provided for @tourAucCatCardBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap a vehicle type to see all its auctions.'**
+  String get tourAucCatCardBody;
+
+  /// No description provided for @tourAucCatLiveTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Live now'**
+  String get tourAucCatLiveTitle;
+
+  /// No description provided for @tourAucCatLiveBody.
+  ///
+  /// In en, this message translates to:
+  /// **'A green Live badge means bidding is open. Tap to join.'**
+  String get tourAucCatLiveBody;
+
+  /// No description provided for @tourAucCatSoonTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Coming soon'**
+  String get tourAucCatSoonTitle;
+
+  /// No description provided for @tourAucCatSoonBody.
+  ///
+  /// In en, this message translates to:
+  /// **'These auctions haven\'t started yet. Check back soon to bid.'**
+  String get tourAucCatSoonBody;
+
+  /// No description provided for @tourAucListTabsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Switch auction lists'**
+  String get tourAucListTabsTitle;
+
+  /// No description provided for @tourAucListTabsBody.
+  ///
+  /// In en, this message translates to:
+  /// **'See live auctions, ones closing today, or upcoming ones.'**
+  String get tourAucListTabsBody;
+
+  /// No description provided for @tourAucListFilterTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Filter vehicles'**
+  String get tourAucListFilterTitle;
+
+  /// No description provided for @tourAucListFilterBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Narrow the list by category, state or bank.'**
+  String get tourAucListFilterBody;
+
+  /// No description provided for @tourAucListCardTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Vehicle card'**
+  String get tourAucListCardTitle;
+
+  /// No description provided for @tourAucListCardBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Photos, time left and bid status. Tap See More for full vehicle details.'**
+  String get tourAucListCardBody;
+
+  /// No description provided for @tourAucListBidTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Place your bid'**
+  String get tourAucListBidTitle;
+
+  /// No description provided for @tourAucListBidBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Use − and + to set your amount, then tap Place Bid before time runs out.'**
+  String get tourAucListBidBody;
+
+  /// No description provided for @tourAucListWishlistTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Save for later'**
+  String get tourAucListWishlistTitle;
+
+  /// No description provided for @tourAucListWishlistBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap the heart to add this vehicle to your wishlist.'**
+  String get tourAucListWishlistBody;
+
+  /// No description provided for @tourAucDetailImagesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Vehicle photos'**
+  String get tourAucDetailImagesTitle;
+
+  /// No description provided for @tourAucDetailImagesBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Swipe to see every photo of the vehicle before you bid.'**
+  String get tourAucDetailImagesBody;
+
+  /// No description provided for @tourAucDetailTimerTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Time left'**
+  String get tourAucDetailTimerTitle;
+
+  /// No description provided for @tourAucDetailTimerBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Shows how long bidding stays open. Place your bid before it hits zero.'**
+  String get tourAucDetailTimerBody;
+
+  /// No description provided for @tourAucDetailBidInfoTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your bid summary'**
+  String get tourAucDetailBidInfoTitle;
+
+  /// No description provided for @tourAucDetailBidInfoBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Your current bid, bids left, bids received and remaining buying limit.'**
+  String get tourAucDetailBidInfoBody;
+
+  /// No description provided for @tourAucDetailAccordionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Full vehicle details'**
+  String get tourAucDetailAccordionTitle;
+
+  /// No description provided for @tourAucDetailAccordionBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to see the repo date and all other details about this vehicle.'**
+  String get tourAucDetailAccordionBody;
+
+  /// No description provided for @tourAucDetailBidTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Bid now'**
+  String get tourAucDetailBidTitle;
+
+  /// No description provided for @tourAucDetailBidBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap here to enter your amount and place a bid on this vehicle.'**
+  String get tourAucDetailBidBody;
+
+  /// No description provided for @tourBsHomeCategoryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick a vehicle type'**
+  String get tourBsHomeCategoryTitle;
+
+  /// No description provided for @tourBsHomeCategoryBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Each card is a vehicle type. The number shows how many are listed right now.'**
+  String get tourBsHomeCategoryBody;
+
+  /// No description provided for @tourBsHomeBuyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Buy a vehicle'**
+  String get tourBsHomeBuyTitle;
+
+  /// No description provided for @tourBsHomeBuyBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap Buy to see all vehicles for sale in this category.'**
+  String get tourBsHomeBuyBody;
+
+  /// No description provided for @tourBsHomeSellTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Sell your vehicle'**
+  String get tourBsHomeSellTitle;
+
+  /// No description provided for @tourBsHomeSellBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap Sell to post your vehicle with photos and price for buyers to see.'**
+  String get tourBsHomeSellBody;
+
+  /// No description provided for @tourBsListingSearchTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Search vehicles'**
+  String get tourBsListingSearchTitle;
+
+  /// No description provided for @tourBsListingSearchBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Type a brand or model to quickly find the vehicle you want.'**
+  String get tourBsListingSearchBody;
+
+  /// No description provided for @tourBsListingFilterTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Filter results'**
+  String get tourBsListingFilterTitle;
+
+  /// No description provided for @tourBsListingFilterBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Narrow the list to just the vehicles that match your needs.'**
+  String get tourBsListingFilterBody;
+
+  /// No description provided for @tourBsListingCardTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Vehicle details'**
+  String get tourBsListingCardTitle;
+
+  /// No description provided for @tourBsListingCardBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap a card to see photos, full details and seller options for that vehicle.'**
+  String get tourBsListingCardBody;
+
+  /// No description provided for @tourBsListingWishlistTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Save to wishlist'**
+  String get tourBsListingWishlistTitle;
+
+  /// No description provided for @tourBsListingWishlistBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap the heart to save a vehicle and check it later.'**
+  String get tourBsListingWishlistBody;
+
+  /// No description provided for @tourBsDetailPriceTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Asking price'**
+  String get tourBsDetailPriceTitle;
+
+  /// No description provided for @tourBsDetailPriceBody.
+  ///
+  /// In en, this message translates to:
+  /// **'This is the seller\'s price. You can still make your own offer below.'**
+  String get tourBsDetailPriceBody;
+
+  /// No description provided for @tourBsDetailShareTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Share this vehicle'**
+  String get tourBsDetailShareTitle;
+
+  /// No description provided for @tourBsDetailShareBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Send this listing to family or friends on WhatsApp and other apps.'**
+  String get tourBsDetailShareBody;
+
+  /// No description provided for @tourBsDetailSpecsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Key details'**
+  String get tourBsDetailSpecsTitle;
+
+  /// No description provided for @tourBsDetailSpecsBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Vehicle ID, model year and location at a glance. Scroll down for full specs.'**
+  String get tourBsDetailSpecsBody;
+
+  /// No description provided for @tourBsDetailContactTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact the owner'**
+  String get tourBsDetailContactTitle;
+
+  /// No description provided for @tourBsDetailContactBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlock the owner\'s phone number here, then call them directly.'**
+  String get tourBsDetailContactBody;
+
+  /// No description provided for @tourBsDetailOfferTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Make an offer'**
+  String get tourBsDetailOfferTitle;
+
+  /// No description provided for @tourBsDetailOfferBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Send the seller your own price for this vehicle.'**
+  String get tourBsDetailOfferBody;
+
+  /// No description provided for @tourApprLandingCardTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Vehicle categories'**
+  String get tourApprLandingCardTitle;
+
+  /// No description provided for @tourApprLandingCardBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Each card is a vehicle type with the number of approved vehicles available.'**
+  String get tourApprLandingCardBody;
+
+  /// No description provided for @tourApprLandingBuyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Buy vehicles'**
+  String get tourApprLandingBuyTitle;
+
+  /// No description provided for @tourApprLandingBuyBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Browse verified vehicles from banks and government sources in this category.'**
+  String get tourApprLandingBuyBody;
+
+  /// No description provided for @tourApprLandingSellTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Sell your vehicle'**
+  String get tourApprLandingSellTitle;
+
+  /// No description provided for @tourApprLandingSellBody.
+  ///
+  /// In en, this message translates to:
+  /// **'List a vehicle for sale in this category by filling a short form.'**
+  String get tourApprLandingSellBody;
+
+  /// No description provided for @tourApprCategoryCardTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick a category'**
+  String get tourApprCategoryCardTitle;
+
+  /// No description provided for @tourApprCategoryCardBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap a vehicle type to see approved vehicles you can book.'**
+  String get tourApprCategoryCardBody;
+
+  /// No description provided for @tourApprCategoryCountTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Vehicles available'**
+  String get tourApprCategoryCountTitle;
+
+  /// No description provided for @tourApprCategoryCountBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Shows how many verified vehicles are listed right now in this category.'**
+  String get tourApprCategoryCountBody;
+
+  /// No description provided for @tourApprListCardTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Approved vehicle'**
+  String get tourApprListCardTitle;
+
+  /// No description provided for @tourApprListCardBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Each card is a verified vehicle. Swipe photos and tap to see full details.'**
+  String get tourApprListCardBody;
+
+  /// No description provided for @tourApprListPriceTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Vehicle price'**
+  String get tourApprListPriceTitle;
+
+  /// No description provided for @tourApprListPriceBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The asking price for this vehicle, set by the approved source.'**
+  String get tourApprListPriceBody;
+
+  /// No description provided for @tourApprListDetailsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'See full details'**
+  String get tourApprListDetailsTitle;
+
+  /// No description provided for @tourApprListDetailsBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Open the vehicle to check its info, request inspection or book it.'**
+  String get tourApprListDetailsBody;
+
+  /// No description provided for @tourApprListShareTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Share vehicle'**
+  String get tourApprListShareTitle;
+
+  /// No description provided for @tourApprListShareBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Send this vehicle to friends or family on WhatsApp and other apps.'**
+  String get tourApprListShareBody;
+
+  /// No description provided for @tourApprDetailStatusTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Vehicle status'**
+  String get tourApprDetailStatusTitle;
+
+  /// No description provided for @tourApprDetailStatusBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Active means this vehicle is still available to inspect and book.'**
+  String get tourApprDetailStatusBody;
+
+  /// No description provided for @tourApprDetailInfoTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Key details'**
+  String get tourApprDetailInfoTitle;
+
+  /// No description provided for @tourApprDetailInfoBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Vehicle ID, category, location and year at a glance.'**
+  String get tourApprDetailInfoBody;
+
+  /// No description provided for @tourApprDetailMoreTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'More details'**
+  String get tourApprDetailMoreTitle;
+
+  /// No description provided for @tourApprDetailMoreBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to expand the full specs and documents for this vehicle.'**
+  String get tourApprDetailMoreBody;
+
+  /// No description provided for @tourApprDetailInspectTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Request inspection'**
+  String get tourApprDetailInspectTitle;
+
+  /// No description provided for @tourApprDetailInspectBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask for an inspection to check the vehicle\'s condition before you book.'**
+  String get tourApprDetailInspectBody;
+
+  /// No description provided for @tourApprDetailBookTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Book this vehicle'**
+  String get tourApprDetailBookTitle;
+
+  /// No description provided for @tourApprDetailBookBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay the booking amount to reserve this vehicle for yourself.'**
+  String get tourApprDetailBookBody;
 }
 
 class _AppLocalizationsDelegate
