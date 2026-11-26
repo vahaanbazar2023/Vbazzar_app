@@ -6,7 +6,9 @@ import '../../../core/constants/app_colors.dart';
 import '../../../core/design_system/design_system.dart';
 import '../../../core/design_system/templates/app_layout.dart';
 import '../../../core/extensions/context_extensions.dart';
+import '../../home/data/models/dashboard_model.dart';
 import '../controllers/spare_and_fms_controller.dart';
+import '../domain/entities/spare_part_entity.dart';
 
 /// Spare part detail view — mirrors the auction vehicle detail layout:
 /// image carousel, centered title with accent underline, 2×2 info grid,
@@ -15,23 +17,79 @@ import '../controllers/spare_and_fms_controller.dart';
 class FmsDetailView extends GetView<SpareAndFmsController> {
   const FmsDetailView({super.key});
 
+  /// One lookup per opening of the screen (keyed by its arguments map), so a
+  /// rebuild does not fetch again.
+  static final _lookups = Expando<Future<SparePartEntity?>>();
+
   @override
   Widget build(BuildContext context) {
     final args = Get.arguments as Map<String, dynamic>? ?? {};
-    final sparePart = args['sparePart'];
+    final direct = args['sparePart'];
+    if (direct is SparePartEntity) return _detail(context, args, direct);
+
+    // Opened with less than the full item: the home screen's FMS card passes
+    // {'spare': SparePartDashboard}, global search {'spare_part_id': id}.
+    final dashboard = args['spare'];
+    final id = dashboard is SparePartDashboard
+        ? dashboard.sparePartId
+        : (args['spare_part_id'] ?? args['sparePartId'] ?? '').toString();
+    if (id.isEmpty) return _noData(context);
+
+    final lookup = _lookups[args] ??= controller.findSparePart(id);
+    return FutureBuilder<SparePartEntity?>(
+      future: lookup,
+      builder: (context, snap) {
+        if (snap.connectionState != ConnectionState.done) {
+          return AppLayout(
+            title: context.l10n.spareDetail,
+            showBack: true,
+            body: const Center(child: CircularProgressIndicator()),
+          );
+        }
+        final found =
+            snap.data ??
+            (dashboard is SparePartDashboard ? _fromDashboard(dashboard) : null);
+        return found == null
+            ? _noData(context)
+            : _detail(context, args, found);
+      },
+    );
+  }
+
+  /// The home screen's item when the full one can't be loaded (no rating or
+  /// "suits for", which the dashboard does not send).
+  static SparePartEntity _fromDashboard(SparePartDashboard d) =>
+      SparePartEntity(
+        id: d.id,
+        sparePartId: d.sparePartId,
+        spareName: d.spareName,
+        spareDescription: d.spareDescription,
+        suitsFor: '',
+        price: d.price,
+        photos: d.photos,
+        status: d.status,
+        starRating: '0',
+        insertedAt: '',
+        modifiedBy: '',
+        modifiedAt: '',
+      );
+
+  Widget _noData(BuildContext context) => AppLayout(
+    title: context.l10n.spareDetail,
+    showBack: true,
+    body: Center(child: Text(context.l10n.noSparePartData)),
+  );
+
+  Widget _detail(
+    BuildContext context,
+    Map<String, dynamic> args,
+    SparePartEntity sparePart,
+  ) {
     final isFromOrders = args['isFromOrders'] as bool? ?? false;
     final orderStatus = args['orderStatus'] as String? ?? '';
     final orderId = args['orderId'] as String? ?? '';
 
-    if (sparePart == null) {
-      return AppLayout(
-        title: context.l10n.spareDetail,
-        showBack: true,
-        body: Center(child: Text(context.l10n.noSparePartData)),
-      );
-    }
-
-    final rating = double.tryParse(sparePart.starRating ?? '0') ?? 0;
+    final rating = double.tryParse(sparePart.starRating) ?? 0;
 
     return AppLayout(
       title: isFromOrders ? context.l10n.orderDetail : context.l10n.spareDetail,
@@ -59,7 +117,7 @@ class FmsDetailView extends GetView<SpareAndFmsController> {
                     child: Stack(
                       children: [
                         NetworkImageCarousel(
-                          imageUrls: sparePart.photos as List<String>,
+                          imageUrls: sparePart.photos,
                           height: 200.h,
                           placeholderIcon: Icons.build_outlined,
                         ),
@@ -77,7 +135,7 @@ class FmsDetailView extends GetView<SpareAndFmsController> {
                   // ── Spare title (centered + accent underline) ──
                   Center(
                     child: Text(
-                      sparePart.spareName as String,
+                      sparePart.spareName,
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontFamily: 'Montserrat',
@@ -139,8 +197,8 @@ class FmsDetailView extends GetView<SpareAndFmsController> {
                           child: _InfoBox(
                             icon: Icons.category_outlined,
                             label: context.l10n.status,
-                            value: (sparePart.status as String).isNotEmpty
-                                ? sparePart.status as String
+                            value: sparePart.status.isNotEmpty
+                                ? sparePart.status
                                 : 'N/A',
                           ),
                         ),
@@ -149,8 +207,8 @@ class FmsDetailView extends GetView<SpareAndFmsController> {
                           child: _InfoBox(
                             icon: Icons.info_outline,
                             label: context.l10n.partId,
-                            value: (sparePart.sparePartId as String).isNotEmpty
-                                ? sparePart.sparePartId as String
+                            value: sparePart.sparePartId.isNotEmpty
+                                ? sparePart.sparePartId
                                 : 'N/A',
                           ),
                         ),
@@ -164,7 +222,7 @@ class FmsDetailView extends GetView<SpareAndFmsController> {
                     children: [
                       _InfoRow(
                         label: context.l10n.spareName,
-                        value: sparePart.spareName as String,
+                        value: sparePart.spareName,
                       ),
                       _InfoRow(
                         label: context.l10n.price,
@@ -176,12 +234,12 @@ class FmsDetailView extends GetView<SpareAndFmsController> {
                       ),
                       _InfoRow(
                         label: context.l10n.status,
-                        value: (sparePart.status as String).toUpperCase(),
+                        value: sparePart.status.toUpperCase(),
                       ),
                       _InfoRow(
                         label: context.l10n.suitsFor,
-                        value: (sparePart.suitsFor as String).isNotEmpty
-                            ? sparePart.suitsFor as String
+                        value: sparePart.suitsFor.isNotEmpty
+                            ? sparePart.suitsFor
                             : 'N/A',
                         isLast: true,
                       ),
@@ -191,7 +249,7 @@ class FmsDetailView extends GetView<SpareAndFmsController> {
 
                   // ── Description accordion ─────────────────
                   _DescriptionAccordion(
-                    description: sparePart.spareDescription as String,
+                    description: sparePart.spareDescription,
                   ),
 
                   SizedBox(height: 16.h),

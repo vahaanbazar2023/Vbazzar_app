@@ -14,7 +14,7 @@ class MainShellScreen extends GetView<MainShellController> {
 
   static const _tabs = [
     HomeScreen(),
-    MySubscriptionScreen(),
+    MySubscriptionScreen(inShell: true), // opens on Explore Plans
     CategoriesScreen(),
     RewardsScreen(),
     ProfileScreen(),

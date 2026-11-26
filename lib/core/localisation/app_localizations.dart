@@ -12471,6 +12471,114 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{name} Support'**
   String profSubNamedSupport(String name);
+
+  /// No description provided for @apprPayBookingHeadline.
+  ///
+  /// In en, this message translates to:
+  /// **'Reserve this vehicle'**
+  String get apprPayBookingHeadline;
+
+  /// No description provided for @apprPayBookingIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay the booking amount now and the vehicle is held for you.'**
+  String get apprPayBookingIntro;
+
+  /// No description provided for @apprPayInspectionHeadline.
+  ///
+  /// In en, this message translates to:
+  /// **'Get it checked by an expert'**
+  String get apprPayInspectionHeadline;
+
+  /// No description provided for @apprPayInspectionIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'A Vahaan Bazar expert inspects the vehicle and shares the report with you.'**
+  String get apprPayInspectionIntro;
+
+  /// No description provided for @apprPayBookingAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Booking amount'**
+  String get apprPayBookingAmount;
+
+  /// No description provided for @apprPayInspectionFee.
+  ///
+  /// In en, this message translates to:
+  /// **'Inspection fee'**
+  String get apprPayInspectionFee;
+
+  /// No description provided for @apprPayVehiclePrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Vehicle price'**
+  String get apprPayVehiclePrice;
+
+  /// No description provided for @apprPayNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay now'**
+  String get apprPayNow;
+
+  /// No description provided for @apprPayToPayNow.
+  ///
+  /// In en, this message translates to:
+  /// **'To pay now'**
+  String get apprPayToPayNow;
+
+  /// No description provided for @apprPayHowItWorks.
+  ///
+  /// In en, this message translates to:
+  /// **'How it works'**
+  String get apprPayHowItWorks;
+
+  /// No description provided for @apprPayBookStep1.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay the booking amount now'**
+  String get apprPayBookStep1;
+
+  /// No description provided for @apprPayBookStep2.
+  ///
+  /// In en, this message translates to:
+  /// **'The vehicle is reserved for you'**
+  String get apprPayBookStep2;
+
+  /// No description provided for @apprPayBookStep3.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay for the vehicle at full payment, with 2% commission + GST'**
+  String get apprPayBookStep3;
+
+  /// No description provided for @apprPayInspStep1.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay the inspection fee'**
+  String get apprPayInspStep1;
+
+  /// No description provided for @apprPayInspStep2.
+  ///
+  /// In en, this message translates to:
+  /// **'Our expert inspects the vehicle'**
+  String get apprPayInspStep2;
+
+  /// No description provided for @apprPayInspStep3.
+  ///
+  /// In en, this message translates to:
+  /// **'You get the inspection report'**
+  String get apprPayInspStep3;
+
+  /// No description provided for @apprPayCommissionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'2% commission + GST'**
+  String get apprPayCommissionTitle;
+
+  /// No description provided for @apprPayCommissionNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Not charged now. It is added to the full payment for this vehicle.'**
+  String get apprPayCommissionNote;
 }
 
 class _AppLocalizationsDelegate

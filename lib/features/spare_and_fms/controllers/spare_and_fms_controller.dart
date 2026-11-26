@@ -281,6 +281,35 @@ class SpareAndFmsController extends GetxController
 
   Future<void> refreshFmsData() => _loadFmsData(isRefresh: true);
 
+  /// The full spare part for [sparePartId], for screens opened with only an id
+  /// (home screen FMS cards, global search). Looks in the loaded list first,
+  /// then pages through the spares list. Null when it can't be found.
+  Future<SparePartEntity?> findSparePart(String sparePartId) async {
+    if (sparePartId.isEmpty) return null;
+    for (final s in fmsList) {
+      if (s.sparePartId == sparePartId) return s;
+    }
+    try {
+      _currentUserId ??= await SecureStorageService.instance.read(
+        StorageKeys.userId,
+      );
+      for (var page = 1; page <= 20; page++) {
+        final result = await _repository.getSparesList(
+          page: page,
+          limit: 50,
+          userId: _currentUserId,
+        );
+        for (final s in result.spares) {
+          if (s.sparePartId == sparePartId) return s;
+        }
+        if (!result.pagination.hasNext || result.spares.isEmpty) break;
+      }
+    } catch (e) {
+      debugPrint('⚠️ findSparePart($sparePartId) failed: $e');
+    }
+    return null;
+  }
+
   // ─── FMS Detail Navigation ──────────────────────────────────
 
   void navigateToFmsDetail(SparePartEntity sparePart) {

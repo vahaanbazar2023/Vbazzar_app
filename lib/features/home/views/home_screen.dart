@@ -223,17 +223,6 @@ class _HomeHeader extends StatelessWidget {
                           maxLines: 1,
                         ),
                       ),
-                      SizedBox(width: 2.w),
-                      Container(
-                        width: 20.r,
-                        height: 20.r,
-
-                        child: Icon(
-                          Icons.keyboard_arrow_down_rounded,
-                          color: Colors.black,
-                          size: 20.r,
-                        ),
-                      ),
                     ],
                   ),
                 ),

@@ -94,8 +94,10 @@ class VehicleListingController extends GetxController
   final selectedCategory = RxnString();
   final selectedVehicleTypeFilter = RxnString(); // For filter dropdown
 
-  /// "Client Name" filter: a bank from GET /auctions/auction-banks, sent as
-  /// `bank_name` (matched on each vehicle's bank). null = all clients.
+  /// "Bank Name" filter: a bank from GET /auctions/auction-banks, sent as
+  /// `bank_name` (matched on each vehicle's bank). null = all banks.
+  /// The list only holds banks with vehicles in this category's auctions of
+  /// the open tab, and is reloaded when the tab changes.
   final selectedBank = RxnString();
   final banks = <String>[].obs;
   final isLoadingBanks = false.obs;
@@ -134,6 +136,13 @@ class VehicleListingController extends GetxController
   final searchError = ''.obs;
   int _searchPage = 1;
   Worker? _searchDebouncer;
+
+  /// Bumped on every search so a slower, older response (other query or other
+  /// tab) never overwrites the newest results.
+  int _searchSeq = 0;
+
+  /// Tab the current search results belong to.
+  int _searchTab = -1;
 
   // ─── Bid placement ────────────────────────────────────────────
   final isPlacingBid = false.obs;
@@ -185,8 +194,13 @@ class VehicleListingController extends GetxController
 
     tabController.addListener(() {
       if (!tabController.indexIsChanging) {
+        if (_banksTab != tabController.index) fetchBanks();
         currentTabIndex.value = tabController.index;
         _loadTab(tabController.index);
+        // Search is scoped to the tab: re-run it when the tab changed.
+        if (isSearchActive && _searchTab != tabController.index) {
+          _performSearch(searchQuery.value);
+        }
       }
     });
 
@@ -517,18 +531,36 @@ class VehicleListingController extends GetxController
     }
   }
 
-  /// Bank names for the "Client Name" dropdown, in the server's order.
+  /// Tab the bank list was loaded for (-1 = not loaded yet).
+  int _banksTab = -1;
+  int _banksSeq = 0;
+
+  /// Bank names for the "Bank Name" dropdown, in the server's order: only the
+  /// banks that have vehicles in this category's auctions of the open tab
+  /// (e.g. 4 banks live in 4W -> those 4). A bank already picked stays listed.
   Future<void> fetchBanks() async {
+    final tab = tabController.index.clamp(0, 2);
+    final seq = ++_banksSeq;
+    _banksTab = tab;
     isLoadingBanks.value = true;
     try {
       final response = await Get.find<NetworkService>().get(
         ApiEndpoints.auctionBanks,
+        queryParameters: {
+          'vehicle_type': vehicleType,
+          'auction_type': _tabTypes[tab],
+        },
       );
-      banks.assignAll(parseBankNames(response.data));
+      if (seq != _banksSeq) return; // the tab changed again meanwhile
+      final names = [...parseBankNames(response.data)];
+      final picked = selectedBank.value;
+      if (picked != null && !names.contains(picked)) names.add(picked);
+      banks.assignAll(names);
     } catch (e) {
+      if (seq == _banksSeq) _banksTab = -1; // retry on the next tab change
       debugPrint('❌ [VehicleListingController] fetchBanks error: $e');
     } finally {
-      isLoadingBanks.value = false;
+      if (seq == _banksSeq) isLoadingBanks.value = false;
     }
   }
 
@@ -566,12 +598,17 @@ class VehicleListingController extends GetxController
 
     // Clear search results if query is too short
     if (trimmed.length < 2) {
+      _searchSeq++; // drop any search still in flight
+      _searchTab = -1;
       searchResults.clear();
       searchError.value = '';
       isSearching.value = false;
       return;
     }
 
+    final seq = ++_searchSeq;
+    final tab = tabController.index.clamp(0, 2);
+    _searchTab = tab;
     isSearching.value = true;
     searchError.value = '';
     _searchPage = 1;
@@ -584,9 +621,12 @@ class VehicleListingController extends GetxController
         userId: userId,
         searchQuery: trimmed,
         vehicleType: vehicleType, // Search within current category
+        // Only the open tab's auctions: on Live, closed auctions never show.
+        auctionType: _tabTypes[tab],
         page: 1,
         limit: 20,
       );
+      if (seq != _searchSeq) return; // a newer search is running
 
       searchResults.assignAll(result.vehicles);
       searchPagination.value = result.pagination;
@@ -595,10 +635,11 @@ class VehicleListingController extends GetxController
         searchError.value = appL10n.aucNoVehiclesFoundMatching(trimmed);
       }
     } catch (e, st) {
+      if (seq != _searchSeq) return;
       debugPrint('❌ [VehicleListing._performSearch] $e\n$st');
       searchError.value = appL10n.aucSearchFailed;
     } finally {
-      isSearching.value = false;
+      if (seq == _searchSeq) isSearching.value = false;
     }
   }
 

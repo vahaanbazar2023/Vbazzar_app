@@ -3,6 +3,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 import '../../../core/constants/app_colors.dart';
+import '../../../core/design_system/molecules/share_circle_button.dart';
+import '../../../core/services/share_service.dart';
 import '../../../core/design_system/design_system.dart';
 import '../../../core/design_system/molecules/custom_snackbar.dart';
 import '../../../core/design_system/templates/app_layout.dart';
@@ -80,6 +82,21 @@ class AuctionVehicleDetailScreen extends StatelessWidget {
                           right: 0,
                           child: ExcludeSemantics(
                             child: TimerBadge(endAt: endAt),
+                          ),
+                        ),
+                        // Share — bottom right of the image
+                        Positioned(
+                          bottom: 10,
+                          right: 10,
+                          child: ShareCircleButton(
+                            onShare: () async {
+                              if (!Get.isRegistered<ShareService>()) return;
+                              await ShareService.to.shareAuctionVehicle(
+                                vehicleId: v.vehicleId,
+                                name: '${v.make} ${v.model}'.trim(),
+                                auctionId: v.auctionId,
+                              );
+                            },
                           ),
                         ),
                       ],

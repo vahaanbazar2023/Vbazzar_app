@@ -14,6 +14,7 @@ import '../domain/entities/approved_vehicle_listing_entity.dart';
 import '../domain/entities/auction_vehicle_match.dart';
 import '../domain/repositories/approved_vehicle_repository.dart';
 import '../utils/sell_form_inputs.dart';
+import '../services/approved_access_gate.dart';
 import '../../../core/extensions/context_extensions.dart';
 
 class ApprovedVehicleController extends GetxController {
@@ -205,7 +206,12 @@ class ApprovedVehicleController extends GetxController {
       listingsTotalCount.value = result.totalCount;
       hasMoreListings.value = listings.length < result.totalCount;
     } catch (e) {
-      listingsError.value = appL10n.apprFailedLoadVehicles;
+      // The server refuses users without a Gold plan (403).
+      final text = e.toString();
+      listingsError.value =
+          text.contains(approvedPlanRequiredCode) || text.contains('valid plan')
+          ? approvedLockedMessage
+          : appL10n.apprFailedLoadVehicles;
     } finally {
       isLoadingListings.value = false;
     }

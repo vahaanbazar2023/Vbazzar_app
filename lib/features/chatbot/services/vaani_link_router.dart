@@ -6,6 +6,7 @@ import '../../../core/services/deep_link_service.dart';
 import '../../../core/storage/secure_storage_service.dart';
 import '../../../core/storage/storage_keys.dart';
 import '../../../routes/app_routes.dart';
+import '../../approved_vehicles/services/approved_access_gate.dart';
 
 /// Opens a link from a Vaani reply inside the app.
 ///
@@ -173,6 +174,10 @@ class VaaniLinkRouter {
     }
 
     final screen = _screens[path];
+    if (screen == AppRoutes.approvedVehicleCategory) {
+      await openApprovedVehicles(screen!); // Gold plan only
+      return true;
+    }
     if (screen != null) {
       Get.toNamed(screen);
       return true;

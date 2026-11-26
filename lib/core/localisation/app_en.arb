@@ -2953,5 +2953,23 @@
         "type": "String"
       }
     }
-  }
+  },
+  "apprPayBookingHeadline": "Reserve this vehicle",
+  "apprPayBookingIntro": "Pay the booking amount now and the vehicle is held for you.",
+  "apprPayInspectionHeadline": "Get it checked by an expert",
+  "apprPayInspectionIntro": "A Vahaan Bazar expert inspects the vehicle and shares the report with you.",
+  "apprPayBookingAmount": "Booking amount",
+  "apprPayInspectionFee": "Inspection fee",
+  "apprPayVehiclePrice": "Vehicle price",
+  "apprPayNow": "Pay now",
+  "apprPayToPayNow": "To pay now",
+  "apprPayHowItWorks": "How it works",
+  "apprPayBookStep1": "Pay the booking amount now",
+  "apprPayBookStep2": "The vehicle is reserved for you",
+  "apprPayBookStep3": "Pay for the vehicle at full payment, with 2% commission + GST",
+  "apprPayInspStep1": "Pay the inspection fee",
+  "apprPayInspStep2": "Our expert inspects the vehicle",
+  "apprPayInspStep3": "You get the inspection report",
+  "apprPayCommissionTitle": "2% commission + GST",
+  "apprPayCommissionNote": "Not charged now. It is added to the full payment for this vehicle."
 }
