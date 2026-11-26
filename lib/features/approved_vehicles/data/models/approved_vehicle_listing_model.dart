@@ -31,6 +31,8 @@ class ApprovedVehicleListingModel extends ApprovedVehicleListingEntity {
     required super.inspectionRequested,
     super.inspectionSubscription,
     super.categorySubscription,
+    super.bookingAmount,
+    super.inspectionAmount,
     super.files,
   });
 
@@ -72,10 +74,18 @@ class ApprovedVehicleListingModel extends ApprovedVehicleListingEntity {
               json['category_subscription'] as Map<String, dynamic>,
             )
           : null,
+      bookingAmount: _parseOptionalDouble(json['booking_amount']),
+      inspectionAmount: _parseOptionalDouble(json['inspection_amount']),
       files: json['files'] != null
           ? _VehicleFilesModel.fromJson(json['files'] as Map<String, dynamic>)
           : null,
     );
+  }
+
+  static double? _parseOptionalDouble(dynamic value) {
+    if (value == null) return null;
+    if (value is num) return value.toDouble();
+    return double.tryParse(value.toString());
   }
 
   static double _parseDouble(dynamic value) {

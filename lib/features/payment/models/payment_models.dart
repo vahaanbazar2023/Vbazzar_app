@@ -10,6 +10,11 @@ class InitiatePaymentReq {
   final String? referralCode;
   final String? inspectionId; // only for planCode == 'INSPCHARGE'
 
+  /// Approved vehicle booking / inspection: the vehicle and what is paid for
+  /// ('booking' or 'inspection'). The server works out the amount from them.
+  final String? approvedVehicleId;
+  final String? purpose;
+
   const InitiatePaymentReq({
     required this.userId,
     required this.planCode,
@@ -17,13 +22,12 @@ class InitiatePaymentReq {
     this.forPayment,
     this.referralCode,
     this.inspectionId,
+    this.approvedVehicleId,
+    this.purpose,
   });
 
   Map<String, dynamic> toJson() {
-    final map = <String, dynamic>{
-      'user_id': userId,
-      'plan_code': planCode,
-    };
+    final map = <String, dynamic>{'user_id': userId, 'plan_code': planCode};
     if (inspectionId != null && inspectionId!.isNotEmpty) {
       map['inspection_id'] = inspectionId;
     }
@@ -35,6 +39,12 @@ class InitiatePaymentReq {
     }
     if (referralCode != null && referralCode!.isNotEmpty) {
       map['referral_code'] = referralCode;
+    }
+    if (approvedVehicleId != null && approvedVehicleId!.isNotEmpty) {
+      map['approved_vehicle_id'] = approvedVehicleId;
+    }
+    if (purpose != null && purpose!.isNotEmpty) {
+      map['purpose'] = purpose;
     }
     return map;
   }
