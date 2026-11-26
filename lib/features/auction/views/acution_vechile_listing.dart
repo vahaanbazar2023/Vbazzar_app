@@ -16,6 +16,7 @@ import '../../../core/design_system/tokens/app_radius.dart';
 import '../../../core/design_system/tokens/app_spacing.dart';
 import '../../../core/extensions/context_extensions.dart';
 import '../../../routes/app_routes.dart';
+import '../../app_tour/screen_tour.dart';
 import '../controllers/vehicle_listing_controller.dart';
 import '../domain/entities/auction_entity.dart';
 import '../models/vehicle_listing.dart';
@@ -31,30 +32,67 @@ class AuctionVehicleListingScreen extends GetView<VehicleListingController> {
 
   @override
   Widget build(BuildContext context) {
-    return AppLayout(
-      title: controller.auctionTitle.isNotEmpty
-          ? controller.auctionTitle
-          : context.l10n.liveAuctions,
-      showBack: true,
-      // Listing screens have no bottom nav; the lists pad themselves instead.
-      showBottomNav: false,
-      headerExtra: _TabAndFilterBar(controller: controller),
-      body: Stack(
-        fit: StackFit.expand,
-        children: [
-          NotificationListener<ScrollNotification>(
-            onNotification: controller.onListScroll,
-            child: TabBarView(
-              controller: controller.tabController,
-              children: List.generate(3, (i) => _TabContent(tabIndex: i)),
+    return TourScope(
+      tourId: 'auction_listing',
+      waitFor: const ['aucListCard'], // wait for the list to load
+      spots: (context) => [
+        TourSpot(
+          'aucListTabs',
+          context.l10n.tourAucListTabsTitle,
+          context.l10n.tourAucListTabsBody,
+          padding: 4,
+        ),
+        TourSpot(
+          'aucListFilter',
+          context.l10n.tourAucListFilterTitle,
+          context.l10n.tourAucListFilterBody,
+          circle: true,
+        ),
+        TourSpot(
+          'aucListCard',
+          context.l10n.tourAucListCardTitle,
+          context.l10n.tourAucListCardBody,
+          padding: 4,
+        ),
+        TourSpot(
+          'aucListBid',
+          context.l10n.tourAucListBidTitle,
+          context.l10n.tourAucListBidBody,
+          padding: 6,
+        ),
+        TourSpot(
+          'aucListWishlist',
+          context.l10n.tourAucListWishlistTitle,
+          context.l10n.tourAucListWishlistBody,
+          padding: 6,
+          circle: true,
+        ),
+      ],
+      child: AppLayout(
+        title: controller.auctionTitle.isNotEmpty
+            ? controller.auctionTitle
+            : context.l10n.liveAuctions,
+        showBack: true,
+        // Listing screens have no bottom nav; the lists pad themselves instead.
+        showBottomNav: false,
+        headerExtra: _TabAndFilterBar(controller: controller),
+        body: Stack(
+          fit: StackFit.expand,
+          children: [
+            NotificationListener<ScrollNotification>(
+              onNotification: controller.onListScroll,
+              child: TabBarView(
+                controller: controller.tabController,
+                children: List.generate(3, (i) => _TabContent(tabIndex: i)),
+              ),
             ),
-          ),
-          Positioned(
-            right: 16,
-            bottom: MediaQuery.paddingOf(context).bottom + AppLayout.fabBottom,
-            child: const AuctionActivityFab(),
-          ),
-        ],
+            Positioned(
+              right: 16,
+              bottom: MediaQuery.paddingOf(context).bottom + AppLayout.fabBottom,
+              child: const AuctionActivityFab(),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -97,11 +135,14 @@ class _TabAndFilterBar extends StatelessWidget {
                 },
                 child: Padding(
                   padding: EdgeInsets.symmetric(horizontal: 10.w),
-                  child: Image.asset(
-                    AppAssets.filterPng,
-                    width: 22.r,
-                    height: 22.r,
-                    color: AppColors.primary,
+                  child: TourAnchor(
+                    id: 'aucListFilter',
+                    child: Image.asset(
+                      AppAssets.filterPng,
+                      width: 22.r,
+                      height: 22.r,
+                      color: AppColors.primary,
+                    ),
                   ),
                 ),
               ),
@@ -111,33 +152,36 @@ class _TabAndFilterBar extends StatelessWidget {
           ),
         ),
         // ── Tab bar ─────────────────────────────────────────
-        SizedBox(
-          height: 34.h,
-          child: TabBar(
-            controller: controller.tabController,
-            isScrollable: false,
-            labelColor: AppColors.primary,
-            unselectedLabelColor: AppColors.grey600,
-            indicatorColor: AppColors.primary,
-            indicatorWeight: 2,
-            dividerColor: AppColors.grey200,
-            labelPadding: EdgeInsets.symmetric(horizontal: 4.w),
-            tabAlignment: TabAlignment.fill,
-            labelStyle: TextStyle(
-              fontFamily: 'Montserrat',
-              fontSize: 11.sp,
-              fontWeight: FontWeight.w600,
+        TourAnchor(
+          id: 'aucListTabs',
+          child: SizedBox(
+            height: 34.h,
+            child: TabBar(
+              controller: controller.tabController,
+              isScrollable: false,
+              labelColor: AppColors.primary,
+              unselectedLabelColor: AppColors.grey600,
+              indicatorColor: AppColors.primary,
+              indicatorWeight: 2,
+              dividerColor: AppColors.grey200,
+              labelPadding: EdgeInsets.symmetric(horizontal: 4.w),
+              tabAlignment: TabAlignment.fill,
+              labelStyle: TextStyle(
+                fontFamily: 'Montserrat',
+                fontSize: 11.sp,
+                fontWeight: FontWeight.w600,
+              ),
+              unselectedLabelStyle: TextStyle(
+                fontFamily: 'Montserrat',
+                fontSize: 11.sp,
+                fontWeight: FontWeight.w500,
+              ),
+              tabs: [
+                Tab(text: context.l10n.liveTab),
+                Tab(text: context.l10n.closingTodayTab),
+                Tab(text: context.l10n.upcomingTab),
+              ],
             ),
-            unselectedLabelStyle: TextStyle(
-              fontFamily: 'Montserrat',
-              fontSize: 11.sp,
-              fontWeight: FontWeight.w500,
-            ),
-            tabs: [
-              Tab(text: context.l10n.liveTab),
-              Tab(text: context.l10n.closingTodayTab),
-              Tab(text: context.l10n.upcomingTab),
-            ],
           ),
         ),
       ],
@@ -280,11 +324,14 @@ class _TabContent extends StatelessWidget {
           }
           return Padding(
             padding: EdgeInsets.only(bottom: AppSpacing.s),
-            child: _VehicleCard(
-              vehicle: vehicles[index],
-              bidIncrementAmount: ctrl.bidIncrementAmount,
-              controller: ctrl,
-              isUpcoming: tabIndex == 2,
+            child: TourAnchor(
+              id: 'aucListCard',
+              child: _VehicleCard(
+                vehicle: vehicles[index],
+                bidIncrementAmount: ctrl.bidIncrementAmount,
+                controller: ctrl,
+                isUpcoming: tabIndex == 2,
+              ),
             ),
           );
         },
@@ -968,7 +1015,9 @@ class _VehicleCardState extends State<_VehicleCard> {
                   padding: EdgeInsets.fromLTRB(10.w, 6.h, 10.w, 4.h),
                   child: Row(
                     children: [
+                      // Amount box gets 3/5 of the row so long amounts fit.
                       Expanded(
+                        flex: 3,
                         child: Container(
                           height: 30.h,
                           decoration: BoxDecoration(
@@ -1045,51 +1094,55 @@ class _VehicleCardState extends State<_VehicleCard> {
                       ),
                       SizedBox(width: 8.w),
                       Flexible(
-                        child: GestureDetector(
-                          onTap: _isPlacingBid
-                              ? null
-                              : () => _placeBid(context),
-                          child: Container(
-                            constraints: BoxConstraints(minHeight: 28.h),
-                            padding: EdgeInsets.symmetric(horizontal: 14.w),
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                colors: _isPlacingBid
-                                    ? [
-                                        const Color(0xFFAA5555),
-                                        const Color(0xFF884444),
-                                      ]
-                                    : [
-                                        AppColors.ctaGradientStart,
-                                        AppColors.ctaGradientEnd,
-                                      ],
+                        flex: 2,
+                        child: TourAnchor(
+                          id: 'aucListBid',
+                            child: GestureDetector(
+                            onTap: _isPlacingBid
+                                ? null
+                                : () => _placeBid(context),
+                            child: Container(
+                              constraints: BoxConstraints(minHeight: 28.h),
+                              padding: EdgeInsets.symmetric(horizontal: 10.w),
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  colors: _isPlacingBid
+                                      ? [
+                                          const Color(0xFFAA5555),
+                                          const Color(0xFF884444),
+                                        ]
+                                      : [
+                                          AppColors.ctaGradientStart,
+                                          AppColors.ctaGradientEnd,
+                                        ],
+                                ),
+                                borderRadius: BorderRadius.circular(19.r),
                               ),
-                              borderRadius: BorderRadius.circular(19.r),
-                            ),
-                            alignment: Alignment.center,
-                            child: _isPlacingBid
-                                ? SizedBox(
-                                    width: 18.r,
-                                    height: 18.r,
-                                    child: const CircularProgressIndicator(
-                                      color: Colors.white,
-                                      strokeWidth: 2,
-                                    ),
-                                  )
-                                : FittedBox(
-                                    fit: BoxFit.scaleDown,
-                                    child: Text(
-                                      context.l10n.placeBid.toUpperCase(),
-                                      maxLines: 1,
-                                      style: TextStyle(
-                                        fontFamily: 'Montserrat',
-                                        fontSize: 12.sp,
-                                        fontWeight: FontWeight.w600,
+                              alignment: Alignment.center,
+                              child: _isPlacingBid
+                                  ? SizedBox(
+                                      width: 18.r,
+                                      height: 18.r,
+                                      child: const CircularProgressIndicator(
                                         color: Colors.white,
-                                        letterSpacing: 0.8,
+                                        strokeWidth: 2,
+                                      ),
+                                    )
+                                  : FittedBox(
+                                      fit: BoxFit.scaleDown,
+                                      child: Text(
+                                        context.l10n.placeBid.toUpperCase(),
+                                        maxLines: 1,
+                                        style: TextStyle(
+                                          fontFamily: 'Montserrat',
+                                          fontSize: 12.sp,
+                                          fontWeight: FontWeight.w600,
+                                          color: Colors.white,
+                                          letterSpacing: 0.8,
+                                        ),
                                       ),
                                     ),
-                                  ),
+                            ),
                           ),
                         ),
                       ),
@@ -1107,10 +1160,13 @@ class _VehicleCardState extends State<_VehicleCard> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                WishlistButton(
-                  isWishlisted: v.isWishlisted,
-                  onTap: () => widget.controller.toggleWishlist(v),
-                  size: 30.r,
+                TourAnchor(
+                  id: 'aucListWishlist',
+                  child: WishlistButton(
+                    isWishlisted: v.isWishlisted,
+                    onTap: () => widget.controller.toggleWishlist(v),
+                    size: 30.r,
+                  ),
                 ),
                 SizedBox(height: 6.r),
                 WatchlistButton(

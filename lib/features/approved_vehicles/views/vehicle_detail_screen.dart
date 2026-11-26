@@ -16,6 +16,7 @@ import '../controllers/approved_vehicle_controller.dart';
 import 'approved_vehicle_payment_screen.dart';
 import '../domain/entities/approved_vehicle_listing_entity.dart';
 import '../../../core/extensions/context_extensions.dart';
+import '../../app_tour/screen_tour.dart';
 
 class VehicleDetailScreen extends StatelessWidget {
   const VehicleDetailScreen({super.key});
@@ -80,243 +81,304 @@ class _ApprVehicleDetail extends StatelessWidget {
         ? listing.displayTitle
         : listing.registrationNumber;
 
-    return AppLayout(
-      title: title,
-      subtitle: listing.approvedVehicleId,
-      showBack: true,
-      bodyColor: AppColors.cardBackground,
-      body: Column(
-        children: [
-          Expanded(
-            child: SingleChildScrollView(
-              padding: EdgeInsets.fromLTRB(
-                AppSpacing.md,
-                AppSpacing.md,
-                AppSpacing.md,
-                AppSpacing.sm,
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // ── Image carousel ─────────────────────────────
-                  ClipRRect(
-                    borderRadius: AppRadius.borderRadiusMd,
-                    child: Stack(
-                      children: [
-                        imageUrls.isNotEmpty
-                            ? NetworkImageCarousel(
-                                imageUrls: imageUrls,
-                                height: 220.h,
-                              )
-                            : Container(
-                                height: 220.h,
-                                color: AppColors.grey100,
-                                child: Center(
-                                  child: Icon(
-                                    Icons.directions_car_outlined,
-                                    size: 56.r,
-                                    color: AppColors.grey400,
+    return TourScope(
+      tourId: 'approved_detail',
+      spots: (context) => [
+        TourSpot(
+          'appr_detail_status',
+          context.l10n.tourApprDetailStatusTitle,
+          context.l10n.tourApprDetailStatusBody,
+          padding: 4,
+        ),
+        TourSpot(
+          'appr_detail_info',
+          context.l10n.tourApprDetailInfoTitle,
+          context.l10n.tourApprDetailInfoBody,
+        ),
+        TourSpot(
+          'appr_detail_more',
+          context.l10n.tourApprDetailMoreTitle,
+          context.l10n.tourApprDetailMoreBody,
+        ),
+        TourSpot(
+          'appr_detail_inspect',
+          context.l10n.tourApprDetailInspectTitle,
+          context.l10n.tourApprDetailInspectBody,
+          padding: 4,
+        ),
+        TourSpot(
+          'appr_detail_book',
+          context.l10n.tourApprDetailBookTitle,
+          context.l10n.tourApprDetailBookBody,
+          padding: 4,
+        ),
+      ],
+      child: AppLayout(
+        title: title,
+        subtitle: listing.approvedVehicleId,
+        showBack: true,
+        bodyColor: AppColors.cardBackground,
+        body: Column(
+          children: [
+            Expanded(
+              child: SingleChildScrollView(
+                padding: EdgeInsets.fromLTRB(
+                  AppSpacing.md,
+                  AppSpacing.md,
+                  AppSpacing.md,
+                  AppSpacing.sm,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // ── Image carousel ─────────────────────────────
+                    ClipRRect(
+                      borderRadius: AppRadius.borderRadiusMd,
+                      child: Stack(
+                        children: [
+                          imageUrls.isNotEmpty
+                              ? NetworkImageCarousel(
+                                  imageUrls: imageUrls,
+                                  height: 220.h,
+                                )
+                              : Container(
+                                  height: 220.h,
+                                  color: AppColors.grey100,
+                                  child: Center(
+                                    child: Icon(
+                                      Icons.directions_car_outlined,
+                                      size: 56.r,
+                                      color: AppColors.grey400,
+                                    ),
                                   ),
                                 ),
+                          // Category badge — top left
+                          Positioned(
+                            top: 10,
+                            left: 10,
+                            child: Container(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 10.w,
+                                vertical: 5.h,
                               ),
-                        // Category badge — top left
-                        Positioned(
-                          top: 10,
-                          left: 10,
-                          child: Container(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 10.w,
-                              vertical: 5.h,
-                            ),
-                            decoration: BoxDecoration(
-                              color: AppColors.primary,
-                              borderRadius: BorderRadius.circular(20.r),
-                            ),
-                            child: Text(
-                              listing.categoryType.toUpperCase(),
-                              style: TextStyle(
-                                fontFamily: 'Montserrat',
-                                fontSize: 9.sp,
-                                fontWeight: FontWeight.w800,
-                                color: Colors.white,
-                                letterSpacing: 1.2,
+                              decoration: BoxDecoration(
+                                color: AppColors.primary,
+                                borderRadius: BorderRadius.circular(20.r),
+                              ),
+                              child: Text(
+                                listing.categoryType.toUpperCase(),
+                                style: TextStyle(
+                                  fontFamily: 'Montserrat',
+                                  fontSize: 9.sp,
+                                  fontWeight: FontWeight.w800,
+                                  color: Colors.white,
+                                  letterSpacing: 1.2,
+                                ),
                               ),
                             ),
                           ),
+                          // Status badge + share — stacked top right
+                          Positioned(
+                            top: 10,
+                            right: 10,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                TourAnchor(
+                                  id: 'appr_detail_status',
+                                  child: _ApprStatusBadge(
+                                    status: listing.vehicleStatus,
+                                  ),
+                                ),
+                                SizedBox(height: 8.h),
+                                ShareCircleButton(
+                                  onShare: () async {
+                                    if (!Get.isRegistered<ShareService>()) {
+                                      return;
+                                    }
+                                    await ShareService.to.shareApprovedVehicle(
+                                      approvedVehicleId:
+                                          listing.approvedVehicleId,
+                                      name: title,
+                                      year: listing.yearOfManufacturing,
+                                      price: listing.price,
+                                    );
+                                  },
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(height: AppSpacing.sm),
+
+                    // ── Title + underline ───────────────────────────
+                    Center(
+                      child: Text(
+                        title,
+                        style: TextStyle(
+                          fontFamily: 'Montserrat',
+                          fontSize: 16.sp,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.black,
                         ),
-                        // Status badge + share — stacked top right
-                        Positioned(
-                          top: 10,
-                          right: 10,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.end,
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                    Center(
+                      child: Container(
+                        margin: EdgeInsets.only(
+                          top: 5.h,
+                          bottom: AppSpacing.sm,
+                        ),
+                        height: 3.h,
+                        width: 55.w,
+                        decoration: BoxDecoration(
+                          color: AppColors.primary,
+                          borderRadius: BorderRadius.circular(2.r),
+                        ),
+                      ),
+                    ),
+
+                    // ── 2×2 Info boxes ──────────────────────────────
+                    TourAnchor(
+                      id: 'appr_detail_info',
+                      child: Column(
+                        children: [
+                          Row(
                             children: [
-                              _ApprStatusBadge(status: listing.vehicleStatus),
-                              SizedBox(height: 8.h),
-                              ShareCircleButton(
-                                onShare: () async {
-                                  if (!Get.isRegistered<ShareService>()) {
-                                    return;
-                                  }
-                                  await ShareService.to.shareApprovedVehicle(
-                                    approvedVehicleId:
-                                        listing.approvedVehicleId,
-                                    name: title,
-                                    year: listing.yearOfManufacturing,
-                                    price: listing.price,
-                                  );
-                                },
+                              Expanded(
+                                child: _ApprInfoBox(
+                                  icon: Icons.fingerprint_rounded,
+                                  label: context.l10n.vehicle_id,
+                                  value: listing.approvedVehicleId,
+                                ),
+                              ),
+                              SizedBox(width: 8.w),
+                              Expanded(
+                                child: _ApprInfoBox(
+                                  icon: Icons.category_outlined,
+                                  label: context.l10n.category,
+                                  value: listing.categoryType,
+                                ),
                               ),
                             ],
+                          ),
+                          SizedBox(height: 8.h),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: _ApprInfoBox(
+                                  icon: Icons.location_city_outlined,
+                                  label: context.l10n.location,
+                                  value: [
+                                    listing.cityName,
+                                    listing.stateName,
+                                  ].where((s) => s.isNotEmpty).join(', '),
+                                ),
+                              ),
+                              SizedBox(width: 8.w),
+                              Expanded(
+                                child: _ApprInfoBox(
+                                  icon: Icons.calendar_month_rounded,
+                                  label: context.l10n.year,
+                                  value: listing.yearOfManufacturing > 0
+                                      ? '${listing.yearOfManufacturing}'
+                                      : context.l10n.na,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(height: AppSpacing.md),
+
+                    // ── Details accordion ───────────────────────────
+                    TourAnchor(
+                      id: 'appr_detail_more',
+                      child: _ApprDetailsAccordion(listing: listing),
+                    ),
+                    SizedBox(height: AppSpacing.md),
+
+                    // ── Actions ──────────────────────────────────────
+                    SizedBox(height: AppSpacing.sm),
+                    Row(
+                      children: [
+                        // Book Now
+                        Expanded(
+                          child: TourAnchor(
+                            id: 'appr_detail_book',
+                            child: listing.isBookedVehicle
+                                ? _disabledBtn(context.l10n.apprBookedCheck)
+                                : GradientButton.filled(
+                                    text: context.l10n.apprBookNow,
+                                    height: 40.h,
+                                    fontSize: 14.sp,
+                                    fontWeight: FontWeight.w600,
+                                    isLoading: false,
+                                    onPressed: () => _showPaymentDialog(
+                                      context: context,
+                                      title: context.l10n.apprBookVehicle,
+                                      description:
+                                          context.l10n.apprBookVehicleDesc,
+                                      // The category's booking fee for this
+                                      // vehicle (flat, or a % of its price).
+                                      amount: listing.bookingAmount,
+                                      planCode: listing
+                                          .inspectionSubscription
+                                          ?.categoryPlan,
+                                      approvedVehicleId:
+                                          listing.approvedVehicleId,
+                                      subscriptionType: 'category',
+                                      ctrl: ctrl,
+                                    ),
+                                  ),
+                          ),
+                        ),
+                        SizedBox(width: 12.w),
+                        // Request Inspection
+                        Expanded(
+                          child: TourAnchor(
+                            id: 'appr_detail_inspect',
+                            child: listing.isInspectionRequested
+                                ? _disabledBtn(context.l10n.apprRequestedCheck)
+                                : GradientButton.filled(
+                                    text: context.l10n.apprInspection,
+                                    height: 40.h,
+                                    fontSize: 14.sp,
+                                    fontWeight: FontWeight.w600,
+                                    isLoading: false,
+                                    onPressed: () => _showPaymentDialog(
+                                      context: context,
+                                      title: context.l10n.requestInspection,
+                                      description: context
+                                          .l10n
+                                          .apprRequestInspectionDesc,
+                                      // The category's inspection fee for this
+                                      // vehicle (flat, or a % of its price).
+                                      amount: listing.inspectionAmount,
+                                      planCode: listing
+                                          .inspectionSubscription
+                                          ?.categoryPlan,
+                                      approvedVehicleId:
+                                          listing.approvedVehicleId,
+                                      subscriptionType: 'inspection',
+                                      ctrl: ctrl,
+                                    ),
+                                  ),
                           ),
                         ),
                       ],
                     ),
-                  ),
-                  SizedBox(height: AppSpacing.sm),
-
-                  // ── Title + underline ───────────────────────────
-                  Center(
-                    child: Text(
-                      title,
-                      style: TextStyle(
-                        fontFamily: 'Montserrat',
-                        fontSize: 16.sp,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.black,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                  Center(
-                    child: Container(
-                      margin: EdgeInsets.only(top: 5.h, bottom: AppSpacing.sm),
-                      height: 3.h,
-                      width: 55.w,
-                      decoration: BoxDecoration(
-                        color: AppColors.primary,
-                        borderRadius: BorderRadius.circular(2.r),
-                      ),
-                    ),
-                  ),
-
-                  // ── 2×2 Info boxes ──────────────────────────────
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _ApprInfoBox(
-                          icon: Icons.fingerprint_rounded,
-                          label: context.l10n.vehicle_id,
-                          value: listing.approvedVehicleId,
-                        ),
-                      ),
-                      SizedBox(width: 8.w),
-                      Expanded(
-                        child: _ApprInfoBox(
-                          icon: Icons.category_outlined,
-                          label: context.l10n.category,
-                          value: listing.categoryType,
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 8.h),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _ApprInfoBox(
-                          icon: Icons.location_city_outlined,
-                          label: context.l10n.location,
-                          value: [
-                            listing.cityName,
-                            listing.stateName,
-                          ].where((s) => s.isNotEmpty).join(', '),
-                        ),
-                      ),
-                      SizedBox(width: 8.w),
-                      Expanded(
-                        child: _ApprInfoBox(
-                          icon: Icons.calendar_month_rounded,
-                          label: context.l10n.year,
-                          value: listing.yearOfManufacturing > 0
-                              ? '${listing.yearOfManufacturing}'
-                              : context.l10n.na,
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: AppSpacing.md),
-
-                  // ── Details accordion ───────────────────────────
-                  _ApprDetailsAccordion(listing: listing),
-                  SizedBox(height: AppSpacing.md),
-
-                  // ── Actions ──────────────────────────────────────
-                  SizedBox(height: AppSpacing.sm),
-                  Row(
-                    children: [
-                      // Book Now
-                      Expanded(
-                        child: listing.isBookedVehicle
-                            ? _disabledBtn(context.l10n.apprBookedCheck)
-                            : GradientButton.filled(
-                                text: context.l10n.apprBookNow,
-                                height: 40.h,
-                                fontSize: 14.sp,
-                                fontWeight: FontWeight.w600,
-                                isLoading: false,
-                                onPressed: () => _showPaymentDialog(
-                                  context: context,
-                                  title: context.l10n.apprBookVehicle,
-                                  description: context.l10n.apprBookVehicleDesc,
-                                  // The category's booking fee for this
-                                  // vehicle (flat, or a % of its price).
-                                  amount: listing.bookingAmount,
-                                  planCode: listing
-                                      .inspectionSubscription
-                                      ?.categoryPlan,
-                                  approvedVehicleId: listing.approvedVehicleId,
-                                  subscriptionType: 'category',
-                                  ctrl: ctrl,
-                                ),
-                              ),
-                      ),
-                      SizedBox(width: 12.w),
-                      // Request Inspection
-                      Expanded(
-                        child: listing.isInspectionRequested
-                            ? _disabledBtn(context.l10n.apprRequestedCheck)
-                            : GradientButton.filled(
-                                text: context.l10n.apprInspection,
-                                height: 40.h,
-                                fontSize: 14.sp,
-                                fontWeight: FontWeight.w600,
-                                isLoading: false,
-                                onPressed: () => _showPaymentDialog(
-                                  context: context,
-                                  title: context.l10n.requestInspection,
-                                  description:
-                                      context.l10n.apprRequestInspectionDesc,
-                                  // The category's inspection fee for this
-                                  // vehicle (flat, or a % of its price).
-                                  amount: listing.inspectionAmount,
-                                  planCode: listing
-                                      .inspectionSubscription
-                                      ?.categoryPlan,
-                                  approvedVehicleId: listing.approvedVehicleId,
-                                  subscriptionType: 'inspection',
-                                  ctrl: ctrl,
-                                ),
-                              ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 32.h),
-                ],
+                    SizedBox(height: 32.h),
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

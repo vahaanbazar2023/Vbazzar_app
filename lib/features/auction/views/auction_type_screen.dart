@@ -7,6 +7,7 @@ import '../../../core/extensions/context_extensions.dart';
 import '../../../core/storage/secure_storage_service.dart';
 import '../../../core/storage/storage_keys.dart';
 import '../../../routes/app_routes.dart';
+import '../../app_tour/screen_tour.dart';
 import '../../approved_vehicles/services/approved_access_gate.dart';
 import '../controllers/auction_controller.dart';
 
@@ -25,34 +26,55 @@ class AuctionTypeScreen extends StatelessWidget {
     return AppLayout(
       title: context.l10n.auctionZone,
       subtitle: context.l10n.chooseAnyOne,
-      body: SingleChildScrollView(
-        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
-        child: Column(
-          children: [
-            SizedBox(height: 8.h),
-            _TypeCard(
-              tabIndex: 0,
-              imagePath: 'assets/images/png/live_bidding.png',
-              title: AuctionType.label(AuctionType.live),
-              subtitle: context.l10n.liveAuctionSubtitle,
-              badgeLabel: context.l10n.liveBadge,
-              icon: Icons.gavel_rounded,
-            ),
-            SizedBox(height: 16.h),
-            // Approved vehicles: Gold plan only — shown locked for anyone else.
-            FutureBuilder<bool>(
-              future: hasApprovedVehicleAccess(),
-              builder: (context, snap) => _TypeCard(
-                tabIndex: 1,
-                imagePath: 'assets/images/png/goverment_inventory.png',
-                title: context.l10n.approvedVehicles,
-                subtitle: context.l10n.liveAuctionSubtitle,
-                badgeLabel: context.l10n.aucVerified,
-                icon: Icons.verified_rounded,
-                locked: snap.data == false,
+      body: TourScope(
+        tourId: 'auction_type',
+        spots: (context) => [
+          TourSpot(
+            'aucTypeLive',
+            context.l10n.tourAucTypeLiveTitle,
+            context.l10n.tourAucTypeLiveBody,
+          ),
+          TourSpot(
+            'aucTypeApproved',
+            context.l10n.tourAucTypeApprovedTitle,
+            context.l10n.tourAucTypeApprovedBody,
+          ),
+        ],
+        child: SingleChildScrollView(
+          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+          child: Column(
+            children: [
+              SizedBox(height: 8.h),
+              TourAnchor(
+                id: 'aucTypeLive',
+                child: _TypeCard(
+                  tabIndex: 0,
+                  imagePath: 'assets/images/png/live_bidding.png',
+                  title: AuctionType.label(AuctionType.live),
+                  subtitle: context.l10n.liveAuctionSubtitle,
+                  badgeLabel: context.l10n.liveBadge,
+                  icon: Icons.gavel_rounded,
+                ),
               ),
-            ),
-          ],
+              SizedBox(height: 16.h),
+              // Approved vehicles: Gold plan only — shown locked for anyone else.
+              TourAnchor(
+                id: 'aucTypeApproved',
+                child: FutureBuilder<bool>(
+                  future: hasApprovedVehicleAccess(),
+                  builder: (context, snap) => _TypeCard(
+                    tabIndex: 1,
+                    imagePath: 'assets/images/png/goverment_inventory.png',
+                    title: context.l10n.approvedVehicles,
+                    subtitle: context.l10n.liveAuctionSubtitle,
+                    badgeLabel: context.l10n.aucVerified,
+                    icon: Icons.verified_rounded,
+                    locked: snap.data == false,
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

@@ -15,6 +15,7 @@ import '../../../routes/app_routes.dart';
 import '../../subscription/models/user_subscription.dart';
 import '../../revvot/revvot_buying_power_button.dart';
 import '../../revvot/revvot_service.dart';
+import '../../app_tour/screen_tour.dart';
 import '../controllers/vehicle_detail_controller.dart';
 import '../domain/entities/buy_vehicle_entity.dart';
 import '../domain/entities/vehicle_files.dart';
@@ -171,7 +172,8 @@ class _BuyVehicleDetailsViewState extends State<BuyVehicleDetailsView> {
       subtitle: vehicle.sbVehicleId.isNotEmpty ? vehicle.sbVehicleId : '',
       showBack: true,
       bodyColor: AppColors.cardBackground,
-      body: Column(
+      body: _withTour(
+        Column(
         children: [
           Expanded(
             child: SingleChildScrollView(
@@ -252,7 +254,9 @@ class _BuyVehicleDetailsViewState extends State<BuyVehicleDetailsView> {
                                 ),
                               ],
                               SizedBox(height: 8.h),
-                              _ShareButton(
+                              TourAnchor(
+                                id: 'bs_detail_share',
+                                child: _ShareButton(
                                 onTap: () async {
                                   if (Get.isRegistered<ShareService>()) {
                                     await ShareService.to.shareVehicle(
@@ -267,6 +271,7 @@ class _BuyVehicleDetailsViewState extends State<BuyVehicleDetailsView> {
                                     );
                                   }
                                 },
+                                ),
                               ),
                             ],
                           ),
@@ -277,11 +282,19 @@ class _BuyVehicleDetailsViewState extends State<BuyVehicleDetailsView> {
                   SizedBox(height: 8.h),
 
                   // ── Price + model year ───────────────────────────────────
-                  _PriceHeader(vehicle: vehicle, ownerMode: widget.ownerMode),
+                  TourAnchor(
+                    id: 'bs_detail_price',
+                    child: _PriceHeader(
+                      vehicle: vehicle,
+                      ownerMode: widget.ownerMode,
+                    ),
+                  ),
                   SizedBox(height: 6.h),
 
                   // ── Compact info tiles (2 per row) ───────────────────────
-                  _InfoGrid(
+                  TourAnchor(
+                    id: 'bs_detail_specs',
+                    child: _InfoGrid(
                     tiles: [
                       _InfoTileData(
                         Icons.fingerprint_rounded,
@@ -324,6 +337,7 @@ class _BuyVehicleDetailsViewState extends State<BuyVehicleDetailsView> {
                         fullWidth: true,
                       ),
                     ],
+                    ),
                   ),
                   SizedBox(height: 10.h),
 
@@ -369,11 +383,16 @@ class _BuyVehicleDetailsViewState extends State<BuyVehicleDetailsView> {
                     SizedBox(height: 8.h),
 
                     // ── Action card 2: Become a Member / Connect with Owner ──
-                    _ConnectWithOwnerCard(vehicle: vehicle),
+                    TourAnchor(
+                      id: 'bs_detail_contact',
+                      child: _ConnectWithOwnerCard(vehicle: vehicle),
+                    ),
                     SizedBox(height: 8.h),
 
                     // ── Action card 3: Make Offer (expands inline) ──────────
-                    _OfferCard(
+                    TourAnchor(
+                      id: 'bs_detail_offer',
+                      child: _OfferCard(
                       offerCtrl: _offerCtrl,
                       expanded: _showOfferField,
                       onToggle: () => setState(() {
@@ -430,6 +449,7 @@ class _BuyVehicleDetailsViewState extends State<BuyVehicleDetailsView> {
                           );
                         }
                       },
+                      ),
                     ),
                     SizedBox(height: 16.h),
 
@@ -489,7 +509,47 @@ class _BuyVehicleDetailsViewState extends State<BuyVehicleDetailsView> {
             ),
           ),
         ],
+        ),
       ),
+    );
+  }
+
+  /// First-visit buyer tour. Owners viewing their own listing get none, so
+  /// they don't use up the buyer tour.
+  Widget _withTour(Widget child) {
+    if (widget.ownerMode) return child;
+    return TourScope(
+      tourId: 'buy_detail',
+      spots: (context) => [
+        TourSpot(
+          'bs_detail_price',
+          context.l10n.tourBsDetailPriceTitle,
+          context.l10n.tourBsDetailPriceBody,
+        ),
+        TourSpot(
+          'bs_detail_share',
+          context.l10n.tourBsDetailShareTitle,
+          context.l10n.tourBsDetailShareBody,
+          padding: 6,
+          circle: true,
+        ),
+        TourSpot(
+          'bs_detail_specs',
+          context.l10n.tourBsDetailSpecsTitle,
+          context.l10n.tourBsDetailSpecsBody,
+        ),
+        TourSpot(
+          'bs_detail_contact',
+          context.l10n.tourBsDetailContactTitle,
+          context.l10n.tourBsDetailContactBody,
+        ),
+        TourSpot(
+          'bs_detail_offer',
+          context.l10n.tourBsDetailOfferTitle,
+          context.l10n.tourBsDetailOfferBody,
+        ),
+      ],
+      child: child,
     );
   }
 

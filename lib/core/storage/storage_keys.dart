@@ -17,6 +17,26 @@ class StorageKeys {
   // User prefs (local storage)
   static const String hasSeenIntro = 'has_seen_intro';
   static const String isOnboardingDone = 'is_onboarding_done';
+
+  /// Set once the first-run Home tour has been finished or skipped.
+  static const String hasSeenHomeTour = 'has_seen_home_tour';
+
+  /// Per-screen first-visit tours (see TourScope). Listed so "Replay app
+  /// tour" can reset them all.
+  static const List<String> screenTourIds = [
+    'auction_type',
+    'auction_category',
+    'auction_listing',
+    'auction_detail',
+    'buy_sell_home',
+    'buy_listing',
+    'buy_detail',
+    'approved_landing',
+    'approved_category',
+    'approved_listing',
+    'approved_detail',
+  ];
+  static String screenTourSeen(String id) => 'tour_seen_$id';
   static const String isDarkMode = 'is_dark_mode';
   static const String selectedLanguage = 'selected_language';
   static const String languageCode = 'language_code';

@@ -6898,4 +6898,363 @@ class AppLocalizationsTe extends AppLocalizations {
   @override
   String get apprPayCommissionNote =>
       'ఇది ఇప్పుడు వసూలు చేయబడదు. ఈ వాహనం పూర్తి చెల్లింపులో కలుపబడుతుంది.';
+
+  @override
+  String get tourSearchTitle => 'ఏదైనా వెతకండి';
+
+  @override
+  String get tourSearchBody =>
+      'ట్రక్కులు, బస్సులు, పరికరాలు, స్పేర్లు లేదా సేవలను పేరుతో వెతకండి.';
+
+  @override
+  String get tourAuctionsTitle => 'లైవ్ వేలాలు';
+
+  @override
+  String get tourAuctionsBody =>
+      'ఇప్పుడు జరుగుతున్న వేలాలు. వాహనం చూసి బిడ్ వేయడానికి కార్డ్‌పై ట్యాప్ చేయండి.';
+
+  @override
+  String get tourServicesTitle => 'మా అన్ని సేవలు';
+
+  @override
+  String get tourServicesBody =>
+      'వేలం, కొనుగోలు & అమ్మకం, FMS, బీమా & ఫైనాన్స్, తనిఖీ, సర్వీస్ సపోర్ట్ — అన్నీ ఒక్క ట్యాప్‌లో.';
+
+  @override
+  String get tourNotificationsTitle => 'నోటిఫికేషన్లు';
+
+  @override
+  String get tourNotificationsBody =>
+      'బిడ్ అప్‌డేట్లు, వేలం ఫలితాలు, ఆఫర్లు ఇక్కడ కనిపిస్తాయి.';
+
+  @override
+  String get tourSubscriptionsTitle => 'సబ్‌స్క్రిప్షన్లు';
+
+  @override
+  String get tourSubscriptionsBody =>
+      'వేలాలు, ప్రీమియం లిస్టింగ్‌ల కోసం ప్లాన్ ఎంచుకోండి.';
+
+  @override
+  String get tourCategoriesTitle => 'వర్గాలు';
+
+  @override
+  String get tourCategoriesBody => 'అన్ని వాహన, సేవా వర్గాలను ఒకే చోట చూడండి.';
+
+  @override
+  String get tourRewardsTitle => 'రివార్డులు';
+
+  @override
+  String get tourRewardsBody => 'వాహన్ బజార్ వాడుతూ రివార్డులు సంపాదించండి.';
+
+  @override
+  String get tourProfileTitle => 'ప్రొఫైల్ & సెట్టింగ్‌లు';
+
+  @override
+  String get tourProfileBody =>
+      'మీ బిడ్లు, లిస్టింగ్‌లు, విష్‌లిస్ట్, భాష. ఈ టూర్‌ను ఇక్కడి నుండి మళ్లీ చూడవచ్చు.';
+
+  @override
+  String get tourNext => 'తరువాత';
+
+  @override
+  String get tourSkip => 'దాటవేయి';
+
+  @override
+  String get tourDone => 'సరే';
+
+  @override
+  String tourStepOf(int current, int total) {
+    return '$totalలో $current';
+  }
+
+  @override
+  String get tourReplayTitle => 'యాప్ టూర్';
+
+  @override
+  String get tourReplaySubtitle => 'చిన్న పరిచయాన్ని మళ్లీ చూడండి';
+
+  @override
+  String get tourAucTypeLiveTitle => 'లైవ్ వేలాలు';
+
+  @override
+  String get tourAucTypeLiveBody =>
+      'వాహనాలపై నేరుగా బిడ్ వేయండి. వర్గం ఎంచుకోవడానికి ట్యాప్ చేయండి.';
+
+  @override
+  String get tourAucTypeApprovedTitle => 'ఆమోదిత వాహనాలు';
+
+  @override
+  String get tourAucTypeApprovedBody =>
+      'తనిఖీ చేసి బుక్ చేసుకోగల ధృవీకరించిన వాహనాలు.';
+
+  @override
+  String get tourAucCatCardTitle => 'వర్గం ఎంచుకోండి';
+
+  @override
+  String get tourAucCatCardBody =>
+      'ఆ రకం అన్ని వేలాలు చూడటానికి వాహన రకంపై ట్యాప్ చేయండి.';
+
+  @override
+  String get tourAucCatLiveTitle => 'ఇప్పుడు లైవ్';
+
+  @override
+  String get tourAucCatLiveBody =>
+      'ఆకుపచ్చ Live బ్యాడ్జ్ అంటే బిడ్డింగ్ తెరిచి ఉంది. చేరడానికి ట్యాప్ చేయండి.';
+
+  @override
+  String get tourAucCatSoonTitle => 'త్వరలో';
+
+  @override
+  String get tourAucCatSoonBody =>
+      'ఈ వేలాలు ఇంకా మొదలవలేదు. బిడ్ వేయడానికి త్వరలో మళ్లీ చూడండి.';
+
+  @override
+  String get tourAucListTabsTitle => 'వేలం జాబితా మార్చండి';
+
+  @override
+  String get tourAucListTabsBody =>
+      'లైవ్, ఈరోజు ముగిసే లేదా రాబోయే వేలాలు చూడండి.';
+
+  @override
+  String get tourAucListFilterTitle => 'వాహనాలను ఫిల్టర్ చేయండి';
+
+  @override
+  String get tourAucListFilterBody =>
+      'వర్గం, రాష్ట్రం లేదా బ్యాంక్ ప్రకారం జాబితాను తగ్గించండి.';
+
+  @override
+  String get tourAucListCardTitle => 'వాహన కార్డ్';
+
+  @override
+  String get tourAucListCardBody =>
+      'ఫోటోలు, మిగిలిన సమయం, బిడ్ స్థితి. పూర్తి వివరాలకు See More ట్యాప్ చేయండి.';
+
+  @override
+  String get tourAucListBidTitle => 'మీ బిడ్ వేయండి';
+
+  @override
+  String get tourAucListBidBody =>
+      '− మరియు + తో మొత్తం సెట్ చేసి, సమయం ముగిసేలోపు Place Bid నొక్కండి.';
+
+  @override
+  String get tourAucListWishlistTitle => 'తర్వాత కోసం సేవ్ చేయండి';
+
+  @override
+  String get tourAucListWishlistBody =>
+      'ఈ వాహనాన్ని విష్‌లిస్ట్‌కు జోడించడానికి హార్ట్‌పై ట్యాప్ చేయండి.';
+
+  @override
+  String get tourAucDetailImagesTitle => 'వాహన ఫోటోలు';
+
+  @override
+  String get tourAucDetailImagesBody =>
+      'బిడ్ వేసే ముందు వాహనం అన్ని ఫోటోలు చూడటానికి స్వైప్ చేయండి.';
+
+  @override
+  String get tourAucDetailTimerTitle => 'మిగిలిన సమయం';
+
+  @override
+  String get tourAucDetailTimerBody =>
+      'బిడ్డింగ్ ఎంతసేపు తెరిచి ఉంటుందో చూపిస్తుంది. సున్నా అయ్యేలోపు బిడ్ వేయండి.';
+
+  @override
+  String get tourAucDetailBidInfoTitle => 'మీ బిడ్ సారాంశం';
+
+  @override
+  String get tourAucDetailBidInfoBody =>
+      'మీ ప్రస్తుత బిడ్, మిగిలిన బిడ్లు, వచ్చిన బిడ్లు, మిగిలిన కొనుగోలు పరిమితి.';
+
+  @override
+  String get tourAucDetailAccordionTitle => 'పూర్తి వాహన వివరాలు';
+
+  @override
+  String get tourAucDetailAccordionBody =>
+      'రిపో తేదీ మరియు ఈ వాహనం ఇతర అన్ని వివరాలు చూడటానికి ట్యాప్ చేయండి.';
+
+  @override
+  String get tourAucDetailBidTitle => 'ఇప్పుడే బిడ్ వేయండి';
+
+  @override
+  String get tourAucDetailBidBody =>
+      'మొత్తం నమోదు చేసి ఈ వాహనంపై బిడ్ వేయడానికి ఇక్కడ ట్యాప్ చేయండి.';
+
+  @override
+  String get tourBsHomeCategoryTitle => 'వాహన రకం ఎంచుకోండి';
+
+  @override
+  String get tourBsHomeCategoryBody =>
+      'ప్రతి కార్డ్ ఒక వాహన రకం. ఇప్పుడు ఎన్ని లిస్ట్ అయ్యాయో సంఖ్య చూపిస్తుంది.';
+
+  @override
+  String get tourBsHomeBuyTitle => 'వాహనం కొనండి';
+
+  @override
+  String get tourBsHomeBuyBody =>
+      'ఈ వర్గంలో అమ్మకానికి ఉన్న అన్ని వాహనాలు చూడటానికి Buy ట్యాప్ చేయండి.';
+
+  @override
+  String get tourBsHomeSellTitle => 'మీ వాహనం అమ్మండి';
+
+  @override
+  String get tourBsHomeSellBody =>
+      'కొనుగోలుదారుల కోసం ఫోటోలు, ధరతో వాహనం పోస్ట్ చేయడానికి Sell ట్యాప్ చేయండి.';
+
+  @override
+  String get tourBsListingSearchTitle => 'వాహనాలు వెతకండి';
+
+  @override
+  String get tourBsListingSearchBody =>
+      'కావలసిన వాహనాన్ని త్వరగా కనుగొనడానికి బ్రాండ్ లేదా మోడల్ టైప్ చేయండి.';
+
+  @override
+  String get tourBsListingFilterTitle => 'ఫలితాలు ఫిల్టర్ చేయండి';
+
+  @override
+  String get tourBsListingFilterBody =>
+      'మీ అవసరాలకు సరిపోయే వాహనాలకే జాబితాను పరిమితం చేయండి.';
+
+  @override
+  String get tourBsListingCardTitle => 'వాహన వివరాలు';
+
+  @override
+  String get tourBsListingCardBody =>
+      'ఫోటోలు, పూర్తి వివరాలు, విక్రేత ఎంపికలు చూడటానికి కార్డ్‌పై ట్యాప్ చేయండి.';
+
+  @override
+  String get tourBsListingWishlistTitle => 'విష్‌లిస్ట్‌లో సేవ్ చేయండి';
+
+  @override
+  String get tourBsListingWishlistBody =>
+      'వాహనాన్ని సేవ్ చేసి తర్వాత చూడటానికి హార్ట్‌పై ట్యాప్ చేయండి.';
+
+  @override
+  String get tourBsDetailPriceTitle => 'అడిగిన ధర';
+
+  @override
+  String get tourBsDetailPriceBody =>
+      'ఇది విక్రేత ధర. కింద మీ స్వంత ఆఫర్ కూడా ఇవ్వవచ్చు.';
+
+  @override
+  String get tourBsDetailShareTitle => 'ఈ వాహనాన్ని షేర్ చేయండి';
+
+  @override
+  String get tourBsDetailShareBody =>
+      'ఈ లిస్టింగ్‌ను WhatsApp, ఇతర యాప్‌లలో కుటుంబం లేదా స్నేహితులకు పంపండి.';
+
+  @override
+  String get tourBsDetailSpecsTitle => 'ముఖ్య వివరాలు';
+
+  @override
+  String get tourBsDetailSpecsBody =>
+      'వాహన ID, మోడల్ సంవత్సరం, ప్రదేశం ఒక్క చూపులో. పూర్తి వివరాలకు కిందకు స్క్రోల్ చేయండి.';
+
+  @override
+  String get tourBsDetailContactTitle => 'యజమానిని సంప్రదించండి';
+
+  @override
+  String get tourBsDetailContactBody =>
+      'ఇక్కడ యజమాని ఫోన్ నంబర్ అన్‌లాక్ చేసి, నేరుగా కాల్ చేయండి.';
+
+  @override
+  String get tourBsDetailOfferTitle => 'ఆఫర్ ఇవ్వండి';
+
+  @override
+  String get tourBsDetailOfferBody => 'ఈ వాహనానికి మీ ధరను విక్రేతకు పంపండి.';
+
+  @override
+  String get tourApprLandingCardTitle => 'వాహన వర్గాలు';
+
+  @override
+  String get tourApprLandingCardBody =>
+      'ప్రతి కార్డ్ ఒక వాహన రకం, అందుబాటులో ఉన్న ఆమోదిత వాహనాల సంఖ్యతో.';
+
+  @override
+  String get tourApprLandingBuyTitle => 'వాహనాలు కొనండి';
+
+  @override
+  String get tourApprLandingBuyBody =>
+      'ఈ వర్గంలో బ్యాంకులు, ప్రభుత్వ వనరుల నుండి ధృవీకరించిన వాహనాలు చూడండి.';
+
+  @override
+  String get tourApprLandingSellTitle => 'మీ వాహనం అమ్మండి';
+
+  @override
+  String get tourApprLandingSellBody =>
+      'చిన్న ఫారం నింపి ఈ వర్గంలో వాహనాన్ని అమ్మకానికి పెట్టండి.';
+
+  @override
+  String get tourApprCategoryCardTitle => 'వర్గం ఎంచుకోండి';
+
+  @override
+  String get tourApprCategoryCardBody =>
+      'బుక్ చేసుకోగల ఆమోదిత వాహనాలు చూడటానికి వాహన రకంపై ట్యాప్ చేయండి.';
+
+  @override
+  String get tourApprCategoryCountTitle => 'అందుబాటులో వాహనాలు';
+
+  @override
+  String get tourApprCategoryCountBody =>
+      'ఈ వర్గంలో ఇప్పుడు ఎన్ని ధృవీకరించిన వాహనాలు ఉన్నాయో చూపిస్తుంది.';
+
+  @override
+  String get tourApprListCardTitle => 'ఆమోదిత వాహనం';
+
+  @override
+  String get tourApprListCardBody =>
+      'ప్రతి కార్డ్ ఒక ధృవీకరించిన వాహనం. ఫోటోలు స్వైప్ చేసి, పూర్తి వివరాలకు ట్యాప్ చేయండి.';
+
+  @override
+  String get tourApprListPriceTitle => 'వాహన ధర';
+
+  @override
+  String get tourApprListPriceBody => 'ఆమోదిత వనరు నిర్ణయించిన ఈ వాహనం ధర.';
+
+  @override
+  String get tourApprListDetailsTitle => 'పూర్తి వివరాలు చూడండి';
+
+  @override
+  String get tourApprListDetailsBody =>
+      'వివరాలు చూడటానికి, తనిఖీ కోరడానికి లేదా బుక్ చేయడానికి వాహనాన్ని తెరవండి.';
+
+  @override
+  String get tourApprListShareTitle => 'వాహనం షేర్ చేయండి';
+
+  @override
+  String get tourApprListShareBody =>
+      'ఈ వాహనాన్ని WhatsApp, ఇతర యాప్‌లలో స్నేహితులు లేదా కుటుంబానికి పంపండి.';
+
+  @override
+  String get tourApprDetailStatusTitle => 'వాహన స్థితి';
+
+  @override
+  String get tourApprDetailStatusBody =>
+      'Active అంటే ఈ వాహనం ఇంకా తనిఖీ, బుకింగ్‌కు అందుబాటులో ఉంది.';
+
+  @override
+  String get tourApprDetailInfoTitle => 'ముఖ్య వివరాలు';
+
+  @override
+  String get tourApprDetailInfoBody =>
+      'వాహన ID, వర్గం, ప్రదేశం, సంవత్సరం ఒక్క చూపులో.';
+
+  @override
+  String get tourApprDetailMoreTitle => 'మరిన్ని వివరాలు';
+
+  @override
+  String get tourApprDetailMoreBody =>
+      'ఈ వాహనం పూర్తి వివరాలు, పత్రాలు చూడటానికి ట్యాప్ చేయండి.';
+
+  @override
+  String get tourApprDetailInspectTitle => 'తనిఖీ కోరండి';
+
+  @override
+  String get tourApprDetailInspectBody =>
+      'బుక్ చేసే ముందు వాహన స్థితిని తెలుసుకోవడానికి తనిఖీ కోరండి.';
+
+  @override
+  String get tourApprDetailBookTitle => 'ఈ వాహనాన్ని బుక్ చేయండి';
+
+  @override
+  String get tourApprDetailBookBody =>
+      'ఈ వాహనాన్ని మీ కోసం రిజర్వ్ చేయడానికి బుకింగ్ మొత్తం చెల్లించండి.';
 }

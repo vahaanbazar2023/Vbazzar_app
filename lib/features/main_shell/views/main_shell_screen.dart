@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import '../../chatbot/widgets/vaani_floating_button.dart';
 import '../../../core/design_system/organisms/app_bottom_nav_bar.dart';
 import '../controllers/main_shell_controller.dart';
+import '../../app_tour/home_tour.dart';
 import '../../home/views/home_screen.dart';
 import '../../subscription/views/my_subscription_screen.dart';
 import '../../categories/views/categories_screen.dart';
@@ -38,9 +39,12 @@ class MainShellScreen extends GetView<MainShellController> {
         ],
       ),
       bottomNavigationBar: Obx(
-        () => AppBottomNavBar(
-          currentTab: BottomNavTab.values[controller.currentIndex.value],
-          onTabSelected: (tab) => controller.onTabTapped(tab.index),
+        () => KeyedSubtree(
+          key: HomeTourKeys.bottomNav, // tour highlights the tabs
+          child: AppBottomNavBar(
+            currentTab: BottomNavTab.values[controller.currentIndex.value],
+            onTabSelected: (tab) => controller.onTabTapped(tab.index),
+          ),
         ),
       ),
     );
