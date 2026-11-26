@@ -45,7 +45,8 @@ class BuyVehicleListingsView extends GetView<BuyVehicleController> {
     return AppLayout(
       title: categoryName,
       subtitle: context.l10n.spareBrowseAvailableListings,
-      hideBottomNav: controller.chromeHidden,
+      // Listing screens have no bottom nav; the list pads itself instead.
+      showBottomNav: false,
       body: Stack(
         children: [
           Column(
@@ -160,7 +161,7 @@ class BuyVehicleListingsView extends GetView<BuyVehicleController> {
                           AppSpacing.md,
                           AppSpacing.sm,
                           AppSpacing.md,
-                          100,
+                          AppLayout.listBottomPadding(context),
                         ),
                         itemCount:
                             controller.buyVehicles.length +
@@ -204,7 +205,11 @@ class BuyVehicleListingsView extends GetView<BuyVehicleController> {
             ],
           ),
           // ── Activity FAB ──────────────────────────────────
-          const Positioned(right: 16, bottom: 24, child: BuySellActivityFab()),
+          Positioned(
+            right: 16,
+            bottom: MediaQuery.paddingOf(context).bottom + AppLayout.fabBottom,
+            child: const BuySellActivityFab(),
+          ),
         ],
       ),
     );
