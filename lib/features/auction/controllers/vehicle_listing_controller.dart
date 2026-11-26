@@ -94,8 +94,10 @@ class VehicleListingController extends GetxController
   final selectedCategory = RxnString();
   final selectedVehicleTypeFilter = RxnString(); // For filter dropdown
 
-  /// "Client Name" filter: a bank from GET /auctions/auction-banks, sent as
-  /// `bank_name` (matched on each vehicle's bank). null = all clients.
+  /// "Bank Name" filter: a bank from GET /auctions/auction-banks, sent as
+  /// `bank_name` (matched on each vehicle's bank). null = all banks.
+  /// The list only holds banks with vehicles in this category's auctions of
+  /// the open tab, and is reloaded when the tab changes.
   final selectedBank = RxnString();
   final banks = <String>[].obs;
   final isLoadingBanks = false.obs;
@@ -192,6 +194,7 @@ class VehicleListingController extends GetxController
 
     tabController.addListener(() {
       if (!tabController.indexIsChanging) {
+        if (_banksTab != tabController.index) fetchBanks();
         currentTabIndex.value = tabController.index;
         _loadTab(tabController.index);
         // Search is scoped to the tab: re-run it when the tab changed.
@@ -528,18 +531,36 @@ class VehicleListingController extends GetxController
     }
   }
 
-  /// Bank names for the "Client Name" dropdown, in the server's order.
+  /// Tab the bank list was loaded for (-1 = not loaded yet).
+  int _banksTab = -1;
+  int _banksSeq = 0;
+
+  /// Bank names for the "Bank Name" dropdown, in the server's order: only the
+  /// banks that have vehicles in this category's auctions of the open tab
+  /// (e.g. 4 banks live in 4W -> those 4). A bank already picked stays listed.
   Future<void> fetchBanks() async {
+    final tab = tabController.index.clamp(0, 2);
+    final seq = ++_banksSeq;
+    _banksTab = tab;
     isLoadingBanks.value = true;
     try {
       final response = await Get.find<NetworkService>().get(
         ApiEndpoints.auctionBanks,
+        queryParameters: {
+          'vehicle_type': vehicleType,
+          'auction_type': _tabTypes[tab],
+        },
       );
-      banks.assignAll(parseBankNames(response.data));
+      if (seq != _banksSeq) return; // the tab changed again meanwhile
+      final names = [...parseBankNames(response.data)];
+      final picked = selectedBank.value;
+      if (picked != null && !names.contains(picked)) names.add(picked);
+      banks.assignAll(names);
     } catch (e) {
+      if (seq == _banksSeq) _banksTab = -1; // retry on the next tab change
       debugPrint('❌ [VehicleListingController] fetchBanks error: $e');
     } finally {
-      isLoadingBanks.value = false;
+      if (seq == _banksSeq) isLoadingBanks.value = false;
     }
   }
 

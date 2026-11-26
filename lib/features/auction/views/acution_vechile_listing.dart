@@ -616,6 +616,33 @@ class _VehicleCardState extends State<_VehicleCard> {
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
+                          // Bank / NBFC selling the vehicle
+                          if (v.displayBankName.isNotEmpty) ...[
+                            SizedBox(height: 2.h),
+                            Row(
+                              children: [
+                                Icon(
+                                  Icons.account_balance_outlined,
+                                  size: 11.sp,
+                                  color: AppColors.primary,
+                                ),
+                                SizedBox(width: 4.w),
+                                Expanded(
+                                  child: Text(
+                                    v.displayBankName,
+                                    style: TextStyle(
+                                      fontFamily: 'Montserrat',
+                                      fontSize: 11.sp,
+                                      fontWeight: FontWeight.w600,
+                                      color: AppColors.primary,
+                                    ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
 
                           // See More / Less pill
                           GestureDetector(
@@ -1489,13 +1516,14 @@ class _AuctionFilterBottomSheetV2State
                   ),
                   SizedBox(height: 20.h),
 
-                  // Client Name (bank / NBFC)
+                  // Bank Name (bank / NBFC): only banks live in this
+                  // category and tab, so every choice has vehicles to show.
                   Obx(
                     () => CustomAutocompleteField<String>(
                       controller: _bankText,
                       options: ctrl.banks.toList(),
-                      label: context.l10n.aucClientName,
-                      placeholder: context.l10n.aucAllClients,
+                      label: context.l10n.aucBankName,
+                      placeholder: 'All Banks',
                       prefixIcon: Icons.account_balance_outlined,
                       isLoading: ctrl.isLoadingBanks.value,
                       displayStringForOption: (b) => b,
