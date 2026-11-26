@@ -63,6 +63,8 @@ class _VehicleListingsScreenState extends State<VehicleListingsScreen> {
     return AppLayout(
       title: category.categoryName,
       subtitle: context.l10n.approvedVehiclesAvailable,
+      // Listing screens have no bottom nav; the list pads itself instead.
+      showBottomNav: false,
       body: Obx(() {
         if (ctrl.isLoadingListings.value && ctrl.listings.isEmpty) {
           return _buildShimmerList();
@@ -81,7 +83,13 @@ class _VehicleListingsScreenState extends State<VehicleListingsScreen> {
           ),
           child: ListView.builder(
             controller: _scrollController,
-            padding: EdgeInsets.all(AppSpacing.md),
+            // No floating button here: clear the home indicator only.
+            padding: EdgeInsets.fromLTRB(
+              AppSpacing.md,
+              AppSpacing.md,
+              AppSpacing.md,
+              AppSpacing.md + MediaQuery.paddingOf(context).bottom,
+            ),
             itemCount:
                 ctrl.listings.length +
                 _apprAdCount(ctrl) +

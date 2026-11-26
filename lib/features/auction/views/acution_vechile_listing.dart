@@ -36,7 +36,8 @@ class AuctionVehicleListingScreen extends GetView<VehicleListingController> {
           ? controller.auctionTitle
           : context.l10n.liveAuctions,
       showBack: true,
-      hideBottomNav: controller.chromeHidden,
+      // Listing screens have no bottom nav; the lists pad themselves instead.
+      showBottomNav: false,
       headerExtra: _TabAndFilterBar(controller: controller),
       body: Stack(
         fit: StackFit.expand,
@@ -48,7 +49,11 @@ class AuctionVehicleListingScreen extends GetView<VehicleListingController> {
               children: List.generate(3, (i) => _TabContent(tabIndex: i)),
             ),
           ),
-          const Positioned(right: 16, bottom: 24, child: AuctionActivityFab()),
+          Positioned(
+            right: 16,
+            bottom: MediaQuery.paddingOf(context).bottom + AppLayout.fabBottom,
+            child: const AuctionActivityFab(),
+          ),
         ],
       ),
     );
@@ -192,7 +197,7 @@ class _TabContent extends StatelessWidget {
             AppSpacing.md,
             AppSpacing.s,
             AppSpacing.md,
-            AppSpacing.sm,
+            AppLayout.listBottomPadding(context),
           ),
           itemCount: searchVehicles.length,
           itemBuilder: (_, index) {
@@ -202,7 +207,7 @@ class _TabContent extends StatelessWidget {
                 vehicle: searchVehicles[index],
                 bidIncrementAmount: ctrl.bidIncrementAmount,
                 controller: ctrl,
-                isUpcoming: false,
+                isUpcoming: tabIndex == 2, // search is scoped to this tab
               ),
             );
           },
@@ -261,7 +266,7 @@ class _TabContent extends StatelessWidget {
           AppSpacing.md,
           AppSpacing.s,
           AppSpacing.md,
-          AppSpacing.sm,
+          AppLayout.listBottomPadding(context),
         ),
         itemCount: vehicles.length + (loadingMore ? 1 : 0),
         itemBuilder: (_, index) {
