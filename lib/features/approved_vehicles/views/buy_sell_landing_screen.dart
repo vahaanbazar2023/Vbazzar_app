@@ -7,6 +7,7 @@ import '../../../core/design_system/templates/app_layout.dart';
 import '../../../core/design_system/tokens/app_radius.dart';
 import '../../../core/design_system/tokens/app_spacing.dart';
 import '../../../routes/app_routes.dart';
+import '../services/approved_access_gate.dart';
 import '../../../theme/app_fonts.dart';
 import '../controllers/approved_vehicle_controller.dart';
 import '../domain/entities/approved_vehicle_category_entity.dart';
@@ -75,12 +76,10 @@ class _BuySellLandingScreenState extends State<BuySellLandingScreen> {
                       },
                     );
                   },
-                  onBuyTap: () {
-                    Get.toNamed(
-                      AppRoutes.approvedVehicleListings,
-                      arguments: {'category': ctrl.categories[index]},
-                    );
-                  },
+                  onBuyTap: () => openApprovedVehicles(
+                    AppRoutes.approvedVehicleListings,
+                    arguments: {'category': ctrl.categories[index]},
+                  ),
                 ),
               );
             },

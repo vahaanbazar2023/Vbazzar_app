@@ -195,10 +195,16 @@ class MySubscriptionsData {
   final int auctionBidLimitOverall;
   final int totalCount;
 
+  /// Server's `additional_details.has_approved_vehicle_access`: true only for
+  /// an active Gold plan (SUBT001 / PLAN001). Null when the server is older
+  /// and does not send it.
+  final bool? hasApprovedVehicleAccess;
+
   const MySubscriptionsData({
     required this.subscriptions,
     required this.auctionBidLimitOverall,
     required this.totalCount,
+    this.hasApprovedVehicleAccess,
   });
 
   factory MySubscriptionsData.fromJson(Map<String, dynamic> json) {
@@ -233,6 +239,8 @@ class MySubscriptionsData {
           (additionalDetails['auction_bid_limit_overall'] as num?)?.toInt() ??
           0,
       totalCount: (data['total_count'] as num?)?.toInt() ?? 0,
+      hasApprovedVehicleAccess:
+          additionalDetails['has_approved_vehicle_access'] as bool?,
     );
   }
 }

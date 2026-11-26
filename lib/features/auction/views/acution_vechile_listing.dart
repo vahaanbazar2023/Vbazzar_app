@@ -36,7 +36,8 @@ class AuctionVehicleListingScreen extends GetView<VehicleListingController> {
           ? controller.auctionTitle
           : context.l10n.liveAuctions,
       showBack: true,
-      hideBottomNav: controller.chromeHidden,
+      // Listing screens have no bottom nav; the lists pad themselves instead.
+      showBottomNav: false,
       headerExtra: _TabAndFilterBar(controller: controller),
       body: Stack(
         fit: StackFit.expand,
@@ -48,7 +49,11 @@ class AuctionVehicleListingScreen extends GetView<VehicleListingController> {
               children: List.generate(3, (i) => _TabContent(tabIndex: i)),
             ),
           ),
-          const Positioned(right: 16, bottom: 24, child: AuctionActivityFab()),
+          Positioned(
+            right: 16,
+            bottom: MediaQuery.paddingOf(context).bottom + AppLayout.fabBottom,
+            child: const AuctionActivityFab(),
+          ),
         ],
       ),
     );
@@ -192,7 +197,7 @@ class _TabContent extends StatelessWidget {
             AppSpacing.md,
             AppSpacing.s,
             AppSpacing.md,
-            AppSpacing.sm,
+            AppLayout.listBottomPadding(context),
           ),
           itemCount: searchVehicles.length,
           itemBuilder: (_, index) {
@@ -202,7 +207,7 @@ class _TabContent extends StatelessWidget {
                 vehicle: searchVehicles[index],
                 bidIncrementAmount: ctrl.bidIncrementAmount,
                 controller: ctrl,
-                isUpcoming: false,
+                isUpcoming: tabIndex == 2, // search is scoped to this tab
               ),
             );
           },
@@ -261,7 +266,7 @@ class _TabContent extends StatelessWidget {
           AppSpacing.md,
           AppSpacing.s,
           AppSpacing.md,
-          AppSpacing.sm,
+          AppLayout.listBottomPadding(context),
         ),
         itemCount: vehicles.length + (loadingMore ? 1 : 0),
         itemBuilder: (_, index) {
@@ -559,6 +564,22 @@ class _VehicleCardState extends State<_VehicleCard> {
                             ),
                           ),
                         ),
+                        // Share — bottom right of the image
+                        Positioned(
+                          bottom: 6.r,
+                          right: 6.r,
+                          child: ShareCircleButton(
+                            size: 30.r,
+                            onShare: () async {
+                              if (!Get.isRegistered<ShareService>()) return;
+                              await ShareService.to.shareAuctionVehicle(
+                                vehicleId: v.vehicleId,
+                                name: '${v.make} ${v.model}'.trim(),
+                                auctionId: v.auctionId,
+                              );
+                            },
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -595,6 +616,33 @@ class _VehicleCardState extends State<_VehicleCard> {
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
+                          // Bank / NBFC selling the vehicle
+                          if (v.displayBankName.isNotEmpty) ...[
+                            SizedBox(height: 2.h),
+                            Row(
+                              children: [
+                                Icon(
+                                  Icons.account_balance_outlined,
+                                  size: 11.sp,
+                                  color: AppColors.primary,
+                                ),
+                                SizedBox(width: 4.w),
+                                Expanded(
+                                  child: Text(
+                                    v.displayBankName,
+                                    style: TextStyle(
+                                      fontFamily: 'Montserrat',
+                                      fontSize: 11.sp,
+                                      fontWeight: FontWeight.w600,
+                                      color: AppColors.primary,
+                                    ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
 
                           // See More / Less pill
                           GestureDetector(
@@ -1065,18 +1113,6 @@ class _VehicleCardState extends State<_VehicleCard> {
                   size: 30.r,
                 ),
                 SizedBox(height: 6.r),
-                ShareCircleButton(
-                  size: 30.r,
-                  onShare: () async {
-                    if (!Get.isRegistered<ShareService>()) return;
-                    await ShareService.to.shareAuctionVehicle(
-                      vehicleId: v.vehicleId,
-                      name: '${v.make} ${v.model}'.trim(),
-                      auctionId: v.auctionId,
-                    );
-                  },
-                ),
-                SizedBox(height: 6.r),
                 WatchlistButton(
                   isWatchlisted: v.isWatchlisted,
                   onTap: () => widget.controller.toggleWatchlist(v),
@@ -1480,13 +1516,14 @@ class _AuctionFilterBottomSheetV2State
                   ),
                   SizedBox(height: 20.h),
 
-                  // Client Name (bank / NBFC)
+                  // Bank Name (bank / NBFC): only banks live in this
+                  // category and tab, so every choice has vehicles to show.
                   Obx(
                     () => CustomAutocompleteField<String>(
                       controller: _bankText,
                       options: ctrl.banks.toList(),
-                      label: context.l10n.aucClientName,
-                      placeholder: context.l10n.aucAllClients,
+                      label: context.l10n.aucBankName,
+                      placeholder: 'All Banks',
                       prefixIcon: Icons.account_balance_outlined,
                       isLoading: ctrl.isLoadingBanks.value,
                       displayStringForOption: (b) => b,

@@ -43,6 +43,13 @@ class SubscriptionGuardService extends GetxService {
   /// For duplicates we keep ALL entries; validity checks pick the best one.
   final _byTypeCode = <String, List<UserSubscription>>{};
 
+  /// Server's has_approved_vehicle_access (null on an older server).
+  bool? _approvedAccessFromServer;
+
+  /// Plans that open approved vehicles: Gold only. Silver, Bronze and the
+  /// auction deposit (SUBT008) do not. Used when the server sends no flag.
+  static const approvedVehiclePlanCodes = {'PLAN001'};
+
   bool _loaded = false;
   bool _loading = false;
 
@@ -60,6 +67,19 @@ class SubscriptionGuardService extends GetxService {
     final subs = _subsFor(typeCode);
     if (subs.isEmpty) return false;
     return subs.any((s) => s.isCurrentlyValid);
+  }
+
+  /// True when the user may open approved vehicles: an active, unexpired Gold
+  /// plan. The server's flag wins; otherwise the plan code is checked here.
+  bool get hasApprovedVehicleAccess {
+    final fromServer = _approvedAccessFromServer;
+    if (fromServer != null) return fromServer;
+    final auctionPlans =
+        _byTypeCode[SubscriptionTypeCode.auction] ?? const <UserSubscription>[];
+    return auctionPlans.any(
+      (s) =>
+          approvedVehiclePlanCodes.contains(s.planCode) && s.isCurrentlyValid,
+    );
   }
 
   /// A held refundable auction deposit (SUBT008) counts as auction access (SUBT001) and as a bid limit (SUBT002),
@@ -141,6 +161,7 @@ class SubscriptionGuardService extends GetxService {
           await SecureStorageService.to.read(StorageKeys.userId) ?? '';
       final result = await _service.fetchMySubscriptions(userId: userId);
       _buildIndex(result.subscriptions);
+      _approvedAccessFromServer = result.hasApprovedVehicleAccess;
       _loaded = true;
     } catch (e, st) {
       debugPrint('⚠️ SubscriptionGuardService load error: $e\n$st');
