@@ -3,6 +3,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../core/constants/app_colors.dart';
+import '../../../core/design_system/molecules/share_circle_button.dart';
+import '../../../core/services/share_service.dart';
 import '../../../core/design_system/design_system.dart';
 import '../../../core/design_system/organisms/network_image_carousel.dart';
 import '../../../core/design_system/templates/app_layout.dart';
@@ -63,6 +65,8 @@ class _VehicleListingsScreenState extends State<VehicleListingsScreen> {
     return AppLayout(
       title: category.categoryName,
       subtitle: context.l10n.approvedVehiclesAvailable,
+      // Listing screens have no bottom nav; the list pads itself instead.
+      showBottomNav: false,
       body: Obx(() {
         if (ctrl.isLoadingListings.value && ctrl.listings.isEmpty) {
           return _buildShimmerList();
@@ -81,7 +85,13 @@ class _VehicleListingsScreenState extends State<VehicleListingsScreen> {
           ),
           child: ListView.builder(
             controller: _scrollController,
-            padding: EdgeInsets.all(AppSpacing.md),
+            // No floating button here: clear the home indicator only.
+            padding: EdgeInsets.fromLTRB(
+              AppSpacing.md,
+              AppSpacing.md,
+              AppSpacing.md,
+              AppSpacing.md + MediaQuery.paddingOf(context).bottom,
+            ),
             itemCount:
                 ctrl.listings.length +
                 _apprAdCount(ctrl) +
@@ -256,19 +266,45 @@ class _VehicleListingCard extends StatelessWidget {
                 topLeft: Radius.circular(AppRadius.lg),
                 topRight: Radius.circular(AppRadius.lg),
               ),
-              child: imageUrls.isNotEmpty
-                  ? NetworkImageCarousel(imageUrls: imageUrls, height: 180.h)
-                  : Container(
-                      height: 180.h,
-                      color: AppColors.grey100,
-                      child: Center(
-                        child: Icon(
-                          Icons.directions_car_outlined,
-                          size: 48.r,
-                          color: AppColors.grey400,
+              child: Stack(
+                children: [
+                  imageUrls.isNotEmpty
+                      ? NetworkImageCarousel(
+                          imageUrls: imageUrls,
+                          height: 180.h,
+                        )
+                      : Container(
+                          height: 180.h,
+                          color: AppColors.grey100,
+                          child: Center(
+                            child: Icon(
+                              Icons.directions_car_outlined,
+                              size: 48.r,
+                              color: AppColors.grey400,
+                            ),
+                          ),
                         ),
-                      ),
+                  // Share — top right of the image
+                  Positioned(
+                    top: 10,
+                    right: 10,
+                    child: ShareCircleButton(
+                      onShare: () async {
+                        if (!Get.isRegistered<ShareService>()) return;
+                        final name = listing.displayTitle.isNotEmpty
+                            ? listing.displayTitle
+                            : title;
+                        await ShareService.to.shareApprovedVehicle(
+                          approvedVehicleId: listing.approvedVehicleId,
+                          name: name,
+                          year: listing.yearOfManufacturing,
+                          price: listing.price,
+                        );
+                      },
                     ),
+                  ),
+                ],
+              ),
             ),
             // ── Details ──────────────────────────────────────────
             Padding(

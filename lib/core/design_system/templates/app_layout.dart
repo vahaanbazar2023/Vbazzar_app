@@ -22,6 +22,22 @@ class AppLayout extends StatelessWidget {
   /// When true the bottom nav slides away (e.g. while a list is scrolling).
   final RxBool? hideBottomNav;
 
+  /// False drops the bottom nav from this screen entirely (vehicle listing
+  /// screens). Pair it with [listBottomPadding] so the last card clears the
+  /// home indicator and the floating menu button.
+  final bool showBottomNav;
+
+  /// Bottom padding for a scrolling list on a screen without the bottom nav:
+  /// the safe-area inset plus room for the round floating menu button
+  /// (bottom: [fabBottom], about 56 tall), so the last item can scroll fully
+  /// into view above it.
+  static double listBottomPadding(BuildContext context) =>
+      MediaQuery.paddingOf(context).bottom + fabBottom + 72;
+
+  /// Distance of a floating menu button from the bottom on a screen without
+  /// the bottom nav, above the home indicator.
+  static const double fabBottom = 16;
+
   const AppLayout({
     super.key,
     required this.title,
@@ -34,6 +50,7 @@ class AppLayout extends StatelessWidget {
     this.bodyColor,
     this.floatingActionButton,
     this.hideBottomNav,
+    this.showBottomNav = true,
   });
 
   @override
@@ -45,7 +62,7 @@ class AppLayout extends StatelessWidget {
       child: Scaffold(
         backgroundColor: bodyColor ?? Colors.white,
         floatingActionButton: floatingActionButton,
-        bottomNavigationBar: _bottomNav(),
+        bottomNavigationBar: showBottomNav ? _bottomNav() : null,
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

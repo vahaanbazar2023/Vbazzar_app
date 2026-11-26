@@ -8,6 +8,7 @@ import '../../../core/network/network_service.dart';
 import '../../../core/storage/secure_storage_service.dart';
 import '../../../core/storage/storage_keys.dart';
 import '../../../routes/app_routes.dart';
+import '../../approved_vehicles/services/approved_access_gate.dart';
 import '../../../core/extensions/context_extensions.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -169,7 +170,8 @@ class SearchController extends GetxController {
         Get.toNamed(AppRoutes.vehicleDetail, arguments: item.navigationParams);
         break;
       case 'AppRoutes.approvedVehicleDetail':
-        Get.toNamed(
+        // Gold plan only; others see the locked message.
+        openApprovedVehicles(
           AppRoutes.approvedVehicleDetail,
           arguments: item.navigationParams,
         );
