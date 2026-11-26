@@ -10,6 +10,7 @@ import '../../../theme/app_fonts.dart';
 import '../controllers/approved_vehicle_controller.dart';
 import '../domain/entities/approved_vehicle_category_entity.dart';
 import '../../../core/extensions/context_extensions.dart';
+import '../../app_tour/screen_tour.dart';
 
 class CategorySelectionScreen extends StatelessWidget {
   const CategorySelectionScreen({super.key});
@@ -18,44 +19,64 @@ class CategorySelectionScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final ctrl = Get.find<ApprovedVehicleController>();
 
-    return AppLayout(
-      title: context.l10n.approvedVehicles,
-      subtitle: context.l10n.apprSelectCategoryToBrowse,
-      body: Obx(() {
-        if (ctrl.isLoadingCategories.value && ctrl.categories.isEmpty) {
-          return _buildShimmerGrid();
-        }
-        if (ctrl.categoriesError.value.isNotEmpty && ctrl.categories.isEmpty) {
-          return _buildErrorState(context, ctrl);
-        }
-        if (ctrl.categories.isEmpty) {
-          return _buildEmptyState(context, ctrl);
-        }
-        return RefreshIndicator(
-          color: AppColors.primary,
-          onRefresh: () => ctrl.fetchCategories(isRefresh: true),
-          child: GridView.builder(
-            padding: EdgeInsets.all(AppSpacing.lg),
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              mainAxisSpacing: 16.h,
-              crossAxisSpacing: 16.w,
-              childAspectRatio: 1,
+    return TourScope(
+      tourId: 'approved_category',
+      spots: (context) => [
+        TourSpot(
+          'appr_category_card',
+          context.l10n.tourApprCategoryCardTitle,
+          context.l10n.tourApprCategoryCardBody,
+        ),
+        TourSpot(
+          'appr_category_count',
+          context.l10n.tourApprCategoryCountTitle,
+          context.l10n.tourApprCategoryCountBody,
+          padding: 4,
+        ),
+      ],
+      child: AppLayout(
+        title: context.l10n.approvedVehicles,
+        subtitle: context.l10n.apprSelectCategoryToBrowse,
+        body: Obx(() {
+          if (ctrl.isLoadingCategories.value && ctrl.categories.isEmpty) {
+            return _buildShimmerGrid();
+          }
+          if (ctrl.categoriesError.value.isNotEmpty &&
+              ctrl.categories.isEmpty) {
+            return _buildErrorState(context, ctrl);
+          }
+          if (ctrl.categories.isEmpty) {
+            return _buildEmptyState(context, ctrl);
+          }
+          return RefreshIndicator(
+            color: AppColors.primary,
+            onRefresh: () => ctrl.fetchCategories(isRefresh: true),
+            child: GridView.builder(
+              padding: EdgeInsets.all(AppSpacing.lg),
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                mainAxisSpacing: 16.h,
+                crossAxisSpacing: 16.w,
+                childAspectRatio: 1,
+              ),
+              itemCount: ctrl.categories.length,
+              itemBuilder: (context, index) {
+                final category = ctrl.categories[index];
+                return TourAnchor(
+                  id: 'appr_category_card',
+                  child: _CategoryCard(
+                    category: category,
+                    onTap: () => Get.toNamed(
+                      AppRoutes.approvedVehicleListings,
+                      arguments: {'category': category},
+                    ),
+                  ),
+                );
+              },
             ),
-            itemCount: ctrl.categories.length,
-            itemBuilder: (context, index) {
-              final category = ctrl.categories[index];
-              return _CategoryCard(
-                category: category,
-                onTap: () => Get.toNamed(
-                  AppRoutes.approvedVehicleListings,
-                  arguments: {'category': category},
-                ),
-              );
-            },
-          ),
-        );
-      }),
+          );
+        }),
+      ),
     );
   }
 
@@ -261,40 +282,43 @@ class _CategoryCard extends StatelessWidget {
             ),
             SizedBox(height: 6.h),
             // Vehicle count — dot + number
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Container(
-                  width: 6.w,
-                  height: 6.w,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: category.approvedVehAvailableCount > 0
-                        ? AppColors.primary
-                        : AppColors.grey400,
-                  ),
-                ),
-                SizedBox(width: 5.w),
-                Flexible(
-                  child: Text(
-                    category.approvedVehAvailableCount > 0
-                        ? context.l10n.apprVehiclesCount(
-                            category.approvedVehAvailableCount,
-                          )
-                        : context.l10n.apprUnavailable,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: AppFonts.bodySmall.copyWith(
-                      fontSize: 10.sp,
+            TourAnchor(
+              id: 'appr_category_count',
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    width: 6.w,
+                    height: 6.w,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
                       color: category.approvedVehAvailableCount > 0
                           ? AppColors.primary
-                          : AppColors.grey500,
-                      fontWeight: FontWeight.w500,
+                          : AppColors.grey400,
                     ),
                   ),
-                ),
-              ],
+                  SizedBox(width: 5.w),
+                  Flexible(
+                    child: Text(
+                      category.approvedVehAvailableCount > 0
+                          ? context.l10n.apprVehiclesCount(
+                              category.approvedVehAvailableCount,
+                            )
+                          : context.l10n.apprUnavailable,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: AppFonts.bodySmall.copyWith(
+                        fontSize: 10.sp,
+                        color: category.approvedVehAvailableCount > 0
+                            ? AppColors.primary
+                            : AppColors.grey500,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ],
         ),

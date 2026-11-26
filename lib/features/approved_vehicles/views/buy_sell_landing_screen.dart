@@ -12,6 +12,7 @@ import '../../../theme/app_fonts.dart';
 import '../controllers/approved_vehicle_controller.dart';
 import '../domain/entities/approved_vehicle_category_entity.dart';
 import '../../../core/extensions/context_extensions.dart';
+import '../../app_tour/screen_tour.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Vendor Buy/Sell Landing — category list with SELL + BUY buttons per card
@@ -38,54 +39,80 @@ class _BuySellLandingScreenState extends State<BuySellLandingScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return AppLayout(
-      title: context.l10n.approvedVehicles,
-      subtitle: context.l10n.apprBuySellSubtitle,
-      body: Obx(() {
-        // ── Loading state ──────────────────────────────────────
-        if (ctrl.isLoadingCategories.value && ctrl.categories.isEmpty) {
-          return _buildShimmerList();
-        }
-        // ── Error state ────────────────────────────────────────
-        if (ctrl.categoriesError.value.isNotEmpty && ctrl.categories.isEmpty) {
-          return _buildErrorState();
-        }
-        // ── Empty state ────────────────────────────────────────
-        if (ctrl.categories.isEmpty) {
-          return _buildEmptyState();
-        }
-        // ── Loaded ─────────────────────────────────────────────
-        return RefreshIndicator(
-          color: AppColors.primary,
-          onRefresh: () => ctrl.fetchCategories(isRefresh: true),
-          child: ListView.builder(
-            padding: EdgeInsets.all(AppSpacing.md),
-            itemCount: ctrl.categories.length,
-            itemBuilder: (context, index) {
-              return Padding(
-                padding: EdgeInsets.only(bottom: AppSpacing.md),
-                child: _VendorCategoryCard(
-                  category: ctrl.categories[index],
-                  onSellTap: () {
-                    final cat = ctrl.categories[index];
-                    Get.toNamed(
-                      AppRoutes.approvedVehicleSellForm,
-                      arguments: {
-                        'categoryName': cat.categoryName,
-                        'categoryCode': cat.categoryCode,
+    return TourScope(
+      tourId: 'approved_landing',
+      spots: (context) => [
+        TourSpot(
+          'appr_landing_card',
+          context.l10n.tourApprLandingCardTitle,
+          context.l10n.tourApprLandingCardBody,
+        ),
+        TourSpot(
+          'appr_landing_buy',
+          context.l10n.tourApprLandingBuyTitle,
+          context.l10n.tourApprLandingBuyBody,
+          padding: 4,
+        ),
+        TourSpot(
+          'appr_landing_sell',
+          context.l10n.tourApprLandingSellTitle,
+          context.l10n.tourApprLandingSellBody,
+          padding: 4,
+        ),
+      ],
+      child: AppLayout(
+        title: context.l10n.approvedVehicles,
+        subtitle: context.l10n.apprBuySellSubtitle,
+        body: Obx(() {
+          // ── Loading state ──────────────────────────────────────
+          if (ctrl.isLoadingCategories.value && ctrl.categories.isEmpty) {
+            return _buildShimmerList();
+          }
+          // ── Error state ────────────────────────────────────────
+          if (ctrl.categoriesError.value.isNotEmpty &&
+              ctrl.categories.isEmpty) {
+            return _buildErrorState();
+          }
+          // ── Empty state ────────────────────────────────────────
+          if (ctrl.categories.isEmpty) {
+            return _buildEmptyState();
+          }
+          // ── Loaded ─────────────────────────────────────────────
+          return RefreshIndicator(
+            color: AppColors.primary,
+            onRefresh: () => ctrl.fetchCategories(isRefresh: true),
+            child: ListView.builder(
+              padding: EdgeInsets.all(AppSpacing.md),
+              itemCount: ctrl.categories.length,
+              itemBuilder: (context, index) {
+                return Padding(
+                  padding: EdgeInsets.only(bottom: AppSpacing.md),
+                  child: TourAnchor(
+                    id: 'appr_landing_card',
+                    child: _VendorCategoryCard(
+                      category: ctrl.categories[index],
+                      onSellTap: () {
+                        final cat = ctrl.categories[index];
+                        Get.toNamed(
+                          AppRoutes.approvedVehicleSellForm,
+                          arguments: {
+                            'categoryName': cat.categoryName,
+                            'categoryCode': cat.categoryCode,
+                          },
+                        );
                       },
-                    );
-                  },
-                  onBuyTap: () => openApprovedVehicles(
-                    AppRoutes.approvedVehicleListings,
-                    arguments: {'category': ctrl.categories[index]},
+                      onBuyTap: () => openApprovedVehicles(
+                        AppRoutes.approvedVehicleListings,
+                        arguments: {'category': ctrl.categories[index]},
+                      ),
+                    ),
                   ),
-                ),
-              );
-            },
-          ),
-        );
-      }),
+                );
+              },
+            ),
+          );
+        }),
+      ),
     );
   }
 
@@ -282,40 +309,43 @@ class _VendorCategoryCard extends StatelessWidget {
                   children: [
                     // BUY — filled gradient
                     Expanded(
-                      child: GestureDetector(
-                        onTap: onBuyTap,
-                        child: Container(
-                          constraints: BoxConstraints(minHeight: 34.h),
-                          decoration: BoxDecoration(
-                            gradient: const LinearGradient(
-                              begin: Alignment.topCenter,
-                              end: Alignment.bottomCenter,
-                              colors: [
-                                AppColors.ctaGradientStart,
-                                AppColors.ctaGradientEnd,
+                      child: TourAnchor(
+                        id: 'appr_landing_buy',
+                        child: GestureDetector(
+                          onTap: onBuyTap,
+                          child: Container(
+                            constraints: BoxConstraints(minHeight: 34.h),
+                            decoration: BoxDecoration(
+                              gradient: const LinearGradient(
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                                colors: [
+                                  AppColors.ctaGradientStart,
+                                  AppColors.ctaGradientEnd,
+                                ],
+                              ),
+                              borderRadius: BorderRadius.circular(20.r),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: AppColors.ctaGradientStart.withValues(
+                                    alpha: 0.3,
+                                  ),
+                                  blurRadius: 6,
+                                  offset: const Offset(0, 2),
+                                ),
                               ],
                             ),
-                            borderRadius: BorderRadius.circular(20.r),
-                            boxShadow: [
-                              BoxShadow(
-                                color: AppColors.ctaGradientStart.withValues(
-                                  alpha: 0.3,
+                            child: Center(
+                              child: Text(
+                                context.l10n.apprBuy,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  fontFamily: 'Montserrat',
+                                  fontSize: 13.sp,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.white,
                                 ),
-                                blurRadius: 6,
-                                offset: const Offset(0, 2),
-                              ),
-                            ],
-                          ),
-                          child: Center(
-                            child: Text(
-                              context.l10n.apprBuy,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                fontFamily: 'Montserrat',
-                                fontSize: 13.sp,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.white,
                               ),
                             ),
                           ),
@@ -325,28 +355,31 @@ class _VendorCategoryCard extends StatelessWidget {
                     SizedBox(width: 8.w),
                     // SELL — outlined
                     Expanded(
-                      child: GestureDetector(
-                        onTap: onSellTap,
-                        child: Container(
-                          constraints: BoxConstraints(minHeight: 34.h),
-                          decoration: BoxDecoration(
-                            color: AppColors.white,
-                            border: Border.all(
-                              color: AppColors.ctaGradientStart,
-                              width: 1.5,
-                            ),
-                            borderRadius: BorderRadius.circular(20.r),
-                          ),
-                          child: Center(
-                            child: Text(
-                              context.l10n.apprSell,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                fontFamily: 'Montserrat',
-                                fontSize: 13.sp,
-                                fontWeight: FontWeight.w600,
+                      child: TourAnchor(
+                        id: 'appr_landing_sell',
+                        child: GestureDetector(
+                          onTap: onSellTap,
+                          child: Container(
+                            constraints: BoxConstraints(minHeight: 34.h),
+                            decoration: BoxDecoration(
+                              color: AppColors.white,
+                              border: Border.all(
                                 color: AppColors.ctaGradientStart,
+                                width: 1.5,
+                              ),
+                              borderRadius: BorderRadius.circular(20.r),
+                            ),
+                            child: Center(
+                              child: Text(
+                                context.l10n.apprSell,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  fontFamily: 'Montserrat',
+                                  fontSize: 13.sp,
+                                  fontWeight: FontWeight.w600,
+                                  color: AppColors.ctaGradientStart,
+                                ),
                               ),
                             ),
                           ),

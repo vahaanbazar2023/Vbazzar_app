@@ -6,6 +6,7 @@ import '../../../core/design_system/loaders/app_shimmer.dart';
 import '../../../core/design_system/templates/app_layout.dart';
 import '../../../core/design_system/tokens/app_spacing.dart';
 import '../../../core/extensions/context_extensions.dart';
+import '../../app_tour/screen_tour.dart';
 import '../controllers/auction_category_controller.dart';
 
 class AuctionCategoryScreen extends StatelessWidget {
@@ -19,43 +20,67 @@ class AuctionCategoryScreen extends StatelessWidget {
       title: context.l10n.auctionZone,
       subtitle: context.l10n.chooseAnyOne,
       bodyColor: const Color(0xFFF5F5F5),
-      body: Obx(() {
-        if (ctrl.isLoadingCategories.value && ctrl.categories.isEmpty) {
-          return _ShimmerList();
-        }
-        if (ctrl.categoriesError.value.isNotEmpty && ctrl.categories.isEmpty) {
-          return _ErrorState(
-            message: ctrl.categoriesError.value,
-            onRetry: () => ctrl.fetchCategories(isRefresh: true),
-          );
-        }
-        if (ctrl.categories.isEmpty) {
-          return _EmptyState(
-            onRetry: () => ctrl.fetchCategories(isRefresh: true),
-          );
-        }
-        return RefreshIndicator(
-          color: AppColors.primary,
-          onRefresh: () => ctrl.fetchCategories(isRefresh: true),
-          child: ListView.separated(
-            padding: EdgeInsets.symmetric(
-              horizontal: AppSpacing.md,
-              vertical: AppSpacing.md,
-            ),
-            itemCount: ctrl.categories.length,
-            separatorBuilder: (_, __) => SizedBox(height: 8.h),
-            itemBuilder: (context, index) {
-              final category = ctrl.categories[index];
-              final imageOnLeft = index % 2 == 0;
-              return _CategoryCard(
-                category: category,
-                imageOnLeft: imageOnLeft,
-                onTap: () => ctrl.onCategoryTapped(category),
-              );
-            },
+      body: TourScope(
+        tourId: 'auction_category',
+        spots: (context) => [
+          TourSpot(
+            'aucCatCard',
+            context.l10n.tourAucCatCardTitle,
+            context.l10n.tourAucCatCardBody,
           ),
-        );
-      }),
+          TourSpot(
+            'aucCatLive',
+            context.l10n.tourAucCatLiveTitle,
+            context.l10n.tourAucCatLiveBody,
+          ),
+          TourSpot(
+            'aucCatSoon',
+            context.l10n.tourAucCatSoonTitle,
+            context.l10n.tourAucCatSoonBody,
+          ),
+        ],
+        child: Obx(() {
+          if (ctrl.isLoadingCategories.value && ctrl.categories.isEmpty) {
+            return _ShimmerList();
+          }
+          if (ctrl.categoriesError.value.isNotEmpty &&
+              ctrl.categories.isEmpty) {
+            return _ErrorState(
+              message: ctrl.categoriesError.value,
+              onRetry: () => ctrl.fetchCategories(isRefresh: true),
+            );
+          }
+          if (ctrl.categories.isEmpty) {
+            return _EmptyState(
+              onRetry: () => ctrl.fetchCategories(isRefresh: true),
+            );
+          }
+          return RefreshIndicator(
+            color: AppColors.primary,
+            onRefresh: () => ctrl.fetchCategories(isRefresh: true),
+            child: ListView.separated(
+              padding: EdgeInsets.symmetric(
+                horizontal: AppSpacing.md,
+                vertical: AppSpacing.md,
+              ),
+              itemCount: ctrl.categories.length,
+              separatorBuilder: (_, __) => SizedBox(height: 8.h),
+              itemBuilder: (context, index) {
+                final category = ctrl.categories[index];
+                final imageOnLeft = index % 2 == 0;
+                return TourAnchor(
+                  id: 'aucCatCard',
+                  child: _CategoryCard(
+                    category: category,
+                    imageOnLeft: imageOnLeft,
+                    onTap: () => ctrl.onCategoryTapped(category),
+                  ),
+                );
+              },
+            ),
+          );
+        }),
+      ),
     );
   }
 }
@@ -169,7 +194,10 @@ class _CardInfo extends StatelessWidget {
     final badgeRow = Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        _StatusBadge(isLive: category.isLive),
+        TourAnchor(
+          id: category.isLive ? 'aucCatLive' : 'aucCatSoon',
+          child: _StatusBadge(isLive: category.isLive),
+        ),
         if (category.isLive) ...[
           SizedBox(width: 10.w),
           GestureDetector(

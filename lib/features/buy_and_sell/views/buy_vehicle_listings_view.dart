@@ -22,6 +22,7 @@ import '../controllers/vehicle_detail_controller.dart';
 import '../domain/entities/buy_vehicle_entity.dart';
 import '../domain/entities/vehicle_category_entity.dart';
 import '../widgets/buy_sell_activity_fab.dart';
+import '../../app_tour/screen_tour.dart';
 
 class BuyVehicleListingsView extends GetView<BuyVehicleController> {
   const BuyVehicleListingsView({super.key});
@@ -47,7 +48,36 @@ class BuyVehicleListingsView extends GetView<BuyVehicleController> {
       subtitle: context.l10n.spareBrowseAvailableListings,
       // Listing screens have no bottom nav; the list pads itself instead.
       showBottomNav: false,
-      body: Stack(
+      body: TourScope(
+        tourId: 'buy_listing',
+      waitFor: const ['bs_listing_card'], // wait for the list to load
+        spots: (context) => [
+          TourSpot(
+            'bs_listing_search',
+            context.l10n.tourBsListingSearchTitle,
+            context.l10n.tourBsListingSearchBody,
+            padding: 6,
+          ),
+          TourSpot(
+            'bs_listing_filter',
+            context.l10n.tourBsListingFilterTitle,
+            context.l10n.tourBsListingFilterBody,
+            padding: 6,
+          ),
+          TourSpot(
+            'bs_listing_card',
+            context.l10n.tourBsListingCardTitle,
+            context.l10n.tourBsListingCardBody,
+          ),
+          TourSpot(
+            'bs_listing_wishlist',
+            context.l10n.tourBsListingWishlistTitle,
+            context.l10n.tourBsListingWishlistBody,
+            padding: 6,
+            circle: true,
+          ),
+        ],
+        child: Stack(
         children: [
           Column(
             children: [
@@ -68,20 +98,25 @@ class BuyVehicleListingsView extends GetView<BuyVehicleController> {
                   children: [
                     // Search field
                     Expanded(
-                      child: CustomSearchBar(
-                        controller: controller.searchController,
-                        hint: context.l10n.searchVehicles,
-                        onChanged: (value) {
-                          // Search functionality preserved
-                        },
-                        onClear: () {
-                          controller.searchController.clear();
-                        },
+                      child: TourAnchor(
+                        id: 'bs_listing_search',
+                        child: CustomSearchBar(
+                          controller: controller.searchController,
+                          hint: context.l10n.searchVehicles,
+                          onChanged: (value) {
+                            // Search functionality preserved
+                          },
+                          onClear: () {
+                            controller.searchController.clear();
+                          },
+                        ),
                       ),
                     ),
                     SizedBox(width: AppSpacing.sm),
                     // Filter icon button
-                    Obx(() {
+                    TourAnchor(
+                      id: 'bs_listing_filter',
+                      child: Obx(() {
                       final hasFilters = controller.appliedFilters.isNotEmpty;
                       return GestureDetector(
                         onTap: () => _showFilterSheet(context, controller),
@@ -112,6 +147,7 @@ class BuyVehicleListingsView extends GetView<BuyVehicleController> {
                         ),
                       );
                     }),
+                    ),
                   ],
                 ),
               ),
@@ -194,7 +230,10 @@ class BuyVehicleListingsView extends GetView<BuyVehicleController> {
                           final vehicle = resolved as BuyVehicleEntity;
                           return Padding(
                             padding: EdgeInsets.only(bottom: AppSpacing.sm),
-                            child: BuyVehicleCard(vehicle: vehicle),
+                            child: TourAnchor(
+                              id: 'bs_listing_card',
+                              child: BuyVehicleCard(vehicle: vehicle),
+                            ),
                           );
                         },
                       ),
@@ -211,6 +250,7 @@ class BuyVehicleListingsView extends GetView<BuyVehicleController> {
             child: const BuySellActivityFab(),
           ),
         ],
+        ),
       ),
     );
   }
@@ -518,7 +558,9 @@ class BuyVehicleCard extends StatelessWidget {
                 Positioned(
                   top: 8.h,
                   right: 8.w,
-                  child: Obx(() {
+                  child: TourAnchor(
+                    id: 'bs_listing_wishlist',
+                    child: Obx(() {
                     final ctrl = Get.find<BuyVehicleController>();
                     return GestureDetector(
                       onTap: () => ctrl.toggleWishlist(vehicle),
@@ -548,6 +590,7 @@ class BuyVehicleCard extends StatelessWidget {
                       ),
                     );
                   }),
+                  ),
                 ),
                 // Image count badge - bottom left
                 if (vehicle.allImageUrls.length > 1)

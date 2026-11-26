@@ -13,6 +13,7 @@ import '../../../core/design_system/tokens/app_spacing.dart';
 import '../../../core/extensions/context_extensions.dart';
 import '../../../routes/app_routes.dart';
 import '../../../theme/app_fonts.dart';
+import '../../app_tour/screen_tour.dart';
 import '../../buy_and_sell/domain/entities/paginated_buy_vehicles_response.dart';
 import '../controllers/approved_vehicle_controller.dart';
 import '../domain/entities/approved_vehicle_category_entity.dart';
@@ -62,73 +63,108 @@ class _VehicleListingsScreenState extends State<VehicleListingsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return AppLayout(
-      title: category.categoryName,
-      subtitle: context.l10n.approvedVehiclesAvailable,
-      // Listing screens have no bottom nav; the list pads itself instead.
-      showBottomNav: false,
-      body: Obx(() {
-        if (ctrl.isLoadingListings.value && ctrl.listings.isEmpty) {
-          return _buildShimmerList();
-        }
-        if (ctrl.listingsError.value.isNotEmpty && ctrl.listings.isEmpty) {
-          return _buildErrorState();
-        }
-        if (ctrl.listings.isEmpty) {
-          return _buildEmptyState();
-        }
-        return RefreshIndicator(
-          color: AppColors.primary,
-          onRefresh: () => ctrl.fetchListings(
-            categoryType: category.categoryCode,
-            isRefresh: true,
-          ),
-          child: ListView.builder(
-            controller: _scrollController,
-            // No floating button here: clear the home indicator only.
-            padding: EdgeInsets.fromLTRB(
-              AppSpacing.md,
-              AppSpacing.md,
-              AppSpacing.md,
-              AppSpacing.md + MediaQuery.paddingOf(context).bottom,
+    return TourScope(
+      tourId: 'approved_listing',
+      waitFor: const ['appr_list_card'], // wait for the list to load
+      spots: (context) => [
+        TourSpot(
+          'appr_list_card',
+          context.l10n.tourApprListCardTitle,
+          context.l10n.tourApprListCardBody,
+        ),
+        TourSpot(
+          'appr_list_price',
+          context.l10n.tourApprListPriceTitle,
+          context.l10n.tourApprListPriceBody,
+          padding: 4,
+        ),
+        TourSpot(
+          'appr_list_details',
+          context.l10n.tourApprListDetailsTitle,
+          context.l10n.tourApprListDetailsBody,
+          padding: 4,
+        ),
+        TourSpot(
+          'appr_list_share',
+          context.l10n.tourApprListShareTitle,
+          context.l10n.tourApprListShareBody,
+          padding: 4,
+          circle: true,
+        ),
+      ],
+      child: AppLayout(
+        title: category.categoryName,
+        subtitle: context.l10n.approvedVehiclesAvailable,
+        // Listing screens have no bottom nav; the list pads itself instead.
+        showBottomNav: false,
+        body: Obx(() {
+          if (ctrl.isLoadingListings.value && ctrl.listings.isEmpty) {
+            return _buildShimmerList();
+          }
+          if (ctrl.listingsError.value.isNotEmpty && ctrl.listings.isEmpty) {
+            return _buildErrorState();
+          }
+          if (ctrl.listings.isEmpty) {
+            return _buildEmptyState();
+          }
+          return RefreshIndicator(
+            color: AppColors.primary,
+            onRefresh: () => ctrl.fetchListings(
+              categoryType: category.categoryCode,
+              isRefresh: true,
             ),
-            itemCount:
-                ctrl.listings.length +
-                _apprAdCount(ctrl) +
-                (ctrl.isLoadingMoreListings.value ? 1 : 0),
-            itemBuilder: (context, index) {
-              final totalVehicles = ctrl.listings.length;
-              final totalAds = _apprAdCount(ctrl);
-              if (index == totalVehicles + totalAds) {
-                return Padding(
-                  padding: EdgeInsets.symmetric(vertical: 16.h),
-                  child: const Center(
-                    child: CircularProgressIndicator(color: AppColors.primary),
-                  ),
-                );
-              }
-              final resolved = _resolveApprItem(index, ctrl);
-              if (resolved is ListingAd) {
+            child: ListView.builder(
+              controller: _scrollController,
+              // No floating button here: clear the home indicator only.
+              padding: EdgeInsets.fromLTRB(
+                AppSpacing.md,
+                AppSpacing.md,
+                AppSpacing.md,
+                AppSpacing.md + MediaQuery.paddingOf(context).bottom,
+              ),
+              itemCount:
+                  ctrl.listings.length +
+                  _apprAdCount(ctrl) +
+                  (ctrl.isLoadingMoreListings.value ? 1 : 0),
+              itemBuilder: (context, index) {
+                final totalVehicles = ctrl.listings.length;
+                final totalAds = _apprAdCount(ctrl);
+                if (index == totalVehicles + totalAds) {
+                  return Padding(
+                    padding: EdgeInsets.symmetric(vertical: 16.h),
+                    child: const Center(
+                      child: CircularProgressIndicator(
+                        color: AppColors.primary,
+                      ),
+                    ),
+                  );
+                }
+                final resolved = _resolveApprItem(index, ctrl);
+                if (resolved is ListingAd) {
+                  return Padding(
+                    padding: EdgeInsets.only(bottom: AppSpacing.md),
+                    child: _ApprAdBanner(ad: resolved),
+                  );
+                }
+                final listing = resolved as ApprovedVehicleListingEntity;
                 return Padding(
                   padding: EdgeInsets.only(bottom: AppSpacing.md),
-                  child: _ApprAdBanner(ad: resolved),
-                );
-              }
-              final listing = resolved as ApprovedVehicleListingEntity;
-              return Padding(
-                padding: EdgeInsets.only(bottom: AppSpacing.md),
-                child: _VehicleListingCard(
-                  listing: listing,
-                  onTap: () => Get.toNamed(
-                    AppRoutes.approvedVehicleDetail,
-                    arguments: {'listing': listing},
+                  child: TourAnchor(
+                    id: 'appr_list_card',
+                    child: _VehicleListingCard(
+                      listing: listing,
+                      onTap: () => Get.toNamed(
+                        AppRoutes.approvedVehicleDetail,
+                        arguments: {'listing': listing},
+                      ),
+                    ),
                   ),
-                ),
-              );
-            },
-          ),
-        );
-      }),
+                );
+              },
+            ),
+          );
+        }),
+      ),
     );
   }
 
@@ -288,19 +324,22 @@ class _VehicleListingCard extends StatelessWidget {
                   Positioned(
                     top: 10,
                     right: 10,
-                    child: ShareCircleButton(
-                      onShare: () async {
-                        if (!Get.isRegistered<ShareService>()) return;
-                        final name = listing.displayTitle.isNotEmpty
-                            ? listing.displayTitle
-                            : title;
-                        await ShareService.to.shareApprovedVehicle(
-                          approvedVehicleId: listing.approvedVehicleId,
-                          name: name,
-                          year: listing.yearOfManufacturing,
-                          price: listing.price,
-                        );
-                      },
+                    child: TourAnchor(
+                      id: 'appr_list_share',
+                      child: ShareCircleButton(
+                        onShare: () async {
+                          if (!Get.isRegistered<ShareService>()) return;
+                          final name = listing.displayTitle.isNotEmpty
+                              ? listing.displayTitle
+                              : title;
+                          await ShareService.to.shareApprovedVehicle(
+                            approvedVehicleId: listing.approvedVehicleId,
+                            name: name,
+                            year: listing.yearOfManufacturing,
+                            price: listing.price,
+                          );
+                        },
+                      ),
                     ),
                   ),
                 ],
@@ -360,13 +399,16 @@ class _VehicleListingCard extends StatelessWidget {
                         ),
                       const Spacer(),
                       if (listing.price > 0)
-                        Text(
-                          '₹${_formatPrice(listing.price)}',
-                          style: TextStyle(
-                            fontFamily: 'Montserrat',
-                            fontSize: 13.sp,
-                            fontWeight: FontWeight.w600,
-                            color: AppColors.primary,
+                        TourAnchor(
+                          id: 'appr_list_price',
+                          child: Text(
+                            '₹${_formatPrice(listing.price)}',
+                            style: TextStyle(
+                              fontFamily: 'Montserrat',
+                              fontSize: 13.sp,
+                              fontWeight: FontWeight.w600,
+                              color: AppColors.primary,
+                            ),
                           ),
                         ),
                     ],
@@ -375,34 +417,37 @@ class _VehicleListingCard extends StatelessWidget {
                   // View Details button
                   Align(
                     alignment: Alignment.centerRight,
-                    child: Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 14.w,
-                        vertical: 7.h,
-                      ),
-                      decoration: BoxDecoration(
-                        gradient: const LinearGradient(
-                          colors: [
-                            AppColors.ctaGradientStart,
-                            AppColors.ctaGradientEnd,
+                    child: TourAnchor(
+                      id: 'appr_list_details',
+                      child: Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 14.w,
+                          vertical: 7.h,
+                        ),
+                        decoration: BoxDecoration(
+                          gradient: const LinearGradient(
+                            colors: [
+                              AppColors.ctaGradientStart,
+                              AppColors.ctaGradientEnd,
+                            ],
+                          ),
+                          borderRadius: BorderRadius.circular(20.r),
+                          boxShadow: [
+                            BoxShadow(
+                              color: AppColors.primary.withValues(alpha: 0.3),
+                              blurRadius: 6,
+                              offset: const Offset(0, 2),
+                            ),
                           ],
                         ),
-                        borderRadius: BorderRadius.circular(20.r),
-                        boxShadow: [
-                          BoxShadow(
-                            color: AppColors.primary.withValues(alpha: 0.3),
-                            blurRadius: 6,
-                            offset: const Offset(0, 2),
+                        child: Text(
+                          context.l10n.knowMore,
+                          style: TextStyle(
+                            fontFamily: 'Montserrat',
+                            fontSize: 12.sp,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.white,
                           ),
-                        ],
-                      ),
-                      child: Text(
-                        context.l10n.knowMore,
-                        style: TextStyle(
-                          fontFamily: 'Montserrat',
-                          fontSize: 12.sp,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.white,
                         ),
                       ),
                     ),
