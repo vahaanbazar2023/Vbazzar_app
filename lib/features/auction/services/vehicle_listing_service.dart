@@ -165,12 +165,15 @@ class VehicleListingService {
     return result;
   }
 
-  /// Search vehicles across all active auctions by query
+  /// Search vehicles by query within one listing tab's auctions.
+  /// [auctionType] is the tab: live_auctions (running now; ended auctions
+  /// never match), closing_today or upcoming_auctions.
   Future<({List<VehicleListing> vehicles, AuctionPagination pagination})>
   searchVehicles({
     required String userId,
     required String searchQuery,
     String vehicleType = '', // Empty means search all categories
+    String auctionType = 'live_auctions',
     int page = 1,
     int limit = 20,
   }) async {
@@ -178,6 +181,7 @@ class VehicleListingService {
       'user_id': userId,
       'search_query': searchQuery.trim(),
       'vehicle_type': vehicleType,
+      'auction_type': auctionType,
       'page': page,
       'limit': limit,
     };

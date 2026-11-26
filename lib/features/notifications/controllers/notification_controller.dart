@@ -6,6 +6,8 @@ import '../../../core/network/network_service.dart';
 import '../../../core/storage/secure_storage_service.dart';
 import '../../../core/storage/storage_keys.dart';
 import '../models/notification_model.dart';
+import '../../approved_vehicles/services/approved_vehicle_push.dart';
+import '../../../core/services/deep_link_service.dart';
 import '../../../core/extensions/context_extensions.dart';
 
 class NotificationController extends GetxController {
@@ -180,6 +182,14 @@ class NotificationController extends GetxController {
   // ── Navigate based on onclick route ──────────────────────────────
 
   void handleTap(AppNotification notification) {
+    // "New approved vehicle": open it (or the section) behind the plan check.
+    if (ApprovedVehiclePush.isApprovedVehiclePush(notification.data)) {
+      if (Get.isRegistered<DeepLinkService>()) {
+        final content = ApprovedVehiclePush.contentFor(notification.data);
+        DeepLinkService.to.openContent(content.type, content.id);
+      }
+      return;
+    }
     final route = notification.onClickRoute;
     if (route == null || route.isEmpty) return;
 

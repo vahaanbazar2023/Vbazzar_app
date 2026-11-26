@@ -6833,4 +6833,62 @@ class AppLocalizationsKn extends AppLocalizations {
   String profSubNamedSupport(String name) {
     return '$name ಬೆಂಬಲ';
   }
+
+  @override
+  String get apprPayBookingHeadline => 'ಈ ವಾಹನವನ್ನು ನಿಮಗಾಗಿ ಕಾಯ್ದಿರಿಸಿ';
+
+  @override
+  String get apprPayBookingIntro =>
+      'ಈಗ ಬುಕಿಂಗ್ ಮೊತ್ತ ಪಾವತಿಸಿ, ವಾಹನವನ್ನು ನಿಮಗಾಗಿ ಇರಿಸಲಾಗುತ್ತದೆ.';
+
+  @override
+  String get apprPayInspectionHeadline => 'ತಜ್ಞರಿಂದ ಪರಿಶೀಲನೆ ಮಾಡಿಸಿ';
+
+  @override
+  String get apprPayInspectionIntro =>
+      'ವಾಹನ್ ಬಜಾರ್ ತಜ್ಞರು ವಾಹನವನ್ನು ಪರಿಶೀಲಿಸಿ ವರದಿಯನ್ನು ನಿಮಗೆ ನೀಡುತ್ತಾರೆ.';
+
+  @override
+  String get apprPayBookingAmount => 'ಬುಕಿಂಗ್ ಮೊತ್ತ';
+
+  @override
+  String get apprPayInspectionFee => 'ಪರಿಶೀಲನಾ ಶುಲ್ಕ';
+
+  @override
+  String get apprPayVehiclePrice => 'ವಾಹನದ ಬೆಲೆ';
+
+  @override
+  String get apprPayNow => 'ಈಗ ಪಾವತಿಸಿ';
+
+  @override
+  String get apprPayToPayNow => 'ಈಗ ಪಾವತಿಸಬೇಕಾದದ್ದು';
+
+  @override
+  String get apprPayHowItWorks => 'ಇದು ಹೇಗೆ ಕೆಲಸ ಮಾಡುತ್ತದೆ';
+
+  @override
+  String get apprPayBookStep1 => 'ಈಗ ಬುಕಿಂಗ್ ಮೊತ್ತ ಪಾವತಿಸಿ';
+
+  @override
+  String get apprPayBookStep2 => 'ವಾಹನವನ್ನು ನಿಮಗಾಗಿ ಕಾಯ್ದಿರಿಸಲಾಗುತ್ತದೆ';
+
+  @override
+  String get apprPayBookStep3 =>
+      'ಪೂರ್ಣ ಪಾವತಿಯ ಸಮಯದಲ್ಲಿ 2% ಕಮಿಷನ್ + GST ಸಹಿತ ವಾಹನದ ಮೊತ್ತ ಪಾವತಿಸಿ';
+
+  @override
+  String get apprPayInspStep1 => 'ಪರಿಶೀಲನಾ ಶುಲ್ಕ ಪಾವತಿಸಿ';
+
+  @override
+  String get apprPayInspStep2 => 'ನಮ್ಮ ತಜ್ಞರು ವಾಹನವನ್ನು ಪರಿಶೀಲಿಸುತ್ತಾರೆ';
+
+  @override
+  String get apprPayInspStep3 => 'ನಿಮಗೆ ಪರಿಶೀಲನಾ ವರದಿ ಸಿಗುತ್ತದೆ';
+
+  @override
+  String get apprPayCommissionTitle => '2% ಕಮಿಷನ್ + GST';
+
+  @override
+  String get apprPayCommissionNote =>
+      'ಇದನ್ನು ಈಗ ವಿಧಿಸಲಾಗುವುದಿಲ್ಲ. ಈ ವಾಹನದ ಪೂರ್ಣ ಪಾವತಿಗೆ ಸೇರಿಸಲಾಗುತ್ತದೆ.';
 }

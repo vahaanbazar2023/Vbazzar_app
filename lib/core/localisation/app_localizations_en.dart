@@ -6752,4 +6752,62 @@ class AppLocalizationsEn extends AppLocalizations {
   String profSubNamedSupport(String name) {
     return '$name Support';
   }
+
+  @override
+  String get apprPayBookingHeadline => 'Reserve this vehicle';
+
+  @override
+  String get apprPayBookingIntro =>
+      'Pay the booking amount now and the vehicle is held for you.';
+
+  @override
+  String get apprPayInspectionHeadline => 'Get it checked by an expert';
+
+  @override
+  String get apprPayInspectionIntro =>
+      'A Vahaan Bazar expert inspects the vehicle and shares the report with you.';
+
+  @override
+  String get apprPayBookingAmount => 'Booking amount';
+
+  @override
+  String get apprPayInspectionFee => 'Inspection fee';
+
+  @override
+  String get apprPayVehiclePrice => 'Vehicle price';
+
+  @override
+  String get apprPayNow => 'Pay now';
+
+  @override
+  String get apprPayToPayNow => 'To pay now';
+
+  @override
+  String get apprPayHowItWorks => 'How it works';
+
+  @override
+  String get apprPayBookStep1 => 'Pay the booking amount now';
+
+  @override
+  String get apprPayBookStep2 => 'The vehicle is reserved for you';
+
+  @override
+  String get apprPayBookStep3 =>
+      'Pay for the vehicle at full payment, with 2% commission + GST';
+
+  @override
+  String get apprPayInspStep1 => 'Pay the inspection fee';
+
+  @override
+  String get apprPayInspStep2 => 'Our expert inspects the vehicle';
+
+  @override
+  String get apprPayInspStep3 => 'You get the inspection report';
+
+  @override
+  String get apprPayCommissionTitle => '2% commission + GST';
+
+  @override
+  String get apprPayCommissionNote =>
+      'Not charged now. It is added to the full payment for this vehicle.';
 }

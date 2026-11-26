@@ -7,6 +7,7 @@ import '../../../core/extensions/context_extensions.dart';
 import '../../../core/storage/secure_storage_service.dart';
 import '../../../core/storage/storage_keys.dart';
 import '../../../routes/app_routes.dart';
+import '../../approved_vehicles/services/approved_access_gate.dart';
 import '../controllers/auction_controller.dart';
 
 // App-wide CTA gradient — identical to GradientButton
@@ -38,13 +39,18 @@ class AuctionTypeScreen extends StatelessWidget {
               icon: Icons.gavel_rounded,
             ),
             SizedBox(height: 16.h),
-            _TypeCard(
-              tabIndex: 1,
-              imagePath: 'assets/images/png/goverment_inventory.png',
-              title: context.l10n.approvedVehicles,
-              subtitle: context.l10n.liveAuctionSubtitle,
-              badgeLabel: context.l10n.aucVerified,
-              icon: Icons.verified_rounded,
+            // Approved vehicles: Gold plan only — shown locked for anyone else.
+            FutureBuilder<bool>(
+              future: hasApprovedVehicleAccess(),
+              builder: (context, snap) => _TypeCard(
+                tabIndex: 1,
+                imagePath: 'assets/images/png/goverment_inventory.png',
+                title: context.l10n.approvedVehicles,
+                subtitle: context.l10n.liveAuctionSubtitle,
+                badgeLabel: context.l10n.aucVerified,
+                icon: Icons.verified_rounded,
+                locked: snap.data == false,
+              ),
             ),
           ],
         ),
@@ -61,6 +67,9 @@ class _TypeCard extends StatelessWidget {
   final String badgeLabel;
   final IconData icon;
 
+  /// Shows a lock over the image (approved vehicles without a Gold plan).
+  final bool locked;
+
   const _TypeCard({
     required this.tabIndex,
     required this.imagePath,
@@ -68,6 +77,7 @@ class _TypeCard extends StatelessWidget {
     required this.subtitle,
     required this.badgeLabel,
     required this.icon,
+    this.locked = false,
   });
 
   @override
@@ -75,6 +85,7 @@ class _TypeCard extends StatelessWidget {
     return GestureDetector(
       onTap: () async {
         if (tabIndex == 1) {
+          if (!await ensureApprovedVehicleAccess()) return;
           final userType =
               await SecureStorageService.to.read(StorageKeys.userType) ?? '';
           final normalized = userType.toUpperCase().trim();
@@ -121,6 +132,27 @@ class _TypeCard extends StatelessWidget {
                       child: Icon(icon, size: 48.r, color: AppColors.grey400),
                     ),
                   ),
+                  if (locked)
+                    Positioned.fill(
+                      child: Container(
+                        key: const Key('approvedLockOverlay'),
+                        color: Colors.black.withValues(alpha: 0.45),
+                        alignment: Alignment.center,
+                        child: Container(
+                          width: 52.r,
+                          height: 52.r,
+                          decoration: const BoxDecoration(
+                            color: Colors.white,
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(
+                            Icons.lock_rounded,
+                            size: 26.r,
+                            color: AppColors.primary,
+                          ),
+                        ),
+                      ),
+                    ),
                   // Badge — theme gradient
                   Positioned(
                     top: 12.h,
