@@ -38,6 +38,11 @@ class SinglePlanPaymentScreen extends StatefulWidget {
   /// being paid for. Sent to /payments/initiate with the plan code.
   final String? inspectionId;
 
+  /// Approved vehicle booking / inspection: the vehicle and 'booking' or
+  /// 'inspection'. Sent to /payments/initiate, which prices it on the server.
+  final String? approvedVehicleId;
+  final String? purpose;
+
   /// Wallet portion already chosen by the caller (server caps it at 50%).
   /// [plan.price] is then the gateway amount.
   final double? fromWallet;
@@ -58,6 +63,8 @@ class SinglePlanPaymentScreen extends StatefulWidget {
     this.shopId,
     this.mechanicId,
     this.inspectionId,
+    this.approvedVehicleId,
+    this.purpose,
     this.fromWallet,
     this.showWalletLink = true,
   });
@@ -114,6 +121,8 @@ class _SinglePlanPaymentScreenState extends State<SinglePlanPaymentScreen> {
       forPayment: widget.plan.price,
       fromWallet: widget.fromWallet,
       inspectionId: widget.inspectionId,
+      approvedVehicleId: widget.approvedVehicleId,
+      purpose: widget.purpose,
     );
 
     if (!success && _isProcessing) {
