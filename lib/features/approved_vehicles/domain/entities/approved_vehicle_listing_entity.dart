@@ -28,6 +28,14 @@ class ApprovedVehicleListingEntity {
   final String inspectionRequested;
   final InspectionSubscriptionEntity? inspectionSubscription;
   final CategorySubscriptionEntity? categorySubscription;
+
+  /// What booking this vehicle costs: the category's booking fee (flat, or a
+  /// % of this vehicle's price), worked out by the server.
+  final double? bookingAmount;
+
+  /// What requesting an inspection of this vehicle costs: the category's
+  /// inspection fee (flat, or a % of this vehicle's price).
+  final double? inspectionAmount;
   final VehicleFilesEntity? files;
 
   const ApprovedVehicleListingEntity({
@@ -58,6 +66,8 @@ class ApprovedVehicleListingEntity {
     required this.inspectionRequested,
     this.inspectionSubscription,
     this.categorySubscription,
+    this.bookingAmount,
+    this.inspectionAmount,
     this.files,
   });
 

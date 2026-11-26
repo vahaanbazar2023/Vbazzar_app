@@ -263,12 +263,12 @@ class _ApprVehicleDetail extends StatelessWidget {
                                   context: context,
                                   title: context.l10n.apprBookVehicle,
                                   description: context.l10n.apprBookVehicleDesc,
-                                  amount: listing
-                                      .categorySubscription
-                                      ?.subscriptionAmount,
+                                  // The category's booking fee for this
+                                  // vehicle (flat, or a % of its price).
+                                  amount: listing.bookingAmount,
                                   planCode: listing
-                                      .categorySubscription
-                                      ?.apprVehCommonSubPlan,
+                                      .inspectionSubscription
+                                      ?.categoryPlan,
                                   approvedVehicleId: listing.approvedVehicleId,
                                   subscriptionType: 'category',
                                   ctrl: ctrl,
@@ -289,9 +289,9 @@ class _ApprVehicleDetail extends StatelessWidget {
                                   title: context.l10n.requestInspection,
                                   description:
                                       context.l10n.apprRequestInspectionDesc,
-                                  amount: listing
-                                      .inspectionSubscription
-                                      ?.inspectionAmount,
+                                  // The category's inspection fee for this
+                                  // vehicle (flat, or a % of its price).
+                                  amount: listing.inspectionAmount,
                                   planCode: listing
                                       .inspectionSubscription
                                       ?.categoryPlan,
@@ -352,6 +352,11 @@ class _ApprVehicleDetail extends StatelessWidget {
         title: title,
         subtitle: description,
         source: subscriptionType == 'category' ? 'APPR_BOOK' : 'APPR_INSP',
+        // Priced per vehicle on the server, which checks the amount; the
+        // wallet-only path can't price it, so it isn't offered here.
+        approvedVehicleId: approvedVehicleId,
+        purpose: subscriptionType == 'category' ? 'booking' : 'inspection',
+        showWalletLink: false,
         onPaymentSuccess: () {
           Get.back();
           _callApi(
