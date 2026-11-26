@@ -6810,4 +6810,366 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get apprPayCommissionNote =>
       'Not charged now. It is added to the full payment for this vehicle.';
+
+  @override
+  String get tourSearchTitle => 'Search anything';
+
+  @override
+  String get tourSearchBody =>
+      'Find trucks, buses, equipment, spares or services by name.';
+
+  @override
+  String get tourAuctionsTitle => 'Live auctions';
+
+  @override
+  String get tourAuctionsBody =>
+      'Auctions running right now. Tap a card to see the vehicle and place your bid.';
+
+  @override
+  String get tourServicesTitle => 'All our services';
+
+  @override
+  String get tourServicesBody =>
+      'Auctions, Buy & Sell, FMS, Insurance & Finance, Inspection and Service Support, all one tap away.';
+
+  @override
+  String get tourNotificationsTitle => 'Notifications';
+
+  @override
+  String get tourNotificationsBody =>
+      'Bid updates, auction results and offers show up here.';
+
+  @override
+  String get tourSubscriptionsTitle => 'Subscriptions';
+
+  @override
+  String get tourSubscriptionsBody =>
+      'Pick a plan to unlock auctions and premium listings.';
+
+  @override
+  String get tourCategoriesTitle => 'Categories';
+
+  @override
+  String get tourCategoriesBody =>
+      'Browse every vehicle and service category in one place.';
+
+  @override
+  String get tourRewardsTitle => 'Rewards';
+
+  @override
+  String get tourRewardsBody => 'Earn rewards as you use Vahaan Bazar.';
+
+  @override
+  String get tourProfileTitle => 'Profile & settings';
+
+  @override
+  String get tourProfileBody =>
+      'Your bids, listings, wishlist and language. You can replay this tour from here.';
+
+  @override
+  String get tourNext => 'Next';
+
+  @override
+  String get tourSkip => 'Skip';
+
+  @override
+  String get tourDone => 'Got it';
+
+  @override
+  String tourStepOf(int current, int total) {
+    return '$current of $total';
+  }
+
+  @override
+  String get tourReplayTitle => 'App tour';
+
+  @override
+  String get tourReplaySubtitle => 'See the quick walkthrough again';
+
+  @override
+  String get tourAucTypeLiveTitle => 'Live auctions';
+
+  @override
+  String get tourAucTypeLiveBody =>
+      'Bid on vehicles in real time. Tap to pick a category.';
+
+  @override
+  String get tourAucTypeApprovedTitle => 'Approved vehicles';
+
+  @override
+  String get tourAucTypeApprovedBody =>
+      'Verified vehicles you can inspect and book.';
+
+  @override
+  String get tourAucCatCardTitle => 'Pick a category';
+
+  @override
+  String get tourAucCatCardBody =>
+      'Tap a vehicle type to see all its auctions.';
+
+  @override
+  String get tourAucCatLiveTitle => 'Live now';
+
+  @override
+  String get tourAucCatLiveBody =>
+      'A green Live badge means bidding is open. Tap to join.';
+
+  @override
+  String get tourAucCatSoonTitle => 'Coming soon';
+
+  @override
+  String get tourAucCatSoonBody =>
+      'These auctions haven\'t started yet. Check back soon to bid.';
+
+  @override
+  String get tourAucListTabsTitle => 'Switch auction lists';
+
+  @override
+  String get tourAucListTabsBody =>
+      'See live auctions, ones closing today, or upcoming ones.';
+
+  @override
+  String get tourAucListFilterTitle => 'Filter vehicles';
+
+  @override
+  String get tourAucListFilterBody =>
+      'Narrow the list by category, state or bank.';
+
+  @override
+  String get tourAucListCardTitle => 'Vehicle card';
+
+  @override
+  String get tourAucListCardBody =>
+      'Photos, time left and bid status. Tap See More for full vehicle details.';
+
+  @override
+  String get tourAucListBidTitle => 'Place your bid';
+
+  @override
+  String get tourAucListBidBody =>
+      'Use − and + to set your amount, then tap Place Bid before time runs out.';
+
+  @override
+  String get tourAucListWishlistTitle => 'Save for later';
+
+  @override
+  String get tourAucListWishlistBody =>
+      'Tap the heart to add this vehicle to your wishlist.';
+
+  @override
+  String get tourAucDetailImagesTitle => 'Vehicle photos';
+
+  @override
+  String get tourAucDetailImagesBody =>
+      'Swipe to see every photo of the vehicle before you bid.';
+
+  @override
+  String get tourAucDetailTimerTitle => 'Time left';
+
+  @override
+  String get tourAucDetailTimerBody =>
+      'Shows how long bidding stays open. Place your bid before it hits zero.';
+
+  @override
+  String get tourAucDetailBidInfoTitle => 'Your bid summary';
+
+  @override
+  String get tourAucDetailBidInfoBody =>
+      'Your current bid, bids left, bids received and remaining buying limit.';
+
+  @override
+  String get tourAucDetailAccordionTitle => 'Full vehicle details';
+
+  @override
+  String get tourAucDetailAccordionBody =>
+      'Tap to see the repo date and all other details about this vehicle.';
+
+  @override
+  String get tourAucDetailBidTitle => 'Bid now';
+
+  @override
+  String get tourAucDetailBidBody =>
+      'Tap here to enter your amount and place a bid on this vehicle.';
+
+  @override
+  String get tourBsHomeCategoryTitle => 'Pick a vehicle type';
+
+  @override
+  String get tourBsHomeCategoryBody =>
+      'Each card is a vehicle type. The number shows how many are listed right now.';
+
+  @override
+  String get tourBsHomeBuyTitle => 'Buy a vehicle';
+
+  @override
+  String get tourBsHomeBuyBody =>
+      'Tap Buy to see all vehicles for sale in this category.';
+
+  @override
+  String get tourBsHomeSellTitle => 'Sell your vehicle';
+
+  @override
+  String get tourBsHomeSellBody =>
+      'Tap Sell to post your vehicle with photos and price for buyers to see.';
+
+  @override
+  String get tourBsListingSearchTitle => 'Search vehicles';
+
+  @override
+  String get tourBsListingSearchBody =>
+      'Type a brand or model to quickly find the vehicle you want.';
+
+  @override
+  String get tourBsListingFilterTitle => 'Filter results';
+
+  @override
+  String get tourBsListingFilterBody =>
+      'Narrow the list to just the vehicles that match your needs.';
+
+  @override
+  String get tourBsListingCardTitle => 'Vehicle details';
+
+  @override
+  String get tourBsListingCardBody =>
+      'Tap a card to see photos, full details and seller options for that vehicle.';
+
+  @override
+  String get tourBsListingWishlistTitle => 'Save to wishlist';
+
+  @override
+  String get tourBsListingWishlistBody =>
+      'Tap the heart to save a vehicle and check it later.';
+
+  @override
+  String get tourBsDetailPriceTitle => 'Asking price';
+
+  @override
+  String get tourBsDetailPriceBody =>
+      'This is the seller\'s price. You can still make your own offer below.';
+
+  @override
+  String get tourBsDetailShareTitle => 'Share this vehicle';
+
+  @override
+  String get tourBsDetailShareBody =>
+      'Send this listing to family or friends on WhatsApp and other apps.';
+
+  @override
+  String get tourBsDetailSpecsTitle => 'Key details';
+
+  @override
+  String get tourBsDetailSpecsBody =>
+      'Vehicle ID, model year and location at a glance. Scroll down for full specs.';
+
+  @override
+  String get tourBsDetailContactTitle => 'Contact the owner';
+
+  @override
+  String get tourBsDetailContactBody =>
+      'Unlock the owner\'s phone number here, then call them directly.';
+
+  @override
+  String get tourBsDetailOfferTitle => 'Make an offer';
+
+  @override
+  String get tourBsDetailOfferBody =>
+      'Send the seller your own price for this vehicle.';
+
+  @override
+  String get tourApprLandingCardTitle => 'Vehicle categories';
+
+  @override
+  String get tourApprLandingCardBody =>
+      'Each card is a vehicle type with the number of approved vehicles available.';
+
+  @override
+  String get tourApprLandingBuyTitle => 'Buy vehicles';
+
+  @override
+  String get tourApprLandingBuyBody =>
+      'Browse verified vehicles from banks and government sources in this category.';
+
+  @override
+  String get tourApprLandingSellTitle => 'Sell your vehicle';
+
+  @override
+  String get tourApprLandingSellBody =>
+      'List a vehicle for sale in this category by filling a short form.';
+
+  @override
+  String get tourApprCategoryCardTitle => 'Pick a category';
+
+  @override
+  String get tourApprCategoryCardBody =>
+      'Tap a vehicle type to see approved vehicles you can book.';
+
+  @override
+  String get tourApprCategoryCountTitle => 'Vehicles available';
+
+  @override
+  String get tourApprCategoryCountBody =>
+      'Shows how many verified vehicles are listed right now in this category.';
+
+  @override
+  String get tourApprListCardTitle => 'Approved vehicle';
+
+  @override
+  String get tourApprListCardBody =>
+      'Each card is a verified vehicle. Swipe photos and tap to see full details.';
+
+  @override
+  String get tourApprListPriceTitle => 'Vehicle price';
+
+  @override
+  String get tourApprListPriceBody =>
+      'The asking price for this vehicle, set by the approved source.';
+
+  @override
+  String get tourApprListDetailsTitle => 'See full details';
+
+  @override
+  String get tourApprListDetailsBody =>
+      'Open the vehicle to check its info, request inspection or book it.';
+
+  @override
+  String get tourApprListShareTitle => 'Share vehicle';
+
+  @override
+  String get tourApprListShareBody =>
+      'Send this vehicle to friends or family on WhatsApp and other apps.';
+
+  @override
+  String get tourApprDetailStatusTitle => 'Vehicle status';
+
+  @override
+  String get tourApprDetailStatusBody =>
+      'Active means this vehicle is still available to inspect and book.';
+
+  @override
+  String get tourApprDetailInfoTitle => 'Key details';
+
+  @override
+  String get tourApprDetailInfoBody =>
+      'Vehicle ID, category, location and year at a glance.';
+
+  @override
+  String get tourApprDetailMoreTitle => 'More details';
+
+  @override
+  String get tourApprDetailMoreBody =>
+      'Tap to expand the full specs and documents for this vehicle.';
+
+  @override
+  String get tourApprDetailInspectTitle => 'Request inspection';
+
+  @override
+  String get tourApprDetailInspectBody =>
+      'Ask for an inspection to check the vehicle\'s condition before you book.';
+
+  @override
+  String get tourApprDetailBookTitle => 'Book this vehicle';
+
+  @override
+  String get tourApprDetailBookBody =>
+      'Pay the booking amount to reserve this vehicle for yourself.';
 }

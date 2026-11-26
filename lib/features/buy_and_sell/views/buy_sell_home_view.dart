@@ -7,6 +7,7 @@ import '../../../core/design_system/loaders/app_shimmer.dart';
 import '../../../core/design_system/templates/app_layout.dart';
 import '../../../core/design_system/tokens/app_spacing.dart';
 import '../../../routes/app_routes.dart';
+import '../../app_tour/screen_tour.dart';
 import '../controllers/buy_sell_home_controller.dart';
 import '../domain/entities/filter_option_entity.dart';
 import '../domain/entities/vehicle_category_entity.dart';
@@ -19,7 +20,29 @@ class BuySellHomeView extends GetView<BuySellHomeController> {
     return AppLayout(
       title: context.l10n.spareBuyAndSellTitle,
       subtitle: context.l10n.spareBrowseAndPostCommercialVehicles,
-      body: _buildCategoryGrid(context),
+      body: TourScope(
+        tourId: 'buy_sell_home',
+        spots: (context) => [
+          TourSpot(
+            'bs_home_category',
+            context.l10n.tourBsHomeCategoryTitle,
+            context.l10n.tourBsHomeCategoryBody,
+          ),
+          TourSpot(
+            'bs_home_buy',
+            context.l10n.tourBsHomeBuyTitle,
+            context.l10n.tourBsHomeBuyBody,
+            padding: 6,
+          ),
+          TourSpot(
+            'bs_home_sell',
+            context.l10n.tourBsHomeSellTitle,
+            context.l10n.tourBsHomeSellBody,
+            padding: 6,
+          ),
+        ],
+        child: _buildCategoryGrid(context),
+      ),
     );
   }
 
@@ -70,7 +93,10 @@ class BuySellHomeView extends GetView<BuySellHomeController> {
         ),
         itemCount: controller.categories.length,
         itemBuilder: (context, index) {
-          return _CategoryCard(category: controller.categories[index]);
+          return TourAnchor(
+            id: 'bs_home_category',
+            child: _CategoryCard(category: controller.categories[index]),
+          );
         },
       );
     });
@@ -198,9 +224,19 @@ class _CategoryCard extends StatelessWidget {
                 // Buy + Sell buttons
                 Row(
                   children: [
-                    Expanded(child: _buildBuyButton(context)),
+                    Expanded(
+                      child: TourAnchor(
+                        id: 'bs_home_buy',
+                        child: _buildBuyButton(context),
+                      ),
+                    ),
                     SizedBox(width: 6.w),
-                    Expanded(child: _buildSellButton(context)),
+                    Expanded(
+                      child: TourAnchor(
+                        id: 'bs_home_sell',
+                        child: _buildSellButton(context),
+                      ),
+                    ),
                   ],
                 ),
               ],

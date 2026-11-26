@@ -10,6 +10,7 @@ import '../../../core/design_system/molecules/custom_snackbar.dart';
 import '../../../core/design_system/templates/app_layout.dart';
 import '../../../core/design_system/tokens/app_spacing.dart';
 import '../../../core/extensions/context_extensions.dart';
+import '../../app_tour/screen_tour.dart';
 import '../controllers/vehicle_listing_controller.dart';
 import '../models/auction_listing.dart';
 import '../models/vehicle_listing.dart';
@@ -54,252 +55,308 @@ class AuctionVehicleDetailScreen extends StatelessWidget {
       title: context.l10n.placeBidTitle,
       subtitle: '${context.l10n.auction_id}: ${v.auctionId}',
       showBack: true,
-      body: Column(
-        children: [
-          // ── Scrollable content ──────────────────────────────
-          Expanded(
-            child: SingleChildScrollView(
-              padding: EdgeInsets.fromLTRB(
-                AppSpacing.md,
-                AppSpacing.md,
-                AppSpacing.md,
-                AppSpacing.sm,
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // ── Image carousel ────────────────────────
-                  ClipRRect(
-                    borderRadius: AppRadius.borderRadiusMd,
-                    child: Stack(
-                      children: [
-                        NetworkImageCarousel(
-                          imageUrls: v.images,
-                          height: 200.h,
+      body: TourScope(
+        tourId: 'auction_detail',
+        spots: (context) => [
+          TourSpot(
+            'aucDetailImages',
+            context.l10n.tourAucDetailImagesTitle,
+            context.l10n.tourAucDetailImagesBody,
+            padding: 4,
+          ),
+          TourSpot(
+            'aucDetailTimer',
+            context.l10n.tourAucDetailTimerTitle,
+            context.l10n.tourAucDetailTimerBody,
+            padding: 4,
+          ),
+          TourSpot(
+            'aucDetailBidInfo',
+            context.l10n.tourAucDetailBidInfoTitle,
+            context.l10n.tourAucDetailBidInfoBody,
+            padding: 4,
+          ),
+          TourSpot(
+            'aucDetailAccordion',
+            context.l10n.tourAucDetailAccordionTitle,
+            context.l10n.tourAucDetailAccordionBody,
+            padding: 4,
+          ),
+          TourSpot(
+            'aucDetailBid',
+            context.l10n.tourAucDetailBidTitle,
+            context.l10n.tourAucDetailBidBody,
+            padding: 6,
+          ),
+        ],
+        child: Column(
+          children: [
+            // ── Scrollable content ──────────────────────────────
+            Expanded(
+              child: SingleChildScrollView(
+                padding: EdgeInsets.fromLTRB(
+                  AppSpacing.md,
+                  AppSpacing.md,
+                  AppSpacing.md,
+                  AppSpacing.sm,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // ── Image carousel ────────────────────────
+                    TourAnchor(
+                      id: 'aucDetailImages',
+                      child: ClipRRect(
+                        borderRadius: AppRadius.borderRadiusMd,
+                        child: Stack(
+                          children: [
+                            NetworkImageCarousel(
+                              imageUrls: v.images,
+                              height: 200.h,
+                            ),
+                            Positioned(
+                              top: 0,
+                              right: 0,
+                              child: TourAnchor(
+                                id: 'aucDetailTimer',
+                                child: ExcludeSemantics(
+                                  child: TimerBadge(endAt: endAt),
+                                ),
+                              ),
+                            ),
+                            // Share — bottom right of the image
+                            Positioned(
+                              bottom: 10,
+                              right: 10,
+                              child: ShareCircleButton(
+                                onShare: () async {
+                                  if (!Get.isRegistered<ShareService>()) return;
+                                  await ShareService.to.shareAuctionVehicle(
+                                    vehicleId: v.vehicleId,
+                                    name: '${v.make} ${v.model}'.trim(),
+                                    auctionId: v.auctionId,
+                                  );
+                                },
+                              ),
+                            ),
+                          ],
                         ),
-                        Positioned(
-                          top: 0,
-                          right: 0,
-                          child: ExcludeSemantics(
-                            child: TimerBadge(endAt: endAt),
-                          ),
-                        ),
-                        // Share — bottom right of the image
-                        Positioned(
-                          bottom: 10,
-                          right: 10,
-                          child: ShareCircleButton(
-                            onShare: () async {
-                              if (!Get.isRegistered<ShareService>()) return;
-                              await ShareService.to.shareAuctionVehicle(
-                                vehicleId: v.vehicleId,
-                                name: '${v.make} ${v.model}'.trim(),
-                                auctionId: v.auctionId,
-                              );
-                            },
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(height: AppSpacing.sm),
-
-                  // ── Vehicle title ─────────────────────────
-                  Center(
-                    child: Text(
-                      '${v.make} | ${v.model}',
-                      style: TextStyle(
-                        fontFamily: 'Montserrat',
-                        fontSize: 15.sp,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.black,
                       ),
                     ),
-                  ),
-                  Center(
-                    child: Container(
-                      margin: EdgeInsets.only(top: 5.h, bottom: AppSpacing.sm),
-                      height: 3.h,
-                      width: 55.w,
-                      decoration: BoxDecoration(
-                        color: AppColors.primary,
-                        borderRadius: BorderRadius.circular(2.r),
+                    SizedBox(height: AppSpacing.sm),
+
+                    // ── Vehicle title ─────────────────────────
+                    Center(
+                      child: Text(
+                        '${v.make} | ${v.model}',
+                        style: TextStyle(
+                          fontFamily: 'Montserrat',
+                          fontSize: 15.sp,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.black,
+                        ),
                       ),
                     ),
-                  ),
-
-                  // ── 2×2 Info boxes ────────────────────────
-                  Padding(
-                    padding: const EdgeInsets.only(left: 8.0, right: 8),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: _InfoBox(
-                            icon: Icons.gavel_rounded,
-                            label: context.l10n.auction_id,
-                            value: v.auctionId,
-                          ),
+                    Center(
+                      child: Container(
+                        margin: EdgeInsets.only(
+                          top: 5.h,
+                          bottom: AppSpacing.sm,
                         ),
-                        SizedBox(width: 8.w),
-                        Expanded(
-                          child: _InfoBox(
-                            icon: Icons.description_outlined,
-                            label: context.l10n.vehicleRef,
-                            value: v.sellerReference.isNotEmpty
-                                ? v.sellerReference
-                                : v.vehicleId,
-                          ),
+                        height: 3.h,
+                        width: 55.w,
+                        decoration: BoxDecoration(
+                          color: AppColors.primary,
+                          borderRadius: BorderRadius.circular(2.r),
                         ),
-                      ],
+                      ),
                     ),
-                  ),
-                  SizedBox(height: 8.h),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 8.0, right: 8),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: _InfoBox(
-                            icon: Icons.app_registration_outlined,
-                            label: context.l10n.registrationRto,
-                            value: v.registeredRto.isNotEmpty
-                                ? v.registeredRto
-                                : context.l10n.na,
+
+                    // ── 2×2 Info boxes ────────────────────────
+                    Padding(
+                      padding: const EdgeInsets.only(left: 8.0, right: 8),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: _InfoBox(
+                              icon: Icons.gavel_rounded,
+                              label: context.l10n.auction_id,
+                              value: v.auctionId,
+                            ),
                           ),
-                        ),
-                        SizedBox(width: 8.w),
-                        Expanded(
-                          child: _InfoBox(
-                            icon: Icons.badge_outlined,
-                            label: context.l10n.regNumber,
-                            value: v.registrationNo.isNotEmpty
-                                ? v.registrationNo
-                                : context.l10n.na,
+                          SizedBox(width: 8.w),
+                          Expanded(
+                            child: _InfoBox(
+                              icon: Icons.description_outlined,
+                              label: context.l10n.vehicleRef,
+                              value: v.sellerReference.isNotEmpty
+                                  ? v.sellerReference
+                                  : v.vehicleId,
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
-                  SizedBox(height: AppSpacing.md),
+                    SizedBox(height: 8.h),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 8.0, right: 8),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: _InfoBox(
+                              icon: Icons.app_registration_outlined,
+                              label: context.l10n.registrationRto,
+                              value: v.registeredRto.isNotEmpty
+                                  ? v.registeredRto
+                                  : context.l10n.na,
+                            ),
+                          ),
+                          SizedBox(width: 8.w),
+                          Expanded(
+                            child: _InfoBox(
+                              icon: Icons.badge_outlined,
+                              label: context.l10n.regNumber,
+                              value: v.registrationNo.isNotEmpty
+                                  ? v.registrationNo
+                                  : context.l10n.na,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(height: AppSpacing.md),
 
-                  // ── Bid info — reactive: updates after each bid ───────
-                  Obx(() {
-                    // Find the freshest version of this vehicle from the
-                    // controller's list; fall back to the initial snapshot.
-                    final live =
-                        ctrl.vehicles.firstWhereOrNull(
-                          (x) => x.vehicleId == v.vehicleId,
-                        ) ??
-                        v;
-                    return _SectionCard(
-                      children: [
-                        _BidInfoRow(
-                          label: context.l10n.your_bid,
-                          value: '₹ ${_formatPrice(live.yourBid)}',
+                    // ── Bid info — reactive: updates after each bid ───────
+                    Obx(() {
+                      // Find the freshest version of this vehicle from the
+                      // controller's list; fall back to the initial snapshot.
+                      final live =
+                          ctrl.vehicles.firstWhereOrNull(
+                            (x) => x.vehicleId == v.vehicleId,
+                          ) ??
+                          v;
+                      return TourAnchor(
+                        id: 'aucDetailBidInfo',
+                        child: _SectionCard(
+                          children: [
+                            _BidInfoRow(
+                              label: context.l10n.your_bid,
+                              value: '₹ ${_formatPrice(live.yourBid)}',
+                            ),
+                            _BidInfoRow(
+                              label: context.l10n.bids_left,
+                              value: live.bidsLeft.toString().padLeft(2, '0'),
+                            ),
+                            _BidInfoRow(
+                              label: context.l10n.bids_received,
+                              value: live.bidsReceived.toString().padLeft(
+                                2,
+                                '0',
+                              ),
+                            ),
+                            _BidInfoRow(
+                              label: context.l10n.availableBuyingLimit,
+                              value: '₹ ${_formatPrice(live.availableBalance)}',
+                              isLast: true,
+                            ),
+                          ],
                         ),
-                        _BidInfoRow(
-                          label: context.l10n.bids_left,
-                          value: live.bidsLeft.toString().padLeft(2, '0'),
-                        ),
-                        _BidInfoRow(
-                          label: context.l10n.bids_received,
-                          value: live.bidsReceived.toString().padLeft(2, '0'),
-                        ),
-                        _BidInfoRow(
-                          label: context.l10n.availableBuyingLimit,
-                          value: '₹ ${_formatPrice(live.availableBalance)}',
-                          isLast: true,
-                        ),
-                      ],
-                    );
-                  }),
-                  SizedBox(height: AppSpacing.md),
+                      );
+                    }),
+                    SizedBox(height: AppSpacing.md),
 
-                  // ── Gate Pass (small) ─────────────────────
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: GatePassButton(vehicle: v),
-                  ),
-                  
-                  SizedBox(height: AppSpacing.sm),
+                    // ── Gate Pass (small) ─────────────────────
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: GatePassButton(vehicle: v),
+                    ),
 
-                  // ── Vehicle Details accordion ─────────────
-                  _VehicleDetailsAccordion(v: v),
+                    SizedBox(height: AppSpacing.sm),
 
-                  SizedBox(height: 16.h),
-                ],
+                    // ── Vehicle Details accordion ─────────────
+                    TourAnchor(
+                      id: 'aucDetailAccordion',
+                      child: _VehicleDetailsAccordion(v: v),
+                    ),
+
+                    SizedBox(height: 16.h),
+                  ],
+                ),
               ),
             ),
-          ),
 
-          // ── Fixed bottom: price + bid button ───────────────
-          Obx(() {
-            final live =
-                ctrl.vehicles.firstWhereOrNull(
-                  (x) => x.vehicleId == v.vehicleId,
-                ) ??
-                v;
-            return Container(
-              padding: EdgeInsets.fromLTRB(
-                AppSpacing.md,
-                AppSpacing.sm,
-                AppSpacing.md,
-                AppSpacing.md,
-              ),
-              decoration: BoxDecoration(
-                color: AppColors.white,
-                border: Border(top: BorderSide(color: AppColors.grey200)),
-                boxShadow: [
-                  BoxShadow(
-                    color: const Color(0x14000000),
-                    blurRadius: 12,
-                    offset: const Offset(0, -3),
-                  ),
-                ],
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Flexible(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          context.l10n.bidStartPrice,
-                          style: TextStyle(
-                            fontFamily: 'Plus Jakarta Sans',
-                            fontSize: 11.sp,
-                            color: AppColors.grey600,
-                          ),
-                        ),
-                        Text(
-                          '₹ ${_formatPrice(live.minimumPrice)}',
-                          style: TextStyle(
-                            fontFamily: 'Montserrat',
-                            fontSize: 18.sp,
-                            fontWeight: FontWeight.w600,
-                            color: AppColors.black,
-                          ),
-                        ),
-                      ],
+            // ── Fixed bottom: price + bid button ───────────────
+            Obx(() {
+              final live =
+                  ctrl.vehicles.firstWhereOrNull(
+                    (x) => x.vehicleId == v.vehicleId,
+                  ) ??
+                  v;
+              return Container(
+                padding: EdgeInsets.fromLTRB(
+                  AppSpacing.md,
+                  AppSpacing.sm,
+                  AppSpacing.md,
+                  AppSpacing.md,
+                ),
+                decoration: BoxDecoration(
+                  color: AppColors.white,
+                  border: Border(top: BorderSide(color: AppColors.grey200)),
+                  boxShadow: [
+                    BoxShadow(
+                      color: const Color(0x14000000),
+                      blurRadius: 12,
+                      offset: const Offset(0, -3),
                     ),
-                  ),
-                  SizedBox(width: AppSpacing.md),
-                  Expanded(
-                    child: GradientButton.filled(
-                      text: context.l10n.bid_now,
-                      isLoading: ctrl.isPlacingBid.value,
-                      onPressed: ctrl.isPlacingBid.value
-                          ? null
-                          : () => _showBidDialog(context, live, ctrl),
+                  ],
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Flexible(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            context.l10n.bidStartPrice,
+                            style: TextStyle(
+                              fontFamily: 'Plus Jakarta Sans',
+                              fontSize: 11.sp,
+                              color: AppColors.grey600,
+                            ),
+                          ),
+                          Text(
+                            '₹ ${_formatPrice(live.minimumPrice)}',
+                            style: TextStyle(
+                              fontFamily: 'Montserrat',
+                              fontSize: 18.sp,
+                              fontWeight: FontWeight.w600,
+                              color: AppColors.black,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                ],
-              ),
-            );
-          }),
-        ],
+                    SizedBox(width: AppSpacing.md),
+                    Expanded(
+                      child: TourAnchor(
+                        id: 'aucDetailBid',
+                        child: GradientButton.filled(
+                          text: context.l10n.bid_now,
+                          isLoading: ctrl.isPlacingBid.value,
+                          onPressed: ctrl.isPlacingBid.value
+                              ? null
+                              : () => _showBidDialog(context, live, ctrl),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }),
+          ],
+        ),
       ),
     );
   }

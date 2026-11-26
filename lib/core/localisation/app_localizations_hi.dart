@@ -6824,4 +6824,366 @@ class AppLocalizationsHi extends AppLocalizations {
   @override
   String get apprPayCommissionNote =>
       'यह अभी नहीं लिया जाएगा। इसे इस वाहन के पूरे भुगतान में जोड़ा जाएगा।';
+
+  @override
+  String get tourSearchTitle => 'कुछ भी खोजें';
+
+  @override
+  String get tourSearchBody =>
+      'नाम से ट्रक, बस, उपकरण, स्पेयर्स या सेवाएँ खोजें।';
+
+  @override
+  String get tourAuctionsTitle => 'लाइव नीलामी';
+
+  @override
+  String get tourAuctionsBody =>
+      'अभी चल रही नीलामियाँ। वाहन देखने और बोली लगाने के लिए कार्ड पर टैप करें।';
+
+  @override
+  String get tourServicesTitle => 'हमारी सभी सेवाएँ';
+
+  @override
+  String get tourServicesBody =>
+      'नीलामी, खरीदें और बेचें, FMS, बीमा और फाइनेंस, निरीक्षण और सर्विस सपोर्ट, सब एक टैप पर।';
+
+  @override
+  String get tourNotificationsTitle => 'सूचनाएँ';
+
+  @override
+  String get tourNotificationsBody =>
+      'बोली अपडेट, नीलामी के नतीजे और ऑफ़र यहाँ दिखेंगे।';
+
+  @override
+  String get tourSubscriptionsTitle => 'सब्सक्रिप्शन';
+
+  @override
+  String get tourSubscriptionsBody =>
+      'नीलामी और प्रीमियम लिस्टिंग खोलने के लिए प्लान चुनें।';
+
+  @override
+  String get tourCategoriesTitle => 'श्रेणियाँ';
+
+  @override
+  String get tourCategoriesBody =>
+      'सभी वाहन और सेवा श्रेणियाँ एक ही जगह देखें।';
+
+  @override
+  String get tourRewardsTitle => 'रिवॉर्ड्स';
+
+  @override
+  String get tourRewardsBody => 'वाहन बाज़ार इस्तेमाल करते हुए रिवॉर्ड कमाएँ।';
+
+  @override
+  String get tourProfileTitle => 'प्रोफ़ाइल और सेटिंग्स';
+
+  @override
+  String get tourProfileBody =>
+      'आपकी बोलियाँ, लिस्टिंग, विशलिस्ट और भाषा। यह टूर यहाँ से दोबारा देख सकते हैं।';
+
+  @override
+  String get tourNext => 'आगे';
+
+  @override
+  String get tourSkip => 'छोड़ें';
+
+  @override
+  String get tourDone => 'समझ गया';
+
+  @override
+  String tourStepOf(int current, int total) {
+    return '$total में से $current';
+  }
+
+  @override
+  String get tourReplayTitle => 'ऐप टूर';
+
+  @override
+  String get tourReplaySubtitle => 'छोटा परिचय फिर से देखें';
+
+  @override
+  String get tourAucTypeLiveTitle => 'लाइव नीलामी';
+
+  @override
+  String get tourAucTypeLiveBody =>
+      'वाहनों पर लाइव बोली लगाएँ। श्रेणी चुनने के लिए टैप करें।';
+
+  @override
+  String get tourAucTypeApprovedTitle => 'अप्रूव्ड वाहन';
+
+  @override
+  String get tourAucTypeApprovedBody =>
+      'सत्यापित वाहन जिन्हें आप जाँच कर बुक कर सकते हैं।';
+
+  @override
+  String get tourAucCatCardTitle => 'श्रेणी चुनें';
+
+  @override
+  String get tourAucCatCardBody =>
+      'उस प्रकार की सभी नीलामियाँ देखने के लिए वाहन प्रकार पर टैप करें।';
+
+  @override
+  String get tourAucCatLiveTitle => 'अभी लाइव';
+
+  @override
+  String get tourAucCatLiveBody =>
+      'हरा Live बैज मतलब बोली खुली है। जुड़ने के लिए टैप करें।';
+
+  @override
+  String get tourAucCatSoonTitle => 'जल्द आ रहा है';
+
+  @override
+  String get tourAucCatSoonBody =>
+      'ये नीलामियाँ अभी शुरू नहीं हुई हैं। बोली लगाने के लिए जल्द दोबारा देखें।';
+
+  @override
+  String get tourAucListTabsTitle => 'नीलामी सूची बदलें';
+
+  @override
+  String get tourAucListTabsBody =>
+      'लाइव, आज बंद होने वाली या आने वाली नीलामियाँ देखें।';
+
+  @override
+  String get tourAucListFilterTitle => 'वाहन फ़िल्टर करें';
+
+  @override
+  String get tourAucListFilterBody =>
+      'श्रेणी, राज्य या बैंक के अनुसार सूची छोटी करें।';
+
+  @override
+  String get tourAucListCardTitle => 'वाहन कार्ड';
+
+  @override
+  String get tourAucListCardBody =>
+      'फ़ोटो, बचा समय और बोली की स्थिति। पूरी जानकारी के लिए See More पर टैप करें।';
+
+  @override
+  String get tourAucListBidTitle => 'अपनी बोली लगाएँ';
+
+  @override
+  String get tourAucListBidBody =>
+      '− और + से राशि तय करें, फिर समय खत्म होने से पहले Place Bid दबाएँ।';
+
+  @override
+  String get tourAucListWishlistTitle => 'बाद के लिए सेव करें';
+
+  @override
+  String get tourAucListWishlistBody =>
+      'इस वाहन को विशलिस्ट में जोड़ने के लिए दिल पर टैप करें।';
+
+  @override
+  String get tourAucDetailImagesTitle => 'वाहन की फ़ोटो';
+
+  @override
+  String get tourAucDetailImagesBody =>
+      'बोली से पहले वाहन की सभी फ़ोटो देखने के लिए स्वाइप करें।';
+
+  @override
+  String get tourAucDetailTimerTitle => 'बचा समय';
+
+  @override
+  String get tourAucDetailTimerBody =>
+      'बोली कितनी देर खुली रहेगी, यह दिखाता है। शून्य होने से पहले बोली लगाएँ।';
+
+  @override
+  String get tourAucDetailBidInfoTitle => 'आपकी बोली का सारांश';
+
+  @override
+  String get tourAucDetailBidInfoBody =>
+      'आपकी मौजूदा बोली, बची बोलियाँ, मिली बोलियाँ और बची खरीद सीमा।';
+
+  @override
+  String get tourAucDetailAccordionTitle => 'वाहन की पूरी जानकारी';
+
+  @override
+  String get tourAucDetailAccordionBody =>
+      'रिपो तारीख और इस वाहन की बाकी सारी जानकारी देखने के लिए टैप करें।';
+
+  @override
+  String get tourAucDetailBidTitle => 'अभी बोली लगाएँ';
+
+  @override
+  String get tourAucDetailBidBody =>
+      'राशि डालकर इस वाहन पर बोली लगाने के लिए यहाँ टैप करें।';
+
+  @override
+  String get tourBsHomeCategoryTitle => 'वाहन प्रकार चुनें';
+
+  @override
+  String get tourBsHomeCategoryBody =>
+      'हर कार्ड एक वाहन प्रकार है। संख्या बताती है कि अभी कितने लिस्टेड हैं।';
+
+  @override
+  String get tourBsHomeBuyTitle => 'वाहन खरीदें';
+
+  @override
+  String get tourBsHomeBuyBody =>
+      'इस श्रेणी में बिक्री के सभी वाहन देखने के लिए Buy पर टैप करें।';
+
+  @override
+  String get tourBsHomeSellTitle => 'अपना वाहन बेचें';
+
+  @override
+  String get tourBsHomeSellBody =>
+      'खरीदारों के लिए फ़ोटो और कीमत के साथ वाहन डालने के लिए Sell पर टैप करें।';
+
+  @override
+  String get tourBsListingSearchTitle => 'वाहन खोजें';
+
+  @override
+  String get tourBsListingSearchBody =>
+      'मनचाहा वाहन जल्दी ढूँढने के लिए ब्रांड या मॉडल लिखें।';
+
+  @override
+  String get tourBsListingFilterTitle => 'नतीजे फ़िल्टर करें';
+
+  @override
+  String get tourBsListingFilterBody =>
+      'सूची को सिर्फ़ आपकी ज़रूरत वाले वाहनों तक सीमित करें।';
+
+  @override
+  String get tourBsListingCardTitle => 'वाहन की जानकारी';
+
+  @override
+  String get tourBsListingCardBody =>
+      'फ़ोटो, पूरी जानकारी और विक्रेता विकल्प देखने के लिए कार्ड पर टैप करें।';
+
+  @override
+  String get tourBsListingWishlistTitle => 'विशलिस्ट में सेव करें';
+
+  @override
+  String get tourBsListingWishlistBody =>
+      'वाहन सेव करके बाद में देखने के लिए दिल पर टैप करें।';
+
+  @override
+  String get tourBsDetailPriceTitle => 'माँगी गई कीमत';
+
+  @override
+  String get tourBsDetailPriceBody =>
+      'यह विक्रेता की कीमत है। आप नीचे अपना ऑफ़र भी दे सकते हैं।';
+
+  @override
+  String get tourBsDetailShareTitle => 'यह वाहन शेयर करें';
+
+  @override
+  String get tourBsDetailShareBody =>
+      'यह लिस्टिंग WhatsApp और दूसरे ऐप पर परिवार या दोस्तों को भेजें।';
+
+  @override
+  String get tourBsDetailSpecsTitle => 'मुख्य जानकारी';
+
+  @override
+  String get tourBsDetailSpecsBody =>
+      'वाहन ID, मॉडल वर्ष और जगह एक नज़र में। पूरी जानकारी के लिए नीचे स्क्रॉल करें।';
+
+  @override
+  String get tourBsDetailContactTitle => 'मालिक से संपर्क करें';
+
+  @override
+  String get tourBsDetailContactBody =>
+      'यहाँ मालिक का फ़ोन नंबर खोलें, फिर सीधे कॉल करें।';
+
+  @override
+  String get tourBsDetailOfferTitle => 'ऑफ़र दें';
+
+  @override
+  String get tourBsDetailOfferBody =>
+      'इस वाहन के लिए विक्रेता को अपनी कीमत भेजें।';
+
+  @override
+  String get tourApprLandingCardTitle => 'वाहन श्रेणियाँ';
+
+  @override
+  String get tourApprLandingCardBody =>
+      'हर कार्ड एक वाहन प्रकार है, साथ में उपलब्ध अप्रूव्ड वाहनों की संख्या।';
+
+  @override
+  String get tourApprLandingBuyTitle => 'वाहन खरीदें';
+
+  @override
+  String get tourApprLandingBuyBody =>
+      'इस श्रेणी में बैंकों और सरकारी स्रोतों के सत्यापित वाहन देखें।';
+
+  @override
+  String get tourApprLandingSellTitle => 'अपना वाहन बेचें';
+
+  @override
+  String get tourApprLandingSellBody =>
+      'छोटा फ़ॉर्म भरकर इस श्रेणी में वाहन बिक्री के लिए डालें।';
+
+  @override
+  String get tourApprCategoryCardTitle => 'श्रेणी चुनें';
+
+  @override
+  String get tourApprCategoryCardBody =>
+      'बुक किए जा सकने वाले अप्रूव्ड वाहन देखने के लिए वाहन प्रकार पर टैप करें।';
+
+  @override
+  String get tourApprCategoryCountTitle => 'उपलब्ध वाहन';
+
+  @override
+  String get tourApprCategoryCountBody =>
+      'इस श्रेणी में अभी कितने सत्यापित वाहन लिस्टेड हैं, यह दिखाता है।';
+
+  @override
+  String get tourApprListCardTitle => 'अप्रूव्ड वाहन';
+
+  @override
+  String get tourApprListCardBody =>
+      'हर कार्ड एक सत्यापित वाहन है। फ़ोटो स्वाइप करें और पूरी जानकारी के लिए टैप करें।';
+
+  @override
+  String get tourApprListPriceTitle => 'वाहन की कीमत';
+
+  @override
+  String get tourApprListPriceBody =>
+      'अप्रूव्ड स्रोत द्वारा तय इस वाहन की कीमत।';
+
+  @override
+  String get tourApprListDetailsTitle => 'पूरी जानकारी देखें';
+
+  @override
+  String get tourApprListDetailsBody =>
+      'जानकारी देखने, निरीक्षण माँगने या बुक करने के लिए वाहन खोलें।';
+
+  @override
+  String get tourApprListShareTitle => 'वाहन शेयर करें';
+
+  @override
+  String get tourApprListShareBody =>
+      'यह वाहन WhatsApp और दूसरे ऐप पर दोस्तों या परिवार को भेजें।';
+
+  @override
+  String get tourApprDetailStatusTitle => 'वाहन की स्थिति';
+
+  @override
+  String get tourApprDetailStatusBody =>
+      'Active मतलब यह वाहन अभी निरीक्षण और बुकिंग के लिए उपलब्ध है।';
+
+  @override
+  String get tourApprDetailInfoTitle => 'मुख्य जानकारी';
+
+  @override
+  String get tourApprDetailInfoBody =>
+      'वाहन ID, श्रेणी, जगह और वर्ष एक नज़र में।';
+
+  @override
+  String get tourApprDetailMoreTitle => 'और जानकारी';
+
+  @override
+  String get tourApprDetailMoreBody =>
+      'इस वाहन की पूरी जानकारी और दस्तावेज़ देखने के लिए टैप करें।';
+
+  @override
+  String get tourApprDetailInspectTitle => 'निरीक्षण माँगें';
+
+  @override
+  String get tourApprDetailInspectBody =>
+      'बुक करने से पहले वाहन की हालत जाँचने के लिए निरीक्षण माँगें।';
+
+  @override
+  String get tourApprDetailBookTitle => 'यह वाहन बुक करें';
+
+  @override
+  String get tourApprDetailBookBody =>
+      'यह वाहन अपने लिए रिज़र्व करने के लिए बुकिंग राशि चुकाएँ।';
 }

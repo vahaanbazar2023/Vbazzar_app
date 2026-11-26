@@ -26,6 +26,7 @@ import '../data/models/dashboard_model.dart'
 import '../../../features/subscription/models/user_subscription.dart';
 import '../../../features/subscription/services/subscription_guard_service.dart';
 import '../controllers/home_controller.dart';
+import '../../app_tour/home_tour.dart';
 import '../data/models/dashboard_model.dart';
 import '../../categories/controllers/categories_controller.dart';
 import '../../categories/models/category_item.dart';
@@ -83,6 +84,10 @@ class HomeScreen extends GetView<HomeController> {
                 onRetry: controller.fetchDashboard,
               );
             }
+            // First-run guided tour (no-op once seen).
+            WidgetsBinding.instance.addPostFrameCallback(
+              (_) => HomeTour.maybeStart(context),
+            );
             return RefreshIndicator(
               color: AppColors.primary,
               onRefresh: controller.fetchDashboard,
@@ -97,7 +102,10 @@ class HomeScreen extends GetView<HomeController> {
                     _HomeHeader(),
                     SizedBox(height: 16.h),
                     // ── Live Auction Carousel ────────────────────
-                    _LiveAuctionCarousel(auctions: data.liveAuctions),
+                    KeyedSubtree(
+                      key: HomeTourKeys.liveAuctions,
+                      child: _LiveAuctionCarousel(auctions: data.liveAuctions),
+                    ),
                     SizedBox(height: 24.h),
                     // ── Service Categories (static, 3-col) ───────
                     _HomeCategoriesGrid(),
@@ -255,6 +263,7 @@ class _HomeHeader extends StatelessWidget {
                   // Search bar — _VehicleSearchBar style, taps → search screen
                   Expanded(
                     child: GestureDetector(
+                      key: HomeTourKeys.search,
                       onTap: () => Get.toNamed(AppRoutes.search),
                       child: AbsorbPointer(
                         child: CustomSearchBar(
@@ -271,6 +280,7 @@ class _HomeHeader extends StatelessWidget {
                   SizedBox(width: 10.w),
                   // Notification icon with unread badge
                   GestureDetector(
+                    key: HomeTourKeys.notifications,
                     onTap: () => Get.toNamed(AppRoutes.notifications),
                     child: Stack(
                       clipBehavior: Clip.none,
@@ -1039,6 +1049,7 @@ class _HomeCategoriesGrid extends StatelessWidget {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 16.w),
       child: GridView.builder(
+        key: HomeTourKeys.services,
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(

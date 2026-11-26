@@ -13,6 +13,7 @@ import '../../../routes/app_routes.dart';
 import '../../../core/design_system/organisms/app_bottom_nav_bar.dart';
 import '../../main_shell/controllers/main_shell_controller.dart';
 import '../controllers/profile_controller.dart';
+import '../../app_tour/home_tour.dart';
 import '../models/activity_summary.dart';
 import '../models/profile_models.dart';
 import '../../../core/storage/local_storage_service.dart';
@@ -269,6 +270,14 @@ class _ProfilePage extends StatelessWidget {
                       AppRoutes.languageSelection,
                       arguments: {'fromProfile': true},
                     ),
+                  ),
+
+                  _Item(
+                    iconData: Icons.explore_rounded,
+                    iconBg: const Color(0xFFE6E0FF),
+                    label: context.l10n.tourReplayTitle,
+                    subtitle: context.l10n.tourReplaySubtitle,
+                    onTap: HomeTour.replay,
                   ),
                 ]),
 
