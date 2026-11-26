@@ -135,6 +135,13 @@ class VehicleListingController extends GetxController
   int _searchPage = 1;
   Worker? _searchDebouncer;
 
+  /// Bumped on every search so a slower, older response (other query or other
+  /// tab) never overwrites the newest results.
+  int _searchSeq = 0;
+
+  /// Tab the current search results belong to.
+  int _searchTab = -1;
+
   // ─── Bid placement ────────────────────────────────────────────
   final isPlacingBid = false.obs;
   final pendingBid = Rxn<PendingBid>();
@@ -187,6 +194,10 @@ class VehicleListingController extends GetxController
       if (!tabController.indexIsChanging) {
         currentTabIndex.value = tabController.index;
         _loadTab(tabController.index);
+        // Search is scoped to the tab: re-run it when the tab changed.
+        if (isSearchActive && _searchTab != tabController.index) {
+          _performSearch(searchQuery.value);
+        }
       }
     });
 
@@ -566,12 +577,17 @@ class VehicleListingController extends GetxController
 
     // Clear search results if query is too short
     if (trimmed.length < 2) {
+      _searchSeq++; // drop any search still in flight
+      _searchTab = -1;
       searchResults.clear();
       searchError.value = '';
       isSearching.value = false;
       return;
     }
 
+    final seq = ++_searchSeq;
+    final tab = tabController.index.clamp(0, 2);
+    _searchTab = tab;
     isSearching.value = true;
     searchError.value = '';
     _searchPage = 1;
@@ -584,9 +600,12 @@ class VehicleListingController extends GetxController
         userId: userId,
         searchQuery: trimmed,
         vehicleType: vehicleType, // Search within current category
+        // Only the open tab's auctions: on Live, closed auctions never show.
+        auctionType: _tabTypes[tab],
         page: 1,
         limit: 20,
       );
+      if (seq != _searchSeq) return; // a newer search is running
 
       searchResults.assignAll(result.vehicles);
       searchPagination.value = result.pagination;
@@ -595,10 +614,11 @@ class VehicleListingController extends GetxController
         searchError.value = appL10n.aucNoVehiclesFoundMatching(trimmed);
       }
     } catch (e, st) {
+      if (seq != _searchSeq) return;
       debugPrint('❌ [VehicleListing._performSearch] $e\n$st');
       searchError.value = appL10n.aucSearchFailed;
     } finally {
-      isSearching.value = false;
+      if (seq == _searchSeq) isSearching.value = false;
     }
   }
 

@@ -9,6 +9,7 @@ import '../storage/local_storage_service.dart';
 import '../storage/secure_storage_service.dart';
 import '../storage/storage_keys.dart';
 import '../../routes/app_routes.dart';
+import '../../features/approved_vehicles/services/approved_access_gate.dart';
 import '../../features/approved_vehicles/data/repositories/approved_vehicle_repository_impl.dart';
 import '../../features/auth/controllers/auth_controller.dart';
 import '../../features/subscription/models/user_subscription.dart';
@@ -204,13 +205,12 @@ class DeepLinkService extends GetxService {
   }
 
   /// Loads the shared approved vehicle by id and opens its detail screen.
-  /// Approved vehicles sit inside the auction module (Home -> Auction ->
-  /// Approved), so a shared link keeps the same rule: no auction plan (SUBT001)
-  /// -> choose a plan first.
+  /// Approved vehicles open only with the Gold plan (SUBT001 / PLAN001), so a
+  /// shared link keeps the same rule: anyone else sees the locked message.
   Future<void> _navigateToApprovedVehicle(String approvedVehicleId) async {
     final userId = await SecureStorageService.to.read(StorageKeys.userId);
     if (userId == null || userId.isEmpty) return; // pending is kept for login
-    if (!await _hasAuctionPlanOrShowPlans()) return;
+    if (!await ensureApprovedVehicleAccess()) return;
     try {
       final listing = await ApprovedVehicleRepositoryImpl()
           .getListingByVehicleId(

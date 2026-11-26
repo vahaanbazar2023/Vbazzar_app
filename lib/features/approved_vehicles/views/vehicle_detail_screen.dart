@@ -1,4 +1,4 @@
-import '../../../core/design_system/molecules/header_share_button.dart';
+import '../../../core/design_system/molecules/share_circle_button.dart';
 import '../../../core/services/share_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -11,10 +11,9 @@ import '../../../core/design_system/organisms/network_image_carousel.dart';
 import '../../../core/design_system/templates/app_layout.dart';
 import '../../../core/design_system/tokens/app_radius.dart';
 import '../../../core/design_system/tokens/app_spacing.dart';
-import '../../../features/subscription/models/subscription_plan.dart';
-import '../../../features/subscription/views/single_plan_payment_screen.dart';
 import '../../../theme/app_fonts.dart';
 import '../controllers/approved_vehicle_controller.dart';
+import 'approved_vehicle_payment_screen.dart';
 import '../domain/entities/approved_vehicle_listing_entity.dart';
 import '../../../core/extensions/context_extensions.dart';
 
@@ -85,19 +84,6 @@ class _ApprVehicleDetail extends StatelessWidget {
       title: title,
       subtitle: listing.approvedVehicleId,
       showBack: true,
-      actions: [
-        HeaderShareButton(
-          onShare: () async {
-            if (!Get.isRegistered<ShareService>()) return;
-            await ShareService.to.shareApprovedVehicle(
-              approvedVehicleId: listing.approvedVehicleId,
-              name: title,
-              year: listing.yearOfManufacturing,
-              price: listing.price,
-            );
-          },
-        ),
-      ],
       bodyColor: AppColors.cardBackground,
       body: Column(
         children: [
@@ -158,12 +144,30 @@ class _ApprVehicleDetail extends StatelessWidget {
                             ),
                           ),
                         ),
-                        // Status badge — top right
+                        // Status badge + share — stacked top right
                         Positioned(
                           top: 10,
                           right: 10,
-                          child: _ApprStatusBadge(
-                            status: listing.vehicleStatus,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              _ApprStatusBadge(status: listing.vehicleStatus),
+                              SizedBox(height: 8.h),
+                              ShareCircleButton(
+                                onShare: () async {
+                                  if (!Get.isRegistered<ShareService>()) {
+                                    return;
+                                  }
+                                  await ShareService.to.shareApprovedVehicle(
+                                    approvedVehicleId:
+                                        listing.approvedVehicleId,
+                                    name: title,
+                                    year: listing.yearOfManufacturing,
+                                    price: listing.price,
+                                  );
+                                },
+                              ),
+                            ],
                           ),
                         ),
                       ],
@@ -257,7 +261,9 @@ class _ApprVehicleDetail extends StatelessWidget {
                             ? _disabledBtn(context.l10n.apprBookedCheck)
                             : GradientButton.filled(
                                 text: context.l10n.apprBookNow,
-                                height: 48.h,
+                                height: 40.h,
+                                fontSize: 14.sp,
+                                fontWeight: FontWeight.w600,
                                 isLoading: false,
                                 onPressed: () => _showPaymentDialog(
                                   context: context,
@@ -282,7 +288,9 @@ class _ApprVehicleDetail extends StatelessWidget {
                             ? _disabledBtn(context.l10n.apprRequestedCheck)
                             : GradientButton.filled(
                                 text: context.l10n.apprInspection,
-                                height: 48.h,
+                                height: 40.h,
+                                fontSize: 14.sp,
+                                fontWeight: FontWeight.w600,
                                 isLoading: false,
                                 onPressed: () => _showPaymentDialog(
                                   context: context,
@@ -333,30 +341,16 @@ class _ApprVehicleDetail extends StatelessWidget {
       return;
     }
 
-    // Build plan and navigate to SinglePlanPaymentScreen (PayU)
-    final plan = SubscriptionPlan(
-      typeCode: subscriptionType == 'category' ? 'APPR_BOOK' : 'APPR_INSP',
-      planCode: planCode,
-      name: title,
-      price: amount,
-      displayOrder: 1,
-      status: 'active',
-      featDescription: description,
-      planMetric: 'days',
-      planMetricValue: '30',
-    );
-
+    // One-time payment for this vehicle (PayU), priced per vehicle on the
+    // server, which checks the amount; no plan validity, no wallet path.
     Get.to(
-      () => SinglePlanPaymentScreen(
-        plan: plan,
-        title: title,
-        subtitle: description,
-        source: subscriptionType == 'category' ? 'APPR_BOOK' : 'APPR_INSP',
-        // Priced per vehicle on the server, which checks the amount; the
-        // wallet-only path can't price it, so it isn't offered here.
-        approvedVehicleId: approvedVehicleId,
-        purpose: subscriptionType == 'category' ? 'booking' : 'inspection',
-        showWalletLink: false,
+      () => ApprovedVehiclePaymentScreen(
+        listing: listing,
+        purpose: subscriptionType == 'category'
+            ? ApprovedVehiclePaymentPurpose.booking
+            : ApprovedVehiclePaymentPurpose.inspection,
+        amount: amount,
+        planCode: planCode,
         onPaymentSuccess: () {
           Get.back();
           _callApi(
@@ -398,7 +392,7 @@ class _ApprVehicleDetail extends StatelessWidget {
 
   static Widget _disabledBtn(String text) {
     return ConstrainedBox(
-      constraints: BoxConstraints(minHeight: 48.h),
+      constraints: BoxConstraints(minHeight: 40.h),
       child: Container(
         decoration: BoxDecoration(
           color: AppColors.grey200,

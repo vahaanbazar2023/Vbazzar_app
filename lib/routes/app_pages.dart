@@ -400,6 +400,9 @@ class AppPages {
     GetPage(
       name: AppRoutes.spareDetail,
       page: () => const FmsDetailView(),
+      // Opened from the home screen and search too, where the FMS screens'
+      // controller isn't registered yet.
+      binding: SpareFmsBinding(),
       transition: Transition.rightToLeft,
     ),
     GetPage(
