@@ -4,6 +4,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'logger_service.dart';
 import '../extensions/context_extensions.dart';
+import '../../features/approved_vehicles/services/approved_vehicle_push.dart';
 import '../../features/auction/services/auction_push.dart';
 
 /// Background message handler - must be a top-level function
@@ -42,7 +43,9 @@ class NotificationService {
         // Handle notification tap
         instance._logger.info('Notification tapped: ${response.payload}');
         final data = decodePayload(response.payload);
-        if (data != null) AuctionPush.onOpened(data);
+        if (data != null && !ApprovedVehiclePush.onOpened(data)) {
+          AuctionPush.onOpened(data);
+        }
       },
     );
 
@@ -125,7 +128,9 @@ class NotificationService {
   /// Handle notification opened from background
   void _handleMessageOpenedApp(RemoteMessage message) {
     _logger.info('Notification opened: ${message.messageId}');
-    // Auction pushes (auto-bid / outbid) open their screen; others: TODO
+    // New approved vehicle -> that vehicle (plan check); auction pushes
+    // (auto-bid / outbid) open their screen; others: TODO
+    if (ApprovedVehiclePush.onOpened(message.data)) return;
     AuctionPush.onOpened(message.data);
   }
 

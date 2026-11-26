@@ -42,6 +42,14 @@ class DeepLinkService extends GetxService {
   static const _kPendingContentType = 'pending_content_type';
   static const _kPendingContentId = 'pending_content_id';
 
+  /// Content type for "the Approved Vehicles section" (a push about several
+  /// newly approved vehicles), opened behind the plan check.
+  static const approvedVehiclesSection = 'approved_vehicles';
+
+  /// Set once home has loaded (resumePendingNavigation ran): from then on a
+  /// push tap can navigate straight away.
+  bool _homeReady = false;
+
   @override
   void onInit() {
     super.onInit();
@@ -172,6 +180,18 @@ class DeepLinkService extends GetxService {
     }
   }
 
+  /// A push was tapped: open its content now when home is up and the user is
+  /// logged in; otherwise keep it, and resumePendingNavigation() opens it once
+  /// home has loaded (cold start from the push, or after logging in).
+  Future<void> openFromPush(String contentType, String contentId) async {
+    final userId = await SecureStorageService.to.read(StorageKeys.userId);
+    if (!_homeReady || userId == null || userId.isEmpty) {
+      _persistPending(contentType: contentType, contentId: contentId);
+      return;
+    }
+    await _openContent(contentType, contentId);
+  }
+
   /// Opens a buy/approved vehicle by id, or the auction module (plan check
   /// included), from inside the app — e.g. a link in a Vaani chat reply.
   Future<void> openContent(String contentType, String contentId) =>
@@ -185,6 +205,9 @@ class DeepLinkService extends GetxService {
         break;
       case 'approved_vehicle':
         await _navigateToApprovedVehicle(contentId);
+        break;
+      case approvedVehiclesSection:
+        await openApprovedVehicles(AppRoutes.approvedVehicleBuySell);
         break;
       case 'live_auction':
       case 'upcoming_auction':
@@ -263,6 +286,7 @@ class DeepLinkService extends GetxService {
   /// Call from HomeController / MainShellController after login to
   /// handle any cold-start deep links that couldn't navigate immediately.
   void resumePendingNavigation() {
+    _homeReady = true;
     final contentType = LocalStorageService.to.read<String>(
       _kPendingContentType,
     );
