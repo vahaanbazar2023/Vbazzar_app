@@ -74,3 +74,4 @@ android/app/*.keystore
 
 # backups of local signing settings
 android/key.properties.*
+*.aab
