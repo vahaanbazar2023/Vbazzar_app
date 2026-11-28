@@ -113,6 +113,8 @@ PODS:
   - nanopb/encode (3.30910.0)
   - open_filex (0.0.2):
     - Flutter
+  - package_info_plus (0.4.5):
+    - Flutter
   - payu_checkoutpro_flutter (1.2.0):
     - Flutter
     - PayUIndia-CheckoutPro (~> 9.3)
@@ -187,6 +189,7 @@ DEPENDENCIES:
   - geolocator_apple (from `.symlinks/plugins/geolocator_apple/darwin`)
   - image_picker_ios (from `.symlinks/plugins/image_picker_ios/ios`)
   - open_filex (from `.symlinks/plugins/open_filex/ios`)
+  - package_info_plus (from `.symlinks/plugins/package_info_plus/ios`)
   - payu_checkoutpro_flutter (from `.symlinks/plugins/payu_checkoutpro_flutter/ios`)
   - permission_handler_apple (from `.symlinks/plugins/permission_handler_apple/ios`)
   - share_plus (from `.symlinks/plugins/share_plus/ios`)
@@ -247,6 +250,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/image_picker_ios/ios"
   open_filex:
     :path: ".symlinks/plugins/open_filex/ios"
+  package_info_plus:
+    :path: ".symlinks/plugins/package_info_plus/ios"
   payu_checkoutpro_flutter:
     :path: ".symlinks/plugins/payu_checkoutpro_flutter/ios"
   permission_handler_apple:
@@ -280,6 +285,7 @@ SPEC CHECKSUMS:
   image_picker_ios: e0ece4aa2a75771a7de3fa735d26d90817041326
   nanopb: fad817b59e0457d11a5dfbde799381cd727c1275
   open_filex: 432f3cd11432da3e39f47fcc0df2b1603854eff1
+  package_info_plus: af8e2ca6888548050f16fa2f1938db7b5a5df499
   payu_checkoutpro_flutter: 912291894ec1693419c6e4a8a1ed9bb64b410022
   PayUIndia-Analytics: 0cec0e6783db70080f7ca2721ae024bc26af7fb4
   PayUIndia-AssetLibrary: e40d7697c37aea55f184e29564e2f8b63a63b472
