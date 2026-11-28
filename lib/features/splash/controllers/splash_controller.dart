@@ -232,7 +232,9 @@ class SplashController extends GetxController with GetTickerProviderStateMixin {
     // Force the latest Play release before anything else (Android only; skips
     // quietly for non-Play installs and never waits more than a few seconds).
     await AppUpdateService.enforceLatestVersion();
-    if (_isDisposed) return;
+    // An update is required: stay on the splash under the dialog (navigating
+    // on would close it and let the old version in).
+    if (_isDisposed || AppUpdateService.blocked) return;
 
     final hasSeenIntro = LocalStorageService.to.getBool(
       StorageKeys.hasSeenIntro,
