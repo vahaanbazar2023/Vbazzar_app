@@ -7,7 +7,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
-	<string>Vahaan Mobile 2 0</string>
+	<string>Vahaan Bazar</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -72,5 +72,78 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<key>CFBundleIconName</key>
+	<string>AppIcon</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>com.vahaanbazar.app</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>vahaanbazar</string>
+			</array>
+		</dict>
+	</array>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>phonepe</string>
+		<string>paytm</string>
+		<string>tez</string>
+		<string>credpay</string>
+		<string>bhim</string>
+	</array>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>fetch</string>
+		<string>remote-notification</string>
+	</array>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<false/>
+		<key>NSExceptionDomains</key>
+		<dict>
+			<key>payu.in</key>
+			<dict>
+				<key>NSExceptionAllowsInsecureHTTPLoads</key>
+				<false/>
+				<key>NSExceptionMinimumTLSVersion</key>
+				<string>TLSv1.2</string>
+				<key>NSIncludesSubdomains</key>
+				<true/>
+			</dict>
+			<key>qervuzac7v.ap-south-1.awsapprunner.com</key>
+			<dict>
+				<key>NSExceptionAllowsInsecureHTTPLoads</key>
+				<false/>
+				<key>NSExceptionMinimumTLSVersion</key>
+				<string>TLSv1.2</string>
+				<key>NSIncludesSubdomains</key>
+				<true/>
+			</dict>
+			<key>test.payu.in</key>
+			<dict>
+				<key>NSExceptionAllowsInsecureHTTPLoads</key>
+				<false/>
+				<key>NSExceptionMinimumTLSVersion</key>
+				<string>TLSv1.2</string>
+				<key>NSIncludesSubdomains</key>
+				<true/>
+			</dict>
+		</dict>
+	</dict>
+	<key>NSCameraUsageDescription</key>
+	<string>This app needs camera access to scan payment cards and QR codes for secure payments.</string>
+	<key>NSContactsUsageDescription</key>
+	<string>This app needs access to contacts for autofill payment information.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>This app needs permission to add photos to your library.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>This app needs access to your photo library to save and read media files.</string>
+	<key>NSUserNotificationsUsageDescription</key>
+	<string>This app uses notifications to keep you updated about auction bids, payment confirmations, and service requests.</string>
 </dict>
 </plist>
